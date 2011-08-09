@@ -1,0 +1,545 @@
+<vocconfig>
+	
+	    <voc id='allPolicyByPatient' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" MedPolicy as mp "
+		    	parent='mp.patient_id=:parent'
+		    	nameId="mp.id"
+		    	join=" left join REG_IC as com on com.id=mp.company_id  "
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    />
+
+    </voc>
+	    <voc id='dmcPolicyByPatient' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" MedPolicy as mp "
+		    	parent='mp.patient_id=:parent'
+		    	nameId="mp.id"
+		    	join=" left join REG_IC as com on com.id=mp.company_id  "
+		    	queryAppend=" (DTYPE in ('MEDPOLICYDMC','MEDPOLICYDMCFOREIGN')) "
+		    	order=""
+		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    />
+
+    </voc>
+	    <voc id='omcPolicyByPatient' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" MedPolicy as mp "
+		    	parent='mp.patient_id=:parent'
+		    	nameId="mp.id"
+		    	join=" left join REG_IC as com on com.id=mp.company_id  "
+		    	queryAppend=" (DTYPE in ('MEDPOLICYOMC','MEDPOLICYOMCFOREIGN')) "
+		    	order=""
+		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    />
+
+    </voc>
+	    <voc id='serviceStreamByDepAndDate' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" vocServiceStream vss "
+		    	parent="(select count(*) from BedFund bf where bf.serviceStream_id =vss.id and bf.lpu_id=$piece(:parent, ':' ,1) and 
+						cast( $$ei^Zcdat ( $piece ( :parent, ':' , 2 ) ) as integer) between cast(bf.dateStart as integer) and cast(isnull(bf.dateFinish,CURRENT_DATE) as integer)) > 0 "
+		    	nameId="vss.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vss.id like UPPER(:query) or vss.name like UPPER(:query)) "
+		    	names = " vss.name "
+		    />
+
+    </voc>
+	    <voc id='bedFundByDepAndStreamAndDate' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" BedFund bf "
+		    	parent="bf.lpu_id=$piece(:parent,':',1) and bf.serviceStream_id=$piece(:parent,':',2) and 
+cast($$ei^Zcdat($piece(:parent,':',3)) as integer) between cast(bf.dateStart as integer) and cast(isnull(bf.dateFinish,CURRENT_DATE) as integer)"
+		    	nameId="bf.id"
+		    	join=" left join vocBedType vbt on vbt.id=bf.bedType_id
+left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (bf.id like UPPER(:query) or vbt.name like UPPER(:query)) "
+		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.noFood=1 then 'без питания' else 'с питанием' end ||')'"
+		    />
+
+    </voc>
+    <!-- Справочник исходов госпитализации -->
+    <voc id='vocHospitalizationOutcome' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <voc id='vocAnesthesiaMethod' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <voc id='vocPediculosis' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник результатов госпитализации -->
+    <voc id='vocHospitalizationResult' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник дефектов догоспитального этапа -->
+    <voc id='vocPreAdmissionDefect' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник времен заболевания до госпитализации -->
+    <voc id='vocPreAdmissionTime' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+
+    <!-- Справочник типов опьянения -->
+    <voc id='vocIntoxication' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник операций -->
+    <voc id='vocOperation' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'VocOperation'
+    			parent="(startActualDate is null or cast(cast($$ini^Zcdat(:parent,7) as date) as integer) >=cast(startActualDate as integer)) and (finishActualDate is null or cast(finishActualDate as integer)>=cast(cast($$ini^Zcdat(:parent,7) as date) as integer))"
+    			names = "name||' (' || ifnull(StartActualDate,'нет даты',TO_CHAR(StartActualDate,'DD.MM.YYYY')) ||'-'||ifnull(FinishActualDate,'нет даты',TO_CHAR(FinishActualDate,'DD.MM.YYYY')) ||')'"
+    			nameId="id"
+    			queryAppend=''
+    			join=''
+    			order=''
+    			queried = "(id like :query or UPPER(name) like UPPER(:query))"
+    			 			
+    	/>
+    </voc> 
+    <!-- Справочник осложнений -->
+    <voc id='vocComplication' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник отказов при госпитализации -->
+    <voc id='vocDeniedHospitalizating' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник профилей операций -->
+    <voc id='vocSurgicalProfile' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник показаний (экстр.,план.) -->
+    <voc id='vocHospitalAspect' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник профилей коек -->
+    <voc id='vocBedType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник типов коек -->
+    <voc id='vocRoomType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <voc id='vocOmcFrm' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm'
+                names   = 'name'
+                queried = 'name'
+            />
+    </voc>
+        <!-- Подразделения у LPU -->
+    <voc id='vocLpuOtd' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
+                names   = 'name'
+                queried = 'name'
+                parent  = 'parent'
+       queryConvertType = "UPPER_CASE"
+        />
+     </voc> 
+     
+      <!-- Справочник показаний к поступлению -->
+    <voc id='vocAdmissionAspect' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionAspect'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+           
+            <!-- Справочник типов госпитального обслуживания -->
+    <voc id='vocHospitalServiceType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalServiceType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+           
+           <!--  queryAppend = 'dateFinish is null' -->
+           
+           <!-- Справочник типов стационара при выписке, поступлении -->
+    <voc id='vocHospType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник типов листов назначений -->
+    <voc id='vocPrescriptType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник госпитализаций (впервые, повторно) -->
+    <voc id='vocHospitalization' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+     <!-- Справочник места смерти -->
+    <voc id='vocDeathPlace' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathPlace'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник причин смерти -->
+    <voc id='vocDeathReason' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathReason'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник оснований смерти -->
+    <voc id='vocDeathEvidence' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Смерть после окончания беременности -->
+    <voc id='vocAfterPregnance' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник. Доношенность. -->
+    <voc id='vocIsPrematurity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIsPrematurity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник видов травм, не связанных с производством -->
+    <voc id='vocAccidentSubType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAccidentSubType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <!-- Справочник видов сертификатов -->
+    <voc id='vocCertificateType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.document.ejb.domain.voc.VocCertificateType'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник. Кем установлена смерть -->
+    <voc id='vocDeathWitnessFunction' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathWitnessFunction'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    <voc id='vocBedFund' type='AllValueHelper'>
+        <IAllValue>ru.ecom.mis.ejb.service.lpu.BedFundByLpuValueVoc</IAllValue>
+    </voc>
+    
+    <!-- Справочник осложнений родов -->
+    <voc id='vocChildbirthComplication' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthComplication'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник места родов -->
+    <voc id='vocChildbirthPlace' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthPlace'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник врожденных аномалий развития -->
+    <voc id='vocCongenitalAnomaly' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocCongenitalAnomaly'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник критериев живорождения -->
+    <voc id='vocLivebirthCriterion' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocLivebirthCriterion'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник осложнений новорожденного -->
+    <voc id='vocNewbornComplication' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocNewbornComplication'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник акушерских процедур -->
+    <voc id='vocObstetricProcedure' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocObstetricProcedure'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник порядка рождения ребенка -->
+    <voc id='vocOrderAndQuantity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocOrderAndQuantity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
+    
+    <!-- Справочник медицинских факторов настоящей беременности -->
+    <voc id='vocPregnancyMedFactor' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyMedFactor'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник прочих факторов риска во время беременности -->
+    <voc id='vocPregnancyRiskFactor' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyRiskFactor'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+     <!-- Справочник приоритетов диагнозов -->
+    <voc id='vocPriorityDiagnosis' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis'
+                names   = 'name'
+                queried = 'name'
+       queryConvertType = "UPPER_CASE"                
+                />
+    </voc>
+    
+    <!-- Справочник положений плода -->
+    <voc id='vocFetusLocation' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник предлежащей части плода -->
+    <voc id='vocPreviusPart' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPreviusPart'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник родовой деятельности -->
+    <voc id='vocPregnancyActivity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPregnancyActivity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник влагалищных выделений -->
+    <voc id='vocVaginalDischarge' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocVaginalDischarge'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник преждевременности отхождения вод -->
+    <voc id='vocBirthWatesPrematurity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник отделения плаценты -->
+    <voc id='vocPlacentaSeparation' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник целостности оболочек -->
+    <voc id='vocFetalMembranesIntegrity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник особенностей повышения температуры тела -->
+    <voc id='vocFeverFeature' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник частоты дыхательных движений по Downes -->
+    <voc id='vocDownesRespirationRate' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesRespirationRate'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+     <!-- Справочник цианоза по Downes -->
+    <voc id='vocDownesCyanosis' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesCyanosis'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник втяжения межреберных промежутков по Downes -->
+    <voc id='vocDownesIntercostalRet' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesIntercostalRet'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник затруднения дыхания по Downes -->
+    <voc id='vocDownesDifExhalation' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesDifExhalation'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+    <!-- Справочник аускультации по Downes -->
+    <voc id='vocDownesAuscultation' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesAuscultation'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+    
+     <!-- Справочник зрелости новорожденного -->
+    <voc id='vocNewBornMaturity' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+</vocconfig>    

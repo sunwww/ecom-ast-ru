@@ -1,0 +1,164 @@
+<vocconfig>
+     <voc id='vocAdministrativeCodeArticle' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocAdministrativeCodeArticle'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocCriminalCase' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCase'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocCriminalCodeArticle' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCodeArticle'
+               names   = 'code,name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocInvalidityHealthViolation' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityHealthViolation'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocInvalidityVitalRestriction' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityVitalRestriction'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocInvalidWorkPlace' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidWorkPlace'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocLawCourt' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocLawCourt'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocLivelihoodSource' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychAmbulatoryCare' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychAmbulatoryCare'
+               names   = 'code,name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychCompulsoryTreatment' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCompulsoryTreatment'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychCourtTreatmentDecision' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCourtTreatmentDecision'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychDeathReason' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychDeathReason'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychDispensaryGroup' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychDispensaryGroup'
+               names   = 'code,name'
+               queried = 'code,name'
+               parent = 'type'
+          />
+     </voc>
+     <voc id='vocPsychExamination' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychExamination'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychExamPaticipation' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychExamPaticipation'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychHospitalReason' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychObservationReason' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychObservationReason'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychStrikeOffReason' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychStrikeOffReason'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsyhicHealthState' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsyhicHealthState'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPublicDangerousEffect' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPublicDangerousEffect'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocResidenceConditions' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocResidenceConditions'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychTransferReason' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychTransferReason'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+     <voc id='vocPsychSuicideNature' type='EntityVocService'>
+          <EntityVocService
+               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSuicideNature'
+               names   = 'name'
+               queried = 'code,name'
+          />
+     </voc>
+</vocconfig>
