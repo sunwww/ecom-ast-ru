@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project default="all" name="ecom-jboss-lib" basedir=".">
+
+    <property name="appname" value="ecom-jboss"/>
+    <property name='dirname' value="ecom/jboss"/>
+
+    <import file="../../ant-support/property-skeleton.xml" />
+
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="log4j/log4j.jar"/>
+        <include name="jboss/jboss-aop-jdk50.jar"/>
+        <include name="jboss/jboss-j2ee.jar"/>
+        <include name="jboss/jboss-system.jar"/>
+        <include name="jboss/jbosssx.jar"/>
+        <include name="j2ee-api/ejb3-persistence.jar"/>
+        <include name="msh/util/msh-util.jar"/>
+    </fileset>
+
+    <import file="../../ant-support/lib-skeleton.xml" />
+</project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ejb3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-aop"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-security"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-allclient"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-system"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
