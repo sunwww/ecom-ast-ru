@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<project default="all" name="ecom-alg" basedir=".">
+
+    <property name="appname" value="ecom-alg"/>
+    <property name='dirname' value="ecom/alg"/>
+
+    <import file="../../ant-support/property-skeleton.xml" />
+
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="log4j/log4j.jar"/>
+        <include name="msh/util/msh-util.jar"/>
+    </fileset>
+
+    <import file="../../ant-support/lib-skeleton.xml" />
+</project>
