@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+    <form-beans>
+        <form-bean name="ecom_loginForm"    type="ru.ecom.web.login.LoginForm" />
+        <form-bean name="idStringForm"      type="ru.ecom.web.actions.formcustomize.IdStringForm" />
+		<form-bean name="formCustomizeForm" type="ru.ecom.web.actions.formcustomize.FormCustomizeForm" />
+		<form-bean name="ecom_helloForm"    type="ru.ecom.ejb.form.hello.HelloForm" />
+    </form-beans>
+
+    <global-forwards>
+    </global-forwards>
+
+
+    <action-mappings>
+        <action
+                path="/start" type="ru.ecom.web.actions.base.ForwardAction" scope="request" unknown="false"
+                validate="false">
+            <forward
+                    name="success"
+                    path="/WEB-INF/actions/start.jsp"
+                    redirect="false"/>
+        </action>
+
+
+        <!-- ENTITY  -->
+        <action path="/entityList-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.entity.ListAction">
+            <forward name="success" path="/WEB-INF/actions/{1}/list.jsp"/>
+        </action>
+
+        <action path="/entityEdit-*" type='ru.ecom.web.actions.entity.EditAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp" />
+        </action>
+
+        <action path="/entityPrepareCreate-*" type='ru.ecom.web.actions.entity.PrepareCreateAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp"/>
+        </action>
+
+        <action path="/entitySave-*" type='ru.ecom.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityList-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entitySaveGoView-*" type='ru.ecom.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityView-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityDelete-*" type='ru.ecom.web.actions.entity.DeleteAction'
+            scope='request' validate="false" name="{1}Form" >
+            <forward name="success" path="/entityList-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityView-*" type='ru.ecom.web.actions.entity.ViewAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp" />
+        </action>
+        <action path="/entityShortView-*" type='ru.ecom.web.actions.entity.ShortViewAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/short.jsp" />
+        </action>
+
+
+        <action path="/entitySubclassView-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.entity.EntitySubclassViewAction" />
+        <action path="/entitySubclassShortView-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.entity.EntitySubclassShortViewAction" />
+        <action path="/entitySubclassEdit-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.entity.EntitySubclassEditAction" />
+
+
+        <!-- ENTITY PARENT -->
+        <action path="/entityParentList-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.parententity.ListAction">
+            <forward name="success" path="/WEB-INF/actions/{1}/list.jsp"/>
+        </action>
+        <action path="/entityParentShortList-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.parententity.ListAction">
+            <forward name="success" path="/WEB-INF/actions/{1}/shortList.jsp"/>
+        </action>
+
+        <action path="/entityParentEdit-*" type='ru.ecom.web.actions.parententity.EditAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp" />
+        </action>
+
+        <action path="/entityParentView-*" type='ru.ecom.web.actions.parententity.ViewAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp" />
+        </action>
+
+        <action path="/entityParentPrepareCreate-*" type='ru.ecom.web.actions.parententity.PrepareCreateAction'
+            scope='request' validate="false" name="{1}Form">
+            <forward name="success" path="/WEB-INF/actions/{1}/edit.jsp"/>
+        </action>
+
+        <action path="/entityParentSave-*" type='ru.ecom.web.actions.parententity.SaveAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityParentSaveGoSubclassView-*" type='ru.ecom.web.actions.parententity.SaveGoSubclassViewAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
+        </action>
+        
+        <action path="/entityParentSaveGoParentView-*" type='ru.ecom.web.actions.parententity.SaveGoParentViewAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityParentSaveGoView-*" type='ru.ecom.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityParentView-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityParentDelete-*" type='ru.ecom.web.actions.parententity.DeleteAction'
+            scope='request' validate="false" name="{1}Form" >
+            <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
+        </action>
+
+        <action path="/entityParentDeleteGoParentView-*" type='ru.ecom.web.actions.parententity.DeleteGoParentViewAction'
+            scope='request' validate="false" name="{1}Form" >
+        </action>
+        <action path="/entityParentDeleteGoSubclassView-*" type='ru.ecom.web.actions.parententity.DeleteGoSublassViewAction'
+            scope='request' validate="false" name="{1}Form" >
+        </action>
+
+        <action path="/entityParentListRedirect-*" name="{1}Form" scope="request" validate="false" type="ru.ecom.web.actions.parententity.ListRedirectAction">
+            <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
+        </action>
+
+        <!-- LOGIN -->
+        <action path="/ecom_login" name="ecom_loginForm" scope="request" validate="false" type="ru.ecom.web.login.LoginAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_login/login.jsp" redirect="false"/>
+        </action>
+
+        <action path="/ecom_loginSave" name="ecom_loginForm" scope="request" validate="true"
+                type="ru.ecom.web.login.LoginSaveAction"
+                input='/WEB-INF/actions/ecom_login/login.jsp'>
+            <forward name="success" path="/start.do" redirect="true"/>
+        </action>
+
+        <action path="/ecom_loginExit" name="" scope="request" validate="false" type="ru.ecom.web.login.LoginExitAction">
+            <forward name="success" path="/ecom_login.do" redirect="true"/>
+        </action>
+
+        <action path="/ecom_relogin" name="" scope="request" validate="false" type="ru.ecom.web.login.ReLoginAction">
+        </action>
+
+        <action path='/ecom_getfile' name='' scope="request" validate="false" type="ru.ecom.web.actions.getfile.GetFileAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_getfile/getfile.jsp" redirect="false"/>
+        </action>
+        
+        <action path='/ecom_executeQuickQuery' name='' scope="request" validate="false" type="ru.ecom.web.actions.quickquery.ExecuteQuickQueryAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_quickquery/viewQuickQuery.jsp" redirect="false"/>
+        </action>
+
+        <action path='/ecom_listQuickQueries' name='' scope="request" validate="false" type="ru.ecom.web.actions.quickquery.ListQuickQueriesAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_quickquery/listQuickQueries.jsp" redirect="false"/>
+        </action>
+
+        <action path='/ecom_hibernateCacheConfig' name='' scope="request" validate="false" type="ru.ecom.web.actions.hibernatecacheconfig.ShowHibernateConfigAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_showCode/showCode.jsp" redirect="false"/>
+        </action>
+        
+        <!-- FORM CUSTOMIZE -->
+     <!-- Изменение вида форм -->
+
+        <action   path ="/formCustomizeEdit"   type="ru.ecom.web.actions.formcustomize.FormCustomizeEditAction"
+                  name = "formCustomizeForm"
+                 scope ="request"
+              validate ="false" >
+          <forward
+                  name = "success"
+                  path = "/WEB-INF/actions/ecom_formCustomize/formCustomizeEdit.jsp"
+              redirect = "false"
+          />
+        </action>
+
+        <action   path ="/formCustomizeSave"   type="ru.ecom.web.actions.formcustomize.FormCustomizeSaveAction"
+                  name = "formCustomizeForm"
+                 scope ="request"
+              validate ="true" >
+          <forward
+                  name = "success"
+                  path = "/formCustomizeEdit.do"
+              redirect = "false"
+          />
+        </action>
+
+        <action   path ="/formCustomizeFormsList"   type="ru.ecom.web.actions.formcustomize.FormCustomizeFormsListAction"
+                  name = ""
+                 scope ="request"
+              validate ="false" >
+          <forward
+                  name = "success"
+                  path = "/WEB-INF/actions/ecom_formCustomize/formCustomizeFormsList.jsp"
+              redirect = "false"
+          />
+        </action>
+
+        <action   path ="/formCustomizeElementsList"   type="ru.ecom.web.actions.formcustomize.FormCustomizeElementsListAction"
+                  name = "idStringForm"
+                 scope ="request"
+              validate ="false" >
+          <forward
+                  name = "success"
+                  path = "/WEB-INF/actions/ecom_formCustomize/formCustomizeElementsList.jsp"
+              redirect = "false"
+          />
+        </action>
+	   
+	   <action   path ="/formCustomizeEditRedirect"   type="ru.ecom.web.actions.formcustomize.FormCustomizeEditRedirectAction"
+                  name = "idStringForm"
+                 scope ="request"
+              validate ="false" >
+          <forward
+                  name = "success"
+                  path = "/formCustomizeFormsList.do"
+              redirect = "false"
+          />
+        </action>
+        
+        <!-- JAVASCRIPT -->
+        <action path="/js-*" type='ru.ecom.web.actions.js.JavaScriptAction'
+            scope='request' validate="false" name="" parameter="${1}">
+        </action>
+        
+        
+    </action-mappings>
+
+
+    <controller maxFileSize="1000M" nocache="true" />
+
+</struts-config>

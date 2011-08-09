@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+    <init>
+    </init>
+
+    <allow>
+	<!-- Remote monitor -->
+        <convert converter="bean" match="ru.ecom.ejb.services.monitor.RemoteMonitorStatus">
+        </convert>
+        <create creator="new" javascript="RemoteMonitorService" scope="application">
+            <param name="class" value="ru.ecom.web.dwr.RemoteMonitorServiceJs"/>
+        </create>
+
+	<!-- Voc -->
+        <create creator="new" javascript="VocService" scope="application">
+            <param name="class" value="ru.ecom.web.dwr.VocServiceJs"/>
+        </create>
+        <create creator="new" javascript="VocEditService" scope="application">
+            <param name="class" value="ru.ecom.web.dwr.VocEditServiceJs"/>
+        </create>
+        
+		<!-- IDE Mode -->
+        <convert converter="bean" match="ru.ecom.web.idemode.EditTagMessage" />
+        <convert converter="bean" match="javax.servlet.jsp.tagext.TagInfo" />
+        <convert converter="bean" match="javax.servlet.jsp.tagext.TagAttributeInfo" />
+        <create creator="new" javascript="IdeModeService" scope="application">
+            <param name="class" value="ru.ecom.web.idemode.IdeModeServiceJs"/>
+        </create>
+        
+
+    </allow>
+
+    <signatures>
+    </signatures>
+
+</dwr>
