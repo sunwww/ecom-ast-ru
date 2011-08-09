@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4" relativePaths="true" type="JAVA_MODULE">
+  <component name="ModuleRootManager" />
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="ejb3-persistence" level="application" />
+    <orderEntry type="library" name="msh-commons" level="application" />
+    <orderEntry type="library" name="hibernate-entitymanager" level="application" />
+    <orderEntry type="library" name="msh-util" level="application" />
+    <orderEntry type="library" name="msh-forms" level="application" />
+    <orderEntry type="library" name="msh-ejb" level="application" />
+    <orderEntry type="library" name="jboss-ejb3x" level="application" />
+    <orderEntry type="library" name="struts" level="application" />
+    <orderEntry type="library" name="commons-validator" level="application" />
+    <orderEntry type="library" name="commons-logging" level="application" />
+    <orderEntry type="library" name="servlet-api" level="application" />
+    <orderEntry type="library" name="jbossall-client" level="application" />
+    <orderEntry type="library" name="jboss-ejb3" level="application" />
+    <orderEntry type="library" name="jboss-aspect-library-jdk50" level="application" />
+    <orderEntry type="library" name="dbflib-0.1" level="application" />
+    <orderEntry type="library" name="apache-poi" level="application" />
+    <orderEntry type="library" name="ecom-report" level="application" />
+    <orderEntry type="library" name="jboss-aop-jdk50" level="application" />
+    <orderEntry type="library" name="jdom" level="application" />
+    <orderEntry type="library" name="log4j" level="application" />
+    <orderEntry type="library" name="jboss-annotations-ejb3" level="application" />
+    <orderEntry type="library" name="json" level="application" />
+    <orderEntryProperties />
+  </component>
+  <component name="Struts Module Component" />
+</module>
+
