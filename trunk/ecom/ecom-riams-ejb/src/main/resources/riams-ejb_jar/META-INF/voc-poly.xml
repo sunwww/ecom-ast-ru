@@ -1,0 +1,102 @@
+<vocconfig>
+    <voc id='medcard' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.Medcard'
+                    names   = 'firstname'
+                    queried = 'firstname'
+                    />
+    </voc>
+
+
+
+    <voc id='worker' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.mis.ejb.domain.worker.Worker'
+                    names   = 'doctorInfo'
+                    queried = "person.lastname"
+                    queryConvertType = 'UPPER_CASE'
+                    />
+    </voc>
+
+    <voc id='vocSpecLabel' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocSpecLabel'
+                    names   = 'name'
+                    queried = 'name'
+                    />
+    </voc>
+
+    <voc id='vocReason' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocReason'
+                    names   = 'name'
+                    queried = 'name'
+                queryAppend = 'deprecated = false'
+                    />
+    </voc>
+
+    <voc id='vocVisitResult' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocVisitResult'
+                    names   = 'name'
+                    queried = 'name'
+                    />
+    </voc>
+
+    <voc id='omcMkb10' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcMkb10'
+                    names   = 'name'
+                    queried = 'name,code'
+                    />
+    </voc>
+    
+    <voc id='vocTraumaType' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType'
+                    names   = 'name'
+                    queried = 'name'
+                    />
+    </voc>
+    <voc id='vocTrauma' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocTrauma'
+                    names   = 'name'
+                    queried = 'name'
+                    />
+    </voc>   
+
+     <voc id='vocDispanseryRegistration' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration'
+                    names   = 'name'
+                    queried = 'name'
+                    queryConvertType="FIRST_UPPER"
+                    />
+    </voc>
+
+    <voc id='vocPolyMedUsluga' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcTariff'
+                    names   = 'code,name'
+                    queried = 'code,name'
+                    queryAppend = 'x4 > 1'
+                    />
+                <!-- queryAppend = 'domen = 6' -->
+    </voc>
+    <voc  id='vocMedUsluga' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocMedUsluga'
+                    names   = 'code,name'
+                    queried = 'code,name'
+                    />
+    </voc>
+    <voc id='vocDisabilityDocumentStatus' type='EntityVocService'>
+            <EntityVocService
+                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus'
+                    names   = 'name'
+                    queried = 'name'
+                    />
+    </voc>
+
+</vocconfig>

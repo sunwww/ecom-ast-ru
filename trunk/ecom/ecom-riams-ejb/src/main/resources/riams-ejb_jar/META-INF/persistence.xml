@@ -1,0 +1,34 @@
+<persistence>
+	<persistence-unit name="mainManager" transaction-type="JTA">
+		<jta-data-source>java:/RiamsBaseDS</jta-data-source>
+		<exclude-unlisted-classes />
+		
+		<!-- LIVE -->
+		<class>ru.ecom.ejb.services.live.domain.LiveTransaction</class>
+		<class>ru.ecom.ejb.services.live.domain.LiveEntity</class>
+		<class>ru.ecom.ejb.services.live.domain.LiveProperty</class>
+		<class>ru.ecom.ejb.services.live.domain.journal.DeleteJournal</class>
+
+		<!-- Hello -->
+		<class>ru.ecom.ejb.domain.hello.Hello</class>
+		
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuArea" value="transactional" />
+			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint" value="transactional" />
+			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText" value="transactional" />
+			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.MisLpu" value="transactional" />
+			<property name="hibernate.ejb.collectioncache.ru.ecom.mis.ejb.domain.lpu.MisLpu.subdivisions" value="transactional" />
+
+			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.address.Address" value="transactional" />
+			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.address.AddressType" value="transactional" />
+
+			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.kladr.Kladr" value="transactional" />
+			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.kladr.KladrDoma" value="transactional" />
+	
+		</properties>
+		
+		
+	</persistence-unit>
+
+</persistence>

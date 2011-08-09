@@ -1,0 +1,131 @@
+<vocconfig>
+
+    <voc id='protocolByPatient' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" Diary as d "
+		    	parent='t1.id=:parent '
+		    	nameId="d.id"
+		    	join=" left join Ticket as t on t.id=d.ticket_id left join Ticket t1 on t1.medcard_id=t.medcard_id left join WorkFunction wf on wf.id=t.workFunction_id left join Worker w on w.id=wf.worker_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Patient p on p.id=w.person_id "
+		    	queryAppend=" d.dtype='Protocol' "
+		    	order=""
+		    	queried=" p.lastname like UPPER(:query) or to_char(t.date,'DD.MM.YYYY') like (:query) "
+		    	names = " to_char(t.date,'DD.MM.YYYY')||' '||vwf.name||' '|| p.lastname ||' '|| p.firstname ||' '|| p.middlename "
+		    />
+
+    </voc>
+
+    <voc id='parameterType' type='AllValueHelper'>
+        <IAllValue>ru.ecom.diary.ejb.service.protocol.ParameterTypeValueVoc</IAllValue>
+    </voc>
+    
+    <voc id='TemplateProtocol' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol'
+                names   = 'title'
+                queried = 'title'
+       queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+    <voc id='TemplateProtocolType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocolType'
+                names   = 'name'
+                queried = 'name'
+       queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+    <voc id='KeyWord' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateWord'
+                names   = 'reduction,decryption'
+                queried = 'reduction'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+    <voc id='SecPolicy' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.jaas.ejb.domain.SecPolicy'
+                names   = 'key,name'
+                queried = 'key'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+    <voc id='valueDomain' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.parameter.user.UserDomain'
+                names   = 'name'
+                queried = 'name'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='TemplateProtocolNew' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol'
+                names   = 'title'
+                queried = 'title'
+       queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <!--<voc id='Mkb' type='EntityVocService'>
+        <EntityVocService
+                entity = 'ru.ecom.diary.ejb.domain.Mkb'
+                names = 'code,name'
+                queried = 'code,name'
+                queriedConvertType = 'FIRST_UPPER'
+            />
+
+    </voc>  -->
+    <voc id='TemplateClassif' type='EntityVocService'>
+        <EntityVocService
+                entity = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateClassif'
+                names = 'name'
+                queried = 'name'
+                queriedConvertType = 'FIRST_UPPER'
+
+            />
+
+    </voc>
+
+    <voc id='vocTemplateCategory' type='AllValueHelper'>
+        <IAllValue>ru.ecom.mis.ejb.service.prescription.TemplateCategoryAllValueVoc</IAllValue>
+    </voc>
+    
+    <voc id='vocTemplateProtocolByCategory' type='AllValueHelper'>
+        <IAllValue>ru.ecom.diary.ejb.service.protocol.TemplateProtocolByCategoryVoc</IAllValue>
+    </voc>
+    
+    <voc id='vocTemplatePrescriptionParent' type='AllValueHelper'>
+        <IAllValue>ru.ecom.mis.ejb.service.prescription.PrescriptionChildValueVoc</IAllValue>
+    </voc>
+
+    <voc id='vocTemplatePrescription' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate'
+                names   = 'name'
+                queried = 'name'
+       queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='vocMenuByDiet' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.diet.MealMenuTemplate'
+                names   = 'description'
+                queried = 'description'
+            queryAppend = 'parentMenu_id is null'
+                 parent = 'diet_id'
+                />
+    </voc>
+    <voc id='vocChildMenu' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.diet.MealMenuTemplate'
+                names   = 'description'
+                queried = 'description'
+                 parent = 'parentMenu_id'
+                />
+    </voc>
+
+
+</vocconfig>
