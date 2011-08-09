@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<project default="dist" name="ECOM-report" basedir=".">
+
+    <!-- ***************************************************************** -->
+    <!-- Give users a chance to override build properties.                 -->
+    <!-- ***************************************************************** -->
+    <property file="${user.home}/ecom-report.build.properties" />
+    <property file="${user.home}/build.properties" />
+    <property file="${basedir}/build.properties" />
+    <property file="${basedir}/default.properties" />
+
+    <target name="${library.name}" >
+        <jar jarfile="${build.dir}/${library.name}.jar"
+            basedir="${build.dir}/classes">
+            <!--<fileset dir="${build.dir}/classes">-->
+                <!--<include name="**/*.*" />-->
+                <!--<exclude name="test/**/*.*" />-->
+            <!--</fileset>-->
+        </jar>
+
+        <jar jarfile="${build.dir}/${library.name}-src.zip"
+            basedir="src/main/java"/>
+
+    </target>
+
+    <!-- DIST -->
+    <target name="dist" depends="${library.name}">
+        <mkdir dir="${library.dist.dir}" />
+        <copy todir="${library.dist.dir}" overwrite="true">
+            <fileset file='${build.dir}/${library.name}.jar' />
+            <fileset file='${build.dir}/${library.name}-src.zip' />
+        </copy>
+    </target>
+
+</project>
