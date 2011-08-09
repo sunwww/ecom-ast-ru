@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>EkoM OMC Exp</display-name>
+    <description>Экспертиза реестров ОМС</description>
+
+    <!-- config servlet -->
+    <servlet>
+        <servlet-name>Config</servlet-name>
+        <servlet-class>ru.ecom.web.servlet.ConfigServlet</servlet-class>
+        <init-param>
+            <param-name>ejb-app-name</param-name>
+            <param-value>expomc-app</param-value>
+        </init-param>
+        <init-param>
+            <param-name>java.naming.provider.url</param-name>
+            <param-value>jnp://localhost:1099/</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <!-- Struts servlet -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>9</param-value>
+        </init-param>
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>9</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <!-- Strugs mapping -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <!-- Voc -->
+    <servlet>
+        <servlet-name>simpleVocAutocomplete</servlet-name>
+        <servlet-class>ru.ecom.web.servlet.SimpleVocAutocompleteServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>treeVocAutocomplete</servlet-name>
+        <servlet-class>ru.ecom.web.servlet.TreeVocAutocompleteServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <!-- Voc mapping -->
+    <servlet-mapping>
+        <servlet-name>simpleVocAutocomplete</servlet-name>
+        <url-pattern>/simpleVocAutocomplete/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>treeVocAutocomplete</servlet-name>
+        <url-pattern>/treeVocAutocomplete/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- dwr servlet -->
+    <servlet>
+        <servlet-name>dwr-invoker</servlet-name>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+        <!--
+        <init-param>
+          <param-name>config</param-name>
+          <param-value>WEB-INF/dwr.xml</param-value>
+        </init-param>
+        -->
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>scriptCompressed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- dwr mapping -->
+    <servlet-mapping>
+        <servlet-name>dwr-invoker</servlet-name>
+        <url-pattern>/dwr/*</url-pattern>
+    </servlet-mapping>
+
+	<!-- GWT -->
+    <servlet>
+        <servlet-name>IdeModeService</servlet-name>
+        <servlet-class>ru.ecom.gwtservice.idemode.IdeModeServiceImpl</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+    <!-- Voc mapping -->
+    <servlet-mapping>
+        <servlet-name>IdeModeService</servlet-name>
+        <url-pattern>/ideModeService</url-pattern>
+    </servlet-mapping>
+	
+
+	<!-- VocEntityServlet -->
+    <servlet>
+        <servlet-name>VocEntityServlet</servlet-name>
+        <servlet-class>ru.ecom.web.vocentity.VocEntityServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <!-- VocEntity mapping -->
+    <servlet-mapping>
+        <servlet-name>VocEntityServlet</servlet-name>
+        <url-pattern>/vocEntity/*</url-pattern>
+    </servlet-mapping>
+	
+    <!-- UTF-8 encoding -->
+    <filter>
+        <filter-name>Set Character Encoding</filter-name>
+        <filter-class>ru.nuzmsh.web.filter.SetCharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <!-- UTF-8 mapping to struts servlet-->
+    <filter-mapping>
+        <filter-name>Set Character Encoding</filter-name>
+        <servlet-name>action</servlet-name>
+    </filter-mapping>
+
+
+    <error-page>
+          <error-code>500</error-code>
+          <location>/500page.jsp</location>
+      </error-page>
+    
+</web-app>

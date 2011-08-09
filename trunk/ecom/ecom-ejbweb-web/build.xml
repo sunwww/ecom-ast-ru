@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ecom-web" default="all" basedir=".">
+
+    <property name="appname" value="ecom" />
+    <property name='dirname' value="ecom/ejbweb"/>
+
+    <import file="../../ant-support/property-skeleton.xml" />
+
+    <fileset id='compile.fileset' dir="${libdir}">
+        <include name="stub.jar"/>
+        <include name="ecs/ecs-1.4.2.jar"/>
+    </fileset>
+
+    <target name="dist">
+        <delete dir='${libdir}/ecom/ejbweb/web' />
+        <copy overwrite="true" todir="${libdir}/ecom/ejbweb/web/webapp">
+            <fileset dir="src/webapp">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+
+		<delete file='./target/${appname}-web.jar'/>
+        <jar destfile="./target/${appname}-web.jar">
+            <fileset dir="./target/webapp/WEB-INF/classes">
+                <include name='ru/**/*' />
+            </fileset>
+            <fileset dir="./src/main/resources">
+                <include name='**/*.tld*' />
+            </fileset>
+        </jar>
+
+		<delete file='./target/${appname}-web-src.zip'/>
+        <jar destfile="./target/${appname}-web-src.zip">
+            <fileset dir="./src/main/java">
+                <include name='ru/**/*' />
+            </fileset>
+        </jar>
+
+        <copy overwrite="true" file="./target/${appname}-web.jar" todir="${libdir}/ecom/ejbweb/web" />
+        <copy overwrite="true" file="./target/${appname}-web-src.zip" todir="${libdir}/ecom/ejbweb/web" />
+    </target>
+
+    <target name="compile">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="compile"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="./target" />
+    </target>
+
+    <target name="all" depends="clean,compile,dist" />
+
+</project>
