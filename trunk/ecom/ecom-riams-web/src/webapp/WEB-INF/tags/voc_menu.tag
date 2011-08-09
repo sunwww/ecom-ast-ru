@@ -1,0 +1,40 @@
+<%@ tag pageEncoding="utf8" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
+
+<%@  attribute name="currentAction" required="true" description="Текущее меню" %>
+
+<style type="text/css">
+a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentAction}  {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}
+#side ul li a#deleteDischarge {
+	color: red ;
+	background-color: silver;
+}
+
+</style>
+<msh:sideMenu></msh:sideMenu>
+	    <msh:sideMenu title="Перейти">
+	    	<msh:sideLink styleId="org" action="/voc_orgs" name="Организации" roles="/Policy/Voc/VocOrg/View" title="Перейти к справочнику организаций"/>
+	    	<msh:sideLink styleId="operation" action="/voc_operations" name="Хир.операции" roles="/Policy/Voc/VocOperation/View" title="Перейти к справочнику хир. операций"/>
+	    	<msh:sideLink styleId="medService" action="/entityParentList-mis_medService.do?id=0" name="Услуги" roles="/Policy/Mis/MedService/View" title="Перейти к справочнику услуг"/>
+	    	<msh:sideLink styleId="drugUN" action="/voc_drugUNs" name="Лек.Ср (непатен.)" roles="/Policy/Voc/VocDrugUnlicensedName/View" title="Перейти к справочнику Лек.Ср"/>
+	    	<msh:sideLink styleId="drugLN" action="/voc_drugLNs" name="Лек.Ср (патен.)" roles="/Policy/Voc/VocDrugLicensedName/View" title="Перейти к справочнику Лек.Ср"/>
+	    	<msh:sideLink styleId="drugTrade" action="/voc_drugs" name="Лек.Ср (торг.)" roles="/Policy/Voc/VocDrugUnlicensedName/View" title="Перейти к справочнику Лек.Ср"/>
+	    	<msh:sideLink styleId="drugClassif" action="/entityParentList-drug_classificator.do?id=0" name="Классификатор" roles="/Policy/Mis/Drug/Classificator/View" title="Перейти к классификатору лек.средств"/>
+	    	<msh:sideLink styleId="exp_voc_kind" action="/entityList-exp_vocKind.do" name="Виды экспертизы" roles="/Policy/Voc/VocQualityEstimationKind/View" title="Перейти к видам экспертизы"/>
+	    	<msh:sideLink styleId="post" action="/entityList-voc_post.do" name="Должности" roles="/Policy/Voc/VocPost/View" title="Перейти к должностям"/>
+	    	<msh:sideLink styleId="workFunction" action="/entityList-voc_workFunction.do" name="Рабочие функции" roles="/Policy/Voc/VocWorkFunction/View" title="Перейти к рабочим функциям"/>
+	    </msh:sideMenu>
