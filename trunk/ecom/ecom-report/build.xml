@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project default="all" name="report" basedir=".">
+
+    <property name="appname" value="ecom-report"/>
+    <property name='dirname' value="ecom/report"/>
+
+    <import file="../../ant-support/property-skeleton.xml" />
+
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="msh/util/msh-util.jar"/>
+        <include name="apache-commons/commons-logging.jar"/>
+        <include name="apache-poi/poi-2.5-final-20040302.jar"/>
+        <include name="bsh/bsh-2.0b4.jar"/>
+        <include name="log4j/log4j.jar"/>
+        <include name="jxl/jxl.jar"/>
+        <include name="jdom/jdom.jar"/>
+	</fileset>
+
+    <import file="../../ant-support/lib-skeleton.xml" />
+</project>

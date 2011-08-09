@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-util"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-poi"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/bsh"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jxl"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdom"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
