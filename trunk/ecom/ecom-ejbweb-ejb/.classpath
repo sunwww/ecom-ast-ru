@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-util"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/struts"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-api"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-beanutils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-commons"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-forms"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdom"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/json"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-query"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-alg"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-dbflib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-ejb"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-poi"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-report"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-reporter"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/bsh"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-annotation"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hibernate"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hibernate-entitymanager"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ejb3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-util-voc"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-jboss"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hibernate-annotation"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/rhino"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/asm"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-allclient"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-validator"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
