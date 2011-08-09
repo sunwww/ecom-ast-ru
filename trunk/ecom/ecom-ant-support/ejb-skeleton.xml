@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- EJB
+  - src/main/java - основной код
+  - src/test/java - тесты
+  -->
+<project name="lib-skeleton" default="" basedir=".">
+
+    <fileset id='ecom.lib.fileset' dir="${libdir}/" >
+        <include name="msh/util/msh-util.jar"/>
+        <include name="msh/commons/msh-commons.jar"/>
+        <include name="msh/ejb/msh-ejb.jar"/>
+        <include name="msh/forms/msh-forms.jar"/>
+        <include name="msh/dbflib/dbflib-0.1.jar"/>
+        <include name="ecom/report/ecom-report.jar"/>
+        <include name="ecom/ejbweb/ejb/ecom-ejb-api.jar"/>
+        <include name="ecom/alg/ecom-alg.jar"/>
+    </fileset>
+
+    <fileset id="package.thirdparty.fileset" dir="${libdir}/">
+        <include name='struts/struts.jar'/>
+        <include name="apache-commons/commons-validator.jar"/>
+        <include name='servlet/servlet-api.jar'/>
+        <include name='jdom/jdom.jar'/>
+        <include name="json/json.jar"/>
+        <include name="jxl/jxl.jar"/>
+        <include name="apache-poi/poi-2.5-final-20040302.jar"/>
+	    <include name="rhino/js.jar"/>
+	    <include name="asm/asm-3.0.jar"/>
+	
+	<!-- IKO 070312 +++ XPATH Library -->
+	<include name="jdom/jaxen-1.1.jar"/>
+	<!-- IKO 070312 === -->
+    </fileset>
+
+    <fileset id='package.classes' dir="./target/classes">
+        <include name='ru/**/*' />
+    </fileset>
+    <fileset id='package.resources' dir='src/main/resources/${appname}-ejb_jar' />
+
+    <import file="ejbweb-libs.xml" />
+
+    <target name="compile" description="Компиляция">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/ejb-support.xml" target="compile"/>
+    </target>
+
+    <target name="package" depends="compile">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/ejb-support.xml" target="package"/>
+    </target>
+
+    <target name="deploy" depends="package">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/ejb-support.xml" target="deploy"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="./target" />
+    </target>
+
+    <target name="all" depends="clean,compile,package,deploy" />
+
+
+</project>
