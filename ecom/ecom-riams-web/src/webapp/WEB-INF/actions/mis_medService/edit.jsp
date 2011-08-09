@@ -1,0 +1,190 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+
+  <tiles:put name="side" type="string">
+    <tags:style_currentMenu currentAction="mis_medService" />
+    <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
+      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
+        <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+      </msh:ifFormTypeAreViewOrEdit>
+    </msh:sideMenu>
+    <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
+      <msh:sideMenu title="Добавить" guid="adding">
+        <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create" guid="a05cafca-1220-455a-b608-b00ed338fdc3" />
+        <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения" guid="9994675c-40a3-4e84-a69a-6a146695f50d" />
+      </msh:sideMenu>
+      <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
+        <tags:diary_additionMenu />
+      </msh:sideMenu>
+      <tags:voc_menu currentAction="medService"/>
+    </msh:ifFormTypeAreViewOrEdit>
+    
+  </tiles:put>
+  <tiles:put name="body" type="string">
+    <!-- 
+    	  - Медицинских услуг
+    	  -->
+    <msh:form action="/entityParentSaveGoView-mis_medService.do" defaultField="vocMedService" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+      <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
+      <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
+      <msh:hidden property="parent" guid="bd32944-4587-a963-a09db2b93caf" />
+      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="20% 30%">
+        <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
+          <msh:autoComplete vocName="vocMedService" property="vocMedService" label="Услуга" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
+        </msh:row>
+        <msh:row guid="1d32ce-a421709f4470">
+          <msh:autoComplete vocName="vocServiceType" property="serviceType" label="Тип услуги" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
+        </msh:row>
+        <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
+          <msh:textField property="code" label="Код"  guid="b87e9cee-b50d-1911d5e87e40" horizontalFill="true" />
+        </msh:row>
+        <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
+          <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="startDate" label="Дата начала"/>
+        	<msh:textField property="finishDate" label="Дата окончания"/>
+        </msh:row>
+        <msh:row>
+        	<ecom:oneToManyOneAutocomplete viewAction="entityView-voc_workFunction.do" label="Прикр. раб. функции" property="workFunctionServices" vocName="vocWorkFunction" colSpan="3"/>
+        </msh:row>
+        <msh:row>
+         	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
+         	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
+        </msh:row>
+        <%-- 
+        <msh:row guid="1d3be9-8db1-a421709f4470">
+          <ecom:oneToManyOneAutocomplete label="Потоки обслуживания" property="serviceStream" vocName="vocServiceStream" colSpan="2" guid="ce032745-62b7-4d1d-abc9-a8c283ccc0c2" />
+        </msh:row>
+        --%>
+<%--         <msh:row>
+        	<ecom:treeAutoComplete property="probaTree" label="Проба дерева" vocName="vocMedService" fieldColSpan="3"/>
+        </msh:row>
+        --%>
+        <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+      </msh:panel>
+    </msh:form>
+    <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
+      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="9f1dd6a4-a7b7-43e7-b205-85730bba6968">
+        <msh:section title="Категории" guid="e681be03-dea7-4bce-96cf-aa600185f156">
+          <ecom:webQuery  name="childMedService" nativeSql="
+          	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
+          	 (select list(' '||vwf.name) from WorkFunctionService wfs left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id) 
+          	 from MedService ms left join VocMedService vms on vms.id=ms.vocMedService_id where ms.parent_id='${param.id}'
+          " guid="childMedService" />
+		  	<msh:tableNotEmpty name="childMedService">
+		  	<msh:toolbar >
+			                	<tbody>
+			                		<msh:toolbar>
+				                		<tr>
+				                			<th class='linkButtons' colspan="6">
+			                					<msh:textField property="planDate" label="Дата"/>
+			                					<input type='button' value='Изменить начало актуальности' onclick="javascript:updateStartDate()" />
+			                					<input type='button' value='Изменить окончание актуальности' onclick="javascript:updateEndDate()" />
+			                					<input type='button' value='Удалить категории(мед.услуги)' onclick="javascript:deleteMedService()" />
+			                					<br/>
+			                					<input type='button' value='Добавить раб.функцию (если прикреп. услуга)' onclick="javascript:updateWorkFunction('add')" />
+			                					<input type='button' value='Убрать прикрепление раб.функции' onclick="javascript:updateWorkFunction('delete')" />
+			                					<msh:autoComplete property="function" horizontalFill="true" label="Раб. функция" vocName="vocWorkFunction"/>
+			                				</th>
+				                		</tr>
+			                		</msh:toolbar>
+			                	</tbody>
+		  	</msh:toolbar>
+  	</msh:tableNotEmpty>
+  	<msh:table selection="true" name="childMedService" action="entityParentView-mis_medService.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+            <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
+            <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
+		      <msh:tableColumn columnName="Дата начала" property="4"/>
+		      <msh:tableColumn columnName="Дата окончания" property="5"/>
+		      <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
+          </msh:table>
+        </msh:section>
+      </msh:ifFormTypeIsView>
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
+      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="9f1dd6a7-43e7-b205-85730bba6968">
+        <msh:section title="Шаблоны заключений" guid="e681be03-d0185f156">
+          <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
+          <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
+            <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />
+            <msh:tableColumn columnName="Информация" identificator="false" property="information" guid="0c047b7-ae6d-89e52e73b2e5" />
+          </msh:table>
+        </msh:section>
+      </msh:ifFormTypeIsView>
+    </msh:ifInRole>
+    
+  </tiles:put>
+  <tiles:put name="title" type="string">
+    <ecom:titleTrail mainMenu="Voc" beginForm="mis_medServiceForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsView formName="mis_medServiceForm">
+ 
+  	<script type="text/javascript">
+  		if ($('planDate')) new dateutil.DateField($('planDate')) ;
+  		function updateStartDate() {
+	  		var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
+	  		if (ids) {
+  				document.location.href = "js-mis_medService-updateStartDate.do?id=${param.id}&"+ids+"&plandate="+$('planDate').value;
+  			} else {
+  				alert("Нет выделенных категорий") ;
+  			}
+  		}
+  		function updateEndDate() {
+	  		var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
+	  		alert(ids);
+	  		if (ids) {
+  				document.location.href = "js-mis_medService-updateEndDate.do?id=${param.id}&"+ids+"&plandate="+$('planDate').value;
+  			} else {
+  				alert("Нет выделенных категорий") ;
+  			}
+  		}
+  		function deleteMedService() {
+	  		var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
+	  		if (ids) {
+	  		  			document.location.href = "js-mis_medService-deleteMedService.do?id=${param.id}&"+ids;
+  			} else {
+  				alert("Нет выделенных категорий") ;
+  			}	  		  			
+  		}
+  		function updateWorkFunction(aAction) {
+			var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
+	  		if (ids) {
+  				document.location.href = "js-mis_medService-updateWorkFunction.do?id=${param.id}&"+ids+"&workFunction="+$('function').value+"&action="+aAction;
+  			} else {
+  				alert("Нет выделенных категорий") ;
+  			}  		
+  		}
+  	</script>
+  
+  </msh:ifFormTypeIsView>
+    <msh:ifFormTypeIsNotView formName="mis_medServiceForm">
+    	<script type="text/javascript">
+    		
+    		vocMedServiceAutocomplete.addOnChangeCallback(function() {
+	      	 	update() ;
+	      	 });
+	      	 function update() {
+	      	 	var text ;
+	      	 	text = $('vocMedServiceName').value ;
+	      	 	var cnt = text.indexOf(' ') ;
+	      	 	if (cnt>0) {
+		      	 	$('code').value=text.substring(0,cnt) ;
+		      	 	$('name').value=text.substring(cnt+1);
+	      	 	}
+	      	 }
+    	</script>
+    </msh:ifFormTypeIsNotView>
+  
+  </tiles:put>
+</tiles:insert>
+
