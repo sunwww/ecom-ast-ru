@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="buildinreport-ejb" default="deploy" basedir=".">
+
+	<property name="appname" value="buildinreport" />
+	<property name='dirname' value="ecom/buildinreport" />
+
+	<import file="../../ant-support/property-skeleton.xml" />
+
+
+	<fileset id='compile.fileset' dir="${libdir}">
+		<include name="msh/util-voc/msh-util-voc.jar" />
+		<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" />
+		<include name="bsh/bsh-2.0b4.jar" />
+	</fileset>
+
+	<target name='persistence.xml'>
+		<fileset id="lib.fileset" dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<path id="lib.classpath">
+			<fileset refid="lib.fileset" />
+		</path>
+
+		<taskdef name="persxml"
+			classname="ru.ecom.ant.FindAndSaveEntitiesToPersistenceXmlTask"
+			classpathref="lib.classpath">
+			<classpath path="./target/classes" />
+			<classpath refid="lib.classpath" />
+		</taskdef>
+
+		<mkdir dir="target/classes/META-INF" />
+		<persxml
+			inputXml='src/main/resources/riams-ejb_jar/META-INF/persistence.xml'
+			outputXml='target/classes/META-INF/persistence.xml'>
+		</persxml>
+	</target>
+
+	<target name='ejb.jar' depends="persistence.xml">
+
+		<jar destfile="./target/${appname}-ejb.jar" compress="false">
+			<fileset refid="ecom.lib.fileset" />
+			<fileset refid="package.thirdparty.fileset" />
+			<fileset refid="package.classes" />
+
+			<!-- 
+		      - FIX START
+		      - Не нужно два раза persistence.xml архивировать 
+		      -	<fileset refid="package.resources" /> 
+		    -->
+			<fileset dir='src/main/resources/${appname}-ejb_jar'>
+				<exclude name="META-INF/persistence.xml"/>
+			</fileset>
+			<!-- FIX END -->
+			
+			<fileset dir='target/classes/'>
+				<include name='META-INF/persistence.xml'/>
+			</fileset>
+
+			<fileset refid="ejbweb.ejb.services" />
+			<fileset refid="ejbweb.ejb.jar" />
+
+		</jar>
+	</target>
+      
+	<import file="../../ant-support/ejb-skeleton.xml" />
+</project>
