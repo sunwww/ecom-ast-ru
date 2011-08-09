@@ -1,0 +1,73 @@
+package ru.ecom.mis.ejb.form.patient;
+
+import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.mis.ejb.domain.patient.MedPolicyOmcForeign;
+import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
+import ru.ecom.mis.ejb.form.patient.interceptors.MedPolicyPreCreate;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Parent;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.validators.Required;
+
+/**
+ * Полис ДМС
+ */
+@EntityForm
+@EntityFormPersistance(clazz = MedPolicyOmcForeign.class)
+@Comment("Полис ОМС иногороднего")
+@WebTrail(comment = "Полис ОМС иногороднего", nameProperties = "polNumber", view = "entityView-mis_medPolicyForeign.do")
+@Parent(property = "patient", parentForm =PatientForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/MedPolicy/OmcForeign")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(MedPolicyPreCreate.class)
+)
+public class MedPolicyOmcForeignForm extends MedPolicyForm {
+	/** Город СМО */
+	@Comment("Город СМО")
+	@Persist @Required
+	public String getInsuranceCompanyCity() {return theInsuranceCompanyCity;}
+	public void setInsuranceCompanyCity(String aOMCCity) {theInsuranceCompanyCity = aOMCCity;}
+
+	/** Название СМО */
+	@Comment("Название СМО")
+	@Persist @Required
+	public String getInsuranceCompanyName() {return theInsuranceCompanyName;}
+	public void setInsuranceCompanyName(String aOMCName) {theInsuranceCompanyName = aOMCName;}
+
+	/** Область нахождения СМО */
+	@Comment("Область нахождения СМО")
+	@Persist @Required
+	public Long getInsuranceCompanyArea() {return theInsuranceCompanyArea;}
+	public void setInsuranceCompanyArea(Long aInsuranceCompanyArea) {
+		theInsuranceCompanyArea = aInsuranceCompanyArea;
+	}
+
+	/** ОГРН СМО, выдавшей паспорт */
+	@Comment("ОГРН СМО, выдавшей паспорт")
+	@Persist 
+	public Long getInsuranceCompanyCode() {return theInsuranceCompanyCode;}
+	public void setInsuranceCompanyCode(Long aInsuranceCompanyOgrn) {theInsuranceCompanyCode = aInsuranceCompanyOgrn;}
+
+	/** Тип полиса */
+	@Comment("Тип полиса")
+	@Persist @Required
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
+
+	/** Тип полиса */
+	private Long theType;
+	/** ОГРН СМО, выдавшей паспорт */
+	private Long theInsuranceCompanyCode;
+	/** Область нахождения СМО */
+	private Long theInsuranceCompanyArea;
+	/** Название СМО */
+	private String theInsuranceCompanyName;
+	/** Город СМО */
+	private String theInsuranceCompanyCity;
+
+}

@@ -1,0 +1,148 @@
+package ru.ecom.mis.ejb.domain.workcalendar;
+
+import java.sql.Time;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+/**
+ * Рабочее время
+ * @author azviagin
+ *
+ */
+@Comment("Рабочее время")
+@Entity
+@AIndexes({
+	@AIndex(unique = false, properties = {"medCase","workCalendarDay","timeFrom"}),
+	@AIndex(unique = false, properties = {"workCalendarDay"}),
+	@AIndex(unique = false, properties = {"timeFrom"})
+})
+@Table(schema="SQLUser")
+public class WorkCalendarTime extends BaseEntity{
+	
+	/** Рабочий день */
+	@Comment("Рабочий день")
+	@ManyToOne
+	public WorkCalendarDay getWorkCalendarDay() {
+		return theWorkCalendarDay;
+	}
+
+	public void setWorkCalendarDay(WorkCalendarDay aWorkCalendarDay) {
+		theWorkCalendarDay = aWorkCalendarDay;
+	}
+
+	/** Рабочий день */
+	private WorkCalendarDay theWorkCalendarDay;
+	
+	/** Время начала */
+	@Comment("Время начала")
+	public Time getTimeFrom() {
+		return theTimeFrom;
+	}
+
+	public void setTimeFrom(Time aTimeFrom) {
+		theTimeFrom = aTimeFrom;
+	}
+
+	/** Время начала */
+	private Time theTimeFrom;
+	
+	/** Резервы обслуживания */
+	@Comment("Резервы обслуживания")
+	@ManyToMany
+	public List<ServiceReserve> getServiceReserves() {
+		return theServiceReserves;
+	}
+
+	public void setServiceReserves(List<ServiceReserve> aServiceReserves) {
+		theServiceReserves = aServiceReserves;
+	}
+
+	/** Резервы обслуживания */
+	private List<ServiceReserve> theServiceReserves;
+	
+	/** СМО */
+	@Comment("СМО")
+	@OneToOne
+	public MedCase getMedCase() {
+		return theMedCase;
+	}
+
+	public void setMedCase(MedCase aMedCase) {
+		theMedCase = aMedCase;
+	}
+
+	/** СМО */
+	private MedCase theMedCase;
+	
+	/** Добавочное время */
+	@Comment("Добавочное время")
+	public Boolean getAdditional() {
+		return theAdditional;
+	}
+
+	public void setAdditional(Boolean aAdditional) {
+		theAdditional = aAdditional;
+	}
+
+	/** Добавочное время */
+	private Boolean theAdditional;
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@OneToOne
+	public VocServiceStream getServiceStream() {
+		return theServiceStream;
+	}
+
+	public void setServiceStream(VocServiceStream aServiceStream) {
+		theServiceStream = aServiceStream;
+	}
+
+	/** Поток обслуживания */
+	private VocServiceStream theServiceStream;
+	
+	/** Резерв персоны */
+	@Comment("Резерв персоны")
+	public Patient getPersonReserve() {
+		return thePersonReserve;
+	}
+
+	public void setPersonReserve(Patient aPersonReserve) {
+		thePersonReserve = aPersonReserve;
+	}
+
+	/** Резерв персоны */
+	private Patient thePersonReserve;
+	
+	/** Нерабочее время */
+	@Comment("Нерабочее время")
+	public Boolean getRest() {
+		return theRest;
+	}
+
+	public void setRest(Boolean aRest) {
+		theRest = aRest;
+	}
+
+	/** Нерабочее время */
+	private Boolean theRest;
+	
+	
+	
+
+
+
+}
