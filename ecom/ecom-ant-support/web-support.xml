@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="web-support" default="" basedir=".">
+
+    <fileset id='ecom.lib.fileset' dir="${libdir}">
+        <include name="msh/util/msh-util.jar"/>
+        <include name="msh/util-voc/msh-util-voc.jar"/>
+        <include name="msh/commons/msh-commons.jar"/>
+        <include name="msh/ejb/msh-ejb.jar"/>
+        <include name="msh/web/msh-web.jar"/>
+        <include name="msh/forms/msh-forms.jar"/>
+        <include name="msh/dbflib/dbflib-0.1.jar"/>
+        <include name="ecom/report/ecom-report.jar"/>
+        <include name="ecom/alg/ecom-alg.jar"/>
+        <include name="ecom/ejbweb/web/ecom-web.jar"/>
+        <include name="ecom/ejbweb/ejb/ecom-ejb-api.jar"/>
+        <include name="ecom/report/ecom-report.jar"/>
+    </fileset>
+
+    <fileset id="compile.thirdparty.fileset" dir="${libdir}/">
+        <include name='j2ee-api/ejb3-persistence.jar'/>
+        <include name='jboss/jboss-ejb3.jar'/>
+        <include name='jboss/jboss-ejb3x.jar'/>
+        <include name='jboss/jboss-annotations-ejb3.jar'/>
+        <include name='jboss/jboss-aop-jdk50.jar'/>
+        <include name='jboss/jboss-aspect-library-jdk50.jar'/>
+        <include name='jboss/jbossall-client.jar'/>
+        <include name='hibernate/entitymanager/hibernate3.jar'/>
+        <include name='struts/struts.jar'/>
+        <include name='servlet/servlet-api.jar'/>
+        <include name='jdom/jdom.jar'/>
+        <include name='log4j/log4j.jar'/>
+        <include name="json/json.jar"/>
+        <include name="apache-commons/commons-logging.jar"/>
+        <include name="apache-commons/commons-beanutils.jar"/>
+        <include name="hibernate/entitymanager/hibernate-entitymanager.jar"/>
+        <include name="jsp/jsp-api.jar"/>
+	    <include name="asm/asm-3.0.jar"/>
+	    <include name="rhino/js.jar"/>
+    </fileset>
+
+
+    <!--
+    -   Компиляция
+    -   compile.fileset - список дополнительных библиотек
+    -->
+    <target name="compile">
+        <path id="compile.classpath">
+            <fileset refid="compile.thirdparty.fileset"/>
+            <fileset refid="ecom.lib.fileset"/>
+            <fileset refid="compile.fileset"/>
+        </path>
+
+        <fileset id="compile.junit.fileset" dir="${libdir}/">
+            <include name='junit/junit.jar'/>
+        </fileset>
+
+        <path id="compile.junit.classpath">
+            <fileset refid="compile.junit.fileset"/>
+        </path>
+
+        <mkdir dir="./target/webapp/WEB-INF/classes"/>
+        <javac destdir="./target/webapp/WEB-INF/classes" encoding="utf-8"  debug="true">
+            <src path="./src/main/java"/>
+            <src path="./src/test/java"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="compile.junit.classpath"/>
+        </javac>
+    	
+    	<copy file="./src/main/resources/log4j.properties" todir="./target/webapp/WEB-INF/classes" failonerror="false"/>
+    </target>
+
+
+    <target name="dist">
+        <delete dir='${libdir}/${dirname}/web'/>
+        <copy overwrite="true" todir="${libdir}/${dirname}/web/webapp">
+            <fileset dir="src/webapp">
+                <include name="**/*"/>
+                <include name='**/dwr-${appname}.xml'/>
+                <exclude name='**/dwr.xml'/> <!-- У каждого проекта свой dwr-->
+                <exclude name='**/mainLayout.jsp'/>
+                <exclude name='**/web.xml'/>
+                <exclude name='**/start.jsp'/>
+                <exclude name='**/context.xml'/>
+            </fileset>
+        </copy>
+
+
+    	<delete file="./target/${appname}-web.jar"/>
+        <jar destfile="./target/${appname}-web.jar">
+            <fileset dir="./target/webapp/WEB-INF/classes">
+                <include name='ru/**/*'/>
+            </fileset>
+            <!--<fileset dir="./src/main/resources">-->
+            <!--<include name='**/*.tld*' />-->
+            <!--</fileset>-->
+        </jar>
+
+    	<delete file="./target/${appname}-web-src.zip"/>
+        <jar destfile="./target/${appname}-web-src.zip" >
+            <fileset dir="./src/main/java">
+                <include name='ru/**/*'/>
+            </fileset>
+        </jar>
+
+    	<delete file='${libdir}/${dirname}/web/${appname}-web.jar'/>
+        <copy overwrite="true" file="./target/${appname}-web.jar" todir="${libdir}/${dirname}/web"/>
+        <copy overwrite="true" file="./target/${appname}-web-src.zip" todir="${libdir}/${dirname}/web"/>
+    </target>
+
+    <target name="prepare">
+
+        <copy overwrite="true" todir="target/webapp/WEB-INF/lib">
+
+
+            <fileset file="${libdir}msh/web/msh-web.jar"/>
+            <fileset file="${libdir}msh/commons/msh-commons.jar"/>
+            <fileset file="${libdir}msh/dbflib/dbflib-0.1.jar"/>
+            <fileset file="${libdir}msh/ejb/msh-ejb.jar"/>
+            <fileset file="${libdir}msh/forms/msh-forms.jar"/>
+            <fileset file="${libdir}msh/util/msh-util.jar"/>
+            <fileset file="${libdir}msh/util-voc/msh-util-voc.jar"/>
+
+            <fileset file="${libdir}ecom/ejbweb/web/ecom-web.jar"/>
+            <fileset file="${libdir}ecom/ejbweb/ejb/ecom-ejb-api.jar"/>
+
+            <fileset dir="${libdir}/struts/WEB-INF/lib" includes="*.jar" />
+
+            <fileset file="${libdir}apache-commons/commons-collections-3.1.jar"/>
+            <fileset file="${libdir}apache-commons/commons-logging.jar"/>
+            <fileset file="${libdir}apache-commons/commons-pool-1.2.jar"/>
+
+            <fileset file="${libdir}ecs/ecs-1.4.2.jar"/>
+            <fileset file='${libdir}j2ee-api/ejb3-persistence.jar'/>
+            <fileset file='${libdir}jboss/jboss-ejb3.jar'/>
+            <fileset file='${libdir}jboss/jboss-ejb3x.jar'/>
+            <fileset file='${libdir}jboss/jboss-annotations-ejb3.jar'/>
+            <fileset file='${libdir}jboss/jboss-aop-jdk50.jar'/>
+            <fileset file='${libdir}jboss/jboss-aspect-library-jdk50.jar'/>
+            <fileset file='${libdir}jboss/jbossall-client.jar'/>
+            <fileset file='${libdir}hibernate/entitymanager/hibernate3.jar'/>
+
+            <fileset file='${libdir}dwr/dwr.jar'/>
+            <fileset file='${libdir}json/json.jar'/>
+            <fileset file='${libdir}log4j/log4j.jar'/>
+            <fileset file='${libdir}jdom/jdom.jar'/>
+            <fileset file='${libdir}postgresql/postgresql-util.jar' />
+
+        	<fileset file='${libdir}asm/asm-3.0.jar' />
+
+        	<fileset file='${libdir}rhino/js.jar' />
+        	
+            <fileset file='${libdir}/${dirname}/${appname}-ejb-api.jar' />
+
+        	
+        </copy>
+
+        <copy overwrite="true" todir="target/webapp">
+            <fileset dir="${libdir}/ecom/ejbweb/web/webapp">
+                <include name='**/*'/>
+            </fileset>
+            <fileset dir="./src/webapp">
+                <include name='**/*'/>
+            </fileset>
+        </copy>
+
+        <ant target="prepare.web" />
+
+    	<!-- Время сборки -->
+    	<tstamp>
+		      <format property="build.time" pattern="yyyy.MM.dd.hh.mm"/>
+	    </tstamp>
+		<echo file="./target/webapp/WEB-INF/buildnumber.txt" message="${build.time}" />
+
+    </target>
+
+	<target name='copy.jsp'>
+        <copy overwrite="true" todir="target/webapp">
+            <fileset dir="./src/webapp">
+                <include name='**/*'/>
+            </fileset>
+        </copy>
+	</target>
+
+    <target name='prepare.nojboss' depends="prepare">
+        <mkdir dir="./target/webapp/WEB-INF/classes/META-INF/services"/>
+        <echo message="org.hibernate.ejb.HibernatePersistence" append="false"
+              file="./target/webapp/WEB-INF/classes/META-INF/services/javax.persistence.spi.PersistenceProvider"/>
+
+        <delete failonerror="false">
+            <fileset dir="./target/webapp/WEB-INF/lib">
+                <include name='jboss-aop-jdk50.jar'/>
+                <include name='jboss-aspect-library-jdk50.jar'/>
+                <include name='jboss-ejb3.jar'/>
+                <include name='jbossall-client.jar'/>
+            </fileset>
+        </delete>
+
+        <copy todir="./target/webapp/WEB-INF/classes">
+            <fileset dir="${libdir}/hibernate/entitymanager">
+                <include name='hibernate.properties'/>
+            </fileset>
+        </copy>
+
+        <copy todir="./target/webapp/WEB-INF/lib">
+            <fileset dir="${libdir}/hibernate/entitymanager">
+                <include name='*.jar'/>
+            </fileset>
+
+            <fileset dir="${libdir}/jboss">
+                <include name='jboss-j2ee.jar'/>
+            </fileset>
+
+            <fileset file="${libdir}ecom/alg/ecom-alg.jar"/>
+            <fileset file="${libdir}jdom/jdom.jar"/>
+
+
+        </copy>
+
+
+        <copy todir="./target/webapp/WEB-INF/classes/META-INF" overwrite="true" failonerror="true">
+            <fileset dir='../ejb/src/main/resources/${appname}-ejb_jar/META-INF'>
+                <include name='*.xml'/>
+            </fileset>
+        </copy>
+
+        <java classname="ru.ecom.miniejb.app.FindServicesMain"
+              classpath="${libdir}/ecom/expomc/web/expomc-web.jar"
+              args=" target/webapp/WEB-INF/classes target/webapp/WEB-INF/classes/META-INF/miniejbservices.txt"
+            />
+        
+        <ant target="prepare.nojboss.web" />
+
+    </target>
+
+</project>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- WEB
+  - src/main/java - основной код
+  - src/test/java - тесты
+  -->
+<project name="web-skeleton" default="" basedir=".">
+
+    <import file="ejbweb-libs.xml" />
+
+    <target name="compile" description="Компиляция">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="compile"/>
+    </target>
+
+    <target name="prepare" depends="compile">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="prepare"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="dist"/>
+    </target>
+
+    <target name="copy.jsp" >
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="copy.jsp"/>
+    </target>
+	
+    <target name="prepare.nojboss" depends="prepare">
+        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="prepare.nojboss"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="./target" />
+    </target>
+
+    <target name="all" depends="clean,compile,dist,prepare">
+	</target>
+
+    <!-- Без удаления webapp/target. Чтобы tomcat не удалял приложение -->
+    <target name="ncall" depends="compile,dist,prepare" />
+
+
+</project>
