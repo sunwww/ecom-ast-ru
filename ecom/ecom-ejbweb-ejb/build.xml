@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ecom-ejb" default="deploy" basedir=".">
+
+    <property name="appname" value="ecom" />
+    <property name='dirname' value="ecom/ejbweb"/>
+
+    <property name='DO_NOT_EAR' value="true"/>
+
+    <import file="../../ant-support/property-skeleton.xml" />
+
+    <fileset id='compile.fileset' dir="${libdir}">
+        <include name="msh/util-voc/msh-util-voc.jar"/>
+        <include name="msh/util/msh-util.jar"/>
+        <include name="ecom/jboss/ecom-jboss.jar"/>
+    </fileset>
+
+    <target name='ejb.jar'>
+    </target>
+
+    <import file="../../ant-support/ejb-skeleton.xml" />
+	<!-- -->
+</project>
