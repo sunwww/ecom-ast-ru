@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>poly</short-name>
+    <uri>http://www.ecom-ast.ru/tags/poly</uri>
+
+    <tag>
+        <description>Загрузка всех активных талонов для данной медкарты</description>
+        <display-name>Можно ли показывать подразделения</display-name>
+        <name>parentTicketListTag</name>
+        <tag-class>ru.ecom.poly.web.tags.ParentTicketListTag</tag-class>
+        <body-content>empty</body-content>
+
+        <attribute>
+            <description>Форма</description>
+            <name>formName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <description>Аттрибут</description>
+            <name>attribute</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+    </tag>
+
+</taglib>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+    <init>
+    </init>
+
+    <allow>
+		<!-- Вывод строки адреса -->
+        <create creator="new" javascript="AddressService" scope="application">
+            <param name="class" value="ru.ecom.address.web.dwr.AddressServiceJs"/>
+        </create>
+
+		<!-- Редактирование справочников -->
+        <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo">
+        </convert>
+        <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityInfo">
+        </convert>
+        <create creator="new" javascript="VocEntityService" scope="application">
+            <param name="class" value="ru.ecom.web.vocentity.VocEntityServiceJs"/>
+        </create>
+
+        <create creator="new" javascript="PregnancyService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.birth.PregnancyServiceJs"/>
+        </create>		
+        <create creator="new" javascript="DisabilityService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.disability.DisabilityServiceJs"/>
+        </create>		
+        <create creator="new" javascript="TicketService" scope="application">
+            <param name="class" value="ru.ecom.poly.web.dwr.TicketServiceJs"/>
+        </create>		
+    </allow>
+
+    <signatures>
+    </signatures>
+
+</dwr>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+  <form-beans>
+  
+    <!-- В обработке -->
+    
+
+    <form-bean name="smo_diagnosisForm" type="ru.ecom.mis.ejb.form.medcase.DiagnosisForm" />
+    <form-bean name="cal_workFunctionForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="test_testForm" type="ru.ecom.mis.ejb.form.diet.TestForm" />
+    <form-bean name="des_destinationForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    
+    
+    <!-- Настоящие -->
+    
+    <form-bean name="smo_directionForm" type="$$map$$smo_directionForm" />
+    <form-bean name="work_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionForm" />
+    <form-bean name="work_personalWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.PersonalWorkFunctionForm" />
+    <form-bean name="work_personalWorkFunctionByGroupForm" type="$$map$$work_personalWorkFunctionByGroupForm" />
+    <form-bean name="work_groupWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.GroupWorkFunctionForm" />
+    <form-bean name="work_workFunctionByWorkerForm" type="$$map$$work_workFunctionByWorkerForm" />
+    <form-bean name="work_journalPatternCalendarForm" type="ru.ecom.mis.ejb.form.worker.JournalPatternCalendarForm" />
+
+<!--     <form-bean name="smo_visitForm" type="$$map$$smo_visitForm" /> -->
+    <form-bean name="smo_visitForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm" />
+
+    <form-bean name="smo_smoForm" type="$$map$$smo_smoForm" />
+    <form-bean name="smo_spoForm" type="$$map$$smo_spoForm" />
+    
+    <!-- Нетрудоспособность -->
+    
+
+	<form-bean name="dis_caseForm" type="ru.ecom.mis.ejb.form.disability.DisabilityCaseForm" />
+	<form-bean name="dis_documentForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm" />
+	<form-bean name="dis_documentByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
+	<form-bean name="dis_recordForm" type="ru.ecom.mis.ejb.form.disability.DisabilityRecordForm" />
+    <form-bean name="dis_medSocCommissionForm" type="ru.ecom.mis.ejb.form.disability.MedSocCommissionForm" />
+    <form-bean name="dis_permissionForm" type="ru.ecom.mis.ejb.form.disability.DisabilityPermissionForm" />
+    <form-bean name="dis_regimeViolationForm" type="ru.ecom.mis.ejb.form.disability.RegimeViolationRecordForm" />
+	
+    
+    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
+    
+    
+    
+    <!-- Сотрудник -->
+    
+    <form-bean name="mis_workerForm" type="ru.ecom.mis.ejb.form.worker.WorkerForm" />
+    
+    <form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
+    <form-bean name="mis_awardForm" type="$$map$$mis_awardForm" />
+    <form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
+    <form-bean name="mis_languageSkillForm" type="$$map$$mis_languageSkillForm" />
+    <form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
+    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
+    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
+    
+    <form-bean name="smo_visitProtocolForm" type="ru.ecom.poly.ejb.form.protocol.VisitProtocolForm" />
+    
+    <form-bean name="mis_workerNewForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="work_awardForm" type="$$map$$work_awardForm" />
+    <form-bean name="work_staffForm" type="$$map$$work_staffForm" />
+    <form-bean name="work_staffUnitForm" type="$$map$$work_staffUnitForm" />
+    <form-bean name="work_workBookRecordForm" type="$$map$$work_workBookRecordForm" />
+    <form-bean name="rec_specialistForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="rec_dateForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="rec_timeForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="rec_recordingForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+    <form-bean name="rec_myRecordsForm" type="ru.ecom.ejb.form.hello.HelloForm" />
+
+    <form-bean name="mis_mortalityReportDateForm" type="ru.ecom.mis.ejb.form.mortality.MortalityReportDateForm" />
+    <form-bean name="mis_birthReportDateForm" type="ru.ecom.mis.ejb.form.birth.BirthReportDateForm" />
+    <form-bean name="mis_lpuFond" type="$$map$$mis_lpuFondForm" />
+    <form-bean name="mis_testForm" type="$$map$$mis_testForm" />
+
+  </form-beans>
+  <global-forwards />
+
+  <action-mappings>
+        <action path='/dis_documents' type='ru.ecom.mis.web.action.disability.DisabilityDocumentSearchAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/dis_document/list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/list.jsp" />
+        </action>
+        <action path='/dis_documentOpen' type='ru.ecom.mis.web.action.disability.DocumentOpenAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/dis_document/listOpen.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpen.jsp" />
+        </action>
+        <action path='/dis_documentClose' type='ru.ecom.mis.web.action.disability.DocumentCloseAction'
+                name='stac_admissionJournalForm'
+                validate='true'
+                scope="request"
+                input='/WEB-INF/actions/dis_document/listClose.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listClose.jsp" />
+        </action>
+        <action path='/dis_documentByDate' type='ru.ecom.mis.web.action.disability.DocumentOpenListAction'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpenByDate.jsp" />
+        </action>
+ 
+  </action-mappings>
+</struts-config>
+

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+	<form-beans>
+		<!-- Рабочий календарь -->
+	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
+	    <form-bean name="cal_patternBySpecForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm" />
+	    
+	    <form-bean name="cal_workCalendarForm" type="$$map$$cal_workCalendarForm" />
+	    <form-bean name="cal_workCalendarDayForm" type="$$map$$cal_workCalendarDayForm" />
+
+		<form-bean name="cal_algorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarAlgorithmForm" />
+		<form-bean name="cal_datesAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarDatesAlgorithmForm" />
+		<form-bean name="cal_dayPatternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarDayPatternForm" />
+		<form-bean name="cal_patternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternForm" />
+		<form-bean name="cal_prophDayAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarProphDayAlgorithmForm" />
+		<form-bean name="cal_reservePatternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarReservePatternForm" />
+		<form-bean name="cal_servicePatternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarServicePatternForm" />
+		<form-bean name="cal_streamPatternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarStreamPatternForm" />
+		<form-bean name="cal_timeExampleForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarTimeExampleForm" />
+		<form-bean name="cal_timeIntervalForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarTimeIntervalForm" />
+		<form-bean name="cal_timePatternForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarTimePatternForm" />
+		<form-bean name="cal_weekAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarWeekAlgorithmForm" />
+		<form-bean name="cal_weekDaysAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarWeekDaysAlgorithmForm" />
+
+		<!-- Медкарта -->
+		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
+		<!-- Договора -->
+		<form-bean name="contract_contractAccountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
+		<form-bean name="contract_contractAccountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
+		<form-bean name="contract_contractAccountRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountRuleForm" />
+		<form-bean name="contract_contractGuaranteeForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeForm" />
+		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
+		<form-bean name="contract_contractGuaranteeLetterForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeLetterForm" />
+		<form-bean name="contract_contractMedPolicyForm" type="ru.ecom.mis.ejb.form.contract.ContractMedPolicyForm" />
+		<form-bean name="contract_contractMedServiceGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractMedServiceGroupForm" />
+		<form-bean name="contract_contractNosologyGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractNosologyGroupForm" />
+		<form-bean name="contract_contractPaymentOrderForm" type="ru.ecom.mis.ejb.form.contract.ContractPaymentOrderForm" />
+		<form-bean name="contract_contractPersonForm" type="ru.ecom.mis.ejb.form.contract.ContractPersonForm" />
+		<form-bean name="contract_contractRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractRuleForm" />
+		<form-bean name="contract_guaranteeIntervalForm" type="ru.ecom.mis.ejb.form.contract.GuaranteeIntervalForm" />
+		<form-bean name="contract_juridicalPersonForm" type="ru.ecom.mis.ejb.form.contract.JuridicalPersonForm" />
+		<form-bean name="contract_medContractForm" type="ru.ecom.mis.ejb.form.contract.MedContractForm" />
+		<form-bean name="contract_medServiceIntervalForm" type="ru.ecom.mis.ejb.form.contract.MedServiceIntervalForm" />
+		<form-bean name="contract_naturalPersonForm" type="ru.ecom.mis.ejb.form.contract.NaturalPersonForm" />
+		<form-bean name="contract_nosologyIntervalForm" type="ru.ecom.mis.ejb.form.contract.NosologyIntervalForm" />
+		<form-bean name="contract_priceListForm" type="ru.ecom.mis.ejb.form.contract.PriceListForm" />
+		<form-bean name="contract_priceMedServiceForm" type="ru.ecom.mis.ejb.form.contract.PriceMedServiceForm" />
+		<form-bean name="contract_pricePositionForm" type="ru.ecom.mis.ejb.form.contract.PricePositionForm" />
+		<form-bean name="contract_servedPersonForm" type="ru.ecom.mis.ejb.form.contract.ServedPersonForm" />
+
+
+		<form-bean name="mis_encodingAccordanceForm"
+			type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
+		<form-bean name="ecom_deleteJournalForm"
+			type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
+		<form-bean name="mis_kinsmanForm"
+			type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>	
+			
+	
+		<form-bean name="mis_lpuForm"
+			type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
+			
+		<form-bean name="voc_orgForm"
+			type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
+			
+		<form-bean name="voc_drugUNForm"
+			type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugUnlicensedNameForm"/>
+			
+		<form-bean name="voc_operationForm"
+			type="ru.ecom.mis.ejb.form.medcase.hospital.VocSurgicalOperationForm"/>
+		<form-bean name="voc_workFunctionForm"
+			type="ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm"/>
+		<form-bean name="voc_postForm"
+			type="ru.ecom.mis.ejb.form.worker.VocPostForm"/>
+
+		<form-bean name="mis_lpuAreaForm"
+			type="ru.ecom.mis.ejb.form.lpu.LpuAreaForm" />
+		<form-bean name="mis_lpuAreaAddressTextForm"
+			type="ru.ecom.mis.ejb.form.lpu.LpuAreaAddressTextForm" />
+		<form-bean name="mis_lpuFond" 
+			type="$$map$$mis_lpuFondForm" />
+		<form-bean name="mis_bedFundForm" 
+			type="ru.ecom.mis.ejb.form.lpu.BedFundForm" />
+		<form-bean name="mis_operatingRoomForm" 
+			type="ru.ecom.mis.ejb.form.lpu.OperatingRoomForm" />
+			
+		<!-- Пациент -->
+		
+		<form-bean name="mis_patientForm"
+			type="ru.ecom.mis.ejb.form.patient.PatientForm" />
+		<form-bean name="mis_identityCardForm"
+			type="ru.ecom.mis.ejb.form.patient.IdentityCardForm" />
+		<form-bean name="mis_identityCardPassportForm"
+			type="ru.ecom.mis.ejb.form.patient.IdentityCardPassportForm" />
+		<form-bean name="mis_identityCardPensionCertificateForm"
+			type="ru.ecom.mis.ejb.form.patient.IdentityCardPensionCertificateForm" />
+
+		<form-bean name="mis_medPolicyForm"
+			type="ru.ecom.mis.ejb.form.patient.MedPolicyForm" />
+
+		<form-bean name="mis_medPolicyOmcForm"
+			type="ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm" />
+		<form-bean name="mis_medPolicyDmcForm"
+			type="ru.ecom.mis.ejb.form.patient.MedPolicyDmcForm" />
+		<form-bean name="mis_medPolicyDmcForeignForm"
+			type="ru.ecom.mis.ejb.form.patient.MedPolicyDmcForeignForm" />
+		<form-bean name="mis_medPolicyOmcForeignForm"
+			type="ru.ecom.mis.ejb.form.patient.MedPolicyOmcForeignForm" />
+		<form-bean name="mis_uslForm"
+			type="ru.ecom.mis.ejb.form.usl.UslForm" />
+		<form-bean name="mis_patientSearchForm"
+			type="ru.ecom.mis.web.action.patient.PatientSearchForm" />
+		
+		<!-- Лицензии ЛПУ -->
+		
+		<form-bean name="mis_licenceForm"
+			type="ru.ecom.mis.ejb.form.licence.LicenceForm" />
+		<form-bean name="mis_prilogenieForm"
+			type="ru.ecom.mis.ejb.form.licence.PrilogenieForm" />
+			
+		<!-- Диетология -->
+		
+		<form-bean name="diet_dishFoodStuffForm" type="ru.ecom.mis.ejb.form.diet.DishFoodStuffForm" />
+        <form-bean name="diet_vocFoodStuffForm" type="ru.ecom.mis.ejb.form.diet.voc.VocFoodStuffForm" />
+        <form-bean name="diet_vocFoodStuffTemplateForm" type="ru.ecom.mis.ejb.form.diet.voc.VocFoodStuffTemplateForm" />
+        <form-bean name="diet_dishForm" type="ru.ecom.mis.ejb.form.diet.DishForm" />
+    	<form-bean name="diet_dietForm" type="ru.ecom.mis.ejb.form.diet.DietForm" />  
+        <form-bean name="diet_mealMenuTemplateForm"
+			type="ru.ecom.mis.ejb.form.diet.MealMenuTemplateForm" />
+        <form-bean name="diet_mealMenuMainTemplateForm"
+			type="ru.ecom.mis.ejb.form.diet.MealMenuMainTemplateForm" />
+        <form-bean name="diet_mealMenuOrderForm"
+			type="ru.ecom.mis.ejb.form.diet.MealMenuOrderForm" />
+        <form-bean name="diet_mealMenuForm"
+			type="ru.ecom.mis.ejb.form.diet.MealMenuForm" />
+        <form-bean name="diet_childMealMenuTemplateForm"
+			type="ru.ecom.mis.ejb.form.diet.ChildMealMenuTemplateForm" />
+		<form-bean name="diet_dishMealMenuForm"
+			type="$$map$$diet_dishMealMenuForm" />
+		<form-bean name="diet_dishMealMenuOrderForm"
+			type="ru.ecom.mis.ejb.form.diet.DishMealMenuOrderForm" />
+		<form-bean name="diet_dishMealMenuTemplateForm"
+			type="ru.ecom.mis.ejb.form.diet.DishMealMenuTemplateForm" />
+		<form-bean name="diet_mealQualityControlForm"
+			type="ru.ecom.mis.ejb.form.diet.MealQualityControlForm" />
+ 		<form-bean name="diet_mealWorkerHealthControlForm"
+			type="ru.ecom.mis.ejb.form.diet.MealWorkerHealthControlForm" />
+		<form-bean name="diet_foodStuffSearchForm"
+			type="ru.ecom.mis.web.action.diet.FoodStuffSearchForm" />
+
+		
+		
+		<!-- Кадры -->
+		
+		<form-bean name="mis_workerForm" type="$$map$$mis_workerForm" />
+		<form-bean name="mis_stateListForm" type="$$map$$mis_stateListForm" />
+		<form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
+		<form-bean name="mis_awardForm" type="$$map$$mis_awardForm" />
+		<form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
+		<form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
+		<form-bean name="mis_workPlaceForm" type="$$map$$mis_workPlaceForm" />
+
+		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
+		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
+		<form-bean name="mis_privilegeForm" type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeForm" />
+		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
+		<form-bean name="mis_recipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.RecipeForm" />
+		<form-bean name="mis_privilegeRecipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeRecipeForm" />
+
+		<!-- Прикрепление по ведомству -->
+		
+		<form-bean name="mis_lpuAttachedByDepartmentForm"
+			type="ru.ecom.mis.ejb.form.patient.LpuAttachedByDepartmentForm" />
+
+<!--		 Вакцинация -->
+		
+		<form-bean name="vac_vaccinationForm" type="ru.ecom.mis.ejb.form.vaccination.VaccinationForm" />
+		<form-bean name="vac_vaccineForm" type="ru.ecom.mis.ejb.form.vaccination.VaccineForm" />
+		<form-bean name="vac_vaccinationAssesmentForm" type="ru.ecom.mis.ejb.form.vaccination.VaccinationAssesmentForm" />
+		<form-bean name="vac_vaccinationEstopForm" type="ru.ecom.mis.ejb.form.vaccination.VaccinationEstopForm" />
+		<form-bean name="vac_vaccinationByPatientForm" type="$$map$$vac_vaccinationByPatientForm" />	
+					
+		
+	   <!-- Назначения на лечение -->	
+        
+        <form-bean name="pres_drugPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionForm" />
+        <form-bean name="pres_dietPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DietPrescriptionForm" />
+        <form-bean name="pres_servicePrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
+        <form-bean name="pres_prescriptionFulfilmentForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionFulfilmentForm" />
+        <form-bean name="pres_prescriptionForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionForm" />
+        <form-bean name="pres_abstractPrescriptionListForm" type="ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm" />
+        <form-bean name="pres_prescriptListForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptListForm" />
+        <form-bean name="pres_listForm" type="ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm" />
+        
+        		
+        <!-- Медицинские услуги -->  		
+        <form-bean name="mis_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceForm" />
+        <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
+        <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
+        
+        <!-- Лекарсвенные средства -->
+        <form-bean name="drug_classificatorForm" type="ru.ecom.mis.ejb.uc.privilege.form.DrugClassificatorForm" />
+        <form-bean name="voc_drugForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm" />
+        <form-bean name="voc_drugLNForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugLicensedNameForm" />
+        
+	</form-beans>
+
+	<global-forwards></global-forwards>
+
+	<action-mappings>
+        
+        <action path='/smo_goingToSmo' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_medcardSearchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp" />
+        </action>
+        
+        <action path='/smo_doubleVisits_list' type='ru.ecom.poly.web.action.ticket.TicketDoubleListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/smo_visit/smo_doubleVisits_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_doubleVisits_list.jsp" />
+        </action>
+        <action path='/smo_doubleVisits_data' type='ru.ecom.poly.web.action.ticket.TicketDoubleDataAction'
+                name='smo_VisitForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/smo_visit/smo_doubleVisits_data.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_doubleVisits_data.jsp" />
+        </action>
+
+       <action path='/smo_journalRegisterVisit_list' type='ru.ecom.mis.web.action.medcase.journal.JournalRegisterVisitAction'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/journal_registerVisit_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_registerVisit_list.jsp"/>
+        </action>
+       <action path='/smo_journalRegisterVisit_print' type='ru.ecom.mis.web.action.medcase.journal.JournalRegisterVisitAction'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/journal_registerVisit_print.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_registerVisit_print.jsp"/>
+        </action>
+        		<!--        <action     path = "/mis_lpuAreaSave"
+			type = 'ru.ecom.web.actions.parententity.SaveAction'
+			scope = 'request'
+			validate = "true"
+			name = "mis_lpuAreaForm"
+			input = "/WEB-INF/actions/mis_lpuArea/edit.jsp">
+			<forward name="success" path="/entityView-mis_lpu.do" redirect="true"/>
+			</action>
+		-->
+
+		<action path='/mis_syncLpuFond'
+			type='ru.ecom.mis.web.action.synclpufond.SyncLpuFondAction'
+			validate='false' scope="request">
+			<forward name="success" redirect="true"
+				path="/entityList-mis_patient.do" />
+		</action>
+
+		<action path='/start'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/mis_patients.do" />
+		</action>
+		<action path='/ecom_releases'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/riams/releases.jsp" />
+		</action>
+		<action path='/ecom_contract'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/riams/contract.jsp" />
+		</action>
+		<action path='/ecom_release-*'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/riams/release/{1}.jsp" />
+		</action>
+
+		<action path='/mis_patientSearch'
+			type='ru.ecom.web.actions.base.ForwardAction' name=''
+			scope="request">
+			<forward name="success" redirect="true"
+				path="/mis_patients.do" />
+		</action>
+		
+
+		<action path='/patientsByWorkCalendarDay'
+			type='ru.ecom.web.actions.base.ForwardAction'
+			validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/cal_workCalendar/patientsByWorkCalendarDay.jsp" />
+		</action> 
+		
+		<action path='/mis_patients'
+			type='ru.ecom.mis.web.action.patient.PatientSearchAction'
+			name='mis_patientSearchForm' validate='true' scope="session"
+			input='/WEB-INF/actions/mis_patient/list.jsp'>
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_patient/list.jsp" />
+		</action>
+
+		<action path='/mis_lpuUpdateJaasPolicy'
+			type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
+			validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/entityParentView-mis_lpu.do?id=" />
+		</action>
+
+		<action path='/mis_lpuCreateLpusFromOmcLpu'
+			type='ru.ecom.mis.web.action.synclpufond.CreateLpusFromOmcLpuAction'
+			validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/entityParentList-mis_lpu.do?id=-1" />
+		</action>
+
+		<action path='/mis_lpuAreaUpdateJaasPolicy'
+			type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
+			name='' validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/entityParentView-mis_lpuArea.do?id=" />
+		</action>
+
+		<action path='/mis_lpuListUpdateJaasPolicy'
+			type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
+			name='' validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/entityParentList-mis_lpu.do?id=" />
+		</action>
+
+		<action path='/mis_bypassAreaExcelExport'
+			type='ru.ecom.mis.web.action.bypassexport.BypassAreaExcelExportAction'
+			name='' validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/ecom_getfile.do?id=" />
+		</action>
+
+		<action path="/print-*" type="ru.ecom.web.print.PrintAction"
+			name="" parameter="{1}" scope="request" validate="false">
+		</action>
+
+		<action path='/mis_lpuFond'
+			type='ru.ecom.mis.web.action.lpufond.LpuFondAction' name=''
+			validate='false' scope="request">
+			<forward name="success" redirect="false"
+				path="/entityList-mis_lpuFond.do?id=" />
+		</action>
+ 
+         <action path='/diet_foodStuffSearch'
+			type='ru.ecom.web.actions.base.ForwardAction' name=''
+			scope="request">
+			<forward name="success" redirect="true"
+				path="/diet_foodStuffs.do" />
+		</action>
+		
+		<action path='/diet_foodStuffs'
+			type='ru.ecom.mis.web.action.diet.FoodStuffSearchAction'
+			name='diet_foodStuffSearchForm' validate='true' scope="session"
+			input='/WEB-INF/actions/diet_vocFoodStuff/list.jsp'>
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/diet_vocFoodStuff/list.jsp" />
+		</action>
+
+		<action path='/journal_infectMessage'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_infectiousMessages/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_infectiousMessages/listByPeriod.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_infectiousMessages/listError.jsp'
+		    />
+		</action>
+		<action path='/journal_militiaMessage'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_militiaMessages/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_militiaMessages/listByPeriod.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_militiaMessages/listError.jsp'
+		    />
+		</action>
+		<action path='/journal_vaccination'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/vac_vaccination/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/vac_vaccination/listByPeriod.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/vac_vaccination/listError.jsp'
+		    />
+		</action>
+		<action path='/journal_serviceMedCase'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/smo_medService/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/smo_medService/listByPeriod.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/smo_medService/listError.jsp'
+		    />
+		</action>
+		<action path='/journal_surOperation'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_surOperation/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_surOperation/listByPeriod.jsp'
+		    />
+		</action>
+		<action path='/journal_surOperationByDate'
+		    type='ru.ecom.mis.web.action.medcase.journal.SurgicalOperationByDateListAction'
+		    validate='false' scope='session'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_surOperation/listByDate.jsp'
+		    />
+		</action>
+		
+		<action path='/findSocPat'
+			type='ru.ecom.mis.web.action.patient.FindPersonBySocialCardAction' 
+			validate='false'
+			scope='session'
+			name='mis_patientSearchForm'
+			>
+			<forward name="success" redirect="false" path='/WEB-INF/actions/mis_patient/list.jsp'/>
+			
+		</action>
+		
+        <action path="/cal_workCalendar-generate" type='ru.ecom.mis.web.action.worker.WorkCalendarGenerateAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/js-mis_worker-pattern.do" redirect="true"/>
+        </action>  
+	</action-mappings>
+
+
+</struts-config>
+

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+    <form-beans>
+    
+    <!-- БЕРЕМЕННОСТЬ -->
+    <form-bean name="preg_pregnancyForm" type="ru.ecom.mis.ejb.form.birth.PregnancyForm"/>
+    <form-bean name="preg_pregnanCardForm" type="ru.ecom.mis.ejb.form.birth.PregnanExchangeCardForm"/>
+    <form-bean name="preg_confinedCardForm" type="ru.ecom.mis.ejb.form.birth.ConfinedExchangeCardForm"/>
+    <form-bean name="preg_newBornInformationForm" type="ru.ecom.mis.ejb.form.birth.NewBornInformationForm"/>
+    <form-bean name="preg_pregHistoryForm" type="ru.ecom.mis.ejb.form.birth.PregnancyHistoryForm"/>
+    <form-bean name="preg_confCertificateForm" type="ru.ecom.document.ejb.form.certificate.ConfinementCertificateForm"/>
+
+    <form-bean name="preg_pregInspectionForm" type="ru.ecom.mis.ejb.form.birth.PregnanInspectionForm"/>
+    <form-bean name="preg_confInspectionForm" type="ru.ecom.mis.ejb.form.birth.ConfinedInspectionForm"/>
+    <form-bean name="preg_inspectionForm" type="ru.ecom.mis.ejb.form.birth.InspectionForm"/>
+    <form-bean name="preg_apgarEstimationForm" type="ru.ecom.mis.ejb.form.birth.ApgarEstimationForm"/>
+    <form-bean name="preg_downesEstimationForm" type="ru.ecom.mis.ejb.form.birth.DownesEstimationForm"/>
+    <form-bean name="preg_newBornInfRiskEstimationForm" type="ru.ecom.mis.ejb.form.birth.NewBornInfRiskEstimationForm"/>
+    <form-bean name="preg_childBirthForm" type="ru.ecom.mis.ejb.form.birth.ChildBirthForm"/>
+    <form-bean name="preg_audiologicScreeningForm" type="ru.ecom.mis.ejb.form.birth.AudiologicScreeningForm"/>
+    <form-bean name="preg_hereditaryScreeningForm" type="ru.ecom.mis.ejb.form.birth.HereditaryScreeningForm"/>
+    <form-bean name="preg_newBornForm" type="ru.ecom.mis.ejb.form.birth.NewBornForm"/>
+    <form-bean name="preg_neonatalNewBornForm" type="ru.ecom.mis.ejb.form.birth.NeonatalNewBornForm"/>
+    <form-bean name="preg_obstetricNewBornForm" type="ru.ecom.mis.ejb.form.birth.ObstetricNewBornForm"/>
+    
+    <!-- ПЕРЕЛИВАНИЕ КРОВИ -->
+    <form-bean name="trans_bloodForm" type="ru.ecom.mis.ejb.form.medcase.transfusion.BloodTransfusionForm"/>
+    <form-bean name="trans_otherForm" type="ru.ecom.mis.ejb.form.medcase.transfusion.OtherTransfusionForm"/>
+    <form-bean name="trans_transfusionForm" type="ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionForm"/>
+    
+    </form-beans>
+
+    <global-forwards>
+    </global-forwards>
+
+    <action-mappings>
+        <action path='/start' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='false'
+                scope="request">
+            <forward name="success" redirect="false" path="/mis_patients.do" />
+        </action>
+
+	    <action path="/riams_service" type='ru.ecom.web.actions.base.ForwardAction'
+	        scope='request' validate="false" name="">
+<!--	        <forward name="success" path="/WEB-INF/actions/riams_service/index.jsp"/>-->
+	        <forward name="success" path="/riams_config.do" />
+	    </action>
+
+	    <action path="/riams_config" type='ru.ecom.web.actions.base.ForwardAction'
+	        scope='request' validate="false" name="">
+	        <forward name="success" path="/WEB-INF/actions/riams/config.jsp"/>
+	    </action>
+	    <action path="/riams_journals" type='ru.ecom.web.actions.base.ForwardAction'
+	        scope='request' validate="false" name="">
+	        <forward name="success" path="/WEB-INF/actions/riams/journals.jsp"/>
+	    </action>
+
+	    <action path="/riams_security" type='ru.ecom.web.actions.base.ForwardAction'
+	        scope='request' validate="false" name="">
+	        <forward name="success" path="/WEB-INF/actions/riams/security.jsp"/>
+	    </action>
+	    
+	     <action path='/diet_foodStuffSearch' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='false'
+                scope="request">
+            <forward name="success" redirect="false" path="/diet_foodStuffs.do" />
+        </action>
+	    
+    </action-mappings>
+
+
+
+</struts-config>
+

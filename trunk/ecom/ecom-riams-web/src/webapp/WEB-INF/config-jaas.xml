@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+    <form-beans>
+       <form-bean name="secuserForm" type="ru.ecom.jaas.ejb.form.SecUserForm" />
+       <form-bean name="secroleForm" type="ru.ecom.jaas.ejb.form.SecRoleForm" />
+       <form-bean name="secpolicyForm" type="ru.ecom.jaas.ejb.form.SecPolicyForm" />
+       <form-bean name="sec_softConfigForm" type="ru.ecom.jaas.ejb.form.SoftConfigForm" />
+       <form-bean name="sec_userPermissionForm" type="ru.ecom.jaas.ejb.form.UserPermissionForm" />
+       <form-bean name="sec_permissionForm" type="ru.ecom.jaas.ejb.form.PermissionForm" />
+
+        <form-bean name="serviceImportPoliciesForm" type="ru.ecom.jaas.web.action.service.ServiceImportPolicesListForm" />
+        <form-bean name="serviceImportRolesForm" type="ru.ecom.jaas.web.action.service.ServiceImportRolesForm" />
+        <form-bean name="policyExportForm" type="ru.ecom.jaas.web.action.policy.ExportPolicyForm" />
+    </form-beans>
+
+    <global-forwards>
+    </global-forwards>
+
+    <action-mappings>
+
+
+        <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/entityList-secuser.do" />
+        </action>
+
+        <action path="/userView" type='ru.ecom.jaas.web.action.secuser.UserViewAction'
+            scope='request' validate="false" name="secuserForm">
+            <forward name="success" path="/WEB-INF/actions/secuser/edit.jsp"/>
+        </action>
+
+        <action path="/userRoleEdit" type='ru.ecom.jaas.web.action.secuser.UserRoleEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/secuser/addRole.jsp"/>
+        </action>
+
+        <action path="/userRoleAdd" type='ru.ecom.jaas.web.action.secuser.UserRoleAddAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/userRoleEdit.do" redirect="true"/>
+        </action>
+
+        <action path="/userRoleRemove" type='ru.ecom.jaas.web.action.secuser.UserRoleRemoveAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/userRoleEdit.do" redirect="true"/>
+        </action>
+        
+        
+        
+        <action path="/roleUserEdit" type='ru.ecom.jaas.web.action.role.RoleUserEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/secrole/addUser.jsp"/>
+        </action>
+
+        <action path="/roleUserAdd" type='ru.ecom.jaas.web.action.role.RoleUserAddAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/roleUserEdit.do" redirect="true"/>
+        </action>
+
+        <action path="/roleUserRemove" type='ru.ecom.jaas.web.action.role.RoleUserRemoveAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/roleUserEdit.do" redirect="true"/>
+        </action>    
+        
+            
+
+        <action path="/rolePolicies" type='ru.ecom.jaas.web.action.role.RolePoliciesEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/secrole/policies.jsp"/>
+        </action>
+
+        <action path="/roleView" type='ru.ecom.jaas.web.action.role.RoleViewAction'
+            scope='request' validate="false" name="secroleForm">
+            <forward name="success" path="/WEB-INF/actions/secrole/edit.jsp"/>
+        </action>
+
+        <action path="/rolePoliciesSave" type='ru.ecom.jaas.web.action.role.RolePoliciesSaveAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/roleView.do" redirect='true'/>
+        </action>
+
+        <action path="/jaas_service" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/service/index.jsp"/>
+        </action>
+
+        <action path="/serviceExport" type='ru.ecom.jaas.web.action.service.ServiceExportJbossAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/riams_service.do" redirect='true'/>
+        </action>
+
+        <action path="/serviceImportPoliciesListEdit" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/service/importPoliciesListEdit.jsp"/>
+        </action>
+
+        <action path="/serviceImportRolesEdit" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/service/importRolesEdit.jsp"/>
+        </action>
+
+        <action path="/serviceImportPoliciesList" type='ru.ecom.jaas.web.action.service.ServiceImportPoliciesListAction'
+            scope='request' validate="false" name="serviceImportPoliciesForm">
+            <forward name="success" redirect="true" path="/entityParentList-secpolicy.do?id="/>
+        </action>
+
+        <action path="/serviceImportRoles" type='ru.ecom.jaas.web.action.service.ServiceImportRolesAction'
+            scope='request' validate="false" name="serviceImportRolesForm">
+            <forward name="success" path="/WEB-INF/actions/service/importPoliciesList.jsp"/>
+        </action>
+        
+        <action path="/servicePolicy-exportEdit" type='ru.ecom.jaas.web.action.policy.ExportPolicyEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/secpolicy/editExport.jsp"/>
+        </action>
+        <action path="/servicePolicy-export" type='ru.ecom.jaas.web.action.policy.ExportPolicyAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/secpolicy/export.jsp"/>
+        </action>
+        
+        <action path="/servicePolicy-importEdit" type='ru.ecom.jaas.web.action.policy.ImportPolicyEditAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/secpolicy/editImport.jsp"/>
+        </action>
+        <action path="/servicePolicy-import" type='ru.ecom.jaas.web.action.policy.ImportPolicyAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/entityParentList-secpolicy.do?id="/>
+        </action>
+        
+        <action path="/serviceRole-exportEdit" type='ru.ecom.jaas.web.action.role.ExportRoleEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/secrole/editExport.jsp"/>
+        </action>
+        <action path="/serviceRole-export" type='ru.ecom.jaas.web.action.role.ExportRoleAction'
+            scope='request' validate="false" name="secroleForm">
+        </action>
+        
+        <action path="/serviceRole-importEdit" type='ru.ecom.jaas.web.action.role.ImportRoleEditAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/secrole/editImport.jsp"/>
+        </action>
+        <action path="/serviceRole-importEditList" type='ru.ecom.jaas.web.action.role.ImportRoleEditListAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/secrole/editListImport.jsp"/>
+        </action>
+        <action path="/serviceRole-import" type='ru.ecom.jaas.web.action.role.ImportRoleAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/entityList-secrole.do?id="/>
+        </action>
+        <action path="/ecom_vocEntity-list" type='ru.ecom.jaas.web.action.vocabulary.VocabularyListAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/ecom_vocEntity/list.jsp" />
+        </action>
+        
+        
+    </action-mappings>
+
+
+</struts-config>
+
