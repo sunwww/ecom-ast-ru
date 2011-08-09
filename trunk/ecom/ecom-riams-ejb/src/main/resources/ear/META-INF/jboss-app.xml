@@ -1,0 +1,5 @@
+<jboss-app>
+    <loader-repository>riams.ecom-ast.ru:loader=riams-ejb.jar</loader-repository>
+</jboss-app>
+
+
