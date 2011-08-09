@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+	<form-beans>
+        <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
+        <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />
+        <form-bean name="stac_extsslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm" />
+        <form-bean name="stac_sslDischargeForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm" />
+        <form-bean name="stac_newBornSloForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm" />
+        <form-bean name="stac_sloForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm" />
+        <form-bean name="stac_surOperationForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm" />
+		<form-bean name="stac_diagnosisForm"               type="ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm"/>
+		<form-bean name="stac_infectiousMessagesForm"      type="ru.ecom.mis.ejb.form.medcase.hospital.InfectiousMessagesForm"/>
+		<form-bean name="stac_militiaMessagesForm"         type="ru.ecom.mis.ejb.form.medcase.hospital.MilitiaMessagesForm"/>
+		<form-bean name="mis_medCaseForm"				   type="ru.ecom.mis.ejb.form.medcase.MedCaseForm"/>
+		<form-bean name="smo_spoForm"			           type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm"/>
+		<form-bean name="stac_temperatureCurveForm"        type="ru.ecom.mis.ejb.form.medcase.hospital.TemperatureCurveForm" />		
+		<form-bean name="stac_admissionJournalForm"	       type="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm" />
+		<form-bean name="stac_departmentJournalForm"       type="ru.ecom.mis.web.action.medcase.journal.DepartmentJournalForm" />
+		<form-bean name="stac_deathCaseForm"               type="ru.ecom.mis.ejb.form.medcase.death.DeathCaseForm" />
+		<form-bean name="stac_deathReasonForm"             type="ru.ecom.mis.ejb.form.medcase.death.DeathReasonForm" />
+		<form-bean name="stac_deathCertificateForm"        type="ru.ecom.document.ejb.form.certificate.DeathCertificateForm" />
+		<form-bean name="stac_certificateForm"             type="ru.ecom.document.ejb.form.certificate.CertificateForm" />
+
+		<form-bean name="stac_statisticStubNewForm"        type="ru.ecom.mis.ejb.form.medcase.hospital.StatisticStubNewForm" />
+
+		<form-bean name="stac_birthCaseForm"               type="ru.ecom.mis.ejb.form.medcase.birth.BirthCaseForm" />
+		<form-bean name="stac_anesthesiaForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.AnesthesiaForm" />
+		<form-bean name="stac_birthCertificateForm"
+		        type="ru.ecom.document.ejb.form.certificate.BirthCertificateForm" />
+		<form-bean name="stac_repeatCaseForm"
+		        type="ru.ecom.mis.web.action.medcase.journal.RepeatCaseJournalForm" />
+		
+
+	</form-beans>
+
+	<global-forwards></global-forwards>
+
+	<action-mappings>
+		<!--        <action     path = "/mis_lpuAreaSave"
+			type = 'ru.ecom.web.actions.parententity.SaveAction'
+			scope = 'request'
+			validate = "true"
+			name = "mis_lpuAreaForm"
+			input = "/WEB-INF/actions/mis_lpuArea/edit.jsp">
+			<forward name="success" path="/entityView-mis_lpu.do" redirect="true"/>
+			</action>
+		-->
+
+        <action path='/stac_groupByBedFundList' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_groupByBedFund_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_groupByBedFund_list.jsp" />
+        </action>
+        <action path='/stac_groupByMoveToAnotherLpuList' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_list.jsp" />
+        </action>
+        <action path='/stac_groupByMoveToAnotherLpuPrint' type='ru.ecom.mis.web.action.medcase.GroupByMoveToAnotherLpuAction'
+                name='stac_sslForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_print.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_print.jsp" />
+        </action>
+        <action path='/stac_groupByMoveToAnotherLpuData' type='ru.ecom.mis.web.action.medcase.GroupByMoveToAnotherLpuAction'
+                name='stac_sslForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_data.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_moveToAnotherLpu_data.jsp" />
+        </action>
+        <action path='/stac_deathCase_list' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_deathCase/list_period.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_deathCase/list_period.jsp" />
+        </action>
+        <action path='/stac_groupByBedFundPrint' type='ru.ecom.mis.web.action.medcase.GroupByBedFundDataAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_groupByBedFund_print.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_groupByBedFund_print.jsp" />
+        </action>
+        <action path='/stac_groupByBedFundData' type='ru.ecom.mis.web.action.medcase.GroupByBedFundDataAction'
+                name='stac_sslForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/list_groupByBedFund_data.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_groupByBedFund_data.jsp" />
+        </action>
+
+        <action path="/stac_sslList" type='ru.ecom.mis.web.action.medcase.AllHospitalMedCasesListAction'
+            scope='request' validate="false" name="stac_sslForm">
+            <forward name="success" path="/WEB-INF/actions/stac_ssl/list.jsp" />
+        </action>
+        <action path="/stac_policiesEdit" type='ru.ecom.mis.web.action.medcase.PoliciesEditAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/stac_policies/addPolicy.jsp"/>
+        </action>
+        <action path="/printProtocolsBySLO" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/stac_slo/printProtocols.jsp"/>
+        </action>
+        <action path="/printProtocolsBySLS" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/stac_sslDischarge/list_noPrintProtocol.jsp"/>
+        </action>
+        <action path="/printMedServiciesBySMO" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/WEB-INF/actions/smo_medService/listBySmo.jsp"/>
+        </action>
+
+        <action path="/stac_policiesAdd" type='ru.ecom.mis.web.action.medcase.PoliciesAddAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/stac_policiesEdit.do" redirect="true"/>
+        </action>
+
+        <action path="/stac_policiesRemove" type='ru.ecom.mis.web.action.medcase.PoliciesRemoveAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/stac_policiesEdit.do" redirect="true"/>
+        </action>
+		<action path='/stac_journalByHospital'
+		    type='ru.ecom.mis.web.action.medcase.journal.AdmissionJournalSearchAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/listByHospital.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/listByHospital.jsp'
+		    />
+		</action>
+		<action path='/stac_journalOpenByHospital'
+		    type='ru.ecom.mis.web.action.medcase.journal.JournalOpenHospitalAction'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/listOpenHospital.jsp'
+		    />
+		</action>
+        <action path='/stac_journalOpenHospitalByDate' 
+        	type='ru.ecom.mis.web.action.medcase.journal.JournalOpenHospitalByDayAction'
+            
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/listOpenHospitalByDate.jsp" />
+        </action>
+        
+		<action path='/stac_journalCaseRareByHospital'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_ssl/caseRare_list.jsp'
+		    />
+		</action>
+        <action path='/stac_journalCaseRareHospitalByDate' 
+        	type='ru.ecom.web.actions.base.ForwardAction'
+            
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/caseRare_listByDate.jsp" />
+        </action>
+        
+		<action path='/stac_journalRepeatCaseByHospital_list'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_repeatCaseForm' validate='true' scope='session'
+		    input='/WEB-INF/actions/stac_ssl/list_repeatCase_list.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_ssl/list_repeatCase_list.jsp'
+		    />
+		</action>
+        <action path='/stac_journalRepeatCaseByHospital_data' 
+        	type='ru.ecom.web.actions.base.ForwardAction'         
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_repeatCase_data.jsp" />
+        </action>
+        
+
+		<action path='/stac_journalByUserDepartmentOnly'
+		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_slo/listByUserDepartmentOnly.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByUserDepartmentOnly.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+		    />
+		</action>
+
+		
+		<action path='/stac_journalByDepartmentAdmission'
+		    type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+		    name='stac_departmentJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/listByDepartmentAdmission.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/listByDepartmentAdmission.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+		    />
+		</action>
+		<action path='/stac_reestrByDepartment'
+		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_slo/reestrByDepartment.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/reestrByDepartment.jsp'
+		    />
+
+		</action>
+		<action path='/stac_print_reestrByDepartment'
+		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_slo/print_reestrByDepartment.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/print_reestrByDepartment.jsp'
+		    />
+		</action>
+		<action path='/stac_journalHospitalByDeniedHospitalizating'
+		    type='ru.ecom.mis.web.action.medcase.journal.HospitalByAmbulanceTreatmentAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_ssl/list_deniedHospitalization_list.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_ssl/list_deniedHospitalization_list.jsp'
+		    />
+
+		</action>
+		<action path='/stac_journalHospitalByDeniedHospitalizating_print'
+		    type='ru.ecom.mis.web.action.medcase.journal.HospitalByAmbulanceTreatmentAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_ssl/list_deniedHospitalization_print.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_ssl/list_deniedHospitalization_print.jsp'
+		    />
+		</action>
+
+		<action path='/stac_reestrByHospital'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/reestrByDate.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/reestrByDate.jsp'
+		    />
+
+		</action>
+		<action path='/stac_print_reestrByHospital'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_ssl/print_reestrByDate.jsp'
+		   >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/print_reestrByDate.jsp'
+		    />
+
+		</action>
+		<action path='/stac_journalByInformationBesk'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='mis_patientSearchForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/listByInformationBesk.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/listByInformationBesk.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+		    />
+		</action>
+		<action path='/stac_journalCurrentByUserDepartment'
+		    type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+		    name='stac_departmentJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_slo/listCurrentByUserDepartment.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listCurrentByUserDepartment.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+		    />
+		</action>
+		
+		<action path='/stac_journalByCurator'
+		    type='ru.ecom.mis.web.action.medcase.journal.ByCuratorSearchAction'
+		    name='stac_departmentJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_slo/listByCurator.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByCurator.jsp'
+		    />
+		    <forward name="successerror" redirect="false"
+		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+		    />
+		</action>
+		
+        <action path='/stac_findSlsByStatCard' type='ru.ecom.mis.web.action.medcase.journal.FindSlsByStatCardAction'
+                name='poly_medcardSearchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/stac_ssl/findByStatcard.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/findByStatcard.jsp" />
+        </action>
+		
+		
+        <action path='/stac_problemPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_sslAdmission/list_mpolicy_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_mpolicy_list.jsp" />
+        </action>
+        <action path='/stac_problemPolicy_print' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_sslAdmission/list_mpolicy_print.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_mpolicy_print.jsp" />
+        </action>
+        		
+	</action-mappings>
+
+
+</struts-config>
+

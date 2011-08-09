@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+
+<struts-config>
+
+    <form-beans>
+    
+       <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>
+       <form-bean name="exp_vocCritForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationCritForm"/>
+       <form-bean name="exp_vocMarkForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationMarkForm"/>
+       <form-bean name="expert_cardForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationCardForm"/>
+       <form-bean name="expert_qualityEstimationForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationForm"/>
+    
+    
+       <form-bean name="exp_regicForm" type="ru.ecom.expomc.ejb.services.form.registry.RegInsuranceCompanyForm" />
+       <form-bean name="exp_formatForm" type="ru.ecom.expomc.ejb.services.form.format.FormatForm" />
+       <form-bean name="exp_fieldForm" type="ru.ecom.expomc.ejb.services.form.format.FieldForm" />
+       <!--<form-bean name="importentityForm" type="ru.ecom.expomc.ejb.services.form.format.ImportEntityForm" />-->
+       <form-bean name="exp_importdocumentForm" type="ru.ecom.expomc.ejb.services.form.impdoc.ImportDocumentForm" />
+       <form-bean name="exp_importtimeForm" type="ru.ecom.expomc.ejb.services.form.impdoc.ImportTimeForm" />
+       <form-bean name="exp_formatImportFromWordForm" type="ru.ecom.expomc.web.actions.format.FormatImportFromWordForm" />
+       <form-bean name="exp_checkForm" type="ru.ecom.expomc.ejb.services.form.check.CheckForm" />
+       <form-bean name="exp_checkpropertyForm" type="ru.ecom.expomc.ejb.services.form.check.CheckPropertyForm" />
+       <form-bean name='exp_importTimeUploadForm' type='ru.ecom.expomc.web.actions.importtime.ImportTimeUploadForm' />
+       <form-bean name='exp_formatImportFromDbfForm' type='ru.ecom.expomc.web.actions.format.importfromdbf.DbfImportForm' />
+
+       <form-bean name='exp_regPreImportForm' type='ru.ecom.expomc.web.actions.registry.PreImportRegistryForm' />
+       <form-bean name='exp_regperiodForm' type='ru.ecom.expomc.ejb.services.form.registry.RegPeriodForm' />
+       <form-bean name='exp_exportForm' type='ru.ecom.expomc.ejb.services.exportservice.ExportForm' />
+
+       <form-bean name='exp_regCreateForm' type='ru.ecom.expomc.ejb.services.registry.CreateRegistryForm' />
+
+        <!-- IKO 070228 +++  -->
+        <form-bean name="exp_exportformatForm" type="ru.ecom.expomc.ejb.services.form.exportformat.ExportFormatForm"/>
+        <!-- 070308 -->
+        <form-bean name="exp_importformatForm" type="ru.ecom.expomc.ejb.services.form.importformat.ImportFormatForm"/>
+        <form-bean name='exp_importformatUploadForm' type='ru.ecom.expomc.web.actions.importformat.ImportFormatUploadForm' />
+        <!-- IKO 070228 ===  -->
+		
+		<!-- Заполнение -->
+        <form-bean name='exp_fillTimeForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimeForm' />
+        <form-bean name='exp_fillTimePropertyForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimePropertyForm' />
+		
+		<!-- Перебор -->
+        <form-bean name='exp_iterateForm' type='ru.ecom.expomc.ejb.uc.iterate.form.IterateForm' />
+
+		<!-- Последовательности -->
+		<form-bean name='exp_sequenceInfoForm' type='$$map$$exp_sequenceInfoForm' />
+    </form-beans>
+
+    <global-forwards>
+    </global-forwards>
+
+
+    <action-mappings>
+
+        <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" redirect='true' path="/exp_reg.do" />
+        </action>
+
+
+        <!-- ЭКСПЕРТИЗА -->
+
+        <action path="/edit-expert_estimation" type="ru.ecom.expomc.web.actions.exportformat.TestSqlAction"
+                scope="request" validate="false" name="exp_exportformatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_exportformat/testSql.jsp"/>
+        </action>
+        
+        
+        <!-- IKO 070301 +++ События формы "формат экспорта" -->
+        
+        
+        
+        <action path="/exp_exportformat-testSql" type="ru.ecom.expomc.web.actions.exportformat.TestSqlAction"
+                scope="request" validate="false" name="exp_exportformatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_exportformat/testSql.jsp"/>
+        </action>
+
+        <!-- 070305 -->
+
+        <action path="/exp_exportformat-testXsl" type="ru.ecom.expomc.web.actions.exportformat.TestXslAction"
+                scope="request" validate="false" name="exp_exportformatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_exportformat/testSql.jsp"/>
+        </action>
+
+        <!-- 070308 -->
+
+        <action path="/exp_exportformat-download" type="ru.ecom.expomc.web.actions.exportformat.ExportFormatDownloadAction"
+                scope="request" validate="false" name="exp_exportformatForm">
+            <forward name="success" path="/ecom_getfile.do?id="/>
+        </action>
+
+        <!-- 070312 -->
+
+        <action path="/exp_exportformat-createXsl" type="ru.ecom.expomc.web.actions.exportformat.ExportFormatCreateXslAction"
+                scope="request">
+
+            <!-- validate="false" name="exp_exportFormatForm"> -->
+
+            <forward name="success" path="/entityParentEdit-exp_exportformat.do"/>
+        </action>
+
+
+        <!-- 070308 -->
+
+        <action path = '/exp_importformatRedirectToImport'
+                type = 'ru.ecom.expomc.web.actions.importformat.ImportFormatRedirectToImportAction'
+                scope = "request" name = ''>
+            <forward name = 'success' path = '/exp_importformatUploadEdit.do' />
+        </action>
+
+        <action path='/exp_importformatUploadEdit'
+                type='ru.ecom.expomc.web.actions.importformat.ImportFormatUploadEditAction'
+                name='exp_importformatUploadForm' validate='false' scope="request">
+            <forward name="success" path="/WEB-INF/actions/exp_importformat/upload.jsp" />
+        </action>
+
+
+        <action path='/exp_importformatUploadSave'
+                type='ru.ecom.expomc.web.actions.importformat.ImportFormatUploadSaveAction'
+                name='exp_importformatUploadForm' validate='true' scope="request">
+
+            <forward name="viewlog" redirect="true" path="/exp_importformatLog.do?file="/>
+            <forward name="test" redirect="true" path="/entityParentEdit-exp_importtime.do?id=5" />
+            <forward name="success" redirect="true" path="/entityView-exp_importdocument.do?id=1&amp;file=" />
+
+            <forward name="success1" redirect="true" path="/entityParentEdit-exp_importtime.do?id=" />
+        </action>
+
+        <action path="/exp_importformatLog" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" redirect='false' path="/WEB-INF/actions/exp_importformat/viewlog.jsp" />
+        </action>
+
+        <!-- IKO 070301 === -->
+
+        <!-- Формат импорта -->
+
+        <action path="/exp_formatList" type='ru.ecom.expomc.web.actions.entity.ListAction'
+            scope='request' validate="false" name="exp_formatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_format/list.jsp" />
+        </action>
+
+        <action path="/exp_formatEdit" type='ru.ecom.expomc.web.actions.entity.EditAction'
+            scope='request' validate="false" name="exp_formatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_format/edit.jsp" />
+        </action>
+
+        <action path="/exp_formatSave" type='ru.ecom.expomc.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="formatForm" input="/WEB-INF/actions/exp_format/edit.jsp">
+            <forward name="success" path="/exp_formatList.do" redirect="true"/>
+        </action>
+
+        <action path="/exp_formatPrepareCreate" type='ru.ecom.expomc.web.actions.entity.PrepareCreateAction'
+            scope='request' validate="false" name="exp_formatForm">
+            <forward name="success" path="/WEB-INF/actions/exp_format/edit.jsp"/>
+        </action>
+
+        <action path="/exp_formatDelete" type='ru.ecom.expomc.web.actions.entity.DeleteAction'
+            scope='request' validate="false" name="exp_formatForm">
+            <forward name="success" path="/exp_formatList.do" redirect="true"/>
+        </action>
+
+        <action path="/exp_formatImportFromWordEdit" type='ru.ecom.expomc.web.actions.base.ForwardAction'
+                name='formatImportFromWordForm'>
+            <forward name="success" path="/WEB-INF/actions/format/exp_importFromWord.jsp" />
+        </action>
+
+        <action path="/exp_formatDefaultKodNameAdd" type='ru.ecom.expomc.web.actions.format.FormatDefaultKodNameAddAction'>
+            <forward name="success" path="/entityParentList-exp_field.do" />
+        </action>
+
+        <action path="/exp_formatImportFromWordSave" type='ru.ecom.expomc.web.actions.format.FormatImportFromWordSaveAction'
+                input="/WEB-INF/actions/exp_format/importFromWord.jsp" name='formatImportFromWordForm'>
+            <forward name="success" path="/entityParentList-exp_field.do" redirect="true" />
+        </action>
+
+        <action path="/exp_importDataList" type='ru.ecom.expomc.web.actions.importdata.ImportDataListAllAction' >
+            <forward name="success" path="/WEB-INF/actions/exp_importdata/list.jsp" />
+        </action>
+
+
+        <!-- Сообщения -->
+        <action path='/exp_messageList' type='ru.ecom.expomc.web.actions.messages.MessageListAction'>
+            <forward name="success" path="/WEB-INF/actions/exp_messages/list.jsp" />
+        </action>
+
+        <action path='/exp_messageView' type='ru.ecom.expomc.web.actions.messages.MessageViewAction'>
+            <forward name="success" path="/WEB-INF/actions/exp_messages/view.jsp" />
+        </action>
+        <action path='/exp_policyAccept' type='ru.ecom.expomc.web.actions.messages.AcceptPolicyAction'>
+            <forward name="success" path="/exp_messageView.do" />
+        </action>
+        <action path='/exp_nextMessage' type="ru.ecom.expomc.web.actions.messages.NextMessageAction">
+            <forward name="success" path="/exp_messageView.do" />
+        </action>
+
+        <!-- Проверки -->
+        <action path='/exp_checkPropertyList' type='ru.ecom.expomc.web.actions.checkproperty.CheckPropertyListAction'>
+            <forward name="success" path="/WEB-INF/actions/exp_checkproperty/list.jsp" />
+        </action>
+        <action path='/exp_checkPropertyEdit' type='ru.ecom.expomc.web.actions.checkproperty.CheckPropertyEditAction'
+                name='exp_checkpropertyForm' validate="false" scope="request">
+            <forward name="success" path="/WEB-INF/actions/exp_checkproperty/edit.jsp" />
+        </action>
+
+        <action path='/exp_checkPropertySave' type='ru.ecom.expomc.web.actions.checkproperty.CheckPropertySaveAction'
+                name='exp_checkpropertyForm' validate="true" scope="request" input="/WEB-INF/actions/exp_checkproperty/edit.jsp">
+            <forward name="success" path="/entityParentView-exp_check.do" redirect="true"/>
+        </action>
+
+        <action   path = '/exp_checkTablePropertiesEdit'
+                  type = 'ru.ecom.expomc.web.actions.checkproperty.TableCheckPropertiesEditAction'
+                 scope = "request"
+                  name = ''
+                 input = ""
+                >
+            <forward name = 'success'
+                 redirect = "false"
+                     path = '/WEB-INF/actions/exp_checkproperty/checkTableProperties.jsp' />
+        </action>
+
+        <action   path = '/exp_checkTablePropertiesSave'
+                  type = 'ru.ecom.expomc.web.actions.checkproperty.TableCheckPropertiesSaveAction'
+                 scope = "request"
+                  name = ''
+                 input = ""
+                >
+            <forward name = 'success'
+                 redirect = "true"
+                     path = '/entityParentEdit-exp_format.do' />
+        </action>
+
+        <!-- Поле -->
+        <action path='/exp_fieldEdit' type='ru.ecom.expomc.web.actions.field.FieldEditAction' name='exp_fieldForm' validate='false' scope="request">
+            <forward name="success" path="/WEB-INF/actions/exp_field/edit.jsp" />
+        </action>
+
+        <action path='/exp_fieldPrepareCreate' type='ru.ecom.expomc.web.actions.field.FieldPrepareCreateAction' name='exp_fieldForm' validate='false' scope="request">
+            <forward name="success" path="/WEB-INF/actions/exp_field/edit.jsp" />
+        </action>
+
+        <!-- ImportTime -->
+        <action path='/exp_importTimeUploadEdit' type='ru.ecom.expomc.web.actions.importtime.ImportTimeUploadEditAction' name='exp_importTimeUploadForm' validate='false' scope="request">
+            <forward name="success" path="/WEB-INF/actions/exp_importtime/upload.jsp" />
+        </action>
+
+        <action path='/exp_importTimeUploadSave' type='ru.ecom.expomc.web.actions.importtime.ImportTimeUploadSaveAction' name='exp_importTimeUploadForm' validate='true' scope="request">
+            <forward name="success" redirect="true" path="/entityParentEdit-exp_importtime.do?id=" />
+        </action>
+
+        <action path='/exp_importtimeCheck' type='ru.ecom.expomc.web.actions.importtime.ImportTimeCheck' scope="request">
+            <forward name='success' redirect="true" path='/entityParentEdit-exp_importtime.do?id=' />
+        </action>
+
+        <!-- Import Format From Dbf -->
+        <action   path = '/exp_formatImportFromDbfEdit'
+                  type = 'ru.ecom.expomc.web.actions.format.importfromdbf.EditAction'
+                 scope = "request"
+                  name = 'exp_formatImportFromDbfForm'>
+            <forward name = 'success'
+                     path = '/WEB-INF/actions/exp_format/importFromDbf.jsp' />
+        </action>
+
+        <action   path = '/exp_formatRemoveFieldsWithEmptyProperty'
+                  type = 'ru.ecom.expomc.web.actions.format.FormatDeleteFieldsWithEmptyProperties'
+                 scope = "request"
+                  name = ''>
+            <forward name = 'success'
+                     path = '/entityParentList-exp_field.do' />
+        </action>
+
+        <action   path = '/exp_formatRedirectToImport'
+                  type = 'ru.ecom.expomc.web.actions.format.FormatRedirectToImportAction'
+                 scope = "request"
+                  name = ''>
+            <forward name = 'success'
+                     path = '/exp_importTimeUploadEdit.do' />
+        </action>
+
+        <action   path = '/exp_formatImportFromDbfSave'
+                  type = 'ru.ecom.expomc.web.actions.format.importfromdbf.SaveAction'
+                 scope = "request"
+                  name = 'exp_formatImportFromDbfForm'
+                 input = "/WEB-INF/actions/exp_format/importFromDbf.jsp"
+                >
+            <forward name = 'success'
+                 redirect = "true"
+                     path = '/entityParentList-exp_field.do' />
+        </action>
+
+        <!-- Импорт реестров -->
+        <action path='/exp_regPreImportEdit'
+                type='ru.ecom.expomc.web.actions.registry.PreImportRegistryEditAction'
+                scope="request"
+                name='exp_regPreImportForm'
+                input=""
+                validate="false">
+            <forward name='success' path='/WEB-INF/actions/exp_registry/preImport.jsp' />
+        </action>
+
+        <action path='/exp_regPreImportSave' type='ru.ecom.expomc.web.actions.registry.PreImportRegistrySaveAction'
+                scope="request"
+                name='exp_regPreImportForm'
+                input="/WEB-INF/actions/exp_registry/preImport.jsp"
+                >
+            <forward name='success' redirect="true" path='/exp_regImportEdit.do' />
+        </action>
+
+        <action path='/exp_regImportEdit' type='ru.ecom.expomc.web.actions.registry.ImportRegistryEditAction'
+                scope="request">
+            <forward name='success' path='/WEB-INF/actions/exp_registry/importEdit.jsp' />
+        </action>
+
+        <action
+                path="/exp_reg"
+                type="ru.ecom.expomc.web.actions.base.ForwardAction">
+            <forward
+                    name="success"
+                    path="/WEB-INF/actions/exp_registry/start.jsp"
+                    />
+        </action>
+
+        <action path='/exp_sync' type='ru.ecom.expomc.web.actions.sync.SyncAction'
+                name=''
+                validate='false'
+                scope="request">
+            <forward name="success" redirect="true" path="/entityParentEdit-exp_importtime.do?id=" />
+        </action>
+
+
+        <action path="/ecom_monitor" type='ru.ecom.web.actions.base.ForwardAction'>
+            <forward name='success' path='/WEB-INF/actions/ecom_monitor/monitor.jsp' />
+        </action>
+
+        <action path="/exp_exportEdit" type='ru.ecom.expomc.web.actions.export.ExportEditAction'
+                name='exp_exportForm' validate='false'>
+            <forward name='success' path='/WEB-INF/actions/exp_export/edit.jsp' />
+        </action>
+
+        <action path="/exp_exportSave" type='ru.ecom.expomc.web.actions.export.ExportSaveAction'
+                name='exp_exportForm' validate='true'
+                input='/WEB-INF/actions/exp_export/edit.jsp'>
+            <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
+           <!-- <forward name='success' path='/entityView-exp_importdocument.do?id=' /> -->
+        </action>
+
+        <action path='/exp_reg' type='ru.ecom.web.actions.base.ForwardAction'>
+            <forward name='success' path='/exp_regCreateEdit.do' />
+        </action>
+
+        <action path="/exp_regCreateEdit" type='ru.ecom.expomc.web.actions.regcreate.RegCreateEditAction'
+                name='exp_regCreateForm' validate='false' scope="session">
+            <forward name='success' path='/WEB-INF/actions/exp_regcreate/edit.jsp' />
+        </action>
+
+        <action path="/exp_regCreateSave" type='ru.ecom.expomc.web.actions.regcreate.RegCreateSaveAction'
+                name='exp_regCreateForm' validate='true' scope="session"
+                input="/WEB-INF/actions/exp_regcreate/edit.jsp">
+            <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
+        </action>
+        
+        <action path="/exp_messagesByCheck" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" redirect='false' path="/WEB-INF/actions/exp_messages/messagesByCheck.jsp" />
+        </action>
+
+        <action path="/exp_messagesOther" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" redirect='false' path="/WEB-INF/actions/exp_messages/messagesOther.jsp" />
+        </action>
+        
+        
+        <action path="/exp_importDocumentDeleteAllValues" type='ru.ecom.expomc.web.actions.importdocument.ImportDocumentDeleteAllValuesAction'
+            scope='request' validate="false" name="">
+            <forward name="success" redirect='true' path="/entityList-exp_importdocument.do" />
+        </action>
+        
+					    
+        <action path="/exp_importdataAppend" type='ru.ecom.expomc.web.actions.importdata.ImportDataAppendDataAction'
+            scope='request' validate="false" >
+            <forward name="success" redirect='true' path="/entityList-exp_importdocument.do" />
+        </action>
+        
+        <!-- Запуск заполнения -->
+        <action path = "/exp_fillTimeExecute" 
+        		type = 'ru.ecom.expomc.web.actions.filltime.ExecuteFillTimeServiceAction'
+               scope = 'request' 
+            validate = "false" >
+            <forward name="success" 
+            	 redirect='true' 
+            	     path="/entityParentView-exp_importtime.do?id=" />
+        </action>
+        
+        <!-- Свойство заполнения по формату -->
+        <action path = "/exp_fillTimePropertyByFormat" 
+        		type = 'ru.ecom.expomc.web.actions.filltime.FillTimePropertyByFormatAction'
+               scope = 'request' 
+            validate = "false" 
+                name = "exp_fillTimePropertyForm"
+            >
+        </action>
+
+        <!-- Запуск перебора -->
+        <action path = "/exp_iterateExecute" 
+        		type = 'ru.ecom.expomc.web.actions.iterate.ExecuteIterateServiceAction'
+               scope = 'request' 
+            validate = "false" >
+            <forward name="success" 
+            	 redirect='true' 
+            	     path="/entityView-exp_iterate.do?id=" />
+        </action>        
+    </action-mappings>
+
+
+
+    <controller maxFileSize="1000M" nocache="true">
+    </controller>
+
+</struts-config>

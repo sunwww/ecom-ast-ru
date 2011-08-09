@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+    <form-beans>
+
+        <!--шаблоны протоколов-->
+        <form-bean name="diary_templateForm" type="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm"/>
+        <form-bean name="diary_templatewordForm" type="ru.ecom.diary.ejb.form.TemplateWordForm"/>
+        <form-bean name="diary_protocolForm" type="ru.ecom.diary.ejb.form.DiaryForm"/>
+<!--         <form-bean name="diary_templateProtocolForm" type="ru.ecom.diary.ejb.form.TemplateProtocolForm"/> -->
+        <form-bean name="diary_templateProtocolTypeForm" type="ru.ecom.diary.ejb.form.TemplateProtocolTypeForm"/>
+        <form-bean name="diary_templateClassifForm" type="ru.ecom.diary.ejb.form.TemplateClassifForm"/>
+        <form-bean name="diary_templateProtocolCategoryForm" type="ru.ecom.diary.ejb.form.TemplateProtocolCategoryForm"/>
+        
+        <form-bean name="diary_parameterForm" type="ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm"/>
+        <form-bean name="diary_parameterGroupForm" type="ru.ecom.diary.ejb.form.protocol.parameter.ParameterGroupForm"/>
+        <form-bean name="diary_userValueForm" type="ru.ecom.diary.ejb.form.protocol.parameter.user.UserValueForm"/>
+        <form-bean name="diary_userDomainForm" type="ru.ecom.diary.ejb.form.protocol.parameter.user.UserDomainForm"/>
+
+        <form-bean name="temp_categoryForm" type="ru.ecom.diary.ejb.form.category.TemplateCategoryForm"/>
+        <form-bean name="temp_protocolForm" type="ru.ecom.diary.ejb.form.TemplateProtocolForm"/> 
+        
+        <!-- Шаблоны листа назначений (main) -->
+        <form-bean name="pres_templateForm" type="ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm"/>
+        <!-- Шаблон листа назначений. Лекарственное средство -->
+        <form-bean name="pres_template_prescriptionForm" type="ru.ecom.mis.ejb.form.prescription.template.PrescriptionForm"/>
+        <form-bean name="pres_template_drugPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.template.DrugPrescriptionForm"/>
+        
+    </form-beans>
+
+    <global-forwards>
+    </global-forwards>
+
+    <action-mappings>
+        <action path='/stat_protocolSearch' type='ru.ecom.diary.web.action.protocol.ProtocolSearchRedirectAction'
+                name=''
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="true" path="/WEB-INF/actions/stat_protocol/list.jsp" />
+        </action>
+        <action path='/diary_parameterEdit' type='ru.ecom.diary.web.action.protocol.parameter.ParameterEditAction'
+                name='diary_parameterForm'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/entityEdit-diary_parameter.do" />
+            <forward name="success_file" redirect="false" path="/WEB-INF/actions/diary_parameter/file.jsp" />
+        </action>
+        <action path="/diary_parameterView" type='ru.ecom.diary.web.action.protocol.parameter.ParameterViewAction'
+            scope='request' validate="false" name="diary_parameterForm">
+            <forward name="success" redirect="false" path="/entityEdit-diary_parameter.do" />
+            <forward name="success_file" redirect="false" path="/WEB-INF/actions/diary_parameter/file.jsp" />
+        </action>
+        <action path="/diary_parameterSave" type='ru.ecom.diary.web.action.protocol.parameter.ParameterSaveAction'
+            scope='request' validate="false" name="diary_parameterForm">
+            <forward name="success" redirect="true" path="/entityParentList-diary_parameter.do" />
+            <forward name="success_file" redirect="false" path="/WEB-INF/actions/diary_parameter/file.jsp" />
+        </action>
+		<action path="/diary_parameterPrepareCreate" type='ru.ecom.diary.web.action.protocol.parameter.ParameterPrepareCreateAction'
+            scope='request' validate="false" name="diary_parameterForm">
+            <forward name="success" path="/WEB-INF/actions/diary_parameter/file.jsp"/>
+        </action>
+
+        <action path="/diary_templateView" 
+        	type='ru.ecom.diary.web.action.protocol.template.TemplateViewAction'
+            scope='request' validate="false" name="diary_templateForm">
+            <forward name="success" path="/WEB-INF/actions/diary_template/edit.jsp"/>
+        </action>
+        <action path="/diary_templateParamsEdit" 
+        	type='ru.ecom.diary.web.action.protocol.template.TemplateEditAction'
+            scope='request' validate="false" name="diary_templateForm">
+            <forward name="success" path="/WEB-INF/actions/diary_template/parameters.jsp"/>
+        </action>
+
+        
+    </action-mappings>
+
+
+</struts-config>
+

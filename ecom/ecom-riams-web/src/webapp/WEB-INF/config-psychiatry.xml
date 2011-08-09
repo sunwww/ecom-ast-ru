@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+  <form-beans>
+  
+    <!-- В обработке -->
+    
+
+    <form-bean name="psych_careCardForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricCareCardForm" />
+    <form-bean name="psych_areaReportForm" type="ru.ecom.mis.web.action.psych.AreaReportForm" />
+    
+    <!-- Руки не дошли -->
+    
+    <form-bean name="psych_compulsoryTreatmentForm" type="ru.ecom.mis.ejb.form.psychiatry.CompulsoryTreatmentForm" />
+    <form-bean name="psych_examinationForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricExaminationForm" />
+    <form-bean name="psych_healthStateForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychicHealthStateForm" />
+    <form-bean name="psych_lpuAreaPsychCareCardForm" type="ru.ecom.mis.ejb.form.psychiatry.LpuAreaPsychCareCardForm" />
+    <form-bean name="psych_observationForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychiaticObservationForm" />
+    <form-bean name="psych_publicDangerousEffectForm" type="ru.ecom.mis.ejb.form.psychiatry.PublicDangerousEffectForm" />
+    <form-bean name="psych_suicideForm" type="ru.ecom.mis.ejb.form.psychiatry.SuicideForm" />
+
+
+
+  </form-beans>
+  <global-forwards />
+
+  <action-mappings>
+
+        <action path='/psych_listByArea' type='ru.ecom.mis.web.action.patient.PsychCareCardByAreaAction'
+                name='psych_areaReportForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/mis_lpuArea/list_drivePatient.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_drivePatient.jsp" />
+        </action>
+        <action path='/psych_listByArea_print' type='ru.ecom.mis.web.action.patient.PsychCareCardByAreaAction'
+                name='psych_areaReportForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/mis_lpuArea/list_drivePatient_print.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_drivePatient_print.jsp" />
+        </action>
+  </action-mappings>
+</struts-config>
+

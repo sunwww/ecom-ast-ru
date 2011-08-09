@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>exp</short-name>
+    <uri>http://www.ecom-ast.ru/tags/exp</uri>
+
+    <tag>
+        <description>Список настроек у проверки</description>
+        <display-name>Список настроек у проверки</display-name>
+        <name>checkPropertyList</name>
+        <tag-class>ru.ecom.expomc.web.tags.CheckPropertyListTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+    
+    <tag>
+        <description>Ссылка на изменение исходных данных</description>
+        <display-name>Ссылка на изменение исходных данных</display-name>
+        <name>messageUrlEdit</name>
+        <tag-class>ru.ecom.expomc.web.tags.MessageUrlEditTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+
+    <tag>
+        <description>Поля, на которые следует обратить внимание</description>
+        <display-name>Поля, на которые следует обратить внимание</display-name>
+        <name>messageBadProperties</name>
+        <tag-class>ru.ecom.expomc.web.tags.MessageBadPropertiesTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+
+    <tag>
+        <description>Список свойств по формату</description>
+        <display-name>Список свойств по формату</display-name>
+        <name>fillTimePropertiesByFormat</name>
+        <tag-class>ru.ecom.expomc.web.tags.ListFillTimePropertyByFormat</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+    
+</taglib>
