@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<project default="all" name="msh-ejb" basedir=".">
+
+    <property name="appname" value="msh-ejb"/>
+    <property name='dirname' value="msh/ejb"/>
+	<property name="ant-support.prefix.dir" value="../../ecom"/>
+
+    <import file="../../ecom/ant-support/property-skeleton.xml" />
+
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="apache-commons/commons-logging.jar"/>
+        <include name="apache-commons/commons-beanutils.jar"/>
+        <include name="log4j/log4j.jar"/>
+        <include name="j2ee-api/ejb3-persistence.jar"/>
+        <include name="jboss/jbossall-client.jar"/>
+        <include name="servlet/servlet-api.jar"/>
+        <include name="struts/struts.jar"/>
+
+		<include name="msh-logicpool/msh-logicpool-api.jar"/>
+		<include name="msh/commons/msh-commons.jar"/>
+		<include name="msh/forms/msh-forms.jar"/>
+		<include name="msh/util/msh-util.jar"/>
+		<include name="msh/util-voc/msh-util-voc.jar"/>
+    </fileset>
+
+    <import file="../../ecom/ant-support/lib-skeleton.xml" />
+</project>
