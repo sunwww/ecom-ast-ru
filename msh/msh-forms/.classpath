@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-util"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/msh-logicpool-api"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jboss-allclient"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/struts"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-api"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-beanutils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-riams-ejb"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-ejbweb-web"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

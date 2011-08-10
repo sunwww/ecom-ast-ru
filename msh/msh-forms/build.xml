@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<project default="all" name="msh-forms" basedir=".">
+
+    <property name="appname" value="msh-forms"/>
+    <property name='dirname' value="msh/forms"/>
+	<property name="ant-support.prefix.dir" value="../../ecom"/>
+
+    <import file="../../ecom/ant-support/property-skeleton.xml" />
+
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="apache-commons/commons-beanutils.jar"/>
+        <include name="log4j/log4j.jar"/>
+        <include name="jboss/jbossall-client.jar"/>
+        <include name="servlet/servlet-api.jar"/>
+        <include name="struts/struts.jar"/>
+		<include name="ecom/riams/ejb/riams-ejb-api.jar" />
+		<include name="ecom/ejbweb/web/ecom-web.jar" />
+		<include name="msh/util/msh-util.jar"/>
+    </fileset>
+
+    <import file="../../ecom/ant-support/lib-skeleton.xml" />
+</project>
