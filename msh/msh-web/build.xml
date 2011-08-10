@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<project default="all" name="msh-web" basedir=".">
+
+    <property name="appname" value="msh-web"/>
+    <property name='dirname' value="msh/web"/>
+	<property name="ant-support.prefix.dir" value="../../ecom"/>
+	<property name="build.dir" value="target"/>
+
+    <import file="../../ecom/ant-support/property-skeleton.xml" />
+
+	<target name="all" depends="clean,compile,generate.web,package,deploy" />
+	
+    <fileset id="compile.fileset" dir="${libdir}/">
+        <include name="apache-commons/commons-logging.jar"/>
+        <include name="apache-commons/commons-beanutils.jar"/>
+        <include name="log4j/log4j.jar"/>
+        <include name="j2ee-api/ejb3-persistence.jar"/>
+        <include name="jboss/jbossall-client.jar"/>
+        <include name="servlet/servlet-api.jar"/>
+        <include name="jsp/jsp-api.jar"/>
+        <include name="struts/struts.jar"/>
+        <include name="ecs/ecs-1.4.2.jar"/>
+        <include name="jdom/jdom.jar"/>
+        <include name="json/json.jar"/>
+
+		<include name="msh-logicpool/msh-logicpool-api.jar"/>
+		<include name="msh/commons/msh-commons.jar"/>
+		<include name="msh/forms/msh-forms.jar"/>
+		<include name="msh/util/msh-util.jar"/>
+		<include name="msh/util-voc/msh-util-voc.jar"/>
+    	
+    	<include name="ecom/riams/ejb/riams-ejb-api.jar" />
+    </fileset>
+
+    <import file="../../ecom/ant-support/lib-skeleton.xml" />
+	
+    <path id="xdoclet-classpath">
+        <fileset dir="${lib.dir}">
+            <include name="xdoclet/*.jar"/>
+            <include name="servlet/*.jar"/>
+            <include name="struts/*.jar"/>
+            <include name="jsp/*.jar"/>
+            <include name="msh/designer/*.jar"/>
+            <include name="msh/util/*.jar"/>
+            <include name="msh/forms/*.jar"/>
+        </fileset>
+    </path>
+	
+    <target name="generate.web" description="Создание файлов: stuts-config.xml, msh.tld">
+        <taskdef name="webdoclet" classname="xdoclet.modules.web.WebDocletTask" classpathref="xdoclet-classpath"/>
+
+
+
+        <delete file="${build.dir}/classes/META-INF/msh.tld"/>
+        <mkdir dir="${build.dir}/classes/META-INF/" />
+
+        <webdoclet destDir="${build.dir}/classes/META-INF"
+                   verbose="true" >
+
+            <fileset dir="src/main/java">
+                <include name="ru/nuzmsh/web/tags/*Tag.java"/>
+                <include name="ru/nuzmsh/web/tree/*Tag.java"/>
+            </fileset>
+
+            <jsptaglib
+                    jspversion="2.0"
+                    destdir="${build.dir}/classes/META-INF"
+                    shortname="msh"
+                    validateXml="true"
+                    filename="msh.tld"
+                    uri="http://www.nuzmsh.ru/tags/msh"
+                    />
+        </webdoclet>
+    </target>
+	
+</project>

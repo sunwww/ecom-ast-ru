@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<project default="dist" name="WEB" basedir=".">
+
+    <!-- ***************************************************************** -->
+    <!-- Give users a chance to override build properties.                 -->
+    <!-- ***************************************************************** -->
+    <property file="${user.home}/msh-logicpool.build.properties" />
+    <property file="${user.home}/build.properties" />
+    <property file="${basedir}/build.properties" />
+    <property file="${basedir}/default.properties" />
+
+    <path id="xdoclet-classpath">
+        <fileset dir="${lib.dir}">
+            <include name="xdoclet/*.jar"/>
+            <include name="servlet/*.jar"/>
+            <include name="struts/*.jar"/>
+            <include name="jsp/*.jar"/>
+            <include name="msh/designer/*.jar"/>
+            <include name="msh/util/*.jar"/>
+            <include name="msh/forms/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="${library.name}" >
+        <jar jarfile="${build.dir}/${library.name}.jar"
+            basedir="${build.dir}/classes"/>
+
+        <jar jarfile="${build.dir}/${library.name}-src.jar"
+            basedir="main/src"/>
+
+    </target>
+
+    <!-- DIST -->
+    <target name="dist" depends="${library.name}">
+        <mkdir dir="${library.dist.dir}" />
+        <copy todir="${library.dist.dir}" overwrite="true">
+            <fileset file='${build.dir}/${library.name}.jar' />
+            <fileset file='${build.dir}/${library.name}-src.jar' />
+        </copy>
+    </target>
+
+    <target name="generate.web" description="Создание файлов: stuts-config.xml, msh.tld">
+        <taskdef name="webdoclet" classname="xdoclet.modules.web.WebDocletTask" classpathref="xdoclet-classpath"/>
+
+
+
+        <delete file="${build.dir}/main/classes/META-INF/msh.tld"/>
+        <mkdir dir="${build.dir}/main/classes/META-INF/" />
+
+        <webdoclet destDir="${build.dir}/classes/META-INF"
+                   verbose="true" >
+
+            <fileset dir="main/src">
+                <include name="ru/nuzmsh/web/tags/*Tag.java"/>
+                <include name="ru/nuzmsh/web/tree/*Tag.java"/>
+            </fileset>
+
+            <jsptaglib
+                    jspversion="2.0"
+                    destdir="${build.dir}/classes/META-INF"
+                    shortname="msh"
+                    validateXml="true"
+                    filename="msh.tld"
+                    uri="http://www.nuzmsh.ru/tags/msh"
+                    />
+        </webdoclet>
+    </target>
+
+
+
+</project>
