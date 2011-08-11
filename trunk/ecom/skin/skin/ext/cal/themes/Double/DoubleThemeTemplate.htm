@@ -1,0 +1,43 @@
+<HTML>
+<HEAD><TITLE>Double Theme</TITLE>
+
+</HEAD>
+<BODY>
+
+<form>
+<input name="dateField1" value="" size="11" class="plain"><input name="popcal" type="button" value="..." class="vbtn" onclick="if(this.blur)this.blur();if(self.gfPop_1)gfPop_1.fPopMulti(this.form.dateField1);">
+<input name="dateField2" value="" size="11" class="plain"><input name="popcal" type="button" value="..." class="vbtn" onclick="if(this.blur)this.blur();if(self.gfPop_1)gfPop_1.fPopMulti(this.form.dateField2,[[2004,6,8],[2004,8,8],[2004,8]]);">
+</form>
+
+
+
+
+<font size=-1>
+<BR><BR>
+<BR>NOTE: Set the gAgendaMask options to -1 to enable all agenda effects.
+<BR>NOTE: In this theme demo, we passed in a dynamic range constraint to the second date-picker (start from 2004.6.8 to 2004.8.8).
+</font>
+
+  <hr size="1">
+  <div align="right"><font size=-2><em>Copyright&copy; 2003-2007 Idemfactor Solutions,
+    Inc. All rights reserved.</em></font></div>
+
+
+
+<!-- calendar panel div, id must be "calPanel" -->
+<div id="calPanel" style="z-index:999; position:absolute; background:white; top:-500px; left:-500px;"
+onmousedown="event.cancelBubble=true;">
+<table border="0" cellspacing="0" cellpadding="4" style="border:solid 1px black;">
+<tr bgcolor="#45443F"><td colspan=5 align="right" ><a href="javascript:void(0)" onclick="gfPop_1.fHideCal()" style="text-decoration:none; font: bold 7pt verdana; color:white;">Close Window</a></td></tr>
+<tr><td height="8"></td></tr>
+<tr><td valign="top"><IMG id='navPrev' class='MonthNav' src='left.gif' border='0' alt='' onmousedown='gfPop_1.showPrevMon()' onmouseup='gfPop_1.stopShowMon()' onmouseout='gfPop_1.stopShowMon();if(this.blur)this.blur()'></td>
+<td><iframe name="gToday:doubleleft:agenda.js:gfPop_1" id="gToday:doubleleft:agenda.js:gfPop_1" src="ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999;"></iframe></td>
+<td></td>
+<td><iframe name="[gToday[0],gToday[1]+1]:doubleright:share[gfPop_1]:gfPop_2" id="[gToday[0],gToday[1]+1]:doubleright:share[gfPop_1]:gfPop_2" src="ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999;">
+</iframe></td><td valign="top"><IMG id='navNext' class='MonthNav' src='right.gif' border='0' alt='' onmousedown='gfPop_1.showNextMon()' onmouseup='gfPop_1.stopShowMon()' onmouseout='gfPop_1.stopShowMon();if(this.blur)this.blur()'></td></tr>
+<tr><td height="8"></td></tr>
+</table>
+</div>
+<!-- calendar panel -->
+</BODY>
+</HTML>
