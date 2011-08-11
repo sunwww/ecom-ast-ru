@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>A canvas lineWidth example</title>
+    <meta name="DC.creator" content="Kamiel Martinet, http://www.martinet.nl/">
+    <meta name="DC.publisher" content="Mozilla Developer Center, http://developer.mozilla.org">
+    
+    <script type="application/x-javascript">
+      function draw() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+		for(var i=0; i<1000; i++) {
+   		    ctx.lineWidth = 1 ;
+            ctx.beginPath();
+            ctx.moveTo(10+i,10+i*3);
+            ctx.lineTo(500+i,500+i*3);
+	    	ctx.stroke() ;
+		}
+      }
+    </script>
+    <style type="text/css">
+      body { margin: 20px; font-family: arial,verdana,helvetica; background: #fff;}
+      h1 { font-size: 140%; font-weight:normal; color: #036; border-bottom: 1px solid #ccc; }
+      canvas { 
+      	position: absolute;
+      	left: 10px ;
+      	top: 10px ;
+      	border: 1px solid red ;
+	  }
+	  
+	  #hello {
+	  	position: absolute;
+	  	background-color: white ;
+      	border: 1px solid red ;
+      	top: 300px ;
+      	left: 300px ;
+      	width: 400px ;
+      	height: 200px ;	
+	  }
+      
+      
+    </style>
+  </head>
+
+  <body onload="draw();">
+    <h1>A canvas <code>lineWidth</code> example</h1>
+    <div>
+      <canvas id="canvas" width='1000' height='800'></canvas>
+		<div id='hello'>
+			<input type="text" name='asdf'/>
+		</div>
+    </div>
+  </body>
+</html>

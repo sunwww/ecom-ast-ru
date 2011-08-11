@@ -1,0 +1,27 @@
+<html>
+<head>
+<script type="text/javascript" src="/skin/js/js/wz_jsgraphics/wz_jsgraphics.js"></script>
+</head>
+<body>
+
+<div id='canvas' style='position: absolute; left: 1em ; top: 1em ; width: 100px; height:100px ; border: 1px solid red' onclick='cl();'>
+
+</div>
+<script type="text/javascript" >
+	function cl() {
+		jg_doc.clear() ;
+		alert("cleared") ;
+	}
+	
+	
+	jg_doc = new jsGraphics('canvas');
+	 jg_doc.setColor("red"); // green
+  jg_doc.fillEllipse(100, 200, 100, 180); // co-ordinates related to the document
+  jg_doc.setColor("black");
+  jg_doc.drawPolyline(new Array(50, 10, 120), new Array(10, 50, 70));
+  jg_doc.paint(); // draws, in this case, directly into the document
+	
+</script>
+
+</body>
+</html>

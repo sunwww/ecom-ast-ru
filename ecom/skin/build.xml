@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JS, css, images" basedir="." default='all' >
+
+	<property file="${user.home}/build.properties"/>
+
+	<target name='all' depends="prepare, shrink">
+		
+	</target>
+	<target name="prepare">
+		<copy file='${libdir}/msh/web/msh-web.jar' todir="./skin/WEB-INF/lib" />
+		<copy file='${libdir}/apache-commons/commons-logging.jar' todir="./skin/WEB-INF/lib" />
+	</target>
+	
+  <target name="shrink" description="Уменьшение количества файлов и размера JS">
+
+  		
+  	<concat fixlastline="true" destfile="skin/a.js">
+  			<fileset file='skin/js/prototype/prototype-1.3.1.js' />
+  	  		<fileset file='skin/js/tablearrow/tablearrow.js' />
+  	  		<fileset file='skin/js/json/json.js' />
+  	  		<fileset file='skin/js/main/cookie.js' />
+  	  		<fileset file='skin/js/main/msh.js' />
+  	  		<fileset file='skin/js/main/effect/FadeEffect.js' />
+  	  		<fileset file='skin/js/main/widget/Dialog.js' />
+  	  		<fileset file='skin/js/main/widget/TreeTableDialog.js' />
+  	  		<fileset file='skin/js/main/widget/AutocompleteTableView.js' />
+  	  		<fileset file='skin/js/main/widget/TreeAutocompleteTableView.js' />
+  	  		<fileset file='skin/js/main/widget/TreeTable.js' />
+  	  		<fileset file='skin/js/main/util/FormData.js' />
+  	  		<fileset file='skin/js/main/errorutil.js' />
+  	  		<fileset file='skin/js/main/eventUtil.js' />
+  	  		<fileset file='skin/js/main/accessKeyUtil.js' />
+  	  		<fileset file='skin/js/main/snilsutil.js' />
+  	  		<fileset file='skin/js/main/dateutil.js' />
+  	  		<fileset file='skin/js/main/timeutil.js' />
+  	  		<fileset file='skin/js/main/keysupport.js' />
+  	  		<fileset file='skin/js/main/tabbedpane.js' />
+  	  		<fileset file='skin/js/main/autocomplete.js' />
+  	  		<fileset file='skin/js/main/treeautocomplete.js' />
+  	  		<fileset file='skin/js/main/widget/VocValueEdit.js' />
+  	  		<fileset file='skin/js/main/form.js' />
+  	  		<fileset file='skin/js/main/widget/OneToManyAutocompletes.js' />
+	</concat>
+  	
+	<java dir="${basedir}" classpath="${libdir}/rhino/custom_rhino.jar" 
+		classname="org.mozilla.javascript.tools.shell.Main" args="-c ./skin/a.js" 
+		output="./skin/ac.js"
+	/>
+  </target>
+</project>

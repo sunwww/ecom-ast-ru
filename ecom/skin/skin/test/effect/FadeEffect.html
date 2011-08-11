@@ -1,0 +1,38 @@
+<html>
+<head>
+    <title>Эффект затемнения</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="../../css/main/main.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="../../js/prototype/prototype-1.3.1.js"></script>
+    <script type='text/javascript' src='../../js/main/msh.js'></script>
+    <script type='text/javascript' src='../../js/main/effect/FadeEffect.js'></script>
+</head>
+
+<body>
+
+
+<a href="#" onclick='putFade()'> PUT </a>
+
+<a href="#" onclick='pushFade()'> PUSH </a>
+
+<script type="text/javascript">
+    function putFade() {
+        msh.effect.FadeEffect.putFade();
+    }
+    function pushFade() {
+        msh.effect.FadeEffect.pushFade();
+    }
+
+</script>
+
+<style type="text/css">
+    #fadeEffect {
+        background-image: url('../../images/main/fade_gray.gif') ;
+        top: 4em ;
+    }
+</style>
+
+</body>
+</html>
+
