@@ -1,0 +1,1580 @@
+@charset "utf-8";
+
+.instant_message { padding: 5px; font-size: 12px; font-family: Arial; visibility: hidden;
+position: absolute;
+width: 80%;
+border: outset 2px #FFFFFF; background:#EEEEEE
+}
+.instant_message input {
+	background: #EEEEEE ;
+	width: 97% ;
+}
+.instant_message table.tabview td {
+	background: white ;
+}
+.instant_message a { width: 240px; padding: 2px 17px; color: #0A246A; text-decoration: none;
+ cursor: default}
+ .instant_message h2 { font-size: 100%;text-align: center;}
+.instant_message a:hover {color: #ffffff; background: #0A246A}
+a.a_instance_message{
+	border-bottom:1px dashed black ;
+}
+div.titleTrail a.a_instance_message{
+	font-size:120% ;
+}
+.instant_message div#shortContentClose {
+		background: white ;
+		border: outset 2px #FFFFFF;
+		right: opx ;
+		text-align: right;
+		text-decoration: inherit ;
+		font-weight: bold;
+		text-transform: uppercase;
+		text-shadow: aqua;
+		color: silver ;
+}
+.instant_message div#shortContentClose:hover {
+		background: white ;
+		border: outset 2px silver ;
+		right: opx ;
+		color: black ;
+		text-align: center;
+		text-decoration: inherit ;
+		font-weight: bold;
+		text-transform: uppercase;
+		text-shadow: aqua;
+	}
+/* Шрифты */
+label, input, select, textarea {
+    font-size: 100% ;
+}
+
+
+body {
+    margin: 2px ;
+    padding: 2px ;
+    background-color: white ;
+}
+
+
+* {
+    padding: 0 ;
+    margin: 0 ;
+}
+/* Общая структура */
+#header {
+    position: relative ;
+    min-height: 5em ;
+    height:     5em ;
+    width: 100% ;
+}
+
+#side {
+    position: absolute;
+    left: 5px ;
+    width: 11em ;
+}
+
+#content {
+    position: relative;
+    margin-left: 12em ;
+    padding-top: 0.4em ;
+    min-height: 20em ;
+    /*border-top: 20px solid rgb(195,217,255) ;
+    border-left: 10px solid rgb(195,217,255) ;
+    border-bottom: 20px solid rgb(195,217,255) ;
+    padding-left: 5px ;
+    */
+}
+#shortContent {
+    position: relative;
+    margin-left: 0.4em ;
+    padding-top: 0.4em ;
+    min-height: 0.4em ;
+    /*border-top: 20px solid rgb(195,217,255) ;
+    border-left: 10px solid rgb(195,217,255) ;
+    border-bottom: 20px solid rgb(195,217,255) ;
+    padding-left: 5px ;
+    */
+}
+#footer {
+    position: relative;
+    clear: both ;
+}
+
+/* Общее оформление */
+a {
+    color: #00c;
+}
+
+a:hover {
+    color: red;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table.selectable tr:hover {
+    background-color: yellow;
+}
+
+img {
+    border: none ;
+}
+
+
+/* HEADER */
+/* Заголовок */
+#header {
+    border-bottom: 1px solid #ddd ;
+}
+
+#header h1 {
+    font-size: 100% ;
+    position: absolute;
+    top: 0px ;
+    left: 110px ;
+    margin: 0 ;
+    color: #666;
+    /*font-weight: normal;*/
+    /*text-decoration:overline;*/
+}
+
+#header img {
+    position: absolute;
+    top: 0px ;
+    left: 0px ;
+}
+
+#header ul#user {
+    position: absolute;
+    top: 0px ;
+    right: 5px ;
+    list-style: none ;
+    margin: 0 ;
+}
+
+#header ul#user li {
+    float: left;
+    display: block;
+    margin-left: 7px ;
+    margin-top: 0px ;
+}
+
+#header ul#user li.separator {
+    font-weight: 900 ;
+    color: gray;
+}
+
+#header ul#mainMenu {
+    position: absolute;
+    bottom: -2px ;
+    left: 10em ;
+    margin: 0 ;
+    padding: 0 ;
+}
+
+#header ul#mainMenu li {
+    float: left ;
+    display: block ;
+    list-style: none ;
+    margin: 0 ;
+
+}
+
+#header ul#mainMenu li a {
+    display: block ;
+    padding: 4px ;
+    border-top: 1px solid #ddd ;
+    border-left: 1px solid #ddd ;
+    border-right: 1px solid #ddd ;
+    margin-right: 2px ;
+    background-color: #eee ;
+    text-decoration: none ;
+    -moz-border-radius-topleft: 7px ;
+    -moz-border-radius-topright: 7px ;
+}
+
+#header ul#mainMenu li a.selected  {
+
+    border-bottom: 1px solid white ;
+    border-top-color:1px solid #999;
+    border-left-color:1px solid #999;
+	border-right-color:1px solid #999;
+    background-color: white ;
+    color: black ;
+    font-weight: bold;
+    /*cursor: text ;*/
+}
+ul li a#selected {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}
+
+
+/*
+ *  DIALOG
+ */
+#dialogHeader h1 {
+    color: #d9251E;
+    text-decoration:overline;
+    font-size: 100% ;
+}
+
+#dialogHeader {
+	border-bottom: 1px solid #ddd ;
+	margin-bottom: 1em ;
+}
+
+/* END HEADER */
+
+
+/* SIDE */
+/* Левое меню */
+#side {
+    /*border: 1px solid red ;*/
+}
+#side a {
+   text-decoration: none ;
+}
+
+#side ul {
+    border-right: 1px solid #ddd ;
+    margin: 0 ;
+    padding: 0 ;
+}
+
+#side ul.menu {
+    border-top: 1px solid #ccc ;
+    margin-top: 1em ;
+    
+}
+
+#side ul.menuAdd {
+    background-color: #d3fbd3 ;
+    background-image: url(/skin/images/tango/list-add.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+    
+}
+#side ul.menuPrint {
+    background-color: #eeffff ;
+
+    
+}
+#side ul.menuGo {
+    background-color: #eeddff ;
+
+    
+}
+
+
+
+#side ul.menuAdd:hover {
+    background-image: url(/skin/images/tango/list-add_003.png);
+}
+
+#side ul.menuShow {
+    background-color: #ffffcc ;
+    background-image: url(/skin/images/tango/document-open_002.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+#side ul.menuShow:hover {
+    background-image: url(/skin/images/tango/document-open_003.png);
+}
+
+#side ul.menu li.title, #side ul.firstMenu li.title { 
+    font-weight: bold ;
+}
+
+#side ul li {
+    list-style: none ;
+    margin: 5px ;
+}
+
+
+#side ul li a {
+    display: block; ;
+    width: 95% ;
+    padding: 2px ;
+    padding-left: 10px ;
+    /*border: 1px solid #fff ;*/
+}
+
+#side ul li a:hover {
+    background-color: #eee ;
+    text-decoration: underline;
+    color: blue;
+    /*border: 1px solid #ddd ;*/
+}
+
+#side ul li a.selected, #side ul li a:hover.selected {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}
+a#selected_menu, #side ul li a#selected_menu, #side ul li a#selected_menu  {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}
+
+#side div.subMenu {
+	display: none ;
+	border-bottom: 1px solid #ddd;
+	text-align: right ;
+	margin-bottom: 1em;
+	padding-top: 1em;
+	font-weight: bold ;
+}
+
+#side div.selected {
+	display: block ;
+}
+
+/* 
+ * WIZARD
+ */
+
+#side .wizard {
+	margin: 5px ;
+}
+
+#side .wizard h2 {
+	font-size: 100% ;
+	background-color: #ddd ;
+	text-align: center ;
+}
+
+#side .wizard ol {
+
+}
+
+#side .wizard ol li {
+	margin-left: 20px ;
+	margin-bottom: 5px ;
+}
+
+#side .wizard ol li.selected {
+	font-weight: bold ;
+}
+
+#side .wizard ol li.skipped {
+	color: #ddd ;
+}
+#side ul li a {
+    position: relative ;
+    padding-top:2px ;
+}
+#side ul li a .accessKey {
+    color: black ;
+    background-color: #ccc ;
+    position: absolute ;
+    right: 4px ;
+    top: 0 ;
+    font-size: 70% ;
+    
+    border: 1px solid #999 ;
+    padding: 1px ;
+    
+    -moz-opacity: 0.5  ;
+    //visibility: hidden;
+    visibility: visible;
+}
+
+#side ul li a:hover .accessKey {
+    color: black ;
+    -moz-opacity: 1  ;
+    visibility: visible;
+}
+
+#side hr {
+    display: none ;
+}
+
+#side ul li.delete a {
+	color: red ;
+}
+
+/* END SIDE */
+
+/* AUTOCOMPLETE */
+input.autocomplete {
+  background: url('/skin/images/main/autocomplete.gif') no-repeat 100% 0px;
+  cursor: default ;
+}
+
+input.searching {
+    background: #ccc ;
+    /*background: url('/skin/images/ajaxtags/throbber.gif') no-repeat 100% 2px;*/
+    /*background-position: 100% -18px;*/
+}
+
+input.vocEditabled {
+    border-right: 2px solid blue ;
+    /*background: #ccc ;*/
+    /*background: url('/skin/images/ajaxtags/throbber.gif') no-repeat 100% 2px;*/
+    /*background-position: 100% -18px;*/
+}
+
+div.autocomplete {
+    position: absolute; ;
+}
+
+div.autocomplete div {
+    background-color: red ;
+}
+div.autocomplete ul {
+    background-color: white ;
+    position: absolute ;
+    /*width: 30em ;*/
+    padding: 0 ;
+    margin: 0 ;
+    border: 1px solid gray ;
+}
+
+div.autocomplete ul li {
+    list-style: none ;
+    padding-left: 3px ;
+}
+
+
+div.autocomplete ul li:hover {
+}
+
+div.autocomplete ul li.selected {
+    background-color: blue ;
+    color: white ;
+    border: 1px dotted gray ;
+}
+
+div.autocomplete ul li span.id {
+   /* visibility: hidden ;
+    display: none ;
+    */
+    color: #ccc ;
+    padding-right: 1em ;
+}
+
+div.autocomplete ul li span.null {
+    visibility: hidden ;
+}
+
+
+div.autocomplete table {
+    z-index: 100 ;
+    background-color: white ;
+    position: absolute ;
+    /*left: 10em ;*/
+    /*top: 10em ;*/
+    /*width: 30em ;*/
+    padding: 0 ;
+    margin: 0 ;
+    border-bottom: 1px solid #333 ;
+    border-right: 1px solid #333 ;
+    border-top: 1px solid #999 ;
+    border-left: 1px solid #999 ;
+}
+
+div.autocomplete table tr td {
+    margin: 0 ;
+    padding: 1px ;
+    border-bottom: 1px dotted #D7D7D7 ;
+    z-index: 100 ;
+}
+
+div.autocomplete table tr td.id {
+    color: blue ;
+    text-align: right;
+    width: 1em ;
+    padding-right: 1em ;
+    padding-left: 3px ;
+    vertical-align: top ;
+}
+
+div.autocomplete table tr.selected td {
+    color: white ;
+    background-color: blue ;
+}
+
+div.autocomplete table tr {
+    cursor: pointer;
+}
+
+div.autocomplete table tr:hover td {
+    color: black ;
+    /*background-color: blue ;*/
+	background-color: rgb(159,159,80);    
+	/*text-decoration: underline;*/
+}
+/* END AUTOCOMPLETE */
+
+/* FOOTER */
+#footer #copyright {
+
+    color: gray ;
+    position: absolute;
+    right: 1em ;
+    bottom: -2em ; 
+}
+/* END FOOTER */
+
+/* CONTENT */
+/**
+ *  H1
+ */
+#content h1 {
+    font-size: 100% ;
+    margin: 0 0 0.4em 0 ;
+    color: #a00;
+}
+
+#content h1 span {
+    color: black ;
+}
+
+#content h1 a span.normal {
+    font-weight: normal;
+    color: black ;
+    text-decoration: none ;
+}
+#content h1 a {
+    font-weight: normal;
+}
+
+/*
+ * H2
+ */
+#content h2 {
+    font-size: 100% ;
+}
+
+#content table.mainMenu h2 {
+    background: #f9f9f9 ;
+    font-size: 100% ;
+    border-left: 1px solid gray ;
+    border-top: 1px solid gray ;
+    padding: 4px 4px 4px 10px;
+    margin: 0 0 5px 0 ;
+    -moz-border-radius-topleft: 7px ;
+}
+
+#content table.mainMenu div.menu {
+    margin-bottom: 20px ;
+    margin-top: 20px ;
+    background: #fdfdfd ;
+    -moz-border-radius-bottomright: 7px ;
+    /*background: url("images/gradient_lightgray_10x30.gif") repeat-x top*/
+}
+
+#content table.mainMenu td {
+    vertical-align: top ;
+}
+
+#content table.mainMenu td.col2 {
+    padding-left: 70px ;
+}
+
+#content table.mainMenu li {
+    list-style: none ;
+    margin-bottom: 10px ;
+    padding-left: 5px ;
+}
+
+#content table.mainMenu ul {
+    padding: 0 10px 10px 0 ;
+    margin:  0px 0px 0px 15px ;
+}
+
+
+/*
+ * CURRENT
+ */
+
+tr.current td {
+	background-color: #ddd ;
+	border-top: 2px solid #666 ;
+	border-bottom: 2px solid #666 ;
+}
+
+tr.current {
+	border: 2px solid #666 ;
+}
+
+/*
+ * DIALOG
+ */
+#dialogContent h1 {
+	font-size: 100% ;
+        color: #a00;
+}
+
+a.errorMessageClose {
+	position: absolute ;
+	top: 0.2em ;
+	right: 0.2em ;
+	color: white ;
+}
+
+div.errorMessage, div.formInfoMessage {
+    background-color: #ce4542 ;
+    color: white ;
+    font-weight: bold;
+    padding-left: 5em ;
+    padding-right: 5em ;
+    margin-top: 0.3em;
+    padding-top: 0.3em ;
+    padding-bottom: 0.3em ;
+    -moz-border-radius: 5px ;
+    position: relative ;
+}
+
+div.formInfoMessage {
+	    color: black ;
+	background-color: rgb(255,209,99) ;
+	padding:0.3em 1em;
+}
+
+#content div.section {
+}
+
+#content div.section h2.section {
+    padding: 2px ;
+    background-color: #ddd ;
+    border-left: 1px solid #999 ;
+    border-top: 1px solid #999 ;
+    margin-top: 4px ;
+}
+#content div.section div.sectionContent {
+    border-left: 1px solid #999 ;
+    padding: 6px ;
+    margin-bottom: 8px ;
+}
+
+/* END CONTENT */
+
+/* FORM */
+input {
+	padding-left: 2px ;
+}
+form {
+    margin: 0 ;
+}
+
+#mainFormFieldset {
+	border: 1px solid #ddd ;
+    -moz-border-radius: 1em ;
+}
+
+#mainFormFieldset legend {
+	padding-left: 1em ;
+	padding-right: 1em ;
+	font-weight: bold ;
+	font-size: 120% ;
+	color: #ccc ;
+}
+select option[selected="selected"], select option.selected {
+    background-color: #add8e6;
+}
+
+input, label {
+    margin: 0 ;
+}
+
+form table td {
+    padding: 2px 1px 2px 1px ;
+}
+
+form table {
+   /* border: 1px solid #ddd ; */
+}
+
+form table.debug {
+    border: 1px solid green ;
+}
+
+form table.viewOnly td.label {
+	padding-top: 2px ;
+	/*text-align: left ;*/
+	color: #333 ;
+}
+
+form table.viewOnly td input, input.viewOnly {
+	border: none ;
+	font-weight: bold ;
+}
+
+form table.viewOnly td span.viewOnlyTextField {
+	/*padding-top: 4px ;*/
+	text-align: left ;
+	font-weight: bold ;
+	white-space: pre-wrap; /* css-3 */
+}
+
+span.viewOnlyAccessDeniedField {
+	color: #933 ;
+	font-weight: bold ; 
+}
+
+td.tips {
+	text-align: left ;
+	vertical-align: top ;
+	color: #666 ;
+	font-style: italic;
+
+}
+
+td.label {
+    text-align: right;
+    vertical-align: top ;
+    padding-left: 3px ;
+}
+
+td.field {
+    vertical-align: top ;
+}
+
+td.commentBox {
+	color: gray ;
+	font-size: 80% ;
+	padding-top: 0px ;
+}
+td.buttons {
+    text-align: right ;
+}
+
+td.buttons input {
+    margin-top: 1em ;
+    margin-left: 10px ;
+}
+
+input#cancelButton {
+    width: 10em;
+}
+
+input.default {
+    font-weight: bold;
+}
+
+table.sel tr:hover th {
+    cursor: text;
+    background-color:white;
+}
+
+table.sel tr:hover {
+    cursor: pointer ;
+}
+
+
+table.tabview th {
+    padding: 3px ;
+    background-color: #f0f0f0 ;
+}
+
+table.tabview td{
+    padding: 2px ;
+    vertical-align: top;
+}
+
+table.tabview tr:hover td {
+    padding: 2px ;
+    background-color: rgb(159,159,80);
+    /*background-color: #e0ecff;*/
+   /*border-bottom: 3px solid black ;*/
+
+}
+
+table.tabview td.boolean {
+    text-align: center ;
+}
+
+table.tabview td.booleanNoValue {
+    color: #ddd ;
+}
+
+table.tabview td.date {
+    text-align: center ;
+}
+
+table.tabview td.number {
+    text-align: right ;
+}
+
+table.tabview tr:hover td.navigationBottom {
+    background-color: white;
+}
+table.tabview td.navigationBottom {
+	border-bottom: 1px solid white ;
+	border-left: 1px solid white ;
+	border-right: 1px solid white ;
+	text-align: right ;
+	cursor: text ;
+}
+
+table.tabview td.navigationBottom a{
+	text-decoration: none ;
+}
+
+table.tabview td, table.tabview th {
+	border: 1px solid rgb(160,160,160)
+}
+
+/* ERRORS */
+td.errorField div.errorField {
+    background-color: #ddd ;
+    border: 1px solid red ;
+    padding: 2px 2px 0 2px ;
+    margin-top: 0px ;
+}
+
+td.errorLabel label {
+    padding: 2px 0 0 2px ;
+    margin-top: 4px ;
+    color: red ;
+    font-weight: bold ;
+}
+
+ul.fieldErrors {
+    list-style: none ;
+    margin: 0 ;
+    padding: 0 ;
+}
+ul.fieldErrors li {
+    color: red ;
+    margin: 0 ;
+    padding: 0 ;
+}
+
+
+.h3 h3 {
+	font-size: 100% ;
+	border-top: 1px solid gray ;
+	margin-top: 1em ;
+	background-color: #eee ;
+}
+#old.h3 h3, #old.h4 h4 {
+	margin: 0;
+	padding: 0 4px;
+	position: relative;
+	top: -.75em;
+	left: 10em ;
+	background-color: #fff;
+	display: inline;
+	font-size: 100% ;
+}
+#old.h3, #old.h4 {
+	border-top: 1px solid #666;
+	margin: 2.5em 0 0 ;
+	padding: 0 0 0 1.75em;
+}
+
+td.label {
+     padding-top: 3px ;
+     vertical-align: top ;
+}
+td.field {
+     vertical-align: top ;
+}
+
+.horizontalFill {
+    width: 97% ;
+}
+
+.maxHorizontalSize {
+    width: 50em ;
+}
+
+/*
+ * REQUIRED
+ */
+span.required {
+	margin-right: 0.5em ;
+	color: red ;
+	font-weight: bold ;
+}
+
+input.required,textarea.required {
+	background-color: rgb(255,255,160) ;
+}
+
+span.viewOnlyCheckBox {
+		font-weight: bold;
+		font-size: 120% ;
+}
+
+/*
+ * AUTOCOMPLETE
+ */
+/*div.autocompleteSelect table123 {*/
+    /*margin: 0 ;*/
+    /*padding: 0 ;*/
+    /*border: none ;*/
+/*}*/
+
+div.autocompleteSelect input[type='button'] {
+    font-size: 90% ;
+    padding: 0 ;
+    margin: 0 ;
+}
+
+div.autocompleteSelect input {
+    margin: 0 ;
+}
+
+
+/*
+ * LinkButton
+ */
+div.linkButtons {
+	padding: 3px ;
+	background-color: rgb(195,217,255) ;
+	margin-bottom: 2px ;
+	text-align: left;
+} 
+
+div.linkButtons button {
+	font-size: 85% ;
+	margin: 2px 10px 2px 0px ;
+	padding: 0px 0.6em ;
+}
+
+table.tabview ul.linkButtons {
+    margin: 0.1em 0 0.1em 0 ;
+}
+
+#linkDefaultFocus {
+	font-weight: bold ;	
+}	
+
+
+table.tabview th.linkButtons {
+	padding: 0;
+	border-top: 1px solid #C3D9FF ;
+	border-left: 1px solid #C3D9FF ;
+	border-right: 1px solid #C3D9FF ;
+}
+
+table.tabview th.linkButtons div.linkButtons {
+	margin-bottom: 0;
+}
+
+/*
+ * Upper Case
+ */
+.upperCase {
+    text-transform: uppercase;
+}
+
+/*
+ *  Dialog
+ */
+.dialog {
+    position: absolute ;
+    left: 10em ;
+    top: 5em ;
+    border: 2px solid rgb(74,123,173) ;
+    background-color: #fff ;
+    display: none ;
+    z-index: 1 ;
+}
+
+.dialog h2 {
+    background-color: rgb(107,156,198) ;
+    color: white ;
+    padding: 4px ;
+    font-size: 110% ;
+}
+
+.dialog .rootPane {
+    padding: 1em ;
+}
+
+#fadeEffect {
+    position: absolute ;
+    left: 0px ;
+    top: 0px ;
+    bottom: 0 ;
+    right: 0 ;
+    /*-moz-opacity:0.87  ;*/
+    /*color: #ccc ;*/
+    background-image: url('/skin/images/main/fade_gray.gif') ;
+    z-index: 0 ;
+}
+
+.treeTable ul li {
+    list-style: none ;
+    float: left ;
+}
+
+.treeTable hr {
+    clear: both ;
+}
+
+a.customized {
+    color: red ;
+    font-weight: bold ;
+    border: 1px solid red ;
+    background-color: red ;
+}
+
+div.titleTrail {
+    margin-bottom: 0.2em ;
+}
+div.titleTrail span, div.titleTrail span a, div.titleTrail  {
+    /*font-weight: bold;*/
+    font-size: 95% ;
+}
+
+div.titleTrail span a {
+	position: relative ;
+}
+
+div.titleTrail span  {
+    color: #a00;
+}
+
+div.preview p {
+    margin: 1em;
+}
+
+div.preview table {
+    margin: 1em;
+}
+
+div.titleTrail span a:focus sup {
+    background-color: red ;
+    text-decoration: blink;
+}
+
+div.titleTrail:hover span a sup {
+	position: absolute ;
+	display: block ;
+	top: 0 ;
+	right: 0 ;
+}
+div.titleTrail span a sup {
+    color: #666 ;
+    background-color: #ccc ;
+    font-size: 70% ;
+    border: 1px solid #999 ;
+    margin-left: 0.5em ;
+	display: none ;	
+}
+
+legend {
+        margin-left: 2em ;
+}
+fieldset {
+    padding-left: 1px ;
+}
+.manyToManyActionLink {
+	margin-left: 0.7em ;
+}
+/* END FORM */
+
+/*TABBED PANE */
+
+#tabbedPane {
+    margin-top: 5px ;
+}
+#tabbedPaneContent {
+    /*border: 1px solid red ;*/
+
+    border-left: 1px solid gray ;
+    border-right: 1px solid gray ;
+	/*    position: relative ; */
+}
+
+#tabbedPaneFooter {
+    visibility: hidden ;
+    border-left: 1px solid gray ;
+    border-bottom: 1px solid gray ;
+    border-right: 1px solid gray ;
+
+    padding-top: 0.5em ;
+    padding-left: 4em ;
+    padding-right: 3em ;
+    padding-bottom: 1em ;
+
+    text-align: left ;
+    border-top: 1px solid #ddd ;
+}
+
+#tabbedPaneHeader {
+  /*  position: relative ; */
+    height: 2em ;
+    border-bottom: 1px solid gray ;
+    margin: 0 ;
+    /*border: 1px solid red ;*/
+}
+
+#tabbedPaneHeader hr {
+    clear: both ;
+    height: 0 ;
+    margin: 0 ;
+    display: inline ;
+}
+#tabbedPaneHeader ul {
+    margin: 0;
+    clear: both ;
+   /** position: absolute ; */
+    bottom: 0 ;
+    left: 1em ;
+}
+
+#tabbedPaneHeader ul li {
+    display: block ;
+    list-style: none ;
+    float: left ;
+    margin: 0 ;
+    padding: 0 ;
+}
+
+#tabbedPaneHeader ul li a {
+    display: block ;
+    background-color: #ddd ;
+    padding: 5px ;
+    margin-right: 2px ;
+    border: 1px solid gray ;
+    text-decoration: none ;
+    margin: 0 4px -2px 0 ;
+    -moz-border-radius-topleft: 7px ;
+    -moz-border-radius-topright: 7px ;
+}
+
+#tabbedPaneHeader ul li a.selected, #tabbedPaneHeader ul li a:hover.selected {
+    background-color: white ;
+    cursor: text;
+    text-decoration: none ;
+    color: black ;
+    border-bottom: 1px solid white ;
+}
+
+
+#tabbedPaneHeader ul li a:hover {
+    background-color: gray ;
+    text-decoration: underline;
+    color: blue ;
+}
+
+#tabbedPaneHeader hr {
+    visibility: hidden ;
+}
+
+#tabbedPaneContent.preview input, #tabbedPaneContent.preview select {
+    border: none ;
+    background-color: white ;
+    color: black ;
+}
+
+.tabPane {
+    margin-top: 1.2em ;
+    padding-left: 1em ;
+    top: 0px ;
+    left: 0px ;
+   /* position: absolute ; */
+    visibility: hidden ;
+    display: none ;
+
+}
+.previewHeader {
+    border: 1px solid gray ;
+    background-color: #ddd ;
+    margin-bottom: 1em ;
+    margin-top: 2em ;
+}
+
+.previewHeader h2 {
+    font-size: 100% ;
+    margin: 4px 2em 4px 4px;
+    padding: 0 ;
+    display: inline ;
+}
+.previewHeader a {
+}
+
+#tabbedPaneContent.preview {
+     border: 1px solid green ;
+     margin: 0 ;
+}
+
+#tabbedPaneContent.preview .tabPane {
+    visibility:  visible;
+/*    position: relative;*/
+}
+
+/* deleted
+#notag .tabPaneContainer .tabPane {
+    visibility: hidden ;
+    top: 0px ;
+    left: 0px ;
+    position: absolute ;
+    border: 1px solid blue ;
+}
+
+#notag .tabPaneContainer {
+    position: relative ;
+    border: 1px solid green ;
+    height: 100px ;
+}
+
+#notag .tabPaneContainer  .buttons {
+    bottom: 0px ;
+    right: 0px ;
+    position: absolute ;
+}
+
+*/
+/* TABBED PANE */
+
+/* TABLEARROW */
+
+table.tableArrow tr.selected  {
+    background-color: rgb(58,110, 165) ;
+    color: white ;
+    border: 1px solid #666 ;
+}
+
+table.tableArrow tr.inserted td {
+    /*background-color: red ;*/
+    background-color: #393 ;
+}
+
+table.tableArrow tr.selected td {
+    border-top: 1px solid darkblue  ;
+    border-bottom: 1px solid darkblue  ;
+}
+/* END TABLEARROW */
+
+/* IDE MODE */
+#content.hideIdeTags div.idetag, #side.hideIdeTags div.idetag, #content.hideIdeTags div.ideParentHidden {
+	display: none ;
+}
+
+#content.hideIdeTags table.debug, #content.hideIdeTags table.debug td.label, #content.hideIdeTags table.debug tr {
+	border : 1px solid white;
+}
+.idetagParent {
+	position: relative;
+}
+
+/* for gwt disable div.idetag */
+div.idetag_disabled {
+	
+	margin: 1px ;
+	padding: 1px ;
+	border: 1px solid gray ;
+	border-bottom: 1px solid #eee ;
+	display: inline;
+	font-size: 9px ;
+	cursor: pointer;
+	background-color: white ;
+	-moz-border-radius-topleft: 4px ;
+	-moz-border-radius-topright: 4px ;
+}
+
+div.idetag {
+	display: inline;
+}	
+
+#ideModeMainMenu {
+	position: absolute;
+	top: 15em;
+	right: 1em ;
+	border: 1px solid gray ;
+	background-color: rgb(255,255,204);
+}
+#ideModeMainMenuClose {
+	position: absolute;
+	top: 15em;
+	right: 0.2em ;
+	border: 1px solid gray ;
+	background-color: rgb(255,255,204);
+	cursor: pointer;
+	color: blue ;
+	font-weight: bold;
+	padding: 1px ;
+}
+
+#ideModeMainMenu li {
+	list-style: none;
+}
+
+#ideModeMainMenu li.infoDiv {
+	margin: 0 ;
+	padding: 1px ;
+}
+
+#ideMode_jspPath, #ideMode_formName, #ideMode_formClass {
+	font-weight: bold ;
+	border-bottom: 1px solid gray ;
+	color: gray ;
+	font-size: 80% ;
+}
+#ideMode_formClass {
+	font-size: 60% ;
+	padding-top: 0 ;
+}	
+
+
+
+#ideModeMainMenu li {
+	margin: 1em ;
+}
+
+.ideParentHightlight {
+	background-color: #729fcf ;
+}
+
+/* IDE MODE CONCRETE */
+div.ideParentPanel {
+		margin: 0.5em ;
+}
+
+div.ideParentForm {
+		margin: 0.5em ;
+}
+div.ideParentHidden {
+	display: inline;
+	margin-left: 1em ;
+}
+
+div.tagError {
+	border: 1px solid red ;
+}
+span.tagError {
+	color: red ;
+	font-weight: bold ;
+}
+
+/* IDE MODE GWT */
+.im-IdeMenuWidget-popup {
+	padding-top: 5px ;
+	border: 1px solid #6593CF ;
+	background-color: #e5effc;
+	color: #bcd4f7
+}
+
+.im-IdeMenuWidget-popup .gwt-Hyperlink a {
+	display: block ;
+	margin: 0 ; 
+	border: 1px solid #e5effc ;
+	color: #233D6D;
+}
+
+.im-textAreaAttributeWidget {
+	width: 70em ;
+	height: 20em ;
+}
+
+.im-IdeMenuWidget-popup .gwt-Hyperlink a:hover {
+	background-color: #bcd4f7;
+	border: 1px solid #6593CF ;
+}
+
+.gwt-DialogBox {
+	border: 1px solid #6593CF ;
+	background-color: #e5effc;
+	color: #233D6D;	
+}
+
+.gwt-DialogBox td {
+	padding: 0.3em ;
+}
+
+.gwt-DialogBox .gwt-Label {
+	text-align: right ;
+}
+
+.im-EditDialog .gwt-TextBox {
+	width: 30em ; ;
+}
+
+
+.gwt-DialogBox .Caption {
+	font-weight: bold ;
+	border-bottom: 1px solid #233D6D;	
+}
+
+.gwt-ListBox option {
+	padding-left: 3px ;
+}
+
+.gwt-ListBox option:selected {
+	font-weight: bold ;
+}
+
+/* 	*/
+/*
+ * Ext JS Library 1.0.1
+ * Copyright(c) 2006-2007, Ext JS, LLC.
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+
+/*
+ Creates rounded, raised boxes like on the Ext website - the markup isn't pretty:
+  <div class="x-box-blue">
+        <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+        <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+            <h3>YOUR TITLE HERE (optional)</h3>
+            <div>YOUR CONTENT HERE</div>
+        </div></div></div>
+        <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+    </div>
+ */
+
+.x-box-tl {
+	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat 0 0;
+    zoom:1;
+}
+
+.x-box-tc {
+	height: 8px;
+	background: transparent url(/skin/images/ext/box/tb.gif) repeat-x 0 0;
+	overflow: hidden;
+}
+
+.x-box-tr {
+	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat right -8px;
+}
+
+.x-box-ml {
+	background: transparent url(/skin/images/ext/box/l.gif) repeat-y 0;
+	padding-left: 4px;
+	overflow: hidden;
+    zoom:1;
+}
+
+.x-box-mc {
+/*	padding: 4px 10px;
+	background: #eee url(/skin/images/ext/box/tb.gif) repeat-x 0 -16px;
+	color: #393939;
+	font-size: 12px;
+*/	
+}
+
+#content .x-box-mc h2 {
+	font-family: "Myriad Pro","Myriad Web","Tahoma","Helvetica","Arial",sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	margin: 0 0 4 0;
+	padding-left: 2em ;
+	padding-bottom: 0.1em ;
+    zoom:1;
+}
+
+.x-box-mr {
+	background: transparent url(/skin/images/ext/box/r.gif) repeat-y right;
+	padding-right: 4px;
+	overflow: hidden;
+}
+
+.x-box-bl {
+	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat 0 -16px;
+    zoom:1;
+}
+
+.x-box-bc {
+/*	background: transparent url(/skin/images/ext/box/tb.gif) repeat-x 0 -8px;*/
+	height: 8px;
+	overflow: hidden;
+}
+
+.x-box-br {
+	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat right -24px;
+}
+
+.x-box-tl, .x-box-bl {
+	padding-left: 8px;
+	overflow: hidden;
+}
+
+.x-box-tr, .x-box-br {
+	padding-right: 8px;
+	overflow: hidden;
+}
+
+.x-box-blue .x-box-bl, .x-box-blue .x-box-br, .x-box-blue .x-box-tl, .x-box-blue .x-box-tr {
+	background-image: url(/skin/images/ext/box/corners-blue.gif);
+}
+
+.x-box-blue .x-box-bc, .x-box-blue .x-box-mc, .x-box-blue .x-box-tc {
+	background-image: url(/skin/images/ext/box/tb-blue.gif);
+}
+
+.x-box-blue .x-box-mc {
+	background-color: #c3daf9;
+}
+
+.x-box-blue .x-box-mc h3 {
+	color: #17385b;
+}
+
+.x-box-blue .x-box-ml {
+	background-image: url(/skin/images/ext/box/l-blue.gif);
+}
+
+.x-box-blue .x-box-mr {
+	background-image: url(/skin/images/ext/box/r-blue.gif);
+}
+
+
+.preCell {
+	 white-space: pre-wrap;
+}
+a#selectedLink, #side ul li a#selectedLink, #side ul li a#selectedLink:hover  {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}
+ul il a#selected {
+    color: black ;
+    background-color: rgb(195,217,255) ;
+    cursor: text ;
+    border: none ;
+    text-decoration: none ;
+    background-image: url("/skin/images/main/sideSelected.gif");
+    background-repeat: no-repeat;
+    background-position: center left; ;
+	font-weight: bold ;
+    -moz-border-radius-topleft: 4px ;
+    -moz-border-radius-bottomleft: 4px ;
+}

@@ -1,0 +1,32 @@
+@import_url("main_ie5.css");
+@import\ url("main_ie55.css");
+@import url\ ("main_ie55.css");
+
+@import "form_ie.css";
+
+#side ul li a {
+    width: 100% ;
+}
+
+body {
+    font: 0.8em Arial;
+}
+
+table.sel {
+    border: 1px solid gray ;
+}
+
+/*autocomplete*/
+div.autocomplete {
+    position: relative;
+    background-color: red ;
+}
+
+.horizontalFill {
+    width: 90% ;
+}
+
+input.viewOnly  {
+	border: #fff 1px solid;
+}
+

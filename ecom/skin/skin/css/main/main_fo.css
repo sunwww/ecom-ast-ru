@@ -1,0 +1,19 @@
+body {
+    font: 0.8em Arial,helvetica,clean,sans-serif;
+}
+
+textarea {
+    font: 100% Courier ;
+}
+    
+label, input, select {
+    font-size: 100% ;
+}
+
+#header ul#mainMenu {
+    bottom: -1px ;
+}
+
+#tabbedPaneHeader ul li a {
+    margin-bottom: -1px ;
+}
