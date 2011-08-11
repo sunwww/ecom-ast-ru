@@ -87,10 +87,10 @@ function printDocument(aCtx, aParams) {
 			var vwf=wf!=null?wf.workFunction:null ;
 			var worker = wf!=null?wf.worker:null;
 			var lastWorker = worker ;
-			var doctor = wf.worker!=null?wf.worker.person:null ;
+			var doctor = worker!=null?worker.person:null ;
 			
 			recordChar(vwf!=null?vwf.name:"",18,"doc.record"+i+".doctor.post") ;
-			recordChar(doctor.lastname+" "+doctor.firstname+" "+doctor.middlename,28,"doc.record"+i+".doctor.fio") ;
+			recordChar(doctor!=null?doctor.lastname+" "+doctor.firstname+" "+doctor.middlename:"",28,"doc.record"+i+".doctor.fio") ;
 		}
 	}
 	recordChar(doc.mainWorkDocumentNumber,12,"doc.maindoc.number") ;
@@ -139,7 +139,12 @@ function printDocument(aCtx, aParams) {
 	//recordChar("НАИМЕНОВАНИЕ МЕД. ОРГАНИЗАЦИИ",38,"doc.lpu.name");
 	//recordChar("АДРЕС МЕД. ОРГАНИЗАЦИИ",38,"doc.lpu.address");
 	//recordChar("ОГРН",38,"doc.lpu.ogrn");
+	
+	var care1 = cas.nursingPerson1 ;
+	var care2 = cas.nursingPerson2 ;
 	for (var i=1;i<3;i++) {
+		var care ;
+		
 		recordChar("ye",2,"doc.care"+i+".age.year") ;
 		recordChar("mo",2,"doc.care"+i+".age.month") ;
 		recordChar("ki",2,"doc.care"+i+".kinship.code") ;
