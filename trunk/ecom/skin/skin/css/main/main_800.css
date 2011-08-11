@@ -1,0 +1,27 @@
+/******************
+ * SIDE
+ */
+#side ul li {
+    margin: 0px ;
+    padding: 0px ;
+}
+
+#side ul li a {
+    margin: 0px ;
+    padding: 1px 1px 2px 7px ;
+}
+
+/******************
+ *  FORMS
+ */
+#content form table td {
+    padding: 1px 1px 1px 4px ;
+}
+
+#content .h3 h3 {
+    margin-top: 1px ;
+}
+
+.maxHorizontalSize {
+    width: 35em ;
+}

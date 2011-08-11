@@ -1,0 +1,15 @@
+table.sel tr:hover {
+    cursor: hand ;
+}
+
+table.sel td {
+    cursor:hand  ;
+}
+
+#fadeEffect {
+    width: 100% ;
+    height: 100% ;
+    background-image: none ;
+    background: #ccc 100% ;
+    filter:alpha(opacity=87);
+}
