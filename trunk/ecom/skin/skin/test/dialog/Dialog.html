@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>Эффект затемнения</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="../../css/main/main.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="../../js/prototype/prototype-1.3.1.js"></script>
+    <script type='text/javascript' src='../../js/main/msh.js'></script>
+    <script type='text/javascript' src='../../js/main/effect/FadeEffect.js'></script>
+    <script type='text/javascript' src='../../js/main/widget/Dialog.js'></script>
+</head>
+
+<body>
+
+<div id='testDialog' class='dialog'>
+    <h2>Test Dialog</h2>
+    <div class='rootPane'>
+        <p>asdfasdfj asdkf;laksdjfa;lsdfj</p>
+        <p>asdfasdfj asdkf;laksdjfa;lsdfj</p>
+        <p>asdfasdfj asdkf;laksdjfa;lsdfj</p>
+        <p>asdfasdfj asdkf;laksdjfa;lsdfj</p>
+    </div>
+</div>
+
+
+<a href="#" onclick='show()'> SHOW </a>
+&nbsp;
+<a href="#" onclick='hide()'> HIDE </a>
+
+<script type="text/javascript">
+
+    var theDialog = new msh.widget.Dialog($('testDialog')) ;
+
+    function show() {
+        theDialog.show() ;
+    }
+    function hide() {
+        theDialog.hide() ;
+    }
+</script>
+
+
+<style type="text/css">
+    #fadeEffect {
+        background-image: url('../../images/main/fade_gray.gif') ;
+        top: 4em ;
+    }
+</style>
+
+</body>
+</html>
+

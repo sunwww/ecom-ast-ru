@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Пробная страница</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type='text/javascript' src='../../js/main/dateutil.js'></script>
+<script type='text/javascript' src='../../js/main/reportperiod.js'></script>
+<script type='text/javascript' src='../../js/main/errorutil.js'></script>
+<script type='text/javascript' src='../../js/main/eventUtil.js'></script>
+<script type="text/javascript" src="../../js/prototype/prototype-1.3.1.js"></script>
+</head>
+<body>
+<form name='frmAct'>
+    <table width="100%" border=1>
+        <tr>
+            <td>
+                с
+                <input type='text' name='dats' id='dats'>
+            </td>
+            <td>
+                по
+                <input type='text' name='datpo' id='datpo'>
+            </td>
+            <td>
+                <input type=button name='yy' onclick='rep()'>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='3'>
+                <div id="divpr" name="divpr">Для отображения нажать на кнопку</div>
+            </td>
+        </tr>
+    </table>
+</form>
+
+
+    <script type="text/javascript">
+        function rep() {
+//            alert(1);
+            reportperiod.CreateDiv($('divpr'),$('dats'),$('datpo')) ;
+                // new dateutil.DateField($('datpo')) ;
+                // new dateutil.YearLinkAction($('dats'), $('datpo')) ;
+            }
+
+
+    </script>
+
+
+</body>
+</html>
