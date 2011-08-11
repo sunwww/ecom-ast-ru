@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<project default="deploy" name="riams-proc" basedir=".">
+
+	<property name='appname' value='riamsproc' />
+
+	<property name='deploy.dir' value='/mnt/grpo' />
+	
+	<import file="../ant-support/property-skeleton.xml" />
+	
+	<target name='compile'>
+		<mkdir dir="./target/classes" />
+		<javac destdir="./target/classes">
+			<src path="./src/main/java"/>	
+		</javac>
+	</target>
+
+	<target name='package'>
+		<jar destfile="target/${appname}.jar">
+		    <fileset dir="./target/classes">
+                <include name='ru/**/*' />
+            </fileset>
+		</jar>
+	</target>
+	
+	
+    <target name='all' depends="compile,package">
+    </target>
+	
+	<target name='deploy' depends="all">
+    	<copy file="target/${appname}.jar" todir="${deploy.dir}" overwrite="true"/>
+    	<chmod perm="644" file="${deploy.dir}/${appname}.jar"></chmod>
+		
+	    <sql  driver = "org.postgresql.Driver" 
+	        password = "charpa" 
+	             url = "jdbc:postgresql://cache:5432/MIN_20070623" 
+	          userid = "esinev"
+			  print  = "false"	
+			  autocommit="true">
+			
+			<fileset dir="./src/main/resources/sql">
+				<include name="deploy.sql"/>
+				<include name="functions.sql"/>
+			</fileset>
+			
+			<classpath>
+				<pathelement location="${lib.dir}/postgresql/postgresql-8.2-504.jdbc3.jar"/>
+			</classpath>	
+        </sql>
+	</target>
+	
+</project>
