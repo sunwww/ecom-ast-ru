@@ -73,34 +73,6 @@
 				</msh:sectionContent>
 			</msh:section>
 			</td></tr><tr><td valign="top"  style="padding-right: 1em">
-			<msh:section title="Алгоритм по неделям"  createRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/Create" viewRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/View"
-				createUrl="entityParentPrepareCreate-cal_weekAlgorithm.do?id=${param.id}" listUrl="entityParentList-cal_weekAlgorithm.do?id=${param.id}"
-			>
-				<msh:sectionContent>
-					<ecom:webQuery name="algWeeks" nativeSql="
-					select wca.id,vww.name,wcdp.name as wcdpname
-					,vwcp.name as vwcpname,vdp.name as vdpname
-					from WorkCalendarAlgorithm wca 
-					left join VocWorkWeek vww on vww.id=wca.workWeek_id
-					left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id
-					left join VocDayParity vdp on vdp.id=wca.parity_id
-					left join WorkCalendarDayPattern wcdp on wcdp.id=dayPattern_id
-					 where dtype='WorkCalendarWeekAlgorithm' and pattern_id='${param.id}'
-					"/>
-					<msh:table
-						editUrl="entityParentEdit-cal_weekAlgorithm.do" 
-						viewUrl="entityShortView-cal_weekAlgorithm.do"
-						deleteUrl="entityParentDeleteGoSubclassView-cal_weekAlgorithm.do" 
-						 name="algWeeks" action="entitySubclassView-cal_algorithm.do" idField="1">
-						<msh:tableColumn property="sn" columnName="#"/>
-						<msh:tableColumn property="2" columnName="Рабочиая неделя"/>
-						<msh:tableColumn property="3" columnName="Тип четности"/>
-						<msh:tableColumn property="4" columnName="Четность"/>
-						<msh:tableColumn property="5" columnName="Шаблон дня"/>
-					</msh:table>
-				</msh:sectionContent>
-			</msh:section>
-			</td><td valign="top">
 			<msh:section title="Алгоритм по дням недели"  createRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/Create" viewRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/View"
 				createUrl="entityParentPrepareCreate-cal_weekDaysAlgorithm.do?id=${param.id}" listUrl="entityParentPrepareCreate-cal_weekDaysAlgorithm.do?id=${param.id}"
 			>
@@ -143,6 +115,34 @@
 					</msh:table>
 				</msh:sectionContent>
 				
+			</msh:section>
+			</td><td valign="top">
+			<msh:section title="Алгоритм по неделям"  createRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/Create" viewRoles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm/View"
+				createUrl="entityParentPrepareCreate-cal_weekAlgorithm.do?id=${param.id}" listUrl="entityParentList-cal_weekAlgorithm.do?id=${param.id}"
+			>
+				<msh:sectionContent>
+					<ecom:webQuery name="algWeeks" nativeSql="
+					select wca.id,vww.name,wcdp.name as wcdpname
+					,vwcp.name as vwcpname,vdp.name as vdpname
+					from WorkCalendarAlgorithm wca 
+					left join VocWorkWeek vww on vww.id=wca.workWeek_id
+					left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id
+					left join VocDayParity vdp on vdp.id=wca.parity_id
+					left join WorkCalendarDayPattern wcdp on wcdp.id=dayPattern_id
+					 where dtype='WorkCalendarWeekAlgorithm' and pattern_id='${param.id}'
+					"/>
+					<msh:table
+						editUrl="entityParentEdit-cal_weekAlgorithm.do" 
+						viewUrl="entityShortView-cal_weekAlgorithm.do"
+						deleteUrl="entityParentDeleteGoSubclassView-cal_weekAlgorithm.do" 
+						 name="algWeeks" action="entitySubclassView-cal_algorithm.do" idField="1">
+						<msh:tableColumn property="sn" columnName="#"/>
+						<msh:tableColumn property="2" columnName="Рабочиая неделя"/>
+						<msh:tableColumn property="3" columnName="Тип четности"/>
+						<msh:tableColumn property="4" columnName="Четность"/>
+						<msh:tableColumn property="5" columnName="Шаблон дня"/>
+					</msh:table>
+				</msh:sectionContent>
 			</msh:section>
 			</td>
 			</tr>
