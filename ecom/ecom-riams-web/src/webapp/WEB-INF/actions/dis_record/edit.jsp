@@ -18,11 +18,14 @@
           <msh:textField property="dateFrom" label="Дата начала" guid="71bb6108-4449-460b-aaca-0c7419683133" />
           <msh:textField property="dateTo" label="Дата окончания" guid="31e70e41-3526-4a9e-b746-263d6e81e657" />
         </msh:row>
-        <msh:row guid="3a4d2f16-324a-48d1-b9ee-cef55e075ff7">
+        <msh:row>
           <msh:autoComplete vocName="vocDisabilityRegime" property="regime" label="Режим" guid="a0252f86-792b-4992-a278-5cb0d1a1bc27" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="010a9b09-d905-4a1b-9be0-ef400444b947">
-          <msh:autoComplete showId="false" vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" label="Специалист" guid="baeb2ab7-b6c6-4b61-b05b-a939fa32af9a" fieldColSpan="3" horizontalFill="true" size="150" />
+        <msh:row>
+          <msh:autoComplete vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" label="Специалист" guid="baeb2ab7-b6c6-4b61-b05b-a939fa32af9a" fieldColSpan="3" horizontalFill="true" size="150" />
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="workFunction" hideLabel="false" property="workFunctionAdd" viewOnlyField="false" label="Специалист" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
