@@ -18,6 +18,9 @@
           <msh:textField label="Код" property="code" guid="40f2cd0a-d466-4811-82fc-ed560c6ca164" />
           <msh:textField label="Наименование" property="name" size="80" guid="7d51235b-c16b-4b60-8743-46e38c0c1ca0" />
         </msh:row>
+        <msh:row>
+        	<msh:textField property="shortName" fieldColSpan="3" label="Короткое название"/>
+        </msh:row>
         <msh:row guid="10e684ef-5a8d-45dd-ab3d-c5bae516a73e">
           <msh:autoComplete horizontalFill="true" property="vocPost" vocName="vocPost" label="Должность" fieldColSpan="3" viewAction="entityView-voc_post.do" guid="351c87de-9b9a-46ee-80c9-b65d6256fd0c" />
         </msh:row>
