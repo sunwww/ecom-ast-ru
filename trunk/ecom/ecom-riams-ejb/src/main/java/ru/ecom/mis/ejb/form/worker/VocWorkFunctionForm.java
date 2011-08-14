@@ -69,4 +69,13 @@ public class VocWorkFunctionForm extends IdEntityForm {
 	private String theName;
 	/** Должности */
 	private Long theVocPost;
+	
+	/** Короткое название */
+	@Comment("Короткое название")
+	@Persist
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое название */
+	private String theShortName;
 }
