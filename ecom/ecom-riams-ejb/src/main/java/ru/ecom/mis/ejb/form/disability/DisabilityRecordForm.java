@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.disability;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -86,6 +87,14 @@ public class DisabilityRecordForm extends IdEntityForm {
 	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
 	public void setWorkFunctionInfo(String aWorkFunctionInfo) {theWorkFunctionInfo = aWorkFunctionInfo;}
 
+	/** Доп. рабочая функция */
+	@Comment("Доп. рабочая функция")
+	@Persist
+	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
+	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+
+	/** Доп. рабочая функция */
+	private Long theWorkFunctionAdd;
 	/** Рабочая функция инфо */
 	private String theWorkFunctionInfo;
 	/** Информация о записи */

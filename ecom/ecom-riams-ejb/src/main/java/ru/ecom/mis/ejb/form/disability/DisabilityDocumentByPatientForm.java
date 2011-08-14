@@ -216,6 +216,13 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 	public Long getPrevDocument() {return thePrevDocument;}
 	public void setPrevDocument(Long aPrevDocument) {thePrevDocument = aPrevDocument;}
 
+	/** Доп. рабочая функция */
+	@Comment("Доп. рабочая функция")
+	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
+	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+
+	/** Доп. рабочая функция */
+	private Long theWorkFunctionAdd;
 	/** Предыдущий документ */
 	private Long thePrevDocument;
 	/** Лечебно-профилактическое учреждение */
