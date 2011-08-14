@@ -1,14 +1,8 @@
 package ru.ecom.mis.ejb.form.disability;
 
-import java.sql.Date;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
-import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason;
-import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason2;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -368,4 +362,44 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	 * Код изменения причины нетрудоспособности
 	 */
 	private Long theDisabilityReasonChange;	
+	/** № истории болезни */
+	@Comment("№ истории болезни")
+	@Persist
+	public String getHospitalizedNumber() {return theHospitalizedNumber;}
+	public void setHospitalizedNumber(String aHospitalizedNumber) {theHospitalizedNumber = aHospitalizedNumber;}
+
+	/** № истории болезни */
+	private String theHospitalizedNumber;
+	/** Пользователь, создавший документ */
+	@Comment("Пользователь, создавший документ")
+	@Persist
+	public String getUsernameCreate() {return theUsernameCreate;}
+	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist
+	public String getDateCreate() {return theDateCreate;}
+	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+
+	/** Пользователь, редактировавший документ */
+	@Comment("Пользователь, редактировавший документ")
+	@Persist
+	public String getUsernameEdit() {return theUsernameEdit;}
+	public void setUsernameEdit(String aUsernameEdit) {theUsernameEdit = aUsernameEdit;}
+
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist
+	public String getDateEdit() {return theDateEdit;}
+	public void setDateEdit(String aDateEdit) {theDateEdit = aDateEdit;}
+
+	/** Дата редактирования */
+	private String theDateEdit;
+	/** Пользователь, редактировавший документ */
+	private String theUsernameEdit;
+	/** Дата создания */
+	private String theDateCreate;
+	/** Пользователь, создавший документ */
+	private String theUsernameCreate;	
 }
