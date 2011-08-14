@@ -311,11 +311,44 @@ public class DisabilityDocument extends BaseEntity{
 	@OneToOne
 	public VocDisabilityReason getDisabilityReasonChange() {return theDisabilityReasonChange;}
 	public void setDisabilityReasonChange(VocDisabilityReason aDisabilityReasonChange) {theDisabilityReasonChange = aDisabilityReasonChange;}
-	/**
-	 * Код изменения причины нетрудоспособности
-	 */
-	private VocDisabilityReason theDisabilityReasonChange;	
 	
+	/** № истории болезни */
+	@Comment("№ истории болезни")
+	public String getHospitalizedNumber() {return theHospitalizedNumber;}
+	public void setHospitalizedNumber(String aHospitalizedNumber) {theHospitalizedNumber = aHospitalizedNumber;}
+
+	/** Пользователь, создавший документ */
+	@Comment("Пользователь, создавший документ")
+	public String getUsernameCreate() {return theUsernameCreate;}
+	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getDateCreate() {return theDateCreate;}
+	public void setDateCreate(Date aDateCreate) {theDateCreate = aDateCreate;}
+
+	/** Пользователь, редактировавший документ */
+	@Comment("Пользователь, редактировавший документ")
+	public String getUsernameEdit() {return theUsernameEdit;}
+	public void setUsernameEdit(String aUsernameEdit) {theUsernameEdit = aUsernameEdit;}
+
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getDateEdit() {return theDateEdit;}
+	public void setDateEdit(Date aDateEdit) {theDateEdit = aDateEdit;}
+
+	/** Дата редактирования */
+	private Date theDateEdit;
+	/** Пользователь, редактировавший документ */
+	private String theUsernameEdit;
+	/** Дата создания */
+	private Date theDateCreate;
+	/** Пользователь, создавший документ */
+	private String theUsernameCreate;
+	/** № истории болезни */
+	private String theHospitalizedNumber;
+	/** Код изменения причины нетрудоспособности*/
+	private VocDisabilityReason theDisabilityReasonChange;	
 	/** Закрыт случай */
 	private Boolean theIsClose;
 	/** Предыдущий документ */
