@@ -49,4 +49,12 @@ public class VocWorkFunction extends VocBaseEntity{
 
 	/** Мед. услуги */
 	private List<WorkFunctionService> theWorkFunctionServices;
+	
+	/** Короткое название */
+	@Comment("Короткое название")
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое название */
+	private String theShortName;
 }
