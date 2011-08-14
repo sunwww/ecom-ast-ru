@@ -89,6 +89,14 @@ public class DisabilityRecord extends BaseEntity{
 	@Transient
 	public String getWorkFunctionInfo() {return theWorkFunction!=null?theWorkFunction.getWorkFunctionInfo():"";}
 	
+	/** Доп. рабочая функция */
+	@Comment("Доп. рабочая функция")
+	@OneToOne
+	public WorkFunction getWorkFunctionAdd() {return theWorkFunctionAdd;}
+	public void setWorkFunctionAdd(WorkFunction aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+
+	/** Доп. рабочая функция */
+	private WorkFunction theWorkFunctionAdd;
 	/** Специалист */
 	private WorkFunction theWorkFunction;
 	/** Документ нетрудоспособности */
