@@ -38,7 +38,9 @@ function onPreCreate(aForm, aCtx) {
 		(aForm.mainWorkDocumentNumber.equals("") || aForm.mainWorkDocumentSeries.equals("") ) )
 			throw "При совмещении необходимо указывать номер и серию документа по основному месту работы" ;
 	//errorThrow(list, ) ;
-	
+	var date = new java.util.Date() ;
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	
 }
 function onCreate(aForm, aEntity, aCtx) {
@@ -57,9 +59,36 @@ function onCreate(aForm, aEntity, aCtx) {
 	drecord.setWorkFunction(wfunc) ;
 	drecord.setDisabilityDocument(aEntity) ;
 	aCtx.manager.persist(drecord) ;
+	if (aEntity.status!=null && +aEntity.status.code>0) {
+		aEntity.setNoActuality(true) ;
+	} else {
+		aEntity.setNoActuality(false) ;
+	}
 	aCtx.manager.persist(aEntity) ;
+	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
+		var org = pat.works ;
+		if (org!=null) {
+			org.setCode(aForm.job) ;
+			aCtx.manager.persist(org) ;
+		}
+	}
 }
-
+function onSave(aForm, aEntity, aCtx) {
+	if (aEntity.status!=null && +aEntity.status.code>0) {
+		aEntity.setNoActuality(true) ;
+	} else {
+		aEntity.setNoActuality(false) ;
+	}
+	aCtx.manager.persist(aEntity) ;
+	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
+		var org = pat.works ;
+		if (org!=null) {
+			org.setCode(aForm.job) ;
+			aCtx.manager.persist(org) ;
+		}
+	}
+	
+}
 function onPreSave(aForm,aEntity , aCtx) {
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
@@ -71,8 +100,8 @@ function onPreSave(aForm,aEntity , aCtx) {
 		throw "Предыдущий документ не должен совпадать с текущим." ;
 	}
 	if (aForm.workComboType!=0 && 
-		(aForm.mainWorkDocumentNumber.equals("") || aForm.mainWorkDocumentSeries.equals("") ) )
-			throw "При совмещении необходимо указывать номер и серию документа по основному месту работы" ;
+		(aForm.mainWorkDocumentNumber.equals("")  ) )
+			throw "При совмещении необходимо указывать номер документа по основному месту работы" ;
     list = aCtx.manager.createQuery("from DisabilityDocument where "
        	+" (series = :series and number = :number and documentType_id <> :doctype)"
        	+" and id != '"+thisid+"'"
@@ -82,6 +111,9 @@ function onPreSave(aForm,aEntity , aCtx) {
        	.setParameter("doctype",doctype)
        	.getResultList() ;
 	errorThrow(list,"В базе уже существует документ с такими номером и серией") ;
+	var date = new java.util.Date() ;
+	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {
