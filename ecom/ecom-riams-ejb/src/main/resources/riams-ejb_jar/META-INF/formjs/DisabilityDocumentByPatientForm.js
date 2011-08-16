@@ -23,31 +23,64 @@ function onPreCreate(aForm, aCtx) {
        	.setParameter("doctype",doctype)
        	.getResultList() ;
 	errorThrow(list) ;
+	var date = new java.util.Date() ;
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 
 function onCreate(aForm, aEntity, aCtx) {
 	var dcase = new Packages.ru.ecom.mis.ejb.domain.disability.DisabilityCase() ;
-	dcase.setPatient(aEntity.patient) ;
+	var pat = aEntity.patient ;
+	dcase.setPatient(pat) ;
 	var drecord = new Packages.ru.ecom.mis.ejb.domain.disability.DisabilityRecord() ;
 	var reg = aCtx.manager.find(
 	Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityRegime
 	,aForm.regime) ;
 	var wfunc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,aForm.workFunction) ;
-
+	var wfunc_add = null ;
 	if (aForm.dateTo != null && aForm.dateTo!="") {
 		drecord.setDateTo(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.dateTo)) ;
+	}
+	if (aEntity.status!=null && +aEntity.status.code>0) {
+		aEntity.setNoActuality(true) ;
+	} else {
+		aEntity.setNoActuality(false) ;
 	}
 	drecord.setDateFrom(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.dateFrom)) ;
 	drecord.setRegime(reg) ;
 	drecord.setWorkFunction(wfunc) ;
 	drecord.setDisabilityDocument(aEntity) ;
-	dcase.setJob(aForm.job) ;
+	var wfunc_add ;
+	
+	if (+aForm.workFunctionAdd>0) {
+		wfuncadd = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,aForm.workFunctionAdd) ;
+		drecord.setWorkFunctionAdd(wfuncadd) ;
+		
+	}
+	//dcase.setJob(aForm.job) ;
 	dcase.setEarlyPregnancyRegistration(aForm.earlyPregnancyRegistration) ;
 	dcase.setPlacementService(aForm.placementService) ;
+	dcase.setCreateDate(aEntity.getCreateDate()) ;
+	dcase.setCreateUsername(aEntity.getCreateUsername()) ;
+	if (+aForm.nursingPerson1>0) {
+		var nur1 = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Kinsman,aForm.nursingPerson1) ;
+		dcase.setNursingPerson1(nur1) ;
+	}
+	if (+aForm.nursingPerson2>0) {
+		var nur2 = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Kinsman,aForm.nursingPerson2) ;
+		dcase.setNursingPerson2(nur2) ;
+	}
 	aCtx.manager.persist(dcase) ;
 	aCtx.manager.persist(drecord) ;
 	aEntity.setDisabilityCase(dcase) ;
 	aCtx.manager.persist(aEntity) ;
+	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
+		var org = pat.works ;
+		if (org!=null) {
+			org.setCode(aForm.job) ;
+			aCtx.manager.persist(org) ;
+		}
+	}
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {
