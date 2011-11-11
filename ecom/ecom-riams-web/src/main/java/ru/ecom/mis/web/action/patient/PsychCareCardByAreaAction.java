@@ -23,6 +23,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		String typeFirst = ActionUtil.updateParameter("PsychCareCardByArea","typeFirst","1", aRequest) ;
 		String typeInv = ActionUtil.updateParameter("PsychCareCardByArea","typeInv","1", aRequest) ;
 		AreaReportForm form = (AreaReportForm)aForm ;
+		
 		boolean isDt = (form!=null) ;
 		/*
 		if (typePat.equals("2")) {
@@ -87,14 +88,29 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			aRequest.setAttribute("typeI"," and  (select count(*) from Invalidity inv where inv.patient_id =pcc.patient_id and inv.dateFrom<area.startDate )=0 ") ;
 			aRequest.setAttribute("typeInvInfo", " Инвалидность: нет") ;
 		} else {
-			String str = "" ;
+			StringBuilder str = new StringBuilder() ;
 			String str1 = "" ;
 			if (form.getGroupInv()!=null &&form.getGroupInv()>0) {
-				str = new StringBuilder().append(" and inv.group_id=").append(form.getGroupInv()).toString() ;
+				str.append(" and inv.group_id=").append(form.getGroupInv()) ;
 				str1 = new StringBuilder().append(" группа " ).append(form.getGroupInv()).toString() ;
+			}
+			if (typeInv.equals("4")) {				
+				str.append(" and inv.primary=1") ;
+			} else if (typeInv.equals("5")) {
+				str.append(" and (inv.primary is null or inv.primary=0)") ;
 			}
 			aRequest.setAttribute("typeI"," and  (select count(*) from Invalidity inv where inv.patient_id =pcc.patient_id and inv.dateFrom<area.startDate "+str+")>0 ") ;
 			aRequest.setAttribute("typeInvInfo", " Инвалидность: есть "+str1) ;
+		}
+		if (form.getCompTreatment()!=null&&
+				!form.getCompTreatment().equals(Long.valueOf(0))) {
+			StringBuilder compTreat = new StringBuilder() ;
+			compTreat.append(" and (ct.decisionDate <=isnull(area.finishDate,current_date) or ct.dateReplace>=isnull(area.startDate,current_date)) and ct.kind_id='").append(form.getCompTreatment()).append("'") ;
+			aRequest.setAttribute("compTreatName", "принудительное лечение: "+form.getCompTreatment()) ;
+			aRequest.setAttribute("compTreat", compTreat.toString()) ;
+		} else {
+			aRequest.setAttribute("compTreatName", "") ;
+			aRequest.setAttribute("compTreat", "") ;
 		}
 		
 		aRequest.setAttribute("group", "") ;

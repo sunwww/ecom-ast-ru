@@ -21,4 +21,12 @@ public class DisabilityServiceJs {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.getDataByClose(aDocId) ;
 	}
+	public Long createDuplicateDocument(Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFunction2,String aJob, Boolean aUpdateJob, HttpServletRequest aRequest) throws Exception {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
+		return service.createDuplicateDocument(aDocId, aReasonId, aSeries, aNumber,aWorkFunction2,aJob,aUpdateJob) ;
+	}
+	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, HttpServletRequest aRequest) throws Exception {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
+		return service.createWorkComboDocument(aDocId, aJob, aSeries, aNumber) ;
+	}
 }

@@ -43,6 +43,31 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	public String getTimeBegin() {return theTimeBegin;}
 	public void setTimeBegin(String aTimeBegin) {theTimeBegin = aTimeBegin;}
 
+	/** Тип стациионара */
+	@Comment("Тип стациионара")
+	public Long getHospType() {
+		return theHospType;
+	}
+
+	public void setHospType(Long aHospType) {
+		theHospType = aHospType;
+	}
+	
+	/** Специалист */
+	@Comment("Специалист")
+	public Long getSpec() {
+		return theSpec;
+	}
+
+	public void setSpec(Long aSpec) {
+		theSpec = aSpec;
+	}
+
+	/** Специалист */
+	private Long theSpec;
+
+	/** Тип стациионара */
+	private Long theHospType;
 	/** Время */
 	private String theTimeBegin;
 	/** Экстренность */

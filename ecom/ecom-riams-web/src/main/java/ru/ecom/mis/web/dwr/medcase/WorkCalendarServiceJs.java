@@ -30,6 +30,14 @@ public class WorkCalendarServiceJs {
 		return "Сгенерировано";
 		
 	}
+	public String addBusyPattern(Long aWorkFunction, String aDateFrom, 
+			String aDateTo, Long aPattern, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
+		java.sql.Date dateFrom = DateFormat.parseSqlDate(aDateFrom) ;
+		java.sql.Date dateTo = DateFormat.parseSqlDate(aDateTo) ;
+		service.addBusyPatternByWorkFunction(aWorkFunction, dateFrom, dateTo, aPattern) ;
+		return "Добавлено" ;
+	}
 	
 	
 	public String getInfoDay(String aDate, HttpServletRequest aRequest) throws NamingException {

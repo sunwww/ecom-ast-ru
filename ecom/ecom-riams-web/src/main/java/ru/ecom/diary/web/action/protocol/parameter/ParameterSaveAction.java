@@ -30,13 +30,13 @@ public class ParameterSaveAction extends AbstractEntityAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 
-    	System.out.println(1);
+    	//System.out.println(1);
     	IEntityForm form = castEntityForm(aForm, aMapping) ;
     	IEntityFormService service = find(aRequest).getEntityFormService();
         BaseValidatorForm validatorForm = (BaseValidatorForm) aForm ;
         ActionErrors errors = validatorForm.validate(aMapping, aRequest) ;
         
-        System.out.println(2);
+        //System.out.println(2);
     	System.out.println(errors);
     	try {
     		IParameterService service1 = Injection.find(aRequest).getService(IParameterService.class) ;
@@ -48,12 +48,12 @@ public class ParameterSaveAction extends AbstractEntityAction {
 			aRequest.setAttribute("paramform","");
 			aRequest.setAttribute("paramscript","");
 		}
-    	System.out.println(3);
+    	//System.out.println(3);
 		
         if (errors!=null && !errors.isEmpty()) {
         	return aMapping.findForward("success_file") ;
         }
-        System.out.println(4);
+        //System.out.println(4);
         IEntityForm formAdapted = form;
         if(isMap(form)) {
         	formAdapted = new MapEntityForm() ;
