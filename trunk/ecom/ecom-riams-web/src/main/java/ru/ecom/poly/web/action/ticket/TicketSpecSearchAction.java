@@ -39,10 +39,12 @@ public class TicketSpecSearchAction extends BaseAction {
         		form.setDoctor(doctor) ;
         		//System.out.println(3) ;
         	}
-        	aRequest.setAttribute("list", service.findAllWorkerTickets(doctor, form.getDateFilter()));
+        	aRequest.setAttribute("listDirect", service.findAllWorkerTickets(doctor, form.getDateFilter(),0));
+        	aRequest.setAttribute("listAccepted", service.findAllWorkerTickets(doctor, form.getDateFilter(),1));
         } else {
         	//System.out.println(4) ;
-        	aRequest.setAttribute("list", service.findAllSpecialistTickets(form.getDoctor(), form.getDateFilter()));
+        	aRequest.setAttribute("listDirect", service.findAllSpecialistTickets(form.getDoctor(), form.getDateFilter(),0));
+        	aRequest.setAttribute("listAccepted", service.findAllSpecialistTickets(form.getDoctor(), form.getDateFilter(),1));
         }
         
         

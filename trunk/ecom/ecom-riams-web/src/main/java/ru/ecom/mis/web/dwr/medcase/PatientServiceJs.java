@@ -37,19 +37,9 @@ public class PatientServiceJs {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		return service.infoMedPolicy(aPatient);
 	}
-	public boolean setDiagnosisCreateByMedCase(Long aMedCase,Long aStatus,HttpServletRequest aRequest)throws Exception  {
+	public boolean setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus,HttpServletRequest aRequest)throws Exception  {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ; 
-		service.setDiagnosisCreateByMedCase(aMedCase,aStatus);
-		return true ;
-	}
-	public boolean setDiaryCreateByMedCase(Long aMedCase,Long aStatus,HttpServletRequest aRequest)throws Exception  {
-		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		service.setDiaryCreateByMedCase(aMedCase,aStatus);
-		return true ;
-	}
-	public boolean setPrintByMedCase(Long aMedCase,Long aStatus,HttpServletRequest aRequest)throws Exception  {
-		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		service.setPrintByMedCase(aMedCase,aStatus);
+		service.setAddParamByMedCase(aParam,aMedCase,aStatus);
 		return true ;
 	}
 }

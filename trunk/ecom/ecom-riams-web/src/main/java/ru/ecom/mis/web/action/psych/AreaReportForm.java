@@ -60,6 +60,13 @@ public class AreaReportForm extends BaseValidatorForm {
 	public Long getGroupInv() {return theGroupInv;}
 	public void setGroupInv(Long aGroupInv) {theGroupInv = aGroupInv;}
 
+	/** Принудительное лечение */
+	@Comment("Принудительное лечение")
+	public Long getCompTreatment() {return theCompTreatment;}
+	public void setCompTreatment(Long aCompTreatment) {theCompTreatment = aCompTreatment;}
+
+	/** Принудительное лечение */
+	private Long theCompTreatment;
 	/** Группа инвалидности */
 	private Long theGroupInv;
 	/** Группа наблюдений */
