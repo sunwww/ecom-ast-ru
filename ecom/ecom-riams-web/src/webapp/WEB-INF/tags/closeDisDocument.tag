@@ -27,7 +27,7 @@
     <h2>Выберите причину закрытия</h2>
     <div class='rootPane'>
     
-<form action="javascript:">
+<form action="javascript:void(0) ;">
     <msh:panel>
     	<msh:row>
     		<msh:textField property="${name}Seria" label="Серия"/>
@@ -39,7 +39,7 @@
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" value='OK'  onclick="javascript:save${name}CloseDocument()"/>
+                <input type="button" id='${name}buttonAddressOk' value='OK'  onclick="javascript:save${name}CloseDocument()"/>
                 <input type="button" value='Отменить' onclick='cancel${name}CloseDocument()'/>
             </td>
         </msh:row>
@@ -58,14 +58,19 @@
          if (!theIs${name}CloseDisDocumentDialogInitialized) {
          	init${name}CloseDisDocumentDialog() ;
           }
+         theTableArrow = null ;
          the${name}CloseDisDocumentDialog.show() ;
-         $("${name}ReasonName").focus() ;
+         $("${name}Seria").focus() ;
 
      }
 
      // Отмена
      function cancel${name}CloseDocument() {
          the${name}CloseDisDocumentDialog.hide() ;
+         theTableArrow = new tablearrow.TableArrow('tab1') ;
+     }
+     function ${name}Docum() {
+    	 
      }
 
      // Сохранение данных
@@ -73,9 +78,9 @@
      	if ($('${name}Reason').value==0) {
      		alert("Не выбрана причина закрытия") ;
      		$("${name}ReasonName").focus() ;
-     	} else if ($('${name}Seria').value=="") {
-     		alert("Поле серия является обязательным") ;
-     		$("${name}Seria").focus() ;
+     	//} else if ($('${name}Seria').value=="") {
+     	//	alert("Поле серия является обязательным") ;
+     	//	$("${name}Seria").focus() ;
      	} else if ($('${name}Number').value=="") {
      		alert("Поле номер является обязательным") ;
      		$("${name}Number").focus() ;
@@ -94,6 +99,9 @@
 	                       
 	                       cancel${name}CloseDocument() ;
 	                       $('ALT_3').style.display = 'none' ;
+	                       $('ALT_7').style.display = 'none' ;
+	                       $('ALT_6').style.display = 'block' ;
+	                       theTableArrow = new tablearrow.TableArrow('tab1') ;
 	                       //window.document.location.reload()  ;
 	                    }
 	                }
@@ -104,6 +112,7 @@
 
      // инициализация диалогового окна
      function init${name}CloseDisDocumentDialog() {
+    	eventutil.addEnterSupport('${name}ReasonName', '${name}buttonAddressOk') ;
      	DisabilityService.getDataByClose (
      		'${param.id}', {
      			callback: function(aString) {

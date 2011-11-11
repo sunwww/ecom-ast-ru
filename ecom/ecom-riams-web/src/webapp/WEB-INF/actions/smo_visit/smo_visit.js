@@ -7,7 +7,7 @@ function addDisabilityByRedirectFromVisit(aForm, aCtx) {
 	 
 	var spoId = aCtx.invokeScript("SmoVisitService", "findSpoIdByVisit", id) ;
 	return aCtx.createForwardRedirect(
-		"/entityParentPrepareCreate-dis_disabilityCase.do?id="+spoId
+		"/entityParentPrepareCreate-dis_case.do?id="+spoId
 	) ;
 }
  

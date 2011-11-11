@@ -48,9 +48,19 @@
         <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
           <msh:autoComplete vocName="vocIdc10ticket" property="idc10" label="Диагноз код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
         </msh:row>
-        <msh:row guid="7866a1f6-46fd-4df8-81dd-15391801c26d">
-          <msh:autoComplete vocName="vocAcuityDiagnosis" property="vocIllnesType" label="Характер заболевания" horizontalFill="true" guid="da756e0d-c6c0-4870-85c6-65973d6183de" />
-          <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" horizontalFill="true" guid="dade0d-c6c0-4870-85c6-6d3de" />
+        <%-- 
+        <msh:row>
+        	<msh:autoComplete property="illnesType" vocName="vocIllnesType" fieldColSpan="3" label="Характер заболевания"/>
+        </msh:row>
+        --%>
+        <msh:ifFormTypeIsView formName="poly_ticketForm">
+	        <msh:row>
+	          <msh:autoComplete vocName="vocAcuityDiagnosis" property="vocIllnesType" label="Острота" horizontalFill="true" guid="da756e0d-c6c0-4870-85c6-65973d6183de" />
+	          <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" horizontalFill="true" guid="dade0d-c6c0-4870-85c6-6d3de" />
+	        </msh:row>
+        </msh:ifFormTypeIsView>
+        <msh:row>
+          <msh:autoComplete vocName="vocIllnesPrimary" property="illnesPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row guid="4bd126b5-2316-42c4-bcb7-ccf5108b2c27">
           <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" horizontalFill="true" guid="bf850705-5557-438e-b56e-33d59b1618e4" />
@@ -176,6 +186,11 @@
     <tags:mis_double name='Ticket' title='Существующие талоны в базе:'/>
   </tiles:put>
   <tiles:put name="side" type="string">
+  	<msh:ifFormTypeAreViewOrEdit formName="poly_ticketForm">
+  		<msh:sideMenu title="Дополнительно">
+  			<msh:sideLink name="Просмотр инф. о заключениях по медкарте" action="/js-poly_protocol-infoByTicket.do" params="id"/>
+  		</msh:sideMenu>
+  	</msh:ifFormTypeAreViewOrEdit>
     <msh:ifFormTypeIsView formName="poly_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
       <msh:sideMenu guid="e6c81315-888f-4d80-856b-ce3095ca1d55" title="Талон" >
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+2" params="id" action="/entityEdit-poly_ticket" name="Изменить" guid="89585df8-aadb-4d59-abd9-c0d16a6170a9" title="Изменить талон" />
@@ -188,7 +203,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-poly_protocol" name="Протокол" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
+        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-poly_protocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />

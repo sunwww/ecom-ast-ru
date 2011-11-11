@@ -74,5 +74,8 @@
       </msh:panel>
     </msh:form>
   </tiles:put>
+  <tiles:put name="title" type="string">
+    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="smo_visitForm" />
+  </tiles:put>  
 </tiles:insert>
 

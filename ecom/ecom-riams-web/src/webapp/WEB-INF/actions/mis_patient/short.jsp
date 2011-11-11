@@ -12,6 +12,22 @@
       <msh:hidden guid="hiddenid123" property="id" />
       <msh:hidden property="saveType" guid="30dc954b-c5f2-49ed-b001-31042904724c" />
       <msh:panel>
+      	<msh:row>
+      		<msh:autoComplete property="medcardLast" viewAction="entityView-poly_medcard.do" shortViewAction="entityShortView-poly_medcard.do"
+      			label="Медкарта" vocName="medcardLast" viewOnlyField="true"/>
+      		<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+      		<msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
+	      		<msh:autoComplete property="careCard"  viewAction="entityView-psych_careCard.do" shortViewAction="entityShortView-psych_careCard.do"
+	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
+	      		/>
+      		</msh:ifInRole>
+      		<msh:ifNotInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
+	      		<msh:autoComplete property="careCard"  
+	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
+	      		/>
+      		</msh:ifNotInRole>
+      		</msh:ifInRole>
+      	</msh:row>
           <msh:row>
             <msh:label  property="lastname" label="Фамилия"  />
             <msh:label property="firstname" label="Имя"  />
@@ -20,9 +36,15 @@
             <msh:label property="middlename" label="Отчество" />
             <msh:label property="birthday" label="Дата рождения" guid="06db8372-9a2e-4737-8703-9e2b96c06782" />
           </msh:row>
+          <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
+	          <msh:row>
+	          	<msh:autoComplete property="newborn" label="Новорожденный" fieldColSpan="3" vocName="vocNewBorn" horizontalFill="true" />
+	          </msh:row>
+          </msh:ifInRole>
+
         <msh:row>
             <msh:autoComplete viewOnlyField="true"property="sex" label="Пол" vocName="vocSex" />
-            <msh:label property="medcardNumberText" label="Номер мед. карты" />
+           
         </msh:row>
         <msh:row>
           <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" viewOnlyField="true" vocName="vocOrg"  />
@@ -54,6 +76,9 @@
         <msh:row>
           <msh:label property="passportDateIssued" label="Дата выдачи"/>
           <msh:label property="passportWhomIssued" label="Кем выдан"/>
+        </msh:row>
+        <msh:row >
+          <msh:textField property="birthPlace" label="Место рождения" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
 	        <msh:label property="addressInfo" fieldColSpan="3" label="Адрес рег."/>

@@ -22,19 +22,25 @@
         	<msh:textField property="registrationDate" label="Дата регистрации"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="lawCourt" label="Суд, принявший решение" vocName="vocLawCourt"/>
+        	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="kind" label="Решение суда" vocName="vocPsychCompulsoryTreatment"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="courtDecision" label="Решение суда" vocName="vocPsychCourtTreatmentDecision"/>
+        	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="lawCourt" label="Суд, принявший решение" vocName="vocLawCourt"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="crimainalCodeArticle" label="Статья уголовного кодекса" vocName="vocCriminalCodeArticle"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" fieldColSpan="3" property="kind" label="Вид принудительного лечения" vocName="vocPsychCompulsoryTreatment"/>
+        	<msh:textArea property="decisionNotes" fieldColSpan="3"  label="Описание решения"/>
         </msh:row>
         <msh:row>
-        	<msh:textArea property="decisionNotes" fieldColSpan="3"  label="Описание решения"/>
+        	<msh:textField property="dateReplace" label="Дата замены"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="lawCourtReplace" vocName="vocLawCourt" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="courtDecisionReplace" vocName="vocPsychCourtTreatmentDecision" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <!-- 
         TODO Добавить заключение 

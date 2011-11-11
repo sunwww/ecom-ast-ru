@@ -130,7 +130,7 @@
 		    left   join VocKsg vk on d.clinicStatisticGroup_id = vk.id
 		    left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
 		    where  cc.id=${param.id} 
-		    group by d.idc10_id,d.priority_id order by vi.code " guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
+		    group by d.idc10_id,d.priority_id order by d.establishDate" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
 		    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 		      <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
 		      <msh:tableColumn columnName="ПО" property="8" />
@@ -146,21 +146,53 @@
     </tr></table>
     </msh:section>
     </msh:ifInRole>
+    <table><tr valign="top">
       <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/View" guid="f950bd96-a00b-4497-ad74-61fa7a713004">
+      <td>
         <msh:section title="Движение по участку." createRoles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Create" createUrl="entityParentPrepareCreate-psych_lpuAreaPsychCareCard.do?id=${param.id}"
         listUrl="entityParentList-psych_lpuAreaPsychCareCard.do?id=${param.id}"
         >
           <msh:sectionContent guid="bed88479-5b63-4d93-98a9-ee37dde8ce22">
-            <ecom:parentEntityListAll attribute="lpuAreas" formName="psych_lpuAreaPsychCareCardForm" guid="adf8923f-81b2-4394-831e-8d65247c8d39" />
-            <msh:table name="lpuAreas" idField="id" action="entityParentView-psych_lpuAreaPsychCareCard.do" guid="dbc0b7a5-0be6-4b8b-9281-d853a785b7b1">
-              <msh:tableColumn property="id" columnName="ИД" guid="b1102c30-857f-47a8-bae4-bfe49dd073b3" />
-              <msh:tableColumn property="startDate" columnName="Дата взятия"/>
-              <msh:tableColumn property="finishDate" columnName="Дата снятия"/>
-              <msh:tableColumn property="lpuAreaInfo" columnName="Участок"/>
+            <ecom:webQuery name="lpuAreas" nativeSql="select pl.id as plid,pl.startDate as plStartDate
+            ,pl.finishDate as plFinishDate ,la.number as laname
+            ,(select list(isnull(vpdg.name,isnull(vpac.name,' '))) 
+            	from PsychiaticObservation po  
+            	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
+            	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
+            	where po.careCard_id=pl.careCard_id and po.startDate>=pl.startDate 
+            	and ( pl.finishDate is null or po.startDate<pl.finishDate)
+            ) from LpuAreaPsychCareCard pl  
+            left join LpuArea la on la.id=pl.lpuArea_id 
+            where pl.careCard_id='${param.id}' order by pl.startDate
+            "/>
+            <msh:table name="lpuAreas" idField="1" action="entityParentView-psych_lpuAreaPsychCareCard.do">
+              <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="3" columnName="Дата снятия"/>
+              <msh:tableColumn property="4" columnName="Участок"/>
+              <msh:tableColumn property="5" columnName="Наблюдения"/>
             </msh:table>
           </msh:sectionContent>
         </msh:section>
+     </td>
       </msh:ifInRole>
+      
+      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View" guid="be0c3268-8280-4e65-b73a-e5933fea4741">
+      <td>
+        <msh:section title="Динамика наблюдений." createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" createUrl="entityParentPrepareCreate-psych_observation.do?id=${param.id}"
+        listUrl="entityParentList-psych_observation.do?id=${param.id}">
+          <msh:sectionContent guid="252153e1-1c93-469a-8184-4d61f6fa08e3">
+            <ecom:parentEntityListAll attribute="observations" formName="psych_observationForm" guid="d2316e2f-aafe-44ad-9dda-aa73f1506131" />
+            <msh:table name="observations" idField="id" action="entityParentView-psych_observation.do" guid="c3767948-f614-492c-ba65-560430eb7646">
+              <msh:tableColumn property="startDate" columnName="Дата начала"/>
+              <msh:tableColumn property="finishDate" columnName="Дата окончания"/>
+              <msh:tableColumn property="ambulatoryCareInfo" columnName="Вид наблюдения"/>
+              <msh:tableColumn property="dispensaryGroupInfo" columnName="Группа"/>
+            </msh:table>
+          </msh:sectionContent>
+        </msh:section>
+        </td>
+      </msh:ifInRole>
+      </tr></table>
     
     <!-- Инвалидность -->
    	<msh:ifInRole roles="/Policy/Mis/Patient/Invalidity/View">
@@ -168,7 +200,7 @@
    			<msh:sectionTitle>Инвалидности по психическому заболеванию
    			</msh:sectionTitle>
    			<msh:sectionContent>
-	    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.revisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate, viwp.name as viwpname from invalidity i left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code like 'F%' )" name="invalidities"/>
+	    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.revisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate, viwp.name as viwpname from invalidity i left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code is null or mkb.code like 'F%' )" name="invalidities"/>
 	    		<msh:table name="invalidities" action="entityParentView-mis_invalidity.do" idField="1">
 	    			<msh:tableColumn property="sn" columnName="#"/>
 	    			<msh:tableColumn property="6" columnName="Группа инвалидности"/>
@@ -207,6 +239,57 @@
           </msh:sectionContent>
         </msh:section>
       </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/View" guid="d95cd064-61fe-47bb-ab71-bc33103adc15">
+        <msh:section title="Принудительное лечение." createRoles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Edit" createUrl="entityParentPrepareCreate-psych_compulsoryTreatment.do?id=${param.id}"
+        listUrl="entityParentList-psych_compulsoryTreatment.do?id=${param.id}">
+          <msh:sectionContent guid="3e092419-4f65-4908-8431-786b6ac6f4dc">
+            <%--<ecom:parentEntityListAll attribute="compulsoryTreatments" formName="psych_compulsoryTreatmentForm" guid="21377aec-7851-48a2-9754-0e6079c33042" />
+            <msh:table idField="id" name="compulsoryTreatments" action="entityParentView-psych_compulsoryTreatment.do" guid="d0c8c1bc-8947-483f-a682-bf6cab9fef9f">
+              <msh:tableColumn property="orderNumber" columnName="Поряд. № лечения" />
+              <msh:tableColumn property="registrationDate" columnName="Дата регистрации" />
+              <msh:tableColumn property="decisionDate" columnName="Дата решения суда" />
+              <msh:tableColumn property="lawCourtInfo" columnName="Суд, принявший решение" />
+              <msh:tableColumn property="crimainalCodeArticleInfo" columnName="Статья уголовного кодекса" />
+              <msh:tableColumn property="courtDecisionInfo" columnName="Решение суда" />
+              <msh:tableColumn property="kindInfo" columnName="Вид принудительного лечения" />
+            </msh:table>--%>
+            <ecom:webQuery name="compulsoryTreatments" nativeSql="
+            select ct.id,ct.orderNumber,ct.registrationDate,ct.decisionDate,vlc.name as vlcname
+            	,vcca.name as vccaname
+            	,vpct.name as vkname 
+            	,to_char(COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))-cast(ct.decisionDate as integer),'9 999')
+            	,to_char(
+            		COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))
+            		-(select min(cast(ct1.decisionDate as integer))  from CompulsoryTreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.orderNumber=ct.orderNumber)
+            	
+            	,'9 999')
+            	 ,vpctR.code as vpctRcode,ct.dateReplace,vlcR.code as vlcRcode
+            from CompulsoryTreatment ct
+            left join VocLawCourt vlc on vlc.id=ct.lawCourt_id
+            left join VocLawCourt vlcR on vlcR.id=ct.lawCourtReplace_id
+            left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
+            left join VocPsychCompulsoryTreatment vpct on vpct.id=ct.kind_id
+            left join VocPsychCompulsoryTreatment vpctR on vpctR.id=ct.courtDecisionReplace_id
+            where ct.careCard_id=${param.id} order by ct.decisionDate
+            "/>
+            <msh:table idField="1" name="compulsoryTreatments" action="entityParentView-psych_compulsoryTreatment.do" guid="d0c8c1bc-8947-483f-a682-bf6cab9fef9f">
+              <msh:tableColumn property="2" columnName="Поряд. № лечения" />
+              <msh:tableColumn property="3" columnName="Дата регистрации" />
+              <msh:tableColumn property="4" columnName="Дата решения суда" />
+              <msh:tableColumn property="5" columnName="Суд, принявший решение" />
+              <msh:tableColumn property="6" columnName="Статья уголовного кодекса" />
+              <msh:tableColumn property="7" columnName="Решение суда" />
+              <msh:tableColumn property="11" columnName="Дата замены" />
+              <msh:tableColumn property="12" columnName="Суд, заменивший решение" />
+              <msh:tableColumn property="10" columnName="Решение заменено на" />
+              
+              <msh:tableColumn property="8" columnName="Кол-во к/дней " />
+              <msh:tableColumn property="9" columnName="Кол-во к/дней общее" />
+
+            </msh:table>
+          </msh:sectionContent>
+        </msh:section>
+      </msh:ifInRole>
       <table><tr valign="top">
       <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/HealthState/View" guid="97d9a49f-c774-4f8f-8ce1-8ea36756e272">
       <td style="padding-right: 8px"  >
@@ -221,21 +304,6 @@
               <msh:tableColumn property="finishDate" columnName="Дата окончания"/>
               <msh:tableColumn property="kindInfo" columnName="Вид состояния псих.здоровья"/>
               <msh:tableColumn property="notes" columnName="Описание"/>
-            </msh:table>
-          </msh:sectionContent>
-        </msh:section>
-        </td>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View" guid="be0c3268-8280-4e65-b73a-e5933fea4741">
-      <td>
-        <msh:section title="Динамика наблюдений." createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" createUrl="entityParentPrepareCreate-psych_observation.do?id=${param.id}"
-        listUrl="entityParentList-psych_observation.do?id=${param.id}">
-          <msh:sectionContent guid="252153e1-1c93-469a-8184-4d61f6fa08e3">
-            <ecom:parentEntityListAll attribute="observations" formName="psych_observationForm" guid="d2316e2f-aafe-44ad-9dda-aa73f1506131" />
-            <msh:table name="observations" idField="id" action="entityParentView-psych_observation.do" guid="c3767948-f614-492c-ba65-560430eb7646">
-              <msh:tableColumn property="startDate" columnName="Дата начала наблюдения"/>
-              <msh:tableColumn property="ambulatoryCareInfo" columnName="Вид амбулаторного наблюдения"/>
-              <msh:tableColumn property="dispensaryGroupInfo" columnName="Диспансерная группа"/>
             </msh:table>
           </msh:sectionContent>
         </msh:section>
@@ -275,52 +343,6 @@
         </td>
       </msh:ifInRole>
       </tr></table>
-      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/View" guid="d95cd064-61fe-47bb-ab71-bc33103adc15">
-        <msh:section title="Принудительное лечение." createRoles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Edit" createUrl="entityParentPrepareCreate-psych_compulsoryTreatment.do?id=${param.id}"
-        listUrl="entityParentList-psych_compulsoryTreatment.do?id=${param.id}">
-          <msh:sectionContent guid="3e092419-4f65-4908-8431-786b6ac6f4dc">
-            <%--<ecom:parentEntityListAll attribute="compulsoryTreatments" formName="psych_compulsoryTreatmentForm" guid="21377aec-7851-48a2-9754-0e6079c33042" />
-            <msh:table idField="id" name="compulsoryTreatments" action="entityParentView-psych_compulsoryTreatment.do" guid="d0c8c1bc-8947-483f-a682-bf6cab9fef9f">
-              <msh:tableColumn property="orderNumber" columnName="Поряд. № лечения" />
-              <msh:tableColumn property="registrationDate" columnName="Дата регистрации" />
-              <msh:tableColumn property="decisionDate" columnName="Дата решения суда" />
-              <msh:tableColumn property="lawCourtInfo" columnName="Суд, принявший решение" />
-              <msh:tableColumn property="crimainalCodeArticleInfo" columnName="Статья уголовного кодекса" />
-              <msh:tableColumn property="courtDecisionInfo" columnName="Решение суда" />
-              <msh:tableColumn property="kindInfo" columnName="Вид принудительного лечения" />
-            </msh:table>--%>
-            <ecom:webQuery name="compulsoryTreatments" nativeSql="
-            select ct.id,ct.orderNumber,ct.registrationDate,ct.decisionDate,vlc.name as vlcname
-            	,vcca.name as vccaname,vpctd.name as vcdname
-            	,vpct.name as vkname 
-            	,cast(ct.decisionDate as integer)-COALESCE((select min(cast(ct2.decisionDate as integer)) from CompulsoryTreatment ct2 
-            		where ct2.careCard_id=ct.careCard_id and ct2.decisionDate < ct.decisionDate
-            	 ),cast(ct.decisionDate as integer))
-            	,COALESCE((select min(cast(ct1.decisionDate as integer)) from CompulsoryTreatment ct1 
-            		where ct1.careCard_id=ct.careCard_id and ct1.decisionDate > ct.decisionDate
-            	 ),cast(ct.decisionDate as integer)) - cast(ct.decisionDate as integer)
-            from CompulsoryTreatment ct
-            left join VocLawCourt vlc on vlc.id=ct.lawCourt_id
-            left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
-            left join VocPsychCourtTreatmentDecision vpctd on vpctd.id=ct.courtDecision_id
-            left join VocPsychCompulsoryTreatment vpct on vpct.id=ct.kind_id
-            where ct.careCard_id=${param.id}
-            "/>
-            <msh:table idField="1" name="compulsoryTreatments" action="entityParentView-psych_compulsoryTreatment.do" guid="d0c8c1bc-8947-483f-a682-bf6cab9fef9f">
-              <msh:tableColumn property="2" columnName="Поряд. № лечения" />
-              <msh:tableColumn property="3" columnName="Дата регистрации" />
-              <msh:tableColumn property="4" columnName="Дата решения суда" />
-              <msh:tableColumn property="5" columnName="Суд, принявший решение" />
-              <msh:tableColumn property="6" columnName="Статья уголовного кодекса" />
-              <msh:tableColumn property="7" columnName="Решение суда" />
-              <msh:tableColumn property="8" columnName="Вид принудительного лечения" />
-              <msh:tableColumn property="10" columnName="Кол-во к/дней " />
-              <msh:tableColumn property="9" columnName="Кол-во к/дней общее" />
-
-            </msh:table>
-          </msh:sectionContent>
-        </msh:section>
-      </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/View">
       	<msh:section title="Госпитализации по псих.профилю ЛПУ">
       		<ecom:webQuery name="hospitalMedCase" nativeSql="

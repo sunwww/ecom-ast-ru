@@ -140,9 +140,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <!--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/ExpertCard/Show" name="Эксперт"   params="id"  action='/expertCardListView' title='Экспертные карты'/>   -->
 <!--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Nurse/Show" name="Лица по уходу"   params="id"  action='/nurseListView' title='Лица по уходу'/>  -->
 <%--     <msh:sideLink roles="/Policy/Mis/Disability/DisabilityCase/View"  
-    	name="Нетрудоспособность"   params="id"  action='/entityParentList-dis_disabilityCase' 
+    	name="Нетрудоспособность"   params="id"  action='/entityParentList-dis_case' 
     	title='Листы нетрудоспособности' 
-    	styleId="dis_disabilityCase"
+    	styleId="dis_case"
     	/> --%>
 <!--    <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  -->
 	<msh:sideLink roles="/Policy/Mis/MedCase/DeathCase/View"  name="Случай смерти"   

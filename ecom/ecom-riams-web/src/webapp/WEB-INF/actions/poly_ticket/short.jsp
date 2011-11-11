@@ -7,6 +7,9 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
+  <tiles:put name="title" type="string">
+    <ecom:titleTrail mainMenu="Medcard" beginForm="poly_ticketForm" guid="5c4f3682-e66b-4e0d-b448-4e6a2961a943" />
+  </tiles:put>
   <tiles:put name="body" type="string">
     <msh:form title="<a href='entityParentView-poly_ticket.do?id=${param.id}'>Талон</a>" action="entityParentSaveGoView-poly_ticket.do" defaultField="date" guid="77bf3d00-cfc6-49eb-9751-76e82d38751c">
       <msh:hidden property="id" guid="e862851f-7390-4fe6-9a37-3b22306138b4" />

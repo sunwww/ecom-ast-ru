@@ -50,13 +50,16 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>
+    
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="work_personalWorkFunctionForm">
+     <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/View">
       <msh:section guid="sectionChilds" title="Календарь">
         <ecom:parentEntityListAll guid="parentEntityListChilds" formName="cal_workCalendarForm" attribute="childs" />
         <msh:table viewUrl="entityShortView-cal_workCalendar.do" guid="tableChilds" name="childs" action="entityParentView-cal_workCalendar.do" idField="id">
           <msh:tableColumn columnName="ИД" property="id" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
         </msh:table>
       </msh:section>
+     </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -67,7 +70,7 @@
       <msh:sideMenu guid="sideMenu-123" title="Рабочая функция">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-work_personalWorkFunction" name="Изменить" roles="/Policy/Mis/Worker/WorkFunction/Create" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-work_personalWorkFunction" name="Удалить" roles="/Policy/Mis/Worker/WorkFunction/Delete" />
-        <msh:sideLink guid="Генерировать на месяц" action="/javascript:generationCalendar('.do')" name="Генерировать" roles="/Policy/Mis/Worker/WorkFunction/View" />
+        <msh:sideLink action="/javascript:generationCalendar('.do')"  name="Генерировать" roles="/Policy/Mis/Worker/WorkCalendar/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="53f4a828-71f4-4c29-a2e8-fd61ff083187">
         <msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_workCalendar" name="Календарь" title="Добавить календарь" guid="2f18fed4-7259-479a-97df-ff073fc4569d" />

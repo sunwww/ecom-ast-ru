@@ -13,7 +13,7 @@
     <tags:stac_journal currentAction="stac_journalCaseRareByHospital" />
   </tiles:put>
   <tiles:put name="body" type="string">
-  	<ecom:webQuery name="list" hql="select dateStart, count(*) from MedCase where DTYPE='HospitalMedCase' and rareCase=1 group by dateStart"/>
+  	<ecom:webQuery name="list" hql="select dateStart, count(*) from MedCase where DTYPE='HospitalMedCase' and cast(rareCase as int)=1 group by dateStart"/>
     <msh:table name="list" action="stac_journalCaseRareHospitalByDate.do" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" guid="ee7181c8-98a7-48b3-8009-3be23b7b86b5" />
       <msh:tableColumn columnName="Дата поступления" property="1" guid="c1058c40-21b8-4e52-b0ff-09fb280d33a7" />

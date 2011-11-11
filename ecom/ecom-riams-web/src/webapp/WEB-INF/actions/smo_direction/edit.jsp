@@ -31,7 +31,7 @@
           </td>
         </tr>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunctionByDirect" property="workFunctionPlan" label="Куда" guid="377c0e96-6812-477d-b44f-d640d659b7b6" fieldColSpan="3" horizontalFill="true" size="50" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunctionByDirect" property="workFunctionPlan" label="Куда" fieldColSpan="3" horizontalFill="true"  />
         </msh:row>
         <msh:row guid="row1">
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
@@ -78,7 +78,22 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
-      <script type="text/javascript">workFunctionPlanAutocomplete.addOnChangeCallback(function(){
+      <script type="text/javascript">
+      //new dateutil.DateField($('datePlanName'));
+      //new timeutil.TimeField($('timePlanName'));
+	  	eventutil.addEventListener($('datePlanName'), eventutil.EVENT_KEY_UP, 
+	  		  	function() {
+		  		if ($('datePlanName').value.length==2) $('datePlanName').value=$('datePlanName').value+"." ; 
+		  		if ($('datePlanName').value.length==5) $('datePlanName').value=$('datePlanName').value+"." ; 
+	  		  	}
+	  	) ;
+	  	eventutil.addEventListener($('timePlanName'), eventutil.EVENT_KEY_UP, 
+	  		  	function() {
+		  		if ($('timePlanName').value.length==2) $('timePlanName').value=$('timePlanName').value+":" ; 
+	  		  	}
+	  	) ;
+      
+      workFunctionPlanAutocomplete.addOnChangeCallback(function(){
   			updateDefaultDate() ;
   		}) ;
   		function updateDefaultDate() {
@@ -105,7 +120,8 @@
   			$('timePlan').value="0" ;
 			$('timePlanName').value = "";
   			
-  		}</script>
+  		}
+  		</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>

@@ -111,6 +111,11 @@
             scope='request' validate="false" name="stac_sslForm">
             <forward name="success" path="/WEB-INF/actions/stac_ssl/list.jsp" />
         </action>
+        <action path="/config_addressUpdate" 
+        	type='ru.ecom.mis.web.action.disability.AddressUpdateAction'
+            scope='request' validate="false" name="stac_sslForm">
+            <forward name="success" path="riams_service.do" />
+        </action>
         <action path="/stac_policiesEdit" type='ru.ecom.mis.web.action.medcase.PoliciesEditAction'
             scope='request' validate="false" name="">
             <forward name="success" path="/WEB-INF/actions/stac_policies/addPolicy.jsp"/>
@@ -144,6 +149,15 @@
 		    >
 		    <forward name="success" redirect="false"
 		    	path='/WEB-INF/actions/stac_sslAllInfo/listByHospital.jsp'
+		    />
+		</action>
+		<action path='/stac_address_list'
+		    type='ru.ecom.mis.web.action.medcase.journal.AddressSheetHospitalAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/list_address_list.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_sslAllInfo/list_address_list.jsp'
 		    />
 		</action>
 		<action path='/stac_journalOpenByHospital'

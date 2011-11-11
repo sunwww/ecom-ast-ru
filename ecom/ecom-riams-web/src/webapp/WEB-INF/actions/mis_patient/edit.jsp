@@ -40,6 +40,22 @@
       	<msh:row >
       		<td colspan="6"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
       	</msh:row>
+      	<msh:row>
+      		<msh:autoComplete property="medcardLast" viewAction="entityView-poly_medcard.do" shortViewAction="entityShortView-poly_medcard.do"
+      			label="Медкарта" vocName="medcardLast" viewOnlyField="true"/>
+      		<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+      		<msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
+	      		<msh:autoComplete property="careCard"  viewAction="entityView-psych_careCard.do" shortViewAction="entityShortView-psych_careCard.do"
+	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
+	      		/>
+      		</msh:ifInRole>
+      		<msh:ifNotInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
+	      		<msh:autoComplete property="careCard"  
+	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
+	      		/>
+      		</msh:ifNotInRole>
+      		</msh:ifInRole>
+      	</msh:row>
       	</msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="a71e4812-8951-4dcc-918f-dc1a440cc9e2">
           <msh:row guid="70af394e-52bb-4df4-8ea8-065f194678cf">
@@ -51,15 +67,20 @@
           <msh:row guid="787b2b06-1c08-4621-b530-6b6734ec955e">
             <msh:textField property="middlename" label="Отчество" size="30" fieldColSpan="3" guid="b32db1c2-6d8a-4164-b3c6-1f5ab2baaf1b" />
           </msh:row>
+          <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
+	          <msh:row>
+	          	<msh:autoComplete property="newborn" label="Новорожденный" fieldColSpan="3" vocName="vocNewBorn" horizontalFill="true" />
+	          </msh:row>
+          </msh:ifInRole>
+          <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+          	<msh:hidden property="newborn"/>
+          </msh:ifNotInRole>
           <msh:row guid="33effb55-c5d6-4306-804e-a9cd7a8f46e5">
             <msh:textField property="birthday" label="Дата рождения" guid="06db8372-9a2e-4737-8703-9e2b96c06782" />
             <msh:autoComplete guid="sex123" property="sex" label="Пол" vocName="vocSex" />
           </msh:row>
         </msh:ifFormTypeIsNotView>
         <msh:row guid="e8f9a2e2-5361-41e6-b486-9c92b5693ac8">
-          <msh:row guid="3f2f4b8b-5b1a-4502-aab4-a358b624e45d">
-            <msh:textField passwordEnabled="false" property="medcardNumberText" viewOnlyField="true" label="Номер мед. карты" guid="8a2b8a55-184f-4fc5-af3a-ccffb4a1c8ab" horizontalFill="true" fieldColSpan="3" />
-          </msh:row>
           <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" vocName="vocOrg" guid="24e551c0-b185-4361-8364-a93210c7d39d" />
         </msh:row>
         <msh:row guid="b8dbed14-010b-44b5-93b7-3d32ccdc8b35">
@@ -117,8 +138,12 @@
           <msh:textField property="passportNumber" label="Номер" guid="3c109874-0bd2-4303-9de8-621589d5201e" />
         </msh:row>
         <msh:row guid="8f6ac7f2-e407-42e4-813c-950a6e2ab33a">
-          <msh:textField property="passportDateIssued" label="Дата выдачи" guid="ab9a3e74-48cb-4a8b-9f82-63539fcc198e" />
+          <msh:textField property="passportDateIssued" label="Дата выдачи"  />
           <msh:textField property="passportWhomIssued" label="Кем выдан" horizontalFill="true" size="40" guid="7d4d3d33-7bd7-4eff-9d32-83fbdd6715bc" />
+        </msh:row>
+        <msh:row >
+          <msh:textField property="passportCodeDivision" label="Код подраздел."/>
+          <msh:textField property="birthPlace" label="Место рождения" horizontalFill="true" size="40" />
         </msh:row>
         <!--        <msh:row>-->
         <!--            <td colspan='1' title='Адрес&nbsp;прописки (passportAddressField)' class='label'><label id='passportAddressFieldLabel'-->
@@ -423,7 +448,10 @@
       <!-- Открытые ССЛ -->
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/View" guid="5e0b8545-8dc8-48fd-a0ac-3a9f762f00dc">
         <msh:section title="Открытые СЛС. <a href='stac_sslList.do?id=${param.id}'>Показать все СЛС</a>" guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
-          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker&#xA;&#x9;, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker&#xA;        , st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA;  left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   and MedCase.dateFinish is null and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
+          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
+          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+			, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
+			, st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA;  left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   and MedCase.dateFinish is null and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
           <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
             <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
             <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
@@ -436,7 +464,13 @@
       <!-- Активные направления -->
       <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/View" guid="31447227-d69b-4477-92bf-57dfcbffb7e0">
         <msh:section title="Активные направления" guid="2908c043-8780-4025-8b28-911f0ce35018">
-          <ecom:webQuery name="directions" nativeSql="select MedCase.id&#xA;&#x9;, WorkCalendarDay.calendarDate&#xA;&#x9;, WorkCalendarTime.timeFrom&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' ||  Patient.middlename as workerOrder&#xA;        , VocReason.name as reasonName&#xA;&#x9;, pp.lastname || ' ' ||  pp.firstname || ' ' ||  pp.middlename || ' ' || VocWorkFunction.name as workerPlan&#xA;  from MedCase&#xA;  left outer join WorkCalendarDay  on MedCase.datePlan_id         = WorkCalendarDay.id&#xA;  left outer join WorkCalendarTime on MedCase.timePlan_id         = WorkCalendarTime.id&#xA;  left outer join Worker           on MedCase.orderWorker_id      = Worker.id&#xA;  left outer join Patient          on Worker.person_id            = Patient.id&#xA;  left outer join VocReason        on MedCase.visitReason_id      = VocReason.id&#xA;  left outer join WorkFunction     on MedCase.workFunctionPlan_id = WorkFunction.id&#xA;  left outer join Worker pw        on WorkFunction.worker_id      = pw.id&#xA;  left outer join Patient pp       on pw.person_id                = pp.id&#xA;  left outer join VocWorkFunction  on WorkFunction.workFunction_id = VocWorkFunction.id&#xA; where MedCase.patient_id=${param.id}&#xA;   and MedCase.DTYPE='Visit'&#xA;   and MedCase.dateStart is null&#xA; and cast(MedCase.noActuality as integer)!=1 order by WorkCalendarDay.calendarDate, WorkCalendarTime.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+          <ecom:webQuery name="directions" nativeSql="select MedCase.id
+, WorkCalendarDay.calendarDate
+, WorkCalendarTime.timeFrom
+, Patient.lastname || ' ' ||  Patient.firstname || ' ' ||  Patient.middlename as workerOrder
+, VocReason.name as reasonName
+, pp.lastname || ' ' ||  pp.firstname || ' ' ||  pp.middlename || ' ' || VocWorkFunction.name as workerPlan
+  from MedCase&#xA;  left outer join WorkCalendarDay  on MedCase.datePlan_id         = WorkCalendarDay.id&#xA;  left outer join WorkCalendarTime on MedCase.timePlan_id         = WorkCalendarTime.id&#xA;  left outer join Worker           on MedCase.orderWorker_id      = Worker.id&#xA;  left outer join Patient          on Worker.person_id            = Patient.id&#xA;  left outer join VocReason        on MedCase.visitReason_id      = VocReason.id&#xA;  left outer join WorkFunction     on MedCase.workFunctionPlan_id = WorkFunction.id&#xA;  left outer join Worker pw        on WorkFunction.worker_id      = pw.id&#xA;  left outer join Patient pp       on pw.person_id                = pp.id&#xA;  left outer join VocWorkFunction  on WorkFunction.workFunction_id = VocWorkFunction.id&#xA; where MedCase.patient_id=${param.id}&#xA;   and MedCase.DTYPE='Visit'&#xA;   and MedCase.dateStart is null&#xA; and cast(MedCase.noActuality as integer)!=1 order by WorkCalendarDay.calendarDate, WorkCalendarTime.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
           <msh:table guid="tableChilds" name="directions" action="entityParentEdit-smo_visit.do" idField="1">
             <msh:tableColumn columnName="№" identificator="false" property="sn" guid="73dd6ce1-81ea-4f13-b141-5d3f604f305d" />
             <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="709291f1-be97-4cd5-87c3-04a112a96639" />
@@ -549,8 +583,9 @@
         <msh:sideLink key="SHIFT+1" roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/stac_sslList" name="СЛС" title="Показать все случаи лечения в стационаре" guid="ca5196e9-9239-47e3-aec4-9a0336e47144" />
         <msh:sideLink params="id" action="/entityParentList-smo_spo" name="СПО" title="Показать все случаи поликлинического обслуживания" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
+        <msh:sideLink params="id" action="/js-poly_protocol-infoByPatient" name="Информация по талонам" title="Показать информацию талонам по пациенту" roles="/Policy/Mis/MedCase/Protocol,/Policy/Poly/Ticket/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_medPolicy" name="Полисы" title="Показать все полисы" roles="/Policy/Mis/MedPolicy/View"/>
-<%-- <msh:sideLink params="id" action="/js-dis_disabilityCase-listByPatient" name="Нетрудоспособности" title="Показать все случаи нетрудоспособности" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/DisabilityCase/View" /> --%>        
+<%-- <msh:sideLink params="id" action="/js-dis_case-listByPatient" name="Нетрудоспособности" title="Показать все случаи нетрудоспособности" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/DisabilityCase/View" /> --%>        
         <msh:sideLink params="id" action="/entityParentList-dis_case" name="Нетрудоспособности" 
         title="Показать все случаи нетрудоспособности по пациенту" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/Case/View" />
         
@@ -560,7 +595,7 @@
         <msh:sideLink params="id" action="/entityParentList-mis_kinsman" name="Родственников (представителей)"  title="Показать всех родственников (представителей)" roles="/Policy/Mis/Patient/Kinsman/View"/>
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
-        <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" name="Сведений о пациенте" title="Печать сведений о пациенте" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/View" />
+        <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" name="Амбул.карты" title="Печать амбул.карты" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/View" />
         <msh:sideLink key="SHIFT+8" params="id" action="/print-pat.do?s=PatientPrintService&amp;m=printInfo" name="Сведений о пациенте" title="Печать сведений о пациенте" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/MedCase/Visit/View" />
         <msh:sideLink key="SHIFT+9" action="/print-agreement.do?s=PatientPrintService&amp;m=printAgreement" 
         	name="Информ. согласия на мед. вмешательство" title="Печать информационного согласия"  

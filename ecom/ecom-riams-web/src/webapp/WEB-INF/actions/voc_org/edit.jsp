@@ -18,6 +18,9 @@
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+        	<msh:textField label="Краткое наим." property="code" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField label="Старый код ФОНДА" property="oldFondNumber" />
         	<msh:textField  label="Новый код ФОНДА" property="fondNumber" />
         </msh:row>

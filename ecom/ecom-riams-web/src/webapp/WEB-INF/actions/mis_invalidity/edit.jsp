@@ -14,12 +14,17 @@
             <msh:panel>
                 <msh:row>
                 	<msh:textField property="dateFrom" label="Дата установления"/>
+                	<msh:checkBox property="primary" label="Первичная инв."/>
                 </msh:row>
                 <msh:row>
                 	<msh:autoComplete property="registrationPlace" label="Место регистрации" vocName="mainLpu" horizontalFill="true" fieldColSpan="3"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox label="Инвалид с детства" property="childhoodInvalid" />
+                </msh:row>
+                <msh:row>
+                	<msh:checkBox property="withoutExam" label="Без переосвидетельства" horizontalFill="true"/>
+                	<msh:checkBox property="incapable" label="Недееспособный"  horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
                 	<msh:textField property="revisionDate" label="Дата пересмотра"/>

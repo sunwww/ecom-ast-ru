@@ -142,6 +142,9 @@
           <msh:autoComplete vocName="workFunction" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="omcStandart" fieldColSpan="6" label="ОМС стандарт" horizontalFill="true" vocName="omcStandart"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete vocName="vocAcuityDiagnosis" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
 	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="1" horizontalFill="true"/>
         </msh:row>

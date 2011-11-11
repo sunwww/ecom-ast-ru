@@ -197,7 +197,7 @@
         $('houseNumber').value = $('addressHouseNumber').value ;
         $('houseBuilding').value = $('addressHouseBuilding').value ;
         $('flatNumber').value = $('addressFlatNumber1').value ;
-        $('zipcode').value = $('addressZipcode').value ;
+        if ($('zipcode')) $('zipcode').value = $('addressZipcode').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
 
         AddressService.getAddressString(addressPk, $('addressHouseNumber').value, $('addressHouseBuilding').value, $('addressFlatNumber1').value,$('addressZipcode').value, {

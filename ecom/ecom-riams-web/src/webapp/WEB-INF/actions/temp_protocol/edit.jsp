@@ -57,7 +57,7 @@
     </msh:form>
     <msh:ifFormTypeIsView formName="temp_protocolForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:section title="Категории" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
-        <ecom:webQuery name="categories" nativeSql="select c.id,c.name,c.comments from TemplateProtocol_TemplateCategory pc left join TemplateCategory c on c.id=pc.categories_id where pc.protocols_id='${param.id}' group by c.id order by c.name" />
+        <ecom:webQuery name="categories" nativeSql="select c.id,c.name,c.comments from TemplateProtocol_TemplateCategory pc left join TemplateCategory c on c.id=pc.categories_id where pc.protocols_id='${param.id}' group by c.id,c.name,c.comments order by c.name" />
         <msh:table name="categories" action="entityParentView-temp_category.do" idField="1" noDataMessage="Нет данных" guid="123c019a-f668-4454-af88-4897d27728ab">
           <msh:tableColumn property="2" columnName="Название" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
           <msh:tableColumn property="3" columnName="Комментарии" guid="f6c2e5ba-4045-4dbe-b8fb-bb5d8386e9c4" />
