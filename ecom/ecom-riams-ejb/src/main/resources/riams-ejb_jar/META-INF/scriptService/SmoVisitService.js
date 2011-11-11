@@ -78,7 +78,7 @@ function journalRegisterVisit(aCtx,aParams) {
 	if (rayon!=null && (+rayon>0)) {
 		sql = "left join patient p on p.id = t.patient_id "+sql+" and p.rayon_id='"+rayon+"'" ;
 	}
-	sql = "select t.id from Medcase t "+sql +" and (t.noActuality is null or cast(t.noActuality as integer)=0) order by "+order;
+	sql = "select t.id from Medcase t "+sql +" and (t.noActuality is null or cast(t.noActuality as integer)=0) and t.dateStart is not null order by "+order;
 	//throw sql ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ids = "" ;
@@ -121,8 +121,8 @@ function visitMap(aVisit,aSn,aFormatSql,aFormat,aFormatTime,aManager) {
 	if (pat!=null) {
 		var sqlDate = aFormatSql.format(aVisit.dateStart) ;
 		var sql = "from MedPolicy where patient_id="
-		+pat.id+" and cast(cast('"+sqlDate+"' as date) as int)<=cast(actualDateTo as int) and cast(cast('"
-		+sqlDate+"' as date) as int) >= cast(actualDateFrom as int)" ;
+		+pat.id+" and to_date('"+sqlDate+"','yyyy-mm-dd')<=actualDateTo  and to_date('"
+		+sqlDate+"','yyyy-mm-dd') >= actualDateFrom" ;
 		//throw sql ;
 		var policies  = aManager.createQuery(sql).getResultList() ;
 		pol = policies.size()>0 ?policies.get(0).text:"" ;

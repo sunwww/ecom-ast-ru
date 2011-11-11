@@ -37,3 +37,27 @@ function onPreDelete(aId, aCtx) {
 	}
 	aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
 }
+
+/**
+ * При создании
+ */
+function onCreate(aForm, aEntity, aContext) {
+	var illnesPrimary=aEntity.illnesPrimary  ;
+	if (illnesPrimary!=null) {
+		aEntity.setVocIllnesType(illnesPrimary.getIllnesType()) ;
+		aEntity.setPrimary(illnesPrimary.getPrimary()) ;
+	}
+	aContext.manager.persist(aEntity) ;
+}
+
+/**
+ * При сохранении
+ */
+function onSave(aForm, aEntity, aContext) {
+	var illnesPrimary=aEntity.illnesPrimary  ;
+	if (illnesPrimary!=null) {
+		aEntity.setVocIllnesType(illnesPrimary.getIllnesType()) ;
+		aEntity.setPrimary(illnesPrimary.getPrimary()) ;
+	}
+	aContext.manager.persist(aEntity) ;
+}

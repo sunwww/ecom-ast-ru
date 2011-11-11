@@ -65,7 +65,7 @@
      <voc id='vocPsychCompulsoryTreatment' type='EntityVocService'>
           <EntityVocService
                entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCompulsoryTreatment'
-               names   = 'name'
+               names   = 'code,name'
                queried = 'code,name'
           />
      </voc>
