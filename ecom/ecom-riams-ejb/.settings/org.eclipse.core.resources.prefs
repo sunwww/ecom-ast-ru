@@ -1,8 +1,10 @@
-#Wed Feb 24 22:49:43 MSK 2010
+#Fri Aug 12 03:56:47 MSD 2011
 =\=\=\=\=\=\=
 <<<<<<<=.mine
 >>>>>>>=.r1862
 eclipse.preferences.version=1
+encoding//src/main/java/ru/ecom/mis/ejb/domain/worker/Worker.java=UTF-8
+encoding//src/main/java/ru/ecom/mis/ejb/service/worker/WorkerServiceBean.java=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/AdmissionMedCaseForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/AnesthesiaForm.js=UTF-8
@@ -43,3 +45,4 @@ encoding//src/main/resources/riams-ejb_jar/META-INF/scriptService/SmoVisitServic
 encoding//src/main/resources/riams-ejb_jar/META-INF/scriptService/TemplateService.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/scriptService/VisitPrintService.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/scriptService/WorkerService.js=UTF-8
+encoding/<project>=UTF-8
