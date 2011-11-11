@@ -70,6 +70,13 @@ public class OmcLpu extends OmcAbstractVoc {
 	public String getOgrn() {return theOgrn;}
 	public void setOgrn(String aOgrn) {theOgrn = aOgrn;}
 
+	/** Код федеральный */
+	@Comment("Код федеральный")
+	public String getCodef() {return theCodef;}
+	public void setCodef(String aCodef) {theCodef = aCodef;}
+
+	/** Код федеральный */
+	private String theCodef;
 	/** ОГРН */
 	private String theOgrn;
     /** Ведомственное подчинение */

@@ -38,9 +38,7 @@ public interface IPatientService {
     
     LpuAreaAddressPoint findPoint(Address aAddress, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
     
-    public void setDiaryCreateByMedCase(Long aMedCase,Long aStatus) ;
-    public void setDiagnosisCreateByMedCase(Long aMedCase,Long aStatus) ;
-    public void setPrintByMedCase(Long aMedCase,Long aStatus);
+    public void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;
     
     
 }

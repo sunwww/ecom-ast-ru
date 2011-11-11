@@ -21,6 +21,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarAlgorithm;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
@@ -31,6 +32,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeExample;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm;
 import ru.ecom.mis.ejb.service.lpu.LpuServiceBean;
 import ru.nuzmsh.util.format.DateFormat;
@@ -45,33 +47,109 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	private final static Logger LOG = Logger.getLogger(WorkCalendarServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
-	public void addBusyPattern(Long aWorkCalendar, Date aDateFrom, 
-			Date aDateTo, Long aPattern) {
+	public void clearOldData(Long aLpu, Date aDateFrom, Date aDateTo) {
+		MisLpu lpu = theManager.find(MisLpu.class, aLpu)  ;
+		for (Worker w : lpu.getWorker()) {
+			
+		}
+	}
+	public void addBusyPatternByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate, Long aPattern) {
+		//WorkFunction wf = theManager.find(WorkFunction.class, aWorkFunction) ;
+		List<WorkCalendar> list = theManager
+			.createQuery("from WorkCalendar where workFunction_id=:wf")
+			.setParameter("wf", aWorkFunction).getResultList() ;
+		WorkCalendarPattern pattern = theManager.find(WorkCalendarPattern.class, aPattern);
+		for (WorkCalendar wc:list) {
+			addBusyPattern(wc,aBeginDate,aFinishDate,pattern) ;
+		}
+		//ru.nuzmsh.util.format.DateFormat.parseSqlTime(aTimeString)
+	}
+	
+	private void addBusyPattern(WorkCalendar aWorkCalendar, Date aDateFrom, 
+			Date aDateTo, WorkCalendarPattern aPattern) {
+		
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("from JournalPatternCalendar jpc where jpc.workCalendar_id=")
-			.append(aWorkCalendar)
-			.append(" and jpc.dateFrom>:dateFrom and jpc.dateTo<:dateTo") ;
-		List<JournalPatternCalendar> list = theManager.createQuery(sql.toString()).getResultList() ;
+		sql.append("from JournalPatternCalendar  where workCalendar=:wc")
+			//.append(aWorkCalendar.getId())
+			.append(" and dateFrom>=:dateFrom and dateTo<=:dateTo") ;
+		List<JournalPatternCalendar> list = theManager
+				.createQuery(sql.toString())
+				.setParameter("wc", aWorkCalendar)
+				.setParameter("dateFrom", aDateFrom)
+				.setParameter("dateTo", aDateTo)
+				.getResultList() ;
 		Calendar calFrom = Calendar.getInstance() ;
 		calFrom.setTime(aDateFrom) ;
 		Calendar calTo = Calendar.getInstance() ;
 		calTo.setTime(aDateTo) ;
+		JournalPatternCalendar jpcnew = new JournalPatternCalendar() ;
+		jpcnew.setDateFrom(aDateFrom) ;
+		jpcnew.setDateTo(aDateTo) ;
+		jpcnew.setNoActive(false) ;
+		jpcnew.setPattern(aPattern) ;
+		jpcnew.setWorkCalendar(aWorkCalendar) ;
+		theManager.persist(jpcnew ) ;
+		theManager.refresh(jpcnew) ;
+		long calLTo = calTo.getTime().getTime() ;
+		long calLFrom = calFrom.getTime().getTime() ;
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+		System.out.println("---------calFrom="+format.format(calFrom.getTime())) ;
+		System.out.println("---------calTo="+format.format(calTo.getTime())) ;
+		calTo.add(Calendar.DAY_OF_MONTH, 1) ;
+		calFrom.add(Calendar.DAY_OF_MONTH, -1) ;		
 		for (JournalPatternCalendar jpc: list) {
 			Calendar calFrom1 = Calendar.getInstance() ;
 			calFrom1.setTime(jpc.getDateFrom()) ;
 			Calendar calTo1 = Calendar.getInstance() ;
+			calTo1.setTime(jpc.getDateTo()) ;
+			long calLTo1 = calTo1.getTime().getTime() ;
+			long calLFrom1 = calFrom1.getTime().getTime() ;
 			
-			
-			calTo1.add(Calendar.DAY_OF_MONTH, 1) ;
-			if (calFrom.after(calFrom1)) {
-				calFrom1.add(Calendar.DAY_OF_MONTH, -1) ;
-				jpc.setDateFrom(new Date(calFrom1.getTime().getTime())) ;
+			//calTo1.add(Calendar.DAY_OF_MONTH, 1) ;
+			System.out.println("----------------------------------------------------------") ;
+			System.out.println("---------------jcp="+jpc.getId()) ;
+			System.out.println("---------------calFrom1="+format.format(calFrom1.getTime())) ;
+			System.out.println("---------------calTo1="+format.format(calTo1.getTime())) ;
+			System.out.println("---------------calLFrom1="+calLFrom1) ;
+			System.out.println("---------------calLFrom="+calLFrom) ;
+			System.out.println("---------------calLTo1="+calLTo1) ;
+			System.out.println("---------------calLTo="+calLTo) ;
+			System.out.println("---------------calTo  after calTo1="+calTo.after(calTo1)) ;
+			System.out.println("---------------calTo  after calFrom1="+calTo.after(calFrom1)) ;
+			System.out.println("---------------calFrom  after calTo1="+calFrom.after(calTo1)) ;
+			System.out.println("---------------calFrom  after calFrom1="+calFrom.after(calFrom1)) ;
+			if (calFrom1.after(calFrom) && (calTo1.after(calTo) )) {
+				System.out.println("--------------++++++--1-") ;
+				
+				jpc.setDateFrom(new Date(calTo.getTime().getTime())) ;
+			} else if (calFrom.after(calFrom1) && (calTo.after(calTo1) )) {
+				System.out.println("--------------++++++--2-") ;
+				//calFrom1.add(Calendar.DAY_OF_MONTH, -1) ;
+				jpc.setDateTo(new Date(calFrom.getTime().getTime())) ;
+			} else if ((calFrom1.after(calFrom)) && (calTo.after(calTo1))) {
+				System.out.println("--------------++++++--3-") ;
+				//calTo1.setTime(jpc.getDateTo()) ;
+				jpc.setNoActive(Boolean.TRUE); 
+				
+			} else if (calFrom1.before(calFrom) && calTo1.before(calTo)) {
+				System.out.println("--------------++++++--4-") ;
+
+				JournalPatternCalendar jpc1 = new JournalPatternCalendar() ;
+				jpc1.setDateFrom(new Date(calTo.getTime().getTime())) ;
+				jpc1.setDateTo(jpc.getDateTo()) ;
+				jpc1.setPattern(jpc.getPattern()) ;
+				jpc1.setWorkCalendar(jpc.getWorkCalendar()) ;
+				jpc1.setNoActive(jpc.getNoActive()) ;
+				jpc.setDateTo(new Date(calFrom.getTime().getTime())) ;
+				theManager.persist(jpc1) ;
+				//theManager.refresh(jpc1) ;
 			}
-			
-			if (calTo.after(calFrom)) {
-				calTo1.setTime(jpc.getDateTo()) ;
-				jpc.setDateTo(new Date(calTo1.getTime().getTime())) ;
-			}
+			System.out.println("-----res noado="+jpc.getNoActive()) ;
+			theManager.persist(jpc) ;
+			//theManager.refresh(jpc) ;
+			System.out.println("-----res noalast="+jpc.getNoActive()) ;
+			System.out.println("-----res from="+format.format(jpc.getDateFrom())) ;
+			System.out.println("-----res to="+format.format(jpc.getDateTo())) ;
 		}
 	}
 	public void addNotBusyPattern(Long aWorkCalendar,Date aDateFrom, Date aDateTo, Long aBusy) {

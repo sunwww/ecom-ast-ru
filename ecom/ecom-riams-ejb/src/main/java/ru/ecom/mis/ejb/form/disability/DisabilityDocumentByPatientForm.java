@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.disability;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -281,6 +280,31 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 	private Long theWorkFunction;
 	/** Режим нетрудоспособности */
 	private Long theRegime;
+
+	
+	/** Поставлена на учет в ранние сроки беременности (до 12 недель) */
+	@Comment("Поставлена на учет в ранние сроки беременности (до 12 недель)")
+	public Boolean getEarlyPregnancyRegistration() {return theEarlyPregnancyRegistration;}
+	public void setEarlyPregnancyRegistration(Boolean aEarlyPregnancyRegistration) {theEarlyPregnancyRegistration = aEarlyPregnancyRegistration;}
+	/**
+	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
+	 */
+	private Boolean theEarlyPregnancyRegistration;
+
+	/** Лицо по уходу 1*/
+	@Comment("Лицо по уходу 1")
+	public Long getNursingPerson1() {return theNursingPerson1;}
+	public void setNursingPerson1(Long aNursingPerson1) {theNursingPerson1 = aNursingPerson1;}
+
+	/** Лицо по уходу 2*/
+	@Comment("Лицо по уходу 2")
+	public Long getNursingPerson2() {return theNursingPerson2;}
+	public void setNursingPerson2(Long aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
+
+	/** Лицо по уходу 2*/
+	private Long theNursingPerson2;
+	/** Лицо по уходу 1*/
+	private Long theNursingPerson1;
 	/**
 	 * Состоит на учете в службе занятости
 	 */
@@ -291,20 +315,4 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 	 * Состоит на учете в службе занятости
 	 */
 	private Boolean thePlacementService;
-	
-	/** Поставлена на учет в ранние сроки беременности (до 12 недель) */
-	@Comment("Поставлена на учет в ранние сроки беременности (до 12 недель)")
-	public Boolean getEarlyPregnancyRegistration() {return theEarlyPregnancyRegistration;}
-	public void setEarlyPregnancyRegistration(Boolean aEarlyPregnancyRegistration) {theEarlyPregnancyRegistration = aEarlyPregnancyRegistration;}
-	/**
-	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
-	 */
-	private Boolean theEarlyPregnancyRegistration;
-	/** Место работы */
-	@Comment("Место работы")
-	public String getJob() {return theJob;}
-	public void setJob(String aJob) {theJob = aJob;}
-
-	/** Место работы */
-	private String theJob;
 }

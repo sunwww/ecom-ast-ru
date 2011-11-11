@@ -29,10 +29,10 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
  * Time: 15:58:40
  * To change this template use File | Settings | File Templates.
  */
-@Comment("Протокол")
+@Comment("Заключение")
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.protocol.Protocol.class)
-@WebTrail(comment = "Протокол", nameProperties = "info", view = "entityParentView-poly_protocol.do")
+@WebTrail(comment = "Заключение", nameProperties = "info", view = "entityParentView-poly_protocol.do")
 @Parent(property = "ticket", parentForm = TicketForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Protocol")
 @ASaveInterceptors(

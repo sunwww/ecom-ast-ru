@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.CompulsoryTreatment;
@@ -80,21 +81,7 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 	  * Карта обратившегося за психиатрической помощью
 	  */
 	 private Long theCareCard;
-	 /**
-	  * Решение суда
-	  */
-	 @Comment("Решение суда")
-	 @Persist @Required
-	 public Long getCourtDecision() {
-	  return theCourtDecision;
-	 }
-	 public void setCourtDecision(Long aCourtDecision) {
-	  theCourtDecision = aCourtDecision;
-	 }
-	 /**
-	  * Решение суда
-	  */
-	 private Long theCourtDecision;
+
 	 /**
 	  * Вид принудительного лечения
 	  */
@@ -156,19 +143,7 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 	  */
 	 private Long thePsychatricExamination;
 	 
-	 /** Решение суда (инфо) */
-	@Comment("Решение суда (инфо)")
-	@Persist
-	public String getCourtDecisionInfo() {
-		return theCourtDecisionInfo;
-	}
 
-	public void setCourtDecisionInfo(String aCourtDecisionInfo) {
-		theCourtDecisionInfo = aCourtDecisionInfo;
-	}
-
-	/** Решение суда (инфо) */
-	private String theCourtDecisionInfo;
 	
 	/** Статья уголовного кодекса (инфо) */
 	@Comment("Статья уголовного кодекса (инфо)")
@@ -239,4 +214,36 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 
 	/** Дата регистрации */
 	private String theRegistrationDate;
+	
+	
+	 /** Дата замены */
+	@Comment("Дата замены")
+	@Persist @DoDateString @DateString
+	public String getDateReplace() {return theDateReplace;}
+	public void setDateReplace(String aDateReplace) {theDateReplace = aDateReplace;}
+	
+	/** Суд, заменивший тип принудительного лечения */
+	@Comment("Суд, заменивший тип принудительного лечения")
+	@Persist
+	public Long getLawCourtReplace() {return theLawCourtReplace;}
+	public void setLawCourtReplace(Long aLawCourtReplace) {theLawCourtReplace = aLawCourtReplace;}
+
+	/** Решение заменено на */
+	@Comment("Решение заменено на")
+	@Persist
+	public Long getCourtDecisionReplace() {
+		return theCourtDecisionReplace;
+	}
+
+	public void setCourtDecisionReplace(Long aCourtDecisionReplace) {
+		theCourtDecisionReplace = aCourtDecisionReplace;
+	}
+
+	/** Решение заменено на */
+	private Long theCourtDecisionReplace;
+	/** Суд, заменивший тип принудительного лечения */
+	private Long theLawCourtReplace;
+	/** Дата замены */
+	private String theDateReplace;
+	
 }

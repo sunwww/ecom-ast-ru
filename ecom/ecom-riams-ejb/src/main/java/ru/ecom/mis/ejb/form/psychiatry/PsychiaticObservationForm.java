@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import java.sql.Date;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiaticObservation;
@@ -107,4 +109,18 @@ public class PsychiaticObservationForm extends IdEntityForm {
 
 	/** Вид амбулаторного наблюдения (ИНФО) */
 	private String theAmbulatoryCareInfo;
+	 /** Дата окончания наблюдения */
+	@Comment("Дата окончания наблюдения")
+	@Persist @DoDateString @DateString
+	public String getFinishDate() {
+		return theFinishDate;
+	}
+	
+	public void setFinishDate(String aFinishDate) {
+		theFinishDate = aFinishDate;
+	}
+	
+	/** Дата окончания наблюдения */
+	private String theFinishDate;
+
 }

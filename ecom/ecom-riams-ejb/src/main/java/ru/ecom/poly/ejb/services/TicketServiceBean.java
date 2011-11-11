@@ -379,7 +379,7 @@ public class TicketServiceBean implements ITicketService {
     /**
      * Талоны по специалисту за определенную дату
      */
-    public List<TicketForm> findAllWorkerTickets(Long aSpecialist, String aDate) {
+    public List<TicketForm> findAllWorkerTickets(Long aSpecialist, String aDate, int aStatus) {
     	QueryClauseBuilder builder = new QueryClauseBuilder();
     	StringBuilder sql = new StringBuilder().append("select list(wf1.id) from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf.id=").append(aSpecialist) ;
     	Object obj = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
@@ -396,7 +396,13 @@ public class TicketServiceBean implements ITicketService {
     		}
     	}
     	if (date != null) builder.add("date", date);
-    	Query query = builder.build(theManager, new StringBuilder().append("from Ticket where workFunction_id in (").append(obj).append(")").toString(), " order by date,time, status");
+    	String stat = "" ;
+    	if (aStatus>0) {
+    		stat = " and status=2" ;
+    	} else {
+    		stat = " and (status is null or status<2)" ;
+    	}
+    	Query query = builder.build(theManager, new StringBuilder().append("from Ticket where workFunction_id in (").append(obj).append(") ").append(stat).toString(), " order by date,time, status");
     	System.out.println("Запрос по ticket: ");
     	System.out.println(query.toString()) ;
     	return createList(query);
@@ -404,13 +410,19 @@ public class TicketServiceBean implements ITicketService {
     /**
      * Талоны по специалисту за определенную дату
      */
-    public List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate) {
+    public List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate,int aStatus) {
         QueryClauseBuilder builder = new QueryClauseBuilder();
 
         // IKO 070424 ***
         builder.add("workFunction_id", aSpecialist);
         // ==============
 
+    	String stat = "" ;
+    	if (aStatus>0) {
+    		stat = " status=2" ;
+    	} else {
+    		stat = " (status is null or status<2)" ;
+    	}
         Date date = null;
         if(!StringUtil.isNullOrEmpty(aDate)) {
             try {
@@ -420,7 +432,7 @@ public class TicketServiceBean implements ITicketService {
             }
         }
         if (date != null) builder.add("date", date);
-        Query query = builder.build(theManager, "from Ticket where", " order by date,time, status");
+        Query query = builder.build(theManager, "from Ticket where "+stat, " order by date,time, status");
         System.out.println("Запрос по ticket: ");
         System.out.println(query.toString()) ;
         return createList(query);

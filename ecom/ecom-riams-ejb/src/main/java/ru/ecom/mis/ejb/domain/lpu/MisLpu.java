@@ -366,5 +366,27 @@ public class MisLpu extends BaseEntity {
      private List<Staff> theStateList ;
      /** Работники ЛПУ */
      private List<Worker> theWorker ;
+     
+     /** Код федеральный */
+	@Comment("Код федеральный")
+	public String getCodef() {return theCodef;}
+	public void setCodef(String aCodef) {theCodef = aCodef;}
+
+	/** Код федеральный */
+	private String theCodef;
+	
+	/** Руководитель */
+	@Comment("Руководитель")
+	@OneToOne
+	public WorkFunction getManager() {
+		return theManager;
+	}
+
+	public void setManager(WorkFunction aManager) {
+		theManager = aManager;
+	}
+
+	/** Руководитель */
+	private WorkFunction theManager;
 
 }

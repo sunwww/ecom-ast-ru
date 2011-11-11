@@ -14,7 +14,7 @@ import ru.nuzmsh.util.format.DateFormat;
 public class AdmissionPreCreateInterceptor  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
     	if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateDoubleOpenHospitalMedCase")) {
-    		List<MedCase> list = aContext.getEntityManager().createQuery("from MedCase where patient_id=:pat and DTYPE='HospitalMedCase'  and dateFinish is null and deniedHospitalizating_id is null and ( ambulanceTreatment=0 or ambulanceTreatment is null) ")
+    		List<MedCase> list = aContext.getEntityManager().createQuery("from MedCase where patient_id=:pat and DTYPE='HospitalMedCase'  and dateFinish is null and deniedHospitalizating_id is null and ( cast(ambulanceTreatment as int)=0 or ambulanceTreatment is null) ")
     			.setParameter("pat", aParentId).getResultList() ;
         	if (list.size()>0) throw new IllegalArgumentException(
     				"У данного пациента есть открытый случай лечения в стационаре!!!"

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.service.patient;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
 import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
+import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -55,18 +58,19 @@ public class PatientServiceBean implements IPatientService {
 
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
-	public void setDiaryCreateByMedCase(Long aMedCase,Long aStatus) {
+	public void setAddParamByMedCase(String aParam,Long aMedCase,Long aStatus)  {
 		MedCase mc = theManager.find(MedCase.class, aMedCase) ;
-		mc.setIsDiaryCreate(aStatus) ;
+		String method = new StringBuilder().append("set").append(Character.toUpperCase(aParam.charAt(0))).append(aParam.substring(1)).toString() ;
+		try {
+			Method ejbSetterMethod =mc.getClass().getMethod(method,Long.class) ;
+			ejbSetterMethod.invoke(mc, aStatus);
+		} catch (Exception e) {
+			
+		}
+		
+		
+		
 	}
-    public void setPrintByMedCase(Long aMedCase,Long aStatus) {
-    	MedCase mc = theManager.find(MedCase.class, aMedCase) ;
-    	mc.setIsPrint(aStatus) ;
-    }
-    public void setDiagnosisCreateByMedCase(Long aMedCase,Long aStatus) {
-    	MedCase mc = theManager.find(MedCase.class, aMedCase) ;
-    	mc.setIsDiagnosisCreate(aStatus) ;    	
-    }
     
     public String infoMedPolicy(Long aPatient) {
     	try {

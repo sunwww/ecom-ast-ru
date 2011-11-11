@@ -17,7 +17,7 @@ import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
     	DisabilityDocument doc = manager.find(DisabilityDocument.class, aParentId) ;
     	
     	if (doc!=null) {
-    		if (doc.getCloseReason()!=null) {
+    		if (doc.getIsClose()!=null && doc.getIsClose()==true) {
     			throw new IllegalStateException("Нельзя добавить МСЭК в закрытый документ!!!") ;
     		}
     	} else {

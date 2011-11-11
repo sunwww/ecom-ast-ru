@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -735,6 +736,22 @@ public class PatientForm extends IdEntityForm {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** Место рождения */
+	@Comment("Место рождения")
+	@Persist @DoUpperCase
+	public String getBirthPlace() {return theBirthPlace;}
+	public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+
+	/** Новорожденный */
+	@Comment("Новорожденный")
+	@Persist
+	public Long getNewborn() {return theNewborn;}
+	public void setNewborn(Long aNewborn) {theNewborn = aNewborn;}
+
+	/** Новорожденный */
+	private Long theNewborn;
+	/** Место рождения */
+	private String theBirthPlace;
 	/** Пользователь, последний редактировающий запись */
 	private String theEditUsername;
 	/** Дата последнего редактирования */
@@ -743,4 +760,39 @@ public class PatientForm extends IdEntityForm {
 	private String theCreateUsername;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Код подразделения, выдавшего паспорт */
+	@Comment("Код подразделения, выдавшего паспорт")
+	@Persist
+	public String getPassportCodeDivision() {return thePassportCodeDivision;}
+	public void setPassportCodeDivision(String aPassportCodeDivision) {thePassportCodeDivision = aPassportCodeDivision;}
+
+	/** Код подразделения, выдавшего паспорт */
+	private String thePassportCodeDivision;
+	
+	/** Мед.карта */
+	@Comment("Мед.карта")
+	public Long getMedcardLast() {
+		return theMedcardLast;
+	}
+
+	public void setMedcardLast(Long aMedcardLast) {
+		theMedcardLast = aMedcardLast;
+	}
+
+	/** Мед.карта */
+	private Long theMedcardLast;
+	/** Психиатрическая мед.карта */
+	@Comment("Психиатрическая мед.карта")
+	public Long getCareCard() {
+		return theCareCard;
+	}
+
+	public void setCareCard(Long aCareCard) {
+		theCareCard = aCareCard;
+	}
+
+	/** Психиатрическая мед.карта */
+	private Long theCareCard;
+	
 }

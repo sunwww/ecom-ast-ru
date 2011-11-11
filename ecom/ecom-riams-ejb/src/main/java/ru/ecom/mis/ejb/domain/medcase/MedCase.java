@@ -47,7 +47,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     @AIndex(properties="dateStart")
     }) 
 @EntityListeners(DeleteListener.class)
-public abstract class MedCase extends BaseEntity {
+abstract public class MedCase extends BaseEntity {
     /** Только принят */
     public static final int STATUS_NULL = 0 ;
     /** ОТКАЗ */
@@ -336,4 +336,38 @@ public abstract class MedCase extends BaseEntity {
 	private DeathCase theDeathCase;
     /**Выписанные рецептурные бланки */
     private List<PrescriptionBlank> thePrescriptionBlanks;
+    
+    /** Закрыть */
+	@Comment("Закрыть")
+	public Long getIsCloseSpo() {return theIsCloseSpo;}
+	public void setIsCloseSpo(Long aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
+
+	/** Закрыть */
+	private Long theIsCloseSpo;
+	
+	/** Дата операции */
+	@Comment("Дата операции")
+	public Date getOperationDate() {
+		return theOperationDate;
+	}
+
+	public void setOperationDate(Date aOperationDate) {
+		theOperationDate = aOperationDate;
+	}
+
+	/** Дата операции */
+	private Date theOperationDate;
+	
+	/** Осложнение при операции */
+	@Comment("Осложнение при операции")
+	public Long getComplication() {
+		return theComplication;
+	}
+
+	public void setComplication(Long aComplication) {
+		theComplication = aComplication;
+	}
+
+	/** Осложнение при операции */
+	private Long theComplication;
 }

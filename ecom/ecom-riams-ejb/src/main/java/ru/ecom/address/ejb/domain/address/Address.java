@@ -142,7 +142,7 @@ public class Address extends BaseEntity {
 
     @Transient
     public String getAddressInfo() {
-        StringBuilder sb = new StringBuilder();
+        /*StringBuilder sb = new StringBuilder();
         Address a = this ;
         while(a!=null) {
 
@@ -157,7 +157,8 @@ public class Address extends BaseEntity {
             }
             if(a!=null) sb.insert(0, ", ") ;
         }
-        return sb.toString() ;
+        return sb.toString() ;*/
+    	return theFullname==null?theName:theFullname ;
     }
 
     @Transient
@@ -244,9 +245,15 @@ public class Address extends BaseEntity {
     	}
     	return "" ;
     }
-    /**
-     * Тип адреса
-     */
+    
+    /** Полный адрес */
+	@Comment("Полный адрес")
+	public String getFullname() {return theFullname;}
+	public void setFullname(String aFullname) {theFullname = aFullname;}
+
+	/** Полный адрес */
+	private String theFullname;
+    /** Тип адреса */
     private AddressType theType;
     /**
      * Почтовый индекс

@@ -27,7 +27,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
     @AIndex(properties="datePlan", table="MedCase")
     }) 
-public abstract class ShortMedCase extends MedCase{
+abstract public class ShortMedCase extends MedCase{
 	
 	/**
 	 * Планируемая дата исполнения
