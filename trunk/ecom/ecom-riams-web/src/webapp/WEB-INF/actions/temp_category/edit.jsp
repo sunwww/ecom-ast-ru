@@ -40,7 +40,7 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsView formName="temp_categoryForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:section title="Протоколы" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
-        <ecom:webQuery name="protocols" nativeSql="select p.id,p.title,p.text,p.username from TemplateProtocol_TemplateCategory pc left join TemplateProtocol p on p.id=pc.protocols_id where pc.categories_id='${param.id}' group by p.id order by p.title" />
+        <ecom:webQuery name="protocols" nativeSql="select p.id,p.title,p.text,p.username from TemplateProtocol_TemplateCategory pc left join TemplateProtocol p on p.id=pc.protocols_id where pc.categories_id='${param.id}' group by p.id,p.title,p.text,p.username order by p.title" />
 	    <msh:table name="protocols" action="entityView-temp_protocol.do" idField="1" guid="c0ba5c22-fda6-4d4f-89c4-aa58abb1e9d8">
           <msh:tableColumn property="2" columnName="Название" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
           <msh:tableColumn property="3" columnName="Комментарии" guid="f6c2e5ba-4045-4dbe-b8fb-bb5d8386e9c4" />

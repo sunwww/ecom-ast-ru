@@ -16,7 +16,7 @@
     <tiles:put name='body' type='string'>
         <msh:hideException>
             <msh:section title='Результат поиска'>
-                <msh:table name="list" action="entityParentView-dis_document.do" idField="id" disableKeySupport="true">
+                <msh:table viewUrl="entityShortView-dis_document.do"  name="list" action="entityParentView-dis_document.do" idField="id" disableKeySupport="true">
 			          <msh:tableColumn columnName="Дата выдачи" property="issueDate" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
 			          <msh:tableColumn columnName="ФИО" property="patientFio" guid="71ed-453fa2687534" />
 			          <msh:tableColumn columnName="Тип документа" property="documentTypeInfo" guid="71edd77-ddd1-4ed-453fa2687534" />

@@ -21,21 +21,42 @@
         <msh:row>
         	<msh:checkBox fieldColSpan="3" horizontalFill="true" property="placementService" label="Состоит на учете в службе занятости"/>
         </msh:row>
-
         <msh:row>
         	<msh:checkBox property="earlyPregnancyRegistration" label="Поставлена на учет в ранние сроки беременности (до 12 недель)" horizontalFill="true" fieldColSpan="6"/>
+        </msh:row>
+        <msh:row>
+        	<msh:separator label="Сопровождающие лица" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanBySMO" property="nursingPerson1" label="Лицо по уходу 1" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanBySMO" property="nursingPerson2" label="Лицо по уходу 2" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
           <msh:label property="duration" label="Продолжительность в днях" guid="6e584655-3e8b-496d-9d2f-68706daafb67" />
         </msh:row>
+        <msh:row>
+        	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
+        	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
+        	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
+        </msh:row>
+        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="dis_caseForm">
-      <msh:section guid="sectionChilds" title="Документы нетрудоспособности">
+      <msh:section createRoles="/Policy/Mis/Disability/Case/Document/Create" createUrl="entityParentPrepareCreate-dis_document.do?id=${param.id}" guid="sectionChilds" title="Документы нетрудоспособности">
         <ecom:parentEntityListAll guid="parentEntityListChilds" formName="dis_documentForm" attribute="childs" />
-        <msh:table guid="tableChilds3434" name="childs" action="entityParentView-dis_document.do" idField="id">
+        <msh:table viewUrl="entityShortView-dis_document.do" guid="tableChilds3434" name="childs" action="entityParentView-dis_document.do" idField="id">
           <msh:tableColumn columnName="Дата выдачи" property="issueDate" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+          <msh:tableColumn columnName="Статус" property="statusInfo" />
           <msh:tableColumn columnName="Тип документа" property="documentTypeInfo" guid="71edd77-ddd1-4ed-453fa2687534" />
           <msh:tableColumn columnName="Первичность" property="primarityInfo" guid="71edd774-ddd1-4e0b-ae7d-453fa2687534" />
           <msh:tableColumn columnName="Информация" property="info" guid="d61b9d49-a94d-4cf2-af1b-05020213901f" />
@@ -51,7 +72,7 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="dis_caseForm" guid="a2b73e72-2f8a-4b8e-a53e-2925252d9eba">
       <msh:sideMenu guid="sideMenu-123" title="Случай">
-     <%--    <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-dis_case" name="Изменить" roles="/Policy/Mis/Disability/Case/Edit" /> --%>
+        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-dis_case" name="Изменить" roles="/Policy/Mis/Disability/Case/Edit" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-dis_case" name="Удалить" roles="/Policy/Mis/Disability/Case/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="08906109-6c4d-469c-9c76-cd63fd470464">

@@ -47,7 +47,7 @@
     </msh:sideMenu>
     <msh:sideMenu title="Работа с заключением">
         <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e9e" />
-        <msh:sideLink key="ALT+4" params="id" action="/diary_templateForm" name="Форма ввода" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8de" />
+        <msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-diary_formInputProtocol" name="Форма ввода" roles="/Policy/Diary/Template/FormInputProtocol/Edit" guid="05503c33-989a-45dc-ab6f-8de" />
         <msh:sideLink key="ALT+5" params="id" action="/diary_templatePrint" name="Форма печати" roles="/Policy/Diary/Template/Edit" guid="05503c33-989d1be735e97e" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">

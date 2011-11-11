@@ -49,8 +49,8 @@
         <msh:row guid="2398008e-85f4-4ed7-83f6-f2a186533ac5">
           <msh:autoComplete showId="false" hideLabel="false" property="subordination" viewOnlyField="false" label="Подчиненность" guid="a3031936-9397-4ed5-92cd-1d208165aba2" fieldColSpan="3" horizontalFill="true" vocName="vocSubordination" />
         </msh:row>
-        <msh:row guid="e86fc1f8-0baa-4d10-908b-dd723926bc3b">
-          <msh:textField property="director" label="Руководитель" horizontalFill="true" fieldColSpan="3" guid="6f1ff2ff-75e4-4ea4-b587-eea3db3d3ba8" />
+        <msh:row>
+          <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3" vocName="workFunctionByDirect" parentId="mis_lpuForm.id"/>
         </msh:row>
         <msh:row guid="0985a3e5-06a4-4245-b652-03e5fc74acf6">
           <msh:textField property="inn" label="ИНН" guid="01e13e55-f966-4eb7-815b-bcaf82617a05" />

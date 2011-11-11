@@ -15,13 +15,14 @@
       <msh:hidden property="careCard" />
       <msh:panel>
         <msh:row>
-        	<msh:textField property="startDate" label="Дата начала наблюдения"/>
+        	<msh:textField property="startDate" label="Дата начала"/>
+        	<msh:textField property="finishDate" label="Дата окончания"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete size="100" property="ambulatoryCare" label="Вид наблюдения" vocName="vocPsychAmbulatoryCare"/>
+        	<msh:autoComplete size="100" property="ambulatoryCare" label="Вид наблюдения" vocName="vocPsychAmbulatoryCare" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete size="100" parentAutocomplete="ambulatoryCare" property="dispensaryGroup" label="Группа" vocName="vocPsychDispensaryGroup"/>
+        	<msh:autoComplete size="100" parentAutocomplete="ambulatoryCare" property="dispensaryGroup" label="Группа" vocName="vocPsychDispensaryGroup" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>

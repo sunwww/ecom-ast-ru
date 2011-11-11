@@ -58,7 +58,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/DeathCase"
 	        styleId="stac_deathCase_list"
-	        action="/stac_deathCase_list" name="Случаи смерти"
+	        action="/stac_deathCase_list" name="Журнал по смертности"
+	        />
+	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/AddressList"
+	        styleId="stac_address_list"
+	        action="/stac_address_list" name="Адресный листок"
 	        />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="СЛО">

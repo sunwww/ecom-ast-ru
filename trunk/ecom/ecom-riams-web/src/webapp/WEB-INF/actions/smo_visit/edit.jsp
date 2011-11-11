@@ -16,6 +16,7 @@
       <msh:hidden property="isDiaryCreate"/>
       <msh:hidden property="isPrint"/>
       <msh:hidden property="isDiagnosisCreate"/>
+      <msh:hidden property="isCloseSpo"/>
             <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel" colsWidth="20%, 10%, 10%">
         <msh:separator colSpan="4" label="Направлен" guid="86dbd4c5-cfa1-4af1-b250-fabe97b77971" />
@@ -75,7 +76,6 @@
         	<msh:checkBox property="isPrintInfo" label="Распечатан?" viewOnlyField="true"/>
 			<msh:checkBox property="noActuality" viewOnlyField="false" label="Недействительность визита" guid="6573be39-9a16-4a7c-bdef-5ca915d669c2" horizontalFill="false" fieldColSpan="1" labelColSpan="1" />        
 		</msh:row>
-        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="8" labelSave="Принять пациента" labelSaving="Принять пациента..." />
       </msh:panel>
     </msh:form>
@@ -119,6 +119,11 @@
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="smo_visitForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
+  	<msh:ifFormTypeIsNotView formName="smo_visitForm">
+  		<msh:sideMenu title="Визит">
+	        <msh:sideLink confirm="Вы точно хотите оформить не явку на прием" key="ALT+3" params="id" action="/js-smo_visit-noPatient" name="Оформить не явку на прием" title="Оформить не явку на прием" roles="/Policy/Mis/MedCase/Visit/Edit"/>
+  		</msh:sideMenu>
+  	</msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">
       <msh:sideMenu guid="sideMenu-123" title="Визит">
         <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
@@ -157,7 +162,7 @@
   <tiles:put name="javascript" type="string">
   <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
   <script type="text/javascript">
-  var isPrint=0, isDiary=0, isDiag=0 ;
+  var isPrint=0, isDiary=0, isDiag=0, isCloseSpo=0 ;
   function printVisit() {
   	TemplateProtocolService.getCountSymbolsInProtocol ('${param.id}'  , {
   	 callback: function(aCount) {
@@ -176,117 +181,65 @@
   </script>
   <msh:ifFormTypeIsView formName="smo_visitForm">
   	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/DisableCheck">
-  		<script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
+  	<script type="text/javascript">
+  		var isDiag = 0 ,isDiary = 0, isPrint = 0 ; 
+  	</script>
+    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
   		<msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/Create">
-	  		<script type="text/javascript">
-	  		 isDiag=1 ;
-	  		</script>
+	  		<script type="text/javascript">isDiag=1 ;</script>
 	  	</msh:ifInRole>
   		<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/Create">
-	  		<script type="text/javascript">
-	  		 isDiary=1 ;
-	  			function isCreateDiary() {
-	  			if ($('dateStart').value!="" && +$('isDiaryCreate').value<1) {
-		  			if (confirm('Вы хотите создать заключение по визиту?')) {
-		  				PatientService.setDiaryCreateByMedCase ('${param.id}' ,2 , {
-  	 					callback: function(aCount) {
-			    		window.location = "entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}";
-			    		}}) ;
-			    	} else {
-			    	PatientService.setDiaryCreateByMedCase ('${param.id}' ,1 ,{
-  	 					callback: function(aCount) {
-						   if (isPrint) {
-			 					isPrintVisit() ;
-			 				
-			 				}				 				
-						}}) ;
-			    	}
-			    	
-		    	} else {
-						   if (isPrint) {
-			 					isPrintVisit() ;
-			 				
-			 				}		    	
-		    	}}
-		    		  		</script>
-	  	</msh:ifInRole>
-  		<msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintVisit">
-	  		<script type="text/javascript">
-	  		isPrint=1 ;
-	  		function isPrintVisit() {
-	  			if ($('dateStart').value!="" && +$('isPrint').value<1) {
-		  			if (confirm('Вы хотите распечатать визит?')) {
-		  				//PatientService.setPrintByMedCase ('${param.id}' ,2 , {
-  	 					//callback: function(aCount) {
-			    				    		printVisit() ;
-							//if (confirm('Вы хотите принять нового пациента?')) { 
-					    	//	window.location = "js-smo_visit-findPolyAdmissions.do";
-					    	//}			 				
-			    	   //}}) ;
-			    		
-			    	} else {
-			    	PatientService.setPrintByMedCase ('${param.id}' ,1 ,{
-  	 					callback: function(aCount) {
-							//if (confirm('Вы хотите принять нового пациента?')) { 
-					    	//	window.location = "js-smo_visit-findPolyAdmissions.do";
-					    	//}			 				
-						}}) ;
-			    	}
-			    	}
-			    	
-			    	
-			    }	
-	  		</script>
-	  	</msh:ifInRole>
-  		
-	  	<msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/Create">
-	  		<script type="text/javascript">
-	  			if ($('dateStart').value!="" && +$('isDiagnosisCreate').value<1) {
-		  			if (confirm('Вы хотите создать диагноз по визиту?')) {
-		  				PatientService.setDiagnosisCreateByMedCase ('${param.id}' ,2 , {
-  	 					callback: function(aCount) {
-			 				window.location = "entityParentPrepareCreate-smo_diagnosis.do?id=${param.id}";
-						}}) ;
-			    		
-			    	} else {
-			    	PatientService.setDiagnosisCreateByMedCase ('${param.id}' ,1 ,{
-  	 					callback: function(aCount) {
-			 				if (isDiary) {
-			 					isCreateDiary() ;
-			 				} else if (isPrint) {
-			 					isPrintVisit() ;
-			 				}
-						}}) ;
-			    	}
-		    	} else {
-			 				if (isDiary) {
-			 					isCreateDiary() ;
-			 				} else if (isPrint) {
-			 					isPrintVisit() ;
-			 				
-			 				}
-		    	}
-	  		</script>
-	  	</msh:ifInRole>
-	  	<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/Create">
-	  		<script type="text/javascript">
-
-		    	if (isDiag==0) {
-		    		isCreateDiary() ;
-		    	}
-		    			    	
-
-	  		</script>
+	  		<script type="text/javascript">isDiary=1 ;</script>
 	  	</msh:ifInRole>
 	  	<msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintVisit">
-	  		<script type="text/javascript">
-	  		
-		    	if (isDiag==0 &&isDiary==0) {
-		    		isPrintVisit() ;
-		    		
-		    	}	  			
-	  		</script>
+	  		<script type="text/javascript">isPrint=1 ;</script>
 	  	</msh:ifInRole>
+	  	<script type="text/javascript">
+	  	var url_next = new Array(
+	  			new Array(0,"entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}"
+	  				,"Вы хотите создать заключение по визиту?","isDiaryCreate",isDiary)
+	  			,new Array(0,"entityParentPrepareCreate-smo_diagnosis.do?id=${param.id}"
+	  				,"Вы хотите создать диагноз по визиту?","isDiagnosisCreate",isDiag)
+	  			,new Array(1,"printVisit()","Вы хотите распечатать визит?","isPrint",isPrint)
+	  			,new Array(0,"js-smo_visit-closeSpo.do?id=${param.id}","Закрыть СПО?"
+	  				,"isCloseSpo",1)
+	  	) ;
+	  	function goPriem(index) {
+	  		if ($('dateStart').value=="") return ;
+	   		if (index>(url_next.length-1)) return ;
+	  		var url = url_next[index] ;
+	  		var next = true ;
+	  		index++ ;
+	  		if (url[4]>0) {
+  				if (+$(url[3]).value<1) {
+  					next = false ;
+  					if (confirm(url[2])) {
+  						PatientService.setAddParamByMedCase(url[3],'${param.id}',2,
+  								{
+  									callback: function(aReturn) {
+  										if (url[0]==0) {
+  											window.location = url[1] ;
+  										} else {eval(url[1]) ;}
+  										return ;
+  									}
+  								}
+  							);
+  					} else {
+  						PatientService.setAddParamByMedCase(url[3],'${param.id}',1,
+  								{callback: function(aReturn) {
+  									goPriem(index) ;
+  									return ;
+  								}}
+  							);	  						
+  					}
+  				}
+  			}
+	  		if (next) goPriem(index) ;
+	  		return ;
+	  	}
+	  	goPriem(0) ;
+	  </script>
+
   	</msh:ifNotInRole>
   </msh:ifFormTypeIsView>
   </tiles:put>

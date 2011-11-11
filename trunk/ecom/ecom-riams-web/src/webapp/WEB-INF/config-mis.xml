@@ -461,6 +461,11 @@
             scope='request' validate="false" name="">
             <forward name="success" path="/js-mis_worker-pattern.do" redirect="true"/>
         </action>  
+		
+        <action path="/cal_workCalendar-addBusyPattern" type='ru.ecom.mis.web.action.worker.WorkCalendarAddBusyPatternAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/js-mis_worker-pattern.do" redirect="true"/>
+        </action>  
 	</action-mappings>
 
 

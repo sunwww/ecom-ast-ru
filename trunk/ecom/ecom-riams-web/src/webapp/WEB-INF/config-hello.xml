@@ -15,7 +15,7 @@
     
     <!-- Настоящие -->
     
-    <form-bean name="smo_directionForm" type="$$map$$smo_directionForm" />
+    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
     <form-bean name="work_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.PersonalWorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionByGroupForm" type="$$map$$work_personalWorkFunctionByGroupForm" />
@@ -35,10 +35,13 @@
 	<form-bean name="dis_caseForm" type="ru.ecom.mis.ejb.form.disability.DisabilityCaseForm" />
 	<form-bean name="dis_documentForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm" />
 	<form-bean name="dis_documentByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
+	<form-bean name="dis_caseShortByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
+	<form-bean name="dis_caseOtherByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
 	<form-bean name="dis_recordForm" type="ru.ecom.mis.ejb.form.disability.DisabilityRecordForm" />
     <form-bean name="dis_medSocCommissionForm" type="ru.ecom.mis.ejb.form.disability.MedSocCommissionForm" />
     <form-bean name="dis_permissionForm" type="ru.ecom.mis.ejb.form.disability.DisabilityPermissionForm" />
     <form-bean name="dis_regimeViolationForm" type="ru.ecom.mis.ejb.form.disability.RegimeViolationRecordForm" />
+    <form-bean name="dis_blanksForm" type="ru.ecom.mis.ejb.form.disability.DisabilityBlanksForm" />
 	
     
     <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
@@ -74,7 +77,8 @@
     <form-bean name="mis_birthReportDateForm" type="ru.ecom.mis.ejb.form.birth.BirthReportDateForm" />
     <form-bean name="mis_lpuFond" type="$$map$$mis_lpuFondForm" />
     <form-bean name="mis_testForm" type="$$map$$mis_testForm" />
-
+    
+    <form-bean name="dis_searchForm" type="ru.ecom.mis.web.action.disability.DisabilitySearchForm"/>
   </form-beans>
   <global-forwards />
 
@@ -96,12 +100,20 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpen.jsp" />
         </action>
         <action path='/dis_documentClose' type='ru.ecom.mis.web.action.disability.DocumentCloseAction'
-                name='stac_admissionJournalForm'
+                name='dis_searchForm'
                 validate='true'
                 scope="request"
                 input='/WEB-INF/actions/dis_document/listClose.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listClose.jsp" />
+        </action>
+        <action path='/dis_swod' type='ru.ecom.web.actions.base.ForwardAction'
+                name='dis_searchForm'
+                validate='true'
+                scope="request"
+                input='/WEB-INF/actions/dis_document/swod.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/swod.jsp" />
         </action>
         <action path='/dis_documentByDate' type='ru.ecom.mis.web.action.disability.DocumentOpenListAction'
                 >

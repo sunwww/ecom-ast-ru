@@ -29,36 +29,43 @@
           <td width="1px" />
           <td width="1px" />
         </msh:row>
+        <msh:row><msh:separator label="Начало родовой деятельности" colSpan="4"/>
+        </msh:row>
         <msh:row guid="ab9ced52-ecf7-48b9-8afe-938249840fab">
-          <msh:textField property="pangsStartDate" label="Дата начала схваток" guid="eec0820e-6990-40f8-aa50-f48b8034d7f3" />
-          <msh:textField property="pangsStartTime" label="Время начала схваток" guid="360cc928-1178-46ee-b5c0-5710ff873e3c" />
+          <msh:textField property="pangsStartDate" label="Дата" guid="eec0820e-6990-40f8-aa50-f48b8034d7f3" />
+          <msh:textField property="pangsStartTime" label="Время" guid="360cc928-1178-46ee-b5c0-5710ff873e3c" />
+        </msh:row>
+        <msh:row>
+        	<msh:separator label="Отхождение вод" colSpan="4"/>
         </msh:row>
         <msh:row guid="84d7a910-53ad-48b2-8582-294aef3497e6">
           <msh:autoComplete property="watersPrematurity" vocName="vocBirthWatesPrematurity" label="Преждевременность отхождения вод" fieldColSpan="3" horizontalFill="true" guid="821b866e-afa4-41d7-bba0-bbc81ab340bf" />
         </msh:row>
         <msh:row guid="1e548b4d-8b56-42e2-9b51-c116784c92a3">
           <msh:textField property="watersDate" label="Дата отхождения вод" guid="34fc13d6-0618-42ac-96e8-d8717302f0bd" />
-          <msh:textField property="watersTime" label="Время отхождения вод" guid="ffcc4f9d-05fc-4b65-8def-78adc1c0b908" />
+          <msh:textField property="watersTime" label="Время" guid="ffcc4f9d-05fc-4b65-8def-78adc1c0b908" />
         </msh:row>
-        <msh:row guid="fe77033f-e23f-4a23-b8e4-1a7c7b19fe23">
+        <msh:row>
           <msh:textField property="downWatersAmount" label="Количество нижних вод (мл)" guid="0ec80893-b680-4ec5-838d-38f79bba181b" />
           <msh:textField property="upperWatersAmount" label="Количество верхних вод (мл)" guid="4bca3368-2341-4f2a-aaab-c82b137349fb" />
         </msh:row>
-        <msh:row guid="16656b37-111c-4d72-a1d3-bbd61e651306">
+        <msh:row>
           <msh:textField property="downWatersQuality" label="Качество нижних вод" guid="864f219e-5bbe-4377-9c5a-7d52da0e4456" />
           <msh:textField property="upperWatersQuality" label="Качество верхних вод" guid="173aa935-23ed-49d3-a1dc-d6eed8dbd63a" />
         </msh:row>
-        <msh:row guid="cce1d599-bf02-4aff-81f7-6c7d33714b46">
+        <msh:row><msh:separator label="Начало потужной деятельности" colSpan="4"/>
+        </msh:row>
+        <msh:row>
           <msh:textField property="travailStartDate" label="Дата начала потуг" guid="10d048cc-6dd3-4e6c-8ef2-3b580a02ec7e" />
           <msh:textField property="travailStartTime" label="Время начала потуг" guid="683fa920-9a2c-4f8a-a223-4e59c6f55f85" />
         </msh:row>
-        <msh:separator label="Роды" colSpan="9" guid="2d310f67-76b8-42ab-95b3-c23af6f03917" />
+        <msh:separator label="Общая продолжительность родов" colSpan="9"/>
         <msh:row guid="0ab970a1-9adb-4534-9d5e-c749136557f8">
-          <msh:textField property="period1Duration" label="Продолжительность 1 периода (час)" guid="1fc59e7b-1423-4249-9bec-e7131f2221e0" />
-          <msh:textField property="period2Duration" label="Продолжительность 2 периода (час)" guid="b8f27f6b-bed2-43a0-b0a3-e3eed5f58544" />
+          <msh:textField property="period1Duration" label="1 периода (час)" guid="1fc59e7b-1423-4249-9bec-e7131f2221e0" />
+          <msh:textField property="period2Duration" label="2 периода (час)" guid="b8f27f6b-bed2-43a0-b0a3-e3eed5f58544" />
         </msh:row>
         <msh:row guid="11eec04b-5366-44fa-a8d8-620c1cab1ff0">
-          <msh:textField property="period3Duration" label="Продолжительность 3 периода (мин)" guid="79931dee-fefe-480e-b976-f39afd0d003c" />
+          <msh:textField property="period3Duration" label="3 периода (мин)" guid="79931dee-fefe-480e-b976-f39afd0d003c" />
         </msh:row>
         <msh:row guid="557af74e-7c16-4f10-b51f-43c4125722db">
           <msh:textField property="birthFinishDate" label="Дата окончания родов" guid="4ca102af-a7eb-4b61-95f3-8eba8ae25ac6" />
@@ -66,20 +73,10 @@
         </msh:row>
         <msh:separator label="Плацента и оболочки" colSpan="9" guid="32379f0e-c12d-43ea-b5b7-8e29e524c0ff" />
         <msh:row guid="a4dbd316-9945-4038-a7ca-914f7642160e">
-          <msh:autoComplete property="placentaSeparation" vocName="vocPlacentaSeparation" fieldColSpan="3" horizontalFill="true" guid="8ce53500-60ec-409e-8fd9-3d6f822fd1a6" />
-        </msh:row>
-        <msh:row guid="79ce3dc8-b631-4014-b22e-a83841d34c04">
-          <msh:textField property="placentaWeight" label="Масса плаценты (гр.)" guid="0b31bed6-d06e-48c0-aaac-b16e54959b53" />
-          <msh:textField property="placentaSize" label="Размеры плаценты" guid="d245643c-f2ba-4e98-a764-0a3c51792866" />
+          <msh:autoComplete label="Послед выделился" property="placentaSeparation" vocName="vocPlacentaSeparation" fieldColSpan="3" horizontalFill="true" guid="8ce53500-60ec-409e-8fd9-3d6f822fd1a6" />
         </msh:row>
         <msh:row guid="c07fa99b-206e-4dad-b1a7-c112173bb4cd">
-          <msh:autoComplete fieldColSpan="3" vocName="vocPlacentaIntegrity" property="placentaIntegrity" label="Целостность плаценты" guid="bcac0c74-7fb5-49f8-beaa-917a584a812e" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="3167dc30-1547-4a75-ac6d-193f5384a202">
-          <msh:textField property="placentaFeatures" label="Особенности плаценты" guid="f817f39f-82a1-4dca-b2e8-136f15069658" horizontalFill="true" fieldColSpan="3"/>
-        </msh:row>
-        <msh:row>
-          <msh:checkBox property="placentaHistologyOrder" label="Направление плаценты на гистологию" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="3"/>
+          <msh:autoComplete fieldColSpan="3" vocName="vocPlacentaIntegrity" property="placentaIntegrity" label="Детское место" guid="bcac0c74-7fb5-49f8-beaa-917a584a812e" horizontalFill="true" />
         </msh:row>
         <msh:row guid="d1181fd6-a4cf-469c-ae0a-fc0f7a9fab42">
           <msh:autoComplete property="membranesIntegrity" label="Целостность оболочек" vocName="vocFetalMembranesIntegrity" fieldColSpan="3" horizontalFill="true" guid="308af9c9-080f-486f-af92-d2be2d0b6e0d" />
@@ -87,6 +84,18 @@
         <msh:row guid="7330bf51-0d0c-415b-a0fc-e852a175fc6c">
           <msh:autoComplete fieldColSpan="3" vocName="vocMembranesBreakPlace" property="membranesBreakPlace" label="Место разрыва оболочек" guid="12caed25-3ab8-42c6-afba-c9d75bd72034" horizontalFill="true" />
         </msh:row>
+        
+        <msh:row guid="79ce3dc8-b631-4014-b22e-a83841d34c04">
+          <msh:textField property="placentaWeight" label="Вес плаценты (гр.)" guid="0b31bed6-d06e-48c0-aaac-b16e54959b53" />
+          <msh:textField property="placentaSize" label="Размеры плаценты" guid="d245643c-f2ba-4e98-a764-0a3c51792866" />
+        </msh:row>
+        <msh:row guid="3167dc30-1547-4a75-ac6d-193f5384a202">
+          <msh:textField property="placentaFeatures" label="Особенности плаценты" guid="f817f39f-82a1-4dca-b2e8-136f15069658" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+          <msh:checkBox property="placentaHistologyOrder" label="Направление плаценты на гистологию" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="3"/>
+        </msh:row>
+
         <msh:row guid="ec1d91f5-4ec4-42e2-bdcb-b3eba2032d22">
           <msh:textField property="hemorrhageVolume" label="Объем кровопотери (мл)" guid="e613e17e-0fad-4dcb-bca5-0261d03cd28c" />
         </msh:row>

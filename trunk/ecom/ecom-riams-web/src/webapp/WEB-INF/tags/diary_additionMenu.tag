@@ -1,6 +1,5 @@
 <%@ tag pageEncoding="utf8" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
  
         <msh:sideLink 
         	action="/entityParentList-mis_medService.do?id=-1" 

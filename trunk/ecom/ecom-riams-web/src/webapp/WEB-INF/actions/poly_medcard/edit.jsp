@@ -68,6 +68,7 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Мед.карта">
       <msh:ifFormTypeIsView formName="poly_medcardForm" guid="67544104-2df3-4f80-a9a4-b119f24ce63c">
+		<msh:sideLink name="Просмотр инф. о заключениях по медкарте" action="/js-poly_protocol-infoByMedcard.do" params="id"/>
       
         <msh:sideLink roles="/Policy/Poly/Medcard/Edit" key="ALT+2" params="id" action="/entityEdit-poly_medcard" name="Изменить" guid="6d095b79-2e4a-45a2-8811-96f9d293397b" />
       </msh:ifFormTypeIsView>

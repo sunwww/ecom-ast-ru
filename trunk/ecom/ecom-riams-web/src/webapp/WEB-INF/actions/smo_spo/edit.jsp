@@ -63,8 +63,8 @@
       <%-- 
       <msh:ifInRole roles="/Policy/Mis/Disability/DisabilityCase/View">
       <msh:section title="Нетрудоспособность" guid="7dfcdd6c-f655-488c-902b-4b6486fffd58">
-        <ecom:parentEntityListAll formName="dis_disabilityCaseForm" attribute="dis" guid="97f7fd1f-97c2-4b57-a01e-56a5d168b8cc" />
-        <msh:table idField="id" name="dis" action="entityParentView-dis_disabilityCase.do" guid="a4c778de-c3ed-4995-8215-2ad17e57fece">
+        <ecom:parentEntityListAll formName="dis_caseForm" attribute="dis" guid="97f7fd1f-97c2-4b57-a01e-56a5d168b8cc" />
+        <msh:table idField="id" name="dis" action="entityParentView-dis_case.do" guid="a4c778de-c3ed-4995-8215-2ad17e57fece">
           <msh:tableColumn columnName="Дата начала" property="dateFrom" guid="2edb485d-971d-499e-8abd-c90ecaf7d480" />
           <msh:tableColumn columnName="Дата окончания" property="dateTo" guid="90c597f9-86a6-4948-be0c-05615685203d" />
           <msh:tableColumn columnName="Продолжительность" property="duration" guid="c54c2899-a6f3-41a5-8473-8fc47ea722e6" />
@@ -94,7 +94,7 @@
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-smo_spo" name="Удалить" roles="/Policy/Mis/MedCase/Spo/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">
-        <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_disabilityCase" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>
+        <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

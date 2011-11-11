@@ -80,6 +80,7 @@
     </msh:table>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  	<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
   	<script type="text/javascript">
   		if ($('beginDate')) new dateutil.DateField($('beginDate')) ;
   		if ($('finishDate')) new dateutil.DateField($('finishDate')) ;
@@ -90,14 +91,21 @@
   			alert('Генерирование расписания по рабочим функциям') ;
   			var ids = theTableArrow.getInsertedIdsAsParams("id","listArch") ;
                if (ids) {
-                   window.location = 'cal_workCalendar-generate.do?lpuId=<%=request.getParameter("id")%>&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
-                   //alert( 'cal_workCalendar-generate.do?lpuId=<%=request.getParameter("id")%>&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
+                   window.location = 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+                   //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
                } else {
                    alert("Нет выделенных функций");
                }
   		}
   		function addJournalPattern() {
-  			alert('') ;
+  			var ids = theTableArrow.getInsertedIdsAsParams("id","listArch") ;
+  			if (ids) {
+  				
+                window.location = 'cal_workCalendar-addBusyPattern.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&pattern='+$('pattern').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+            } else {
+                alert("Нет выделенных функций");
+            }
+  			alert('Добавить шаблон') ;
   		}
   		function deleteGenerate() {
   			alert('Удалить не использованное время') ;

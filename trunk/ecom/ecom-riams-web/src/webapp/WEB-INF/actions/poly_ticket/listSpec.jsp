@@ -29,9 +29,19 @@
                 </msh:panel>
             </msh:form>
             
+            <msh:section title="Направленные пациенты">
+        <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" name="listDirect" action="entityParentEdit-poly_ticket.do" idField="id" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="Номер" property="id"/>
+            <msh:tableColumn columnName="Дата приема" property="date"/>
+            <msh:tableColumn columnName="Время приема" property="time"/>
+            <msh:tableColumn columnName="Пациент" property="patientName" />
+            <msh:tableColumn columnName="Статус" property="statusName"/>
+            <msh:tableColumn columnName="Специалист" property="workFunctionInfo" />
+        </msh:table>
+            </msh:section>
 
-            <msh:section title="Результаты поиска">
-        <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" name="list" action="entityView-poly_ticket.do" idField="id" noDataMessage="Не найдено">
+            <msh:section title="Принятые пациенты">
+        <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" name="listAccepted" action="entityView-poly_ticket.do" idField="id" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Номер" property="id"/>
             <msh:tableColumn columnName="Дата приема" property="date"/>
             <msh:tableColumn columnName="Время приема" property="time"/>

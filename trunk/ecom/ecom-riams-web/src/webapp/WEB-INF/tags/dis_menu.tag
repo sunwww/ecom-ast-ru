@@ -26,12 +26,14 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		styleId="find_number"/>
 </msh:sideMenu>
     <msh:sideMenu title="Журналы">
-      <msh:sideLink key="CTRL+7" params="" action="/dis_documentClose" name="Закрытых документов НТ" 
-        roles='/Policy/Mis/Disability/Case/Document/View'
-      	styleId="closeDNT"
-      	guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
+      <msh:sideLink key="CTRL+7" params="" action="/dis_documentClose" name="Выданных документов НТ" 
+        roles='/Policy/Mis/Disability/Case/Document/View' styleId="closeDNT" />
       <msh:sideLink key="CTRL+8" params="" action="/dis_documentOpen" name="Открытых документов НТ" 
-        roles='/Policy/Mis/Disability/Case/Document/View'
-        styleId="openDNT"
-        guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
+        roles='/Policy/Mis/Disability/Case/Document/View' styleId="openDNT" />
+      <msh:sideLink name="Журнал поступивших бланков" action="/entityList-dis_blanks.do"
+      	roles="/Policy/Mis/Disability/Blanks/View" styleId="blanksNT"
+      />
+      <msh:sideLink name="Свод" action="/dis_swod.do"
+      	roles="/Policy/Mis/Disability/Case/Document/View" styleId="swodNT"
+      />
     </msh:sideMenu>

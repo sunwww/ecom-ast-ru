@@ -24,12 +24,17 @@
         <msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
           <msh:textArea horizontalFill="true" property="name" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="3" rows="2" />
         </msh:row>
-        <msh:row guid="07fea0ed-ebcd-4cd7-85a7-23c229125b85">
-          <msh:autoComplete vocName="vocAcuityDiagnosis" property="acuity" label="Острота" guid="21cf4876-83b6-457c-be68-f186d986c130" horizontalFill="true" />
-          <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
+        <msh:ifFormTypeIsView formName="smo_diagnosisForm">
+	        <msh:row>
+	          <msh:autoComplete vocName="vocAcuityDiagnosis" property="acuity" label="Острота" guid="21cf4876-83b6-457c-be68-f186d986c130" horizontalFill="true" />
+          <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" guid="8efc75d0-c5c7-4a5d-856f-d043968e1429" horizontalFill="true" />
+	        </msh:row> 
+        </msh:ifFormTypeIsView>
+        <msh:row>
+          <msh:autoComplete vocName="vocIllnesPrimary" property="illnesPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row guid="313f2ba2-1321-4ea9-85d8-c5b17b37f6fc">
-          <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" guid="8efc75d0-c5c7-4a5d-856f-d043968e1429" horizontalFill="true" />
+	          <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
           <msh:checkBox property="prophylacticExamination" label="Выявлен при профосмотре" guid="7db11bbf-480e-4be0-9e96-5d8bbcd4fcd8" />
         </msh:row>
         <msh:row guid="61966961-9aee-416e-86d4-40be76f573d5">

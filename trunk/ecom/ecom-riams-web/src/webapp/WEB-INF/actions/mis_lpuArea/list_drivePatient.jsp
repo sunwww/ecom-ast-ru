@@ -56,22 +56,18 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeInv" value="3">  есть
         </td>
-        <msh:autoComplete property="groupInv" vocName="vocInvalidity" hideLabel="true"/>
+        <msh:autoComplete fieldColSpan="3" property="groupInv" size="20" vocName="vocInvalidity" hideLabel="true"/>
         </msh:row>
-        <%--
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-       <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
+     </tr><tr><td></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="1">  региональные
+        	<input type="radio" name="typeInv" value="4">  впервые взятые
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  иногородные
+        	<input type="radio" name="typeInv" value="4">  исключая впервые взятых
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
-        </td>
+        <msh:row>
+        	<msh:autoComplete property="compTreatment" vocName="vocPsychCompulsoryTreatment" fieldColSpan="5" horizontalFill="true" label="Принуд.лечен"/>
         </msh:row>
-        --%>
         <msh:row>
         	<msh:autoComplete property="ambulatoryCare" vocName="vocPsychAmbulatoryCare" label="Вид наблюдения"/>
         	<msh:autoComplete parentAutocomplete="ambulatoryCare" property="group" vocName="vocPsychDispensaryGroup" label="Группа"/>
@@ -129,7 +125,11 @@
     } else {
     	typeFirst[0].checked='checked' ;
     }    
-    if ((+'${typeInv}')==3) {
+    if ((+'${typeInv}')==5) {
+    	typeInv[4].checked='checked' ;
+    } else  if ((+'${typeInv}')==4) {
+    	typeInv[3].checked='checked' ;
+    } else  if ((+'${typeInv}')==3) {
     	typeInv[2].checked='checked' ;
     } else  if ((+'${typeInv}')==2) {
     	typeInv[1].checked='checked' ;
@@ -153,6 +153,7 @@
     } else {
     	typePatient[2].checked='checked' ;
     }*/
+    
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
@@ -262,9 +263,10 @@
    from PsychiatricCareCard pcc 
    left join Patient p on p.id=pcc.patient_id 
    left join LpuAreaPsychCareCard area on pcc.id=area.careCard_id 
+   left join CompulsoryTreatment ct on pcc.id=ct.careCard_id
    ${lpo}
    where  area.lpuArea_id=${param.id} 
-   ${dateT} ${dateF} ${typeI} ${group} order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+   ${dateT} ${dateF} ${typeI} ${compTreat} ${group} order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table viewUrl="entityShortView-psych_careCard.do" editUrl="entityParentEdit-psych_careCard.do" deleteUrl="entityParentDeleteGoParentView-psych_careCard.do" name="journal_ticket" action="entityView-psych_careCard.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn columnName="№карты" property="2"/>
@@ -284,6 +286,13 @@
     <% } else {%>
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  	<script type="text/javascript">
+    if (groupInvAutocomplete) groupInvAutocomplete.addOnChangeCallback(function() {
+    	typeInv[2].checked='checked' ;
+    });
+  	</script>
   </tiles:put>
 </tiles:insert>
 

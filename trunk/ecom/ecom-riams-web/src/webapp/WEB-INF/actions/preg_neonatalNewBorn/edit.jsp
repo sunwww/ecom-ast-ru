@@ -58,7 +58,7 @@
         <msh:ifFormTypeIsNotView formName="preg_neonatalNewBornForm" guid="0cc493cc-488d-4b55-b90f-68a5ca3e4fd5">
           <msh:row guid="9625d712-b37d-4426-8072-de2ccf878aa4">
             <msh:textField property="lastname" label="Фамилия" guid="39c48320-804b-4b00-8ca2-5d85cd0f7ee5" horizontalFill="true" />
-          	<msh:autoComplete property="child" vocName="vocChild" label="Ребенок" horizontalFill="true" size="25"/>
+          	<msh:autoComplete property="child" vocName="vocNewBorn" label="Ребенок" horizontalFill="true" size="25"/>
           </msh:row>
           <msh:row guid="9851b07d-f4b5-45e5-a028-68f0bba966ce">
             <msh:textField property="middlename" label="Отчество" guid="ab852d1b-5231-4c29-9faa-62f7101b3c26" horizontalFill="true" />

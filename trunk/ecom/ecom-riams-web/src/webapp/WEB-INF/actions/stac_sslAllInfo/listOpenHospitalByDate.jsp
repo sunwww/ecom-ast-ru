@@ -35,7 +35,7 @@
             			left join Patient p on p.id=m.patient_id
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
-            			where m.DTYPE='HospitalMedCase' and m.dateStart=cast($$ini^Zcdat('${param.id}',7) as date) and (m.noActuality =0 or m.noActuality is null) and m.dateFinish is null and m.deniedHospitalizating_id is null and (m.ambulanceTreatment is null or m.ambulanceTreatment=0)"
+            			where m.DTYPE='HospitalMedCase' and m.dateStart=to_date('${param.id}','DD.MM.YYYY') and (m.noActuality =0 or m.noActuality is null) and m.dateFinish is null and m.deniedHospitalizating_id is null and (m.ambulanceTreatment is null or m.ambulanceTreatment=0)"
             	/>
                 <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
 				      <msh:tableColumn columnName="Год" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />

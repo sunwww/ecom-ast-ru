@@ -65,6 +65,12 @@
 					<li>
 						<msh:link action="js-ecom_deleteJournal-listNext.do">Журнал удаленных данных</msh:link>
                     </li>
+					<li>
+					<msh:link roles='/Policy/Jaas/SecPolicy/Create'
+                          action="config_addressUpdate.do">
+                          Адреса заполнить доп.поля
+                     </msh:link>
+					</li>
                         
 				</ul>
 				</div>
