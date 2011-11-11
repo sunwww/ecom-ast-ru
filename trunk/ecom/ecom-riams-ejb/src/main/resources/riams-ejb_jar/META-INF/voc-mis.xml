@@ -299,6 +299,23 @@
                 queryConvertType = 'UPPER_CASE'
                 />
     </voc>
+   <voc id='vocDisabilityStatus' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus'
+                names   = 'name'
+                queried = 'name'
+                queryConvertType = 'UPPER_CASE'
+                />
+    </voc>
+   <voc id='vocDisabilityStatusForDuplicate' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus'
+                names   = 'name'
+                queried = 'name'
+                queryAppend="code!='0'"
+                queryConvertType = 'UPPER_CASE'
+                />
+    </voc>
    <voc id='vocLpuFunction' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocLpuFunction'
@@ -375,7 +392,7 @@
 		    	join=""
 		    	queryAppend=""
 		    	order=""
-		    	queried=" (omcCode like (:query) or name like UPPER(:query) or id like (:querId)) "
+		    	queried=" (omcCode like (:query) or name like UPPER(:query) or cast(id as varchar(20)) like (:querId)) "
 		    	names = " omcCode ||' '|| name"
 		    />
     </voc>
@@ -770,8 +787,8 @@
     	<NativeVocService
     			from = 'WorkCalendarTime as wct '
     			parent = " wct.workCalendarDay_id = :parent "
-    			names  = " to_char(wct.timeFrom,'HH24:MI') "
-    			queried =" (to_char(wct.timeFrom,'HH24:MI') like :query ) "
+    			names  = " cast(wct.timeFrom as varchar(5)) "
+    			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
     			queryAppend = " wct.medCase_id is null "
     			order =''
     			nameId='wct.id'
@@ -806,7 +823,7 @@
     			from = 'WorkFunction as wf '
     			parent = ''
     			names  = "vwf.name||' '||case when w.person_id is null then wf.groupName else p.lastname||' '||p.firstname||' '||p.middlename end "
-    			queried =" (wf.id = :query or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
+    			queried =" (cast(wf.id as varchar(20))= :querId or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
     			queryAppend = 'wf.group_id is null '
     			order =''
     			nameId='wf.id'
@@ -834,6 +851,26 @@
     			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
     	/>
     </voc>
+    <voc id="medcardLast" type="NativeVocService">
+    	<NativeVocService
+    		from="Medcard m"
+    		nameId="m.id"
+    		queryAppend=""
+    		names="m.number || ' '||ISNULL(vci.name,'')"
+    		queried="m.number like UPPER(:query)"
+    		join="left join VocCardIndex vci on vci.id=m.cardIndex_id"
+    	/>
+    </voc>
+    <voc id="psychiatricCareCard" type="NativeVocService">
+    	<NativeVocService
+    		from="PsychiatricCareCard pcc"
+    		names="pcc.cardNumber ||' '||  isnull((select vpac.code||' '||to_char(po.startDate,'dd.mm.yyyy') from PsychiaticObservation po left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id where po.carecard_id=pcc.id  having po.startDate=max(po.startDate)),'-')"
+    		nameId="pcc.id"
+    		join=""
+    		queried="pcc.cardNumber like UPPER(:query)"
+    		
+    	/>
+    </voc>
 
     			<!-- parent = " ( (select m.lpu_id from medcard as m where m.id=:parent) is null or w.lpu_id=(select m.lpu_id from medcard as m where m.id=:parent) )" -->
     <voc id='workFunctionByDoctor' type='NativeVocService'>
@@ -857,7 +894,7 @@
 		    	parent='okt.id=:parent'
 		    	nameId="oss.id"
 		    	join=" left join Omc_KodTer as okt on okt.okato=oss.fondOkato "
-		    	queryAppend=""
+		    	queryAppend=" oss.smoCode is not null"
 		    	order=""
 		    	queried=" oss.name like UPPER(:query) "
 		    	names = " oss.name"
@@ -1181,27 +1218,30 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<voc id='vocDisabilityDocumentCloseReason' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason'
-                names   = 'name'
-                queried = 'name'
+                names   = 'codeF,name'
+                queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
+                queryAppend="(disable is null or disable=false)"
                 />
     </voc>
     
     <!-- Причина нетрудоспособности-->
-	<voc id='vocDisabilityReason' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason'
-                names   = 'name'
-                queried = 'name'
-                queryConvertType = 'UPPER_CASE'
-                />
+	<voc id='vocDisabilityReason' type='NativeVocService'>
+		<NativeVocService
+			from="VocDisabilityReason"
+			nameId="id"
+			names="' '||codeF||' '||name"
+			queried="codeF like :querId or UPPER(name) like UPPER(:query)"
+			queryAppend="(disable is null or cast(disable as int)=0)"
+			join=""
+			/>
     </voc>
     <!-- Режим нетрудоспособности-->
 	<voc id='vocDisabilityRegime' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityRegime'
-                names   = 'name'
-                queried = 'name'
+                names   = 'code,name'
+                queried = 'code,name'
                 queryConvertType = 'UPPER_CASE'
                 />
     </voc>
@@ -1209,9 +1249,10 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<voc id='vocRegimeViolationType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocRegimeViolationType'
-                names   = 'name'
-                queried = 'name'
+                names   = 'codeF,name'
+                queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
+                queryAppend="(disable is null or disable=false)"
                 />
     </voc>
     <!-- Степень ограничения трудоспособности -->

@@ -28,45 +28,39 @@ function printProtocol(aCtx, aParams) {
 	map.put("protocol",protocol);
 	map.put("prot.spec",protocol.specialistInfo);
 	//map.put("prot.rec",protocol.record) ;
-	recordMultiText("prot.rec", protocol.record,1) ;
-
+	recordMultiText("prot.rec", protocol.record) ;
+	//map.put("prot.ticket",) ;
+	if (protocol.ticket!=null) {
+		var medcard = protocol.ticket.medcard ;
+		if (medcard!=null) {
+			map.put("prot.medcard",medcard.number) ;
+			var pat = medcard.person ;
+				map.put("prot.patient",pat!=null?pat.fio:"") ;
+			
+		} else {
+			map.put("prot.medcard","") ;
+			map.put("prot.patient","") ;			
+		}
+	} else {
+		map.put("prot.medcard","") ;
+		map.put("prot.patient","") ;
+	}
 	return map ;
 }
 
-function recordMultiText(aKey, aValue,aRtf) {
-	if (aRtf!=null && aRtf>0) {
-		var ret = new java.lang.StringBuilder () ;
-		var val = aValue!=null?"" +aValue:"" ;
-		var n = /\n/ ;
-		var items = val.split(n);
-		//ret.append("</text:p>") ;
-		for (var i = 0; i < items.length; i++) {
-			//ret.append("<text:p text:style-name=\"P6\">") ;
-			//ret.append("<text:tab/>") ;
-			ret.append(items[i]);
-			ret.append("                                                                                                                                  ") ;
-			ret.append("                                                                                                                                  ") ;
-		}
-		//ret.append("<text:p>") ;
-		map.put(aKey,ret.toString()) ;
-	} else {
-		var ret = new java.lang.StringBuilder () ;
-		var val = aValue!=null?"" +aValue:"" ;
-		val=val.replace("&", "&amp;") ;
-		val=val.replace("<", "&lt;");
-		val=val.replace(">", "&gt;");
-		var n = /\n/ ;
-		var items = val.split(n);
-		ret.append("</text:p>") ;
-		for (var i = 0; i < items.length; i++) {
-			ret.append("<text:p text:style-name=\"P6\">") ;
-			//ret.append("<text:tab/>") ;
-			ret.append(items[i]);
-			ret.append("</text:p>") ;
-		}
-		ret.append("<text:p>") ;
-		map.put(aKey,ret.toString()) ;
+function recordMultiText(aKey, aValue) {
+	var ret = new java.lang.StringBuilder () ;
+	var val = aValue!=null?"" +aValue:"" ;
+	var n = /\n/ ;
+	
+	var items = val.split(n);
+	var list = new java.util.ArrayList() ;
+	for (var i = 0; i < items.length; i++) {
+		var prot = Packages.ru.ecom.poly.ejb.form.protocol.ProtocolForm() ;
+		prot.setRecord(items[i]);
+		list.add(prot);
 	}
+	map.put(aKey,list) ;
 }
 	
 function printInfo(aCtx, aParams) {

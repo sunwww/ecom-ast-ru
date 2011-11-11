@@ -1,4 +1,113 @@
 var map = new java.util.HashMap() ;
+function printAddressSheetArrival(aCtx, aParams) {
+	var ids1 = aParams.get("id") ;
+	var spec = aParams.get("spec") ;
+	var dateBegin = aParams.get("dateBegin") ;
+	var dateEnd = aParams.get("dateEnd") ;
+	map.put("dates",dateBegin) ;
+	map.put("datepo",dateEnd) ;
+	var specInfo = "" ;
+	var dep = aParams.get("department") ;
+	if (spec!=null && +spec>0) {
+		var list = aCtx.manager.createNativeQuery("select wp.lastname||' '||substring(wp.firstname,0,2)||' '||substring(wp.middlename,0,2),wp.id  from workfunction wf left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wf.id="+spec)
+		.getResultList();
+		if (list.size()>0) {		
+			specInfo =list.get(0)[0];
+		}
+		list.clear() ;
+	}
+	map.put("spec",specInfo) ;
+	var depAddress = "" ;
+	var depName = "" ;
+	if (dep!=null && +dep>0) {
+		var list = aCtx.manager.createNativeQuery("select l.name,a.fullname,l.houseNumber , l.houseBuilding from mislpu l left join address2 a on a.addressid=l.address_addressid where l.id="+dep).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			depName = ob[0] ;
+			if (ob[1]!=null &&ob[1]!="") {
+				depAddress = ob[1] ;
+				if (ob[2]!=null&&ob[2]!="") depAddress = depAddress+" д."+ob[2] ;
+				if (ob[3]!=null&&ob[3]!="") depAddress = depAddress+" корп."+ob[3] ;
+			}
+		}
+	}
+	map.put("depAddress",depAddress) ;
+	map.put("depName",depName) ;
+	var ids = ids1.split(",") ;
+	var ret = new java.util.ArrayList() ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var sn=0 ;
+	for (var i=0; i < ids.length; i++) {
+		var id1=ids[i] ;
+		var indlast = id1.lastIndexOf(":") ;
+		var id = id1.substring(indlast+1) ;
+		
+		var medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
+		, new java.lang.Long(id)) ;
+		var kinsman = medcase.kinsman!=null?medcase.kinsman.kinsman:null ;
+		var pat = medcase.patient ;
+		var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
+		var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
+		if (pat!=null) {
+			sn++ ;
+			ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
+		}
+		if (kinsman!=null) {
+			sn++ ;
+			var obj = saveInfoByPatient(kinsman,compilationDate,dischargeDate,sn,FORMAT_2) ;
+			ret.add(obj) ;
+		}
+	}
+	var ret1 = new java.util.ArrayList() ;
+	
+	for (var i=0; i < ret.size(); i++) {
+		var par = new Packages.ru.ecom.mis.ejb.service.medcase.AddressSheetParentPrintForm()  ;
+		par.setDoc1(ret.get(i)) ;
+		i++ ;if (i<ret.size()) par.setDoc2(ret.get(i)) ;
+		i++ ;if (i<ret.size()) par.setDoc3(ret.get(i)) ;
+		i++ ;if (i<ret.size()) par.setDoc4(ret.get(i)) ;
+		
+		ret1.add(par) ;
+		
+	}
+	
+	map.put("list",ret1) ;
+	//map.put("list1",ret) ;
+	return map ;
+	
+}
+function saveInfoByPatient(aPatient,aComplicationDate,aDischargeDate,aSn,aFormat2) {
+	var obj = new Packages.ru.ecom.mis.ejb.service.medcase.AddressSheetPrintForm()  ;
+	obj.setCompilationDate(aComplicationDate) ;
+	obj.setDischargeDate(aDischargeDate) ;
+	obj.setSn(aSn) ;
+	obj.setAddress(aPatient.addressRegistration + ((aPatient.rayon!=null && aPatient.code!='ИО')?(" "+aPatient.rayon.name):"" ));
+	obj.setLastname(aPatient.lastname) ;
+	obj.setFirstname(aPatient.firstname);
+	obj.setMiddlename(aPatient.middlename);
+	obj.setBirthday(aPatient.birthday!=null?aFormat2.format(aPatient.birthday):"") ;
+	obj.setNationality(aPatient.nationality!=null?aPatient.nationality.name:"") ;
+	obj.setBirthPlace(aPatient.birthPlace!=null?aPatient.birthPlace:"") ;
+	obj.setSex(aPatient.sex!=null? aPatient.sex.name:"") ;
+	if (aPatient.passportType!=null) {
+		obj.setDocument("вид "+aPatient.passportType.name
+				+" серия "
+				+(aPatient.passportSeries!=null?aPatient.passportSeries:"____")
+				+" №"
+				+(aPatient.passportNumber!=null?aPatient.passportNumber:"_____________")
+				+" выдан "
+				+(aPatient.passportWhomIssued!=null?aPatient.passportWhomIssued:
+					"_____________________________________")
+				
+				+" "+(aPatient.passportDateIssued!=null?aFormat2.format(aPatient.passportDateIssued):"___.___.______")
+				+" код подразделения, выдавшего документ "
+				+(aPatient.passportCodeDivision!=null?aPatient.passportCodeDivision:"_________"));
+	} else {
+		obj.setDocument("документов не имеет") ;					
+	}
+	return obj ;
+
+}
 
 function printMedServicies(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;

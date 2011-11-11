@@ -161,19 +161,21 @@ function recordMultiText(aKey, aValue) {
 	var ret = new java.lang.StringBuilder () ;
 	var val = aValue!=null?"" +aValue:"" ;
 	var n = /\n/ ;
-	val=val.replace("&", "&amp;") ;
-	val=val.replace("<", "&lt;");
-	val=val.replace(">", "&gt;");
+	//val=val.replace("&", "&amp;") ;
+	//val=val.replace("<", "&lt;");
+	//val=val.replace(">", "&gt;");
 	
 	var items = val.split(n);
-	
-	ret.append("</text:p>") ;
+	var list = new java.util.ArrayList() ;
+	//ret.append("</text:p>") ;
 	for (var i = 0; i < items.length; i++) {
-		ret.append("<text:p text:style-name=\"P6\">") ;
-		ret.append("<text:tab/>") ;
-		ret.append(items[i]);
-		ret.append("</text:p>") ;
+		//ret.append("<text:p text:style-name=\"P6\">") ;
+		//ret.append("<text:tab/>") ;
+		var prot = Packages.ru.ecom.poly.ejb.form.protocol.ProtocolForm() ;
+		prot.setRecord(items[i]);
+		list.add(prot);
+		//ret.append("</text:p>") ;
 	}
-	ret.append("<text:p>") ;
-	map.put(aKey,ret.toString()) ;
+	//ret.append("<text:p>") ;
+	map.put(aKey,list) ;
 }

@@ -245,6 +245,13 @@
                     queried = 'hello'
                     />
     </voc>
+    <voc id="omcStandart" type="EntityVocService">
+    	<EntityVocService
+    		entity="ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart"
+    		names='model,name'
+    		queried="model,name"
+    	/>
+    </voc>
     <voc id='vocQualityEstimationMark' type='NativeVocService'>
     	<NativeVocService 
     		from = ' VocQualityEstimationMark vqem '

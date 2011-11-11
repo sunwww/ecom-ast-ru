@@ -28,7 +28,7 @@ function onPreCreate(aForm, aCtx) {
     if (aForm.workComboType==0 && primary!=null && primary.code.equals("1")) {
 	    list = aCtx.manager.createNativeQuery("select count(*) from DisabilityDocument as dd"
 			+ " inner join VocDisabilityDocumentPrimarity as vddp on vddp.id=dd.primarity_id"
-			+ " where dd.disabilityCase_id=:dcase and (dd.noActuality is null or dd.noActuality = 0) and dd.workComboType_id is null and vddp.code=1"
+			+ " where dd.disabilityCase_id=:dcase and (dd.noActuality is null or cast(dd.noActuality as int) = 0) and dd.workComboType_id is null and vddp.code='1'"
 	       	)
 	       	.setParameter("dcase",dcase)
 	       	.getSingleResult() ;
@@ -58,6 +58,11 @@ function onCreate(aForm, aEntity, aCtx) {
 	drecord.setRegime(reg) ;
 	drecord.setWorkFunction(wfunc) ;
 	drecord.setDisabilityDocument(aEntity) ;
+	if (+aForm.workFunctionAdd>0) {
+		wfuncadd = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,aForm.workFunctionAdd) ;
+		drecord.setWorkFunctionAdd(wfuncadd) ;
+		
+	}
 	aCtx.manager.persist(drecord) ;
 	if (aEntity.status!=null && +aEntity.status.code>0) {
 		aEntity.setNoActuality(true) ;
@@ -66,6 +71,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	}
 	aCtx.manager.persist(aEntity) ;
 	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
+		var pat = aEntity.disabilityCase.patient ;
 		var org = pat.works ;
 		if (org!=null) {
 			org.setCode(aForm.job) ;
@@ -81,6 +87,7 @@ function onSave(aForm, aEntity, aCtx) {
 	}
 	aCtx.manager.persist(aEntity) ;
 	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
+		var pat = aEntity.disabilityCase.patient ;
 		var org = pat.works ;
 		if (org!=null) {
 			org.setCode(aForm.job) ;
@@ -124,4 +131,30 @@ function errorThrow(aList, aError) {
 		}
 		throw aError + error ;
 	}
+}
+
+
+function onPreDelete(aEntityId, aContext) {
+	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
+			, new java.lang.Long(aEntityId)) ;
+	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"
+	var list = aContext.manager.createQuery(
+		"from DisabilityDocument where duplicate_id=:aid")
+		.setParameter("aid", aEntityId)
+		.getResultList() ;
+	
+	if (list.size()>0) {
+		var orig = list.get(0) ;
+		var id = orig.id ;
+		orig.setDuplicate(null) ;
+		var stat = aContext.manager.createQuery(
+				"from VocDisabilityStatus where code='0'").getResultList() ;
+		if (stat.size()>0) {
+			orig.setStatus(stat.get(0)) ;
+		} else {
+			stat.setStatus(null) ;
+		}
+		aContext.manager.persist(orig);
+	} 
+	
 }
