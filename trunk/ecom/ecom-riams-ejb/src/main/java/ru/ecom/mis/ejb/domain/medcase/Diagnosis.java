@@ -24,6 +24,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 
@@ -434,4 +435,18 @@ public class Diagnosis extends BaseEntity {
 	private Patient thePatient;
 	/** Дата объявления недействительным */
 	private Date theDisableDate;
+	
+    /** Характер заболевания */
+	@Comment("Характер заболевания")
+	@OneToOne
+	public VocIllnesPrimary getIllnesPrimary() {
+		return theIllnesPrimary;
+	}
+
+	public void setIllnesPrimary(VocIllnesPrimary aIllnesPrimary) {
+		theIllnesPrimary = aIllnesPrimary;
+	}
+
+	/** Характер заболевания */
+	private VocIllnesPrimary theIllnesPrimary;
 }

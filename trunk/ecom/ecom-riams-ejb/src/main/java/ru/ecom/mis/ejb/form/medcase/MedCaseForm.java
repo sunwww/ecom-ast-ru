@@ -1,12 +1,9 @@
 package ru.ecom.mis.ejb.form.medcase;
 
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
@@ -253,4 +250,13 @@ public class MedCaseForm extends IdEntityForm {
 	private Long thePatient;
 	/** Поток обслуживания */
 	private Long theServiceStream;
+	
+    /** Закрыть */
+	@Comment("Закрыть СПО")
+	@Persist
+	public Long getIsCloseSpo() {return theIsCloseSpo;}
+	public void setIsCloseSpo(Long aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
+
+	/** Закрыть */
+	private Long theIsCloseSpo;
 }

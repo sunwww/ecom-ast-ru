@@ -32,8 +32,10 @@ public class ListPersist {
 					Object count = aManager.createNativeQuery(sql.toString()).getSingleResult() ;
 					if (WorkerServiceBean.parseLong(count)<1) {
 						sql = new StringBuilder() ;
-						sql.append("insert into ").append(aTableName).append(" set ").append(aFieldChildren).append("='")
-							.append(jsonId).append("',").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
+						sql.append("insert into ").append(aTableName).append(" ( ")
+							.append(aFieldChildren).append(",").append(aFieldParent)
+							.append(") values ('")
+							.append(jsonId).append("',").append("'").append(aIdEntity).append("')") ;
 						aManager.createNativeQuery(sql.toString()).executeUpdate() ;
 					}
 				}

@@ -12,7 +12,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCodeArticle;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocLawCourt;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCompulsoryTreatment;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCourtTreatmentDecision;
+
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
   * Принудительное лечение
@@ -93,21 +93,7 @@ private Date theRegistrationDate;
   * Карта обратившегося за психиатрической помощью
   */
  private PsychiatricCareCard theCareCard;
- /**
-  * Решение суда
-  */
- @Comment("Решение суда")
- @OneToOne
- public VocPsychCourtTreatmentDecision getCourtDecision() {
-  return theCourtDecision;
- }
- public void setCourtDecision(VocPsychCourtTreatmentDecision aCourtDecision) {
-  theCourtDecision = aCourtDecision;
- }
- /**
-  * Решение суда
-  */
- private VocPsychCourtTreatmentDecision theCourtDecision;
+
  /**
   * Вид принудительного лечения
   */
@@ -169,11 +155,7 @@ private Date theRegistrationDate;
   */
  private PsychiatricExamination thePsychatricExamination;
  
- @Comment("Решение суда инфо")
- @Transient
- public String getCourtDecisionInfo() {
-	 return theCourtDecision!=null?theCourtDecision.getName():"" ;
- }
+
  @Comment("Статья уголовного кодекса инфо")
  @Transient
  public String getCrimainalCodeArticleInfo() {
@@ -194,5 +176,35 @@ private Date theRegistrationDate;
  public String getPsychatricExaminationInfo() {
 	 return thePsychatricExamination!=null?thePsychatricExamination.getExpertDecision():"" ;
  }
+ 
+	 /** Дата замены */
+	@Comment("Дата замены")
+	public Date getDateReplace() {return theDateReplace;}
+	public void setDateReplace(Date aDateReplace) {theDateReplace = aDateReplace;}
+	
+	/** Суд, заменивший тип принудительного лечения */
+	@Comment("Суд, заменивший тип принудительного лечения")
+	@OneToOne
+	public VocLawCourt getLawCourtReplace() {return theLawCourtReplace;}
+	public void setLawCourtReplace(VocLawCourt aLawCourtReplace) {theLawCourtReplace = aLawCourtReplace;}
+
+	/** Решение заменено на */
+	@Comment("Решение заменено на")
+	@OneToOne
+	public VocPsychCompulsoryTreatment getCourtDecisionReplace() {
+		return theCourtDecisionReplace;
+	}
+
+	public void setCourtDecisionReplace(VocPsychCompulsoryTreatment aCourtDecisionReplace) {
+		theCourtDecisionReplace = aCourtDecisionReplace;
+	}
+
+	/** Решение заменено на */
+	private VocPsychCompulsoryTreatment theCourtDecisionReplace;
+	/** Суд, заменивший тип принудительного лечения */
+	private VocLawCourt theLawCourtReplace;
+	/** Дата замены */
+	private Date theDateReplace;
+
 
 }

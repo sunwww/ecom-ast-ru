@@ -26,7 +26,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance (clazz = DisabilityRecord.class)
 @Comment("Запись сроков нетрудоспособности")
 @WebTrail(comment = "Запись сроков нетрудоспособности", nameProperties= "info", view="entityParentView-dis_record.do")
-@Parent(property="disabilityDocument", parentForm=DisabilityDocumentForm.class)
+@Parent(property="disabilityDocument",orderBy="dateFrom", parentForm=DisabilityDocumentForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Disability/Case/Document/Record")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(RecordPreCreate.class)
@@ -113,5 +113,16 @@ public class DisabilityRecordForm extends IdEntityForm {
 	private Long theRegime;
 	/** СМО, создавшего запись */
 	private Long theCreateMedCase;
+	/**
+	 * Новое свойство
+	 */
+	@Comment("Новое свойство")
+	@Persist
+	public String getWorkFunctionAddInfo() {return theWorkFunctionAddInfo;}
+	/** Новое свойство */
+	public void setWorkFunctionAddInfo(String a_Property) {theWorkFunctionAddInfo = a_Property;}
+
+	/** Новое свойство */
+	private String theWorkFunctionAddInfo;
 
 }

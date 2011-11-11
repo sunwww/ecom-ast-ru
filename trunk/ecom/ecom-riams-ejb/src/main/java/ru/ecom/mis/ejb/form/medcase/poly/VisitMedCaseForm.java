@@ -12,6 +12,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Форма визита
@@ -46,19 +47,19 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 
 	/** Результат визита */
 	@Comment("Результат визита")
-	@Persist
+	@Persist @Required
 	public Long getVisitResult() {return theVisitResult;	}
 	public void setVisitResult(Long aResult) {theVisitResult = aResult;}
 
 	/** Цель визита */
 	@Comment("Цель визита")
-	@Persist
+	@Persist @Required
 	public Long getVisitReason() {return theVisitReason;	}
 	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
-	@Persist
+	@Persist @Required
 	public Long getWorkPlaceType() {return theWorkPlaceType;}
 	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
 	
@@ -161,7 +162,14 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
 	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist @Required
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
 
+	/** Поток обслуживания */
+	private Long theServiceStream;
 		
 	
 

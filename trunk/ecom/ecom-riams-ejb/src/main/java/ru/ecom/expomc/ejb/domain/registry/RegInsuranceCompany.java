@@ -24,6 +24,13 @@ public class RegInsuranceCompany extends VocIdNameOmcCode {
 	public void setOkato(String aOkato) {
 		theOkato = aOkato;
 	}
+	/** Код СМО */
+	@Comment("Код СМО")
+	public String getSmocode() {return theSmocode;}
+	public void setSmocode(String aSmocode) {theSmocode = aSmocode;}
+
+	/** Код СМО */
+	private String theSmocode;
 
 	/** ОКАТО */
 	private String theOkato;

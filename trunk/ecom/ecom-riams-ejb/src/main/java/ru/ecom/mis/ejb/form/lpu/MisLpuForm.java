@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.form.lpu;
 
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -9,6 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -362,5 +365,19 @@ public class MisLpuForm extends IdNameEntityForm {
 	private String thePrintAddress;
 	/** Название для печати */
 	private String thePrintName;
+	
+	/** Руководитель */
+	@Comment("Руководитель")
+	@Persist
+	public Long getManager() {
+		return theManager;
+	}
+
+	public void setManager(Long aManager) {
+		theManager = aManager;
+	}
+
+	/** Руководитель */
+	private Long theManager;
 
 }

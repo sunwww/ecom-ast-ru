@@ -72,7 +72,10 @@ public class WorkerServiceBean implements IWorkerService{
 		return worker.getWorkFunctionInfo() ;
 
 	}
-	//Получение ID SecUser
+	/**
+	 * Получение ID SecUser
+	 */
+	@SuppressWarnings({ "unchecked"})
 	public Long getSecUser() {
 		String username = theContext.getCallerPrincipal().toString() ;
 		List<SecUser> list = theManager.createQuery("from SecUser where login = :login")
@@ -92,6 +95,7 @@ public class WorkerServiceBean implements IWorkerService{
 					.toString()) ;
 		return list.iterator().next().getId();
 	}
+	@SuppressWarnings({ "unchecked" })
 	public Long getWorkFunction()  {
 		String username = theContext.getCallerPrincipal().toString() ;
 		List<WorkFunction> list= theManager.createQuery("from WorkFunction where secUser.login = :login")
@@ -266,7 +270,7 @@ public class WorkerServiceBean implements IWorkerService{
 	}
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select top 1 id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null") ;
+		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null") ;
 		System.out.println("minIs="+aMinIs) ;
 		if (aMinIs!=null && aMinIs.equals(Long.valueOf(1))) {
 			sql.append(" order by timeFrom asc") ;
@@ -275,6 +279,7 @@ public class WorkerServiceBean implements IWorkerService{
 		}
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 			.setParameter("WCDid", aCalendarDay)
+			.setMaxResults(1)
 			//.setParameter("time", aCalendarTime) 
 			.getResultList() ;
 		if (list.size()>0) {
@@ -316,16 +321,18 @@ public class WorkerServiceBean implements IWorkerService{
 		StringBuilder ret = new StringBuilder() ;
 		StringBuilder sqlmax = new StringBuilder() ;
 		StringBuilder sqlmin = new StringBuilder() ;
-		sqlmin.append("select to_char(wcd.calendarDate,'dd.MM.yyy'),wcd.id from WorkCalendarDay as wcd")
+		sqlmin.append("select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
 			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate >= CURRENT_DATE") 
 			.append(" group by wc.id,wcd.id,wcd.calendarDate")
-			.append(" order by wcd.calendarDate") ; 
-		sqlmax.append(" select to_char(wcd.calendarDate,'dd.MM.yyy'),wcd.id from WorkCalendarDay as wcd")
+			.append(" order by wcd.calendarDate")
+			; 
+		sqlmax.append(" select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
 			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate <= CURRENT_DATE") 
-			.append(" group by workCalendar_id")
-			.append(" order by wcd.calendarDate desc") ;
+			.append(" group by wc.id,wcd.id,wcd.calendarDate")
+			.append(" order by wcd.calendarDate desc")
+			;
 		List<Object[]> rownext = theManager.createNativeQuery(sqlmin.toString())
 						.setParameter("workFuncId", aWorkFunction) 
 						.setMaxResults(1)

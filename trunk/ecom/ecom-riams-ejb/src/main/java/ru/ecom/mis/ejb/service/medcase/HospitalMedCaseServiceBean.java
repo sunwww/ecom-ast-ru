@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 
+import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
@@ -56,6 +57,66 @@ import ru.nuzmsh.util.format.DateFormat;
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+
+    public String addressInfo(Address aAddress) {
+        StringBuilder sb = new java.lang.StringBuilder();
+        Address a = aAddress ;
+        if (a.getFullname()!=null && a.getFullname()!="") return a.getFullname().trim();
+        
+        sb.insert(0, a.getName()) ;
+        if (a.getType()!=null) {
+            sb.insert(0,  " ") ;
+            sb.insert(0,  a.getType().getShortName() ) ;
+        	
+        }
+        
+        //long oldId = a.getId() ;
+        ////a = a.getParent() ;
+        
+        	//sb.insert(0, a.getFullname()+", ") ;
+            if(a.getParent()!=null) {
+            	sb.insert(0, ", ") ;
+            	sb.insert(0, addressInfo(a.getParent())) ;
+            }
+        
+        
+        //throw "address"+aAddress.id+" "+sb ;
+        //throw sb.toString() ;
+        aAddress.setFullname(sb.toString()) ;
+        theManager.persist(aAddress) ;
+    	//aCtx.manager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddress.id).executeUpdate() ;
+        return sb.toString() ;
+    }
+
+    public void addressUpdate() {
+    	long id=0 ;
+    	List<Address> list ;
+    	theManager.createNativeQuery("update Address2 set fullname=null where fullname is not null").executeUpdate() ;
+    	
+    	while (id!=-1) {
+    		String sql = "from Address where id>"+id+" order by id" ;
+    		//if (id>0) throw sql ;
+    		list = theManager.createQuery(sql)
+    			.setMaxResults(450)
+    			.getResultList() ;
+    		if (list.size()>0) {
+    			for (Address adr:list) {
+    				
+    				//Address adr = list.get(i) ;
+    				addressInfo(adr) ;
+    				//adr.setFullname() ;
+    				//aCtx.manager.persist(adr) ;
+    				id = adr.getId();
+    				//throw id ;
+    			}
+    			list.clear() ;
+    		} else {
+    			id=-1 ;
+    		}
+    		
+    	}
+    }
+    
     public String getIdc10ByDocDiag(Long aIdDocDiag){
     	VocDiagnosis diag = theManager.find(VocDiagnosis.class, aIdDocDiag) ;
     	VocIdc10 mkb = diag.getIdc10() ;
@@ -503,7 +564,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     // Открытые случаи госпитализации по дате поступления
     public List<GroupByDate> findOpenHospitalGroupByDate() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select t.dateStart,count(t.id),count(t1.id) from MedCase as t left join MedCase as t1 on t1.parent_id=t.id and t1.dateStart=t.dateStart where t.DTYPE='HospitalMedCase' and (t.noActuality=0 or t.noActuality is null) and t.dateFinish is null and t.deniedHospitalizating_id is null and (t.ambulanceTreatment is null or t.ambulanceTreatment=0) and t1.prevMEdCase_id is null group by t.dateStart") ;
+		sql.append("select t.dateStart,count(t.id),count(t1.id) from MedCase as t left join MedCase as t1 on t1.parent_id=t.id and t1.dateStart=t.dateStart where t.DTYPE='HospitalMedCase' and (cast(t.noActuality as int)=0 or t.noActuality is null) and t.dateFinish is null and t.deniedHospitalizating_id is null and (t.ambulanceTreatment is null or cast(t.ambulanceTreatment as int)=0) and t1.prevMEdCase_id is null group by t.dateStart") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.getResultList() ;
 		LinkedList<GroupByDate> ret = new LinkedList<GroupByDate>() ;
@@ -538,7 +599,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	        } else {
 	        	throw new IllegalDataException("Неправильная дата") ;
 	        }
-	        Query query = builder.build(theManager, "from MedCase where DTYPE='HospitalMedCase' and dateFinish is null  and deniedHospitalizating_id is null and (ambulanceTreatment is null or ambulanceTreatment=0)", " order by entranceTime");
+	        Query query = builder.build(theManager, "from MedCase where DTYPE='HospitalMedCase' and dateFinish is null  and deniedHospitalizating_id is null and (ambulanceTreatment is null or cast(ambulanceTreatment as int)=0)", " order by entranceTime");
 	        System.out.println("Запрос по medCase: ");
 	        System.out.println(query.toString()) ;
 	        return createHospitalList(query);

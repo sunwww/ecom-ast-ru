@@ -338,7 +338,34 @@ public class Invalidity extends BaseEntity{
 
 	/** Трудоспособен */
 	private Boolean theIsWorking;
+	
+	/** Первичность */
+	@Comment("Первичность")
+	public Boolean getPrimary() {
+		return thePrimary;
+	}
 
+	public void setPrimary(Boolean aPrimary) {
+		thePrimary = aPrimary;
+	}
 
+	/** Первичность */
+	private Boolean thePrimary;
+	
+	/** Без переосвидетельствования */
+	@Comment("Без переосвидетельствования")
+	public Boolean getWithoutExam() {return theWithoutExam;}
+	public void setWithoutExam(Boolean aWithoutExam) {theWithoutExam = aWithoutExam;}
+
+	/** Без переосвидетельствования */
+	private Boolean theWithoutExam;
+
+	/** Недееспособный */
+	@Comment("Недееспособный")
+	public Boolean getIncapable() {return theIncapable;}
+	public void setIncapable(Boolean aIncapable) {theIncapable = aIncapable;}
+
+	/** Недееспособный */
+	private Boolean theIncapable;
 
 }

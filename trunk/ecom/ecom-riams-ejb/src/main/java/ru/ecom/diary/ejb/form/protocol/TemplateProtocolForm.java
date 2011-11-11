@@ -17,7 +17,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz= TemplateProtocol.class)
 @Comment("Шаблон протокола")
-@WebTrail(comment = "Шаблон протокола", nameProperties= "title", view="entityParentView-temp_protocol.do")
+@WebTrail(comment = "Шаблон протокола", nameProperties= "title", view="entityParentView-diary_template.do")
 @EntityFormSecurityPrefix("/Policy/Diary/Template")
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm extends IdEntityForm{

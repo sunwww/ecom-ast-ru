@@ -2,7 +2,10 @@ package ru.ecom.mis.ejb.form.disability;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
+import ru.ecom.mis.ejb.form.disability.interceptors.DocumentPreCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -21,9 +24,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance (clazz = DisabilityDocument.class)
 @Comment("Документ нетрудоспособности")
-@WebTrail(comment = "Документ нетрудоспособности", nameProperties= "info", view="entityParentView-dis_document.do")
+@WebTrail(comment = "Документ нетрудоспособности", nameProperties= "info"
+	, view="entityParentView-dis_document.do"
+	, shortView="entityShortView-dis_document.do"
+	)
 @Parent(property="disabilityCase", parentForm=DisabilityCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Disability/Case/Document")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(DocumentPreCreate.class)
+)
 public class DisabilityDocumentForm extends IdEntityForm{
 	
 	/** Медико-социальная экспертная комиссия */
@@ -237,6 +246,14 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	public Boolean getIsClose() {return theIsClose;}
 	public void setIsClose(Boolean aIsClose) {theIsClose = aIsClose;}
 
+	/** Статус */
+	@Comment("Статус")
+	@Persist @Required
+	public Long getStatus() {return theStatus;}
+	public void setStatus(Long aStatus) {theStatus = aStatus;}
+
+	/** Статус */
+	private Long theStatus;
 	/** Закрыт случай */
 	private Boolean theIsClose;
 	/** Предыдущий документ */
@@ -370,36 +387,136 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** № истории болезни */
 	private String theHospitalizedNumber;
+	
 	/** Пользователь, создавший документ */
 	@Comment("Пользователь, создавший документ")
 	@Persist
-	public String getUsernameCreate() {return theUsernameCreate;}
-	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
-	@Persist
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	@Persist @DateString @DoDateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aDateCreate) {theCreateDate = aDateCreate;}
 
 	/** Пользователь, редактировавший документ */
 	@Comment("Пользователь, редактировавший документ")
 	@Persist
-	public String getUsernameEdit() {return theUsernameEdit;}
-	public void setUsernameEdit(String aUsernameEdit) {theUsernameEdit = aUsernameEdit;}
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
 
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
-	@Persist
-	public String getDateEdit() {return theDateEdit;}
-	public void setDateEdit(String aDateEdit) {theDateEdit = aDateEdit;}
+	@Persist @DateString @DoDateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aDateEdit) {theEditDate = aDateEdit;}
 
 	/** Дата редактирования */
-	private String theDateEdit;
+	private String theEditDate;
 	/** Пользователь, редактировавший документ */
-	private String theUsernameEdit;
+	private String theEditUsername;
 	/** Дата создания */
-	private String theDateCreate;
+	private String theCreateDate;
 	/** Пользователь, создавший документ */
-	private String theUsernameCreate;	
+	private String theCreateUsername;
+	
+	/** Место работы */
+	@Comment("Место работы")
+	@Persist @DoUpperCase
+	public String getJob() {return theJob;}
+	public void setJob(String aJob) {theJob = aJob;}
+
+	/** Место работы */
+	private String theJob;
+	
+	/** Обновить место работы */
+	@Comment("Обновить место работы")
+	public Boolean getIsUpdateWork() {return theIsUpdateWork;}
+	public void setIsUpdateWork(Boolean aIsUpdateWork) {theIsUpdateWork = aIsUpdateWork;}
+
+	/** Обновить место работы */
+	private Boolean theIsUpdateWork;
+	
+	/** Специалист 2 */
+	@Comment("Специалист 2")
+	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
+	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+
+	/** Специалист 2 */
+	private Long theWorkFunctionAdd;
+	/** Заключительный диагноз */
+	@Comment("Заключительный диагноз")
+	@Persist
+	public Long getIdc10Final() {return theIdc10Final;}
+	public void setIdc10Final(Long aIdc10Final) {theIdc10Final = aIdc10Final;}
+
+	/** Заключительный диагноз */
+	private Long theIdc10Final;	
+	/** Диагноз заключительный */
+	@Comment("Диагноз заключительный")
+	public String getDiagnosisFinal() {return theDiagnosisFinal;}
+	public void setDiagnosisFinal(String aDiagnosisFinal) {theDiagnosisFinal = aDiagnosisFinal;}
+
+	/** Диагноз заключительный */
+	private String theDiagnosisFinal;
+	/** Продолжительность */
+	@Comment("Продолжительность")
+	public String getDuration() {return theDuration;}
+	public void setDuration(String aDuration) {theDuration = aDuration;}
+	/** Продолжительность */
+	private String theDuration;
+	
+	/** Причина закрытия инфо */
+	@Comment("Причина закрытия инфо")
+	public String getCloseReasonInfo() {return theCloseReasonInfo;}
+	public void setCloseReasonInfo(String aCloseReasonInfo) {theCloseReasonInfo = aCloseReasonInfo;}
+
+	/** Причина закрытия инфо */
+	private String theCloseReasonInfo;
+	
+	/** Адрес пациента */
+	@Comment("Адрес пациента")
+	//@Persist
+	public String getPatientAddress() {
+		return thePatientAddress;
+	}
+
+	public void setPatientAddress(String aPatientAddress) {
+		thePatientAddress = aPatientAddress;
+	}
+
+	/** Адрес пациента */
+	private String thePatientAddress;
+	
+	/** Номер БЛ выданный др. ЛПУ */
+	@Comment("Номер БЛ выданный др. ЛПУ")
+	public String getOtherNumber() {
+		return theOtherNumber;
+	}
+
+	public void setOtherNumber(String aOtherNumber) {
+		theOtherNumber = aOtherNumber;
+	}
+
+	/** Номер БЛ выданный др. ЛПУ */
+	private String theOtherNumber;
+	
+	/** Дубликат */
+	@Comment("Дубликат")
+	@Persist
+	public Long getDuplicate() {return theDuplicate;}
+	public void setDuplicate(Long aDuplicate) {theDuplicate = aDuplicate;}
+
+	/** Дубликат */
+	private Long theDuplicate;
+	
+	/** Статус информация */
+	@Comment("Статус информация")
+	@Persist
+	public String getStatusInfo() {return theStatusInfo;}
+	public void setStatusInfo(String aStatusInfo) {theStatusInfo = aStatusInfo;}
+
+	/** Статус информация */
+	private String theStatusInfo;
 }

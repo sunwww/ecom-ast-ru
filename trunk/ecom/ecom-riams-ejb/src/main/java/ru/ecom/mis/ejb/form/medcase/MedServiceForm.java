@@ -122,7 +122,9 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Прикрепленные рабочие функции */
 	@Comment("Прикрепленные рабочие функции")
-	@Persist @PersistManyToManyOneProperty(parentProperty="medService_id",tableName="WorkFunctionService", valueProperty="vocWorkFunction_id",collectionGenericType=MedService.class)
+	@Persist @PersistManyToManyOneProperty(parentProperty="medService_id"
+	,tableName="WorkFunctionService", valueProperty="vocWorkFunction_id"
+	,collectionGenericType=MedService.class)
 	public String getWorkFunctionServices() {return theWorkFunctionServices;}
 	public void setWorkFunctionServices(String aWorkFunctionServices) {theWorkFunctionServices = aWorkFunctionServices;}
 

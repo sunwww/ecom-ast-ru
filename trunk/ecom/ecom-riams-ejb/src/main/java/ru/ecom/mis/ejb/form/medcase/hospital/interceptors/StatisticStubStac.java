@@ -321,7 +321,7 @@ public class StatisticStubStac {
 
         String nextStatCardNumber;
         if (theMedCase.getIsAmbulanseDialis()) {
-            // сохранение
+            System.out.println(" dialis....") ;
             nextStatCardNumber = new StringBuffer().append(theMedCase.getPatient().getId()).toString();
             StatisticStubExist statstub = new StatisticStubExist();
             statstub.setCode(nextStatCardNumber);
@@ -329,10 +329,12 @@ public class StatisticStubStac {
             statstub.setMedCase(theMedCase);
             theMedCase.setStatisticStub(statstub);
         } else {
+        	System.out.println(" начало создание....") ;
             Long year = getYear() ;
             StatisticStubRestored restored =null ;
             boolean next ;
             do {
+            	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
             	StatisticStubRestored restoredb = getRestoredStatCard() ;
             	if (restoredb==null) break ;
                 boolean existnum = isStatCardNumberExists(restoredb.getCode(), restoredb.getYear());
@@ -347,6 +349,7 @@ public class StatisticStubStac {
                 	//break;
                 }
             }while(next); 
+            
             if (restored!=null) {
             	//long restoredId=Long.valueOf(restored.getCode()) ;
                 if (CAN_DEBUG) LOG.debug("Берем номер из восстановленных");
@@ -363,8 +366,9 @@ public class StatisticStubStac {
             } else {
             	//создаем новый номер
                 if (CAN_DEBUG) LOG.debug("Создание новый номер");
-            	List<StatisticStubNew> rows = theEntityManager.createQuery("from StatisticStub where year=:year and DTYPE='StatisticStubNew'")
-            		.setParameter("year", year).setMaxResults(1).getResultList();
+            	List<StatisticStubNew> rows = theEntityManager.createQuery("from StatisticStub where year='"+year+"' and DTYPE='StatisticStubNew'")
+            		//.setParameter("year", year)
+            		.setMaxResults(1).getResultList();
             	long nextId ;
         		//int year_int = year.intValue() ;
         		StatisticStubNew stubnew ;
@@ -374,11 +378,12 @@ public class StatisticStubStac {
             	} else {
             		nextId = Long.valueOf(1) ;
             		stubnew = new StatisticStubNew();
-            		theEntityManager.persist(stubnew);
-            		theEntityManager.refresh(stubnew);
             		stubnew.setYear(year);
+            		
+            		//theEntityManager.refresh(stubnew);
             	}
         		stubnew.setCode(""+(nextId+1));
+        		theEntityManager.persist(stubnew);
         		nextStatCardNumber = prepareStatCardNumber(nextId);
             	if(CAN_DEBUG)LOG.debug("Просмотр");
                 while (!isStatCardNumberFree(nextStatCardNumber)) {
@@ -388,11 +393,12 @@ public class StatisticStubStac {
                 }
             	if(CAN_DEBUG)LOG.debug("Запись нового номера стат.карты = "+nextStatCardNumber);
                 StatisticStubExist stubexist = new StatisticStubExist();
-                theEntityManager.persist(stubexist);
-                theEntityManager.refresh(stubexist);
+                //
+                //theEntityManager.refresh(stubexist);
                 stubexist.setCode(nextStatCardNumber);
                 stubexist.setYear(year);
                 stubexist.setMedCase(theMedCase);
+                theEntityManager.persist(stubexist);
             	//theMedCase.setStatCardNumber(nextStatCardNumber);
                 theMedCase.setStatisticStub(stubexist);
             	

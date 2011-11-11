@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -299,4 +300,17 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	private Long theParent;
 	/** Пациент */
 	private Long thePatient;
+	/** Стандарт */
+	@Comment("Стандарт")
+	@Persist
+	public Long getOmcStandart() {
+		return theOmcStandart;
+	}
+
+	public void setOmcStandart(Long aOmcStandart) {
+		theOmcStandart = aOmcStandart;
+	}
+
+	/** Стандарт */
+	private Long theOmcStandart;
 }

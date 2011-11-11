@@ -26,7 +26,10 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.Medcard.class)
 @Parent(property = "person", parentForm = ru.ecom.mis.ejb.form.patient.PatientForm.class)
-@WebTrail(comment = "Медицинская карта", nameProperties = "number", view = "entityParentView-poly_medcard.do")
+@WebTrail(comment = "Медицинская карта", nameProperties = "number"
+, view = "entityParentView-poly_medcard.do"
+, shortView = "entityShortView-poly_medcard.do"
+)
 @EntityFormSecurityPrefix("/Policy/Poly/Medcard")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(PrepareCreateMedcardInterceptor.class)

@@ -29,7 +29,14 @@ public class FormInputProtocol extends BaseEntity{
 	@OneToMany(mappedBy="formInput", cascade=CascadeType.ALL)
 	public List<ParameterByForm> getParameters() {return theParameters;	}
 	public void setParameters(List<ParameterByForm> aParameters) {theParameters = aParameters;}
+	
+	/** Название */
+	@Comment("Название")
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
 
+	/** Название */
+	private String theName;
 	/** Список параметров формы */
 	private List<ParameterByForm> theParameters;
 	/** Шаблон протокола */

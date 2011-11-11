@@ -147,7 +147,7 @@ public class InvalidityForm extends IdEntityForm{
 	  * Мкб10
 	  */
 	 @Comment("Мкб10")
-	 @Persist @Required
+	 @Persist 
 	 public Long getIdc10() {
 	  return theIdc10;
 	 }
@@ -235,7 +235,7 @@ public class InvalidityForm extends IdEntityForm{
 	
 	/** Дата освидетельствования */
 	@Comment("Дата освидетельствования")
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString
 	public String getRevisionDate() {
 		return theRevisionDate;
 	}
@@ -344,4 +344,30 @@ public class InvalidityForm extends IdEntityForm{
 
 	/** Трудоспособен */
 	private Boolean theIsWorking;
+	
+	/** Первичность */
+	@Comment("Первичность")
+	@Persist
+	public Boolean getPrimary() {return thePrimary;}
+	public void setPrimary(Boolean aPrimary) {thePrimary = aPrimary;}
+	
+	/** Без переосвидетельствования */
+	@Comment("Без переосвидетельствования")
+	@Persist
+	public Boolean getWithoutExam() {return theWithoutExam;}
+	public void setWithoutExam(Boolean aWithoutExam) {theWithoutExam = aWithoutExam;}
+
+	/** Без переосвидетельствования */
+	private Boolean theWithoutExam;
+	
+	/** Недееспособный */
+	@Comment("Недееспособный")
+	@Persist
+	public Boolean getIncapable() {return theIncapable;}
+	public void setIncapable(Boolean aIncapable) {theIncapable = aIncapable;}
+
+	/** Первичность */
+	private Boolean thePrimary;
+	/** Недееспособный */
+	private Boolean theIncapable;
 }

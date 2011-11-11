@@ -24,6 +24,13 @@ public class OmcSprSmo extends OmcAbstractVoc {
 	public String getAreaName() {return theAreaName;}
 	public void setAreaName(String aAreaName) {theAreaName = aAreaName;}
 
+	/** СМО код */
+	@Comment("СМО код")
+	public String getSmoCode() {return theSmoCode;}
+	public void setSmoCode(String aSmoCode) {theSmoCode = aSmoCode;}
+
+	/** СМО код */
+	private String theSmoCode;
 	/** areaName */
 	private String theAreaName;
 	/** fondOkato */

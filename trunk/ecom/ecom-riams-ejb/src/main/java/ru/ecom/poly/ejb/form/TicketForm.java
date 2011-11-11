@@ -200,7 +200,7 @@ public class TicketForm extends IdEntityForm {
 	
 	/** Первичность */
 	@Comment("Первичность")
-	@Persist @Required
+	@Persist 
 	public Long getPrimary() {return thePrimary;}
 	public void setPrimary(Long aNewProperty) {thePrimary = aNewProperty;}
 
@@ -337,4 +337,14 @@ public class TicketForm extends IdEntityForm {
     private String theTime;
 	/** Информация по талону */
 	private String theTicketInfo;
+    
+	/** Диагноз */
+	@Comment("Диагноз")
+	@Persist @Required
+	public Long getIllnesPrimary() {return theIllnesPrimary;}
+	public void setIllnesPrimary(Long aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
+
+	/** Диагноз */
+	private Long theIllnesPrimary;
+
 }

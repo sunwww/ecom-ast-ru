@@ -10,4 +10,16 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocPsychCompulsoryTreatment extends VocBaseEntity{
+	 /** Окончание */
+	@Comment("Окончание")
+	public Boolean getIsFinish() {
+		return theIsFinish;
+	}
+
+	public void setIsFinish(Boolean aIsFinish) {
+		theIsFinish = aIsFinish;
+	}
+
+	/** Окончание */
+	private Boolean theIsFinish;
 }

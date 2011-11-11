@@ -84,10 +84,14 @@ public class DisabilityRecord extends BaseEntity{
 		return ret.toString();
 	}
 	
-	/** Рабочая функция инфо */
+	/** Рабочая функция1 инфо */
 	@Comment("Рабочая функция инфо")
 	@Transient
 	public String getWorkFunctionInfo() {return theWorkFunction!=null?theWorkFunction.getWorkFunctionInfo():"";}
+	/** Рабочая функция инфо */
+	@Comment("Рабочая функция председ. ВК инфо")
+	@Transient
+	public String getWorkFunctionAddInfo() {return theWorkFunctionAdd!=null?theWorkFunctionAdd.getWorkFunctionInfo():"";}
 	
 	/** Доп. рабочая функция */
 	@Comment("Доп. рабочая функция")

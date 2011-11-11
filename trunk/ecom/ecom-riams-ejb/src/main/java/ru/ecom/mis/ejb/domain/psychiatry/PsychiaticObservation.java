@@ -86,11 +86,28 @@ public class PsychiaticObservation extends BaseEntity{
  @Comment("Вид амбулаторного наблюдения (ИНФО)	")
  @Transient
  public String getAmbulatoryCareInfo() {
-	 return theAmbulatoryCare!=null?new StringBuilder().append(theAmbulatoryCare.getCode()).append(". ").append(theAmbulatoryCare.getName()).toString() : ""  ;
+	 return theAmbulatoryCare!=null?new StringBuilder().append(theAmbulatoryCare.getName())
+			 //.append(". ").append(theAmbulatoryCare.getName())
+			 .toString() : ""  ;
  }
  @Comment("Диспансерная группа (ИНФО)")
  @Transient
  public String getDispensaryGroupInfo() {
-	 return theDispensaryGroup!=null?new StringBuilder().append(theDispensaryGroup.getCode()).append(". ").append(theDispensaryGroup.getName()).toString() : "" ;
+	 return theDispensaryGroup!=null?new StringBuilder().append(theDispensaryGroup.getName())
+			 //.append(". ").append(theDispensaryGroup.getName())
+			 .toString() : "" ;
  }
+ 
+	 /** Дата окончания наблюдения */
+	@Comment("Дата окончания наблюдения")
+	public Date getFinishDate() {
+		return theFinishDate;
+	}
+	
+	public void setFinishDate(Date aFinishDate) {
+		theFinishDate = aFinishDate;
+	}
+	
+	/** Дата окончания наблюдения */
+	private Date theFinishDate;
 }

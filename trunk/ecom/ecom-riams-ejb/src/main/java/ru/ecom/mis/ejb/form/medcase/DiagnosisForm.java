@@ -2,7 +2,11 @@ package ru.ecom.mis.ejb.form.medcase;
 
 
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DiagnosisPreCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.interceptor.DiagnosisPolyPreCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -23,6 +27,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Диагноз", nameProperties= "diagnosisInfo", view="entityView-mis_diagnosis.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Diagnosis")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(DiagnosisPolyPreCreate.class)
+)
 public class DiagnosisForm extends ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm {
 	
 	/** Информация по специалисту */
@@ -39,19 +46,19 @@ public class DiagnosisForm extends ru.ecom.mis.ejb.form.medcase.hospital.Diagnos
 
 	/** Приоритет */
 	@Comment("Приоритет")
-    @Persist @Required	
+    @Persist @Required
 	public Long getPriority() {return thePriority;	}
 	public void setPriority(Long aNewProperty) {thePriority = aNewProperty;}
 
 	/** Острота */
 	@Comment("Острота")
-    @Persist @Required
+    @Persist 
 	public Long getAcuity() {return theAcuity;}
 	public void setAcuity(Long aNewProperty) {theAcuity = aNewProperty;}
 
 	/** Первичность */
 	@Comment("Первичность")
-    @Persist @Required
+    @Persist 
     public Long getPrimary() {return thePrimary;}
 	public void setPrimary(Long aNewProperty) {thePrimary = aNewProperty;}
 

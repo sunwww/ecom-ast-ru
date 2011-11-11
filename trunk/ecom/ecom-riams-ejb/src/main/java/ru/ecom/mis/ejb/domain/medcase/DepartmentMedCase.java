@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.util.DurationUtil;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart;
 import ru.ecom.mis.ejb.domain.lpu.BedFund;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
@@ -139,5 +140,18 @@ public class DepartmentMedCase extends HospitalMedCase {
 		ret.append("СЛО ").append(getId()).append(" номер стат.карты СЛС ").append(getStatCardBySLS()) ;
 		return ret.toString() ;
 	}
+	/** Стандарт */
+	@Comment("Стандарт")
+	@OneToOne
+	public OmcStandart getOmcStandart() {
+		return theOmcStandart;
+	}
+
+	public void setOmcStandart(OmcStandart aOmcStandart) {
+		theOmcStandart = aOmcStandart;
+	}
+
+	/** Стандарт */
+	private OmcStandart theOmcStandart;
 
 }

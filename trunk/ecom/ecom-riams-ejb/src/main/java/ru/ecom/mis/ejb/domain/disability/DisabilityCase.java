@@ -19,6 +19,7 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 /**
  * Случай нетрудоспособности
  * @author azviagin,stkacheva
@@ -102,10 +103,6 @@ public class DisabilityCase extends BaseEntity{
 	public Kinsman getNursingPerson2() {return theNursingPerson2;}
 	public void setNursingPerson2(Kinsman aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
 	
-	/** Место работы */
-	@Comment("Место работы")
-	public String getJob() {return theJob;}
-	public void setJob(String aJob) {theJob = aJob;}
 
 	/**
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
@@ -123,8 +120,6 @@ public class DisabilityCase extends BaseEntity{
 
 	/** Поставлена на учет в ранние сроки беременности (до 12 недель) */
 	private Boolean theEarlyPregnancyRegistration;
-	/** Место работы */
-	private String theJob;
 	/** Лицо по уходу 2*/
 	private Kinsman theNursingPerson2;
 	/** Лицо по уходу 1*/
@@ -139,5 +134,32 @@ public class DisabilityCase extends BaseEntity{
 	private List<DisabilityCase> theChildDisabiblityCases;
 	/** Родительский случай нетрудоспособности */
 	private DisabilityCase theParentDisabiblityCase;
- 
+	/** Пользователь, создавший документ */
+	@Comment("Пользователь, создавший документ")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aDateCreate) {theCreateDate = aDateCreate;}
+
+	/** Пользователь, редактировавший документ */
+	@Comment("Пользователь, редактировавший документ")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
+
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aDateEdit) {theEditDate = aDateEdit;}
+
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Пользователь, редактировавший документ */
+	private String theEditUsername;
+	/** Дата создания */
+	private Date theCreateDate;
+	/** Пользователь, создавший документ */
+	private String theCreateUsername; 
 }

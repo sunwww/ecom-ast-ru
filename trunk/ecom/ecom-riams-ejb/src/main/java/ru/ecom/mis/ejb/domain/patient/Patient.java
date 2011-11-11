@@ -27,6 +27,7 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcOksm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetT;
+import ru.ecom.mis.ejb.domain.birth.voc.VocNewBorn;
 import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
@@ -291,13 +292,13 @@ public class Patient extends BaseEntity{
 //    public Invalidity getInvalidity() { return theInvalidity ; }
 //    public void setInvalidity(Invalidity aInvalidity) { theInvalidity = aInvalidity ; }
 
-    /** Документы */
+//    /** Документы */
 //    @OneToMany(mappedBy = "patient", cascade= ALL)
 //    public List<IdentityCard> getIdentityCard() { return theIdentityCard ; }
 //    public void setIdentityCard(List<IdentityCard> aIdentityCard) { theIdentityCard = aIdentityCard ; }
 
 
-    /** Место проживания */
+//    /** Место проживания */
 //    @OneToOne(cascade = CascadeType.ALL)
 //    public PatientAddress getRegistrationPlace() { return theRegistrationPlace ; }
 //    public void setRegistrationPlace(PatientAddress aRegistrationPlace) { theRegistrationPlace = aRegistrationPlace ; }
@@ -306,6 +307,7 @@ public class Patient extends BaseEntity{
 //    private PatientAddress theRegistrationPlace ;
 //    /** Документы */
 //    private List<IdentityCard> theIdentityCard ;
+    
     /** Номер паспорта */
     @Comment("Номер паспорта")
     public String getPassportNumber() { return thePassportNumber ; }
@@ -447,30 +449,26 @@ public class Patient extends BaseEntity{
 		if (theAddress!=null ) return theAddress.getAddressInfo(theHouseNumber, theHouseBuilding, theFlatNumber)  ;
 		if (theTerritoryRegistrationNonresident!=null) {
 			StringBuilder nonres = new StringBuilder();
-			if (theTerritoryRegistrationNonresident!=null) {
-				nonres.append(" ").append(theTerritoryRegistrationNonresident.getName()) ;
-			} else {
-				nonres.append(" ").append("район") ;
-			}
+			nonres.append(" ").append(theTerritoryRegistrationNonresident.getName()).append(", ") ;
 			nonres.append(theRegionRegistrationNonresident) ;
 			if (theTypeSettlementNonresident!=null) {
-				nonres.append(" ").append(theTypeSettlementNonresident.getName()) ;
+				nonres.append(" ").append(theTypeSettlementNonresident.getName()).append(" ") ;
 			}  else {
-				nonres.append(" нас.пункт");
+				nonres.append(" нас.пункт ");
 			}
 			nonres.append(theSettlementNonresident) ;
 			if (theTypeStreetNonresident!=null) {
-				nonres.append(" ").append(theTypeStreetNonresident.getName());
+				nonres.append(" ").append(theTypeStreetNonresident.getName()).append(" ");
 			} else {
-				nonres.append(" тип ул.") ;
+				nonres.append(" тип ул. ") ;
 			}
 			nonres.append(theStreetNonresident) ;
-	        if (!StringUtil.isNullOrEmpty(theHouseNonresident)) nonres.append(" д.").append(theHouseNonresident) ;
-	        if (!StringUtil.isNullOrEmpty(theBuildingHousesNonresident)) nonres.append(" корп.").append(theBuildingHousesNonresident);
-	        if (!StringUtil.isNullOrEmpty(theApartmentNonresident)) nonres.append(" кв.").append(theApartmentNonresident);
+	        if (!StringUtil.isNullOrEmpty(theHouseNonresident)) nonres.append(" д.").append(theHouseNonresident).append(" ") ;
+	        if (!StringUtil.isNullOrEmpty(theBuildingHousesNonresident)) nonres.append(" корп.").append(theBuildingHousesNonresident).append(" ");
+	        if (!StringUtil.isNullOrEmpty(theApartmentNonresident)) nonres.append(" кв.").append(theApartmentNonresident).append(" ");
 	        return nonres.toString() ;
 		}
-		return theForeignRegistrationAddress ;
+		return theForeignRegistrationAddress!=null?theForeignRegistrationAddress:"" ;
 	}
 	@Transient
 	public String getAddressReal() {
@@ -992,6 +990,21 @@ public class Patient extends BaseEntity{
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** Место рождения */
+	@Comment("Место рождения")
+	public String getBirthPlace() {return theBirthPlace;}
+	public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+
+	/** Новорожденный */
+	@Comment("Новорожденный")
+	@OneToOne
+	public VocNewBorn getNewborn() {return theNewborn;}
+	public void setNewborn(VocNewBorn aNewborn) {theNewborn = aNewborn;}
+
+	/** Новорожденный */
+	private VocNewBorn theNewborn;
+	/** Место рождения */
+	private String theBirthPlace;
 	/** Пользователь, последний редактировающий запись */
 	private String theEditUsername;
 	/** Дата последнего редактирования */
@@ -1000,4 +1013,12 @@ public class Patient extends BaseEntity{
 	private String theCreateUsername;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Код подразделения, выдавшего паспорт */
+	@Comment("Код подразделения, выдавшего паспорт")
+	public String getPassportCodeDivision() {return thePassportCodeDivision;}
+	public void setPassportCodeDivision(String aPassportCodeDivision) {thePassportCodeDivision = aPassportCodeDivision;}
+
+	/** Код подразделения, выдавшего паспорт */
+	private String thePassportCodeDivision;
 }

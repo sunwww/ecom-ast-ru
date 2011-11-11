@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChild;
+import ru.ecom.mis.ejb.domain.birth.voc.VocNewBorn;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBornCordAttaching;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -243,11 +243,11 @@ public class NewBorn extends BaseEntity{
 	/** Ребенок */
 	@Comment("Ребенок")
 	@OneToOne
-	public VocChild getChild() {return theChild;}
-	public void setChild(VocChild aChild) {theChild = aChild;}
+	public VocNewBorn getChild() {return theChild;}
+	public void setChild(VocNewBorn aChild) {theChild = aChild;}
 
 	/** Ребенок */
-	private VocChild theChild;
+	private VocNewBorn theChild;
 	/** Время создания */
 	private Time theCreateTime;
 	/** Дата создания */

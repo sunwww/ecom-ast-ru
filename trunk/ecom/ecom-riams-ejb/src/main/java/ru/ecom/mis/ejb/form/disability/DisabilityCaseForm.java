@@ -22,7 +22,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance (clazz = DisabilityCase.class)
 @Comment("Случай нетрудоспособности")
 @WebTrail(comment = "Случай нетрудоспособности", nameProperties= "id", view="entityParentView-dis_case.do",
-			list="entityParentList-dis_case.do",listComment="СНТ по пациенту")
+			list="entityParentList-dis_case.do",listComment="СНТ по пациенту"
+			, shortView="entityShortView-dis_case.do"
+		)
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Disability/Case")
 public class DisabilityCaseForm extends IdEntityForm {
@@ -103,12 +105,54 @@ public class DisabilityCaseForm extends IdEntityForm {
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
 	 */
 	private Boolean theEarlyPregnancyRegistration;
-	/** Место работы */
-	@Comment("Место работы")
-	@Persist
-	public String getJob() {return theJob;}
-	public void setJob(String aJob) {theJob = aJob;}
 
-	/** Место работы */
-	private String theJob;
+
+	/** Лицо по уходу 1*/
+	@Comment("Лицо по уходу 1")
+	@Persist
+	public Long getNursingPerson1() {return theNursingPerson1;}
+	public void setNursingPerson1(Long aNursingPerson1) {theNursingPerson1 = aNursingPerson1;}
+
+	/** Лицо по уходу 2*/
+	@Comment("Лицо по уходу 2")
+	@Persist
+	public Long getNursingPerson2() {return theNursingPerson2;}
+	public void setNursingPerson2(Long aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
+
+	/** Лицо по уходу 2*/
+	private Long theNursingPerson2;
+	/** Лицо по уходу 1*/
+	private Long theNursingPerson1;
+	/** Пользователь, создавший документ */
+	@Comment("Пользователь, создавший документ")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DateString @DoDateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aDateCreate) {theCreateDate = aDateCreate;}
+
+	/** Пользователь, редактировавший документ */
+	@Comment("Пользователь, редактировавший документ")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
+
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DateString @DoDateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aDateEdit) {theEditDate = aDateEdit;}
+
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Пользователь, редактировавший документ */
+	private String theEditUsername;
+	/** Дата создания */
+	private String theCreateDate;
+	/** Пользователь, создавший документ */
+	private String theCreateUsername;
 }

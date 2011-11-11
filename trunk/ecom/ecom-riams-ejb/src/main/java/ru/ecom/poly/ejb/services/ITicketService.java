@@ -23,11 +23,11 @@ public interface ITicketService {
     List<TicketForm> findActiveMedcardTickets(Long aMedcard);
     // Поиск всех талонов по медкарте
     List<TicketForm> findAllMedcardTickets(Long aMedcard);
-    List<TicketForm> findAllWorkerTickets(Long aSpecialist, String aDate);
+    List<TicketForm> findAllWorkerTickets(Long aSpecialist, String aDate, int aStatus);
     //Поиск талонов по специалисту
     List<TicketForm> findAllSpecialistTickets(Long aSpecialist);
     // Поиск талонов по специалисту и дате
-    List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate);
+    List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate, int aStatu);
     // Поиск талона по номеру
     List<TicketForm> findTicketsByNumber(String aNumber) ;
     // Поиск

@@ -27,6 +27,14 @@ public class VocDisabilityDocumentCloseReason extends VocBaseEntity{
 	public Boolean getDisable() {return theDisable;}
 	public void setDisable(Boolean aDisable) {theDisable = aDisable;}
 
+	/** Краткое название */
+	@Comment("Краткое название")
+	@AFormatFieldSuggest({"SHORTNAME"})
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Краткое название */
+	private String theShortName;
 	/** Не действует */
 	private Boolean theDisable;
 	/** Федеральный код */

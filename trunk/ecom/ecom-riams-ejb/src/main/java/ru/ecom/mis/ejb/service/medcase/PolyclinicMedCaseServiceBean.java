@@ -109,7 +109,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 	SessionContext theContext ;
 	public Long getWorkCalendar(Long aWorkFunction) {
 		
-		List<Object[]> list = theManager.createNativeQuery("select wc.id,ifnull(wf.group_id,wc.id,(select wc1.id from WorkCalendar as wc1 where wc1.workFunction_id = wf.group_id )) from WorkCalendar as wc"
+		List<Object[]> list = theManager.createNativeQuery("select wc.id,case when wf.group_id is null then wc.id else (select wc1.id from WorkCalendar as wc1 where wc1.workFunction_id = wf.group_id ) end from WorkCalendar as wc"
 					+	" left join WorkFunction as wf on wf.id=wc.workFunction_id"
 					+" where wc.workFunction_id = :funct")
 			.setParameter("funct", aWorkFunction)
@@ -145,7 +145,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 				}
 				Long workCalendarDayId = list.get(0).getId() ;
 				Long workFunc = list.get(0).getWorkFunction().getId() ;
-				Integer executed = (Integer)theManager.createNativeQuery("select count(*)"
+				Object executed = theManager.createNativeQuery("select count(*)"
                      +  " from medcase"
                      + " where workfunctionExecute_id=:workFunction"
                      + " and dateStart=:date")
@@ -153,7 +153,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                    .setParameter("workFunction",workFunc)
                    .setParameter("date", date)
                    .getSingleResult();
-				Integer planned = (Integer)theManager.createNativeQuery("select count(id) from medcase"
+				Object planned = theManager.createNativeQuery("select count(id) from medcase"
 					+" where workfunctionplan_id =:workFunction"
                    +" and datePlan_id=:workCalendarDay"
 						)
@@ -164,7 +164,8 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 				System.out.println("day="+workCalendarDayId) ;
 				System.out.println("exec="+executed) ;
 				System.out.println("plan="+planned) ;
-				return ""+workCalendarDayId+"#"+executed+"#"+planned;
+				return new StringBuilder().append(workCalendarDayId).append("#")
+						.append(executed).append("#").append(planned).toString();
 				
 	}
 }

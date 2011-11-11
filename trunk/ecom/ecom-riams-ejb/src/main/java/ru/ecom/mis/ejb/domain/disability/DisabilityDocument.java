@@ -21,6 +21,7 @@ import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentType;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason2;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityRegime;
+import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
@@ -36,7 +37,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(unique = false, properties= {"disabilityCase"})
+	,@AIndex(unique = false, properties= {"issueDate"})
 	,@AIndex(unique = false, properties= {"patient"})
+	,@AIndex(unique = false , properties = {"duplicate"})
+	,@AIndex(unique = false, properties = {"prevDocument"})
 })
 @Table(schema="SQLUser")
 public class DisabilityDocument extends BaseEntity{
@@ -243,6 +247,11 @@ public class DisabilityDocument extends BaseEntity{
 	@Comment("Пациент ФИО")
 	@Transient
 	public String getPatientFio() {return thePatient!=null?thePatient.getFio():"";}
+	
+	/** Пациент ФИО */
+	@Comment("Пациент ФИО")
+	@Transient
+	public String getPatientAddress() {return thePatient!=null?thePatient.getAddressRegistration():"";}
 
 
 	/** Лечебно-профилактическое учреждение */
@@ -319,32 +328,40 @@ public class DisabilityDocument extends BaseEntity{
 
 	/** Пользователь, создавший документ */
 	@Comment("Пользователь, создавший документ")
-	public String getUsernameCreate() {return theUsernameCreate;}
-	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
-	public Date getDateCreate() {return theDateCreate;}
-	public void setDateCreate(Date aDateCreate) {theDateCreate = aDateCreate;}
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aDateCreate) {theCreateDate = aDateCreate;}
 
 	/** Пользователь, редактировавший документ */
 	@Comment("Пользователь, редактировавший документ")
-	public String getUsernameEdit() {return theUsernameEdit;}
-	public void setUsernameEdit(String aUsernameEdit) {theUsernameEdit = aUsernameEdit;}
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
 
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
-	public Date getDateEdit() {return theDateEdit;}
-	public void setDateEdit(Date aDateEdit) {theDateEdit = aDateEdit;}
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aDateEdit) {theEditDate = aDateEdit;}
 
+	/** Статус */
+	@Comment("Статус")
+	@OneToOne
+	public VocDisabilityStatus getStatus() {return theStatus;}
+	public void setStatus(VocDisabilityStatus aStatus) {theStatus = aStatus;}
+
+	/** Статус */
+	private VocDisabilityStatus theStatus;
 	/** Дата редактирования */
-	private Date theDateEdit;
+	private Date theEditDate;
 	/** Пользователь, редактировавший документ */
-	private String theUsernameEdit;
+	private String theEditUsername;
 	/** Дата создания */
-	private Date theDateCreate;
+	private Date theCreateDate;
 	/** Пользователь, создавший документ */
-	private String theUsernameCreate;
+	private String theCreateUsername;
 	/** № истории болезни */
 	private String theHospitalizedNumber;
 	/** Код изменения причины нетрудоспособности*/
@@ -411,4 +428,41 @@ public class DisabilityDocument extends BaseEntity{
 	private Date theSanatoriumDateFrom;
 	/** Дата окончания санаторного лечения */
 	private Date theSanatoriumDateTo;
+	
+	/** Место работы */
+	@Comment("Место работы")
+	public String getJob() {return theJob;}
+	public void setJob(String aJob) {theJob = aJob;}
+
+	/** Место работы */
+	private String theJob;
+	
+	/** Заключительный диагноз */
+	@Comment("Заключительный диагноз")
+	@OneToOne
+	public VocIdc10 getIdc10Final() {return theIdc10Final;}
+	public void setIdc10Final(VocIdc10 aIdc10Final) {theIdc10Final = aIdc10Final;}
+
+	/** Заключительный диагноз */
+	private VocIdc10 theIdc10Final;
+	
+	/** Дубликат */
+	@Comment("Дубликат")
+	@OneToOne
+	public DisabilityDocument getDuplicate() {return theDuplicate;}
+	public void setDuplicate(DisabilityDocument aDuplicate) {theDuplicate = aDuplicate;}
+
+	/** Дубликат */
+	private DisabilityDocument theDuplicate;
+	
+	@Transient
+	public String getStatusInfo() {
+		StringBuilder res = new StringBuilder() ;
+		res.append(theStatus!=null? theStatus.getName(): "") ;
+		if (theDuplicate!=null) {
+			res.append(" заменен на ").append(theDuplicate.getNumber()) ;
+		}
+		return  res.toString();
+	}
+
 }

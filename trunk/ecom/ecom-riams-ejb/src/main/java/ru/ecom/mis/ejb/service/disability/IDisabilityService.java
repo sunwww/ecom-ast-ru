@@ -12,4 +12,7 @@ public interface IDisabilityService {
 	public List<GroupByDate> findOpenDocumentGroupByDate() ;
 	public List<GroupByDate> findCloseDocumentGroupByDate(String aDateFrom, String aDateTo) ;
 	public String getDataByClose(Long aDocumentId) ;
+	public Long createDuplicateDocument(Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFuntion2,String aJob,Boolean aUpdateJob) ;
+	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber) ;
+	
 }

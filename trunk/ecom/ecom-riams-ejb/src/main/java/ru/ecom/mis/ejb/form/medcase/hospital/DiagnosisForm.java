@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -7,6 +9,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DiagnosisPreCreateInterceptor;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -50,13 +53,13 @@ public class DiagnosisForm extends IdEntityForm {
 
 	/** Приоритет */
 	@Comment("Приоритет")
-    @Persist @Required	
+    @Persist 
 	public Long getPriority() {return thePriority;	}
 	public void setPriority(Long aNewProperty) {thePriority = aNewProperty;}
 
 	/** Острота */
 	@Comment("Острота")
-    @Persist @Required
+    @Persist 
 	public Long getAcuity() {return theAcuity;}
 	public void setAcuity(Long aNewProperty) {theAcuity = aNewProperty;}
 
@@ -266,4 +269,11 @@ public class DiagnosisForm extends IdEntityForm {
 	/** Информация по специалисту */
 	private String theWorkerInfo;
 
-}
+    /** Характер заболевания */
+	@Comment("Характер заболевания")
+	@Persist @Required
+	public Long getIllnesPrimary() {return theIllnesPrimary;}
+	public void setIllnesPrimary(Long aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
+
+	/** Характер заболевания */
+	private Long theIllnesPrimary;}

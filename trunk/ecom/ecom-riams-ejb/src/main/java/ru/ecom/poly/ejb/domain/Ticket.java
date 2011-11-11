@@ -36,6 +36,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus;
 import ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.ecom.poly.ejb.domain.voc.VocMedUsluga;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 import ru.ecom.poly.ejb.domain.voc.VocSpecLabel;
@@ -375,4 +376,13 @@ public class Ticket extends BaseEntity {
     private Date thePrevIdc10Date;
     /** Статус */
     private long theStatus;
+    
+    /** Характер заболевания */
+	@Comment("Характер заболевания")
+	@OneToOne
+	public VocIllnesPrimary getIllnesPrimary() {return theIllnesPrimary;}
+	public void setIllnesPrimary(VocIllnesPrimary aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
+
+	/** Характер заболевания */
+	private VocIllnesPrimary theIllnesPrimary;
 }
