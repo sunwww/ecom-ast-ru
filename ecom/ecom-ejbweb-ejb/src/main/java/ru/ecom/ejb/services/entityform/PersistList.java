@@ -14,6 +14,10 @@ import org.json.JSONWriter;
 import ru.nuzmsh.util.StringUtil;
 
 public class PersistList {
+	
+	public static void saveArrayJson(Class aTableName, String aJson,Object aEntityParent, String aFieldParent, Class aClassChildren, String aFieldChildren, EntityManager aManager) {
+		
+	}
 	public static void saveArrayJson(String aTableName, Long aIdEntity, String aJson, String aFieldParent, String aFieldChildren, EntityManager aManager) {
 		try {
 			JSONObject obj = new JSONObject(aJson) ;
@@ -32,9 +36,22 @@ public class PersistList {
 					Object count = aManager.createNativeQuery(sql.toString()).getSingleResult() ;
 					if (parseLong(count)<1) {
 						sql = new StringBuilder() ;
-						sql.append("insert into ").append(aTableName).append(" set ").append(aFieldChildren).append("='")
-							.append(jsonId).append("',").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
-						aManager.createNativeQuery(sql.toString()).executeUpdate() ;
+						
+						sql.append("insert into ").append(aTableName).append(" ( ")
+							.append(aFieldChildren).append(",").append(aFieldParent)
+							.append(") values ('")
+							.append(jsonId).append("','").append(aIdEntity).append("')") ;
+						try {
+							aManager.createNativeQuery(sql.toString()).executeUpdate() ;
+						} catch (Exception e) {
+							sql = new StringBuilder() ;
+							
+							sql.append("insert into ").append(aTableName).append(" (id, ")
+								.append(aFieldChildren).append(",").append(aFieldParent)
+								.append(") values (nextval('").append(aTableName.toLowerCase()).append("_sequence'),'")
+								.append(jsonId).append("','").append(aIdEntity).append("')") ;
+							
+						}
 					}
 				}
 			}
