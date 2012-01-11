@@ -10,6 +10,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -21,6 +23,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Обменная карта беременности (сведения о родильнице)")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "pregnancy" }) 
+	}
+)
 public class ConfinedExchangeCard extends BaseEntity{
 	
 	/** Больница */

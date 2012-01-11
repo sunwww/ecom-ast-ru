@@ -1,4 +1,254 @@
 var map = new java.util.HashMap() ;
+function printCoveringLetterByDay(aCtx,aParams) {
+	//var ids1 = aParams.get("id") ;
+	//var spec = aParams.get("spec") ;
+	var dateBegin = aParams.get("dateBegin") ;
+	//var dateEnd = aParams.get("dateEnd") ;
+	var disc = aParams.get("dischargeIs") ;
+	var dateI = "dateStart" ;
+	var timeI = "entranceTime" ;
+	var dischInfo = "поступившим " ;
+	map.put("dates",dateBegin) ;
+	if (disc!=null && disc=="on") {
+		dateI="dateFinish" ;
+		timeI="dischargeTime" ;
+		dischInfo="выбывшим " ;
+	} 
+	var emerIs = "" ; 
+	map.put("dischInfo",dischInfo) ;
+	var sql = "select" 
+    +" m.id as mid"
+    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart"
+    +" ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish"
+    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
+    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
+    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
+    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
+    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
+    +" from MedCase as m  "
+    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
+    +" left outer join Patient pat on m.patient_id = pat.id" 
+    +" left join MisLpu as ml on ml.id=m.department_id "
+    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+    +" where m.DTYPE='HospitalMedCase' and m."+dateI+" = to_date('"+dateBegin+"','dd.mm.yyyy')"
+    +" and m.deniedHospitalizating_id is null"
+    +"  "+emerIs+" order by m."+dateI+",pat.lastname,pat.firstname,pat.middlename";
+	
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	var j=1 ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(j++)) ;
+		par.set2(obj[6]) ;
+		par.set3(obj[4]) ;
+		par.set4(obj[10]) ;
+		ret.add(par) ;
+	} 
+
+	//throw ""+deniedlist.size() ;
+	map.put("listDep",ret) ;
+	return map ;
+}
+
+function printReestrByDay(aCtx,aParams) {
+	//var ids1 = aParams.get("id") ;
+	//var spec = aParams.get("spec") ;
+	var dateBegin = aParams.get("dateBegin") ;
+	//var dateEnd = aParams.get("dateEnd") ;
+	var disc = aParams.get("dischargeIs") ;
+	var dateI = "dateStart" ;
+	var timeI = "entranceTime" ;
+	var dischInfo = "поступившим " ;
+	map.put("dates",dateBegin) ;
+	if (disc!=null && disc=="on") {
+		dateI="dateFinish" ;
+		timeI="dischargeTime" ;
+		dischInfo="выбывшим " ;
+	} 
+	
+	var hour8=  aParams.get("hour8") ;
+	var period = "m."+dateI+"= to_date('"+dateBegin+"','dd.mm.yyyy')" ;
+	var hour8IsInfo="";
+	if (hour8!=null && hour8.equals("on")) {
+		var dat = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dateBegin) ;
+	    var cal = java.util.Calendar.getInstance() ;
+	    cal.setTime(dat) ;
+	    cal.add(java.util.Calendar.DAY_OF_MONTH, 1) ;
+	    var format=new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	    var date1=format.format(cal.getTime()) ;
+		//request.setAttribute("hour8Is","cast('08:00' as time)") ;
+		hour8IsInfo=" (8 часов)" ;
+		period = "((m."+dateI+"= to_date('"+dateBegin+"','dd.mm.yyyy') and m."+timeI+">= cast('08:00' as time) )"
+				+" or (m."+dateI+"= to_date('"+date1+"','dd.mm.yyyy') and m."+timeI+"< cast('08:00' as time) )"
+		+")" ;
+	}
+	
+	var emerIs = "" ; 
+	map.put("dischInfo",dischInfo) ;
+	var sql = "select" 
+    +" m.id as mid"
+    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart"
+    +" ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish"
+    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
+    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
+    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
+    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
+    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
+    +" from MedCase as m  "
+    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
+    +" left outer join Patient pat on m.patient_id = pat.id" 
+    +" left join MisLpu as ml on ml.id=m.department_id "
+    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+    +" where m.DTYPE='HospitalMedCase' and "+period+""
+    +" and m.deniedHospitalizating_id is null"
+    +"  "+emerIs+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
+	
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	var j=1 ;
+	var depname = "" ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var depnew = ""+obj[8] ;
+		
+		if (depname!=depnew) {
+			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			par.set1("") ;
+			par.set2("") ;
+			par.set3("------------------------------------------------------------------------------------------------------------") ;
+			par.set4("") ;
+			par.set5("") ;
+			ret.add(par);
+			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			par.set1("") ;
+			par.set2("") ;
+			par.set3(" --"+depnew+"--") ;
+			par.set4("") ;
+			par.set5("") ;
+			ret.add(par) ;		
+		}
+		if (depname!="") {
+			//throw ""+depname ;
+		}
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(j++)) ;
+		par.set2(obj[6]) ;
+		par.set3(obj[4]) ;
+		par.set4(obj[10]) ;
+		par.set5(obj[2]) ;
+		ret.add(par) ;
+		
+		depname = depnew ;
+	} 
+
+	var emerIs = "" ; 
+	map.put("dischInfo",dischInfo) ;
+	var sql = "select" 
+    +" m.id as mid"
+    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart"
+    +" ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish"
+    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
+    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
+    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
+    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
+    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
+    +" ,vdh.name "
+    +" from MedCase as m  "
+    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
+    +" left outer join Patient pat on m.patient_id = pat.id" 
+    +" left join MisLpu as ml on ml.id=m.department_id "
+    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+    +" left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id"
+    +" where m.DTYPE='HospitalMedCase' and "+period+""
+    +" and m.deniedHospitalizating_id is not null"
+    +"  "+emerIs+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
+	
+	var list1 = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	
+	//var deniedlist = new java.util.ArrayList() ;
+	//var j=1 ;
+	
+	var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	par.set1("") ;
+	par.set2("") ;
+	par.set3("------------------------------------------------------------------------------------------------------------") ;
+	par.set4("") ;
+	par.set5("") ;
+	ret.add(par);
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1("") ;
+		par.set2("") ;
+		par.set3(" ----ОТКАЗЫ ОТ ГОСПИТАЛИЗАЦИИ---- ") ;
+		par.set4("") ;
+		par.set5("") ;
+		ret.add(par) ;			
+	
+	for (var i=0; i < list1.size(); i++) {
+		var obj = list1.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(j++)) ;
+		par.set2(obj[10]) ;
+		par.set3(obj[4]) ;
+		par.set4(obj[11]) ;
+		par.set5(obj[2]) ;
+		ret.add(par) ;
+	}
+	//throw ""+deniedlist.size() ;
+	map.put("listDep",ret) ;
+	return map ;
+}
+function printAddressSheetByHospital(aCtx, aParams) {
+	var id = aParams.get("id") ;
+	var medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
+			, new java.lang.Long(id)) ;
+	var dep = medcase.lpu!=null?medcase.lpu.id:java.lang.Long(0) ;
+	var depAddress = "" ;
+	var depName = "" ;
+	if (dep!=null && +dep>0) {
+		var list = aCtx.manager.createNativeQuery("select l.name,a.fullname,l.houseNumber , l.houseBuilding from mislpu l left join address2 a on a.addressid=l.address_addressid where l.id="+dep).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			depName = ob[0] ;
+			if (ob[1]!=null &&ob[1]!="") {
+				depAddress = ob[1] ;
+				if (ob[2]!=null&&ob[2]!="") depAddress = depAddress+" д."+ob[2] ;
+				if (ob[3]!=null&&ob[3]!="") depAddress = depAddress+" корп."+ob[3] ;
+			}
+		}
+	}
+	map.put("depAddress",depAddress) ;
+	map.put("depName",depName) ;
+	map.put("spec","") ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var sn=0 ;
+	var ret = new java.util.ArrayList() ;
+	var kinsman = medcase.kinsman!=null?medcase.kinsman.kinsman:null ;
+	var pat = medcase.patient ;
+	var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
+	var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
+	if (pat!=null) {
+		sn++ ;
+		var obj = saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2) ;
+		var par = new Packages.ru.ecom.mis.ejb.service.medcase.AddressSheetParentPrintForm()  ;
+		par.setDoc1(obj) ;
+		ret.add(par) ;
+	}
+	if (kinsman!=null) {
+		sn++ ;
+		var obj = saveInfoByPatient(kinsman,compilationDate,dischargeDate,sn,FORMAT_2) ;
+		var par = new Packages.ru.ecom.mis.ejb.service.medcase.AddressSheetParentPrintForm()  ;
+		par.setDoc1(obj) ;
+		ret.add(par) ;
+	}
+	
+	var par = new Packages.ru.ecom.mis.ejb.service.medcase.AddressSheetParentPrintForm()  ;
+	par.setDoc1(obj) ;
+	
+	map.put("list",ret) ;
+	return map ;
+}
 function printAddressSheetArrival(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var spec = aParams.get("spec") ;
@@ -44,18 +294,20 @@ function printAddressSheetArrival(aCtx, aParams) {
 		
 		var medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(id)) ;
-		var kinsman = medcase.kinsman!=null?medcase.kinsman.kinsman:null ;
-		var pat = medcase.patient ;
-		var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
-		var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
-		if (pat!=null) {
-			sn++ ;
-			ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
-		}
-		if (kinsman!=null) {
-			sn++ ;
-			var obj = saveInfoByPatient(kinsman,compilationDate,dischargeDate,sn,FORMAT_2) ;
-			ret.add(obj) ;
+		if (medcase.deniedHospitalizating == null) {
+			var kinsman = medcase.kinsman!=null?medcase.kinsman.kinsman:null ;
+			var pat = medcase.patient ;
+			var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
+			var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
+			if (pat!=null) {
+				sn++ ;
+				ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
+			}
+			if (kinsman!=null) {
+				sn++ ;
+				var obj = saveInfoByPatient(kinsman,compilationDate,dischargeDate,sn,FORMAT_2) ;
+				ret.add(obj) ;
+			}
 		}
 	}
 	var ret1 = new java.util.ArrayList() ;
@@ -236,9 +488,11 @@ function printNewBornHistory(aCtx, aParams){
 function recordPolicy(policies) {
 	var rec="" ;
 	for(var i=0; i<policies.size(); i++) {
-		var policy = policies.get(i);
-		if (!rec.equals("")) rec = rec + "; " ;
-		rec = rec+policy.text ;
+		var casepol = policies.get(i);
+		if (casepol!=null && casepol.policies!=null) {
+			if (!rec.equals("")) rec = rec + "; " ;
+			rec = rec+casepol.policies.text ;
+		}
 	}
 	if (!rec.equals("")) {
 		map.put("policyIs","");
@@ -251,7 +505,7 @@ function recordPolicy(policies) {
 function recordPatient(medCase,aCtx) {
 	//1. Фамилия имя отчество
 	map.put("patient",medCase.patient) ;
-			
+	
 	map.put("pat.lastname",medCase.patient.lastname) ;
 	map.put("pat.firstname",medCase.patient.firstname) ;
 	map.put("pat.middlename",medCase.patient.middlename) ;
@@ -442,16 +696,16 @@ function printBilling(aCtx, aParams)
 	recordPatient(medCase,aCtx) ;
 	//Диагнозы
 	recordMedCaseDefaultInfo(medCase) ;
-	var otds =aCtx.manager.createNativeQuery("select d.name,to_char(dmc.dateStart,'DD.MM.YYYY'),COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY')) "
-		+", ifnull(dateFinish,'',vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename)"
-		+", ifnull(dateFinish,'',d.name)"
-		+"from MedCase dmc "
+	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
+		+", case when dateFinish is not null then vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
+		+", case when dateFinish is not null then d.name else '' end as dname"
+		+" from MedCase dmc "
 		+" left join MisLpu d on d.id=dmc.department_id "
 		+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
 		+" left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
 		+" left join Worker w on w.id=wf.worker_id "
 		+" left join Patient p on p.id=w.person_id "
-		+" where dmc.parent_id='"+id+"' and dmc.DTYPE='DepartmentMedCase'").getResultList();
+		+" where dmc.parent_id='"+id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart ").getResultList();
 	var otd = "";
 	var lech = ""
 	var lastotd = "";
@@ -465,15 +719,17 @@ function printBilling(aCtx, aParams)
 	map.put("sls.departments",otd) ;
 	map.put("sls.owner",lech) ;
 	map.put("sls.lastOtd",lastotd) ;
+	map.put("sls.emergency", ((medCase.emergency!=null && medCase.emergency) ? "в экстренном порядке":"в плановом порядке")) ;
 	//5. Даты: поступления, выбытия
 	map.put("sls.Start",medCase.dateStart) ;
 	map.put("sls.Finish",medCase.dateFinish) ;
 	//выписной диагноз
 	getDiagnos("sls.diagnosConcluding",medCase.diagnosConcluding);
-	map.put("sls.dischargeRecord",recordMultiValue(medCase.dischargeEpicrisis));
+	recordMultiText("sls.dischargeRecord",medCase.dischargeEpicrisis);
 	//текущая дата
 	var currentDate = new Date() ;
-	map.put("currentDate",currentDate.getDate()+"."+(currentDate.getMonth()+1)+"."+(1900+currentDate.getYear())+"г.") ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	
 	return map ;
 }
@@ -485,7 +741,7 @@ function getCode(aKey, aValue)
 function printProtocols(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
-	infoSmo(aCtx,ids[0]) ;
+	//infoSmo(aCtx,ids[0]) ;
 	infoPrint(aCtx,ids[0]) ;
 	var ret = new java.lang.StringBuilder () ;
 	//ret.append(ids) ;
@@ -505,8 +761,10 @@ function printProtocols(aCtx, aParams) {
 	var curTime = new java.sql.Time(current.getTime()) ;
 	for (var i=0; i < ids.length; i++) {
 		var id1=ids[i] ;
-		var indlast = id1.lastIndexOf(":") ;
+		var indlast = id1.lastIndexOf("!") ;
 		var id = id1.substring(indlast+1) ;
+		//throw indlast+"--"+id1 +"----"+id;
+		
 		
 		var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
 		, new java.lang.Long(id)) ;
@@ -515,8 +773,9 @@ function printProtocols(aCtx, aParams) {
 		
 		var mapS= new Packages.ru.ecom.poly.ejb.form.protocol.VisitProtocolForm()  ;
 		mapS.timeRegistration=FORMAT_3.format(protocol.timeRegistration);
-		mapS.dateRegistration=FORMAT_1.format(protocol.dateRegistration);
+		mapS.dateRegistration=FORMAT_2.format(protocol.dateRegistration);
 		mapS.specialistInfo=protocol.specialistInfo ;
+		mapS.typeInfo= protocol.medCase!=null?protocol.medCase.info:"";
 		/*var n = '\n'  ;
 		var items = protocol.record.split(n) ;
 		//mapS.setId(service.id) ;
@@ -637,43 +896,7 @@ function printProtocol (aCtx,aParams){
 	// получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 function getAge(aKey,aBirthday,aDate,aManager) {
 	if (aDate!=null && aBirthday!=null) {
-		/**/
-		var calenB = java.util.Calendar.getInstance() ;
-		calenB.setTime(aBirthday) ;
-		var calenE = java.util.Calendar.getInstance() ;
-		calenE.setTime(aDate) ;
-		var year = calenE.get(java.util.Calendar.YEAR)-calenB.get(java.util.Calendar.YEAR) ;
-		var dd=calenE.get(java.util.Calendar.DAY_OF_MONTH)-calenB.get(java.util.Calendar.DAY_OF_MONTH) ;
-		var list = aManager.createNativeQuery("select top 1 $piece($$dif^Zcdat('"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aBirthday)+"','"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aDate)
-			+"',0),'.',1),$piece($$dif^Zcdat('"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aBirthday)+"','"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aDate)
-			+"',0),'.',2),$piece($$dif^Zcdat('"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aBirthday)+"','"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aDate)
-			+"',0),'.',3), $$dif^Zcdat('"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aBirthday)+"','"+
-			Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aDate)
-			+"',3)  from VocSex").getResultList();
-		if (list.size()>0) {
-			var age=list.get(0) ;
-			map.put(aKey,""+age[3]) ;
-			
-			/*if (+age[0]>1) {
-				map.put(aKey,""+age[0]+" г") ;
-			} else {
-				if (+age[1]>0) {
-					map.put(aKey,""+age[1] +" м") ;
-				} else {
-					var d = +age[2] ;
-					d = d+1;
-					map.put(aKey,""+d+" д") ;
-				}
-			}*/
-
-		}
+		map.put(aKey,Packages.ru.nuzmsh.util.date.AgeUtil.getAgeCache(aDate,aBirthday,3)) ;	
 	} else {
 		map.put(aKey,"");
 	}
@@ -714,16 +937,16 @@ function recordServiseStream(aKey,aMedCase) {
 	var k1="<text:span text:style-name=\"T23\">" ;
 	var k2="</text:span>" ;
 	if(aMedCase.serviceStream!=null){
-		if(aMedCase.serviceStream.code.equals("OBLIGATORYINSURANCE")){
+		if(aMedCase.serviceStream.code=="OBLIGATORYINSURANCE"){
 			map.put(aKey,k1+"ОМС – 1"+k2+"; Бюджет – 2; Платные услуги – 3; в т.ч. ДМС – 4; Другое – 5.") ;
 		 }
-		if(aMedCase.serviceStream.code.equals("BUDGET")){
+		if(aMedCase.serviceStream.code=="BUDGET"){
 			map.put(aKey,"ОМС – 1; "+k1+"Бюджет – 2"+k2+"; Платные услуги – 3; в т.ч. ДМС – 4; Другое – 5.") ;
 		 }
-		if(aMedCase.serviceStream.code.equals("CHARGED")){
+		if(aMedCase.serviceStream.code=="CHARGED"){
 			map.put(aKey,"ОМС – 1; Бюджет – 2"+k1+"; Платные услуги – 3;"+k2+" в т.ч. ДМС – 4; Другое – 5.") ;
 		 }		
-		if(aMedCase.serviceStream.code.equals("PRIVATEINSURANCE")){
+		if(aMedCase.serviceStream.code=="PRIVATEINSURANCE"){
 			map.put(aKey,"ОМС – 1; Бюджет – 2; Платные услуги – 3;"+k1+" в т.ч. ДМС – 4;"+k2+" Другое – 5.") ;
 		 }	
 		}
@@ -789,7 +1012,7 @@ function recordVocProba(aKey, aValue, aMin, aMax) {
 		map.put(aKey+ind+".k2","</text:span>");
 	}
 } 
-
+/*
 function recordMultiText(aKey, aValue) {
 	var ret = new java.lang.StringBuilder () ;
 	var val = aValue!=null?"" +aValue:"" ;
@@ -804,8 +1027,29 @@ function recordMultiText(aKey, aValue) {
 	}
 	//ret.append("<text:p>") ;
 	map.put(aKey,ret.toString()) ;
+}*/
+function recordMultiText(aKey, aValue) {
+	var ret = new java.lang.StringBuilder () ;
+	var val = aValue!=null?"" +aValue:"" ;
+	var n = /\n/ ;
+	//val=val.replace("&", "&amp;") ;
+	//val=val.replace("<", "&lt;");
+	//val=val.replace(">", "&gt;");
+	
+	var items = val.split(n);
+	var list = new java.util.ArrayList() ;
+	//ret.append("</text:p>") ;
+	for (var i = 0; i < items.length; i++) {
+		//ret.append("<text:p text:style-name=\"P6\">") ;
+		//ret.append("<text:tab/>") ;
+		var prot = Packages.ru.ecom.poly.ejb.form.protocol.ProtocolForm() ;
+		prot.setRecord(items[i]);
+		list.add(prot);
+		//ret.append("</text:p>") ;
+	}
+	//ret.append("<text:p>") ;
+	map.put(aKey,list) ;
 }
-
 function recordMultiValue(aValue) {
 	var ret = new java.lang.StringBuilder () ;
 	var val = aValue!=null?"" +aValue:"" ;

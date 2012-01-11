@@ -53,7 +53,7 @@ public class DiagnosisForm extends IdEntityForm {
 
 	/** Приоритет */
 	@Comment("Приоритет")
-    @Persist 
+    @Persist @Required
 	public Long getPriority() {return thePriority;	}
 	public void setPriority(Long aNewProperty) {thePriority = aNewProperty;}
 
@@ -65,7 +65,7 @@ public class DiagnosisForm extends IdEntityForm {
 
 	/** Первичность */
 	@Comment("Первичность")
-    @Persist @Required
+    @Persist 
     public Long getPrimary() {return thePrimary;}
 	public void setPrimary(Long aNewProperty) {thePrimary = aNewProperty;}
 

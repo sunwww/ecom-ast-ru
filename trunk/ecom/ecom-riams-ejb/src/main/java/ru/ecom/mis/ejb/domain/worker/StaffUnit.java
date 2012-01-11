@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.worker.voc.VocPost;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
@@ -23,6 +25,9 @@ import ru.nuzmsh.util.StringUtil;
 @Comment("Штатная единица")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"staff"})
+})
 public class StaffUnit extends BaseEntity{
 	
 	/** Штатное расписание */

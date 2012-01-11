@@ -10,23 +10,28 @@ function checkPermission(aCtx,  aParam) {
 	var permission = aParam.get("permission");
 	var id=+aParam.get("id");
 	var username=aCtx.sessionContext.callerPrincipal.name ;
-	var sql_obj="select top 1 count(*),vop.id,vop.namePermissionTable,vop.namePermissionDate from VocObjectPermission vop where vop.code='"+obj+"' " ;
-	var list_obj = aCtx.manager.createNativeQuery(sql_obj).getResultList();
-	var vop= list_obj.size()>0?list_obj.get(0):"" ;
-	if (vop==""||+vop[0]==0) {
+	var sql_obj="select count(*) from VocObjectPermission vop where vop.code='"+obj+"' " ;
+	//throw sql_obj ;
+	var vop = aCtx.manager.createNativeQuery(sql_obj).getSingleResult();
+	if (vop==null||+vop==0) {
 		// Нет существует ограничение
 		return 0 ;
+	} else {
+		var sql_obj="select vop.id from VocObjectPermission vop where vop.code='"+obj+"' " ;
+		var vop = aCtx.manager.createNativeQuery(sql_obj).setMaxResults(1).getSingleResult();
 	}
 	var sql ="select count(*),cast(p.editPeriodFrom as integer),cast(p.editPeriodTo as integer),to_char(p.editPeriodFrom,'dd.mm.yyyy'),to_char(p.editPeriodTo,'dd.mm.yyyy')" ;
+	//throw vop[1] ;
 	sql=sql+" from Permission p"
 		+" left join vocObjectPermission vop on vop.id=p.object_id"
 		+" left join vocPermission vp on vp.id=p.permission_id"
 		+" left join SecUser su on su.id=p.username_id"
 		+" where p.dtype='UserPermission'"
-		+" and CURRENT_DATE between isnull(p.dateFrom,CURRENT_DATE) and isnull(p.dateTo,CURRENT_DATE) "
+		+" and CURRENT_DATE between coalesce(p.dateFrom,CURRENT_DATE) and coalesce(p.dateTo,CURRENT_DATE) "
 		+" and (su.login='"+username+"' or p.username_id is null)"
-		+" and p.object_id='"+vop[1]+"' "
-		+" and vp.code='"+permission+"' "
+		+" and p.object_id='"+vop+"' "
+		+" and vp.code='"+permission+"' " 
+		;
 	if (id>0) sql=sql+" and (p.idObject='"+id+"' or p.idObject ='' or p.idObject is null) " ;
 	var list = aCtx.manager.createNativeQuery(sql)
 		.getResultList();

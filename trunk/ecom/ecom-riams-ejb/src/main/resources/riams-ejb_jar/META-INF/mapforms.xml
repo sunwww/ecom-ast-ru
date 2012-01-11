@@ -16,6 +16,14 @@
     <persist clazz="ru.ecom.mis.ejb.domain.medcase.Visit" />
   </form>
 
+  <form        name = "$$map$$smo_contract_directionForm" 
+     securityPrefix = "/Policy/Mis/MedCase/Direction"
+            comment = "Направление">
+    <parent property='patient' parentForm='ru.ecom.mis.ejb.form.contract.ContractAccountForm'/>        
+    <webTrail comment='Направление' nameProperties='id' view='entityView-smo_contract_direction.do'/>
+    <persist clazz="ru.ecom.mis.ejb.domain.medcase.Visit" />
+  </form>
+
   <form        name = "$$map$$smo_polyAdmissionForm" 
      securityPrefix = "/Policy/Mis/MedCase/Visit"
             comment = "Журнал приема специалиста">
@@ -189,14 +197,14 @@
     <persist clazz="ru.ecom.mis.ejb.domain.worker.Qualification" />
   </form>
   
-      <form        name = "$$map$$work_awardForm" 
+  <!--     <form        name = "$$map$$work_awardForm" 
      securityPrefix = "/Policy/Mis/Worker/Award"
             comment = "Награждения">
     <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
     <webTrail comment='Награждения' nameProperties='awardNumber' 
     			 view='entityView-work_award.do'/>
     <persist clazz="ru.ecom.mis.ejb.domain.worker.Award" />
-  </form>
+  </form>  -->
 
   <form        name = "$$map$$mis_languageSkillForm" 
      securityPrefix = "/Policy/Mis/Worker/LaguageSkill"

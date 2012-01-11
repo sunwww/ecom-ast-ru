@@ -1,8 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
+import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.medcase.CriminalPhoneMessage;
 import ru.ecom.mis.ejb.domain.medcase.PhoneMessage;
+import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -19,11 +22,11 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Сообщения в милицию")
 @EntityForm
 @EntityFormPersistance(clazz= PhoneMessage.class)
-@WebTrail(comment = "Сообщение в милицию", nameProperties= "id", view="entityParentView-stac_militiaMessages.do")
-@Parent(property="medCase", parentForm= HospitalMedCaseForm.class)
-@EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages")
-
-public class MilitiaMessagesForm extends IdEntityForm{
+@WebTrail(comment = "Сообщения", nameProperties= "id", view="entitySublcassView-stac_phoneMessage.do")
+@Parent(property="medCase", parentForm= MedCaseForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage")
+@Subclasses(value = { CriminalPhoneMessageForm.class, InfectiousPhoneMessageForm.class })
+public class PhoneMessageForm extends IdEntityForm {
 
 	/**Getter of the property <tt>theDate</tt>*/
 	@Comment("Дата регистрации")
@@ -65,8 +68,6 @@ public class MilitiaMessagesForm extends IdEntityForm{
 	public void setPhone(String aPhoneNumber) {thePhone = aPhoneNumber;}
 
 	
-
-
 	/** Getter of the property <tt>theRecieverOrganization</tt>*/
 	@Persist
 	@Comment("Принявшая сообщение организация")
@@ -151,4 +152,5 @@ public class MilitiaMessagesForm extends IdEntityForm{
 	private Long theWorker;
 	/** Телефон */
 	private String thePhone;
+
 }

@@ -24,10 +24,12 @@ import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.ExtHospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
 import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
@@ -41,10 +43,8 @@ import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.ecom.poly.ejb.services.GroupByDate;
 import ru.ecom.poly.ejb.services.MedcardServiceBean;
-import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 /**
@@ -58,63 +58,84 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
-    public String addressInfo(Address aAddress) {
+    public String addressInfo(EntityManager aManager,Long aAddressId, Object[] aAddress) {
         StringBuilder sb = new java.lang.StringBuilder();
-        Address a = aAddress ;
-        if (a.getFullname()!=null && a.getFullname()!="") return a.getFullname().trim();
+        String fullname = new StringBuilder().append(aAddress[1]).toString().trim() ;
         
-        sb.insert(0, a.getName()) ;
-        if (a.getType()!=null) {
-            sb.insert(0,  " ") ;
-            sb.insert(0,  a.getType().getShortName() ) ;
+        //Address a = aAddress ;
+        //Long id = a.getId() ;
+        if (aAddress[1]!=null && !fullname.equals("")) return fullname;
+        
+        sb.insert(0, aAddress[2]) ;
+        if (aAddress[3]!=null) {
+        	String shortName = aAddress[3]+" " ;
+            sb.insert(0,  shortName) ;
         	
         }
         
         //long oldId = a.getId() ;
         ////a = a.getParent() ;
         
-        	//sb.insert(0, a.getFullname()+", ") ;
-            if(a.getParent()!=null) {
-            	sb.insert(0, ", ") ;
-            	sb.insert(0, addressInfo(a.getParent())) ;
+        //sb.insert(0, aAddress[2]) ;
+        //System.out.println(aAddress) ;
+            if(aAddress[4]!=null) {
+            	Long id1 = ConvertSql.parseLong(aAddress[4]) ;
+                //System.out.println("parent="+id1) ;
+            	List<Object[]> list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid="+id1+" order by a.addressid")
+        				.setMaxResults(1)	
+        				.getResultList() ;
+            	if (list.size()>0) {
+            		
+                	sb.insert(0, ", ") ;
+                	sb.insert(0, addressInfo(aManager,id1,list.get(0))) ;
+            	}
             }
         
         
         //throw "address"+aAddress.id+" "+sb ;
         //throw sb.toString() ;
-        aAddress.setFullname(sb.toString()) ;
-        theManager.persist(aAddress) ;
-    	//aCtx.manager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddress.id).executeUpdate() ;
-        return sb.toString() ;
+        //aAddress.setFullname(sb.toString()) ;
+        
+        //theManager.persist(aAddress) ;
+        Address a =theManager.find(Address.class, aAddressId) ;
+        a.setFullname(sb.toString()) ;
+        theManager.persist(a) ;
+    	//aManager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddressId).executeUpdate() ;
+        return sb.toString().trim() ;
     }
 
-    public void addressUpdate() {
-    	long id=0 ;
-    	List<Address> list ;
-    	theManager.createNativeQuery("update Address2 set fullname=null where fullname is not null").executeUpdate() ;
-    	
-    	while (id!=-1) {
-    		String sql = "from Address where id>"+id+" order by id" ;
+    public void addressClear() {
+    	theManager.createNativeQuery("update Address2 set fullname=null").executeUpdate() ;
+    }
+    public long addressUpdate(long id) {
+    	//long id=0 ;
+    	List<Object[]> list ;
+
+    		//String sql = "from Address where id>"+id+" and fullname is null order by id" ;
     		//if (id>0) throw sql ;
-    		list = theManager.createQuery(sql)
-    			.setMaxResults(450)
-    			.getResultList() ;
+    		//list = theManager.createQuery(sql)
+    		//	.setMaxResults(450)
+    		//	.getResultList() ;
+    		list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>"+id+" and a.fullname is null order by a.addressid")
+    				.setMaxResults(450)	
+    				.getResultList() ;
     		if (list.size()>0) {
-    			for (Address adr:list) {
+    			for (Object[] adr:list) {
     				
     				//Address adr = list.get(i) ;
-    				addressInfo(adr) ;
+    				id = ConvertSql.parseLong(adr[0]);
+    				addressInfo(theManager,id,adr) ;
     				//adr.setFullname() ;
     				//aCtx.manager.persist(adr) ;
-    				id = adr.getId();
+    				
     				//throw id ;
     			}
-    			list.clear() ;
+    			//list.clear() ;
     		} else {
     			id=-1 ;
     		}
     		
-    	}
+    	return id ;
     }
     
     public String getIdc10ByDocDiag(Long aIdDocDiag){
@@ -398,16 +419,31 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
 	public Collection<MedPolicyForm> listPolicies(Long aMedCase) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCase);
-		List<MedPolicy> listPolicies = hospital.getPolicies() ;
+		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
+		List<MedPolicy> listPolicies =new ArrayList<MedPolicy>() ;
+		for (MedCaseMedPolicy mp : hospital.getPolicies()) {
+			listPolicies.add(mp.getPolicies()) ;
+		}
 		return convert(listPolicies);
 	}
 
 	public Collection<MedPolicyForm> listPoliciesToAdd(Long aMedCase) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCase);
-		List<MedPolicy> listPolicies = hospital.getPolicies() ;
-		List<MedPolicy> allPolicies = theManager.createQuery("from MedPolicy where patient_id=:pat").setParameter("pat", hospital.getPatient().getId()).getResultList();
-		for (MedPolicy pol:listPolicies) {
-			allPolicies.remove(pol);
+		List<Object[]> listPolicies = theManager.createNativeQuery("select p.id,count(case when mp.medCase_id='"
+				+aMedCase
+				+"' then 1 else null end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
+				+hospital.getPatient().getId()+"' group by p.id")
+				.getResultList();
+		//List<MedPolicy> allPolicies = theManager.createQuery("from MedPolicy where patient_id=:pat").setParameter("pat", hospital.getPatient().getId()).getResultList();
+		List<MedPolicy> allPolicies = new ArrayList<MedPolicy>() ;
+		for (Object[] obj:listPolicies) {
+			Long cnt = ConvertSql.parseLong(obj[1]) ;
+			if (cnt==null || cnt.equals(Long.valueOf(0))) {
+				Long pId = ConvertSql.parseLong(obj[0]) ;
+				MedPolicy p = theManager.find(MedPolicy.class, pId) ;
+				allPolicies.add(p) ;
+			}
+			//allPolicies.remove(pol);
 		}
 		return convert(allPolicies);
 	}
@@ -428,26 +464,44 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
 	public void addPolicies(long aMedCaseId, long[] aPolicies) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
-		List<MedPolicy> listPolicies = hospital.getPolicies() ;
+		List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		for (long policyId: aPolicies) {
+			
 			MedPolicy policy= theManager.find(MedPolicy.class, policyId);
 			System.out.println("adding="+policy.getId());
-			if (listPolicies.isEmpty() || listPolicies.indexOf(policy)==-1) listPolicies.add(policy) ;
+			if (!checkExistsAttachedPolicy(aMedCaseId, policyId)) {
+				MedCaseMedPolicy mp = new MedCaseMedPolicy() ;
+				mp.setMedCase(hospital) ;
+				MedPolicy p = theManager.find(MedPolicy.class, policyId) ;
+				mp.setPolicies(p) ;
+				theManager.persist(mp) ;
+			}
 		}
 		theManager.persist(hospital) ;
 		//theManager.refresh(hospital);
 	}
+	private boolean checkExistsAttachedPolicy(long aMedCaseId,long aPolicy) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(" select count(*) from MedCase_MedPolicy where medCase_id='")
+			.append(aMedCaseId)
+			.append("' and policies_id='").append(aPolicy).append("'") ;
+		Object res= theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		Long cnt=ConvertSql.parseLong(res) ;
+		return cnt>Long.valueOf(0)?true:false ;
+	}
 
 	public void removePolicies(long aMedCaseId, long[] aPolicies) {
-		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
-		List<MedPolicy> listPolicies = hospital.getPolicies() ;
+		//HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
+		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		for (long policyId:aPolicies) {
-			MedPolicy policy= theManager.find(MedPolicy.class, policyId);
-			System.out.println("remove="+policy.getId());
-			listPolicies.remove(policy) ;
+			//MedPolicy policy= theManager.find(MedPolicy.class, policyId);
+			//System.out.println("remove="+policy.getId());
+			//listPolicies.remove(policy) ;
+			theManager.createNativeQuery(new StringBuilder().append("delete from MedCase_MEdPolicy where medCase_id='")
+			.append(aMedCaseId).append("' and policies_id='").append(policyId).append("'").toString()).executeUpdate();
 		}
 		
-		theManager.persist(hospital);
+		//theManager.persist(hospital);
 		//theManager.refresh(hospital);
 		
 	}
@@ -572,9 +626,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		for (Object[] row: list ) {
 			GroupByDate result = new GroupByDate() ;
 			Date date = (Date)row[0] ;
-			result.setCnt(WorkerServiceBean.parseLong(row[1])) ;
-			result.setCnt1(WorkerServiceBean.parseLong(row[2])) ;
-			//result.setCnt2(WorkerServiceBean.parseLong(row[3])) ;
+			result.setCnt(ConvertSql.parseLong(row[1])) ;
+			result.setCnt1(ConvertSql.parseLong(row[2])) ;
+			//result.setCnt2(ConvertSql.parseLong(row[3])) ;
 			result.setDate(date) ;
 			result.setDateInfo(DateFormat.formatToDate(date)) ;
 			result.setComment(new StringBuilder().append(row[2]).toString()) ;

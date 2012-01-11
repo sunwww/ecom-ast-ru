@@ -22,6 +22,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties={"person"})
+	,@AIndex(properties={"kinsman"})
 })
 @Table(schema="SQLUser")
 public class Kinsman extends BaseEntity{

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import javax.persistence.Transient;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
@@ -12,6 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
@@ -40,7 +43,7 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	 * Тип операции
 	 */
 	@Comment("Тип операции")
-	@Persist
+	@Persist @Required
 	public Long getType() {
 		return theType;
 	}
@@ -87,6 +90,7 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	 * Стоимость
 	 */
 	@Comment("Стоимость")
+	@Required
 	@Persist
 	public String getCost() {
 		return theCost;
@@ -158,4 +162,80 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	 * Скидка
 	 */
 	private String theDiscount;
+	
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DoDateString @DateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	@Persist @DoTimeString @TimeString
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	
+	/** Дата последнего изменения */
+	@Comment("Дата последнего изменения")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время, последнего изменения */
+	@Comment("Время, последнего изменения")
+	@Persist @DoTimeString @TimeString
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	
+	/** Пользователь, последний изменивший запись */
+	@Comment("Пользователь, последний изменивший запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний изменивший запись */
+	private String theEditUsername;
+	/** Время, последнего изменения */
+	private String theEditTime;
+	/** Дата последнего изменения */
+	private String theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Время создания */
+	private String theCreateTime;
+	/** Дата создания */
+	private String theCreateDate;
+	
+	/** Тип операции (информация) */
+	@Comment("Тип операции (информация)")
+	@Persist
+	public String getTypeInfo() {return theTypeInfo;}
+	public void setTypeInfo(String aTypeInfo) {theTypeInfo = aTypeInfo;}
+
+	/** Случай мед. обслуживания (информация) */
+	@Comment("Случай мед. обслуживания (информация)")
+	@Persist
+	public String getMedcaseInfo() {return theMedcaseInfo;}
+	public void setMedcaseInfo(String aMedcaseInfo) {theMedcaseInfo = aMedcaseInfo;}
+
+	/** Отменившая операция (информация) */
+	@Comment("Отменившая операция (информация)")
+	@Persist
+	public String getRepealOperationInfo() {return theRepealOperationInfo;}
+	public void setRepealOperationInfo(String aRepealOperationInfo) {theRepealOperationInfo = aRepealOperationInfo;}
+
+	/** Отменившая операция (информация) */
+	private String theRepealOperationInfo;
+	/** Случай мед. обслуживания (информация) */
+	private String theMedcaseInfo;
+	/** Тип операции (информация) */
+	private String theTypeInfo;
+	
+
 }

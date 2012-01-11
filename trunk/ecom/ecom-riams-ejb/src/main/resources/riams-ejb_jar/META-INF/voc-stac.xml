@@ -6,10 +6,10 @@
 		    	parent='mp.patient_id=:parent'
 		    	nameId="mp.id"
 		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=""
+		    	queryAppend=" (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE)) "
 		    	order=""
 		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    	names = "(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
 		    />
 
     </voc>
@@ -19,10 +19,10 @@
 		    	parent='mp.patient_id=:parent'
 		    	nameId="mp.id"
 		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=" (DTYPE in ('MEDPOLICYDMC','MEDPOLICYDMCFOREIGN')) "
+		    	queryAppend=" (DTYPE ='MedPolicyDmc' or DTYPE='MedPolicyDmcForeign') AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
 		    	order=""
 		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    	names = "(CASE WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
 		    />
 
     </voc>
@@ -32,39 +32,41 @@
 		    	parent='mp.patient_id=:parent'
 		    	nameId="mp.id"
 		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=" (DTYPE in ('MEDPOLICYOMC','MEDPOLICYOMCFOREIGN')) "
+		    	queryAppend=" (DTYPE in ('MedPolicyOmc','MedPolicyOmcForeign')) AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
 		    	order=""
 		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MEDPOLICYOMC' THEN 'ОМС. '||com.name WHEN DTYPE='MEDPOLICYDMC' THEN 'ДМС. '||com.name WHEN DTYPE='MEDPOLICYOMCFOREIGN' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MEDPOLICYDMCFOREIGN' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||to_char(mp.actualDateTo,'DD.MM.YYYY')"
+		    	names = "(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
 		    />
 
     </voc>
 	    <voc id='serviceStreamByDepAndDate' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" vocServiceStream vss "
-		    	parent="(select count(*) from BedFund bf where bf.serviceStream_id =vss.id and bf.lpu_id=$piece(:parent, ':' ,1) and 
-						cast( $$ei^Zcdat ( $piece ( :parent, ':' , 2 ) ) as integer) between cast(bf.dateStart as integer) and cast(isnull(bf.dateFinish,CURRENT_DATE) as integer)) > 0 "
+		    	parent="(select count(*) from BedFund bf where bf.serviceStream_id =vss.id and bf.lpu_id=:par1 and 
+						 to_date(:par2,'dd.mm.yyyy')  between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE) ) > 0 "
 		    	nameId="vss.id"
 		    	join=""
 		    	queryAppend=""
 		    	order=""
-		    	queried=" (vss.id like UPPER(:query) or vss.name like UPPER(:query)) "
+		    	queried=" (cast(vss.id as varchar(10))  like UPPER(:querId) or vss.name like UPPER(:query)) "
 		    	names = " vss.name "
+		    	parentSplitCount="2"
 		    />
 
     </voc>
 	    <voc id='bedFundByDepAndStreamAndDate' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" BedFund bf "
-		    	parent="bf.lpu_id=$piece(:parent,':',1) and bf.serviceStream_id=$piece(:parent,':',2) and 
-cast($$ei^Zcdat($piece(:parent,':',3)) as integer) between cast(bf.dateStart as integer) and cast(isnull(bf.dateFinish,CURRENT_DATE) as integer)"
+		    	parent="bf.lpu_id=:par1 and bf.serviceStream_id=:par2 and 
+to_date(:par3,'dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)"
 		    	nameId="bf.id"
 		    	join=" left join vocBedType vbt on vbt.id=bf.bedType_id
 left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 		    	queryAppend=""
 		    	order=""
-		    	queried=" (bf.id like UPPER(:query) or vbt.name like UPPER(:query)) "
-		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.noFood=1 then 'без питания' else 'с питанием' end ||')'"
+		    	queried=" (cast(bf.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
+		    	names = " vbt.name||' ('||vbst.name||' ' || case when cast(bf.noFood as integer)=1 then 'без питания' else 'с питанием' end ||')'"
+		    	parentSplitCount="3"
 		    />
 
     </voc>
@@ -130,13 +132,13 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <voc id='vocOperation' type='NativeVocService'>
     	<NativeVocService
     			from = 'VocOperation'
-    			parent="(startActualDate is null or cast(cast($$ini^Zcdat(:parent,7) as date) as integer) >=cast(startActualDate as integer)) and (finishActualDate is null or cast(finishActualDate as integer)>=cast(cast($$ini^Zcdat(:parent,7) as date) as integer))"
-    			names = "name||' (' || ifnull(StartActualDate,'нет даты',TO_CHAR(StartActualDate,'DD.MM.YYYY')) ||'-'||ifnull(FinishActualDate,'нет даты',TO_CHAR(FinishActualDate,'DD.MM.YYYY')) ||')'"
+    			parent="(startActualDate is null or to_date(:parent,'dd.mm.yyyy')  >=startActualDate ) and (finishActualDate is null or finishActualDate>=to_date(:parent,'dd.mm.yyyy'))"
+    			names = "name||' (' || case when StartActualDate is null then 'нет даты' else TO_CHAR(StartActualDate,'DD.MM.YYYY') end ||'-'||case when FinishActualDate is null then 'нет даты' else TO_CHAR(FinishActualDate,'DD.MM.YYYY') end ||')'"
     			nameId="id"
     			queryAppend=''
     			join=''
     			order=''
-    			queried = "(id like :query or UPPER(name) like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :query or UPPER(name) like UPPER(:query))"
     			 			
     	/>
     </voc> 

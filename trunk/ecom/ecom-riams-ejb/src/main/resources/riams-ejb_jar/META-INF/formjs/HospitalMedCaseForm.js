@@ -58,7 +58,7 @@ function onPreDelete(aMedCaseId, aContext) {
 		restored.setCode(medCase.getStatisticStub().getCode());
 		restored.setYear(medCase.getStatisticStub().getYear());
 		aContext.manager.persist(restored);
-		aContext.manager.refresh(restored);
+		//aContext.manager.refresh(restored);
 		var stat = medCase.statisticStub ;
 		medCase.statisticStub = null ;
 		aContext.manager.remove(stat) ;

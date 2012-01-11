@@ -161,5 +161,31 @@ public class DisabilityCase extends BaseEntity{
 	/** Дата создания */
 	private Date theCreateDate;
 	/** Пользователь, создавший документ */
-	private String theCreateUsername; 
+	private String theCreateUsername;
+	
+	/** Возраст пациента */
+	@Comment("Возраст пациента")
+	public Long getAgePatient() {
+		return theAgePatient;
+	}
+
+	public void setAgePatient(Long aAgePatient) {
+		theAgePatient = aAgePatient;
+	}
+
+	/** Возраст пациента */
+	private Long theAgePatient;
+	
+	/** Длительность */
+	@Comment("Длительность")
+	public Long getDurationCase() {
+		return theDurationCase;
+	}
+
+	public void setDurationCase(Long aDurationCase) {
+		theDurationCase = aDurationCase;
+	}
+
+	/** Длительность */
+	private Long theDurationCase;
 }

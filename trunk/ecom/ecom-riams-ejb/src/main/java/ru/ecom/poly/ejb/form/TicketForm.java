@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.form;
 
+import org.jboss.annotation.ejb.CurrentMessage;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -21,6 +23,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Mkb;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
@@ -71,7 +74,7 @@ public class TicketForm extends IdEntityForm {
 
     @Comment("Дата приема")
     @Required @Persist
-    @DateString @DoDateString
+    @DateString @DoDateString @MaxDateCurrent
     public String getDate() {return theDate;}
     public void setDate(String aDate) {theDate = aDate;}
 
@@ -87,13 +90,13 @@ public class TicketForm extends IdEntityForm {
     public void setVocPaymentType(Long aVocPaymentType) {theVocPaymentType = aVocPaymentType;}
 
     @Comment("Место обслуживания")
-    @Persist
+    @Persist @Required
     public Long getVocServicePlace() {return theVocServicePlace;}
     public void setVocServicePlace(Long aVocServicePlace) {theVocServicePlace = aVocServicePlace;}
 
 
     @Comment("Цель посещения")
-    @Persist
+    @Persist @Required
     public Long getVocReason() {return theVocReason;}
     public void setVocReason(Long aVocReason) {theVocReason = aVocReason;}
 
@@ -229,7 +232,7 @@ public class TicketForm extends IdEntityForm {
 	public void setKinsman(Long aKinsman) {theKinsman = aKinsman;}
 	
 	@Comment("Обращение по поводу данного заболевания в текущем году (впервые, повторно)")
-	@Persist
+	@Persist @Required
 	public Long getHospitalization() {return theHospitalization;}
 	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
 	

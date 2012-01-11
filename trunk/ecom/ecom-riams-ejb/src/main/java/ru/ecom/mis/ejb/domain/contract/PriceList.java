@@ -20,8 +20,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Прейскурант")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "name" }) }
-		)
+@AIndexes(value = { @AIndex(properties = { "name" }) })
 public class PriceList extends BaseEntity{
 	@OneToMany(mappedBy="priceList", cascade=CascadeType.ALL)
 	public List<PricePosition> getPositions() {

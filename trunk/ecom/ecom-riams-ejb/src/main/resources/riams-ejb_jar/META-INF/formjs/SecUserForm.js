@@ -12,7 +12,8 @@ function onPreCreate(aForm, aCtx) {
         	.getResultList() ;
 	} 
 	errorThrow(list) ;
-	aForm.setPassword(Packages.ru.ecom.jaas.ejb.service.SecUserServiceBean.getHashPassword(aForm.getLogin(),aForm.getPassword())) ;	
+	aForm.setPassword(Packages.ru.ecom.jaas.ejb.service.SecUserServiceBean.getHashPassword(aForm.getLogin(),aForm.getPassword())) ;
+	aForm.setIsHash(true) ;
 }
 
 function onPreSave(aForm,aEntity , aCtx) {

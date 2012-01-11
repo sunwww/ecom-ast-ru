@@ -12,6 +12,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
@@ -29,13 +30,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class MedPolicyOmcForeignForm extends MedPolicyForm {
 	/** Город СМО */
 	@Comment("Город СМО")
-	@Persist @Required
+	@Persist @Required @DoUpperCase
 	public String getInsuranceCompanyCity() {return theInsuranceCompanyCity;}
 	public void setInsuranceCompanyCity(String aOMCCity) {theInsuranceCompanyCity = aOMCCity;}
 
 	/** Название СМО */
 	@Comment("Название СМО")
-	@Persist @Required
+	@Persist @Required @DoUpperCase
 	public String getInsuranceCompanyName() {return theInsuranceCompanyName;}
 	public void setInsuranceCompanyName(String aOMCName) {theInsuranceCompanyName = aOMCName;}
 

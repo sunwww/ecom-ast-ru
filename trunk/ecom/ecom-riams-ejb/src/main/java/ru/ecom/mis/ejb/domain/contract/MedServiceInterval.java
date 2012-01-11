@@ -5,6 +5,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractMedServiceGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +18,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 	@Comment("Интервал медицинских услуг (A01.01.001-A01.01.005, A01.001.")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"name"})
+	})
 public class MedServiceInterval extends BaseEntity{
 	/**
 	 * Маска кодов мед. услуг

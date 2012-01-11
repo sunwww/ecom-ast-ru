@@ -23,6 +23,7 @@ import ru.nuzmsh.forms.validator.transforms.DoInputNonLat;
 import ru.nuzmsh.forms.validator.transforms.DoTrimString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.SnilsString;
 import ru.nuzmsh.forms.validator.validators.VInputFIOByMaskOmc;
@@ -34,7 +35,7 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 @EntityForm
 @EntityFormPersistance(clazz = Patient.class)
 @Comment("Персона")
-@WebTrail(comment = "Персона", nameProperties = "patientInfo"
+@WebTrail(comment = "Персона", nameProperties = {"patientInfo","patientSync"}
 	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Patient")
 @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
@@ -51,7 +52,19 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
         @AEntityFormInterceptor(PatientViewInterceptor.class)
 )
 public class PatientForm extends IdEntityForm {
-
+    
+    
+    @Comment("Синхронизация пациента")
+    @Persist @DoUpperCase
+    public String getPatientSync() {
+        return thePatientSync;
+    }
+    
+    public void setPatientSync(String aPatientSync) {
+        thePatientSync = aPatientSync;
+    }
+    /* Синхронизация пациента */
+    private String thePatientSync;
     /** Название ЛПУ */
     @Persist
     @Comment("Название ЛПУ")
@@ -119,7 +132,7 @@ public class PatientForm extends IdEntityForm {
 
     /** Дата рождения */
     @Comment("Дата рождения")
-    @Persist
+    @Persist @MaxDateCurrent
     @Required @DateString @DoDateString
     public String getBirthday() { return theBirthday ; }
     public void setBirthday(String aBirthday) { theBirthday = aBirthday ; }
@@ -271,11 +284,6 @@ public class PatientForm extends IdEntityForm {
 	public Long getRayon() {return theRayon;}
 	public void setRayon(Long aRayon) {theRayon = aRayon;}
 	
-	/** Номер мед. карты */
-	@Comment("Номер мед. карты")
-	@Persist
-	public String getMedcardNumberText() {return thegetMedcardNumberText;}
-	public void setMedcardNumberText(String agetMedcardNumberText) {thegetMedcardNumberText = agetMedcardNumberText;}
 	
 	/** Национальность */
 	@Comment("Национальность")
@@ -553,8 +561,7 @@ public class PatientForm extends IdEntityForm {
 	private Boolean theNoActuality;
 	/** Район */
 	private Long theRayon;
-	/** Номер мед. карты */
-	private String thegetMedcardNumberText;
+
 	/** Национальность */
 	private Long theEthnicity;
 	/** Семейное положение */
@@ -791,8 +798,43 @@ public class PatientForm extends IdEntityForm {
 	public void setCareCard(Long aCareCard) {
 		theCareCard = aCareCard;
 	}
+	
+	/** Возраст */
+	@Comment("Возраст")
+	public String getAge() {return theAge;}
+	public void setAge(String aAge) {theAge = aAge;}
+
+	/** Возраст */
+	private String theAge;
 
 	/** Психиатрическая мед.карта */
 	private Long theCareCard;
+	
+	/** Кем выдан паспорт */
+	@Comment("Кем выдан паспорт")
+	@Persist
+	public Long getPassportDivision() {
+		return thePassportDivision;
+	}
+
+	public void setPassportDivision(Long aPassportDivision) {
+		thePassportDivision = aPassportDivision;
+	}
+
+	/** Кем выдан паспорт */
+	private Long thePassportDivision;
+	/** Справочник по месту рождения */
+	@Comment("Справочник по месту рождения")
+	@Persist
+	public Long getPassportBirthPlace() {
+		return thePassportBirthPlace;
+	}
+
+	public void setPassportBirthPlace(Long aPassportBirthPlace) {
+		thePassportBirthPlace = aPassportBirthPlace;
+	}
+
+	/** Справочник по месту рождения */
+	private Long thePassportBirthPlace;
 	
 }

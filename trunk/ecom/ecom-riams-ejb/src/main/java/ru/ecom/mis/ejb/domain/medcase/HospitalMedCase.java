@@ -18,6 +18,7 @@ import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCause;
@@ -183,9 +184,9 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Полисы */
 	@Comment("Полисы")
-	@ManyToMany
-	public List<MedPolicy> getPolicies() {return thePolicies;}
-	public void setPolicies(List<MedPolicy> aPolicies) {thePolicies = aPolicies;}
+	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
+	public List<MedCaseMedPolicy> getPolicies() {return thePolicies;}
+	public void setPolicies(List<MedCaseMedPolicy> aPolicies) {thePolicies = aPolicies;}
 
 	/** Характер заболевания */
 	@Comment("Характер заболевания")
@@ -497,7 +498,7 @@ public class HospitalMedCase extends LongMedCase {
 	/** Характер заболевания */
 	private OmcQz theIllessCharacter;
 	/** Полисы */
-	private List<MedPolicy> thePolicies;
+	private List<MedCaseMedPolicy> thePolicies;
 	/** Оказана мед. помощь в приемном отделении */
 	private Boolean theMedicalAid;
 	/** Профиль коек */
@@ -535,11 +536,13 @@ public class HospitalMedCase extends LongMedCase {
 	@Comment("Количество дней")
 	@Transient
 	public String getDaysCount() {
+		if (getDateFinish()==null) return "" ;
 		if (getChildMedCase()!=null) {
 			for (MedCase m:getChildMedCase()) {
 				if (m instanceof DepartmentMedCase) {
 					DepartmentMedCase d = (DepartmentMedCase) m ;
-					if (d.getBedFund()!=null&&d.getBedFund().getBedSubType()!=null&&d.getBedFund().getBedSubType().getCode().equals("2")) {
+					VocBedSubType vbst = (d.getBedFund()!=null&&d.getBedFund().getBedSubType()!=null)?d.getBedFund().getBedSubType():null ;
+					if (vbst.getCode()!=null&&vbst.getCode().equals("2")) {
 						return DurationUtil.getDurationMedCase(getDateStart(), getDateFinish(),0,1);
 					}
 				}

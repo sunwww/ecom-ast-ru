@@ -14,10 +14,10 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 
 import ru.ecom.ejb.services.entityform.PersistList;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.form.SecUserForm;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 
 /**
  * Роли
@@ -87,7 +87,7 @@ public class SecRoleServiceBean implements ISecRoleService {
         LinkedList<SecUserForm> ret = new LinkedList<SecUserForm>();
         for (Object[] user : aFrom) {
             SecUserForm form = new SecUserForm();
-            form.setId(WorkerServiceBean.parseLong(user[0]));
+            form.setId(ConvertSql.parseLong(user[0]));
             form.setFullname(String.valueOf(user[1]));
             form.setLogin(String.valueOf(user[2]));
             form.setComment(String.valueOf(user[3]));

@@ -115,6 +115,56 @@ function printVisit(aCtx, aParams) {
 	visit.setIsPrint(new java.lang.Long(2)) ;
 	return map ;
 }
+function printTalon1(aCtx,aParams) {
+	//map = printVisit(aCtx, aParams) ;
+	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+			, new java.lang.Long(aParams.get("id"))) ;
+	
+	var pat = visit.patient ;
+	map.put("pat", pat) ;
+	
+	var currentDate = new Date() ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	var cal = java.util.Calendar.getInstance() ;
+	cal.setTime(currentDate) ;
+	cal.add(java.util.Calendar.DATE,14) ;
+	map.put("dateTo",FORMAT_2.format(cal.getTime())) ;
+	map.put("sex", pat.sex!=null?pat.sex.omcCode=="1"?"М":"Ж":"М Ж");
+	map.put("serviceStream",visit.serviceStream!=null?visit.serviceStream.name:"1-ОМС,2-бюджет,3-плат.усл.,4-ДМС,5-др") ;
+	map.put("rayon",pat.rayon!=null?pat.rayon.omcCode:"____");
+	
+	if (pat.address!=null) {
+		var city = pat.address.addressIsCity ;
+		var vil = pat.address.addressIsVillage ;
+		if (city!=null && city) {
+			map.put("resident","гор.") ;
+		} else if(vil!=null && vil) {
+			map.put("resident","сел.") ;
+		} else {
+			map.put("resident","___")
+		}
+		
+	} else {
+		map.put("resident","___") ;
+	}
+	map.put("whomDirect",visit.orderLpu!=null?visit.orderLpu.name:"_____________");
+	var wf = visit.workFunctionPlan ;
+	var pers = wf.worker!=null?wf.worker.person:null;
+	if (pers!=null) {
+		map.put("specFIO",pers.lastname+" "+pers.firstname+" "+pers.middlename) ;
+	} else {
+		map.put("specFIO","_____________________") ;
+	}
+	map.put("specCODE",wf.code!=null?wf.code:"_____________") ;
+	map.put("workfunction",wf.workFunction!=null?wf.workFunction.name:"_____________") ;
+	map.put("usluga","") ;
+	map.put("polSer","") ;
+	map.put("polNum","") ;
+	map.put("polSK","") ;
+	
+	return map ;
+}
 function printTalon(aCtx, aParams) {
 	map = printVisit(aCtx, aParams) ;
 	var visit = map.get("visit") ;
@@ -134,7 +184,7 @@ function printTalon(aCtx, aParams) {
 		
 		
 	return map ;
-	}				
+}				
 function recordBoolean(aKey,aBool) {
 	if (aBool!=null && aBool==true) {
 		map.put(aKey+".k1","<text:span text:style-name=\"T14\">") ;

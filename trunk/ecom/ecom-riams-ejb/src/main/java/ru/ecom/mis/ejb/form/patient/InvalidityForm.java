@@ -348,8 +348,8 @@ public class InvalidityForm extends IdEntityForm{
 	/** Первичность */
 	@Comment("Первичность")
 	@Persist
-	public Boolean getPrimary() {return thePrimary;}
-	public void setPrimary(Boolean aPrimary) {thePrimary = aPrimary;}
+	public Boolean getInitial() {return theInitial;}
+	public void setInitial(Boolean aPrimary) {theInitial = aPrimary;}
 	
 	/** Без переосвидетельствования */
 	@Comment("Без переосвидетельствования")
@@ -367,7 +367,7 @@ public class InvalidityForm extends IdEntityForm{
 	public void setIncapable(Boolean aIncapable) {theIncapable = aIncapable;}
 
 	/** Первичность */
-	private Boolean thePrimary;
+	private Boolean theInitial;
 	/** Недееспособный */
 	private Boolean theIncapable;
 }

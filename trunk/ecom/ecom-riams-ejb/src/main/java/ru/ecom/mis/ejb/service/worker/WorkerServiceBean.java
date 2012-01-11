@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.worker;
 
-import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.LinkedList;
@@ -16,11 +15,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.util.format.DateFormat;
 
 /**
@@ -67,8 +69,8 @@ public class WorkerServiceBean implements IWorkerService{
 		return Long.valueOf(0) ;
 	}
 	
-	public String getWorkFunctionInfo(Long aWorker) {
-		WorkFunction worker = theManager.find(WorkFunction.class, aWorker) ;
+	public String getWorkFunctionInfo(Long aWorkFunction) {
+		WorkFunction worker = theManager.find(WorkFunction.class, aWorkFunction) ;
 		return worker.getWorkFunctionInfo() ;
 
 	}
@@ -184,11 +186,20 @@ public class WorkerServiceBean implements IWorkerService{
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
     @Resource SessionContext theContext ;
-	public String getWorkingLpuInfo(Long aLpu) {
+	
+    public String getWorkingLpuInfo(Long aLpu) {
 		MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
-		return lpu.getFullname() ;
+		return lpu!=null?lpu.getFullname():"" ;
 	}
-
+    
+    public String getVocWorkFunctionByIdInfo(Long aId) {
+    	VocWorkFunction vwf = theManager.find(VocWorkFunction.class, aId) ;
+    	return vwf!=null?vwf.getName():"" ;
+    }
+    public String getVocServiceStreamByIdInfo(Long aId) {
+    	VocServiceStream vss = theManager.find(VocServiceStream.class, aId) ;
+    	return vss!=null?vss.getName():"" ;
+    }
 	public List<TableTimeBySpecialists> getTableByDayAndFunction(Date aDateStart, Date aDateFinish, Long aVocWorkFunctionId) {
 		StringBuilder sql = new StringBuilder() ;
 		
@@ -219,9 +230,9 @@ public class WorkerServiceBean implements IWorkerService{
 			System.out.println("Specialist") ;
 			//BigInteger idbi = (BigInteger)row[0] ;
 			//String idst = Long.valueOf(row[0]) ;
-			result.setSpecialistId(parseLong(row[0])) ;
+			result.setSpecialistId(ConvertSql.parseLong(row[0])) ;
 			System.out.println("Calendar day") ;
-			result.setCalendarDayId(parseLong(row[1]));
+			result.setCalendarDayId(ConvertSql.parseLong(row[1]));
 			//String specialist ;
 			//System.out.println("Specialist info") ;
 			/*
@@ -284,34 +295,14 @@ public class WorkerServiceBean implements IWorkerService{
 			.getResultList() ;
 		if (list.size()>0) {
 			Object[] row = list.get(0) ;
-			Long id = parseLong(row[0]) ;
+			Long id = ConvertSql.parseLong(row[0]) ;
 			Time time = (Time)row[1] ;
 			return new StringBuilder().append(id).append("#").append(time).toString() ;
 		}
 		return null ;
 	}
 	
-	public static Long parseLong(Object aValue) {
-		Long ret =null;
-		if (aValue==null) return ret ;
-		if (aValue instanceof Integer) {
-			
-			return Long.valueOf((Integer) aValue) ;
-		}
-		if(aValue instanceof BigInteger) {
-			BigInteger bigint = (BigInteger) aValue ;
-			
-			return bigint!=null?bigint.longValue() : null;
-		} 
-		if (aValue instanceof Number) {
-			Number number = (Number) aValue ;
-			return number!=null?number.longValue() : null ;
-		}
-		if (aValue instanceof String) {
-			return Long.valueOf((String) aValue);
-		}
-		return ret ;
-	}
+	
 	
 	
 	/**
@@ -350,5 +341,4 @@ public class WorkerServiceBean implements IWorkerService{
 		System.out.println("default date="+ret) ;
 		return ret.toString() ;
 	}
-
 }

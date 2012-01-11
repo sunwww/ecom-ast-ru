@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.voc.VocEducationType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocInstitut;
@@ -21,6 +23,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Образование")
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"person"})
+})
 public class Education extends BaseEntity {
 
 

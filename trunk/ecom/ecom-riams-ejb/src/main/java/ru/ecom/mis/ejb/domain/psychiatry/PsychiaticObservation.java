@@ -38,6 +38,20 @@ public class PsychiaticObservation extends BaseEntity{
   * Карта обратившегося за психиатрической помощью
   */
  private PsychiatricCareCard theCareCard;
+ 
+ /** Участок */
+@Comment("Участок")
+@ManyToOne
+public LpuAreaPsychCareCard getLpuAreaPsychCareCard() {
+	return theLpuAreaPsychCareCard;
+}
+
+public void setLpuAreaPsychCareCard(LpuAreaPsychCareCard aLpuAreaPsychCareCard) {
+	theLpuAreaPsychCareCard = aLpuAreaPsychCareCard;
+}
+
+/** Участок */
+private LpuAreaPsychCareCard theLpuAreaPsychCareCard;
  /**
   * 
   */

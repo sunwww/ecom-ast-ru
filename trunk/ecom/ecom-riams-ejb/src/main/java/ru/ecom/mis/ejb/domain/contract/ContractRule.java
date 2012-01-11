@@ -6,6 +6,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractGuaranteeGroup;
 import ru.ecom.mis.ejb.domain.contract.ContractMedServiceGroup;
 import ru.ecom.mis.ejb.domain.contract.ContractNosologyGroup;
@@ -21,6 +23,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Договорное правило")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"contract"})
+	})
 public class ContractRule extends BaseEntity{
 	/**
 	 * Договор

@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.NosologyInterval;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
@@ -13,6 +15,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Нозологическая группа по договору")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"name"})
+	})
 public class ContractNosologyGroup extends BaseEntity{
 	@OneToMany(mappedBy="nosologyGroup", cascade=CascadeType.ALL)
 	public List<NosologyInterval> getIntervals() {

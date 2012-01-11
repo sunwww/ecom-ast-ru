@@ -22,12 +22,12 @@ import ru.nuzmsh.util.StringUtil;
 //@Table(name="EOENTRY")
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Comment("Запись в реестре")
-@AIndexes({
-@AIndex(properties = {"time", "InsuranceCompany", "sgroup"})
-        , @AIndex(properties = {"time", "insuranceCompany"})
-        , @AIndex(properties = {"time"})
-        , @AIndex(name="timePolis", properties={"time", "insuranceCompany", "SPolis", "NPolis"})
-        })
+//@AIndexes({
+//@AIndex(properties = {"time", "InsuranceCompany", "sgroup"})
+//        , @AIndex(properties = {"time", "insuranceCompany"})
+//        , @AIndex(properties = {"time"})
+//        , @AIndex(name="timePolis", properties={"time", "insuranceCompany", "SPolis", "NPolis"})
+//        })
 
 @NamedQueries({
 @NamedQuery(name = "registryEntry.byGroupWorking"

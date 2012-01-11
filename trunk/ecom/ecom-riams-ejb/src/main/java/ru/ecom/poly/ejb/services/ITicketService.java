@@ -36,8 +36,8 @@ public interface ITicketService {
     List<TicketForm> findStatTicketByDateAndUsername(String aDateInfo, String aDate,String aUsername) ;
 
     
-    public List<TicketForm> findTicketByNonresident(String aTypePat, String aDate,String aDateTo);
-    public List<TicketForm> findTicketByNonresidentByDate(String aTypePat, String aDate);
+    //public List<TicketForm> findTicketByNonresident(String aTypePat, String aDate,String aDateTo);
+    //public List<TicketForm> findTicketByNonresidentByDate(String aTypePat, String aDate);
     
     public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) ;
     void closeTicket(Long aTicketForm);

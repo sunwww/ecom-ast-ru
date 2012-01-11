@@ -12,7 +12,6 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
-import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -27,7 +26,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 		,@AIndex(name="Index4", properties={"patient","actualDateFrom","actualDateTo"})
 })
 @Table(schema="SQLUser")
-public class MedPolicy extends BaseEntity {
+abstract public class MedPolicy extends BaseEntity {
  
     /** Страховая компания */
     @OneToOne

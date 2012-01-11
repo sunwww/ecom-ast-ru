@@ -13,7 +13,7 @@ import javax.persistence.PersistenceContext;
 
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
+import ru.ecom.ejb.services.util.ConvertSql;
 
 @Stateless
 @Remote(IQualityEstimationService.class)
@@ -210,13 +210,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		if (list1.size()>0) {
 			StringBuilder result = new StringBuilder() ;
 			Object[] row = list1.get(0) ;
-			cntSection = WorkerServiceBean.parseLong(row[0]) ;
+			cntSection = ConvertSql.parseLong(row[0]) ;
 			result.append(cntSection) ;
 			for (int i =0 ; i<list1.size();i++) {
 				result.append("#").append(list1.get(i)[1]);
 			}
 			
-			//kind = WorkerServiceBean.parseLong(row[1]) ;
+			//kind = ConvertSql.parseLong(row[1]) ;
 			return result.toString() ;
 		} else {
 			log("row null") ;
@@ -253,8 +253,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		Long kind ;
 		if (list1.size()>0) {
 			Object[] row = list1.get(0) ;
-			cntSection = WorkerServiceBean.parseLong(row[0]).intValue() ;
-			kind = WorkerServiceBean.parseLong(row[1]) ;
+			cntSection = ConvertSql.parseLong(row[0]).intValue() ;
+			kind = ConvertSql.parseLong(row[1]) ;
 		} else {
 			
 			return null ;
@@ -334,7 +334,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 Object[] row = list.get(i) ;
 				 table.append("<tr>") ;
 				 if (cntSubsection==0)  {
-					 cntSubsection = WorkerServiceBean.parseLong(row[4]).intValue() ;
+					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
 					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'>").append(cntPart++).append(".</td>") ;
 					 table.append("<td colspan=5 align='center'><b><i>").append(row[3]).append("-").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr><tr>") ;
@@ -550,7 +550,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	}
 	public Long getIdQualityEstimationByType(String aType, Long aIdCard) {
 		List<Object[]> result = theManager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType='"+aType+"'").getResultList();
-		if (result.size()>0) return WorkerServiceBean.parseLong(result.get(0)[0]) ;
+		if (result.size()>0) return ConvertSql.parseLong(result.get(0)[0]) ;
 		return null ;
 	}
 	@EJB ILocalEntityFormService theEntityFormService ;

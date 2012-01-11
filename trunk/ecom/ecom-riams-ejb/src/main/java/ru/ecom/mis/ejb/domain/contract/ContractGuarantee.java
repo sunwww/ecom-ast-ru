@@ -4,6 +4,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,6 +15,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Гарантийный документ по договору")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"contract"})
+	})
 public abstract class ContractGuarantee extends BaseEntity{
 	/**
 	 * Договор

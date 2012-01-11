@@ -20,11 +20,21 @@ function onPreCreate(aForm, aCtx) {
 }
 function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
-		var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
-		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+		var medPolicyOmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
+		var mp1 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
+		mp1.setPolicies(medPolicyOmc) ;
+		mp1.setMedCase(aEntity) ;
+		aCtx.manager.persist(mp1) ;
+		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
+		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	}	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
-		var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicyDmc+"'" ;
-		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+		var medPolicyDmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
+		var mp2 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
+		mp2.setPolicies(medPolicyDmc) ;
+		mp2.setMedCase(aEntity) ;
+		aCtx.manager.persist(mp2) ;
+		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicyDmc+"'" ;
+		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	}
 	if (aForm.pregnancyOrderNumber!=null && aForm.pregnancyOrderNumber>0) {
 		var list = aCtx.manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
@@ -64,7 +74,28 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
-
+	var aStatCardNumber = aForm.statCardNumber ;
+	if (aStatCardNumber!=null && aStatCardNumber!="" && (+aForm.id>0)) {
+		var year = aForm.dateStart.substring(6) ;
+		//throw ""+year ;
+		var list = aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist' and medCase_id='"+aForm.id+"'")
+			.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
+		if (list.size()==0) {
+			var alwaysCreate = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
+			if (!alwaysCreate) {
+    			if (aForm.deniedHospitalizating>0) {
+    				throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
+    			}
+    		}
+			Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.id, aStatCardNumber, "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber", aCtx.manager, aCtx.getSessionContext());
+		} else {
+			ret = false ;
+		}
+		
+	}
+	//if (ret==true) {
+	//	throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
+	//}
 
 	var stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour") ;
 	var psych=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/IsPsychiatry") ;

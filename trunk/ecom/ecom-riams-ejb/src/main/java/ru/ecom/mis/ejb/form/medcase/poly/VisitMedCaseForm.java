@@ -129,6 +129,13 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	public void setNextVisitDate(String aNextVisitDate) {
 		theNextVisitDate = aNextVisitDate;
 	}
+	/** Госпитализация (впервые, повторно) */
+	@Comment("Госпитализация (впервые, повторно)")
+	@Persist @Required
+	public Long getHospitalization() {return theHospitalization;}
+	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
+	/** Госпитализация (впервые, повторно) */
+	private Long theHospitalization;
 
 	/** Дата следующего визита */
 	private String theNextVisitDate;

@@ -17,7 +17,8 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
-	public void addressUpdate() ;
+	public void addressClear() ;
+	public long addressUpdate(long id) ;
 	public String getIdc10ByDocDiag(Long aIdDocDiag) ;
 	public String getOperationsText(Long aPatient, String aDateStart,String aDateFinish) ;
 	public String getnvestigationsTextDTM(Long aPatient, String aDateStart,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs) ;

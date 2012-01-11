@@ -34,8 +34,6 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		@ASaveInterceptors(
         @AEntityFormInterceptor(DischargeMedCaseSaveInterceptor.class)
 )
-
-
 public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Время выписки */

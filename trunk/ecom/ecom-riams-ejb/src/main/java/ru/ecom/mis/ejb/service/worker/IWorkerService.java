@@ -25,7 +25,10 @@ public interface IWorkerService {
     public Long getSecUser() ;
 	public Long getWorkFunction(Long SecUser) ;
 	public Long getWorkFunction() ;
-	public String getWorkFunctionInfo(Long aWorker) ;
+	public String getWorkFunctionInfo(Long aWorkFunction) ;
+	
+	public String getVocServiceStreamByIdInfo(Long aId) ;
+	public String getVocWorkFunctionByIdInfo(Long aId) ;
 	public List<TableTimeBySpecialists> getTableByDayAndFunction(Date aDateStart, Date aDateFinish, Long aVocWorkFunctionId) ;
 	public List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) ;
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) ;

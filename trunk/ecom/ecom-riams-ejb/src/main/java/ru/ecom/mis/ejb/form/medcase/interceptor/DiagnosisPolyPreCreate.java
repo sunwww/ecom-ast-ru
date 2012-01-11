@@ -43,6 +43,9 @@ public class DiagnosisPolyPreCreate
 		    		form.setEstablishDate(v.getDateStart()!=null?DateFormat.formatToDate(v.getDateStart()):"") ;
 		    		form.setMedicalWorker(v.getWorkFunctionExecute()!=null?v.getWorkFunctionExecute().getId():null) ;
 		    	}
+		    	/*if (parent.getPatient()!=null) {
+		    		form.setPatient(parent.getPatient().getId()) ;
+		    	}*/
 	        }
 	    }
 }

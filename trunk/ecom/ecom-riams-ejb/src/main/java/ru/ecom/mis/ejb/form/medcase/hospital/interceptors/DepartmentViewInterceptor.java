@@ -22,7 +22,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 				String regType = diag.getRegistrationType().getCode() ;
 				String prior = diag.getPriority()!=null?diag.getPriority().getCode():"" ;
 				Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-				Long actuity = diag.getAcuity()!=null?diag.getAcuity().getId():null;
+				Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
 
 				// Concluding
 				if (regType.equals("3")&& prior.equals("1")){
@@ -33,7 +33,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 				if ( regType.equals("4") && prior.equals("1")){
 					form.setClinicalDiagnos(diag.getName());
 					if (mkb!=null) form.setClinicalMkb(mkb) ;
-					if(actuity!=null) form.setClinicalActuity(actuity) ;
+					if(illnes!=null) form.setClinicalActuity(illnes) ;
 				}
 			    //Pathanatomical
 				if (regType.equals("5") && prior.equals("1")) {

@@ -21,6 +21,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarAlgorithm;
@@ -89,12 +90,12 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		jpcnew.setPattern(aPattern) ;
 		jpcnew.setWorkCalendar(aWorkCalendar) ;
 		theManager.persist(jpcnew ) ;
-		theManager.refresh(jpcnew) ;
-		long calLTo = calTo.getTime().getTime() ;
-		long calLFrom = calFrom.getTime().getTime() ;
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
-		System.out.println("---------calFrom="+format.format(calFrom.getTime())) ;
-		System.out.println("---------calTo="+format.format(calTo.getTime())) ;
+		//theManager.refresh(jpcnew) ;
+		//long calLTo = calTo.getTime().getTime() ;
+		//long calLFrom = calFrom.getTime().getTime() ;
+		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+		//System.out.println("---------calFrom="+format.format(calFrom.getTime())) ;
+		//System.out.println("---------calTo="+format.format(calTo.getTime())) ;
 		calTo.add(Calendar.DAY_OF_MONTH, 1) ;
 		calFrom.add(Calendar.DAY_OF_MONTH, -1) ;		
 		for (JournalPatternCalendar jpc: list) {
@@ -102,11 +103,11 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			calFrom1.setTime(jpc.getDateFrom()) ;
 			Calendar calTo1 = Calendar.getInstance() ;
 			calTo1.setTime(jpc.getDateTo()) ;
-			long calLTo1 = calTo1.getTime().getTime() ;
-			long calLFrom1 = calFrom1.getTime().getTime() ;
+			//long calLTo1 = calTo1.getTime().getTime() ;
+			//long calLFrom1 = calFrom1.getTime().getTime() ;
 			
 			//calTo1.add(Calendar.DAY_OF_MONTH, 1) ;
-			System.out.println("----------------------------------------------------------") ;
+			/*System.out.println("----------------------------------------------------------") ;
 			System.out.println("---------------jcp="+jpc.getId()) ;
 			System.out.println("---------------calFrom1="+format.format(calFrom1.getTime())) ;
 			System.out.println("---------------calTo1="+format.format(calTo1.getTime())) ;
@@ -118,21 +119,22 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			System.out.println("---------------calTo  after calFrom1="+calTo.after(calFrom1)) ;
 			System.out.println("---------------calFrom  after calTo1="+calFrom.after(calTo1)) ;
 			System.out.println("---------------calFrom  after calFrom1="+calFrom.after(calFrom1)) ;
+			*/
 			if (calFrom1.after(calFrom) && (calTo1.after(calTo) )) {
-				System.out.println("--------------++++++--1-") ;
+				//System.out.println("--------------++++++--1-") ;
 				
 				jpc.setDateFrom(new Date(calTo.getTime().getTime())) ;
 			} else if (calFrom.after(calFrom1) && (calTo.after(calTo1) )) {
-				System.out.println("--------------++++++--2-") ;
+				//System.out.println("--------------++++++--2-") ;
 				//calFrom1.add(Calendar.DAY_OF_MONTH, -1) ;
 				jpc.setDateTo(new Date(calFrom.getTime().getTime())) ;
 			} else if ((calFrom1.after(calFrom)) && (calTo.after(calTo1))) {
-				System.out.println("--------------++++++--3-") ;
+				//System.out.println("--------------++++++--3-") ;
 				//calTo1.setTime(jpc.getDateTo()) ;
 				jpc.setNoActive(Boolean.TRUE); 
 				
 			} else if (calFrom1.before(calFrom) && calTo1.before(calTo)) {
-				System.out.println("--------------++++++--4-") ;
+				//System.out.println("--------------++++++--4-") ;
 
 				JournalPatternCalendar jpc1 = new JournalPatternCalendar() ;
 				jpc1.setDateFrom(new Date(calTo.getTime().getTime())) ;
@@ -144,12 +146,12 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 				theManager.persist(jpc1) ;
 				//theManager.refresh(jpc1) ;
 			}
-			System.out.println("-----res noado="+jpc.getNoActive()) ;
+			//System.out.println("-----res noado="+jpc.getNoActive()) ;
 			theManager.persist(jpc) ;
 			//theManager.refresh(jpc) ;
-			System.out.println("-----res noalast="+jpc.getNoActive()) ;
-			System.out.println("-----res from="+format.format(jpc.getDateFrom())) ;
-			System.out.println("-----res to="+format.format(jpc.getDateTo())) ;
+			//System.out.println("-----res noalast="+jpc.getNoActive()) ;
+			//System.out.println("-----res from="+format.format(jpc.getDateFrom())) ;
+			//System.out.println("-----res to="+format.format(jpc.getDateTo())) ;
 		}
 	}
 	public void addNotBusyPattern(Long aWorkCalendar,Date aDateFrom, Date aDateTo, Long aBusy) {
@@ -194,7 +196,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		
 		while (cal2.after(cal1)) {
 			// Обработка дней
-			System.out.println("---------------cal1="+format.format(cal1.getTime())) ;
+			//System.out.println("---------------cal1="+format.format(cal1.getTime())) ;
 			//int weekYear =cal1.get(Calendar.WEEK_OF_YEAR) ;
 			//boolean parityYear= (weekYear%2==1)?true:false ;
 			int weekMonth =cal1.get(Calendar.WEEK_OF_MONTH) ;
@@ -211,7 +213,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			// Определение действующего журнала
 			boolean isNewJour = false;
 			if (jpc==null || !calTo1.after(cal1)) {
-				System.out.println("<<<<<<--------------->calTo after calFrom="+calTo1.after(calFrom1)) ;
+				//System.out.println("<<<<<<--------------->calTo after calFrom="+calTo1.after(calFrom1)) ;
 				isNewJour=true ;
 			}
 			if (isNewJour) {
@@ -241,10 +243,10 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			if (jpc==null) {
 				
 			} else {
-				System.out.println("------------<>----jpc="+jpc) ;
-				System.out.println("------------<>----jpc id="+jpc.getId()) ;
-				System.out.println("------------<>----jpc from="+jpc.getDateFrom()) ;
-				System.out.println("------------<>----jpc to="+jpc.getDateTo()) ;
+				//System.out.println("------------<>----jpc="+jpc) ;
+				//System.out.println("------------<>----jpc id="+jpc.getId()) ;
+				//System.out.println("------------<>----jpc from="+jpc.getDateFrom()) ;
+				//System.out.println("------------<>----jpc to="+jpc.getDateTo()) ;
 				String weekDaySt = String.valueOf(weekDay) ;
 				String monthOrder = getOrderWeek(cal1,weekMonth);
 				WorkCalendarPattern pattern = jpc.getPattern() ;
@@ -261,7 +263,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 						Date dateCur = new Date(cal1.getTime().getTime()) ;
 						sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" where wca.dtype='WorkCalendarDatesAlgorithm' and pattern_id=:pattern").append(" and :day between wca.dateFrom and wca.dateTo") ;
 						query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("day", cal1.getTime());
-						System.out.println("----------------WorkCalendarDatesAlgorithm=");
+						//System.out.println("----------------WorkCalendarDatesAlgorithm=");
 						nextSearch= !getParrentDay(aWorkCalendar, dateCur, query) ;
 						//System.out.println("----------------WorkCalendarDatesAlgorithm="+listA.size());
 						
@@ -343,7 +345,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		List<Object[]> list = aQuery.getResultList() ;
 		if (!list.isEmpty()) {
 			Object[] objs = list.get(0) ;
-			Long dayPattern = WorkerServiceBean.parseLong(objs[1]) ;
+			Long dayPattern = ConvertSql.parseLong(objs[1]) ;
 			WorkCalendarDayPattern pattern =theManager.find(WorkCalendarDayPattern.class, dayPattern) ;
 			WorkCalendarDay day = createCalendarDay(aWorkCalendar, aDate) ;
 			LOG.info(new StringBuilder().append("day=").append(day).toString()) ;

@@ -7,6 +7,8 @@ import javax.persistence.Transient;
 
 import ru.ecom.document.ejb.domain.certificate.ConfinementCertificate;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -18,6 +20,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("История родов")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "pregnancy" }) 
+	}
+)
 public class PregnancyHistory extends BaseEntity {
 	/** Беременность */
 	@Comment("Беременность")

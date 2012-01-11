@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.MedServiceInterval;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
@@ -13,6 +15,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Группу медицинских услуг по договору")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"name"})
+	})
 public class ContractMedServiceGroup extends BaseEntity{
 	/**
 	 * Название

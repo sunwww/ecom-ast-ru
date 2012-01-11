@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.worker.voc.VocPostBusyType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkRecordBase;
@@ -24,6 +26,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Запись трудовой книжки")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	//@AIndex(properties={"lpu"}),
+	@AIndex(properties={"workBook"})
+})
 public class WorkBookRecord extends BaseEntity{
 	
 	/** Трудовая книжка */

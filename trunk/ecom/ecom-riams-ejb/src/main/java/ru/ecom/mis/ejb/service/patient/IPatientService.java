@@ -13,6 +13,15 @@ import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 /**
  */
 public interface IPatientService {
+	
+	public boolean isNaturalPerson(Long aPatient) ;
+	public void createNaturalPerson(Long aPatient) ;	
+	
+	public String getInfoVocForFond(String aPassportType,String aAddress) ;
+	public boolean updateDataByFond(Long aPatientId, String aFiodr
+			,String aDocument,String aPolicy,String aAddress) ;
+	public PatientForm getPatientById(Long aId) ;
+	public String getOmcCodeByPassportType(Long aPassportType);
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;
 	public void movePatientDoubleData(Long aIdNew, Long aIdOld);
 	// Информация по полисам ОМС по пациенту

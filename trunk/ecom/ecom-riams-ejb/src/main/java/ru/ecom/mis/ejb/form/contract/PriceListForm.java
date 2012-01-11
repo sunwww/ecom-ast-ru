@@ -9,6 +9,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = PriceList.class)
 @Comment("Прейскурант")
@@ -34,7 +35,7 @@ public class PriceListForm extends IdEntityForm{
 	 * Название
 	 */
 	@Comment("Название")
-	@Persist
+	@Persist @Required
 	public String getName() {
 		return theName;
 	}
@@ -49,7 +50,7 @@ public class PriceListForm extends IdEntityForm{
 	 * Дата начала действия
 	 */
 	@Comment("Дата начала действия")
-	@Persist
+	@Persist @Required
 	@DateString @DoDateString
 	public String getDateFrom() {
 		return theDateFrom;

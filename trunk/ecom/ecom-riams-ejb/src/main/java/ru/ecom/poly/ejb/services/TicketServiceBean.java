@@ -19,9 +19,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import ru.ecom.ejb.services.entityform.EntityFormException;
@@ -30,9 +28,9 @@ import ru.ecom.ejb.services.entityform.PersistList;
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.util.JBossConfigUtil;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.form.TicketForm;
 import ru.ecom.report.rtf.RtfPrintServiceHelper;
@@ -89,7 +87,7 @@ public class TicketServiceBean implements ITicketService {
     }
     
     public String findProvReason() {
-    	List<Object[]> list = theManager.createNativeQuery("select id,name from VocReason where code='PROFILACTIC' or omcCode=2").getResultList() ;
+    	List<Object[]> list = theManager.createNativeQuery("select id,name from VocReason where code='PROFYLACTIC' order by id").setMaxResults(1).getResultList() ;
     	StringBuilder ret = new StringBuilder() ;
     	if (list.size()>0) {
     		Object[] obj = list.get(0) ;
@@ -116,7 +114,7 @@ public class TicketServiceBean implements ITicketService {
     	System.out.println("date="+aDate) ;
     	
         StringBuilder sql = new StringBuilder() ;
-        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||CONVERT(VARCHAR(20),p.birthday,104),CONVERT(VARCHAR(20),t.date,104),t.recordTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
+        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(t.date,'dd.mm.yyyy'),t.recordTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
         	.append(" from Ticket as t ")
         	.append(" left join medcard as m on m.id=t.medcard_id")
 			.append(" left join patient as p on m.person_id=p.id")
@@ -165,7 +163,7 @@ public class TicketServiceBean implements ITicketService {
 
         return createList(query);
     }
-    
+    /*
     public List<TicketForm> findTicketByNonresident(String aTypePat, String aDate,String aDateTo) {
         QueryClauseBuilder builder = new QueryClauseBuilder();
         Date date = null;
@@ -204,7 +202,7 @@ public class TicketServiceBean implements ITicketService {
         //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
         System.out.println(query.toString()) ;
         return createList(query);    	
-    }
+    }*/
     public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) {
     	//QueryClauseBuilder builder = new QueryClauseBuilder();
     	Date date = null;
@@ -239,6 +237,7 @@ public class TicketServiceBean implements ITicketService {
     	System.out.println(query.toString()) ;
     	return createNativeList(query);    	
     }
+    /*
     public List<TicketForm> findTicketByNonresidentByDate(String aTypePat, String aDate) {
         //QueryClauseBuilder builder = new QueryClauseBuilder();
         Date date = null;
@@ -272,7 +271,7 @@ public class TicketServiceBean implements ITicketService {
         //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
         System.out.println(query.toString()) ;
         return createNativeList(query);    	
-    }
+    }*/
     
     public List<TicketForm> findStatTicketByDateAndUsername(String aDateInfo, String aDate,String aUsername) {
         QueryClauseBuilder builder = new QueryClauseBuilder();
@@ -312,7 +311,7 @@ public class TicketServiceBean implements ITicketService {
 		for (Object[] row: list ) {
 			GroupByDate result = new GroupByDate() ;
 			Date date = (Date)row[0] ;
-			result.setCnt(WorkerServiceBean.parseLong(row[1])) ;
+			result.setCnt(ConvertSql.parseLong(row[1])) ;
 			result.setDate(date) ;
 			result.setDateInfo(DateFormat.formatToDate(date)) ;
 			result.setSn(++i) ;
@@ -469,7 +468,7 @@ public class TicketServiceBean implements ITicketService {
         	StringBuilder ids = new StringBuilder() ;
         	StringBuilder sql = new StringBuilder() ;
 	        for (Object obj:list_id) {
-	        	//Long iddoc = WorkerServiceBean.parseLong(obj) ;
+	        	//Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;

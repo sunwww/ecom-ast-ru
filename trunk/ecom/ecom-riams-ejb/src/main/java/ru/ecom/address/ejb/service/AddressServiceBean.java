@@ -87,19 +87,23 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
         Address address = theEntityManager.find(Address.class, aAddressPk) ;
         String rayon = theAstrkhanReginHelper.getOmcRayonName(address, aHouse, theEntityManager) ; 
         StringBuilder sb = new StringBuilder();
-        while(address!=null) {
-            StringBuilder s = new StringBuilder();
-            s.append(" ") ;
-            s.append(address.getTypeName()) ;
-            s.append(" ") ;
-            s.append(address.getName()) ;
-            s.append(", ") ;
-            //sb.insert(0, s) ;
-            sb.insert(0,s) ;
-//            System.out.println("s = " + sb);
-            long oldId = address.getId();
-            address = address.getParent() ;
-            if(address==null || address.getId()==oldId) address = null ;
+        if (address!=null && address.getFullname()!=null) {
+        	sb.append(address.getFullname()) ;
+        } else {
+	        while(address!=null) {
+	            StringBuilder s = new StringBuilder();
+	            s.append(" ") ;
+	            s.append(address.getTypeName()) ;
+	            s.append(" ") ;
+	            s.append(address.getName()) ;
+	            s.append(", ") ;
+	            //sb.insert(0, s) ;
+	            sb.insert(0,s) ;
+	//            System.out.println("s = " + sb);
+	            long oldId = address.getId();
+	            address = address.getParent() ;
+	            if(address==null || address.getId()==oldId) address = null ;
+	        }
         }
     	if (aZipCode!=null && !aZipCode.equals("")) sb.insert(0,", ").insert(0,aZipCode).insert(0,"Индекс ") ;
         add(aHouse, "д.",sb) ;

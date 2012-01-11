@@ -23,6 +23,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties={"patient"})
+	,@AIndex(properties={"cardNumber"})
 })
 @Table(schema="SQLUser")
 public class PsychiatricCareCard extends BaseEntity{

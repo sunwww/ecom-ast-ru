@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,6 +16,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Правило договорного счета")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"contract"})
+		,@AIndex(unique= false, properties = {"servedPerson"})
+	})
 public class ContractAccountRule extends BaseEntity{
 	/**
 	 * Скидка

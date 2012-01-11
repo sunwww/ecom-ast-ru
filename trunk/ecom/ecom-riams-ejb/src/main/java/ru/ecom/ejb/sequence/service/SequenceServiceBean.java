@@ -11,8 +11,8 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class SequenceServiceBean implements ISequenceService {
 
-	public String startUseNextValue(String aKey) {
-		return SequenceHelper.getInstance().startUseNextValue(aKey, theManager);
+	public String startUseNextValue(String aTable,String aField) {
+		return SequenceHelper.getInstance().startUseNextValue(aTable,aField, theManager);
 	}
 	
 	

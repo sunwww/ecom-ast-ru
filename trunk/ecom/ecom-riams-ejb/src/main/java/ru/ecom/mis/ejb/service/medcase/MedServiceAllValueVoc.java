@@ -38,9 +38,9 @@ public class MedServiceAllValueVoc  implements IAllValue {
 				addSql = FORMAT_1.format(date) ;
 				addSql = new StringBuilder()
 					.append(" and vocMedService_id is null")
-					.append(" and (startDate is null or cast(startDate as integer) <= cast(cast('")
-					.append(addSql).append("' as date) as integer) ) and (finishDate is null or cast(finishDate as integer)>=cast(cast('")
-					.append(addSql).append("' as date) as integer))").toString() ;
+					.append(" and (startDate is null or startDate <= to_date('")
+					.append(addSql).append("','yyyy-mm-dd') ) and (finishDate is null or finishDate >=to_date('")
+					.append(addSql).append("','yyyy-mm-dd'))").toString() ;
 				//LOG.info(addSql) ;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

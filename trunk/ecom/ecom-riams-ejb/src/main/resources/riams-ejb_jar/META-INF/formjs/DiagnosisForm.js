@@ -6,6 +6,11 @@ function onCreate(aForm, aEntity, aContext) {
 	if (illnesPrimary!=null) {
 		aEntity.setAcuity(illnesPrimary.getIllnesType()) ;
 		aEntity.setPrimary(illnesPrimary.getPrimary()) ;
+		
+	}
+	if (aEntity.getPatient()==null) {
+		var pat = aEntity.getMedCase()!=null?aEntity.getMedCase().getPatient():null ;
+		aEntity.setPatient(pat) ;
 	}
 	aContext.manager.persist(aEntity) ;
 }
@@ -18,6 +23,10 @@ function onSave(aForm, aEntity, aContext) {
 	if (illnesPrimary!=null) {
 		aEntity.setAcuity(illnesPrimary.getIllnesType()) ;
 		aEntity.setPrimary(illnesPrimary.getPrimary()) ;
+	}
+	if (aEntity.getPatient()==null) {
+		var pat = aEntity.getMedCase()!=null?aEntity.getMedCase().getPatient():null ;
+		aEntity.setPatient(pat) ;
 	}
 	aContext.manager.persist(aEntity) ;
 }

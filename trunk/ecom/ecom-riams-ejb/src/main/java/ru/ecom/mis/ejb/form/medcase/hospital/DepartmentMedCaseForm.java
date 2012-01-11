@@ -32,7 +32,8 @@ import ru.nuzmsh.forms.validator.validators.ViewOnly;
 //@Comment("Случай стационарного лечения в отделении")
 @EntityForm
 @EntityFormPersistance(clazz=DepartmentMedCase.class)
-@WebTrail(comment = "Лечение в отделении", nameProperties= "departmentInfo", view="entityParentView-stac_slo.do",shortView="entityShortView-stac_slo.do",shortList="entityParentShortList-stac_slo.do")
+@WebTrail(comment = "Лечение в отделении", nameProperties= "departmentInfo", view="entityParentView-stac_slo.do",shortView="entityShortView-stac_slo.do"
+	,shortList="entityParentShortList-stac_slo.do",list="entityParentList-stac_slo.do")
 @Parent(property="parent", parentForm= HospitalMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Slo")
 @AParentPrepareCreateInterceptors(

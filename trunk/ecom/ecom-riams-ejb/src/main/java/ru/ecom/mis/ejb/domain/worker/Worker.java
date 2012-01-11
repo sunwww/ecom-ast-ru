@@ -17,8 +17,6 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.WorkerEMail;
-import ru.ecom.mis.ejb.domain.patient.WorkerPhone;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -87,27 +85,6 @@ public class Worker extends BaseEntity {
     /** ЛПУ */
     private MisLpu theLpu ;
 
-    /** Телефоны сотрудников */
-	@Comment("Телефоны сотрудников")
-	@OneToMany(mappedBy="worker", cascade=CascadeType.ALL)
-	public List<WorkerPhone> getWorkPhones() {
-		return theWorkPhones;
-	}
-
-	public void setWorkPhones(List<WorkerPhone> aWorkPhones) {
-		theWorkPhones = aWorkPhones;
-	}
-
-	/** Телефоны сотрудников */
-	private List<WorkerPhone> theWorkPhones;
-    
-    /** E-mail */
-    @Comment("E-mail")
-    @OneToMany(mappedBy="worker", cascade=CascadeType.ALL)
-    public List<WorkerEMail> getWorkerEMail() { return theWorkerEMail ; }
-    public void setWorkerEMail(List<WorkerEMail> aEmail) { theWorkerEMail = aEmail ; }
-    /** E-mail */
-    private List<WorkerEMail> theWorkerEMail ;
     
     /** Информация о сотруднике */
     @Comment("Информация о сотруднике")

@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,8 +8,6 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
@@ -39,11 +35,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
                 throw new IllegalStateException("При отказе в госпитализации нельзя заводить случай лечения в отделении") ;
                
     		}
-    		List<Object[]> listDep = manager
-    			.createNativeQuery("select count(*),id from MedCase where parent_id = :parentId and DTYPE='DepartmentMedCase' ")
+    		Object listDep = manager
+    			.createNativeQuery("select count(*) from MedCase where parent_id = :parentId and DTYPE='DepartmentMedCase' ")
     			.setParameter("parentId", aParentId)
-    			.getResultList() ;
-    		if (listDep.isEmpty()) {
+    			.getSingleResult() ;
+    		if (listDep!=null && ConvertSql.parseLong(listDep).equals(Long.valueOf(0))) {
     			prepareForCreationFirstSlo(form, parentSSL) ;
     		} else {
     			prepareForCreationNextSlo(form,parentSSL,manager) ;
@@ -80,10 +76,20 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     private void prepareForCreationNextSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCaseParent, EntityManager aManager) {
     	aForm.setPatient(aMedCaseParent.getPatient().getId());
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select max(ms.dateFinish),ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id")
-    			.append(" from MedCase as ms where ms.parent_id = :parentId and ms.DTYPE='DepartmentMedCase'") 
-    			.append(" and (select count(*) from MedCase as ms1 where ms1.prevMedCase_id=ms.id and DTYPE='DepartmentMedCase')=0")
-				.append(" order by ms.transferDate desc,ms.transferTime desc") ;
+    	sql.append("select max(ms1.dateFinish) as maxdatefinish")
+    		.append(",ms.id, to_char(ms.transferDate,'dd.mm.yyyy') as mstransferdate,cast(ms.transferTime as varchar(5)) as mstransfertime,ms.transferDepartment_id as mstransferdepartment,ms.lpu_id as mslpu")
+    		.append(" from MedCase as ms ")
+    		.append(" left join MedCase as ms1 on ms1.parent_id=ms.parent_id and ms1.dtype='DepartmentMedCase'")
+    		.append(" left join MedCase as ms2 on ms2.prevMedCase_id=ms.id and ms2.dtype='DepartmentMedCase'")
+    		.append(" where ms.parent_id =:parentId and ms.DTYPE='DepartmentMedCase' ")
+    		.append(" group by ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id,ms2.id")
+    		.append(" having ms2.id is null ")
+    		.append(" order by ms.transferDate desc,ms.transferTime desc");
+    	//sql.append("select max(ms.dateFinish),ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id")
+    	//		.append(" from MedCase as ms where ms.parent_id = :parentId and ms.DTYPE='DepartmentMedCase'") 
+    	//		.append(" and (select count(*) from MedCase as ms1 where ms1.prevMedCase_id=ms.id and DTYPE='DepartmentMedCase')=0")
+		//		.append(" order by ms.transferDate desc,ms.transferTime desc") ;
+    	System.out.println(sql) ;
     	List<Object[]> list = aManager.createNativeQuery(sql.toString())
     			.setParameter("parentId", aMedCaseParent.getId()).setMaxResults(3).getResultList() ;
     	if (list.size()>0) {
@@ -92,8 +98,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     			throw new IllegalStateException("Уже есть лечение в отделении с выпиской.") ;
     		}
     		if (obj[2]!=null) {
-    			aForm.setDateStart(DateFormat.formatToDate((Date)obj[2]));
-                aForm.setEntranceTime(DateFormat.formatToTime((Time)obj[3]));
+    			aForm.setDateStart((String)obj[2]);
+                aForm.setEntranceTime((String)obj[3]);
                 aForm.setPrevMedCase(ConvertSql.parseLong(obj[1]));
                 aForm.setDepartment(ConvertSql.parseLong(obj[4]));
     		} else {

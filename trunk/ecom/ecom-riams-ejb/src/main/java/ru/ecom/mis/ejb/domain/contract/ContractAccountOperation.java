@@ -6,7 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractAccount;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
@@ -19,6 +23,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Операция договорного счета")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"account"})
+		,@AIndex(unique= false, properties = {"medcase"})
+	})
 public class ContractAccountOperation extends BaseEntity{
 	/**
 	 * Договорной счет
@@ -155,4 +163,65 @@ public class ContractAccountOperation extends BaseEntity{
 	 * Скидка
 	 */
 	private BigDecimal theDiscount;
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	
+	/** Дата последнего изменения */
+	@Comment("Дата последнего изменения")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время, последнего изменения */
+	@Comment("Время, последнего изменения")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	
+	/** Пользователь, последний изменивший запись */
+	@Comment("Пользователь, последний изменивший запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний изменивший запись */
+	private String theEditUsername;
+	/** Время, последнего изменения */
+	private Time theEditTime;
+	/** Дата последнего изменения */
+	private Date theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата создания */
+	private Date theCreateDate;
+	
+	@Transient
+	public String getTypeInfo() {
+		return theType!=null?theType.getName():"" ;
+	}
+	@Transient
+	public String getMedcaseInfo() {
+		return theMedcase!=null?theMedcase.getInfo():"" ;
+	}
+	@Transient
+	public String getRepealOperationInfo() {
+		
+		return theRepealOperation!=null?
+				new StringBuilder().append(theRepealOperation.getTypeInfo()).append(" ")
+				.append(theCost).append(" руб.").toString()
+				:"" ;
+	}
+	
+	
 }

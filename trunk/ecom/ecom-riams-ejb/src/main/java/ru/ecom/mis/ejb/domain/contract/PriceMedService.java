@@ -7,6 +7,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.PricePosition;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +18,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Медицинская услуга прескуранта")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(unique= false, properties = {"pricePosition"})
+	, @AIndex(unique= false, properties = {"medService"})
+})
 public class PriceMedService extends BaseEntity{
 	/**
 	 * Позиция прейскуранта

@@ -29,7 +29,6 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 
 /**
  *
@@ -149,7 +148,7 @@ public class SecUserServiceBean implements ISecUserService {
         	}
         //}
         /*for (Object pol_id : listPolicies) {
-            	SecPolicy policy = theManager.find(SecPolicy.class, WorkerServiceBean.parseLong(pol_id)) ;
+            	SecPolicy policy = theManager.find(SecPolicy.class, ConvertSql.parseLong(pol_id)) ;
                 policies.add(getPolicyFullKey(policy)) ;
             }
         */
