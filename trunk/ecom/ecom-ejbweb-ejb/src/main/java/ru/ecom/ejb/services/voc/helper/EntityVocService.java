@@ -131,10 +131,11 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 */
             	
                 case FIRST_LAT_UPPER: {
-                    char c = aQuery.charAt(0) ;
                     queryDop = aQuery ;
                     queryDop = queryDop.toUpperCase() ;
-                    aQuery = getLat(Character.toUpperCase(c)) + (aQuery.length()>1 ? aQuery.substring(1).toLowerCase() : "") ;
+                	char c1 = queryDop.charAt(0) ;
+                	queryDop = queryDop.replaceFirst("Ю", ".") ;
+                    aQuery = getLat(c1) + (queryDop.length()>1 ? queryDop.substring(1) : "") ;
                     break ;
                 }
             }
@@ -327,6 +328,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     	map.put("Д", "L" ) ;
     	map.put("Т","N" ) ;
     	map.put( "Ь","M" ) ;
+    	map.put( "Ю","." ) ;
     	return map ;
     }
     private String getLat(char aChar) {

@@ -8,5 +8,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PersistOneToManyProperty {
-
+	Class collectionGenericType() ;
+	Class spanTable() ;
+    String collectionProperty()  default "";
+    String parentProperty() default "";
 }
