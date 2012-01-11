@@ -294,6 +294,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        
+        <attribute>
+            <description>Ьаксимальное кол-во записей</description>
+            <name>maxResult</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
 
         <attribute>
             <description>Запрос на родном SQL для базы</description>

@@ -30,9 +30,13 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
         HttpServletRequest request = (HttpServletRequest) ctx.getRequest() ;
         try {
 			IWebQueryService service = Injection.find(request).getService(IWebQueryService.class) ;
+			Integer maxResult = null;
+			if (theMaxResult!=null && !theMaxResult.equals("")) {
+				maxResult = Integer.valueOf(theMaxResult) ;
+			}
 			Object result = StringUtil.isNullOrEmpty(theNativeSql) 
-				? service.executeHql(theHql)
-				: service.executeNativeSql(theNativeSql)		;
+				? service.executeHql(theHql,maxResult)
+				: service.executeNativeSql(theNativeSql,maxResult)		;
 			request.setAttribute(theName, result) ;
 		} catch (Exception e) {
 			LOG.error("Ошибка выполнения запроса: \n hql: "+theHql+", native: \n"+theNativeSql,e);
@@ -50,6 +54,19 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
 	public void setNativeSql(String aNativeSql) {
 		theNativeSql = aNativeSql;
 	}
+	
+	/** Кол-во строк */
+	@Comment("Кол-во строк")
+	public String getMaxResult() {
+		return theMaxResult;
+	}
+
+	public void setMaxResult(String aMaxResult) {
+		theMaxResult = aMaxResult;
+	}
+
+	/** Кол-во строк */
+	private String theMaxResult;
 
 	/** Родной SQL для базы */
 	private String theNativeSql;
