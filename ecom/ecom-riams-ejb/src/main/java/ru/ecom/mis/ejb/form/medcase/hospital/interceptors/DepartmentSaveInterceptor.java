@@ -16,9 +16,11 @@ import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
@@ -36,13 +38,20 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		boolean adding3is = (!isEmpty(form.getConcludingDiagnos()) || (!isEmpty(form.getConcludingMkb()))) ;
 		boolean adding1is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb()))) ;
 		boolean adding6is = (!isEmpty(form.getConcomitantDiagnos()) || (!isEmpty(form.getConcomitantMkb()))) ;
-		
+		String dateFinish = "null" ;
+		if (medCase.getDateFinish()!=null) {
+			dateFinish = new StringBuilder().append("to_date('").append(DateFormat.formatToDate(medCase.getDateFinish())).append("','dd.mm.yyyy')").toString() ;
+		}
+		String timeFinish ="null" ;
+		if (medCase.getDischargeTime()!=null) {
+			timeFinish = new StringBuilder().append("'").append(DateFormat.formatToTime(medCase.getDischargeTime())).append("'").toString() ;
+		}
 		StringBuilder sqlupdate = new StringBuilder() ;
 		System.out.println() ;
-		sqlupdate.append("update MedCase set dateFinish=:dateF, dischargeTime=:timeF where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
+		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
 		manager.createNativeQuery(sqlupdate.toString())
-			.setParameter("dateF", medCase.getDateFinish())
-			.setParameter("timeF", medCase.getDischargeTime())
+			//.setParameter("dateF", medCase.getDateFinish())
+			//.setParameter("timeF", medCase.getDischargeTime())
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
 		if (adding4is|| adding5is||adding3is||adding1is) {
@@ -113,7 +122,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 	}
     
     private Object getVocByCode(EntityManager manager,String aTable, String aCode) {
-    	List list = manager.createQuery("from "+aTable+" where code="+aCode).getResultList() ;
+    	List list = manager.createQuery(new StringBuilder().append("from ").append(aTable).append(" where code='").append(aCode).append("'").toString()).getResultList() ;
     	return list.size()>0?list.get(0):null ; 
     }
 
@@ -140,9 +149,16 @@ private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosis
 		if (aDiag.getRegistrationType()==null) aDiag.setRegistrationType(aType);
 		if (aDiag.getPriority()==null) aDiag.setPriority(aPriorityType) ;
 		if(!isEmpty(aActuity)) {
-			VocAcuityDiagnosis actuity = aManager.find(VocAcuityDiagnosis.class, aActuity) ;
-			System.out.println("      actuity ="+actuity+""); 
+			VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
+			VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
+			VocPrimaryDiagnosis primary = illnes.getPrimary() ;
+			//System.out.println("      actuity ="+actuity+""); 
 			aDiag.setAcuity(actuity) ;
+			aDiag.setPrimary(primary) ;
+			aDiag.setIllnesPrimary(illnes) ;
+			//VocAcuityDiagnosis actuity = aManager.find(VocAcuityDiagnosis.class, aActuity) ;
+			//System.out.println("      actuity ="+actuity+""); 
+			//aDiag.setAcuity(actuity) ;
 		}
 		resault = true ;
 	}

@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -19,6 +21,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Позиция прейскуранта")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(unique= false, properties = {"name"})
+	,@AIndex(unique= false, properties = {"priceList"})
+})
 public class PricePosition extends BaseEntity{
 	/**
 	 * Прайс-лист

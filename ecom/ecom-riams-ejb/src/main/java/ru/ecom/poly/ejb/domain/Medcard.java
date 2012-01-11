@@ -30,7 +30,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties= ("number"))
-    ,    @AIndex(properties= ("person"))
+    ,@AIndex(properties= ("person"))
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")

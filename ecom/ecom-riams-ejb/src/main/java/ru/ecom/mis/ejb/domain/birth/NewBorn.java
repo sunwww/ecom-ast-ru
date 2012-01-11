@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBorn;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBornCordAttaching;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity;
@@ -29,6 +31,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment(" Новорожденный")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "patient" }) ,
+		@AIndex(properties = { "medCase" }) ,
+		@AIndex(properties = { "childBirth" }) 
+	}
+)
 public class NewBorn extends BaseEntity{
 
 	/** Пациент */

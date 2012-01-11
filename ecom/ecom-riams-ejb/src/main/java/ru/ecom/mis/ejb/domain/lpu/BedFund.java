@@ -30,7 +30,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 //	    @AIndex(unique = true, properties= {"lpu,serviceStream,bedType"})})
 @AIndexes(
 	{
-			@AIndex(unique= false, properties = {"lpu","serviceStream","bedType","bedSubType","reductionType","dateStart"})
+		@AIndex(unique= false, properties = {"lpu","serviceStream","bedType","bedSubType","reductionType","dateStart"})
+			,@AIndex(unique= false, properties = {"lpu"})
 		}
 )
 @Table(schema="SQLUser")

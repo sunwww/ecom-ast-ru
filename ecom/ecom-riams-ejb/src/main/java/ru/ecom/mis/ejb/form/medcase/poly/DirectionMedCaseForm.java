@@ -57,7 +57,7 @@ public class DirectionMedCaseForm extends ShortMedCaseForm {
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
-	@Persist
+	@Persist @Required
 	public Long getWorkPlaceType() {return theWorkPlaceType;}
 	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
 	
@@ -185,5 +185,11 @@ public class DirectionMedCaseForm extends ShortMedCaseForm {
 	private Long theWorkFunctionPlan;
 	/** Планируемая дата исполнения */
 	private Long theDatePlan;
-	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist @Required
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	/** Поток обслуживания */
+	private Long theServiceStream;	
 }

@@ -103,10 +103,10 @@ public class StatisticStubStac {
             // если плановая и отказ в госпитализации, то можно убрать номер стат карты
             if (StringUtil.isNullOrEmpty(aNewStatCardNumber) && medCase.getStatisticStub()!=null && !medCase.getEmergency() && (medCase.getDeniedHospitalizating())!=null) {
             	StatisticStubRestored restored = new StatisticStubRestored();
-            	aManager.persist(restored);
-            	aManager.refresh(restored);
+            	//aManager.refresh(restored);
             	restored.setCode(medCase.getStatisticStub().getCode());
             	restored.setYear(medCase.getStatisticStub().getYear());
+            	aManager.persist(restored);
                 medCase.getStatisticStub().setCode(medCase.getStatisticStub().getCode() + "/DELETED");
                 return true;
             } else {
@@ -126,10 +126,10 @@ public class StatisticStubStac {
                     		StatisticStubRestored restorednum = isStatCardNumberRestored(medCase.getStatisticStub().getCode(), medCase.getStatisticStub().getYear(), aManager) ; 
                     		if (restorednum==null) {
                             	StatisticStubRestored restored = new StatisticStubRestored();
-                            	aManager.persist(restored);
-                            	aManager.refresh(restored);
+                            	//aManager.refresh(restored);
                             	restored.setCode(medCase.getStatisticStub().getCode());
                             	restored.setYear(medCase.getStatisticStub().getYear());
+                            	aManager.persist(restored);
                     		}
                         } else {
                         	
@@ -138,7 +138,7 @@ public class StatisticStubStac {
                         	exist.setYear(Long.valueOf(cal.get(Calendar.YEAR)));
                         	exist.setCode(aNewStatCardNumber) ;
                         	aManager.persist(exist);
-                        	aManager.refresh(exist);
+                        	//aManager.refresh(exist);
                         	medCase.setStatisticStub(exist) ;
                         }
                     	StatisticStubRestored restorednum = isStatCardNumberRestored(aNewStatCardNumber, Long.valueOf(cal.get(Calendar.YEAR)), aManager);
@@ -256,7 +256,7 @@ public class StatisticStubStac {
         	stubrestored.setYear(stubexist.getYear());
         	theMedCase.setStatisticStub(null);
         	theEntityManager.persist(stubrestored);
-        	theEntityManager.refresh(stubrestored);
+        	//theEntityManager.refresh(stubrestored);
         	theEntityManager.remove(stubexist);
         }
             //LOG.debug(" Удаление номер стат. карты " + getStatCardNumber());
@@ -357,7 +357,7 @@ public class StatisticStubStac {
             	//TODO доделать удаление из восстановленных номеров
                 StatisticStubExist stubexist = new StatisticStubExist();
                 theEntityManager.persist(stubexist);
-                theEntityManager.refresh(stubexist);
+                //theEntityManager.refresh(stubexist);
                 stubexist.setCode(restored.getCode());
                 stubexist.setYear(year);
                 stubexist.setMedCase(theMedCase);

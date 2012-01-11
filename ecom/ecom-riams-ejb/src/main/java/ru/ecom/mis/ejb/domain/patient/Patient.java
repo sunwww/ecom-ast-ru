@@ -39,11 +39,12 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMarriageStatus;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
+import ru.ecom.mis.ejb.domain.patient.voc.VocPassportBirthPlace;
+import ru.ecom.mis.ejb.domain.patient.voc.VocPassportWhomIssue;
 import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
 import ru.ecom.mis.ejb.domain.patient.voc.VocResidenceConditions;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
-import ru.ecom.mis.ejb.domain.usl.MisUsl;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.worker.Award;
 import ru.ecom.mis.ejb.domain.worker.Education;
@@ -66,8 +67,11 @@ import ru.nuzmsh.util.format.DateFormat;
 //@EntityListeners(PatientListener.class) // теперь вызывается при сохранении формы
 @AIndexes({
    	    @AIndex(unique = false, properties= {"dtype"})
-   	 ,  @AIndex(unique = false, properties= {"patientSync"})
-      , @AIndex(unique = false, properties= {"snils"})
+   	  , @AIndex(unique = false, properties= {"patientSync"})
+   	    , @AIndex(unique = false, properties= {"snils"})
+   	    , @AIndex(unique = false, properties= {"editDate"})
+   	  , @AIndex(unique = false, properties= {"createDate"})
+      //, @AIndex(unique = false, properties= {"sex"})
       , @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthday"})
       , @AIndex(unique = false, properties= {"lastname"})
       , @AIndex(unique = false, properties= {"lastname","firstname"})
@@ -144,19 +148,6 @@ public class Patient extends BaseEntity{
 	public MedPolicyOmc getAttachedOmcPolicy() {return theAttachedOmcPolicy;}
 	public void setAttachedOmcPolicy(MedPolicyOmc aAttachedOmcPolicy) {theAttachedOmcPolicy = aAttachedOmcPolicy;}
 
-    /** Оказанные услуги по ОМС */
-    @Comment("Оказанные услуги по ОМС")
-    @OneToMany(mappedBy = "patient", cascade = ALL, fetch=FetchType.LAZY)
-    public List<MisUsl> getRender() { 
-//        try {
-//            if(true) throw new RuntimeException("RENDER !!!") ;
-//        } catch (Exception e) {
-//            e.printStackTrace() ;
-//        }
-    	return theRender ; 
-    }
-    public void setRender(List<MisUsl> aRender) { theRender = aRender ; }
-
     /** Ведомственное прикрепление */
 	@Comment("Ведомственное прикрепление")
 	@OneToMany(cascade=ALL, mappedBy="patient")
@@ -203,10 +194,10 @@ public class Patient extends BaseEntity{
     public void setQualifications(List<Qualification> aQualifications) { theQualifications = aQualifications ; }
 	
 	/** Награды */
-	@Comment("Награды")
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	public List<Award> getAwards() {return theAwards;}
-	public void setAwards(List<Award> aAwards) {theAwards = aAwards;}
+	//@Comment("Награды")
+	//@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
+	//public List<Award> getAwards() {return theAwards;}
+	//public void setAwards(List<Award> aAwards) {theAwards = aAwards;}
 	
 	/** Медицинские карты */
 	@Comment("Медицинские карты")
@@ -332,12 +323,6 @@ public class Patient extends BaseEntity{
     @Comment("СНИЛС")
     public String getSnils() { return theSnils ; }
     public void setSnils(String aSnils) { theSnils = aSnils ; }
-    
-    /** Телефоны персон */
-	@Comment("Телефоны персон")
-	@ManyToMany(cascade=CascadeType.ALL)
-	public List<PatientPhone> getPatentPhones() {return thePatentPhones;}
-	public void setPatentPhones(List<PatientPhone> aPatientPhones) {thePatentPhones = aPatientPhones;}
 	
     /** Адрес */
     @Comment("Адрес")
@@ -438,11 +423,11 @@ public class Patient extends BaseEntity{
 	public List<Kinsman> getKinsmen() {return theKinsmen;}
 	public void setKinsmen(List<Kinsman> aKinsmen) {theKinsmen = aKinsmen;}
 	
-	/** Чей родственник */
-	@Comment("Чей родственник")
-	@OneToMany(mappedBy="kinsman", cascade=CascadeType.ALL)
-	public List<Kinsman> getKinsmanOf() {return theKinsmanOf;}
-	public void setKinsmanOf(List<Kinsman> aKinsmanOf) {theKinsmanOf = aKinsmanOf;}
+	///** Чей родственник */
+	//@Comment("Чей родственник")
+	//@OneToMany(mappedBy="kinsman", cascade=CascadeType.ALL)
+	//public List<Kinsman> getKinsmanOf() {return theKinsmanOf;}
+	//public void setKinsmanOf(List<Kinsman> aKinsmanOf) {theKinsmanOf = aKinsmanOf;}
 	
 	@Transient
 	public String getAddressRegistration() {
@@ -475,18 +460,6 @@ public class Patient extends BaseEntity{
 		if (theRealAddress!=null ) return theRealAddress.getAddressInfo(theRealHouseNumber, theRealHouseBuilding, theRealFlatNumber)  ;
 		
 		return theForeignRealAddress ;
-	}
-	// [start] Вычисляемые
-	/** Номер стат. карты (текст) */
-	@Comment("Номер стат. карты (текст)")
-	@Transient
-	public String getMedcardNumberText() {
-		StringBuilder sb = new StringBuilder() ;
-		for(Medcard md : theMedcard) {
-			sb.append(md.getNumber());
-			sb.append(" ");
-		}
-		return sb.toString();
 	}
 	
 
@@ -522,19 +495,10 @@ public class Patient extends BaseEntity{
     @Comment("Синхронизация пациента")
     public String getPatientSync() {
         return thePatientSync;
-//        StringBuilder sb = new StringBuilder();
-//        add(sb, theLastname,"");
-//        add(sb, theFirstname," ");
-//        add(sb, theMiddlename," ");
-//        return sb.toString().toUpperCase();
     }
     
     public void setPatientSync(String aPatientSync) {
         thePatientSync = aPatientSync;
-//        String[] fio  = ("~ "+aFio+" ~").split("\\s+");
-//        theLastname   = fio.length>2 ? fio[1] : "";
-//        theFirstname  = fio.length>3 ? fio[2] : "";
-//        theMiddlename = fio.length>4 ? fio[3] : "";
     }
 
     // IKO 070430 ===
@@ -758,8 +722,6 @@ public class Patient extends BaseEntity{
     private LpuAreaAddressText theLpuAreaAddressText ;
     /** ЛПУ основного прикрепления */
     private MisLpu theLpu ;
-    /** Оказанные услуги по ОМС */
-    private List<MisUsl> theRender ;
     /** Ведомственное прикрепление */
 	private List<LpuAttachedByDepartment> theAttachedByDepartments;
 	/** СМО */
@@ -777,7 +739,7 @@ public class Patient extends BaseEntity{
     /** Квалификации */
     private List<Qualification> theQualifications ;
     /** Награды */
-	private List<Award> theAwards;
+	//private List<Award> theAwards;
 	/** Медицинские карты */
 	private List<Medcard> theMedcard;
 	/** Район города и области для фонда */
@@ -814,8 +776,6 @@ public class Patient extends BaseEntity{
     private String thePassportWhomIssued ;
     /** СНИЛС */
     private String theSnils ;
-    /** Телефоны персон*/
-	private List<PatientPhone> thePatentPhones;
 	 /** Адрес */
     private Address theAddress ;
     /** Адрес проживания */
@@ -851,7 +811,7 @@ public class Patient extends BaseEntity{
 	/** Родственники */
 	private List<Kinsman> theKinsmen;
 	/** Чей родственник */
-	private List<Kinsman> theKinsmanOf;
+	//private List<Kinsman> theKinsmanOf;
 	
 	
 	
@@ -1021,4 +981,30 @@ public class Patient extends BaseEntity{
 
 	/** Код подразделения, выдавшего паспорт */
 	private String thePassportCodeDivision;
+	/** Кем выдан паспорт */
+	@Comment("Кем выдан паспорт")
+	@OneToOne
+	public VocPassportWhomIssue getPassportDivision() {
+		return thePassportDivision;
+	}
+
+	public void setPassportDivision(VocPassportWhomIssue aPassportDivision) {
+		thePassportDivision = aPassportDivision;
+	}
+
+	/** Кем выдан паспорт */
+	private VocPassportWhomIssue thePassportDivision;
+	/** Справочник по месту рождения */
+	@Comment("Справочник по месту рождения")
+	@OneToOne
+	public VocPassportBirthPlace getPassportBirthPlace() {
+		return thePassportBirthPlace;
+	}
+
+	public void setPassportBirthPlace(VocPassportBirthPlace aPassportBirthPlace) {
+		thePassportBirthPlace = aPassportBirthPlace;
+	}
+
+	/** Справочник по месту рождения */
+	private VocPassportBirthPlace thePassportBirthPlace;
 }

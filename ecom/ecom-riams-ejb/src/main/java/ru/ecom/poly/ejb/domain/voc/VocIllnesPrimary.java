@@ -14,24 +14,24 @@ public class VocIllnesPrimary extends VocBaseEntity {
 	/** Первичность */
 	@Comment("Первичность")
 	@OneToOne
-	public VocPrimaryDiagnosis getPrimary() {
-		return thePrimary;
-	}
+	public VocPrimaryDiagnosis getPrimary() {return thePrimary;}
 
-	public void setPrimary(VocPrimaryDiagnosis aPrimary) {
-		thePrimary = aPrimary;
-	}
+	public void setPrimary(VocPrimaryDiagnosis aPrimary){thePrimary = aPrimary;}
 	
 	/** Острота */
 	@Comment("Острота")
 	@OneToOne
-	public VocAcuityDiagnosis getIllnesType() {
-		return theIllnesType;
-	}
+	public VocAcuityDiagnosis getIllnesType() {return theIllnesType;}
 
-	public void setIllnesType(VocAcuityDiagnosis aIllnesType) {
-		theIllnesType = aIllnesType;
-	}
+	public void setIllnesType(VocAcuityDiagnosis aIllnesType) {theIllnesType = aIllnesType;}
+	
+	/** Устарел */
+	@Comment("Устарел")
+	public Boolean getDeprecated() {return theDeprecated;}
+	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
+
+	/** Устарел */
+	private Boolean theDeprecated;
 
 	/** Острота */
 	private VocAcuityDiagnosis theIllnesType;

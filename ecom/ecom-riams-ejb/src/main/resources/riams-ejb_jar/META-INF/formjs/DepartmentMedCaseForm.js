@@ -4,12 +4,12 @@
 function onPreCreate(aForm, aContext) {
 	var listDep ;
 	if (aForm.prevMedCase >0) {
-		listDep=aContext.manager.createQuery("from MedCase where parent_id=:parent and prevMedCase_id=:prev")
+		listDep=aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id=:prev")
 			.setParameter("parent",aForm.parent)
 			.setParameter("prev",aForm.prevMedCase)
 			.getResultList() ;
 	} else {
-		listDep=aContext.manager.createQuery("from MedCase where parent_id=:parent and prevMedCase_id=null")
+		listDep=aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id=null")
 		.setParameter("parent",aForm.parent)
 		.getResultList();
 	}

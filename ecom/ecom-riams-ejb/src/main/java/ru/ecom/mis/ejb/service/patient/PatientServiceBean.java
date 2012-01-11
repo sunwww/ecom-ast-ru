@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Date;
 import java.text.ParseException;
@@ -28,19 +27,22 @@ import ru.ecom.alg.common.IsChild;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
 import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
+import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
-import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -52,12 +54,272 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
+	
+	
+	public boolean isNaturalPerson(Long aPatient) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='")
+			.append(aPatient).append("'") ;
+		Object ret = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		Long cnt = ConvertSql.parseLong(ret) ;
+		
+		return cnt>Long.valueOf(0)?true:false ; 
+		
+		
+	}
+	public void createNaturalPerson(Long aPatient) {
+		 Patient pat = theManager.find(Patient.class, aPatient) ;
+		 NaturalPerson np = new NaturalPerson();
+		 np.setPatient(pat) ;
+		 theManager.persist(np);
+		 //return np.getId();
+	}
+	
+	private String getAddressByKladr(String aKladr,String aRayon, String aSity, String aStreet) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
+		StringBuilder res = new StringBuilder() ;
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			res.append(list.get(0)[0]) ;
+		} else {
+			String lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+			while (lastKl!=null&&lastKl.equals("0")) {
+				aKladr = aKladr.substring(0,aKladr.length()-1) ;
+				lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+			}
+			
+			sql = new StringBuilder() ;
+			sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
+			list.clear() ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (list.size()>0) {
+				aKladr = ""+list.get(0)[1] ;
+				lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+				while (lastKl!=null&&lastKl.equals("0")) {
+					aKladr = aKladr.substring(0,aKladr.length()-1) ;
+					lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+				}
+				sql = new StringBuilder() ;
+				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
+				list.clear() ;
+				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+				res.append(list.get(0)[0]) ;
+			} else {
+				sql = new StringBuilder() ;
+				sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
+				list.clear() ;
+				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+				if (list.size()>0) {
+					aKladr = ""+list.get(0)[1] ;
+				}
+				sql = new StringBuilder() ;
+				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
+				list.clear() ;
+				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+				if (list.size()>0) {
+					aKladr = ""+list.get(0)[1] ;
+					lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+					while (lastKl!=null&&lastKl.equals("0")) {
+						aKladr = aKladr.substring(0,aKladr.length()-1) ;
+						lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+					}
+					sql = new StringBuilder() ;
+					sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
+					list.clear() ;
+					list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+					res.append(list.get(0)[0]) ;
+				}
+				
 
+			}
+			
+		}
+
+		return res.toString() ;
+	}
+	public String getInfoVocForFond(String aPassportType,String aAddress) {
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql.append("select id,name from VocIdentityCard where omcCode='").append(aPassportType).append("'" ) ;
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+		} else {
+			res.append("##");
+		}
+		sql = new StringBuilder() ;
+		//res = new StringBuilder() ;
+		String[] adr = aAddress.split("#") ;
+		String kladr = adr[0] ;
+		String rayon = adr[1].toUpperCase() ;
+		String sity = adr[2].toUpperCase() ;
+		String street = adr[3].toUpperCase() ;
+		res.append(getAddressByKladr(kladr,rayon, sity, street)) ;
+		res.append("#");
+		sql = new StringBuilder() ;
+		//res = new StringBuilder() ;
+		
+		sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("'" ) ;
+		list.clear() ;
+		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+		} else {
+			res.append("##");
+		}
+		return res.toString() ;
+	}
+	public boolean updateDataByFond(Long aPatientId, String aFiodr
+			,String aDocument,String aPolicy,String aAddress) {
+		if (aFiodr!=null && !aFiodr.equals("")) {
+			String[] fiodr = aFiodr.split("#") ;
+			if (aPatientId!=null &&aPatientId>Long.valueOf(0)) {
+				StringBuilder sql = new StringBuilder() ;
+				sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
+				sql.append(", firstname='").append(fiodr[1]).append("'") ;
+				sql.append(", middlename='").append(fiodr[2]).append("'") ;
+				sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+				sql.append(", snils='").append(fiodr[4]).append("'") ;
+				sql.append(" where id='").append(aPatientId).append("'") ;
+				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			}
+		}
+		if (aDocument!=null &&!aDocument.equals("")) {
+			String[] doc = aDocument.split("#") ;
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("update Patient set passportSeries='").append(doc[1]).append("'") ;
+			sql.append(", passportNumber='").append(doc[2]).append("'") ;
+			sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
+			sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
+			sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
+			sql.append(" where id='").append(aPatientId).append("'") ;
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+		}
+		if (aAddress!=null &&!aAddress.equals("")) {
+			String[] adr = aAddress.split("#") ;
+			StringBuilder sql = new StringBuilder() ;
+			String kladr = adr[0] ;
+			String sity = adr[5].toUpperCase() ;
+			String street = adr[6].toUpperCase() ;
+			String rayon = adr[4].toUpperCase() ;
+			String addressid=getAddressByKladr(kladr,rayon, sity, street) ;
+			
+			sql = new StringBuilder() ;
+			sql.append("update Patient set ") ;
+			if (addressid!=null&&!addressid.equals("")) sql.append(" address_addressid='").append(addressid).append("' , ") ;
+			sql.append(" houseNumber='").append(adr[1]).append("'") ;
+			sql.append(", houseBuilding='").append(adr[2]).append("'") ;
+			sql.append(", flatNumber='").append(adr[3]).append("'") ;
+			sql.append(", rayon_id=(select id from VocRayon where code='").append(rayon).append("')") ;
+			sql.append(" where id='").append(aPatientId).append("'") ;
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+		}
+		if (aPolicy!=null && !aPolicy.equals("")) {
+			String[] pols = aPolicy.split("&") ;
+			for (String p:pols) {
+				String[] pol = p.split("#") ;
+				StringBuilder sql = new StringBuilder() ;
+				sql.append("select count(*) from medpolicy ") ;
+				sql.append(" where patient_id='").append(aPatientId).append("'");
+				sql.append(" and series='").append(pol[1]).append("'") ;
+				sql.append(" and polNumber='").append(pol[2]).append("'") ;
+				Object cnt =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+				Long cntL = ConvertSql.parseLong(cnt) ;
+				String type = "" ;
+				if (pol[1]!=null) {
+					if (pol[1].startsWith("0") && pol[1].length()<4) {
+						type = "2" ;
+					} else if (pol[1].startsWith("0") && pol[1].length()>3) {
+						type = "3" ;
+					} else {
+						type ="1" ;
+					}
+				}
+				if (cntL!=null &&cntL>Long.valueOf(0)) {
+					sql = new StringBuilder() ;
+					sql.append("update MedPolicy set ") ;
+					sql.append(" company_id=(select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
+					sql.append(", actualDateFrom=to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
+					sql.append(", actualDateTo=to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					sql.append(", commonNumber='").append(pol[5]).append("'") ;
+					sql.append(", type_id=(select id from VocMedPolicyOmc where code='").append(type).append("')") ;
+					sql.append(" where patient_id='").append(aPatientId).append("'");
+					sql.append(" and series='").append(pol[1]).append("'") ;
+					sql.append(" and polNumber='").append(pol[2]).append("'") ;
+					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				} else {
+					
+					sql = new StringBuilder() ;
+					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id) values ('MedPolicyOmc'") ;
+					sql.append(", (select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
+					sql.append(", to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
+					sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					sql.append(", '").append(pol[5]).append("'") ;
+					sql.append(", '").append(aPatientId).append("'");
+					sql.append(", '").append(pol[1]).append("'") ;
+					sql.append(", '").append(pol[2]).append("',(select id from VocMedPolicyOmc where code='").append(type).append("'))") ;
+					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				}
+				
+			}
+		}
+		return true ;
+	}
+	public PatientForm getPatientById(Long aId) {
+		//Patient p = theManager.find(Patient.class, aId) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') as birthday,p.snils ")
+			.append(" ,p.passportNumber,p.passportSeries,p.passportType_id,vic.omcCode as vicomccode")
+			.append(" ,mp.series,mp.polNumber, ri.omcCode as riomccode,mp.commonNumber,a.kladr")
+			.append(" ,p.houseNumber,p.houseBuilding,flatNumber")
+			.append(" from patient p ")
+			.append(" left join Address2 a on a.addressid=p.address_addressid")
+			.append(" left join VocIdentityCard vic on vic.id=p.passportType_id")
+			.append(" left join MedPolicy mp on mp.patient_id=p.id")
+			.append(" left join REG_IC ri on ri.id=mp.company_id")
+			.append(" where p.id='").append(aId).append("' order by mp.actualDateFrom desc");
+		PatientForm frm = new PatientForm() ;
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			Object[] objs = list.get(0) ;
+			frm.setLastname((String)objs[0]) ;
+			frm.setFirstname((String)objs[1]) ;
+			frm.setMiddlename((String)objs[2]) ;
+			frm.setBirthday((String)objs[3]) ;
+			frm.setSnils((String)objs[4]) ;
+			
+			frm.setPassportNumber(""+objs[5]) ;
+			frm.setPassportSeries(""+objs[6]) ;
+			
+			frm.setPassportType(ConvertSql.parseLong(objs[7])) ;
+			
+			frm.setPassportWhomIssued(""+objs[8]) ;
+			frm.setAddressInfo(""+(objs[13]!=null?objs[13]:"")) ;
+			frm.setHouseNumber(""+(objs[14]!=null?objs[14]:"")) ;
+			frm.setHouseBuilding(""+(objs[15]!=null?objs[15]:"")) ;
+			frm.setFlatNumber(""+(objs[16]!=null?objs[16]:"")) ;
+			
+			MedPolicyOmcForm policy = new MedPolicyOmcForm() ;
+			
+			policy.setSeries(""+objs[9]);
+			policy.setPolNumber(""+objs[10]);
+			policy.setText(""+objs[11]);
+			policy.setCommonNumber(""+(objs[12]!=null?objs[12]:""));
+			
+			frm.setPolicyOmcForm(policy) ;
+			
+		}
+		return frm ;
+	}
 	private final static Logger LOG = Logger
 			.getLogger(PatientServiceBean.class);
 
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	public String getOmcCodeByPassportType(Long aPassportType) {
+		VocIdentityCard vic = theManager.find(VocIdentityCard.class, aPassportType) ;
+		return vic!=null?vic.getOmcCode():"" ;
+	}
 	public void setAddParamByMedCase(String aParam,Long aMedCase,Long aStatus)  {
 		MedCase mc = theManager.find(MedCase.class, aMedCase) ;
 		String method = new StringBuilder().append("set").append(Character.toUpperCase(aParam.charAt(0))).append(aParam.substring(1)).toString() ;
@@ -111,9 +373,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("	update Medcard set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update MedCase set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update MedPolicy set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("	update MIS_USL set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update NewBorn set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("	update Patient_PatientPhone set Patient_id =:idnew where Patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Pregnancy set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Privilege set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Qualification set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
@@ -249,6 +509,10 @@ public class PatientServiceBean implements IPatientService {
 		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
 			appendNativeToList(findByMedCardNumber(aLastname), ret);
 		}
+		// Поиск по коду синхронизации
+		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
+			appendNativeToList(findByPatientSync(aLastname), ret);
+		}
 		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
 			appendNativeToList(findByPolicy(aLpuId, aLpuAreaId, aLastname), ret);
 		}
@@ -288,15 +552,29 @@ public class PatientServiceBean implements IPatientService {
 	private Query findByMedCardNumber(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		String query = 
-			  "select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday from Medcard " 
-			+ " inner join Patient on Medcard.person_id = Patient.id"
+				"select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday from Medcard " 
+						+ " inner join Patient on Medcard.person_id = Patient.id"
+						+ " where"
+						;
+		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
+		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
+		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
+		String number = st.hasMoreTokens() ? st.nextToken() : null ;
+		b.add("\"number\"", number);
+		return b.buildNative(theManager, query, "") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		// from MedPolicy where series = :series and 
+	}
+	private Query findByPatientSync(String aPolicyQuery) {
+		QueryClauseBuilder b = new QueryClauseBuilder() ;
+		String query = 
+			  "select id, lastname, firstname, middlename, birthday from Patient "
 			+ " where"
 			;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
-		b.add("\"number\"", number);
+		b.add("patientSync", number);
 		return b.buildNative(theManager, query, "") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
@@ -492,11 +770,11 @@ public class PatientServiceBean implements IPatientService {
 		aLastname = aLastname.toUpperCase().trim() ;
 		String birthyear = aBirthday.substring(6) ;
 		System.out.println("birthyear="+birthyear) ;
-		sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils")
+		sql.append("")
 			.append(" from Patient p")
 			.append(" where (")
 			.append(" (UPPER(p.lastname) =:lastname and UPPER(p.firstname) = :firstname and UPPER(p.middlename)=:middlename and to_char(p.birthday,'yyyy')=:birthyear)") ;
-		if (aSnils!=null && !aSnils.equals("")) {
+		if (aSnils!=null && !aSnils.equals("") && !aSnils.equals("999-999-999 99")) {
 			sql.append(" or (p.snils='").append(aSnils).append("')") ;
 		}
 		if (aPassportNumber!=null && !aPassportNumber.equals("") && aPassportSeries!=null && !aPassportSeries.equals("") ) {
@@ -508,8 +786,18 @@ public class PatientServiceBean implements IPatientService {
 		if (aId!=null && !aId.equals("")) {
 			sql.append(" and p.id!='").append(aId).append("'") ;
 		}
+		Object cntdoubles = theManager.createNativeQuery(
+				"select count(*) "+sql.toString())
+				.setParameter("lastname", aLastname)
+				.setParameter("firstname", aFirstname)
+				.setParameter("middlename", aMiddlename)
+				.setParameter("birthyear", birthyear)
+				//			.setParameter("snils", aSnils)
+				//			.setParameter("pnumber", aPassportNumber)
+				//			.setParameter("pseries", aPassportSeries)
+				.getSingleResult() ;
 		List<Object[]> doubles = theManager.createNativeQuery(
-				sql.toString())
+				"select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils "+sql.toString())
 				.setParameter("lastname", aLastname)
 				.setParameter("firstname", aFirstname)
 				.setParameter("middlename", aMiddlename)
@@ -517,12 +805,14 @@ public class PatientServiceBean implements IPatientService {
 	//			.setParameter("snils", aSnils)
 	//			.setParameter("pnumber", aPassportNumber)
 	//			.setParameter("pseries", aPassportSeries)
+				.setMaxResults(20)
 				.getResultList() ;
 		
 		if (doubles.size()>0) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			for (Object[] res:doubles) {
+				ret.append("<li>Количество найденных дублей: <b>").append(cntdoubles).append("</b></li>") ;
 				ret.append("<li>")
 				.append("<a href='") ;
 				if (aAction.toLowerCase().indexOf("javascript")!=-1) {

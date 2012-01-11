@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient.interceptors;
 
+import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
@@ -15,8 +16,21 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 		PatientForm form = (PatientForm) aForm ;
 		Patient patient = (Patient) aEntity ;
 		patient.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
-		patient.setCreateDate(new java.sql.Date(new java.util.Date().getTime())) ;
-
+		java.sql.Date cur = new java.sql.Date(new java.util.Date().getTime()) ;
+		patient.setCreateDate(cur) ;
+		patient.setEditDate(cur) ;
+		
+		
+		//form.setNumber(next);
+		
+		if (patient.getPatientSync()==null || patient.getPatientSync().equals("")) {
+			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpuDynamic/1/View")) {
+				String syncCode = EjbInjection.getInstance().getLocalService(ISequenceService.class).startUseNextValue("Patient","patientSync");
+				patient.setPatientSync(syncCode) ;
+			} else {
+				patient.setPatientSync(new StringBuilder().append("Н").append(patient.getId()).toString()) ;
+			}
+		}
 		if(form.isAttachedByDepartment()) {
 			// убираем прикрепление по полису, потом SaveInterceptor его прикрепит по адресу
 			patient.setAttachedOmcPolicy(null);

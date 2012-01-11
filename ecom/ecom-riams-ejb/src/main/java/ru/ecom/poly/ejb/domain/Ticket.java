@@ -54,6 +54,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
   @AIndex(properties= {"date","workFunction","medcard"})
   ,  @AIndex(properties= {"medcard"})
   ,  @AIndex(properties= {"medcard","status"})
+  ,@AIndex(properties={"date"})
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")

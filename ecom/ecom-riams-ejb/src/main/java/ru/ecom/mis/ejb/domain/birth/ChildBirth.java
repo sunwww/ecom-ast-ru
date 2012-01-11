@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature;
@@ -31,6 +33,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Роды")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "medCase" }) 
+	}
+)
 public class ChildBirth extends BaseEntity{
 	
 	/** Время начала потуг */

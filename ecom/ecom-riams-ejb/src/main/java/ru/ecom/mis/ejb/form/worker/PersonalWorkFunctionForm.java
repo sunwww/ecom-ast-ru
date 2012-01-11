@@ -58,6 +58,7 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	public Boolean getIsCalendarCreate() {return theIsCalendarCreate;}
 	public void setIsCalendarCreate(Boolean aIsCalendarCreate) {theIsCalendarCreate = aIsCalendarCreate;}
 
+
 	/** Создавать календарь */
 	private Boolean theIsCalendarCreate;
 	/** Пользователь */

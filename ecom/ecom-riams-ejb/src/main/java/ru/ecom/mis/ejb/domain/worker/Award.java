@@ -8,6 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAwardGroup;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAwardType;
@@ -21,6 +23,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Награда")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"person"})
+})
 public class Award extends BaseEntity{
 	
 	/** Группа наград */

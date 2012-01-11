@@ -31,7 +31,7 @@
                     entity  = 'ru.ecom.poly.ejb.domain.voc.VocReason'
                     names   = 'name'
                     queried = 'name'
-                queryAppend = 'deprecated = false'
+                queryAppend = '(deprecated is null or deprecated = false)'
                     />
     </voc>
 

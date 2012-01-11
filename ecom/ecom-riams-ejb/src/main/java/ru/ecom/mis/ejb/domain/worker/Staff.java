@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.worker.listener.StateListListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -23,6 +25,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(StateListListener.class)
 @Comment("Штатное расписание")
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"lpu"})
+})
 public class Staff extends BaseEntity {
 	
 	/** Штатные единицы */

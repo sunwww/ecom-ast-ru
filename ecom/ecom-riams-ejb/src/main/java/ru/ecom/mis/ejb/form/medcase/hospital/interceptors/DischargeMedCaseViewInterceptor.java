@@ -7,12 +7,12 @@ import javax.persistence.EntityManager;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.nuzmsh.util.format.DateFormat;
 
 
@@ -30,7 +30,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='"+id+"' and m.dtype='HospitalMedCase') or (m.parent_id='"+id+"' and m.dtype='DepartmentMedCase')) and p.printDate is null") ;
 				Object obj = manager
 					.createNativeQuery(sql.toString()).getSingleResult() ;
-				Long count = WorkerServiceBean.parseLong(obj) ;
+				Long count = ConvertSql.parseLong(obj) ;
 				if (count>0){
 					throw new IllegalArgumentException("Необходимо перед выпиской распечатать все протоколы! <a href='printProtocolsBySLS.do?stNoPrint=selected&id="+id+"'>Есть "+(count.intValue())+" нераспечатанный(х) протокол(ов)</a>");
 				}
@@ -39,6 +39,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				throw new IllegalArgumentException("Необходимо перед выпиской создать случай лечения в отделении");
 			//System.out.println("----------------1") ;
 			
+			@SuppressWarnings("unchecked")
 			List<DepartmentMedCase> list = manager
 				.createQuery("from MedCase where DTYPE='DepartmentMedCase' and parent_id=:hosp and ((dateFinish is not null) or (dateFinish is null and transferDate is null))")
 				.setParameter("hosp",medCase.getId()).getResultList();
@@ -63,7 +64,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 							String regType = diag.getRegistrationType().getCode() ;
 							String prior = diag.getPriority()!=null?diag.getPriority().getCode():"" ;
 							Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-							Long actuity = diag.getAcuity()!=null?diag.getAcuity().getId():null;
+							Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
 
 							// Concluding
 							if (regType.equals("3")&& prior.equals("1")){
@@ -74,7 +75,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 							if ( regType.equals("4") && prior.equals("1")){
 								form.setClinicalDiagnos(diag.getName());
 								if (mkb!=null) form.setClinicalMkb(mkb) ;
-								if(actuity!=null) form.setClinicalActuity(actuity) ;
+								if(illnes!=null) form.setClinicalActuity(illnes) ;
 							}
 						    //Pathanatomical
 							if (regType.equals("5") && prior.equals("1")) {
@@ -101,7 +102,8 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					String regType = diag.getRegistrationType().getCode() ;
 					String prior = diag.getPriority().getCode() ;
 					Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-					Long actuity = diag.getAcuity()!=null?diag.getAcuity().getId():null;
+					//Long actuity = diag.getAcuity()!=null?diag.getAcuity().getId():null;
+					Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
 					
 					// Entrance
 					if (regType.equals("1")&& prior.equals("1")){
@@ -117,7 +119,8 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					if ( regType.equals("4") && prior.equals("1")){
 						form.setClinicalDiagnos(diag.getName());
 						if (mkb!=null) form.setClinicalMkb(mkb) ;
-						if (actuity!=null) form.setClinicalActuity(actuity) ;
+						//if (actuity!=null) form.setClinicalActuity(actuity) ;
+						if (illnes!=null) form.setClinicalActuity(illnes) ;
 					}
 				    //Pathanatomical
 					if (regType.equals("5") && prior.equals("1")) {

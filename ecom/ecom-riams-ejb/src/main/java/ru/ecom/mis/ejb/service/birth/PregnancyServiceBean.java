@@ -8,13 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import ru.ecom.document.ejb.domain.certificate.ConfinementCertificate;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.birth.ConfinedExchangeCard;
 import ru.ecom.mis.ejb.domain.birth.NewBorn;
 import ru.ecom.mis.ejb.domain.birth.PregnanExchangeCard;
 import ru.ecom.mis.ejb.domain.birth.PregnancyHistory;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 
 @Stateless
 @Remote(IPregnancyService.class)
@@ -98,7 +97,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 		if(row.size()>0) {
 			ret = new StringBuilder() ;
 			ret.append(row.get(0)[0]) ;
-			value = WorkerServiceBean.parseLong(row.get(0)[0]) ;
+			value = ConvertSql.parseLong(row.get(0)[0]) ;
 			if (value==null) value=Long.valueOf(0) ; 
 		} 
 		
@@ -128,7 +127,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 		
 		Long value = Long.valueOf(0) ;
 		if(row.size()>0) {
-			value = WorkerServiceBean.parseLong(row.get(0)[0]) ;
+			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;
 		ret.append(value).append("#") ;
@@ -170,7 +169,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 		
 		Long value = Long.valueOf(0) ;
 		if(row.size()>0) {
-			value = WorkerServiceBean.parseLong(row.get(0)[0]) ;
+			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;
 		ret.append(value).append("#") ;

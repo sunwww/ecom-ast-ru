@@ -5,6 +5,7 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.poly.ejb.services.GroupByDate;
 
 public interface IDisabilityService {
+	public void createF16vn(String aDateStart,String aDateEnd) ;
 	public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber) ;
 	public List<DisabilityDocumentForm> findDocumentBySeriesAndNumber(String aFind) ;
 	public List<DisabilityDocumentForm> findOpenTicketByDate(String aDate) ;

@@ -2,8 +2,11 @@ package ru.ecom.mis.ejb.form.psychiatry;
 
 import java.sql.Date;
 
+import javax.persistence.ManyToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.psychiatry.LpuAreaPsychCareCard;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiaticObservation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -19,7 +22,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = PsychiaticObservation.class)
 @Comment("Динамика наблюдений")
 @WebTrail(comment = "Динамика наблюдений", nameProperties= "id",list="entityParentList-psych_observation.do",listComment="список по пациенту", view="entityParentView-psych_observation.do")
-@Parent(property="careCard", parentForm=PsychiatricCareCardForm.class,orderBy="startDate")
+@Parent(property="lpuAreaPsychCareCard", parentForm=LpuAreaPsychCareCardForm.class,orderBy="startDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation")
 public class PsychiaticObservationForm extends IdEntityForm {
 	/**
@@ -122,5 +125,18 @@ public class PsychiaticObservationForm extends IdEntityForm {
 	
 	/** Дата окончания наблюдения */
 	private String theFinishDate;
+	 /** Участок */
+	@Comment("Участок")
+	@Persist
+	public Long getLpuAreaPsychCareCard() {
+		return theLpuAreaPsychCareCard;
+	}
+
+	public void setLpuAreaPsychCareCard(Long aLpuAreaPsychCareCard) {
+		theLpuAreaPsychCareCard = aLpuAreaPsychCareCard;
+	}
+
+	/** Участок */
+	private Long theLpuAreaPsychCareCard;
 
 }

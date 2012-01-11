@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.nuzmsh.util.StringUtil;
 
 public class ListPersist {
@@ -30,7 +30,7 @@ public class ListPersist {
 							.append(aIdEntity).append("' and ").append(aFieldChildren).append("='").append(jsonId).append("'") ;
 					System.out.println(sql) ;
 					Object count = aManager.createNativeQuery(sql.toString()).getSingleResult() ;
-					if (WorkerServiceBean.parseLong(count)<1) {
+					if (ConvertSql.parseLong(count)<1) {
 						sql = new StringBuilder() ;
 						sql.append("insert into ").append(aTableName).append(" ( ")
 							.append(aFieldChildren).append(",").append(aFieldParent)
@@ -69,7 +69,7 @@ public class ListPersist {
 				sql.append("select ").append(aFieldChildren).append(",").append(aFieldParent).append(" from ").append(aTableName).append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
 				List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
 				for (Object child[] : list) {
-					j.object().key("value").value(WorkerServiceBean.parseLong(child[0]));
+					j.object().key("value").value(ConvertSql.parseLong(child[0]));
 					j.endObject();
 				}
 			}

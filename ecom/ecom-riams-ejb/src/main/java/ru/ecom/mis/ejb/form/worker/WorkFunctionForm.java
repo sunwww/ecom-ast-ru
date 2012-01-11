@@ -64,7 +64,14 @@ public class WorkFunctionForm extends IdEntityForm{
 	public void setArchival(Boolean aArchival) {theArchival = aArchival;}
 	
 
+	/** Код специалиста */
+	@Comment("Код специалиста")
+	@Persist
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
 
+	/** Код специалиста */
+	private String theCode;
 	/** Поместить в архив? */
 	private Boolean theArchival;
 	/** Информация */

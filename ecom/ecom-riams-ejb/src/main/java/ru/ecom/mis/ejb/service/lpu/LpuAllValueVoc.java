@@ -42,7 +42,7 @@ public class LpuAllValueVoc implements IAllValue {
 	private static void add(List<VocValue> aValues, MisLpu aLpu, String aAppend
 			, EntityManager aManager) {
 		String name = aAppend + aLpu.getName() ;
-		aManager.refresh(aLpu);
+		//aManager.refresh(aLpu);
 		aValues.add(new VocValue(String.valueOf(aLpu.getId()), name)) ;
 		
 		for(MisLpu lpu : aLpu.getSubdivisions()) {

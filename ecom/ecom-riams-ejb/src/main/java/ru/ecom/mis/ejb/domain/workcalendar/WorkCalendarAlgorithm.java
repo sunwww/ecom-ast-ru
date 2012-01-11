@@ -7,6 +7,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,7 +17,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря")
 @Entity
-@Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(unique = false, properties = {"pattern"})
+})
+@Table(schema="SQLUser")	
 public class WorkCalendarAlgorithm extends BaseEntity{
 	/**
 	 * Шаблон рабочего календаря

@@ -1,8 +1,13 @@
 package ru.ecom.mis.ejb.domain.psychiatry;
 import java.sql.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -137,4 +142,19 @@ public class LpuAreaPsychCareCard extends BaseEntity{
  public String getLpuAreaInfo() {
 	 return theLpuArea!=null? theLpuArea.getName():"" ;
  }
+ /**
+  * Наблюдения
+  */
+ @Comment("Наблюдения")
+ @OneToMany(mappedBy="lpuAreaPsychCareCard", cascade=CascadeType.ALL)
+ public List<PsychiaticObservation> getObservations() {
+  return theObservations;
+ }
+ public void setObservations(List<PsychiaticObservation> aObservations) {
+  theObservations = aObservations;
+ }
+ /**
+  * Наблюдения
+  */
+ private List<PsychiaticObservation> theObservations;
 }

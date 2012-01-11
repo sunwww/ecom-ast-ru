@@ -341,16 +341,16 @@ public class Invalidity extends BaseEntity{
 	
 	/** Первичность */
 	@Comment("Первичность")
-	public Boolean getPrimary() {
-		return thePrimary;
+	public Boolean getInitial() {
+		return theInitial;
 	}
 
-	public void setPrimary(Boolean aPrimary) {
-		thePrimary = aPrimary;
+	public void setInitial(Boolean aPrimary) {
+		theInitial = aPrimary;
 	}
 
 	/** Первичность */
-	private Boolean thePrimary;
+	private Boolean theInitial;
 	
 	/** Без переосвидетельствования */
 	@Comment("Без переосвидетельствования")

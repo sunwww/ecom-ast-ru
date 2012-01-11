@@ -21,6 +21,18 @@ public class VocRayon extends VocBaseEntity {
 	public void setOkato(String aOkato) {
 		theOkato = aOkato;
 	}
+	/** Кладр */
+	@Comment("Кладр")
+	public String getKladr() {
+		return theKladr;
+	}
+
+	public void setKladr(String aKladr) {
+		theKladr = aKladr;
+	}
+
+	/** Кладр */
+	private String theKladr;
 
 	/** ОКАТО */
 	private String theOkato;

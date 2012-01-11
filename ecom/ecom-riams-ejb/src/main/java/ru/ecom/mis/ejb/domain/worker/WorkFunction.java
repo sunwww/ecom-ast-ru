@@ -23,6 +23,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="archival")
 	,@AIndex(properties="workFunction")
 	//,@AIndex(properties={"archival","workFunction"})
+	,@AIndex(properties={"code"})
 })
 @Table(schema="SQLUser")
 abstract public class WorkFunction extends BaseEntity {
@@ -121,5 +122,12 @@ abstract public class WorkFunction extends BaseEntity {
 	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
 	/** ЛПУ */
 	private MisLpu theLpu;
+	/** Код специалиста */
+	@Comment("Код специалиста")
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+
+	/** Код специалиста */
+	private String theCode;
 
 }

@@ -1,4 +1,56 @@
 <vocconfig>
+	<voc id="priceMedServiceByContractAccout" type="NativeVocService">
+		<NativeVocService
+			from="PriceMedService PMS"
+                parent='CA.id = :parent'
+                nameId="pms.id"
+                queryAppend=""
+                join="
+                	left join PricePosition PP ON PP.priceList_id = PMS.pricePosition_id
+					left join MedContract MC ON MC.priceList_id = PP.priceList_id
+					left join ServedPerson SP ON SP.contract_id=MC.id
+					left join ContractAccount CA ON CA.servedPerson_id=sp.id
+					left join MedService MS ON PMS.medService_id = MS.id             
+				"
+                order=""
+                names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
+	    		queried=" (upper(PP.code) like upper(:query) or upper(PP.name) like upper(:query)) "
+			/>
+	</voc>
+		
+	<voc id="contractAccountOperation" type="NativeVocService">
+		<NativeVocService
+			from="ContractAccountOperation CAO"
+                parent='CA.id = :parent'
+                nameId="CAO.id"
+                queryAppend=" "
+                join="
+					left join ContractAccount CA ON CAO.account_id = CA.id
+					left join VocAccountOperation VAO ON  CAO.type_id=VAO.id           
+				"
+                order=""
+                names   = "CAO.id||' '||VAO.name || ' '||to_char(CAO.operationDate,'dd.mm.yyyy')"
+	    		queried=" cast(CAO.id as varchar(20)) like :query"
+			/>
+	</voc>
+	
+	<voc id='vocAccountOperation' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc>
+	<voc id='vocIllnesPrimary' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary'
+                names   = 'name'
+                queried = 'code,name'
+                queryAppend="(deprecated is null or deprecated=false)"
+                />
+    </voc>
+
+
 	<!--
    <voc id='workCalendarPattern' type='EntityVocService'>
         <EntityVocService
@@ -25,11 +77,13 @@
 	<voc id="workCalendarPattern" type="NativeVocService">
 		<NativeVocService
 			from="WorkCalendarPattern wcp"
-                parent='wc.id = :parent'
+                parent='(wc.id = :parent or wc1.id=:parent)'
                 nameId="wcp.id"
-                queryAppend=" (wcp.workFunction_id is null or wcp.workFunction_id = wc.workFunction_id) "
+                queryAppend=" (wcp.workFunction_id is null or wcp.workFunction_id = wc.workFunction_id) and (wf1.DTYPE='GroupWorkFunction' and wf.dtype='PersonalWorkFunction')"
                 join="
                 left join worker w on w.lpu_id=wcp.lpu_id
+                left join workfunction wf1 on wf1.lpu_id=wcp.lpu_id
+                left join workcalendar wc1 on wc1.workfunction_id=wf1.id
                 left join workfunction wf on wf.worker_id=w.id
                 left join workcalendar wc on wc.workfunction_id=wf.id
                 
@@ -122,7 +176,15 @@
     			queryAppend=''
     			join=' left join patient p on p.id=cp.patient_id'
     			order=''
-    			queried = " cp.id like :querId or UPPER(cp.name) like :query or p.lastname like upper(:querId) or (p.lastname like $piece(upper(:querId),' ',1)||'%' and (p.firstname like $piece(upper(:querId),' ',2)||'%' or $piece(upper(:querId),' ',2) is null) and (p.middlename like $piece(upper(:querId),' ',3)||'%' or $piece(:querId,' ',3) is null))"
+    			queried = " cast(cp.id as varchar(10)) like :querId or UPPER(cp.name) like :query 
+    				or 
+    				p.lastname like upper(:querId) 
+    				or 
+    				(p.lastname like upper(:quer1) and (p.firstname like upper(:quer2) 
+    				or 
+    				:quer2='%') and (p.middlename like upper(:quer3)
+    				 or :quer3='%')) "
+    			queriedSplitCount="3"
                 />
     </voc>
     <voc id='contractNosologyGroup' type='EntityVocService'>
@@ -186,13 +248,14 @@
     <voc id='medServiceForCategory' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService'
-    			parent="parent_id=$piece(:parent,'#',1) and (startDate is null or cast(cast($$ini^Zcdat($piece(:parent,'#',2),7) as date) as integer) >=cast(startDate as integer)) and (finishDate is null or cast(finishDate as integer)>=cast(cast($$ini^Zcdat($piece(:parent,'#',2),7) as date) as integer))"
+    			parent="parent_id=:par1 and (startDate is null or to_date(:par2,'dd.mm.yyyy') >=startDate) and (finishDate is null or finishDate>=to_date(:par2,'dd.mm.yyyy'))"
     			names = "name"
     			nameId="id"
     			queryAppend='vocMedService_id is not null'
     			join=''
     			order=''
-    			queried = "(id like :query or name like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :query or name like UPPER(:query))"
+    			parentSplitCount="2"
     			 			
     	/>
     
@@ -422,12 +485,31 @@
                 />
     </voc>
 
-    <voc id='vocPassportWhomIssue' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocPassportWhomIssue'
-                names   = 'name'
-                queried = 'name'
-                />
+    <voc id='vocPassportWhomIssue' type="NativeVocService">
+    	<NativeVocService
+    			from = 'VocPassportWhomIssue vpwi'
+    			names = "vpwi.code||' '||vpwi.name"
+    			nameId="vpwi.id"
+    			queryAppend=''
+    			parent=""
+    			join=''
+    			order=''
+    			queried = " (vpwi.code like :querId or vpwi.name like :query)"
+    	/>
+
+    </voc>
+    <voc id='vocPassportBirthPlace' type="NativeVocService">
+    	<NativeVocService
+    			from = 'VocPassportBirthPlace vpbp'
+    			names = "vpbp.name"
+    			nameId="vpbp.id"
+    			queryAppend=''
+    			parent=""
+    			join=''
+    			order=''
+    			queried = " (vpbp.name like :query)"
+    	/>
+
     </voc>
 
     <voc id='Address-1' type='EntityVocService'>
@@ -509,6 +591,7 @@
                 entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard'
                 names   = 'name'
                 queried = 'name'
+            queryAppend = "(deprecated is null or deprecated=true)"
                 />
     </voc>
 
@@ -851,12 +934,24 @@
     			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
     	/>
     </voc>
+    <voc id='workFunctionByLpu' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'WorkFunction as wf '
+    			parent = "  (w.lpu_id=:parent) "
+    			names  = "case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			queried =" (cast(wf.id as varchar(10)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
+    			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0)"
+    			order =''
+    			nameId='wf.id'
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
+    	/>
+    </voc>
     <voc id="medcardLast" type="NativeVocService">
     	<NativeVocService
     		from="Medcard m"
     		nameId="m.id"
     		queryAppend=""
-    		names="m.number || ' '||ISNULL(vci.name,'')"
+    		names="m.number || ' '||COALESCE(vci.name,'')"
     		queried="m.number like UPPER(:query)"
     		join="left join VocCardIndex vci on vci.id=m.cardIndex_id"
     	/>
@@ -864,7 +959,7 @@
     <voc id="psychiatricCareCard" type="NativeVocService">
     	<NativeVocService
     		from="PsychiatricCareCard pcc"
-    		names="pcc.cardNumber ||' '||  isnull((select vpac.code||' '||to_char(po.startDate,'dd.mm.yyyy') from PsychiaticObservation po left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id where po.carecard_id=pcc.id  having po.startDate=max(po.startDate)),'-')"
+    		names="pcc.cardNumber ||' '||  coalesce((select vpac.code||' '||to_char(po.startDate,'dd.mm.yyyy') from PsychiaticObservation po left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id where po.carecard_id=pcc.id  having po.startDate=max(po.startDate)),'-')"
     		nameId="pcc.id"
     		join=""
     		queried="pcc.cardNumber like UPPER(:query)"
@@ -1023,6 +1118,7 @@ left join medcase smoP on smoP.owner_id=w.id "
                 names   = 'name'
                 queried = 'name'
                 queryConvertType="UPPER_CASE"
+                queryAppend=" (deprecated is null or deprecated=true) "
         />
     </voc> 
 

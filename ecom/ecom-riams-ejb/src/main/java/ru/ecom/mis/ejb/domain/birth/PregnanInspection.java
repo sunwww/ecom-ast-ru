@@ -10,6 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetusPalpitationNature;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetusPalpitationPlace;

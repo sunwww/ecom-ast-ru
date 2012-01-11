@@ -7,6 +7,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractGuaranteeGroup;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServedPersonStatus;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServiceProgram;
@@ -18,6 +20,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Интервал гарантийных документов")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(unique= false, properties = {"name"})
+	})
 public class GuaranteeInterval extends BaseEntity{
 	/**
 	 * Группа гарантийных документов

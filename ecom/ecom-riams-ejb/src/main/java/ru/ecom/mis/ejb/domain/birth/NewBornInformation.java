@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -19,6 +21,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Информация о новорожденном")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "confinedExchangeCard" }) 
+	}
+)
 public class NewBornInformation extends BaseEntity{
 	
 	/** Обменная карта родильницы */

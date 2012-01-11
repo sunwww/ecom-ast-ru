@@ -1,5 +1,5 @@
 function onPreCreate(aForm, aEntity, aContext) {
-	aForm.phoneMessageType = java.lang.Long.valueOf(1) ;
+	//aForm.phoneMessageType = java.lang.Long.valueOf(1) ;
 }
 /**
  * Перед сохранением

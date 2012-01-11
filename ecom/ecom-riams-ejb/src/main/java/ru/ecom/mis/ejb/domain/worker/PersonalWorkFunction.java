@@ -20,6 +20,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties={"secUser"},table="WorkFunction")
 	,@AIndex(properties={"worker"},table="WorkFunction")
+	
 })
 @Table(schema="SQLUser")
 public class PersonalWorkFunction extends WorkFunction {
@@ -35,6 +36,7 @@ public class PersonalWorkFunction extends WorkFunction {
 	public SecUser getSecUser() {return theSecUser;}
 	public void setSecUser(SecUser aSecUser) {theSecUser = aSecUser;
 	}
+
 
 	/** Пользователь системы */
 	private SecUser theSecUser;

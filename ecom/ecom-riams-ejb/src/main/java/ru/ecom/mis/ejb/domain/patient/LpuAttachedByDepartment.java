@@ -7,6 +7,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +18,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"patient"})
+	,@AIndex(properties={"lpu"})
+	,@AIndex(properties={"area"})
+})
 public class LpuAttachedByDepartment extends BaseEntity {
 
 	/** Участок */

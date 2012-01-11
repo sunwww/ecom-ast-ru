@@ -154,7 +154,7 @@ public class SecUserServiceBeanCopy  implements ISecUserService {
 	        	}
 	        }
 	        /*for (Object pol_id : listPolicies) {
-	            	SecPolicy policy = theManager.find(SecPolicy.class, WorkerServiceBean.parseLong(pol_id)) ;
+	            	SecPolicy policy = theManager.find(SecPolicy.class, ConvertSql.parseLong(pol_id)) ;
 	                policies.add(getPolicyFullKey(policy)) ;
 	            }
 	        */

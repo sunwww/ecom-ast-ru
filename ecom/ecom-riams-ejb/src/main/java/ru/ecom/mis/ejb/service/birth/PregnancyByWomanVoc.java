@@ -4,11 +4,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
@@ -30,7 +29,7 @@ public class PregnancyByWomanVoc  implements IAllValue {
 				&&aContext.getVocAdditional().getParentId()!=null
 				&&!aContext.getVocAdditional().getParentId().equals("")) {	
 			System.out.println("Поиск по medCaseId="+ aContext.getVocAdditional().getParentId()) ;
-			Long idPatient =WorkerServiceBean.parseLong(aContext.getEntityManager()
+			Long idPatient =ConvertSql.parseLong(aContext.getEntityManager()
 					.createNativeQuery("select patient_id from MedCase where id=:medCase_id")
 					.setParameter("medCase_id", aContext.getVocAdditional().getParentId())
 					.getSingleResult()) ;

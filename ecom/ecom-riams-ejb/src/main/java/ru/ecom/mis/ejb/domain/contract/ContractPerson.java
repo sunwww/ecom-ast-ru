@@ -14,6 +14,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public abstract class ContractPerson extends BaseEntity{
 		@Transient
 		public String getInformation() {
-			return "" ;
+			return "-----" ;
 		}
 }

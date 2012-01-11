@@ -14,14 +14,29 @@ function onPreSave(aForm,aEntity, aCtx) {
 	if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
 	//if ((((dateFsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата выписки - сегодняшняя" ;
 	
-	var row = aCtx.manager.createNativeQuery("select max(transferDate),max(id) from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase'")
-	       	.setParameter("parent",aForm.id)
-			.getSingleResult() ;
+	var ldate = aCtx.manager.createNativeQuery("select transferDate,transferTime from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate is not null order by transferDate desc,transferTime desc")
+		.setParameter("parent",aForm.id)
+		.setMaxResults(1)
+		.getResultList() ;
 	//var stat = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.isDischargeOnlyCurrentDay(context) ;
-	if (row[0]!=null) {
-		var cal = java.util.Calendar.getInstance() ;
-		cal.setTime(row[0]) ;
-		if ((dateFinish.getTime() < row[0].getTime())) throw "Дата выписки должна быть больше, чем дата последнего перевода "+cal.get(java.util.Calendar.DATE)+"."+(cal.get(java.util.Calendar.MONTH)+1)+"."+cal.get(java.util.Calendar.YEAR);
+	//throw "date="+dmax[0] ;
+	if (ldate.size()>0) {
+		var dmax=ldate.get(0) ;
+		//var vmax = aCtx.manager.createNativeQuery("select max() from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate=:dmax")
+	     //  	.setParameter("parent",aForm.id)
+	      // 	.setParameter("dmax",dmax)
+	       	
+		//	.getSingleResult() ;
+		//throw "time="+dmax[0]+" "+dmax[1];
+			var dateMax = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(dmax[0],dmax[1]);
+			if ((dateFinish.getTime() < dateMax.getTime())) {
+				var cal = java.util.Calendar.getInstance() ;
+				cal.setTime(dateMax) ;			
+				throw "Дата выписки должна быть больше, чем дата последнего перевода "+cal.get(java.util.Calendar.DATE)+"."+(cal.get(java.util.Calendar.MONTH)+1)+"."+cal.get(java.util.Calendar.YEAR)
+				+" "+cal.get(java.util.Calendar.HOUR_OF_DAY)
+				+":"+cal.get(java.util.Calendar.MINUTE)
+				;
+		}
 	}
 	if (stat) {
 		

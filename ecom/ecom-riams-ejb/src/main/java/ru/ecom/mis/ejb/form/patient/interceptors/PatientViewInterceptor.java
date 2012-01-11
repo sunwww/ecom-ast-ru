@@ -1,20 +1,16 @@
 package ru.ecom.mis.ejb.form.patient.interceptors;
 
+import java.math.BigInteger;
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-//import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
-import ru.nuzmsh.forms.response.FormMessage;
-import sun.awt.windows.ThemeReader;
+import ru.nuzmsh.util.date.AgeUtil;
 
 public class PatientViewInterceptor implements IFormInterceptor {
 
@@ -24,8 +20,6 @@ public class PatientViewInterceptor implements IFormInterceptor {
 	
 	public void intercept(IEntityForm aForm, Object aEntity,
 			InterceptorContext aContext) {
-		if (CAN_DEBUG)
-			LOG.debug("intercept: aForm = " + aForm); 
 
 		Patient pat = (Patient) aEntity;
 		PatientForm form = (PatientForm) aForm ;
@@ -33,17 +27,24 @@ public class PatientViewInterceptor implements IFormInterceptor {
 			form.setAttachedByPolicy(true);
 		}
 		if(aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")){
-			String sql = "select id,patient_id from PsychiatricCareCard where patient_id="+form.getId()+" order by id desc" ;
-			List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql)
+			String sql = "select id from PsychiatricCareCard where patient_id="+form.getId()+" order by id desc" ;
+			List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
 					.setMaxResults(1).getResultList() ;
-			Long med = list.size()>0?WorkerServiceBean.parseLong(list.get(0)[0]):Long.valueOf(0) ;
+			Long med = list.size()>0?parseLong(list.get(0)):Long.valueOf(0) ;
 			form.setCareCard(med) ;
 		}
-		String sql = "select id,person_id from medcard where person_id="+form.getId()+" order by id desc" ;
-		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql)
+		String sql = "select id from medcard where person_id="+form.getId()+" order by id desc" ;
+		List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
 				.setMaxResults(1).getResultList() ;
-		Long med = list.size()>0?WorkerServiceBean.parseLong(list.get(0)[0]):Long.valueOf(0) ;
+		Long med = list.size()>0?parseLong(list.get(0)):Long.valueOf(0) ;
 		form.setMedcardLast(med) ;
+		//java.util.Date current = new java.util.Date();
+		if (!form.getBirthday().equals("")) {
+			String age = AgeUtil.getAgeCache(new java.util.Date(),pat.getBirthday(), 2) ;
+			form.setAge(age) ;
+		}
+		
+		//
 		/*
 		try {
 			//Date date = new Date() ;
@@ -62,4 +63,25 @@ public class PatientViewInterceptor implements IFormInterceptor {
 		// AND cast("_Date_" as integer) between cast(actualDateFrom as integer) and cast(actualDateTo as integer)
 		
 	}
+	private Long parseLong(Object aValue) {
+		Long ret =null;
+		if (aValue==null) return ret ;
+		if (aValue instanceof Integer) {
+			return Long.valueOf((Integer) aValue) ;
+		}
+		if(aValue instanceof BigInteger) {
+			BigInteger bigint = (BigInteger) aValue ;
+			
+			return bigint!=null?bigint.longValue() : null;
+		} 
+		if (aValue instanceof Number) {
+			Number number = (Number) aValue ;
+			return number!=null?number.longValue() : null ;
+		}
+		if (aValue instanceof String) {
+			return Long.valueOf((String) aValue);
+		}
+		return ret ;
+	}
+
 }
