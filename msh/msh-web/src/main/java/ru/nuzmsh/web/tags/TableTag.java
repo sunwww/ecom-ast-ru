@@ -341,6 +341,9 @@ public class TableTag extends AbstractGuidSupportTag {
     }
     private String getViewFunctionName(String aId) {
     	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
+    	if (theFunctionViewName==null) {
+    		createViewFunctionName(theViewUrl) ;
+    	}
     	return new StringBuilder().append(theFunctionViewName).append(aId).append("',event); ").toString();
     }
     private String getEditFunctionName(String aId) {
