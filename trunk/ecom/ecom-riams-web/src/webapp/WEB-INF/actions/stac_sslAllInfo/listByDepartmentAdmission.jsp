@@ -58,7 +58,7 @@
     <%-- 
     <%-- --%>
     <ecom:webQuery name="journal_admission1" nativeSql="
-select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,vas.name as vasname  ,diag.name as diagname
+select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,vas.name as vasname  ,list(diag.name) as diagname
     from MedCase  m 
     left outer join Patient pat on m.patient_id = pat.id  
     left outer join StatisticStub stat on m.statisticstub_id=stat.id 
@@ -66,11 +66,16 @@ select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|
     left join MedCase d on d.parent_id=m.id and d.dtype='DepartmentMedCase'
     left join Diagnosis diag on diag.medCase_id=m.id
 	where m.DTYPE='HospitalMedCase' and m.department_id='${department}'
-	group by m.id
-	having d.id is null ${onlyMonthH} and (m.noActuality is null or cast(m.noActuality as integer)=0) and (m.ambulanceTreatment=0 or m.ambulanceTreatment is null) and m.dateFinish is null
+	and d.id is null and (m.noActuality is null or cast(m.noActuality as integer)=0) 
+	and (cast(m.ambulanceTreatment as integer)=0 or m.ambulanceTreatment is null) and m.dateFinish is null
+	${onlyMonthH}
+	group by m.id,m.dateStart,m.username,stat.code,pat.lastname,pat.firstname,pat.middlename,pat.birthday
+,vas.name 
+	 
+	order by pat.lastname,pat.firstname,pat.middlename
      "/>
      <%-- --%>
-    <msh:table name="journal_admission1" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_admission1" viewUrl="entityShortView-stac_ssl.do" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
     	<msh:tableColumn columnName="#" property="sn"/>
       <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Статус пациента" property="7" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
@@ -108,7 +113,7 @@ left join mislpu lput on lput.id=d.department_id
 where d.DTYPE='DepartmentMedCase' 
  and d.transferDepartment_id='${department}' and n.dateStart is null  ${onlyMonthD} and sls.dateFinish is null
     "/>
-    <msh:table name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
     	<msh:tableColumn columnName="#" property="sn"/>
       <msh:tableColumn columnName="Перевод из отделения" property="7" guid="fc26523a-eb9c-4ca9ac5b" />
       <msh:tableColumn columnName="Дата перевода" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7" />

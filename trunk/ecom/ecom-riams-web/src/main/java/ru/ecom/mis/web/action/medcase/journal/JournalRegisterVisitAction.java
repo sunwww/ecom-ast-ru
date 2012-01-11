@@ -26,6 +26,7 @@ public class JournalRegisterVisitAction  extends BaseAction {
 		aRequest.setAttribute("rayon", form.getRayon()) ;
 		aRequest.setAttribute("primaryInYear", form.getPrimaryInYear()) ;
 		
+		
 		if (form.getOrderBySpecialist()!=null &&
 				form.getOrderBySpecialist().equals(Boolean.TRUE)) {
 			args=args+"workFunction_id" ;
@@ -34,9 +35,11 @@ public class JournalRegisterVisitAction  extends BaseAction {
 			aRequest.setAttribute("order", "Сортировка по времени приема") ;
 			args=args+"dateStart,timeExecute" ;
 		}
+		args=args+":"+form.getWorkFunction() ;
+		aRequest.setAttribute("func", form.getWorkFunction()) ;
 		if (form!=null) {
 			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 
-			aRequest.setAttribute("listRegisterVisit",script.invoke("SmoVisitService","journalRegisterVisit", 
+			aRequest.setAttribute("listRegisterVisit",script.invoke("SmoVisitService","journalRegisterVisitByMap", 
 				new Object[]{args})) ;
 		} else {
 			aRequest.setAttribute("listRegisterVisit",new java.util.ArrayList()) ;

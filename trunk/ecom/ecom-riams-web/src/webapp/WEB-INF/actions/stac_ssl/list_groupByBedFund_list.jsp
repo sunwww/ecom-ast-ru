@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+лш<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -47,7 +47,11 @@
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
-        </msh:row>
+		<td>
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
+                  </msh:row>
+        <%--
         <msh:row>
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
         
@@ -60,11 +64,10 @@
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
         </td>
-           <td>
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
+           
 
       </msh:row>
+       --%>
     </msh:panel>
     </msh:form>
     
@@ -77,12 +80,29 @@
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select  
-    	bf.id||':${param.dateBegin}:${param.dateEnd}:${dateT}:${param.typePatient }:'||isnull(p.additionStatus_id,'')
-    	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*)
+    	m.bedfund_id||':${param.dateBegin}:${param.dateEnd}:${dateT}:${param.typePatient }:'||
+    	case when p.additionStatus_id is null then '' else cast(p.additionStatus_id as varchar(10)) end 
+    	as idparam
+    	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*) as cnt
     	,vss.name as vssname
-    	,sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',m.dateStart,ifnull(m.dateFinish,m.transferDate,m.DateFinish)))
-    	,sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',hmc.dateStart,hmc.DateFinish)) 
-    	,vas.name
+    	,sum(
+    	  case 
+			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
+			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+		  end
+    	
+    	
+    	) as sum1
+    	,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    	,vas.name as vasname
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
@@ -91,8 +111,11 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient p on p.id=hmc.patient_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-    where m.DTYPE='DepartmentMedCase' and ${dateT} between cast('${param.dateBegin}' as date)  and cast('${param.dateEnd}' as date) ${add} group by m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') ${add} 
+    group by m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
    		<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -131,7 +154,7 @@
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
      var typeDate = document.forms[0].typeDate ;
-     var period = document.forms[0].period ;
+     /* var period = document.forms[0].period ;
     
     
     if ((+'${period}')==1) {
@@ -140,7 +163,7 @@
     	period[0].checked='checked' ;
     }else {
     	period[2].checked='checked' ;
-    }   
+    } */  
     if ((+'${typeDate}')==1) {
     	typeDate[0].checked='checked' ;
     } else  if ((+'${typeDate}')==3) {
@@ -164,7 +187,7 @@
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	frm.action='stac_groupByBedFundList.do' ;
-    }
+    }/*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -235,7 +258,7 @@
 				 timeFormat : "24",
 				 eventName: "focus",
 				 onUpdate : catcalc
- 			});
+ 			});*/
     </script>
   </tiles:put>
 </tiles:insert>

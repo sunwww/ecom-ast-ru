@@ -6,11 +6,11 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Lpu" beginForm="contract_contractAccountRuleForm" title="Список Правило договорного счета"/>
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountRuleForm" title="Список Правило договорного счета"/>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/ContractAccountRule/Create" params="" action="/entityPrepareCreate-contract_contractAccountRule" title="Правило договорного счета" name="Правило договорного счета" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/ContractAccountRule/Create" params="id" action="/entityParentPrepareCreate-contract_contractAccountRule" title="Правило договорного счета" name="Правило договорного счета" />
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="medContract"/>
 	</tiles:put>

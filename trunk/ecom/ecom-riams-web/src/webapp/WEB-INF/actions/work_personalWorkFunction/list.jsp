@@ -16,6 +16,7 @@
   <tiles:put name="body" type="string">
     <msh:table name="list" action="entityView-work_personalWorkFunction.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="ИД" property="id" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
+      <msh:tableColumn columnName="Код" property="code" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
       <msh:tableColumn columnName="Функция" property="name" guid="6682eeef-105f-43a0-be61-30a865f27972" />
       <msh:tableColumn columnName="Сотрудник" property="workerInfo" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
       <msh:tableColumn columnName="Рабочая группа" identificator="false" property="groupInfo" guid="771b8c68-2368-4dea-9ca1-244204677cb2" />

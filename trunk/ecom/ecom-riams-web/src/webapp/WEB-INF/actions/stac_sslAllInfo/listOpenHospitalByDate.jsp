@@ -24,10 +24,14 @@
     </msh:table>--%>
             	<ecom:webQuery name="list" 
             		nativeSql="select m.id as mid,ss.year as ssyear, ss.code as sscode
-            			, $$GetBedDays^ZExpCheck('000'|| (case when vht.code='DAYTIMEHOSP' then 'J' else 'A' end) || '00',m.dateStart,isnull(m.dateFinish,CURRENT_DATE))
-            			, case when (select count(id) from medcase d where d.parent_id=m.id)>0 then 'Да' else 'Нет' end
-            			, p.lastname||' '||p.firstname ||' '|| p.middlename ||' гр.'||to_char(p.birthday,'DD.MM.YYYY')
-            			, md.name as mdname,case when m.emergency=1 then 'Да' else 'Нет' end  as memergency
+            			, case 
+            				when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
+            				when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
+            				else (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)
+            				end as cntDays
+            			, case when (select count(id) from medcase d where d.parent_id=m.id)>0 then 'Да' else 'Нет' end as sloIs
+            			, p.lastname||' '||p.firstname ||' '|| p.middlename ||' гр.'||to_char(p.birthday,'DD.MM.YYYY') as patInfo
+            			, md.name as mdname,case when cast(m.emergency as integer)=1 then 'Да' else 'Нет' end  as memergency
             			, m.dateStart as mdateStart
             			 from medcase m 
             			left join statisticstub ss on m.statisticstub_id=ss.id
@@ -35,9 +39,13 @@
             			left join Patient p on p.id=m.patient_id
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
-            			where m.DTYPE='HospitalMedCase' and m.dateStart=to_date('${param.id}','DD.MM.YYYY') and (m.noActuality =0 or m.noActuality is null) and m.dateFinish is null and m.deniedHospitalizating_id is null and (m.ambulanceTreatment is null or m.ambulanceTreatment=0)"
+            			where m.DTYPE='HospitalMedCase' and m.dateStart=to_date('${param.id}','DD.MM.YYYY') 
+            			and (cast(m.noActuality as integer) =0 or m.noActuality is null) 
+            			and m.dateFinish is null 
+            			and m.deniedHospitalizating_id is null 
+            			and (m.ambulanceTreatment is null or cast(m.ambulanceTreatment as integer)=0)"
             	/>
-                <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
+                <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
 				      <msh:tableColumn columnName="Год" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				      <msh:tableColumn columnName="Стат.карта" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				      <msh:tableColumn columnName="К/дни" property="4" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />

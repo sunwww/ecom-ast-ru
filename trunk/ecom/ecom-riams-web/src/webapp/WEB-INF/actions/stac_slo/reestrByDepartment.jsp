@@ -27,7 +27,14 @@
         <msh:checkBox property="dischargeIs" label="Искать по дате выписки" guid="f5458f6-b5b8-4d48-a045-ba7b9f875245" />
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
-        </msh:row>
+           <td>
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
+           <td>
+            <input type="submit" onclick="print()" value="Печать" />
+          </td>
+                  </msh:row>
+                  <%-- 
         <msh:row>
         <td class="label" title="Период (period)" colspan="1"><label for="periodName" id="periodLabel">Период:</label></td>
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
@@ -36,13 +43,9 @@
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
         </td>
-           <td>
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
-           <td>
-            <input type="submit" onclick="print()" value="Печать" />
-          </td>
+
       </msh:row>
+      --%>
     </msh:panel>
     </msh:form>
     
@@ -68,7 +71,7 @@
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left outer join Patient pat on m.patient_id = pat.id 
     left join VocAdditionStatus vas on pat.additionStatus_id=vas.id
-    where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'  and m.${dateSearch}  between '${param.dateBegin}'  and '${param.dateEnd}'
+    where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'  and m.${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')
     order by vbst.name, m.${dateSearch}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -92,18 +95,20 @@
     <% } else {%>
     	<i>Нет данных </i>
     	<% }   %>
-    
+    <%-- 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+    --%>
     <script type='text/javascript'>
+    /*
     var period = document.forms[0].period ;
     if ((+'${param.period}')==2) {
     	period[1].checked='checked' ;
     } else {
     	period[0].checked='checked' ;
-    }
+    }*/
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
@@ -114,6 +119,7 @@
     	frm.target='_blank' ;
     	frm.action='stac_print_reestrByDepartment.do' ;
     }
+    /*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -177,7 +183,7 @@
 				 timeFormat : "24",
 				 eventName: "focus",
 				 onUpdate : catcalc
- 			});
+ 			});*/
     </script>
   </tiles:put>
 </tiles:insert>

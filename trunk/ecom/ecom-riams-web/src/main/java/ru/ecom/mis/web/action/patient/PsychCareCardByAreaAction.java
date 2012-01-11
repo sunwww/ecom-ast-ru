@@ -95,9 +95,9 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				str1 = new StringBuilder().append(" группа " ).append(form.getGroupInv()).toString() ;
 			}
 			if (typeInv.equals("4")) {				
-				str.append(" and inv.primary=1") ;
+				str.append(" and inv.initial=1") ;
 			} else if (typeInv.equals("5")) {
-				str.append(" and (inv.primary is null or inv.primary=0)") ;
+				str.append(" and (inv.initial is null or inv.initial=0)") ;
 			}
 			aRequest.setAttribute("typeI"," and  (select count(*) from Invalidity inv where inv.patient_id =pcc.patient_id and inv.dateFrom<area.startDate "+str+")>0 ") ;
 			aRequest.setAttribute("typeInvInfo", " Инвалидность: есть "+str1) ;

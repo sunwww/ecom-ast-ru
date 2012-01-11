@@ -10,15 +10,21 @@
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="parent" />
+			<msh:hidden property="createDate" />
+			<msh:hidden property="createTime" />
+			<msh:hidden property="createUsername" />
+			<msh:hidden property="editDate" />
+			<msh:hidden property="editTime" />
+			<msh:hidden property="editUsername" />
 			<msh:panel>
 				<msh:row>
 					<msh:textField property="contractNumber" label="Номер договора"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" size="100" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="customer" label="Заказчик" vocName="contractPerson" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="customer" label="Заказчик" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
@@ -33,6 +39,28 @@
 				<msh:row>
 					<msh:textArea property="comment" label="Описание" fieldColSpan="3"/>
 				</msh:row>
+				<msh:ifFormTypeIsView formName="contract_medContractForm">
+				<msh:row>
+					<msh:separator label="Информация о создании" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="createDate" label="Дата"/>
+					<msh:textField property="createTime" label="Время"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="createUsername" label="Пользователь"/>
+				</msh:row>
+				<msh:row>
+					<msh:separator label="Информация о последней редакции" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="editDate" label="Дата"/>
+					<msh:textField property="editTime" label="Время"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="editUsername" label="Пользователь"/>
+				</msh:row>
+				</msh:ifFormTypeIsView>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
@@ -52,7 +80,7 @@
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
 				</msh:table>
 			</msh:section>
-			<msh:section title="Потомки">
+			<msh:section title="Поддоговор">
 			<ecom:webQuery name="childContract" nativeSql="
 			select mc.id 
 			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
@@ -121,7 +149,7 @@
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Patient" beginForm="contract_medContractForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_medContractForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:sideMenu>
@@ -130,13 +158,14 @@
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
-			<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-contract_medContract" name="Потомки" title="Потомки" roles="/Policy/Mis/Contract/MedContract/Create"/>
+			<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-contract_medContract" name="Поддоговор" title="Поддоговор" roles="/Policy/Mis/Contract/MedContract/Create"/>
 			<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-contract_contractRule" name="Договорные правила" title="Добавить договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/Create"/>
 
 			<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-contract_contractGuaranteeLetter" name="Гарантийное письмо" title="Гарантийное письмо" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create"/>
 			<msh:sideLink key="ALT+7" params="id" action="/entityParentPrepareCreate-contract_contractPaymentOrder" name="Платежное поручение" title="Добавить платежное поручение по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/Create"/>
 			<msh:sideLink key="ALT+8" params="id" action="/entityParentPrepareCreate-contract_contractMedPolicy" name="Медицинский полис" title="Добавить медицинский полис по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/Create"/>
 		</msh:sideMenu>
+		
 		<msh:sideMenu title="Показать по договору">
 			<msh:sideLink params="id" action="/entityParentList-contract_contractGuaranteeLetter" name="Гарантийные письма" title="Просмотреть гарантийные письма по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_contractPaymentOrder" name="Платежные поручения" title="Просмотреть платежные поручения по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/View"/>

@@ -2,7 +2,9 @@ package ru.ecom.mis.web.action.medcase.journal;
 
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 /**
@@ -12,12 +14,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class AdmissionJournalForm extends BaseValidatorForm{
 	/** Дата начала периода */
 	@Comment("Дата начала периода") 
-	@Required
+	@Required @DateString @DoDateString
 	public String getDateBegin() {return theDateBegin;}
 	public void setDateBegin(String aDateBegin) {theDateBegin = aDateBegin;}
 
 	/** Дата окончания периода */
 	@Comment("Дата окончания периода")
+	@DateString @DoDateString
 	public String getDateEnd() {return theDateEnd;}
 	public void setDateEnd(String aDateEnd) {theDateEnd = aDateEnd;}
 
@@ -37,6 +40,19 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	public Boolean getEmergancyIs() {return theEmergancyIs;}
 	public void setEmergancyIs(Boolean aEmergancyIs) {theEmergancyIs = aEmergancyIs;}
 
+	
+	/** 8 часов */
+	@Comment("8 часов")
+	public Boolean getHour8() {
+		return theHour8;
+	}
+
+	public void setHour8(Boolean aHour8Is) {
+		theHour8 = aHour8Is;
+	}
+
+	/** 8 часов */
+	private Boolean theHour8;
 	/** Время */
 	@Comment("Время")
 	@DoTimeString @TimeString

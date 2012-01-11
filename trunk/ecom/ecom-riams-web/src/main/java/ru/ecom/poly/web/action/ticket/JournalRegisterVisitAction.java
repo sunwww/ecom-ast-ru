@@ -36,7 +36,7 @@ public class JournalRegisterVisitAction extends BaseAction {
 		aRequest.setAttribute("func", form.getWorkFunction()) ;
 		if (form!=null) {
 			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 
-			aRequest.setAttribute("listRegisterVisit",script.invoke("TicketService","journalRegisterVisit", 
+			aRequest.setAttribute("listRegisterVisit",script.invoke("TicketService","journalRegisterVisitByMap", 
 				new Object[]{args})) ;
 			aRequest.setAttribute("listCount", script.invoke("TicketService", "journalRegisterGroupByDirectHospital", new Object[]{args})) ;
 		} else {

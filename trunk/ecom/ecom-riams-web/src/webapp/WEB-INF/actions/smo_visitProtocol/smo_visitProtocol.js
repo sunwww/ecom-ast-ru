@@ -3,7 +3,7 @@ function infoByPatient(aForm,aCtx) {
 }
 function viewProtocol(aForm,aCtx) {
 	var id=aCtx.request.getParameter("id") ;
-	var list =id.split(":") ;
+	var list =id.split("!") ;
 	return aCtx.createForwardRedirect(
 		"/entityParentView-smo_visitProtocol.do?id="+list[2]) ;
 	

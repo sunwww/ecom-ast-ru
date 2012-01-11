@@ -38,10 +38,14 @@
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="list" 
             		nativeSql="select m.id as mid,ss.year as ssyear, ss.code as sscode
-            			, $$GetBedDays^ZExpCheck('000'|| (case when vht.code='DAYTIMEHOSP' then 'J' else 'A' end) || '00',m.dateStart,isnull(m.dateFinish,CURRENT_DATE))
-            			, case when (select count(id) from medcase d where d.parent_id=m.id)>0 then 'Да' else 'Нет' end
-            			, p.lastname||' '||p.firstname ||' '|| p.middlename ||' гр.'||to_char(p.birthday,'DD.MM.YYYY')
-            			, md.name as mdname,case when m.emergency=1 then 'Да' else 'Нет' end  as memergency
+            			, case 
+            				when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
+            				when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
+            				else (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)
+            				end as countDays
+            			, case when (select count(id) from medcase d where d.parent_id=m.id)>0 then 'Да' else 'Нет' end as sloIs 
+            			, p.lastname||' '||p.firstname ||' '|| p.middlename ||' гр.'||to_char(p.birthday,'DD.MM.YYYY') as patInfo
+            			, md.name as mdname,case when cast(m.emergency as int)=1 then 'Да' else 'Нет' end  as memergency
             			, vdh.name as vdhname,m.dateStart as mdateStart,m.dateFinish as mdateFinish
             			 from statisticstub ss 
             			left join medcase m on m.statisticstub_id=ss.id
@@ -49,9 +53,9 @@
             			left join Patient p on p.id=m.patient_id
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
-            			where ss.dtype='STATISTICSTUBEXIST' and ss.code like '%${param.number}%' ${onlyYearS}"
+            			where ss.dtype='StatisticStubExist' and ss.code like '%${param.number}%' ${onlyYearS}"
             	/>
-                <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
+                <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
 				      <msh:tableColumn columnName="Год" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				      <msh:tableColumn columnName="Стат.карта" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				      <msh:tableColumn columnName="К/дни" property="4" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />

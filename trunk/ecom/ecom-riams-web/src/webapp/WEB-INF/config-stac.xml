@@ -13,8 +13,8 @@
         <form-bean name="stac_sloForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm" />
         <form-bean name="stac_surOperationForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm" />
 		<form-bean name="stac_diagnosisForm"               type="ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm"/>
-		<form-bean name="stac_infectiousMessagesForm"      type="ru.ecom.mis.ejb.form.medcase.hospital.InfectiousMessagesForm"/>
-		<form-bean name="stac_militiaMessagesForm"         type="ru.ecom.mis.ejb.form.medcase.hospital.MilitiaMessagesForm"/>
+		<form-bean name="stac_infectiousMessagesForm"      type="ru.ecom.mis.ejb.form.medcase.hospital.InfectiousPhoneMessageForm"/>
+		<form-bean name="stac_criminalMessagesForm"         type="ru.ecom.mis.ejb.form.medcase.hospital.CriminalPhoneMessageForm"/>
 		<form-bean name="mis_medCaseForm"				   type="ru.ecom.mis.ejb.form.medcase.MedCaseForm"/>
 		<form-bean name="smo_spoForm"			           type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm"/>
 		<form-bean name="stac_temperatureCurveForm"        type="ru.ecom.mis.ejb.form.medcase.hospital.TemperatureCurveForm" />		
@@ -114,7 +114,7 @@
         <action path="/config_addressUpdate" 
         	type='ru.ecom.mis.web.action.disability.AddressUpdateAction'
             scope='request' validate="false" name="stac_sslForm">
-            <forward name="success" path="riams_service.do" />
+            <forward name="success" path="/riams_service.do" />
         </action>
         <action path="/stac_policiesEdit" type='ru.ecom.mis.web.action.medcase.PoliciesEditAction'
             scope='request' validate="false" name="">

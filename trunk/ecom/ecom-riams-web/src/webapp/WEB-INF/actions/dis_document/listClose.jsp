@@ -83,6 +83,11 @@
             <input type="submit" onclick="printNoActuality()" value="Печать испорченных" />
           </td>
       </msh:row>
+      <msh:row>
+           <td>
+            <input type="submit" onclick="create16vn()" value="Сформировать 16-ВН" />
+          </td>
+      </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
     </msh:panel>
@@ -171,6 +176,12 @@
     	var frm = document.forms[0] ;
     	frm.target='' ;
     	frm.action='dis_documentClose.do' ;
+    }
+    function create16vn() {
+    	var frm = document.forms[0] ;
+    	//alert('ewqe') ;
+    	frm.target='' ;
+    	frm.action='dis_create16vn.do' ;
     }
     function print() {
     	var frm = document.forms[0] ;

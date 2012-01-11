@@ -50,6 +50,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="учет посещений" action="/poly_journalRegisterVisit_list" params="" 
 		roles="/Policy/Poly/Ticket/RegistrationVisit" styleId="journalRegisterVisit"
 	/>
+	<msh:sideLink name="Форма 039У-02" action="/poly_f039_list.do?ticketIs=1" params="" 
+		roles="/Policy/Poly/Ticket/Report039" styleId="report039"
+	/>
+	<!--<msh:sideLink name="Форма 039У-02 доп" action="/poly_f039_add_list" params="" 
+		roles="/Policy/Poly/Ticket/RegistrationVisit" styleId="form039add"
+	/>-->
 </msh:sideMenu>
     <msh:sideMenu title="Поиск">
       <msh:sideLink key="CTRL+7" params="" action="/poly_medcards" name="⇧ Мед.карты" 

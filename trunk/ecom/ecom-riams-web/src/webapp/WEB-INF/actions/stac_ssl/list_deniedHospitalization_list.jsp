@@ -15,7 +15,7 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_journalHospitalByDeniedHospitalizating.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -49,20 +49,8 @@
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="3"> День
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td>
-           <td>
+           <td colspan="3" align="right">
             <input type="submit" onclick="find()" value="Найти" />
-          </td>           <td>
             <input type="submit" onclick="print()" value="Печать" />
           </td>
 
@@ -76,17 +64,29 @@
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${hospInfo}
+    <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${hospInfo}
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select m.id as mid, ss.code as sscode, p.lastname|| ' ' || p.firstname ||' '||p.middlename as pfio,p.birthday as pbirthday,m.datestart as mdatestart, d.name as dname,vdh.name as vdhname  from MedCase as m left join Patient p on p.id=m.patient_id left join statisticstub as ss on ss.id=m.statisticstub_id left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  left join mislpu as d on d.id=m.department_id where m.DTYPE='HospitalMedCase' and m.ambulanceTreatment=1 ${hospT} and m.datestart between cast('${param.dateBegin}' as date) and cast('${param.dateEnd}' as date)  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket" nativeSql="select m.id as mid
+    	, ss.code as sscode, p.lastname|| ' ' || p.firstname ||' '||p.middlename as pfio
+    	,to_char(p.birthday,'dd.mm.yyyy') as pbirthday,m.datestart as mdatestart, d.name as dname
+    	,vdh.name as vdhname  
+    	from MedCase as m 
+    	left join Patient p on p.id=m.patient_id 
+    	left join statisticstub as ss on ss.id=m.statisticstub_id 
+    	left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  
+    	left join mislpu as d on d.id=m.department_id 
+    	left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    	where m.DTYPE='HospitalMedCase' and m.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') 
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	and cast(m.ambulanceTreatment as int)=1 ${hospT} 
+    	  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Стат.карта" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Год рождения" property="4"/>
-            <msh:tableColumn columnName="Дата поступления" property="5"/>
-            
+            <msh:tableColumn columnName="Дата обращения" property="5"/>
             <msh:tableColumn columnName="Причина отказа" property="7"/>
         </msh:table>
     </msh:sectionContent>
@@ -102,16 +102,16 @@
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
      var typeHospit = document.forms[0].typeHospit ;
-     var period = document.forms[0].period ;
+     /*  var period = document.forms[0].period ;
     
-    
+   
     if ((+'${period}')==1) {
     	period[1].checked='checked' ;
     } else if ((+'${period}')==3) {
     	period[0].checked='checked' ;
     }else {
     	period[2].checked='checked' ;
-    }   
+    } */  
     if ((+'${typeHospit}')==1) {
     	typeHospit[0].checked='checked' ;
     } else if ((+'${typeHospit}')==2) {
@@ -191,22 +191,6 @@
 			 //var date2 = new Date(time);
 			 field.value = date2.print("%Y-%m-%d");
 	}
-			 Calendar.setup({
-				 inputField : "dateBegin", // id of the input field
-				 ifFormat : "%Y-%m-%d", // format of the input field
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
-			 });
-			 Calendar.setup({
-				 inputField : "dateEnd",
-				 ifFormat : "%Y-%m-%d",
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
- 			});
     </script>
   </tiles:put>
 </tiles:insert>

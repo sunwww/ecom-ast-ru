@@ -20,8 +20,8 @@
   <tiles:put name="body" type="string">
   	<msh:section title="Непринятые пациенты" >
   		<ecom:webQuery name="list_no" nativeSql="select v.id
-  		,to_char(wct.timeFrom,'HH24:MI') as timeFrom
-  		,to_char(v.dateStart,'DD.MM.YYYY')||' '||to_char(v.timeExecute,'HH24:MI') as dateStart
+  		,cast(wct.timeFrom as varchar(5)) as timeFrom
+  		,to_char(v.dateStart,'DD.MM.YYYY')||' '||cast(v.timeExecute as varchar(5)) as dateStart
   		,po.lastname||' '||po.firstname||' '||po.middlename as pofio
   		,lpuo.name as lpuoname
   		,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
@@ -44,13 +44,13 @@ left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and v.dateStart is null
-order by v.timeplan_id"/>
+order by wct.timeFrom"/>
 	    <msh:table name="list_no" action="entityEdit-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
 	      <msh:tableColumn columnName="Кто направил" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />
 	      <msh:tableColumn columnName="Кем направлен" property="5" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Принятые пациенты">

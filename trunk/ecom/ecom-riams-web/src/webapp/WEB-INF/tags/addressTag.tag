@@ -1,5 +1,6 @@
 <%@ tag pageEncoding="utf8" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ attribute name="nextField" required="false" description="" %>
 
 <style type="text/css">
     #addressDialog {
@@ -48,8 +49,10 @@
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" id='buttonSaveAddressOk' value='OK' onclick='saveAddress()'/>
-                <input type="button" value='Отменить' onclick='cancelAddress()'/>
+            	
+                <input type="button" name="buttonSaveAddressOk" id='buttonSaveAddressOk' value='OK' 
+                onclick='return saveAddress()' autocomplete="off"/>
+                <input type="button" value='Отменить' onclick='cancelAddress()'  autocomplete="off"/>
             </td>
         </msh:row>
 </form>
@@ -57,7 +60,7 @@
 </div>
 </div>
 
-
+<script type="text/javascript" src='./dwr/interface/AddressService.js' ></script>
 <script type="text/javascript">
 
 
@@ -92,8 +95,12 @@
     var theAddressDialog = new msh.widget.Dialog($('addressDialog')) ;
     var theFields ;
     var theIsAddressDialogInitialized = false ;
-
-
+    
+    function reloadAddress() {
+    	theIsAddressDialogInitialized=false ;
+		$('addressFieldRow').innerHTML='<input title="АдресNoneField" class=" horizontalFill" id="addressField" name="addressField" size="10" value="Адрес... " type="text" />' ;
+		initAddress() ;    	
+    }
     function showAddress() {
         if(!theIsAddressDialogInitialized) {
             theFields = new Array(6) ;
@@ -124,7 +131,7 @@
             $('addressFlatNumber1').value = $('flatNumber').value ;
             if ($('zipcode')) $('addressZipcode').value = $('zipcode').value ;
             //addressProvincialAreaPkAutocomplete.setVocId($('provincialAreaPk')) ;
-            
+            eventutil.addEnterSupport('buttonSaveAddressOk', '${nextField}') ;
             address_6Autocomplete.addOnChangeCallback(function() {
              	 updateZipcode() ;
              }) ;
@@ -179,7 +186,8 @@
         } ) ;
     }
 
-    function saveAddress() {
+    function saveAddress(aEvent,aKeyPress) {
+    	//alert(4);
         var addressPk = "" ;
         var defaultAddress = "" ;
         var sb = "" ;
@@ -217,12 +225,15 @@
 
         updateProvincialArea() ;
 
-        $('buttonShowAddress').focus() ;
 
         if(onAddressSave) {
             onAddressSave() ;
         }
+
+        $('buttonShowAddress').focus() ;
+        
     }
+
 
 
 
@@ -243,7 +254,7 @@
         }
 
         $('addressField').parentNode.innerHTML = "<span id='addressPar'>"+
-                                                 "Получение адреса..."
+                                                 "Получение адреса...<a href='javascript:reloadAddress()'>Обновить</a>"
                 +"</span><input id='buttonShowAddress' type='button' value='"+inputLabel+"' onclick='showAddress()' />" ;
                 
         var zipcode ="";
@@ -260,6 +271,7 @@
         } else {
         	eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
         }
+        //eventutil.addEnterSupport('buttonSaveAddressOk', '${nextField}') ;
         
 
     }

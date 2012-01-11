@@ -23,8 +23,10 @@ public class PatientSearchAction extends BaseAction {
         form.validate(aMapping, aRequest) ;
         IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
 //        IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
-        aRequest.setAttribute("list"
+        if (!form.getLastname().equals("") && form.getLastname().length()>3) {
+        	aRequest.setAttribute("list"
                 , service.findPatient(form.getLpu(), form.getLpuArea(), form.getLastname()));
+        }
         return aMapping.findForward("success");
     }
 }

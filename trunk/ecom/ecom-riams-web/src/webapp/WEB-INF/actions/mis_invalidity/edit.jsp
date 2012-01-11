@@ -14,7 +14,7 @@
             <msh:panel>
                 <msh:row>
                 	<msh:textField property="dateFrom" label="Дата установления"/>
-                	<msh:checkBox property="primary" label="Первичная инв."/>
+                	<msh:checkBox property="initial" label="Первичная инв."/>
                 </msh:row>
                 <msh:row>
                 	<msh:autoComplete property="registrationPlace" label="Место регистрации" vocName="mainLpu" horizontalFill="true" fieldColSpan="3"/>

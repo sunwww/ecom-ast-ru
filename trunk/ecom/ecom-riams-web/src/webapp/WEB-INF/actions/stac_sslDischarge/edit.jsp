@@ -102,8 +102,12 @@
         </msh:ifNotInRole>
         </msh:ifInRole>
         <msh:row>
-        	<msh:autoComplete vocName="vocAcuityDiagnosis" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="1" horizontalFill="true"/>
+        	<msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"
+        		fieldColSpan="3"
+        	/>
+        </msh:row>
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
     	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>

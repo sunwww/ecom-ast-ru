@@ -55,7 +55,7 @@
 </div>
 </div>
 
-
+<script src='./dwr/interface/AddressService.js' type="text/javascript"></script>
 <script type="text/javascript">
 
 

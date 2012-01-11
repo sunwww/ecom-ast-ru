@@ -53,7 +53,7 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsView formName="secuserForm" guid="4640a7ef-b9d6-469c-b18b-07c74c890d">
       <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/View" guid="dfcf6e04-a278-46d3-b4b2-63b53eb4b5">
-            <ecom:webQuery name="workFunction" hql="select id,workFunction.name,&#xA; worker.person.lastname || ' '|| worker.person.firstname || ' ' || worker.person.middlename&#xA;from WorkFunction where secUser.id=${param.id}" guid="e13952fe-a624-4b4d-b97f-e52768edf0db" />
+            <ecom:webQuery name="workFunction" hql="select id,COALESCE(workFunction.name,','),&#xA; worker.person.lastname || ' '|| worker.person.firstname || ' ' || worker.person.middlename&#xA;from WorkFunction where secUser.id=${param.id}" guid="e13952fe-a624-4b4d-b97f-e52768edf0db" />
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <% 

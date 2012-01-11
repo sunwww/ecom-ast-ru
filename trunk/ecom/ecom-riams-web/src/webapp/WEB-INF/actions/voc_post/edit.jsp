@@ -37,7 +37,7 @@
 	       	<msh:sectionContent>
 	       		<ecom:webQuery nativeSql="
 	       			select vwf.id as vwfid,vwf.code as vwfcode,vwf.name as vwfname,(select list(ms.name) from WorkFunctionService wfs left join MedService ms on ms.id=wfs.medService_id where wfs.vocWorkFunction_id=vwf.id) as medService from VocWorkFunction vwf left join WorkFunction wf on vwf.id=wf.workFunction_id
-left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id is not null group by vwf.id
+left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id is not null group by vwf.id,vwf.code,vwf.name
 	       		" name="used"/>
 	            <msh:table name="used" action="entityView-voc_workFunction.do" idField="1" disableKeySupport="true">
 	                <msh:tableColumn columnName="Код" property="2"/>
@@ -49,7 +49,7 @@ left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id i
 	       	<msh:sectionContent>
 	       		<ecom:webQuery nativeSql="
 	       			select vwf.id as vwfid,vwf.code as vwfcode,vwf.name as vwfname,(select list(ms.name) from WorkFunctionService wfs left join MedService ms on ms.id=wfs.medService_id where wfs.vocWorkFunction_id=vwf.id) as medService from VocWorkFunction vwf left join WorkFunction wf on vwf.id=wf.workFunction_id
-left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id is null group by vwf.id
+left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id is null group by vwf.id,vwf.code,vwf.name
 	       		" name="noused"/>
 	            <msh:table name="noused" action="entityView-voc_workFunction.do" idField="1" disableKeySupport="true">
 	                <msh:tableColumn columnName="Код" property="2"/>

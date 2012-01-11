@@ -62,20 +62,60 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}',t.date,count(*) from Ticket t left join medcard as m on m.id=t.medcard_id where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by t.date" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket" nativeSql="select  
+    to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}',t.date,count(*)
+    ,count(case when t.talk=1 then 1 else null end)
+    from Ticket t left join medcard as m on m.id=t.medcard_id 
+    left join Patient p on p.id=m.person_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    
+    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}'  
+    and t.status='2' ${add} 
+    group by t.date" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        <msh:table name="journal_ticket" action="poly_ticketsByNonredidentPatientData.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Дата" property="2"/>
+            <msh:tableColumn columnName="Кол-во" property="3"/>
+            <msh:tableColumn columnName="Кол-во беседа с род." property="4"/>
+        </msh:table>
+	</msh:ifInRole>
+	<msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket" action="poly_ticketsByNonredidentPatientData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
             <msh:tableColumn columnName="Кол-во" property="3"/>
         </msh:table>
+	</msh:ifNotInRole>
     </msh:sectionContent>
     <msh:sectionTitle>Итог</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_sum" nativeSql="select  top 1 count(*),t.date from Ticket t left join medcard as m on m.id=t.medcard_id where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket_sum" maxResult="1" nativeSql="select 
+    count(*),count(case when t.talk=1 then 1 else null end) ,vss.name as vssname
+    from Ticket t 
+    left join medcard as m on m.id=t.medcard_id 
+    left join Patient p on p.id=m.person_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join VocServiceStream vss on vss.id=t.vocPaymentType_id
+    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' 
+    and t.status='2' ${add}
+    group by t.vocPaymentType_id
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="3"/>
+            <msh:tableColumn columnName="Кол-во" property="1"/>
+            <msh:tableColumn columnName="Кол-во бесед с род." property="2"/>
+        </msh:table>
+	</msh:ifInRole>
+	<msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="3"/>
             <msh:tableColumn columnName="Кол-во" property="1"/>
         </msh:table>
+	</msh:ifNotInRole>
     </msh:sectionContent>
     </msh:section>
     <% } else {%>

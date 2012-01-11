@@ -42,7 +42,7 @@
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Patient" beginForm="contract_contractAccountRuleForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountRuleForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="contract_contractAccountRuleForm">

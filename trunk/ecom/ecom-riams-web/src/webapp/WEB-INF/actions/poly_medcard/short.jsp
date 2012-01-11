@@ -35,7 +35,27 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="poly_medcardForm" guid="d23e5168-1840-4e42-b681-7d8b84945666">
-	  <msh:ifInRole roles="/Policy/Poly/Ticket/View">
+    	<ecom:webQuery name="lastVisit" nativeSql="select 
+    	t.id,t.date,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	from ticket t 
+    	left join medcard m on m.id=t.medcard_id
+    	left join patient p on p.id=m.person_id
+    	left join workfunction wf on wf.id=t.workFunction_id
+    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+    	left join worker w on w.id=wf.worker_id
+    	left join patient wp on wp.id=w.person_id
+    	where m.id=${param.id}
+    	order by t.date desc
+    	" maxResult="1" />
+    <msh:tableNotEmpty name="lastVisit">
+     <msh:section title="Последнее посещение">
+    	<msh:table name="lastVisit" action="entityParentView-poly_ticket.do" idField="1">
+	    	<msh:tableColumn property="2" columnName="Дата"/>
+    		<msh:tableColumn property="3" columnName="Специалист"/>
+    	</msh:table>
+     </msh:section>
+    </msh:tableNotEmpty>
+    <msh:ifInRole roles="/Policy/Poly/Ticket/View">
 	      <msh:section title="Открытые талоны" createRoles="/Policy/Poly/Ticket/Create" viewRoles="/Policy/Poly/Ticket/View" 
 	      shortList="entityParentShortList-poly_ticket.do?id=${param.id}" 
 	      createUrl="entityParentPrepareCreate-poly_ticket.do?id=${param.id}" 

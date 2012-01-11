@@ -22,21 +22,25 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  	<ecom:webQuery name="listArch" nativeSql="
-  	select wf.id,wp.lastname||' '||wp.firstname||' '||wp.middlename
-  	, vwf.name as vwfname, gr.groupName as grgroupName
-  	,wc.id as wcid 
+  <msh:section title="Рабочие функции">
+  	<ecom:webQuery name="listPerson" nativeSql="
+  	select wf.id,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName,'нет данных') as infowf
+  	, vwf.name as vwfname
+  	,wc.id as wcid ,wf.code
   	from workfunction wf 
   	left join worker w on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id 
   	left join WorkFunction gr on gr.id=wf.group_id
   	 left join WorkCalendar wc on wc.workFunction_id=wf.id  
   	 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-  	 where w.lpu_id=${param.id} 
+  	 where ((w.lpu_id=${param.id} and wf.DTYPE='PersonalWorkFunction') or
+  	 (wf.lpu_id=${param.id} and wf.DTYPE='GroupWorkFunction') ) 
   	 and (wf.archival is null or cast(wf.archival as integer)=0) 
   	 and wf.group_id is null
-  	 and wc.id is not null"/>
-  	 <msh:tableNotEmpty name="listArch">
+  	 and wc.id is not null
+  	 order by wf.groupName, wp.lastname,wp.middlename,wp.firstname
+  	 "/>
+  	 <msh:tableNotEmpty name="listPerson">
 		  	<msh:toolbar >
 			                	<tbody>
 			                		<msh:toolbar>
@@ -48,21 +52,21 @@
 				                		</msh:row>
 				                		<msh:row>
 				                			<th class='linkButtons' colspan="6">
-			                					<input type='button' value='Генерировать календарь' onclick="javascript:generateWorkFunction('add')" />
-			                					<input type='button' value='Очистить незанятые времена' onclick="javascript:deleteGenerate('add')" />
-			                					<input type='button' value='Оформить неявки на прием' onclick="javascript:deleteNoAppearance('add')" />
+			                					<input type='button' value='Генерировать календарь' onclick="javascript:generateWorkFunction('add','listPerson')" />
+			                					<input type='button' value='Очистить незанятые времена' onclick="javascript:deleteGenerate('add','listPerson')" />
+			                					<input type='button' value='Оформить неявки на прием' onclick="javascript:deleteNoAppearance('add','listPerson')" />
 			                				</th>
 				                		</msh:row>
 		                					<msh:autoComplete parentId="${param.id}" property="pattern" horizontalFill="true"
 			                					 label="Шаблон" vocName="workCalendarPatternByLpu"  fieldColSpan="3"/>
 					                		<th class='linkButtons' colspan="2">
-			                					<input type='button' value='Добавить шаблон календаря' onclick="javascript:addJournalPattern('add')" />
+			                					<input type='button' value='Добавить шаблон календаря' onclick="javascript:addJournalPattern('add','listPerson')" />
 		                					</th>
 				                		<msh:row>
 		                					 <msh:autoComplete property="busy" horizontalFill="true"
 			                					 label="Причина" vocName="vocWorkBusyIsNot" fieldColSpan="3"/>
 					                		<th class='linkButtons' colspan="2">
-			                					 <input type='button' value='Добавить в нерабочее время' onclick="javascript:addNotWorking('delete')" />
+			                					 <input type='button' value='Добавить в нерабочее время' onclick="javascript:addNotWorking('delete','listPerson')" />
 			                				</th>				                		
 				                		</msh:row>
 				                		</table>
@@ -71,25 +75,27 @@
 			                	</tbody>
 		  	</msh:toolbar>
   	</msh:tableNotEmpty>
-    <msh:table selection="true" viewUrl="entityShortView-work_personalWorkFunction.do" name="listArch" action="entityParentView-work_personalWorkFunction.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
+    <msh:table selection="true" viewUrl="entitySubclassShortView-work_workFunction.do" name="listPerson" action="entitySubclassView-work_workFunction.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
       <msh:tableColumn columnName="#" property="sn" guid="4797" />
-      <msh:tableColumn columnName="ФИО" property="2" guid="4ceb96e" />
+      <msh:tableColumn columnName="Код" property="5" guid="4ceb96e" />
+      <msh:tableColumn columnName="ФИО (Название группы)" property="2" guid="4ceb96e" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
-      <msh:tableColumn columnName="Групповая функция" property="4"/>
-      <msh:tableColumn columnName="Рабочий календарь" property="5"/>
+      <msh:tableColumn columnName="Рабочий календарь" property="4"/>
     </msh:table>
+  </msh:section>
+  
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
   	<script type="text/javascript">
   		if ($('beginDate')) new dateutil.DateField($('beginDate')) ;
   		if ($('finishDate')) new dateutil.DateField($('finishDate')) ;
-  		function addNotWorking() {
+  		function addNotWorking(add,list) {
   			alert('Установить не рабочее время') ;
   		}
-  		function generateWorkFunction() {
+  		function generateWorkFunction(add,list) {
   			alert('Генерирование расписания по рабочим функциям') ;
-  			var ids = theTableArrow.getInsertedIdsAsParams("id","listArch") ;
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
                if (ids) {
                    window.location = 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
                    //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
@@ -97,8 +103,8 @@
                    alert("Нет выделенных функций");
                }
   		}
-  		function addJournalPattern() {
-  			var ids = theTableArrow.getInsertedIdsAsParams("id","listArch") ;
+  		function addJournalPattern(add,list) {
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
   			if (ids) {
   				
                 window.location = 'cal_workCalendar-addBusyPattern.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&pattern='+$('pattern').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
@@ -107,10 +113,10 @@
             }
   			alert('Добавить шаблон') ;
   		}
-  		function deleteGenerate() {
+  		function deleteGenerate(add,list) {
   			alert('Удалить не использованное время') ;
   		}
-  		function deleteNoAppearance() {
+  		function deleteNoAppearance(add,list) {
   			alert('Удалить все не якви:)') ;
   		}
   		

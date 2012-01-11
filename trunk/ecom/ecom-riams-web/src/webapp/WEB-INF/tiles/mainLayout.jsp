@@ -71,9 +71,6 @@
             <msh:sideLink params="" styleId="mainMenuDiet" 
             			  action="/entityParentList-diet_diet.do?id=0" name="Диетпитание"
                           roles="/Policy/MainMenu/Diet" title="Диетпитание"/>
-            <msh:sideLink params="" styleId="mainMenuContract" 
-            			  action="/ecom_contract.do" name="Договора"
-                          roles="/Policy/MainMenu/Contract" title="Работа с договорами"/>
 
             <msh:sideLink params="" styleId="mainMenuTemplate" action="/entityList-diary_template.do" name="Шаблоны"
                           title="Шаблоны" roles="/Policy/MainMenu/Template"/>
@@ -83,6 +80,8 @@
                           
             <msh:sideLink params="" styleId="mainMenuReport" action="../../birt/start.do" name="Отчеты"
                           title="Список отчетов" roles="/Policy/MainMenu/Report"/>
+            <msh:sideLink params="" styleId="mainMenuContract" action="/contract_reports.do" name="Договора"
+                          title="Договора" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
 
 			<msh:sideLink params="" styleId="mainMenuVoc" action="/js-ecom_vocEntity-list.do" name="Справочники"
                           roles="/Policy/MainMenu/Voc" title="Справочники"/>

@@ -6,14 +6,14 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_militiaMessagesForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_criminalMessagesForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="stac_militiaMessagesForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
+    <msh:ifFormTypeIsView formName="stac_criminalMessagesForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_militiaMessages" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_militiaMessages" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
-        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_militiaMessages" name="⇧Cписок сообщений в милицию" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/View" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_criminalMessages" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_criminalMessages" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_criminalMessages" name="⇧Cписок сообщений в милицию" roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/View" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="5d2e6cab-8667-4344-9d02-b4a248383066">
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" guid="a5ab8aa6-8be1-43f4-8aae-f5024f6283ca" />
@@ -24,7 +24,7 @@
     <!-- 
     	  - Сообщение в милицию
     	  -->
-    <msh:form action="/entityParentSave-stac_militiaMessages.do?sslid=${param.sslid}" defaultField="dateStart" guid="b37b5d4a-9687-45bf-b42c-613fd9b1739d" editRoles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Create">
+    <msh:form action="/entityParentSave-stac_criminalMessages.do?sslid=${param.sslid}" defaultField="dateStart" guid="b37b5d4a-9687-45bf-b42c-613fd9b1739d" editRoles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/Create">
       <msh:hidden property="id" guid="c5a9c42c-d593-4fae-a685-44586a81938b" />
       <msh:hidden property="saveType" guid="7cb7bcb7-2cb3-4e65-92ce-2a4a2cec809f" />
       <msh:hidden property="medCase" guid="a5b77824-a218-425d-b687-89c701cf512d" />
