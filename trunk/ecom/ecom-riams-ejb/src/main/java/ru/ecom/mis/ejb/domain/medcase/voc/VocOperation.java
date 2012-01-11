@@ -22,6 +22,18 @@ public class VocOperation extends VocBaseEntity{
 	public Date getFinishActualDate() {return theFinishActualDate;}
 	public void setFinishActualDate(Date aFinishActualDate) {theFinishActualDate = aFinishActualDate;}
 
+	/** Уровонь сложности */
+	@Comment("Уровонь сложности")
+	public Long getComplexity() {
+		return theComplexity;
+	}
+
+	public void setComplexity(Long aComplexity) {
+		theComplexity = aComplexity;
+	}
+
+	/** Уровонь сложности */
+	private Long theComplexity;
 	/** Дата окончания актуальности */
 	private Date theFinishActualDate;
 	/** Дата начала актуальности */
