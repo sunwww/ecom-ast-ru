@@ -11,22 +11,32 @@
     if (date!=null && !date.equals(""))  {
     	%>
     
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${hospInfo}
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select m.id as mid, ss.code as sscode, p.lastname|| ' ' || p.firstname ||' '||p.middlename as pfio,p.birthday as pbirthday,m.datestart as mdatestart, d.name as dname,vdh.name as vdhname  from MedCase as m left join Patient p on p.id=m.patient_id left join statisticstub as ss on ss.id=m.statisticstub_id left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  left join mislpu as d on d.id=m.department_id where m.DTYPE='HospitalMedCase' and m.ambulanceTreatment=1 ${hospT} and m.datestart between cast('${param.dateBegin}' as date) and cast('${param.dateEnd}' as date)  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <p>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${hospInfo}
+    </p>
+    <ecom:webQuery name="journal_ticket" nativeSql="select m.id as mid
+    	, ss.code as sscode, p.lastname|| ' ' || p.firstname ||' '||p.middlename as pfio
+    	,to_char(p.birthday,'dd.mm.yyyy') as pbirthday,m.datestart as mdatestart, d.name as dname
+    	,vdh.name as vdhname  
+    	from MedCase as m 
+    	left join Patient p on p.id=m.patient_id 
+    	left join statisticstub as ss on ss.id=m.statisticstub_id 
+    	left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  
+    	left join mislpu as d on d.id=m.department_id 
+    	left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    	where m.DTYPE='HospitalMedCase' and m.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') 
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	and cast(m.ambulanceTreatment as int)=1 ${hospT} 
+    	  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Стат.карта" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Год рождения" property="4"/>
-            <msh:tableColumn columnName="Дата поступления" property="5"/>
+            <msh:tableColumn columnName="Дата обращения" property="5"/>
             
             <msh:tableColumn columnName="Причина отказа" property="7"/>
         </msh:table>
-    </msh:sectionContent>
-    </msh:section>
+
     <% } else {%>
 
     	<% }   %>

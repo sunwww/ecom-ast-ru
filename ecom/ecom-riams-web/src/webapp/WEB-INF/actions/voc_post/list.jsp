@@ -12,7 +12,7 @@
 
     <tiles:put name='side' type='string'>
     <msh:sideMenu title="Добавить" guid="dcf2e072-d44e-47ca-ad16-db0ec61e35c8" >
-      <msh:sideLink key="ALT+N" roles="/Mis/Voc/VocPost" action="/entityPrepareCreate-voc_post" name="Рабочую функцию" />
+      <msh:sideLink key="ALT+N" roles="/Policy/Voc/VocPost/Create" action="/entityPrepareCreate-voc_post" name="Рабочую функцию" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="post"/>
     </tiles:put>

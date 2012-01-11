@@ -67,8 +67,12 @@
                     </li>
 					<li>
 					<msh:link roles='/Policy/Jaas/SecPolicy/Create'
-                          action="config_addressUpdate.do">
-                          Адреса заполнить доп.поля
+                          action="config_addressUpdate.do?clear=1">
+                          Адреса очис+запол
+                     </msh:link>
+                     					<msh:link roles='/Policy/Jaas/SecPolicy/Create'
+                          action="config_addressUpdate.do?clear=0">
+                          Адреса заполнить
                      </msh:link>
 					</li>
                         

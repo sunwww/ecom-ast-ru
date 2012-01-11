@@ -9,11 +9,14 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-work_groupWorkFunction.do" defaultField="hello">
+    <msh:form guid="formHello" action="/entitySaveGoView-work_groupWorkFunction.do" defaultField="code">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="lpu" guid="384a5a43-d9f9-464e-a36b-bcf6e2e8c6d4" />
       <msh:panel guid="panel">
+        <msh:row>
+          <msh:textField property="code" fieldColSpan="3" label="Код" size="50" />
+        </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
           <msh:textField property="groupName" guid="3a3e4d1b-8802-467d-b205-715fb379b018" fieldColSpan="3" label="Название группы" size="50" />
         </msh:row>
@@ -26,13 +29,13 @@
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="work_groupWorkFunctionForm">
       <msh:section guid="sectionChilds" title="Календарь">
         <ecom:parentEntityListAll guid="parentEntityListChilds" formName="cal_workCalendarForm" attribute="childs" />
-        <msh:table guid="tableChilds" name="childs" action="entityParentView-cal_workCalendar.do" idField="id">
+        <msh:table guid="tableChilds" viewUrl="entityShortView-cal_workCalendar.do" name="childs" action="entityParentView-cal_workCalendar.do" idField="id">
           <msh:tableColumn columnName="ИД" property="id" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
         </msh:table>
       </msh:section>
       <msh:section title="Список сотрудников" guid="3ca48b94-1757-42fa-b790-63b5e0ba4966">
         <ecom:parentEntityListAll attribute="functions" formName="work_personalWorkFunctionByGroupForm" guid="3f936e9b-bc75-4344-92ff-2b81e9aab54b" />
-        <msh:table name="functions" action="entityParentView-work_personalWorkFunction.do" idField="id" guid="5de5a4f7-4a9a-4bca-907b-7506e87dc49b">
+        <msh:table name="functions" viewUrl="entityShortView-work_personalWorkFunction.do" action="entityParentView-work_personalWorkFunction.do" idField="id" guid="5de5a4f7-4a9a-4bca-907b-7506e87dc49b">
           <msh:tableColumn property="workerInfo" columnName="Сотрудник" guid="c7e6d86d-c0b9-4cc4-869e-71968f1b6481" />
         </msh:table>
       </msh:section>

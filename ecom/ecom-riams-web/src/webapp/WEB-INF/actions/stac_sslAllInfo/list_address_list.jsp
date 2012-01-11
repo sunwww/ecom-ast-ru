@@ -46,7 +46,9 @@
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
-    
+    String dateEnd = (String)request.getAttribute("dateEnd") ;
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=(String)request.getAttribute("dateBegin") ;
+    request.setAttribute("dateEnd", dateEnd) ;
     if (date!=null && !date.equals("")) {
     	%>
     
@@ -70,7 +72,7 @@
 	left outer join MisLpu lpu on m.department_id = lpu.id 
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
-	${hospType}
+	${hospType} and m.deniedHospitalizating_id is null
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -78,8 +80,10 @@
                                 <msh:toolbar>
                         <msh:row>
                             <th colspan='12'>
-                                    <a href='javascript:printAdmission()'>Печатать адресные листки прибытия</a>
-                                    <a href='javascript:printDischarge()'>Печатать адресные листки убытиях</a>
+                                    Печать:<a href='javascript:printAdmission()'> адрес. листков прибытия</a>
+                                    <a href='javascript:printDischarge()'>адрес. листков убытиях</a>
+                                    <a href='javascript:printAdmission1()'>реестр для листков прибытия</a>
+                                    <a href='javascript:printDischarge1()'>реестр для листков убытиях</a>
                             </th>
                           </msh:row>
                                 </msh:toolbar>
@@ -104,8 +108,8 @@
     	<% }   %>
     
     <script type='text/javascript'>
-	    new dateutil.DateField($('dateBegin'));
-	    new dateutil.DateField($('dateEnd'));
+	    //new dateutil.DateField($('dateBegin'));
+	    //new dateutil.DateField($('dateEnd'));
 	    function printAdmission() {
 	    	
             var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
@@ -122,6 +126,28 @@
             var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
             if (ids) {
                 window.location = 'print-listDischarge.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids+'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value;
+                
+            } else {
+                alert("Нет выделенных данных");
+            }
+
+	    }
+	    function printAdmission1() {
+	    	
+            var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
+            if (ids) {
+                window.location = 'print-reestrAdmission.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids +'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value;
+                
+            } else {
+                alert("Нет выделенных данных");
+            }
+
+	    }
+	    function printDischarge1() {
+	    	
+            var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
+            if (ids) {
+                window.location = 'print-reestrDischarge.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids+'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value;
                 
             } else {
                 alert("Нет выделенных данных");

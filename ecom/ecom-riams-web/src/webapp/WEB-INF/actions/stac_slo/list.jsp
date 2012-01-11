@@ -14,22 +14,42 @@
 	</msh:sideMenu>  
   </tiles:put>
   <tiles:put name="body" type="string">
-          <ecom:webQuery name="list" nativeSql="select MedCase.id, MedCase.dateStart&#xA;       
-           , MedCase.department_id||' '||postDep.Name&#xA;        , MedCase.transferDate &#xA;      
-             , MedCase.transferDepartment_id||' '||tranDep.Name&#xA;       
-              , MedCase.dateFinish&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker&#xA;&#x9;, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker&#xA;  ,ifnull(MedCase.dateFinish, ifnull(MedCase.transferDate,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,CURRENT_DATE)) || '(на текущий момент)' ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.transferDate)) ||' (перевод)') ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.dateFinish)) ||' (выписан)')           , MedCase.entranceTime,MedCase.transferTime,MedCase.dischargeTime  
-              ,VocServiceStream.name
-              from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  
-          left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
-          left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA; 
-left outer join Patient op on ow.person_id           = op.id&#xA;  
-left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tranDep.id&#xA; 
- left outer join MisLpu postDep on MedCase.department_id           = postDep.id&#xA; 
-  left join BedFund on BedFund.id=MedCase.bedFund_id 
-  left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
-          left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
+          <ecom:webQuery name="list" nativeSql="select MedCase.id as mid, MedCase.dateStart as mdateStart       
+           , MedCase.department_id||' '||postDep.Name     as department    
+           , MedCase.transferDate as transferDate 
+           , MedCase.transferDepartment_id||' '||tranDep.Name as departmentTransfer
+           , MedCase.dateFinish as mdateFinish
+           , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+           , op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
+           ,
+           case when (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)=0 then 1
+               when cast(BedFund.addCaseDuration as integer)=1 then (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)+1
+               else (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)
+           end
+           ||
+           case 
+            when MedCase.dateFinish is not null then ' (выписан)'
+          	when MedCase.transferDate is not null then ' (перевод)'
+          	else ' (на текущий момент)'
+           end as countBed
+          , MedCase.entranceTime as entranceTime,MedCase.transferTime as transferTime
+          ,MedCase.dischargeTime  as dischargeTime
+           ,VocServiceStream.name as vssname
+           from MedCase
+           left outer join Worker     on MedCase.startWorker_id = Worker.id  
+           left outer join Patient    on Worker.person_id       = Patient.id  
+           left outer join Worker ow  on MedCase.owner_id       = ow.id  
+           left outer join Patient op on ow.person_id           = op.id  
+           left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tranDep.id 
+           left outer join MisLpu postDep on MedCase.department_id           = postDep.id
+           left join BedFund on BedFund.id=MedCase.bedFund_id 
+           left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
+           left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
   
-  where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+           where MedCase.parent_id=${param.id} 
+           and MedCase.DTYPE='DepartmentMedCase'
+           order by MedCase.dateStart,MedCase.entranceTime
+           " />
     <msh:table name="list" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
@@ -55,7 +75,9 @@ left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tran
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_slo" name="Новый СЛО" title="Добавить случай стационарного лечения в отделении" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" />
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_slo" name="Новый СЛО" title="Добавить случай стационарного лечения в отделении" 
+      roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Create" key="ALT+2"
+      guid="dc488234-9da8-4290-9e71-3b4558d27ec7" />
     </msh:sideMenu>
     
   </tiles:put>

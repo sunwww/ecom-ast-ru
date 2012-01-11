@@ -54,4 +54,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="нозологических групп" roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/View"
 		title="Список нозологических групп по договорам"
 		/>
+		
+</msh:sideMenu>
+<msh:sideMenu title="Отчеты">
+	<msh:sideLink styleId="financeReport" 
+		action="/contract_reports" 
+		name="финансовый отчет" roles="/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Финансовый отчет"
+		/>
 </msh:sideMenu>

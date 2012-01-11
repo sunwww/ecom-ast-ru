@@ -15,7 +15,7 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" decorator="decorator">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" decorator="decorator">
       <msh:tableColumn columnName="Номер" property="id" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
       <msh:tableColumn columnName="Дата открытия" property="dateStart" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Экстренность" property="emergency" guid="e98f6bbc96" />

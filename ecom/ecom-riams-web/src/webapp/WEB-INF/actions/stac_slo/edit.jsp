@@ -139,14 +139,16 @@
         	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
         </msh:row>
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
-          <msh:autoComplete vocName="workFunction" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
+          <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="omcStandart" fieldColSpan="6" label="ОМС стандарт" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete vocName="vocAcuityDiagnosis" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="1" horizontalFill="true"/>
+        	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
+        </msh:row>
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
     	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
@@ -194,9 +196,10 @@
             <msh:tableColumn columnName="Запись" property="record" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
             <msh:tableColumn columnName="Специалист" property="specialistInfo" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
           </msh:table>--%>
-      <ecom:webQuery name="protocols"  nativeSql="
-      select top 50 d.id, d.dateRegistration, d.timeRegistration, d.record 
-     , vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename
+      <ecom:webQuery maxResult="50" name="protocols"  nativeSql="
+      select d.id as did, d.dateRegistration as ddateRegistration
+      , d.timeRegistration as dtimeRegistration, d.record as drecord 
+     , vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
       from Diary as d
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
@@ -219,9 +222,9 @@
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
        <%--  <ecom:parentEntityListAll formName="stac_diagnosisForm" attribute="diagnosis" guid="302c-7369-4ec7-a67c-882abcf" />
 		--%>
-		<ecom:webQuery name='diagnosis' nativeSql="select d.id, d.establishDate, vrt.name as vrtinfo
+		<ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
 		, vpd.name as vpdname, d.name as dname, mkb.code
-		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
 		from Diagnosis d
 		left join VocDiagnosisRegistrationType vrt on vrt.id=d.registrationType_id
 		left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
@@ -280,7 +283,11 @@
       	<msh:section>
 	      	<msh:sectionTitle>Листы назначений. Добавить ЛН</msh:sectionTitle>
 	      	<msh:sectionContent>
-	          <ecom:webQuery name="presLists" nativeSql="select pl.id,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename,pl.comments,pl.date,(select ifnull(min(p.planStartDate),'нет даты начала',to_char(min(p.planStartDate),'DD.MM.YYYY'))||'-'||ifnull(max(p.planEndDate),'нет даты окончания',to_char(max(p.planEndDate),'DD.MM.YYYY')) from prescription p where prescriptionList_id=pl.id) from PrescriptionList pl left join WorkFunction wf on wf.id = pl.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id where pl.medCase_id =  '${param.id}'"/>
+	          <ecom:webQuery name="presLists" nativeSql="select pl.id as ilid
+	          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+	          ,pl.comments as plcomments,pl.date as dldate
+	          ,(select coalesce(to_char(min(p.planStartDate),'DD.MM.YYYY'),'нет даты начала')||'-'||coalesce(to_char(max(p.planEndDate),'dd.mm.yyyy'),'нет даты окончания') as pldatend 
+	          from prescription p where prescriptionList_id=pl.id) from PrescriptionList pl left join WorkFunction wf on wf.id = pl.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id where pl.medCase_id =  '${param.id}'"/>
 		      <msh:table name="presLists" action="entityParentView-pres_prescriptList.do" idField="1" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
 			      <msh:tableColumn columnName="Назначил" property="2" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
 			      <msh:tableColumn columnName="Комментарии" property="3" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
@@ -344,8 +351,8 @@
       	function goDischarge() {
       		window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
-      	$('lpuAndDate').value = $('department').value +":"+$('serviceStream').value+":" +$('dateStart').value;
-      	lpuDate = $('department').value +":"+$('dateStart').value  ;
+      	$('lpuAndDate').value = $('department').value +"#"+(0+$('serviceStream').value)+"#" +$('dateStart').value;
+      	lpuDate = $('department').value +"#"+$('dateStart').value  ;
       	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.setParentId(lpuDate) ;
       	//bedFundAutocomplete.setVocId(theBedFund);
@@ -364,9 +371,10 @@
       	 });
       	 
       	 function updateLpuAndDate() {
-      	 	$('lpuAndDate').value = $('department').value +":"+$('serviceStream').value+":" +$('dateStart').value;
+      		 var serviceStream=+$('serviceStream').value ;
+      	 	$('lpuAndDate').value = $('department').value +"#"+serviceStream+"#" +$('dateStart').value;
       	 	//alert("lpuAndDate"+$('lpuAndDate').value) ;
-      	 	lpuDate = $('department').value +":"+$('dateStart').value ;
+      	 	lpuDate = $('department').value +"#"+$('dateStart').value ;
       	 	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	 	bedFundAutocomplete.setVocId('');
       	 }</script>

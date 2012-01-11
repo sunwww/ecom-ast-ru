@@ -24,7 +24,7 @@ try {
 }
 </script>
 
-<script type='text/javascript' src='/skin/js/ac-CA11fcb11d2c8.js'></script><script type='text/javascript' src='/skin/js/engine-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/VocService-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/VocEditService-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/RemoteMonitorService-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/AddressService-CA11fcb11d2c8.js'></script><!-- Дополнительное определение стиля -->
+<script type='text/javascript' src='/skin/js/ac-CA11fcb11d2c8.js'></script><script type='text/javascript' src='/skin/js/engine-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/VocService-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/VocEditService-CA11fcb11d2c8.js'></script><script type='text/javascript' src='./dwr/interface/RemoteMonitorService-CA11fcb11d2c8.js'></script><!-- Дополнительное определение стиля -->
 <!-- Дополнительное определение стиля END -->
 
 

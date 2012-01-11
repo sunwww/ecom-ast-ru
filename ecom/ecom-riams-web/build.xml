@@ -11,6 +11,7 @@
 		<include name="ecom/gwt/clazz/ecom-gwt-clazz.jar" />
 		<include name="gwt/gwt-servlet.jar" />
         <include name="ecs/ecs-1.4.2.jar"/>
+        <include name="axis.jar"/>
 	</fileset>
 
 	<target name='prepare.web'>
@@ -20,6 +21,9 @@
 			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
 			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />
 			<fileset file='${lib.dir}/gwt/gwt-servlet.jar' />
+			<fileset file='${lib.dir}/axis/axis.jar' />
+			<fileset file='${lib.dir}/axis/commons-discovery-0.2.jar' />
+			<fileset file='${lib.dir}/axis/commons-logging-1.0.4.jar' />
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />

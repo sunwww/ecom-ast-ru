@@ -22,11 +22,19 @@
     select m.id,' '||p.lastname||' '||p.firstname||' '||p.middlename
     ,d.name as depname,ss.code as sscode,p.birthday
     , m.dateStart as mdateStart
-    ,ifnull(m.dateFinish,m.transferDate,m.dateFinish) as mdateFinish
+    ,coalesce(m.dateFinish,m.transferDate) as mdateFinish
     ,h.dateStart as hdateStart
     ,h.dateFinish as hdateFinish
-    ,$$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',m.dateStart,ifnull(m.DateFinish,m.transferDate,m.dateFinish))
-    ,$$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',h.dateStart,h.DateFinish) 
+    ,	  case 
+			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
+			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+		  end
+    ,	  case 
+			when (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)=0 then 1 
+			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)+1) 
+			else (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)
+		  end
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id)
     from MedCase as m 
     left join medcase as h on h.id=m.parent_id 
@@ -36,6 +44,7 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient as p on p.id=m.patient_id 
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     where m.DTYPE='DepartmentMedCase' and ${dateType } between cast('${dateBegin }' as Date) and cast('${dateEnd }' as Date) 
     and m.bedfund_id=${bedFund} ${addStatus} ${add } 
     order by p.lastname,p.firstname" 

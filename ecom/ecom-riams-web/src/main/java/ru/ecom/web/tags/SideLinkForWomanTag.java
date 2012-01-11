@@ -139,7 +139,6 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
         	printIdeStart("link");
         	System.out.println("----PREGNANCY BY PATIENT LINK") ;
            
-
         
 	    	try {
 				IPregnancyService service = Injection.find(theRequest).getService(IPregnancyService.class) ;

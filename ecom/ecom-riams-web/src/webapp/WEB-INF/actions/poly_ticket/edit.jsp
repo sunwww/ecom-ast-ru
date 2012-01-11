@@ -11,6 +11,7 @@
     <msh:form action="entityParentSaveGoView-poly_ticket.do" defaultField="date" guid="77bf3d00-cfc6-49eb-9751-76e82d38751c">
       <msh:hidden property="id" guid="e862851f-7390-4fe6-9a37-3b22306138b4" />
       <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
+      <msh:hidden property="talk" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:panel colsWidth="15%,15%,15%,55%" guid="fecf8cd8-e883-4375-b47a-2954067ec3a7">
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
@@ -70,9 +71,11 @@
         	<msh:checkBox property="directHospital" label="Направлен на стационарное лечение" fieldColSpan="3"/>
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        	<msh:ifFormTypeIsView formName="poly_ticketForm">
 	        <msh:row>
 	        	<msh:checkBox label="Беседа с родств." property="talk"/>
 	        </msh:row>
+	        </msh:ifFormTypeIsView>
         </msh:ifInRole>
         <msh:row>
 	        	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="3"/>
@@ -96,6 +99,7 @@
         <msh:ifFormTypeIsNotView formName="poly_ticketForm" guid="540eb2a2-2113-4cad-97a0-f54f680a2a44">
           <script type="text/javascript">$('isTicketClosed').checked=true ;</script>
         </msh:ifFormTypeIsNotView>
+        <%--
         <msh:separator label="Ранее зарегистрированный диагноз" colSpan="4" guid="88c6ecbf-55f4-4d7a-8db7-f41a75b8f86d" />
         <msh:row guid="f969e28a-aa6a-4457-bf2b-e228b53544e5">
           <msh:autoComplete vocName="vocIdc10ticket" property="prevIdc10" label="Диагноз" fieldColSpan="3" horizontalFill="true" guid="dd2d60e5-7f9b-45c2-8df1-74b553d52ae8" />
@@ -110,6 +114,7 @@
         <msh:row guid="f9adcbb3-0c79-486e-a402-1e48bd857afb">
           <msh:autoComplete showId="false" vocName="vocDisabilityReason" property="disabilityReason" label="Причина нетрудоспос." fieldColSpan="3" horizontalFill="true" guid="8cb2cdff-ff63-4a1c-84c1-ab1871fd7e8a" />
         </msh:row>
+         --%>
         <msh:ifFormTypeAreViewOrEdit formName="poly_ticketForm">
         <msh:separator label="Выдан талон" colSpan="4" guid="d9a7ec35-7893-48b3-aa08-f2e04d9a9400" />
         <msh:row>
@@ -130,8 +135,11 @@
     	<msh:section>
     		<msh:sectionTitle>Талоны беседы с родственниками <msh:link action="/js-poly_ticket-addTalk.do?id=${param.id}" roles="/Policy/Poly/Ticket/Create,/Policy/Mis/MisLpu/Psychiatry">добавить</msh:link> </msh:sectionTitle>
     		<msh:sectionContent>
-    			<ecom:webQuery name="ticketTalk" nativeSql="select t1.id, t1.status,t1.talk from Ticket t1 left join Ticket t2 on t1.workFunction_id=t2.workFunction_id and t1.date=t2.date where t2.id=${param.id} and t1.talk=1"/>
-    			<msh:table name="ticketTalk" action="entityParentView-poly_ticket.do" idField="1">
+    			<ecom:webQuery name="ticketTalk" nativeSql="select t1.id, t1.status,t1.talk 
+    			from Ticket t1 
+    			left join Ticket t2 on t1.medcard_id=t2.medcard_id and t1.date=t2.date 
+    			where t2.id=${param.id} and t1.workFunction_id=t2.workFunction_id  and t1.talk=1"/>
+    			<msh:table deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" viewUrl="entityShortView-poly_ticket.do" name="ticketTalk" action="entityParentView-poly_ticket.do" idField="1">
     				<msh:tableColumn property="sn" columnName="#"/>
     				<msh:tableColumn property="1" columnName="ИД талона"/>
     				<msh:tableColumn property="2" columnName="status"/>
@@ -186,16 +194,16 @@
     <tags:mis_double name='Ticket' title='Существующие талоны в базе:'/>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<msh:ifFormTypeAreViewOrEdit formName="poly_ticketForm">
   		<msh:sideMenu title="Дополнительно">
-  			<msh:sideLink name="Просмотр инф. о заключениях по медкарте" action="/js-poly_protocol-infoByTicket.do" params="id"/>
+	        <msh:sideLink action="/javascript:viewProtocolByMedcard('.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:infoDiagByMedcard('.do')" name='Диагнозы<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
   		</msh:sideMenu>
-  	</msh:ifFormTypeAreViewOrEdit>
     <msh:ifFormTypeIsView formName="poly_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
       <msh:sideMenu guid="e6c81315-888f-4d80-856b-ce3095ca1d55" title="Талон" >
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+2" params="id" action="/entityEdit-poly_ticket" name="Изменить" guid="89585df8-aadb-4d59-abd9-c0d16a6170a9" title="Изменить талон" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+3" params="id" action="/poly_closeTicket" name="Закрыть" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Закрыть талон" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-poly_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-poly_ticket-doNotAddTalk" name="Сделать обычным посещением" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         
         <msh:ifFormTypeAreViewOrEdit formName="poly_ticketForm" guid="7f581b0a-a8b3-4d57-9cff-6dc6db1c85e3">
           <msh:sideLink roles="/Policy/Poly/Ticket/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-poly_ticket" name="Удалить" confirm="Вы действительно хотите удалить талон?" guid="8b9de89f-3b99-414e-b4af-778ccbb70edf" title="Удалить талон" />
@@ -217,6 +225,16 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+    <script type="text/javascript">
+    function viewProtocolByMedcard(d) {
+    	var m = document.forms[0].medcard ;
+  	  getDefinition("js-poly_protocol-infoByMedcardShort.do?id="+m.value, null); 
+    }    
+    function infoDiagByMedcard(d) {
+    	var m = document.forms[0].medcard ;
+  	  getDefinition("js-poly_ticket-infoDiagByMedcard.do?id="+m.value, null); 
+    }    
+    </script>
   	<msh:ifInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
   <msh:ifFormTypeIsCreate formName="poly_ticketForm">
   <script type="text/javascript">

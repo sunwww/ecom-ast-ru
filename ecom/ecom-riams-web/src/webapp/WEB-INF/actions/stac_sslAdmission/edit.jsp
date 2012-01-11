@@ -285,13 +285,30 @@
 		if ($('deniedHospitalizatingName')) {
             var ch = function ch() {
             
-                if ($('deniedHospitalizatingName').value != "") {
+                if (+$('deniedHospitalizating').value>0) {
                     $('ambulanceTreatment').checked = true;
+                    $('departmentName').className="autocomplete horizontalFill";
+                    $('hospitalizationName').className="autocomplete horizontalFill";
+                    $('serviceStreamName').className="autocomplete horizontalFill";
                 } else {
                 	$('ambulanceTreatment').checked = false;
+                    $('departmentName').className="autocomplete horizontalFill required";
+                    $('hospitalizationName').className="autocomplete horizontalFill required";
+                    $('serviceStreamName').className="autocomplete horizontalFill required";
             	}
             }              
        		eventutil.addEventListener($('deniedHospitalizatingName'),'blur',ch);
+       		if (+$('deniedHospitalizating').value>0) {
+                $('ambulanceTreatment').checked = true;
+                $('departmentName').className="autocomplete horizontalFill";
+                $('hospitalizationName').className="autocomplete horizontalFill";
+                $('serviceStreamName').className="autocomplete horizontalFill";
+            } else {
+            	$('ambulanceTreatment').checked = false;
+                $('departmentName').className="autocomplete horizontalFill required";
+                $('hospitalizationName').className="autocomplete horizontalFill required";
+                $('serviceStreamName').className="autocomplete horizontalFill required";
+        	}
         }</script>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" guid="6c59f9b3-c9b2-4822-aff8-9225ca67edb1">

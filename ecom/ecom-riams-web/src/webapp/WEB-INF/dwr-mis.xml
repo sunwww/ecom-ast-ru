@@ -11,6 +11,10 @@
         <create creator="new" javascript="AddressService" scope="application">
             <param name="class" value="ru.ecom.address.web.dwr.AddressServiceJs"/>
         </create>
+        <!-- Работа с договорами -->
+        <create creator="new" javascript="ContractService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.contract.ContractServiceJs"/>
+        </create>
 
 		<!-- Редактирование справочников -->
         <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo">

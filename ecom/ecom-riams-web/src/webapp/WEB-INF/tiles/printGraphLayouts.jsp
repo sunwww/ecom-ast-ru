@@ -40,7 +40,6 @@ try {
 <msh:javascriptSrc src='./dwr/interface/VocService.js' />
 <msh:javascriptSrc src='./dwr/interface/VocEditService.js' />
 <msh:javascriptSrc src='./dwr/interface/RemoteMonitorService.js' />
-<msh:javascriptSrc src='./dwr/interface/AddressService.js' />
 
 <!-- Дополнительное определение стиля -->
 <tiles:insert attribute="style" ignore='true'/>

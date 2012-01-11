@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<msh:title mainMenu="Lpu">Список группу медицинских услуг</msh:title>
+		<msh:title mainMenu="Contract">Список группу медицинских услуг</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">

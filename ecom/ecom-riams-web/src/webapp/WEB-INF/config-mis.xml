@@ -51,6 +51,9 @@
 		<form-bean name="contract_priceMedServiceForm" type="ru.ecom.mis.ejb.form.contract.PriceMedServiceForm" />
 		<form-bean name="contract_pricePositionForm" type="ru.ecom.mis.ejb.form.contract.PricePositionForm" />
 		<form-bean name="contract_servedPersonForm" type="ru.ecom.mis.ejb.form.contract.ServedPersonForm" />
+		<form-bean name="contract_contractAccountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceForm" />
+		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
+		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
 
 
 		<form-bean name="mis_encodingAccordanceForm"
@@ -110,8 +113,7 @@
 			type="ru.ecom.mis.ejb.form.patient.MedPolicyDmcForeignForm" />
 		<form-bean name="mis_medPolicyOmcForeignForm"
 			type="ru.ecom.mis.ejb.form.patient.MedPolicyOmcForeignForm" />
-		<form-bean name="mis_uslForm"
-			type="ru.ecom.mis.ejb.form.usl.UslForm" />
+		
 		<form-bean name="mis_patientSearchForm"
 			type="ru.ecom.mis.web.action.patient.PatientSearchForm" />
 		
@@ -159,7 +161,6 @@
 		<form-bean name="mis_workerForm" type="$$map$$mis_workerForm" />
 		<form-bean name="mis_stateListForm" type="$$map$$mis_stateListForm" />
 		<form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
-		<form-bean name="mis_awardForm" type="$$map$$mis_awardForm" />
 		<form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
 		<form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
 		<form-bean name="mis_workPlaceForm" type="$$map$$mis_workPlaceForm" />
@@ -221,6 +222,18 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp" />
         </action>
+        <action path='/contract_contractAccountMedServiciesView' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/contract_contractAccountMedService/add.jsp" />
+        </action>
+        <action path='/contract_contractAccountMedServiciesSave' type='ru.ecom.mis.web.action.contract.ContractAccountMedServiceSaveAction'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/entityParentView-contract_contractAccount.do" />
+        </action>
         
         <action path='/smo_doubleVisits_list' type='ru.ecom.poly.web.action.ticket.TicketDoubleListAction'
                 name='stac_admissionJournalForm'
@@ -264,6 +277,21 @@
 			<forward name="success" path="/entityView-mis_lpu.do" redirect="true"/>
 			</action>
 		-->
+		<!-- Реестры по договорам -->	
+		<action path='/contract_reports'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm"
+			validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list.jsp" />
+		</action>
+		<action path='/ecom_contract'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/riams/contract.jsp" />
+		</action>
 
 		<action path='/mis_syncLpuFond'
 			type='ru.ecom.mis.web.action.synclpufond.SyncLpuFondAction'
@@ -396,13 +424,13 @@
 		<action path='/journal_militiaMessage'
 		    type='ru.ecom.web.actions.base.ForwardAction'
 		    name='stac_admissionJournalForm' validate='false' scope='request'
-		    input='/WEB-INF/actions/stac_militiaMessages/listByPeriod.jsp'
+		    input='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
 		    >
 		    <forward name="success" redirect="false"
-		    	path='/WEB-INF/actions/stac_militiaMessages/listByPeriod.jsp'
+		    	path='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
 		    />
 		    <forward name="successerror" redirect="false"
-		    	path='/WEB-INF/actions/stac_militiaMessages/listError.jsp'
+		    	path='/WEB-INF/actions/stac_criminalMessages/listError.jsp'
 		    />
 		</action>
 		<action path='/journal_vaccination'

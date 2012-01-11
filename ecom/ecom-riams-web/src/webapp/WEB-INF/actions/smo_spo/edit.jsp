@@ -92,6 +92,9 @@
       <msh:sideMenu guid="sideMenu-123" title="СПО">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_spo" name="Изменить" roles="/Policy/Mis/MedCase/Spo/Edit" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-smo_spo" name="Удалить" roles="/Policy/Mis/MedCase/Spo/Delete" />
+        <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
+        	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
+        />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>

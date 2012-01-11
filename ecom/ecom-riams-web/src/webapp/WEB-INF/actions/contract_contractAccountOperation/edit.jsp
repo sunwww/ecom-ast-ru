@@ -10,39 +10,80 @@
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="account" />
-			<msh:panel>
+			<msh:hidden property="createDate" />
+			<msh:hidden property="createTime" />
+			<msh:hidden property="createUsername" />
+			<msh:hidden property="editDate" />
+			<msh:hidden property="editTime" />
+			<msh:hidden property="editUsername" />
+			<msh:hidden property="workFunction"/>
+			<msh:hidden property="medcase"/>
+			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
-					<msh:autoComplete property="type" label="Тип операции" vocName="VocAccountOperation" horizontalFill="true" />
-				</msh:row>
-				<msh:row>
-					<msh:textField property="operationDate" label="Дата"/>
-				</msh:row>
-				<msh:row>
-					<msh:textField property="operationTime" label="Время операции"/>
+					<msh:autoComplete property="type" label="Тип операции" vocName="vocAccountOperation" fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="cost" label="Стоимость"/>
+					<msh:textField property="discount" label="Скидка"/>
 				</msh:row>
+				<!-- 
 				<msh:row>
 					<msh:autoComplete property="medcase" label="Случай медицинского обслуживания" vocName="MedCase" horizontalFill="true" />
 				</msh:row>
+				-->
+				<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/EditOperationInfo">
+					<msh:ifFormTypeIsNotView formName="contract_contractAccountOperationForm">
+						<msh:row>
+							<msh:textField property="operationDate" label="Дата операции"/>
+							<msh:textField property="operationTime" label="Время"/>
+						</msh:row>
+					</msh:ifFormTypeIsNotView>
+				</msh:ifInRole>
+				<msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/EditOperationInfo">
+					<msh:hidden property="operationDate" />
+					<msh:hidden property="operationTime" />
+				</msh:ifNotInRole>
 				<msh:row>
-					<msh:autoComplete property="repealOperation" label="Отменившая операция" vocName="ContractAccountOperation" horizontalFill="true" />
+					<msh:autoComplete property="repealOperation" label="Отменившая операция" vocName="contractAccountOperation" horizontalFill="true" fieldColSpan="3"/>
+				</msh:row>
+				<msh:ifFormTypeIsView formName="contract_contractAccountOperationForm">
+				<msh:row>
+					<msh:textField property="operationDate" label="Дата операции"/>
+					<msh:textField property="operationTime" label="Время"/>
+				</msh:row>
+					<msh:row>
+						<msh:autoComplete property="workFunction" label="Оператор" vocName="workFunction" fieldColSpan="3" size="100" />
+					</msh:row>
+				<msh:row>
+					<msh:separator label="Информация о создании" colSpan="4"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="workFunction" label="Оператор" vocName="workFunction" horizontalFill="true" />
+					<msh:textField property="createDate" label="Дата"/>
+					<msh:textField property="createTime" label="Время"/>
 				</msh:row>
 				<msh:row>
-					<msh:textField property="discount" label="Скидка"/>
+					<msh:textField property="createUsername" label="Пользователь"/>
 				</msh:row>
-			<msh:submitCancelButtonsRow colSpan="4" />
+				<msh:row>
+					<msh:separator label="Информация о последней редакции" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="editDate" label="Дата"/>
+					<msh:textField property="editTime" label="Время"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="editUsername" label="Пользователь"/>
+				</msh:row>
+				</msh:ifFormTypeIsView>
+				
+			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_contractAccountOperationForm">
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Patient" beginForm="contract_contractAccountOperationForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountOperationForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="contract_contractAccountOperationForm">

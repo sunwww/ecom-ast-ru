@@ -7,6 +7,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class GroupByMoveToAnotherLpuAction extends BaseAction {
@@ -45,10 +46,12 @@ public class GroupByMoveToAnotherLpuAction extends BaseAction {
 		
 		
 		if (typePat.equals("2")) {
-			aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
+			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
+			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp")) ;
 			aRequest.setAttribute("infoTypePat", " (по иногородним)") ;
 		} else if (typePat.equals("1")){
-			aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp")) ;
 			aRequest.setAttribute("infoTypePat", " (по региональным)") ;
 		} else {
 			aRequest.setAttribute("add", "") ;

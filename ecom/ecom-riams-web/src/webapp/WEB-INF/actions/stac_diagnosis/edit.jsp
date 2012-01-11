@@ -20,7 +20,7 @@
         </msh:row>
         <msh:row>
           <msh:autoComplete property="registrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
-          <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" guid="8efc75d0-c5c7-4a5d-856f-d043968e1429" horizontalFill="true" />
+          <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
         </msh:row>
         <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
           <msh:autoComplete vocName="vocDiagnosis" property="docDiagnosis" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" fieldColSpan="3" horizontalFill="true" />
@@ -34,7 +34,7 @@
         <msh:ifFormTypeIsView formName="stac_diagnosisForm">
 	        <msh:row>
 	          <msh:autoComplete vocName="vocAcuityDiagnosis" property="acuity" label="Острота" guid="21cf4876-83b6-457c-be68-f186d986c130" horizontalFill="true" />
-	          <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
+          	  <msh:autoComplete vocName="vocPrimaryDiagnosis" property="primary" label="Первичность" guid="8efc75d0-c5c7-4a5d-856f-d043968e1429" horizontalFill="true" />
 	        </msh:row> 
         </msh:ifFormTypeIsView>
         <msh:row>

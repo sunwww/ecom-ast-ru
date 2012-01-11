@@ -31,12 +31,18 @@
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
+    String date1 = (String)request.getParameter("dateEnd") ;
     
     if (date!=null && !date.equals("")) {
+    	if (date1!=null &&!date1.equals("")) {
+    		request.setAttribute("dateEnd", date1) ;
+    	} else {
+    		request.setAttribute("dateEnd", date) ;
+    	}
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска обращений за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nativeSql="
     
@@ -46,7 +52,7 @@
 (select count(*) from MedCase m1 where m1.DTYPE='HospitalMedCase' and m1.${dateSearch}=m.${dateSearch} and (m1.noActuality is null or cast(m1.noActuality as integer)=0) and cast(m1.emergency as integer)=1 and m1.deniedHospitalizating_id is null) as em
 , CEILING(count(m.id)-count(m.deniedHospitalizating_id)) as obr
 , count(m.deniedHospitalizating_id) as denied ,
- count(m.id) as all from medcase m where m.dtype='HospitalMedCase' and m.${dateSearch} between '${param.dateBegin}'  and '${param.dateEnd}'  and ( m.noActuality is null or cast(m.noActuality as integer)=0)
+ count(m.id) as all from medcase m where m.dtype='HospitalMedCase' and m.${dateSearch} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  and ( m.noActuality is null or cast(m.noActuality as integer)=0)
 
 group by m.${dateSearch}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -77,6 +83,7 @@ group by m.${dateSearch}
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
     <script type='text/javascript'>
+    /*
     function catcalc(cal) {
 			var date = cal.date;
 			var time = date.getTime()
@@ -107,6 +114,7 @@ group by m.${dateSearch}
 				 eventName: "focus",
 				 onUpdate : catcalc
  			});
+			 */
     </script>
     
   </tiles:put>

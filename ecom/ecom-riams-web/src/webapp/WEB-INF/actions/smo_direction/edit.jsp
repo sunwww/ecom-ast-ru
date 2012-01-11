@@ -40,12 +40,18 @@
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
           <msh:separator label="Дополнительные параметры" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
         </msh:row>
+        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
+          <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:row guid="a970fa32-6038-4e0b-a0a8-c57b5ebd3a04">
+          <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" viewOnlyField="false" label="Рабочее место" guid="c61023b1-bf59-432f-8764-8a571b1eddf8" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" 
         	parentId="smo_directionForm.patient" viewAction="entityParentView-mis_kinsman.do" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row guid="69487e8f-d832-47f8-b486-dd2cd97d11ca">
-          <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent" size="50" label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" />
+          <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent"  label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row guid="16db3ed2-4536-4a64-9cac-b73390bf65d6">
           <msh:autoComplete showId="false" vocName="vocReason" property="visitReason" viewOnlyField="false" label="Цель визита" guid="5f53c276-d7de-423a-86f5-b523ed37e75d" horizontalFill="true" fieldColSpan="3" />
@@ -53,14 +59,8 @@
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
         </msh:row>
-        <msh:row guid="a970fa32-6038-4e0b-a0a8-c57b5ebd3a04">
-          <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" viewOnlyField="false" label="Рабочее место" guid="c61023b1-bf59-432f-8764-8a571b1eddf8" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
-          <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="6a5e584e-2322-4c12-a0d0-285bf544e7ef" />
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
     <tags:smo_direction_time name="Time" workFuncId="workFunctionPlan" calenDayId="datePlan" calenTimeId="timePlan" />
@@ -73,6 +73,10 @@
       <msh:sideMenu guid="sideMenu-123" title="Направление">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-smo_direction" name="Изменить" roles="/Policy/Mis/MedCase/Direction/Edit" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-smo_direction" name="Удалить" roles="/Policy/Mis/MedCase/Direction/Delete" />
+        
+      </msh:sideMenu>
+      <msh:sideMenu title="Печать">
+      	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

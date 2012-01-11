@@ -190,6 +190,30 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/journal_ticket_spec_list.jsp"/>
         </action>
+        <action path='/poly_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/poly_ticket/f039_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/f039_list.jsp"/>
+        </action>
+        <action path='/visit_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/f039_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_list.jsp"/>
+        </action>
+        <action path='/poly_f039_add_list' type='ru.ecom.poly.web.action.ticket.Form039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/poly_ticket/f039_add_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/f039_add_list.jsp"/>
+        </action>
         <action path='/poly_journalRegisterVisit_print' type='ru.ecom.poly.web.action.ticket.JournalRegisterVisitAction'
                 name='poly_journalBySpecForm'
                 validate='true'
@@ -236,7 +260,7 @@
         </action>
         
         
-        <action path='/poly_ticketsByNonredidentPatientData' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentDataAction'
+        <action path='/poly_ticketsByNonredidentPatientData' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='poly_ticketForm'
                 validate='false'
                 scope="session"
@@ -295,6 +319,10 @@
         </action>
     </action-mappings>
 
+        <action path="/smo_contract_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="smo_contract_directionForm" input="/WEB-INF/actions/smo_direction/contract_direction.jsp">
+            <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
+        </action>
 
 
 </struts-config>

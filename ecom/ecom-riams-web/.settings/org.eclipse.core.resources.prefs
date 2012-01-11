@@ -1,5 +1,9 @@
-#Fri Aug 12 03:27:01 MSD 2011
+#Thu Dec 08 12:45:12 MSK 2011
 eclipse.preferences.version=1
+encoding//src/main/java/org/tempuri/WS_MES_SERVER/wsdl/WS.java=UTF-8
+encoding//src/main/java/org/tempuri/WS_MES_SERVER/wsdl/WSLocator.java=UTF-8
+encoding//src/main/java/org/tempuri/WS_MES_SERVER/wsdl/WS_MES_SERVERSoapBindingStub.java=UTF-8
+encoding//src/main/java/org/tempuri/WS_MES_SERVER/wsdl/WS_MES_SERVERSoapPort.java=UTF-8
 encoding//src/webapp/WEB-INF/actions/ecom_forms/ecom_forms.js=UTF-8
 encoding//src/webapp/WEB-INF/actions/riams/release/20091115.jsp=UTF-8
 encoding//src/webapp/WEB-INF/actions/riams/release/20091215.jsp=UTF-8

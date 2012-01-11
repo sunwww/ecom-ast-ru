@@ -36,8 +36,13 @@
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+           <td>
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
         </msh:row>
+        <%--
         <msh:row>
+        
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
         
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
@@ -49,56 +54,67 @@
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
         </td>
-           <td>
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
+         
 
       </msh:row>
+      --%>
     </msh:panel>
     </msh:form>
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
+    String date1 = (String)request.getParameter("dateEnd") ;
     if (date!=null && !date.equals(""))  {
+    	if (date1!=null &&!date1.equals("")) {
+    		request.setAttribute("dateEnd", date1) ;
+    	} else {
+    		request.setAttribute("dateEnd", date) ;
+    	}
     	%>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select  
-    	m.moveToAnotherLpu_id||':${param.dateBegin}:${param.dateEnd}:${param.typePatient }:'||isnull(p.additionStatus_id,'')
-    	,vss.name as vssname
+    	m.moveToAnotherLpu_id||':${param.dateBegin}:${dateEnd}:${param.typePatient }:'
+    		||case when p.additionStatus_id is null then '' else cast(p.additionStatus_id as varchar(10)) end as idparam
     	,vas.name as vasname
     	,aLpu.name as alpuname
-    	,d.name as dname
-    	, count(*)
+    	, count(*) as cnt
     from MedCase as m 
     left join mislpu as aLpu on aLpu.id=m.moveToAnotherLPU_id 
     left join mislpu as d on d.id=m.department_id 
     left join vocservicestream as vss on vss.id=m.servicestream_id 
     left join patient p on p.id=m.patient_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-    where m.DTYPE='HospitalMedCase' and m.dateFinish between cast('${param.dateBegin}' as date)  and cast('${param.dateEnd}' as date) and m.moveToAnotherLPU_id is not null ${add} group by m.moveToAnotherLPU_id,p.additionStatus_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where m.DTYPE='HospitalMedCase' 
+    and m.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    and to_date('${param.dateEnd}','dd.mm.yyyy') and m.moveToAnotherLPU_id is not null ${add} 
+    group by m.moveToAnotherLPU_id,aLpu.name,p.additionStatus_id,vas.name
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="stac_groupByMoveToAnotherLpuData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Статус пациента" property="3"/>
-            <msh:tableColumn columnName="ЛПУ перевода" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="6"/>
+            <msh:tableColumn columnName="Статус пациента" property="2"/>
+            <msh:tableColumn columnName="ЛПУ перевода" property="3"/>
+            <msh:tableColumn columnName="Кол-во" property="4"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
     <% } else {%>
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
-    
+    <%-- 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+     --%>
     <script type='text/javascript'>
+    
     var typePatient = document.forms[0].typePatient ;
      var typeDate = document.forms[0].typeDate ;
-     var period = document.forms[0].period ;
+     /* var period = document.forms[0].period ;
     
     
     if ((+'${period}')==1) {
@@ -107,7 +123,7 @@
     	period[0].checked='checked' ;
     }else {
     	period[2].checked='checked' ;
-    }   
+    } */  
     if ((+'${typePatient}')==1) {
     	typePatient[0].checked='checked' ;
     } else if ((+'${typePatient}')==2) {
@@ -124,7 +140,7 @@
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	frm.action='stac_groupByMoveToAnotherLpuList.do' ;
-    }
+    }/*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -196,6 +212,7 @@
 				 eventName: "focus",
 				 onUpdate : catcalc
  			});
+			 */
     </script>
   </tiles:put>
 </tiles:insert>

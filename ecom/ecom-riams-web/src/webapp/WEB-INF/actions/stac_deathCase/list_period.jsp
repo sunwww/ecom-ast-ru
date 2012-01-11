@@ -70,7 +70,7 @@
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select dc.id,dc.deathDate,dc.deathTime,
-    vdp.name as vdpname,vdr.name as vdrreason,ss.code,p.lastname||' '||p.firstname||' '||p.middlename||' гр '||to_char(p.birthday,'DD.MM.YYYY'),$$dif^Zcdat($$ie^Zcdat(p.birthday),$$ie^Zcdat(dc.deathdate),3) 
+    vdp.name as vdpname,vdr.name as vdrreason,ss.code,p.lastname||' '||p.firstname||' '||p.middlename||' гр '||to_char(p.birthday,'DD.MM.YYYY') 
     from deathcase dc 
     left join medcase m on m.id=dc.medcase_id 
     left join statisticstub ss on ss.id=m.statisticstub_id 
@@ -82,7 +82,6 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="№стат.карты" property="6"/>
             <msh:tableColumn columnName="ФИО пациента" property="7"/>
-            <msh:tableColumn columnName="Возраст" property="8"/>
             <msh:tableColumn columnName="Дата смерти" property="2"/>
             <msh:tableColumn columnName="Время смерти" property="3"/>
             <msh:tableColumn columnName="Место смерти" property="4"/>

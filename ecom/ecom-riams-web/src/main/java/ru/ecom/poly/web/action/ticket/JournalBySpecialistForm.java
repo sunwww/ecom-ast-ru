@@ -50,6 +50,25 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 	public Long getWorkFunction() {return theWorkFunction;}
 	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
+	/** ЛПУ */
+	@Comment("ЛПУ")
+	public Long getLpu() {return theLpu;}
+	public void setLpu(Long aLpu) {theLpu = aLpu;}
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	public Long getServiceStream() {
+		return theServiceStream;
+	}
+
+	public void setServiceStream(Long aServiceStream) {
+		theServiceStream = aServiceStream;
+	}
+
+	/** Поток обслуживания */
+	private Long theServiceStream;
+	/** ЛПУ */
+	private Long theLpu;
 	/** Рабочая функция */
 	private Long theWorkFunction;
 	/** Сортировка по специалисту */

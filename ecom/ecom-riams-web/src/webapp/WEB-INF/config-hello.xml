@@ -53,7 +53,6 @@
     <form-bean name="mis_workerForm" type="ru.ecom.mis.ejb.form.worker.WorkerForm" />
     
     <form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
-    <form-bean name="mis_awardForm" type="$$map$$mis_awardForm" />
     <form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
     <form-bean name="mis_languageSkillForm" type="$$map$$mis_languageSkillForm" />
     <form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
@@ -63,7 +62,7 @@
     <form-bean name="smo_visitProtocolForm" type="ru.ecom.poly.ejb.form.protocol.VisitProtocolForm" />
     
     <form-bean name="mis_workerNewForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="work_awardForm" type="$$map$$work_awardForm" />
+    <!-- <form-bean name="work_awardForm" type="$$map$$work_awardForm" />  -->
     <form-bean name="work_staffForm" type="$$map$$work_staffForm" />
     <form-bean name="work_staffUnitForm" type="$$map$$work_staffUnitForm" />
     <form-bean name="work_workBookRecordForm" type="$$map$$work_workBookRecordForm" />
@@ -106,6 +105,14 @@
                 input='/WEB-INF/actions/dis_document/listClose.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listClose.jsp" />
+        </action>
+        <action path='/dis_create16vn' type='ru.ecom.mis.web.action.disability.DisabilityReportAction'
+                name='dis_searchForm'
+                validate='true'
+                scope="request"
+                input='/WEB-INF/actions/dis_document/listClose.jsp'
+                >
+            <forward name="success" redirect="false" path="/dis_documentClose.do" />
         </action>
         <action path='/dis_swod' type='ru.ecom.web.actions.base.ForwardAction'
                 name='dis_searchForm'

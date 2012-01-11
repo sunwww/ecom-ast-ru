@@ -18,7 +18,7 @@
       <msh:hidden property="isDiagnosisCreate"/>
       <msh:hidden property="isCloseSpo"/>
             <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
-      <msh:panel guid="panel" colsWidth="20%, 10%, 10%">
+      <msh:panel guid="panel">
         <msh:separator colSpan="4" label="Направлен" guid="86dbd4c5-cfa1-4af1-b250-fabe97b77971" />
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" viewOnlyField="true" />
@@ -37,8 +37,8 @@
           <msh:autoComplete viewAction="entityParentView-smo_spo.do" property="parent" label="СПО" guid="1daf90d8-052b-4776-809c-aedeeac116be" fieldColSpan="3" horizontalFill="true" vocName="vocOpenedSpoByPatient" parentId="smo_visitForm.patient" />
         </msh:row>
         <msh:row guid="8171a822-87ac-4a70-9c65-dd2234890dad">
-          <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" label="Поток" guid="d23cec11-2213-41d7-8877-73235062a656" horizontalFill="true" />
-          <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" label="Место" guid="7f2d4e25-c863-439c-99eb-4f82a6159067" horizontalFill="true" />
+          <msh:autoComplete size="20" showId="false" vocName="vocServiceStream" property="serviceStream" label="Поток" guid="d23cec11-2213-41d7-8877-73235062a656" horizontalFill="true" />
+          <msh:autoComplete size="20" showId="false" vocName="vocWorkPlaceType" property="workPlaceType" label="Место" guid="7f2d4e25-c863-439c-99eb-4f82a6159067" horizontalFill="true" />
         </msh:row>
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
@@ -48,28 +48,29 @@
         	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
         	parentId="smo_visitForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:row guid="bb138544-81d9-4339-b3a7-cab980708336">
+        <msh:row>
           <msh:textField property="dateStart" label="Дата приема" guid="b2d29f22-2b89-4b43-a6af-ef7c8b8c5fb3" />
           <msh:textField property="timeExecute" label="Время" guid="8d583c3f-dda1-43a9-8417-5a2d43a6cd40" />
         </msh:row>
-        <msh:row guid="2c4a87f8-7053-4539-b172-c551603d828e">
-          <msh:autoComplete vocName="vocReason" property="visitReason" viewOnlyField="false" label="Цель визита" guid="7250a2c7-21c3-4633-95ed-5f9fd37d05a3" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="84300380-adbd-4c7f-b3ba-65d5fe0fbfe6">
+        <msh:row>
           <msh:autoComplete showId="false" vocName="vocVisitResult" property="visitResult" viewOnlyField="false" label="Результат визита" guid="77a0dc57-91e5-45a8-b12e-0cdebc6475bb" fieldColSpan="1" horizontalFill="true" />
-          <msh:textField property="nextVisitDate" label="След.дата посещен. по плану"/>
+          <msh:textField property="nextVisitDate" label="След.дата посещен."/>
         </msh:row>
-        <msh:row guid="8g80-adbd-4c7f-b3ba-6ffe6">
-          <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" guid="77g57-91e5-45a8-b12e-0r6475bb" fieldColSpan="3" horizontalFill="true" />
+        <msh:row>
+          <msh:autoComplete vocName="vocReason" property="visitReason" viewOnlyField="false" label="Цель визита" fieldColSpan="1" horizontalFill="true" />
+          <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" fieldColSpan="1" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="18e3d5aa-abff-40e7-ad50-bcc01ee998c1">
+        <msh:row>
+          <msh:autoComplete vocName="vocHospitalization" labelColSpan="3" property="hospitalization" label="Посещ. по дан. заболеванию в текущем году" horizontalFill="true" />
+        </msh:row>
+        <msh:row>
 	        <msh:textField property="uet" label="Усл.един.трудоем."/>
-          <msh:textField property="privilegeRecipeAmount" label="Количество выписанных льготных рецептов" guid="d677be2b-3347-4379-a77e-04d06580ba29" />
+          <msh:textField property="privilegeRecipeAmount" label="Кол-во льгот. рецептов" guid="d677be2b-3347-4379-a77e-04d06580ba29" />
         </msh:row>
-        <msh:row guid="3738a973-a1d3-460e-ab4a-c9ef551a9951">
+        <msh:row>
           <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunctionExecute" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
-        <msh:row guid="0e759382-d46b-413a-b9c2-f142b5476d4d">
+        <msh:row>
           <msh:autoComplete vocName="vocWorker" property="startWorker" label="Исполнитель" guid="fcfa2efc-593e-4fcf-b6be-cc28d9aec89e" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" viewAction="entityView-mis_worker.do" />
         </msh:row>
         <msh:row>
@@ -122,6 +123,11 @@
   	<msh:ifFormTypeIsNotView formName="smo_visitForm">
   		<msh:sideMenu title="Визит">
 	        <msh:sideLink confirm="Вы точно хотите оформить не явку на прием" key="ALT+3" params="id" action="/js-smo_visit-noPatient" name="Оформить не явку на прием" title="Оформить не явку на прием" roles="/Policy/Mis/MedCase/Visit/Edit"/>
+	        
+  		</msh:sideMenu>
+  		<msh:sideMenu title="Показать">
+        <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
   		</msh:sideMenu>
   	</msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">
@@ -149,6 +155,8 @@
         <msh:sideLink params="id" action="/entityParentList-vac_vaccination" name="Вакцинации" title="Показать все вакцинации" roles="/Policy/Mis/Vaccination/View" guid="0b4406ba-1860-4063-a26a-ea11f6f9fb23" />
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений" guid="7hb0b69ae-3b9c-47d9-ab3c-5fbe6fa9f" />
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" params="id" action="/entityParentList-smo_medService" title="Показать все услуги" guid="df23-45a26d-5hfd" />
+        <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="cdf02c63-67bc-4542-a68d-38398f5059bd">
 
@@ -178,7 +186,16 @@
 			}}) ;
 		$('isPrintInfo').checked='checked' ;
   }
+  function viewOtherVisitsByPatient(d) {
+	  //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
+	  
+	  getDefinition("js-smo_visit-infoShortByPatient.do?id="+$('patient').value, null); 
+  }
+  function viewOtherDiagnosisByPatient(d) {
+	  getDefinition("js-smo_diagnosis-infoShortByPatient.do?id="+$('patient').value, null);
+  }
   </script>
+
   <msh:ifFormTypeIsView formName="smo_visitForm">
   	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/DisableCheck">
   	<script type="text/javascript">
@@ -212,7 +229,10 @@
 	  		index++ ;
 	  		if (url[4]>0) {
   				if (+$(url[3]).value<1) {
-  					next = false ;
+  					if (+url[0]==0) {
+  						next = false ;
+  					} 
+  					
   					if (confirm(url[2])) {
   						PatientService.setAddParamByMedCase(url[3],'${param.id}',2,
   								{

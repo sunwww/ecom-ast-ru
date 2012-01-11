@@ -50,8 +50,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	--%>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/View" 
     	name="Милиция" params="id"  
-    	action='/entityParentList-stac_militiaMessages' title='Сообщения в милицию'
-    	styleId="stac_militiaMessage" />
+    	action='/entityParentList-stac_criminalMessages' title='Сообщения в милицию'
+    	styleId="stac_criminalMessages" />
     <msh:sideLink roles="/Policy/Mis/Vaccination/View" name="Вакцинация" params="id"  
     	action='/entityParentList-vac_vaccination' title='Вакцинация'
     	styleId="vac_vacination"
@@ -104,7 +104,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
 
 <msh:sideMenu title="Печать">
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard3" 
     	name="Печать стат. карты в формате А3" params="id"  
     	action='/print-statcard.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать истории болезни'
     	/>
@@ -119,6 +119,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard033" 
     	name="Печать истории болезни и стат.карты выбывшего из стационара" params="id"  
     	action='/print-003.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
+    	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066" 
+    	name="Печать адресных листков (прибытия и убытия)"  params="id"  
+    	action='/print-listAddressHospital.do?m=printAddressSheetByHospital&s=HospitalPrintService' title='Печать адресных листков'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать выписки" params="id"  

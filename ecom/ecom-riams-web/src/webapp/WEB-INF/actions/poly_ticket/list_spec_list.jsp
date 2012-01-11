@@ -60,33 +60,85 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}'||':'||t.workFunction_id,t.date,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename from Ticket t left join medcard as m on m.id=t.medcard_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by t.date,t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}'||':'||t.workFunction_id,t.date
+    ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename
+    ,count(case when t.talk=1 then 1 else null end)
+    from Ticket t left join medcard as m on m.id=t.medcard_id 
+    left join WorkFunction as wf on wf.id=t.workFunction_id 
+    left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2'  ${add} group by t.date,t.workFunction_id,p.lastname,p.middlename,p.firstname,vwf.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        <msh:table name="journal_ticket" action="poly_ticketsBySpecialistData.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Дата" property="2"/>
+            <msh:tableColumn columnName="Специалист" property="4"/>
+            <msh:tableColumn columnName="Кол-во беседа с род." property="5"/>
+            <msh:tableColumn columnName="Кол-во" property="3"/>
+        </msh:table>
+	</msh:ifInRole>
+	<msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket" action="poly_ticketsBySpecialistData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
             <msh:tableColumn columnName="Специалист" property="4"/>
             <msh:tableColumn columnName="Кол-во" property="3"/>
         </msh:table>
+	</msh:ifNotInRole>
     </msh:sectionContent>
     <msh:sectionTitle>Разбивка по МКБ</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_mkb" nativeSql="select t.idc10_id||':${param.typePatient}'||':'||t.workFunction_id||':${param.dateBegin}:${param.dateEnd}' ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename,mkb.code from Ticket t left join medcard as m on m.id=t.medcard_id left join vocidc10 as mkb on mkb.id=t.idc10_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by t.workFunction_id,t.idc10_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket_mkb" nativeSql="select t.idc10_id||':${param.typePatient}'||':'||t.workFunction_id||':${param.dateBegin}:${param.dateEnd}' ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename,mkb.code 
+    ,count(case when t.talk=1 then 1 else null end)
+    from Ticket t left join medcard as m on m.id=t.medcard_id 
+    left join vocidc10 as mkb on mkb.id=t.idc10_id 
+    left join WorkFunction as wf on wf.id=t.workFunction_id 
+    left join Worker as w on w.id=wf.worker_id 
+    left join Patient as p on p.id=w.person_id 
+    inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
+    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2'  ${add} group by t.workFunction_id,t.idc10_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        <msh:table name="journal_ticket_mkb" action="poly_ticketsBySpecialistMkbData.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Специалист" property="3"/>
+            <msh:tableColumn columnName="Диагноз" property="4"/>
+            <msh:tableColumn columnName="Кол-во бесед" property="5"/>
+            <msh:tableColumn columnName="Кол-во" property="2"/>
+        </msh:table>
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_mkb" action="poly_ticketsBySpecialistMkbData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="3"/>
             <msh:tableColumn columnName="Диагноз" property="4"/>
             <msh:tableColumn columnName="Кол-во" property="2"/>
         </msh:table>
+    </msh:ifNotInRole>
     </msh:sectionContent>
     <msh:sectionTitle>Итог</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename, (select count(*) from Ticket t1 left join VocIdc10 as mkb on mkb.id=t1.idc10_id left join Medcard m1 on m1.id=t1.medcard_id where t1.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) from Ticket t left join medcard as m on m.id=t.medcard_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename, (select count(*) from Ticket t1 left join VocIdc10 as mkb on mkb.id=t1.idc10_id left join Medcard m1 on m1.id=t1.medcard_id where t1.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) 
+    ,count(case when t.talk=1 then 1 else null end),p.snils
+    from Ticket t left join medcard as m on m.id=t.medcard_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
+    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2' ${add} group by t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="2"/>
+            <msh:tableColumn columnName="СНИЛС спец." property="5"/>
+            <msh:tableColumn columnName="Кол-во Z*" property="3"/>
+            <msh:tableColumn columnName="Кол-во бесед" property="4"/>
+            <msh:tableColumn columnName="Всего" property="1"/>
+        </msh:table>
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Специалист" property="2"/>
+            <msh:tableColumn columnName="СНИЛС спец." property="5"/>
             <msh:tableColumn columnName="Кол-во Z*" property="3"/>
             <msh:tableColumn columnName="Всего" property="1"/>
         </msh:table>
+    </msh:ifNotInRole>
     </msh:sectionContent>
     </msh:section>
     <% } else {%>

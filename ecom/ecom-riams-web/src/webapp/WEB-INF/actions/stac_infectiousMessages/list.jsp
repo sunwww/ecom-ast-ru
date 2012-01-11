@@ -10,8 +10,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/InfectiousMessages/View" guid="8a611faa-ba68-408d-bd39-c016648b0ed0">
-      <ecom:webQuery name="listInf" nativeSql="select id, number, phoneDate, phoneTime,phone,recieverOrganization from PhoneMessage &#xA;where phoneMessageType_id=1 and medCase_id=${param.id} " guid="909fd277-28b6-4ce3-841c-7d76ee74c9e0" />
-      <msh:table name="listInf" action="entityView-stac_infectiousMessages.do" idField="1" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+      <msh:table name="list" action="entityView-stac_infectiousMessages.do" idField="1" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
         <msh:tableColumn columnName="Номер сообщения" property="2" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
         <msh:tableColumn columnName="Дата регистрации" property="3" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
         <msh:tableColumn columnName="Время регистрации" property="4" guid="35347247-b552-4154-a82a-ee484a1714ad" />

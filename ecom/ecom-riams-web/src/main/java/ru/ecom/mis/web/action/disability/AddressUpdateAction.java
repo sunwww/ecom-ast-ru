@@ -20,7 +20,15 @@ public class AddressUpdateAction extends BaseAction {
         //form.validate(aMapping, aRequest);
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
         //System.out.println("search="+form.getNumberTicket()) ;
-        service.addressUpdate();
+        String clear = aRequest.getParameter("clear") ;
+    	long id = 0 ;
+        if (clear!=null && clear.equals("1")) {
+        	service.addressClear();
+        }
+    	while (id!=-1) {
+    		id=service.addressUpdate(id);
+    	}
+        
 
         return aMapping.findForward("success");
     }

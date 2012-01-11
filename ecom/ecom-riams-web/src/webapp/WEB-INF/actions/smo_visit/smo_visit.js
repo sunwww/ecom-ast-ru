@@ -134,6 +134,9 @@ function noPatient(aForm, aCtx) {
 		"/entityView-smo_visit.do?id="+visitId
 	) ;
 }
+function infoShortByPatient(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_visit/listShort_by_patient.jsp") ;
+}
 function infoByPatient(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/smo_visit/list_by_patient.jsp") ;
 }

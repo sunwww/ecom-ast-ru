@@ -28,9 +28,28 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="0cbf528e-b3d1-48bb-9d50-a878dbbd0c4e">
         <msh:section title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>" guid="313bfb94-a58e-4041-be05-dacad7710873">
-          <ecom:webQuery name="allSLOs" nativeSql="select MedCase.id, MedCase.dateStart&#xA;        , MedCase.department_id||' '||postDep.Name&#xA;        , MedCase.transferDate &#xA;        , MedCase.transferDepartment_id||' '||tranDep.Name&#xA;        , MedCase.dateFinish&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker&#xA;&#x9;, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker&#xA;         ,ifnull(MedCase.dateFinish, ifnull(MedCase.transferDate,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,CURRENT_DATE)) || '(на текущий момент)' ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.transferDate)) ||' (перевод)') ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.dateFinish)) ||' (выписан)')           , MedCase.entranceTime,MedCase.transferTime,MedCase.dischargeTime            
-          ,VocServiceStream.name
-          from MedCase&#xA;  
+          <ecom:webQuery  name="allSLOs" nativeSql="select MedCase.id
+          , MedCase.dateStart as mdateStart 
+          , MedCase.department_id||' '||postDep.Name as mdepartment      
+          , MedCase.transferDate as mtransferDate
+          , MedCase.transferDepartment_id||' '||tranDep.Name as mtransferDepartment        
+          , MedCase.dateFinish as mdateFinish
+          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+          , op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker       
+          ,
+          case when (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)=0 then 1
+               when cast(BedFund.addCaseDuration as integer)=1 then (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)+1
+               else (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)
+          end
+          ||
+          case 
+            when MedCase.dateFinish is not null then ' (выписан)'
+          	when MedCase.transferDate is not null then ' (перевод)'
+          	else ' (на текущий момент)'
+          end as bedCount
+          , MedCase.entranceTime mentranceTime,MedCase.transferTime as mtransferTime,MedCase.dischargeTime as mdischargeTime            
+          ,VocServiceStream.name as vssname
+          from MedCase
           left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA; 
            left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
            left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA; 
@@ -39,7 +58,10 @@
               left outer join MisLpu postDep on MedCase.department_id           = postDep.id&#xA;
                left join BedFund on BedFund.id=MedCase.bedFund_id 
           left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
-               left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+               left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
+               where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'
+               order by MedCase.dateStart,MedCase.entranceTime
+               " guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
           <msh:table name="allSLOs" action="entityParentView-stac_slo.do" idField="1" guid="a99e7bed-cb69-49df-bbe6-ac9718cd22e0">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
@@ -65,9 +87,10 @@
         </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" guid="ea6d2cd5-0263-4602-960d-644c49ab4975">
-          <ecom:webQuery name="allSurgOper" nativeSql="select so.id,so.operationDate,so.operationTime,vo.name as voname
-          , case when parent.DTYPE='HospitalMedCase' then 'Приемное отделение' when parent.DTYPE='DepartmentMedCase' then d.name else '' end 
-          , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+          <ecom:webQuery name="allSurgOper" nativeSql="select so.id
+          ,so.operationDate as sooperationDate,so.operationTime as soperationTime,vo.name as voname
+          , case when parent.DTYPE='HospitalMedCase' then 'Приемное отделение' when parent.DTYPE='DepartmentMedCase' then d.name else '' end as whoIs  
+          , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           from SurgicalOperation as so 
           left join VocOperation vo on vo.id=so.operation_id 
           left join medcase parent on parent.id=so.medcase_id 
@@ -110,8 +133,16 @@
         --%>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View" guid="4cc62e2b-bf2a-4839-8bab-481886e8e721">
-         <ecom:webQuery name="diags" nativeSql="select Diagnosis.id, VocDiagnosisRegistrationType.name as vdrtname, Diagnosis.establishDate, &#xA;  ' '||Diagnosis.name,VocIdc10.code, VocPriorityDiagnosis.name as vpdname&#xA;  from Diagnosis&#xA;  left outer join VocDiagnosisRegistrationType on Diagnosis.registrationType_id = VocDiagnosisRegistrationType.id left outer join VocPriorityDiagnosis on Diagnosis.priority_id = VocPriorityDiagnosis.id&#xA;  left outer join VocIdc10     on Diagnosis.idc10_id = VocIdc10.id&#xA; where Diagnosis.medCase_id=${param.id} &#xA;" guid="b72ef17b-92bc-4d99-9d2f-a129e9b2cc3f" />
-        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'>Добавить новый диагноз</a>" guid="a2bc2525-333d-4548-a7bf-0065569f87ba">
+         <ecom:webQuery name="diags" nativeSql="
+         select Diagnosis.id as did, VocDiagnosisRegistrationType.name as vdrtname
+         ,Diagnosis.establishDate as establishDate
+         ,Diagnosis.name as dname,VocIdc10.code as mkbcode
+         ,VocPriorityDiagnosis.name as vpdname  from Diagnosis
+         left outer join VocDiagnosisRegistrationType on Diagnosis.registrationType_id = VocDiagnosisRegistrationType.id 
+         left outer join VocPriorityDiagnosis on Diagnosis.priority_id = VocPriorityDiagnosis.id
+         left outer join VocIdc10     on Diagnosis.idc10_id = VocIdc10.id
+         where Diagnosis.medCase_id=${param.id}" />
+        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'>Добавить новый диагноз</a>" >
           <msh:table name="diags" action="entityParentView-stac_diagnosis.do" idField="1" guid="7312ce0c-0c61-482d-9079-71b2a0f29484">
               <msh:tableColumn property="sn" columnName="#" />
             <msh:tableColumn columnName="Тип регистрации" property="2" guid="e2fc05a6-e089-4c90-8fb2-a8377e6f8967" />
@@ -133,7 +164,11 @@
         		</msh:ifNotInRole>
         </msh:sectionTitle>
         <msh:sectionContent>
-          <ecom:webQuery name="protocols" nativeSql="select p.id,p.dateRegistration,p.timeRegistration,p.record,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename from diary p left join workfunction wf on wf.id=p.specialist_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where p.medcase_id=${param.id} and p.dtype='Protocol'"/>
+          <ecom:webQuery name="protocols" nativeSql="select p.id as pid
+          ,p.dateRegistration as pdateregistration,p.timeRegistration as ptimeRegistration
+          ,p.record as precord
+          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+           from diary p left join workfunction wf on wf.id=p.specialist_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where p.medcase_id=${param.id} and p.dtype='Protocol'"/>
           <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false" guid="d0e60067-9aec-4ee0-b20a-4f6b37">
               <msh:tableColumn property="sn" columnName="#"/>
 		      <msh:tableColumn columnName="Дата" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />

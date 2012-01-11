@@ -32,6 +32,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		styleId="journalDouble" roles="/Policy/Mis/MedCase/Visit/JournalDoubleVisit" 
 		title="Просмотр повторных по посещениям"/>
 		
+	<msh:sideLink name="Форма 039У-02" action="/visit_f039_list.do?ticketIs=0" params="" 
+		roles="/Policy/Mis/MedCase/Visit/Report039" styleId="report039"
+	/>
 	<msh:sideLink name="Открытые СПО" action="/smo_openSPO_list.do"
 		styleId="journalOpenSPO" roles="/Policy/Mis/MedCase/Visit/OpenSpo"/>
 	<msh:sideLink name="Активные направления" action="/smo_activeDirect_list.do"

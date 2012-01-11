@@ -17,6 +17,9 @@
     
   <tiles:put name="body" type="string">
     <msh:form action="/poly_journalRegisterVisit_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <input type="hidden" name="m" id="m" value="journalRegisterVisitByFrm"/>
+    <input type="hidden" name="s" id="s" value="TicketService"/>
+    <input type="hidden" name="id" id="id"/>
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -50,7 +53,7 @@
         <td colspan="4" class="buttons">
 			<input type="button" value="Отменить" title="Отменить изменения [SHIFT+ESC]" onclick="this.disabled=true; window.history.back()" id="cancelButton">
 			<input type="button" title="Найти [CTRL+ENTER]" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;poly_journalRegisterVisit_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
-			<input type="button" title="Печать [CTRL+ENTER]" onclick="this.value=&quot;Печать&quot;; this.form.action=&quot;poly_journalRegisterVisit_print.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">
+			<input type="button" title="Печать [CTRL+ENTER]" onclick="this.value=&quot;Печать&quot;; getId();this.form.action=&quot;print-journalRegistration.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">
 		</td>
         
         </msh:row>
@@ -91,6 +94,23 @@
     <% } else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  	<script type="text/javascript">
+  		function getId() {
+  			var args=$('beginDate').value+":"+$('finishDate').value
+  			+":"+$('specialist').value+":"+$('rayon').value+":"+$('primaryInYear').value 
+  			+":" +$('numberInJournal').value +":";
+  			
+  			if ($('orderBySpecialist') && $('orderBySpecialist').checked) {
+  				args=args+"t.workFunction_id" ;
+  			}  else {
+  				args=args+"t.date,t.recordtime" ;
+  			}
+  			args=args+":"+$('workFunction').value ;
+  			$('id').value =args ; 
+  		}
+  	</script>
   </tiles:put>
 
 </tiles:insert>

@@ -118,9 +118,28 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="0cbf528e-b3d1-48bb-9d50-a878dbbd0c4e">
         <msh:section title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>" guid="313bfb94-a58e-4041-be05-dacad7710873">
-          <ecom:webQuery name="allSLOs" nativeSql="select MedCase.id, MedCase.dateStart&#xA;        , MedCase.department_id||' '||postDep.Name&#xA;        , MedCase.transferDate &#xA;        , MedCase.transferDepartment_id||' '||tranDep.Name&#xA;        , MedCase.dateFinish&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker&#xA;&#x9;, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker&#xA;         ,ifnull(MedCase.dateFinish, ifnull(MedCase.transferDate,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,CURRENT_DATE)) || '(на текущий момент)' ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.transferDate)) ||' (перевод)') ,($$GetBedDays^ZExpCheck('000' || (case when BedFund.addCaseDuration=1 then 'J' else 'A' end),MedCase.dateStart,MedCase.dateFinish)) ||' (выписан)')           , MedCase.entranceTime,MedCase.transferTime,MedCase.dischargeTime            
-          ,VocServiceStream.name
-          from MedCase&#xA;  
+         <ecom:webQuery  name="allSLOs" nativeSql="select MedCase.id
+          , MedCase.dateStart as mdateStart 
+          , MedCase.department_id||' '||postDep.Name as mdepartment      
+          , MedCase.transferDate as mtransferDate
+          , MedCase.transferDepartment_id||' '||tranDep.Name as mtransferDepartment        
+          , MedCase.dateFinish as mdateFinish
+          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+          , op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker       
+          ,
+          case when (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)=0 then 1
+               when cast(BedFund.addCaseDuration as integer)=1 then (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)+1
+               else (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)
+          end
+          ||
+          case 
+            when MedCase.dateFinish is not null then ' (выписан)'
+          	when MedCase.transferDate is not null then ' (перевод)'
+          	else ' (на текущий момент)'
+          end as bedCount
+          , MedCase.entranceTime mentranceTime,MedCase.transferTime as mtransferTime,MedCase.dischargeTime as mdischargeTime            
+          ,VocServiceStream.name as vssname
+          from MedCase
           left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA; 
            left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
            left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA; 
@@ -130,6 +149,8 @@
                left join BedFund on BedFund.id=MedCase.bedFund_id 
           left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
                left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+          
+
           <msh:table name="allSLOs" action="entityParentView-stac_slo.do" idField="1" guid="a99e7bed-cb69-49df-bbe6-ac9718cd22e0">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>

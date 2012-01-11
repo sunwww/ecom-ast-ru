@@ -31,7 +31,7 @@
         <msh:section>
             <msh:sectionTitle>Протоколы по случаю медицинского обслуживания</msh:sectionTitle>
             <msh:sectionContent>
-            	<ecom:webQuery name="protocols"  hql="select dateRegistration||':'||timeRegistration||':'||id, dateRegistration, timeRegistration, record, printDate from Diary 
+            	<ecom:webQuery name="protocols"  hql="select dateRegistration||'!'||timeRegistration||'!'||id, dateRegistration, timeRegistration, record, printDate from Diary 
             	where medCase_id='${param.id}' 
             	${dop}
             	order by dateRegistration,timeRegistration"/>

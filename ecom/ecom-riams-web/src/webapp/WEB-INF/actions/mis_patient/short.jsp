@@ -12,6 +12,10 @@
       <msh:hidden guid="hiddenid123" property="id" />
       <msh:hidden property="saveType" guid="30dc954b-c5f2-49ed-b001-31042904724c" />
       <msh:panel>
+       	<msh:row >
+      		<msh:textField property="patientSync" label="Код синх." viewOnlyField="true"/>
+			<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
+      	</msh:row>
       	<msh:row>
       		<msh:autoComplete property="medcardLast" viewAction="entityView-poly_medcard.do" shortViewAction="entityShortView-poly_medcard.do"
       			label="Медкарта" vocName="medcardLast" viewOnlyField="true"/>
@@ -34,7 +38,11 @@
           </msh:row>
           <msh:row>
             <msh:label property="middlename" label="Отчество" />
+            <msh:autoComplete viewOnlyField="true"property="sex" label="Пол" vocName="vocSex" />
+          </msh:row>
+          <msh:row>
             <msh:label property="birthday" label="Дата рождения" guid="06db8372-9a2e-4737-8703-9e2b96c06782" />
+          	<msh:textField property="age" label="Возраст" viewOnlyField="true"  size="20"/>
           </msh:row>
           <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
 	          <msh:row>
@@ -43,15 +51,11 @@
           </msh:ifInRole>
 
         <msh:row>
-            <msh:autoComplete viewOnlyField="true"property="sex" label="Пол" vocName="vocSex" />
-           
-        </msh:row>
-        <msh:row>
           <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" viewOnlyField="true" vocName="vocOrg"  />
         </msh:row>
         <msh:row>
-          <msh:label property="workPost" label="Должность" />
-          <msh:label property="snils" label="СНИЛС" />
+          <msh:label property="workPost" label="Должность" size="20"/>
+          <msh:label property="snils" label="СНИЛС" size="20"/>
         </msh:row>
         <msh:row>
           <msh:autoComplete property="socialStatus" fieldColSpan="1" label="Социальный статус" horizontalFill="true" vocName="vocSocialStatus" guid="016dc681-4c60-4c68-9855-7b84e62373f7" />
@@ -86,8 +90,6 @@
         <msh:separator colSpan="4" label="Доп.сведения" />
          <msh:row >
           <msh:label property="deathDate" label="Дата смерти"  />
-        </msh:row>
-        <msh:row >
             <msh:label property="notice" label="Примечание"  />
         </msh:row>
         <msh:row >

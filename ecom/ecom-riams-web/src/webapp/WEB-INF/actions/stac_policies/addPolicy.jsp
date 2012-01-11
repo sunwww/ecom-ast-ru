@@ -11,7 +11,7 @@
     <tiles:put name='side' type='string'>
         <msh:sideMenu>
             <msh:sideLink key='ALT+1' params="id" action="/entityParentView-stac_ssl"
-                          name="Текущий ССЛ"/>
+                          name="Текущий СЛС"/>
         </msh:sideMenu>
     </tiles:put>
 

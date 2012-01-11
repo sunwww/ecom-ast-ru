@@ -13,16 +13,56 @@
     <tags:ticket_finds currentAction="ticketsByResident" />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="id" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
-      <msh:tableColumn columnName="Номер" property="id" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-      <msh:tableColumn columnName="Дата выдачи" property="dateCreate" guid="1b4ed9e3-9e46-43fd-b9a6-700b3269c7c5" />
-      <msh:tableColumn columnName="Время выдачи" property="timeCreate" guid="d214034d-3ab6-4a6d-b698-5abbd75f3c68" />
-      <msh:tableColumn columnName="Дата приема" property="date" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
-      <msh:tableColumn columnName="Время приема" property="time" guid="f62732ff-2c80-471e-8d1d-bdc8f358e730" />
-      <msh:tableColumn columnName="Специалист" property="workFunctionInfo" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-      <msh:tableColumn columnName="Пациент" property="patientName" guid="d7955208-4c68-42ce-85d6-684a4b9076a9" />
-      <msh:tableColumn columnName="Статус" property="statusName" guid="4d08977e-791d-42d6-8b84-7968aede7e79" />
-    </msh:table>
+    <ecom:webQuery name="journal_priem" nativeSql=" select p.id as pid,m.number as mnumber
+    , p.lastname||' '|| p.firstname||' '||p.middlename as fiopat,p.birthday
+    ,  t.id as tid,t.date as tdate
+    ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
+    ,mkb.code as mkbcode ,vr.name as vrname, case when t.talk=1 then 'Да' else '' end
+    from Ticket t left join medcard m on m.id=t.medcard_id     
+    left join Patient p on p.id=m.person_id     
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join workfunction wf on wf.id=t.workFunction_id    
+    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    
+    left join worker  w on w.id=wf.worker_id    
+    left join patient wp on wp.id=w.person_id    
+    left join vocIdc10 mkb on mkb.id=t.idc10_id    
+    left join vocreason vr on vr.id=t.vocreason_id    
+    where t.date  =  to_date('${date}','dd.mm.yyyy')
+    and t.status='2' ${add}     order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    
+    <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+	    <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" 
+	    deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" 
+	    name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
+	      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Беседа с родст." property="10" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	    </msh:table>
+    
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+	    <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" 
+	    deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" 
+	    name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
+	      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	    </msh:table>
+    
+    </msh:ifNotInRole>
   </tiles:put>
 </tiles:insert>
 

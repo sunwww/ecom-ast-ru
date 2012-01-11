@@ -9,12 +9,16 @@
     <!-- 
     	  - Рабочая функция к специалистам
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-work_personalWorkFunction.do" defaultField="workFunctionName">
+    <msh:form guid="formHello" action="/entityParentSaveGoView-work_personalWorkFunction.do" defaultField="workFunctionName"
+    title="<a href='entityView-work_personalWorkFunction.do?id=${param.id}'>Групповая рабочая функция</a>">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="lpuRegister" guid="384a5a43-d9f9-464e-a36b-bcf6e2e8c6d4" />
       <msh:hidden property="worker" guid="caf14c3e-853a-4150-aeee-c85053c88d72" />
       <msh:panel guid="panel">
+        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
+          <msh:textField property="code" horizontalFill="true" fieldColSpan="3" label="Код"/>
+        </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
           <msh:autoComplete viewAction="entityView-voc_workFunction.do" vocName="vocWorkFunction" property="workFunction" guid="3a3e4d1b-8802-467d-b205-715fb379b018" fieldColSpan="3" label="Название функции" size="50" />
         </msh:row>

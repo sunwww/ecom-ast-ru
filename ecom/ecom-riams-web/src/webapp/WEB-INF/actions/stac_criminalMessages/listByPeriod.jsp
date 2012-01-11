@@ -10,7 +10,7 @@
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в милицию"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:style_currentMenu currentAction="stac_militiaMessages" />
+  	<tags:style_currentMenu currentAction="stac_criminalMessages" />
     	<tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -39,7 +39,7 @@
     <msh:sectionTitle>Результаты поиска за период с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="select phoneDate, count(id) from PhoneMessage where phoneMessageType_id=2 and phoneDate  between '${param.dateBegin}'  and '${param.dateEnd}'  group by phoneDate " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_militia" action="js-stac_militiaMessages-listByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_militia" action="js-stac_criminalMessages-listByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Количество сообщений" identificator="false" property="2" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
