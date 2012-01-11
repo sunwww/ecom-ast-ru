@@ -299,9 +299,11 @@
 	      	 }
 	    });
     	if ($('workFunctionName')) workFunctionAutocomplete.addOnChangeCallback(function() {
-    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunction").value+"#"+$("date").value) ;
+    		var wf = +$("workFunction").value;
+    		if (wf=='') {wf=0;}
+    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("date").value) ;
     		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 TicketService.getMedServiceBySpec($('workFunction').value,$('date').value,{
+    		 TicketService.getMedServiceBySpec(wf,$('date').value,{
 	      	 		callback: function(aResult) {
 	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
 	      	 		}
@@ -309,9 +311,11 @@
 	    });
 	      	eventutil.addEventListener($('date'),'blur',function(){
 		  		if (oldValue!=$('date').value) {
-		  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunction").value+"#"+$("date").value) ;
+		  			var wf = +$("workFunction").value;
+		    		if (wf=='') {wf=0;}
+		  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("date").value) ;
 		    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-		    		 TicketService.getMedServiceBySpec($('workFunction').value,$('date').value,{
+		    		 TicketService.getMedServiceBySpec(wf,$('date').value,{
 			      	 		callback: function(aResult) {
 			      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
 			      	 		}
@@ -345,7 +349,7 @@
     				return "none" ;
     			}
     		}
-    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunction").value+"#"+$("date").value) ;
+    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunction").value)+"#"+$("date").value) ;
     	//]]>
     	</script>
     	

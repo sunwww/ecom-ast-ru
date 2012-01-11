@@ -47,7 +47,7 @@
     
     <msh:section>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select t.medcard_id||':'||$piece(to_char(t.date,'yyyy-mm-dd'),' ')||':'||t.workFunction_id, t.id as tid, t.medcard_id as person,t.date
+    <ecom:webQuery name="journal_ticket" nativeSql="select t.medcard_id||':'||to_char(t.date,'yyyy-mm-dd')||':'||t.workFunction_id, t.medcard_id as person,t.date
     				,(select count(*) from Ticket t2 where t2.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t2.medcard_id=t.medcard_id and t2.workFunction_id=t.workFunction_id and t2.date=t.date)
     				,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename,pm.lastname||' '||pm.firstname||' '||pm.middlename, m.number 
     				from Ticket t 
@@ -58,14 +58,19 @@
     				left join Medcard as m on m.id=t.medcard_id
     				 left join Patient as pm on pm.id=m.person_id 
     				 inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-    				 where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.id>t1.id group by t.medcard_id,t.date,t.workFunction_id"/>
+    				 where t.date  between '${param.dateBegin}'  
+    				 and '${param.dateEnd}' and t.id>t1.id 
+    				 group by t.medcard_id,t.date,t.workFunction_id
+						,vwf.name,p.lastname,p.firstname,p.middlename
+						,pm.lastname,pm.firstname
+						,pm.middlename, m.number"/>
         <msh:table name="journal_ticket" action="poly_doubleTickets_data.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Дата" property="4"/>
-            <msh:tableColumn columnName="Медкарта" property="8"/>
-            <msh:tableColumn columnName="Пациент" property="7"/>
-            <msh:tableColumn columnName="Специалист" property="6"/>
-            <msh:tableColumn columnName="Кол-во" property="5"/>
+            <msh:tableColumn columnName="Дата" property="3"/>
+            <msh:tableColumn columnName="Медкарта" property="7"/>
+            <msh:tableColumn columnName="Пациент" property="6"/>
+            <msh:tableColumn columnName="Специалист" property="5"/>
+            <msh:tableColumn columnName="Кол-во" property="4"/>
         </msh:table>
     </msh:sectionContent>
 
