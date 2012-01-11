@@ -25,7 +25,7 @@ public class ReplaceHelper {
         		Object o = aValueGetter.getValue(aLine.substring(2, aLine.length() - 1)) ;
         		return o ;
         	}catch (Exception e) {
-        		System.out.println(e.getCause()) ;
+        		//System.out.println(e.getCause()) ;
         		throw new SetValueException(e.getMessage(),e.getCause());
         	}
             
@@ -65,11 +65,11 @@ public class ReplaceHelper {
                     strValue = "" ;
                 } else {
                     try {
-                        System.out.println("value.getClass() = " + value.getClass() +"  "+value);
+                        //System.out.println("value.getClass() = " + value.getClass() +"  "+value);
                         strValue = (String) PropertyUtil.convertValue(value.getClass(), String.class, value ) ;
                     } catch (Exception e) {
                         LOG.warn("Ошибка преобразования",e);
-                        System.out.println(e) ;
+                        //System.out.println(e) ;
                         strValue = value.toString() ;
                     }
                 }
