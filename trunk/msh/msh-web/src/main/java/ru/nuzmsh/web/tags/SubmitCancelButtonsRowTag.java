@@ -35,6 +35,24 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
     public void setColSpan(int aColSpan) {
         theColSpan = aColSpan;
     }
+    
+    /**
+     * На показывать кнопку отмены
+     *
+     * @jsp.attribute description="а показывать кнопку отмены"
+     * required="false"
+     * rtexprvalue="true"
+     */
+	public boolean getNotDisplayCancel() {
+		return theNotDisplayCancel;
+	}
+
+	public void setNotDisplayCancel(boolean aNotDisplayCancel) {
+		theNotDisplayCancel = aNotDisplayCancel;
+	}
+
+	/** Не показывать кпонку отмены */
+	private boolean theNotDisplayCancel = false;
 
     /**
      * Подпись на кнопке СОЗДАТЬ
@@ -179,9 +197,9 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
                 out.println("'>");
 
                 IdeTagHelper.getInstance().printMarker(this, pageContext);
-                
-                out.println("<input id='cancelButton' type='button' onclick='this.disabled=true; window.history.back()' title='Отменить изменения [SHIFT+ESC]'value='Отменить'/>");
-
+                if(!theNotDisplayCancel) {
+                	out.println("<input id='cancelButton' type='button' onclick='this.disabled=true; window.history.back()' title='Отменить изменения [SHIFT+ESC]'value='Отменить'/>");
+                }
 
                 out.print("<input id='submitButton' class='default' type='button' value='");
                 String label = isTypeCreate() ? getLabelCreate() : getLabelSave() ;
