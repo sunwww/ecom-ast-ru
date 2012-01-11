@@ -77,7 +77,8 @@
         <msh:section title="Категории" guid="e681be03-dea7-4bce-96cf-aa600185f156">
           <ecom:webQuery  name="childMedService" nativeSql="
           	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
-          	 (select list(' '||vwf.name) from WorkFunctionService wfs left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id) 
+          	 (select list(' '||vwf.name) from WorkFunctionService wfs left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id)
+          	 ,ms.code 
           	 from MedService ms left join VocMedService vms on vms.id=ms.vocMedService_id where ms.parent_id='${param.id}'
           " guid="childMedService" />
 		  	<msh:tableNotEmpty name="childMedService">
@@ -101,6 +102,7 @@
 		  	</msh:toolbar>
   	</msh:tableNotEmpty>
   	<msh:table selection="true" name="childMedService" action="entityParentView-mis_medService.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+            <msh:tableColumn  property="7" columnName="Код"  />
             <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
             <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
 		      <msh:tableColumn columnName="Дата начала" property="4"/>
