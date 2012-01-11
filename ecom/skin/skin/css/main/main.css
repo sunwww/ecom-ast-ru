@@ -308,7 +308,7 @@ ul li a#selected {
 #side ul li a {
     display: block; ;
     width: 95% ;
-    padding: 2px ;
+    padding: 1px 1px 0 10px ;
     padding-left: 10px ;
     /*border: 1px solid #fff ;*/
 }
@@ -392,7 +392,7 @@ a#selected_menu, #side ul li a#selected_menu, #side ul li a#selected_menu  {
 }
 #side ul li a {
     position: relative ;
-    padding-top:2px ;
+    padding-top:1px ;
 }
 #side ul li a .accessKey {
     color: black ;
@@ -710,7 +710,7 @@ input, label {
 }
 
 form table td {
-    padding: 2px 1px 2px 1px ;
+    padding: 1px 1px 1px 1px ;
 }
 
 form table {
@@ -795,17 +795,17 @@ table.sel tr:hover {
 
 
 table.tabview th {
-    padding: 3px ;
+    padding: 2px ;
     background-color: #f0f0f0 ;
 }
 
 table.tabview td{
-    padding: 2px ;
+    padding: 1px ;
     vertical-align: top;
 }
 
 table.tabview tr:hover td {
-    padding: 2px ;
+    padding: 1px ;
     background-color: rgb(159,159,80);
     /*background-color: #e0ecff;*/
    /*border-bottom: 3px solid black ;*/

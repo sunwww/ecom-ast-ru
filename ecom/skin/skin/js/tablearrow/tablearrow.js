@@ -75,10 +75,17 @@ tablearrow.TableArrow = function(aTableId) {
             var str = "";
             for (var i = 0; i < ids.length; i++) {
             	if (ids[i]!="inserted") {
-	                str += aIdParamName+"=" + ids[i];
-	                if (i != ids.length - 1) {
-	                    str += "&";
-	                }
+            		if (aIdParamName!=null && aIdParamName!="") {
+    	                str += aIdParamName+"=" + ids[i];
+    	                if (i != ids.length - 1) {
+    	                    str += "&";
+    	                }
+            		} else {
+    	                str += ids[i];
+    	                if (i != ids.length - 1) {
+    	                    str += ",";
+    	                }
+            		}
                 }
             }
             return str ;

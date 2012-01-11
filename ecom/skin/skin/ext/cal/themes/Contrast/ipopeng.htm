@@ -327,11 +327,14 @@ function fFormatDate(y,m,d){
 	var D=gbPadZero&&d<10?"0"+d:d;
 	var sy=y%100;
 	var Y=gbShortYear?sy<10?"0"+sy:sy:y;
+	//var st = "" ;
 	switch (giDatePos) {
-		case 0: return D+gsSplit+M+gsSplit+Y;
-		case 1: return M+gsSplit+D+gsSplit+Y;
-		case 2: return Y+gsSplit+M+gsSplit+D;
+		case 0: return D+gsSplit+M+gsSplit+Y; 
+		case 1: return M+gsSplit+D+gsSplit+Y; 
+		case 2: return Y+gsSplit+M+gsSplit+D; 
+
 	}
+	return "" ;
 }
 
 function fGetAgenda(y,m,d,taint) {
