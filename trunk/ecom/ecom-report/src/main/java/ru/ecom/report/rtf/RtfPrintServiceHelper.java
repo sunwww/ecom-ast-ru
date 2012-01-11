@@ -34,7 +34,8 @@ public class RtfPrintServiceHelper {
     	theDrivers.add(new OdtPrintFileDriver(".odt")) ;
     	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
     	theDrivers.add(new RtfPrintFileDriver()) ;
-        theReplaceHelper.setRtfMode(true);
+    	theDrivers.add(new TxtPrintFileDriver()) ;
+        //theReplaceHelper.setRtfMode(true);
         setRemovedTempFile(true) ;
     }
 
