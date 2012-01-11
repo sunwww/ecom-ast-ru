@@ -203,9 +203,9 @@ function parseDate(inputStr) {
     if (yyyy < 100)
     {
         if (yyyy >= 15) {
-            yyyy += 1900
+            yyyy += 1900;
         } else {
-            yyyy += 2000
+            yyyy += 2000;
         }
     }
     if (yyyy > 10000 || yyyy < 1000)
@@ -232,44 +232,44 @@ function onDateFld(aElementSt, aElementEnd)
 // Заменяет символ aSearch в строке aStr на символ aReplaceStr
 function replaceString(aStr,aSearchStr,aReplaceStr)
 {
-        var front = getFront(aStr,aSearchStr)
-        var end = getEnd(aStr,aSearchStr)
+        var front = getFront(aStr,aSearchStr);
+        var end = getEnd(aStr,aSearchStr);
         if (front != null && end != null)
         {
-                return front + aReplaceStr + end
+                return front + aReplaceStr + end;
         }
-        return null
+        return null;
 }
 
 function getFront(aStr,aSearchStr)
 {
-        var foundOffset = aStr.indexOf(aSearchStr)
+        var foundOffset = aStr.indexOf(aSearchStr);
         if (foundOffset == -1)
         {
-                return null
+                return null;
         }
-        return aStr.substring(0,foundOffset)
+        return aStr.substring(0,foundOffset);
 }
 
 function getEnd(aStr,aSearchStr)
 {
-        var foundOffset = aStr.indexOf(aSearchStr)
+        var foundOffset = aStr.indexOf(aSearchStr);
         if (foundOffset == -1)
         {
-                return null
+                return null;
         }
-        return aStr.substring(foundOffset+aSearchStr.length,aStr.length)
+        return aStr.substring(foundOffset+aSearchStr.length,aStr.length);
 }
 
 function monthDayFormat(val)
 {
 	if (isNaN(val) || val == 0)
     {
-		return "01"
+		return "01";
 	}
     else if (val < 10)
     {
-		return "0" + val
+		return "0" + val;
 	}
-	return "" + val
+	return "" + val;
 }
