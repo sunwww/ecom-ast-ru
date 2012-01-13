@@ -25,8 +25,9 @@ public class PatientServiceJs {
 	}
 	public Object checkPatientBySnils(Long aPatientId, String aSnils,HttpServletRequest aRequest) throws Exception {
 		Object res = null;
-		System.out.println("checking...") ;
-		
+		//System.out.println("checking snils...") ;
+		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
+		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		res = FondWebService.checkPatientBySnils(getPatientInfo(aPatientId, service),aSnils) ;
 		
@@ -35,7 +36,9 @@ public class PatientServiceJs {
 	public Object checkPatientByFioDr(Long aPatientId, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday,HttpServletRequest aRequest) throws Exception {
 		Object res = null;
-		//System.out.println("checking...") ;
+		//System.out.println("checking fiodr...") ;
+		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
+		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		res = FondWebService.checkPatientByFioDr( getPatientInfo(aPatientId, service),aLastname, aFirstname
 				, aMiddlename,  aBirthday) ;
@@ -44,7 +47,9 @@ public class PatientServiceJs {
 	public Object checkPatientByDocument(Long aPatientId, Long aType, String aSeries
 			,String aNumber,HttpServletRequest aRequest) throws Exception {
 		Object res = null;
-		//System.out.println("checking...") ;
+		//System.out.println("checking doc...") ;
+		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
+		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		String type = service.getOmcCodeByPassportType(aType) ;
 		res = FondWebService.checkPatientByDocument(getPatientInfo(aPatientId, service),type, aSeries, aNumber) ;

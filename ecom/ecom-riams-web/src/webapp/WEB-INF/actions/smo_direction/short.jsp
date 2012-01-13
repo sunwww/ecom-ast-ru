@@ -4,14 +4,14 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-smo_direction" 
-    defaultField="orderLpuName" >
+    <msh:form guid="formHello" action="/entitySaveGoView-smo_direction" defaultField="orderLpuName"
+    title="<a href='entityView-smo_direction.do?id=${param.id}'>Направление</a>">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="hiddenParent" property="patient" />

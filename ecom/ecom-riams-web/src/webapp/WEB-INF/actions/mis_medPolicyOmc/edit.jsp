@@ -37,9 +37,7 @@
                     <msh:textField property="actualDateFrom" label='Дата&nbsp;действия&nbsp;с' />
                     <msh:textField property="actualDateTo" label='по' />
                 </msh:row>
-                <msh:row>
-                    <msh:autoComplete vocName="vocOrg" property="org" label="Предприятие" horizontalFill="true" fieldColSpan="5"/>
-                </msh:row>
+                
 
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>

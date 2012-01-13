@@ -8,6 +8,9 @@ function findDirections(aForm, aCtx) {
 	aCtx.request.setAttribute("worker", aCtx.invokeScript("WorkerService", "findLogginedWorkerName", null) ) ;
 	return aCtx.createForward("/WEB-INF/actions/smo_direction/list.jsp") ;
 }
+function findDirectionByUsername(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_direction/listByUsername.jsp") ;
+}
 
 
  
