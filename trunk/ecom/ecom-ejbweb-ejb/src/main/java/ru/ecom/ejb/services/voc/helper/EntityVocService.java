@@ -135,6 +135,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                     queryDop = queryDop.toUpperCase() ;
                 	char c1 = queryDop.charAt(0) ;
                 	queryDop = queryDop.replaceFirst("Ю", ".") ;
+                	queryDop = queryDop.replaceFirst(",", ".") ;
                     aQuery = getLat(c1) + (queryDop.length()>1 ? queryDop.substring(1) : "") ;
                     break ;
                 }
