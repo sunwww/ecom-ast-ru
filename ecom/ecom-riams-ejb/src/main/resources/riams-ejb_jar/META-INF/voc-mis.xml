@@ -906,11 +906,11 @@
     			from = 'WorkFunction as wf '
     			parent = ''
     			names  = "vwf.name||' '||case when w.person_id is null then wf.groupName else p.lastname||' '||p.firstname||' '||p.middlename end "
-    			queried =" (cast(wf.id as varchar(20))= :querId or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
-    			queryAppend = 'wf.group_id is null '
+    			queried =" (cast(wf.id as varchar(20))= :querId or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
+    			queryAppend = 'wc.id is not null and wf.group_id is null'
     			order =''
     			nameId='wf.id'
-    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join WorkCalendar wc on wc.workFunction_id=wf.id'
     	/>
     </voc>
    <voc id='role' type='EntityVocService'>
@@ -927,7 +927,7 @@
     			from = 'WorkFunction as wf '
     			parent = " ( (select m.lpu_id from medcard as m where m.id=:parent) is null or w.lpu_id=(select m.lpu_id from medcard as m where m.id=:parent) )"
     			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
-    			queried =" (wf.id like :query or p.lastname like UPPER(:query)) "
+    			queried =" (cast(wf.id as varchar(6)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
     			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0)"
     			order =''
     			nameId='wf.id'

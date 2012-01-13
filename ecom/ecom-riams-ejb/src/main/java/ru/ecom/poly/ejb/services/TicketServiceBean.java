@@ -68,12 +68,13 @@ public class TicketServiceBean implements ITicketService {
 				JSONWriter j = new JSONWriter(out);
 				j.object();
 				j.key("childs").array();
-	    					for (Object child[] : list) {
+				Object child[] = list.get(0) ;
+	    					//for (Object child[] : list) {
 	    						j.object();
 	    						j.key("value").value(PersistList.parseLong(child[0]));
 	    						j.key("name").value((String)child[1]);
 	    						j.endObject();
-	    					}
+	    					//}
 				j.endArray();
 		
 				j.endObject();

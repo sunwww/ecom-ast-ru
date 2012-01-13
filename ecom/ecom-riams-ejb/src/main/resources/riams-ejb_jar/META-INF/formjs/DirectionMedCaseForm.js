@@ -34,7 +34,13 @@ function createOrSave(aForm, aVisit, aCtx) {
 function onCreate(aForm, aVisit, aCtx) {
 	checks(aVisit) ;
 	if(aVisit.timePlan.medCase!=null) throw "На это время уже есть направление: "+ aVisit.timePlan.medCase.id;
+
 	createOrSave(aForm, aVisit, aCtx) ;
+}
+
+function onPreCreate(aForm, aCtx) {
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
+	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 
 
