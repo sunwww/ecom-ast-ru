@@ -83,7 +83,8 @@ public class PatientServiceBean implements IPatientService {
 		if (list.size()>0) {
 			res.append(list.get(0)[0]) ;
 		} else {
-			String lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+			if (aStreet.startsWith("?")) return res.toString() ;
+			String lastKl = aKladr.equals("")?"30":aKladr.substring(aKladr.length()-1, aKladr.length()) ;
 			while (lastKl!=null&&lastKl.equals("0")) {
 				aKladr = aKladr.substring(0,aKladr.length()-1) ;
 				lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
@@ -176,25 +177,49 @@ public class PatientServiceBean implements IPatientService {
 			String[] fiodr = aFiodr.split("#") ;
 			if (aPatientId!=null &&aPatientId>Long.valueOf(0)) {
 				StringBuilder sql = new StringBuilder() ;
-				sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
-				sql.append(", firstname='").append(fiodr[1]).append("'") ;
-				sql.append(", middlename='").append(fiodr[2]).append("'") ;
-				sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
-				sql.append(", snils='").append(fiodr[4]).append("'") ;
-				sql.append(" where id='").append(aPatientId).append("'") ;
-				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				
+				if (!fiodr[0].startsWith("?")) {
+					sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
+					sql.append(", firstname='").append(fiodr[1]).append("'") ;
+					sql.append(", middlename='").append(fiodr[2]).append("'") ;
+					sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+					sql.append(", snils='").append(fiodr[4]).append("'") ;
+					sql.append(" where id='").append(aPatientId).append("'") ;
+					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				} else {
+					sql.append("update Patient set ") ;
+					//sql.append("lastname='").append(fiodr[0]).append("'") ;
+					//sql.append(", firstname='").append(fiodr[1]).append("'") ;
+					//sql.append(", middlename='").append(fiodr[2]).append("'") ;
+					sql.append(" birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+					sql.append(", snils='").append(fiodr[4]).append("'") ;
+					sql.append(" where id='").append(aPatientId).append("'") ;
+					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+					
+				}
 			}
 		}
 		if (aDocument!=null &&!aDocument.equals("")) {
 			String[] doc = aDocument.split("#") ;
 			StringBuilder sql = new StringBuilder() ;
-			sql.append("update Patient set passportSeries='").append(doc[1]).append("'") ;
-			sql.append(", passportNumber='").append(doc[2]).append("'") ;
-			sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
-			sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
-			sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
-			sql.append(" where id='").append(aPatientId).append("'") ;
-			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			if (!doc[0].startsWith("?")) {
+				sql.append("update Patient set passportSeries='").append(doc[1]).append("'") ;
+				sql.append(", passportNumber='").append(doc[2]).append("'") ;
+				sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
+				sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
+				sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
+				sql.append(" where id='").append(aPatientId).append("'") ;
+				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			} else {
+				sql.append("update Patient set passportSeries='").append(doc[1]).append("'") ;
+				sql.append(", passportNumber='").append(doc[2]).append("'") ;
+				sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
+				//sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
+				sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
+				sql.append(" where id='").append(aPatientId).append("'") ;
+				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				
+			}
 		}
 		if (aAddress!=null &&!aAddress.equals("")) {
 			String[] adr = aAddress.split("#") ;
@@ -354,10 +379,11 @@ public class PatientServiceBean implements IPatientService {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
 		if (newpat!=null && oldpat!=null) {
+			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Award set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update BirthCase set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update BirthCase set mother_id =:idnew where mother_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("	update Customer set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			//theManager.createNativeQuery("	update Customer set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update DeathCase set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update DeathCase set mother_id =:idnew where mother_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Diagnosis set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();

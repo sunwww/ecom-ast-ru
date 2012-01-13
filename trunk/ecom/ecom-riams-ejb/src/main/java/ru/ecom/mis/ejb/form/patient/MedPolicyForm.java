@@ -13,6 +13,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxLength;
 import ru.nuzmsh.forms.validator.validators.MinLength;
@@ -32,7 +33,7 @@ public class MedPolicyForm extends IdEntityForm {
 
     /** Серия */
     @Comment("Серия")
-    @Persist
+    @Persist @DoUpperCase
     public String getSeries() { return theSeries ; }
     public void setSeries(String aSeries) { theSeries = aSeries ; }
 
@@ -44,7 +45,7 @@ public class MedPolicyForm extends IdEntityForm {
 
     /** Номер */
     @Comment("Номер")
-    @Persist
+    @Persist @DoUpperCase
     @Required
     public String getPolNumber() { return theNumber ; }
     public void setPolNumber(String aNumber) { theNumber = aNumber ; }
