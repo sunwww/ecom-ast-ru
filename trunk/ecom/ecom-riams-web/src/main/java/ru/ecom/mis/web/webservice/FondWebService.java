@@ -13,6 +13,7 @@ import org.tempuri.WS_MES_SERVER.wsdl.WSLocator;
 import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
 
 import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.web.login.LoginInfo;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class FondWebService {
@@ -79,9 +80,10 @@ public class FondWebService {
 		if (!aRz.equals("")) {
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
+        	//System.out.println(result);
         	result =updateXml(result) ;
         	
-        	//System.out.println(result);
+        	
         	InputStream in = new ByteArrayInputStream(result.getBytes());
         	Document doc = new SAXBuilder().build(in);
         	Element root = doc.getRootElement();
@@ -112,6 +114,10 @@ public class FondWebService {
     			.append(o).append("#").append(dr).append("#")
     			.append(ss).append("#").append(aRz).append("#")
     			.append("'/>").append("</td>") ;
+            	//System.out.println("---ФАМИЛИЯ:"+f) ;
+            	//System.out.println("---ИМЯ:"+i) ;
+            	//System.out.println("---ОТЧЕСТВО:"+o) ;
+            	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getLastname().equals(f)?"":" bgcolor='yellow'"):"").append(">").append(f).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
@@ -322,7 +328,9 @@ public class FondWebService {
 	}
 	private static String updateXml(String result) {
 		int ind = result.indexOf("?>") ;
+		
     	result = result.substring(ind+2) ;
+    	//result = result.replace("Windows-1252", "utf-8") ;
     	return result ;
 	}
 

@@ -17,6 +17,10 @@
       <msh:hidden property="isPrint"/>
       <msh:hidden property="isDiagnosisCreate"/>
       <msh:hidden property="isCloseSpo"/>
+      <msh:hidden property="orderWorkFunction"/>
+      <msh:hidden property="orderWorker"/>
+      <msh:hidden property="username"/>
+      <msh:hidden property="createDate"/>
             <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
         <msh:separator colSpan="4" label="Направлен" guid="86dbd4c5-cfa1-4af1-b250-fabe97b77971" />

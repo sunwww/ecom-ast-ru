@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Medcard" guid="4b11dc98-30fc-413e-8bc6-976f292e704f">Список талонов по специалисту ${stat_user } ${stat_date}</msh:title>
+    <msh:title mainMenu="Medcard" guid="4b11dc98-30fc-413e-8bc6-976f292e704f">Список талонов по специалисту  ${stat_user}  ${stat_date}</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:ticket_finds currentAction="ticketsByUser" />

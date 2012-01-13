@@ -313,17 +313,18 @@
                 >
             <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
         </action>
+        <!-- 
         <action path="/smo_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
             scope='request' validate="true" name="smo_directionForm" input="/WEB-INF/actions/smo_direction/edit.jsp">
             <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
         </action>
-    </action-mappings>
-
+        
         <action path="/smo_contract_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
             scope='request' validate="true" name="smo_contract_directionForm" input="/WEB-INF/actions/smo_direction/contract_direction.jsp">
             <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
         </action>
-
+         -->
+         </action-mappings>
 
 </struts-config>
 

@@ -350,17 +350,24 @@
           </td><td style="padding-right: 8px">
     
     	<ecom:webQuery name="lastVisit1" nativeSql="select 
-    	m.id,m.dateStart,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	m.id,coalesce(m.dateStart,wcd.calendarDate) as dateFrom
+    	,coalesce(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	,vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename) as worker
     	from medCase m
     	left join workfunction wf on wf.id=m.workFunctionExecute_id
     	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+    	left join workfunction wf1 on wf1.id=m.workFunctionPlan_id
+    	left join vocworkfunction vwf1 on vwf1.id=wf1.workFunction_id
+    	left join WorkCalendarDay wcd on wcd.id=m.datePlan_id
     	left join worker w on w.id=wf.worker_id
     	left join patient wp on wp.id=w.person_id
+    	left join worker w1 on w1.id=wf1.worker_id
+    	left join patient wp1 on wp1.id=w1.person_id
     	where m.patient_id=${param.id} and m.DTYPE='Visit'
     	order by m.dateStart desc
     	" maxResult="1" />
     <msh:tableNotEmpty name="lastVisit1">
-     <msh:section title="Последнее посещение">
+     <msh:section title="Последнее посещение" viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
     	<msh:table name="lastVisit1" action="entitySubclassView-mis_medCase.do" idField="1">
 	    	<msh:tableColumn property="2" columnName="Дата"/>
     		<msh:tableColumn property="3" columnName="Специалист"/>
@@ -701,6 +708,7 @@
          --%>
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="9f390953-ddd1-426b-bf16-5198c38f449b">
+        
         <msh:sideLink key="SHIFT+1" roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/stac_sslList" name="СЛС" title="Показать все случаи лечения в стационаре" guid="ca5196e9-9239-47e3-aec4-9a0336e47144" />
         <msh:sideLink params="id" action="/entityParentList-smo_spo" name="СПО" title="Показать все случаи поликлинического обслуживания" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />

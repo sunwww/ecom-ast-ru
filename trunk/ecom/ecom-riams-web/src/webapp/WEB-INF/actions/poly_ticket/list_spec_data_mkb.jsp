@@ -14,10 +14,13 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <ecom:webQuery name="list" nativeSql=" select t.id as tid,m.number as mnumber
-    , p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||p.birthday
-    ,t.dateCreate,t.date as tdate
+    , p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||p.birthday as fio
+    ,t.dateCreate as tdateCreate,t.date as tdate
     ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
-    ,mkb.code as mkbcode ,vr.name as vrname,case when t.talk=1 then 1 else null end as talk  from Ticket t left join medcard m on m.id=t.medcard_id     left join patient p on p.id=m.person_id     left join workfunction wf on wf.id=t.workFunction_id    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    left join worker  w on w.id=wf.worker_id    left join patient wp on wp.id=w.person_id    left join vocIdc10 mkb on mkb.id=t.idc10_id    left join vocreason vr on vr.id=t.vocreason_id    
+    ,mkb.code as mkbcode ,vr.name as vrname
+    ,case when cast(t.talk as int)=1 then 1 else null end as talk  
+    from Ticket t left join medcard m on m.id=t.medcard_id     left join patient p on p.id=m.person_id     
+    left join workfunction wf on wf.id=t.workFunction_id    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    left join worker  w on w.id=wf.worker_id    left join patient wp on wp.id=w.person_id    left join vocIdc10 mkb on mkb.id=t.idc10_id    left join vocreason vr on vr.id=t.vocreason_id    
     where t.date  between '${dateBegin}'  and '${dateEnd}' and t.status='2' and t.workfunction_id='${spec }' and t.idc10_id='${mkb}'  ${add}     order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
 	    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">

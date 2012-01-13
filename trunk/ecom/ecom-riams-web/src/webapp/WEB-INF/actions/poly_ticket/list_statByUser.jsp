@@ -30,7 +30,11 @@
         </td>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <td>
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
         </msh:row>
+        <%--
         <msh:row>
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
@@ -39,23 +43,33 @@
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
         </td>
-           <td>
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
+           
 
       </msh:row>
+       --%>
     </msh:panel>
     </msh:form>
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
+    	String date1 = (String)request.getParameter("dateEnd") ;
+    	if (date1==null || date1.equals("")) {
+    		request.setAttribute("dateEnd", date) ;
+    	} else {
+    		request.setAttribute("dateEnd", date1) ;
+    	}
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска талонов ${info}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска талонов ${info}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(${dateSearch},'DD.MM.YYYY')||':'||ifnull(usernameCreate,'',usernameCreate)||':${dateSearch1}',${dateSearch},usernameCreate,count(*) from Ticket where ${dateSearch}  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by ${dateSearch},usernameCreate" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket" nativeSql="select  
+    to_CHAR(${dateSearch},'DD.MM.YYYY')||':'||coalesce(usernameCreate,'')||':${dateSearch1}' as idPar
+    ,${dateSearch} as dateSearch,usernameCreate,count(*) as cnt 
+    from Ticket where ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy')
+    	 ${add} group by ${dateSearch},usernameCreate" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="poly_ticketsByUserData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
@@ -66,7 +80,11 @@
     
 		<msh:sectionTitle>Итог по пользователям:</msh:sectionTitle>    
 		<msh:sectionContent>
-        <ecom:webQuery name="journal_ticket_sum" nativeSql="select  usernameCreate,count(*) from Ticket where ${dateSearch}  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} group by usernameCreate" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <ecom:webQuery name="journal_ticket_sum" nativeSql="select  
+        usernameCreate,count(*) from Ticket where ${dateSearch}  
+        between to_date('${param.dateBegin}','dd.mm.yyyy')  
+        and to_date('${dateEnd}','dd.mm.yyyy')
+         ${add} group by usernameCreate" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket_sum"  idField="1" action="" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Пользователь" property="1"/>
@@ -78,19 +96,20 @@
     	<i>Выберите параметры поиска и нажмите "Найти"</i>
     	<% }   %>
     
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
+    <%--<script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+     --%>
     <script type='text/javascript'>
-    var period = document.forms[0].period ;
+    //var period = document.forms[0].period ;
     var dateChange = document.forms[0].dateChange ;
-    
+    /*
     if ((+'${period}')==1) {
     	period[0].checked='checked' ;
     } else {
     	period[1].checked='checked' ;
-    }
+    }*/
     if ((+'${dateChange}')==2) {
     	dateChange[1].checked='checked' ;
     } else {
@@ -106,6 +125,7 @@
     	frm.target='_blank' ;
     	frm.action='stac_print_reestrByDepartment.do' ;
     }
+    /*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -169,6 +189,7 @@
 				 eventName: "focus",
 				 onUpdate : catcalc
  			});
+			 */
     </script>
   </tiles:put>
 </tiles:insert>

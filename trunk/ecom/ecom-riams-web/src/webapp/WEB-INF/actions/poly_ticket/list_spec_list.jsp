@@ -15,7 +15,7 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsBySpecialistList.do" defaultField="" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/poly_ticketsBySpecialistList.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -35,7 +35,12 @@
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+
+           <td>
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
         </msh:row>
+        <%--
         <msh:row>
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
@@ -44,29 +49,35 @@
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
         </td>
-           <td>
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
 
       </msh:row>
+       --%>
     </msh:panel>
     </msh:form>
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
+    	String date1 = (String)request.getParameter("dateEnd") ;
+    	if (date1==null || date1.equals("")) {
+    		request.setAttribute("dateEnd", date) ;
+    	} else {
+    		request.setAttribute("dateEnd", date1) ;
+    	}
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}'||':'||t.workFunction_id,t.date
     ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename
-    ,count(case when t.talk=1 then 1 else null end)
+    ,count(case when cast(t.talk as int)=1 then 1 else null end)
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2'  ${add} group by t.date,t.workFunction_id,p.lastname,p.middlename,p.firstname,vwf.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    and to_date('${dateEnd}','dd.mm.yyyy')
+     and t.status='2'  ${add} group by t.date,t.workFunction_id,p.lastname,p.middlename,p.firstname,vwf.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket" action="poly_ticketsBySpecialistData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -87,15 +98,23 @@
     </msh:sectionContent>
     <msh:sectionTitle>Разбивка по МКБ</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_mkb" nativeSql="select t.idc10_id||':${param.typePatient}'||':'||t.workFunction_id||':${param.dateBegin}:${param.dateEnd}' ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename,mkb.code 
-    ,count(case when t.talk=1 then 1 else null end)
+    <ecom:webQuery name="journal_ticket_mkb" nativeSql="select 
+    t.idc10_id||':${param.typePatient}'||':'||t.workFunction_id||':${param.dateBegin}:${param.dateEnd}' as idPar
+    ,count(*) as cnt1
+    ,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename as doctor,mkb.code as mkbcode 
+    ,count(case when cast(t.talk as int)=1 then 1 else null end) as cntTalk
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join vocidc10 as mkb on mkb.id=t.idc10_id 
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id 
     left join Patient as p on p.id=w.person_id 
     inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
-    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2'  ${add} group by t.workFunction_id,t.idc10_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    and to_date('${dateEnd}','dd.mm.yyyy')
+     and t.status='2'  ${add} 
+     group by t.workFunction_id,t.idc10_id
+     ,vwf.name,p.lastname,p.firstname,p.middlename,mkb.code
+     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_mkb" action="poly_ticketsBySpecialistMkbData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -117,9 +136,11 @@
     <msh:sectionTitle>Итог</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename, (select count(*) from Ticket t1 left join VocIdc10 as mkb on mkb.id=t1.idc10_id left join Medcard m1 on m1.id=t1.medcard_id where t1.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) 
-    ,count(case when t.talk=1 then 1 else null end),p.snils
+    ,count(case when cast(t.talk=1 as int) then 1 else null end),p.snils
     from Ticket t left join medcard as m on m.id=t.medcard_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
-    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t.status='2' ${add} group by t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
+      and to_date('${dateEnd}','dd.mm.yyyy') 
+      and t.status='2' ${add} group by t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -144,21 +165,22 @@
     <% } else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
-    
+    <%--
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+     --%>
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
-     var period = document.forms[0].period ;
+    // var period = document.forms[0].period ;
     
-    
+    /*
     if ((+'${period}')==1) {
     	period[0].checked='checked' ;
     } else {
     	period[1].checked='checked' ;
-    }   
+    } */  
     if ((+'${typePatient}')==1) {
     	typePatient[0].checked='checked' ;
     } else if ((+'${typePatient}')==2) {
@@ -176,6 +198,7 @@
     	frm.target='_blank' ;
     	frm.action='poly_ticketsBySpecialistPrint.do' ;
     }
+    /*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -239,6 +262,7 @@
 				 eventName: "focus",
 				 onUpdate : catcalc
  			});
+			 */
     </script>
   </tiles:put>
 </tiles:insert>
