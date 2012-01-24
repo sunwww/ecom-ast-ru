@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.contract.interceptor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
@@ -23,9 +24,30 @@ public class MedContractPreCreateInterceptor implements IParentFormInterceptor {
         		if (parent.getRulesProcessing()!=null) {
         			form.setRulesProcessing(parent.getRulesProcessing().getId()) ;
         		}
+        		StringBuilder sql = new StringBuilder() ;
+        		sql.append("select mc.contractNumber,mc.id from MedContract mc where mc.parent_id='")
+        			.append(aParentId).append("' order by mc.id desc") ;
+        		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql.toString()).setMaxResults(1)
+        				.getResultList() ;
+        		String addDog = ".1" ;
+        		if (list.size()>0) {
+        			Object[] objs = list.get(0) ;
+        			addDog = ""+objs[0] ;
+        			addDog = addDog.replaceFirst(parent.getContractNumber()+".", "") ;
+        			//System.out.println("----->"+addDog) ;
+        			addDog = "."+((Integer.valueOf(addDog)+1)) ;
+        		}
+        		
+        		form.setContractNumber(
+        			new StringBuilder().append(parent.getContractNumber())
+        			//.append(".")
+        			.append(addDog)
+        			.toString()
+        			) ;
     		}
     		
     	}
+    	
     	form.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString());
         Date date = new Date();
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");

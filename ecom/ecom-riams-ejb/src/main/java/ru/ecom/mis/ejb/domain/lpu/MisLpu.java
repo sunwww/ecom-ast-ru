@@ -27,6 +27,7 @@ import ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocPropertyAdmin;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocSubordination;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.worker.Staff;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
@@ -388,5 +389,19 @@ public class MisLpu extends BaseEntity {
 
 	/** Руководитель */
 	private WorkFunction theManager;
+	
+	/** Приемное отделение */
+	@Comment("Приемное отделение")
+	@OneToOne
+	public VocPigeonHole getPigeonHole() {
+		return thePigeonHole;
+	}
+
+	public void setPigeonHole(VocPigeonHole aPigeonHole) {
+		thePigeonHole = aPigeonHole;
+	}
+
+	/** Приемное отделение */
+	private VocPigeonHole thePigeonHole;
 
 }

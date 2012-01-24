@@ -26,10 +26,6 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 })
 public class Message extends NoLiveBaseEntity {
 
-    /** Список изменений в записи */
-    @OneToMany (cascade= CascadeType.ALL, mappedBy="message")
-    public Collection<MessageChange> getChanges() { return theChanges ; }
-    public void setChanges(Collection<MessageChange> aChanges) { theChanges = aChanges ; }
 
     /** Идентификатор данных */
     public long getDataId() { return theDataId ; }
@@ -41,11 +37,6 @@ public class Message extends NoLiveBaseEntity {
     public void setImportTime(ImportTime aImportTime) { theImportTime = aImportTime ; }
 
 
-    /** Лог */
-    @OneToMany (cascade = CascadeType.ALL, mappedBy="message")
-    public Collection<MessageLog> getLogs() { return theLogs ; }
-    public void setLogs(Collection<MessageLog> aLogs) { theLogs = aLogs ; }
-
     /** Тип проверки */
     @OneToOne
     public Check getCheck() { return theCheck ; }
@@ -54,12 +45,9 @@ public class Message extends NoLiveBaseEntity {
     
     /** Тип проверки */
     private Check theCheck ;
-    /** Список изменений в записи */
-    private Collection<MessageChange> theChanges ;
+
     /** Идентификатор данных */
     private long theDataId ;
-    /** Лог */
-    private Collection<MessageLog> theLogs ;
     /** Время данных */
     private ImportTime theImportTime ;
 }

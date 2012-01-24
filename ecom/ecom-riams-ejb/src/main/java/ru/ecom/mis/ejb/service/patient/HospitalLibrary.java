@@ -24,7 +24,7 @@ public class HospitalLibrary {
 			.append("or ")
 			.append("").append(aSocialStatusAtr).append(".omcCode='И0' ")
 			.append("or ")
-			.append("( ")
+			.append(" coalesce(( ")
 			.append("  select ")
 			.append("      count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
 			.append("  from medpolicy ").append(aMedPolicyAtr).append(" ")
@@ -32,7 +32,7 @@ public class HospitalLibrary {
 			.append("  and coalesce(").append(aMedPolicyAtr).append(".actualDateTo,current_date) >=").append(aFieldDate).append(" ")
 			.append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' then 1 else null end)=0 ")
 			.append(" )");
-			sql.append(">0 ") ;
+			sql.append(",0)>0 ") ;
 		} else {
 			sql
 			.append("( ")
@@ -42,14 +42,14 @@ public class HospitalLibrary {
 			.append(" or ")
 			.append(" ").append(aSocialStatusAtr).append(".omcCode is null) ")
 			.append(" and ")
-			.append("( ")
+			.append(" coalesce(( ")
 			.append("  select ")
 			.append("      count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
 			.append("  from medpolicy ").append(aMedPolicyAtr).append(" ")
 			.append("  where ").append(aPatientAtr).append(".id=").append(aMedPolicyAtr).append(".patient_id and ").append(aMedPolicyAtr).append(".actualDateFrom <=").append(aFieldDate).append(" ")
 			.append("  and coalesce(").append(aMedPolicyAtr).append(".actualDateTo,current_date) >=").append(aFieldDate).append(" ")
 			.append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' then 1 else null end)=0 ")
-			.append(" )");
+			.append(" ),0)");
 			sql.append("=0 ") ;
 		}
 				

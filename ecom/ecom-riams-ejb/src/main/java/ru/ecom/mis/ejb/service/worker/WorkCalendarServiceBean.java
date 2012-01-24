@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.service.worker;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +20,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.jdom.IllegalDataException;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -48,7 +50,225 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	private final static Logger LOG = Logger.getLogger(WorkCalendarServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
-	public void clearOldData(Long aLpu, Date aDateFrom, Date aDateTo) {
+	public String getIntervalBySpecAndDate(String aDate
+			, Long aSpecialist) throws ParseException {
+		Date date = DateFormat.parseSqlDate(aDate) ;
+		 //int duration = aDuration.intValue() ;
+		 List<WorkCalendar> list = theManager
+					.createQuery("from WorkCalendar where workFunction_id=:wf")
+					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
+		 if (list.size()>0) {
+			WorkCalendar wc = list.get(0) ;
+			
+			List<WorkCalendarDay> listD = theManager
+					.createQuery("from WorkCalendarDay where workCalendar=:calen and calendarDate=:day")
+					.setParameter("calen", wc)
+					.setParameter("day", date) 
+					.setMaxResults(1).getResultList() ;
+			if (listD.size()>0) {
+				WorkCalendarDay day = listD.get(0) ;
+				StringBuilder sql1 = new StringBuilder() ;
+				sql1.append(" select cast(min(t.timeFrom) as varchar(5)),cast(max(t.timeFrom) as varchar(5))");
+				sql1.append(" from WorkCalendarTime t ");
+				sql1.append(" where t.workCalendarDay_id = '")
+					.append(day.getId()).append("'");
+				List<Object[]> times = theManager
+						.createNativeQuery(sql1.toString())
+						.setMaxResults(1).getResultList() ;
+				if (times.size()>0) {
+					StringBuilder ret = new StringBuilder() ;
+					Object[] objs = times.get(0) ;
+					ret.append(objs[0]!=null?objs[0]:"").append("-") ;
+					ret.append(objs[1]!=null?objs[1]:"") ;
+					return ret.toString() ;
+				}
+			}
+			
+		 }
+		return "" ;
+	}
+	// Получить новые времена по специалисту за определенное число
+	public String getTimesBySpecAndDate(String aDate
+			, Long aSpecialist, Long aCountVisits
+			, String aBeginTime, String aEndTime
+			) throws ParseException {
+		 Date date = DateFormat.parseSqlDate(aDate) ;
+		 //int duration = aDuration.intValue() ;
+		 List<WorkCalendar> list = theManager
+					.createQuery("from WorkCalendar where workFunction_id=:wf")
+					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
+		 if (list.size()>0) {
+			WorkCalendar wc = list.get(0) ;
+			
+			List<WorkCalendarDay> listD = theManager
+					.createQuery("from WorkCalendarDay where workCalendar=:calen and calendarDate=:day")
+					.setParameter("calen", wc)
+					.setParameter("day", date) 
+					.setMaxResults(1).getResultList() ;
+			java.sql.Time timeFrom = DateFormat.parseSqlTime(aBeginTime) ;
+			java.sql.Time timeTo = DateFormat.parseSqlTime(aEndTime) ;
+			Calendar cal1 = java.util.Calendar.getInstance() ;
+			Calendar cal2 = java.util.Calendar.getInstance() ;
+			cal1.setTime(timeFrom) ;
+			cal2.setTime(timeTo) ;
+			int cnt = aCountVisits.intValue() ;
+			StringBuilder ret = new StringBuilder() ;
+			if (listD.size()>0) {
+				WorkCalendarDay day = listD.get(0) ;
+				StringBuilder sql1 = new StringBuilder() ;
+				sql1.append(" select count(*)");
+				sql1.append(" from WorkCalendarTime t ");
+				sql1.append(" where t.workCalendarDay_id = '")
+					.append(day.getId()).append("'");
+				sql1.append(" and t.timeFrom=:tim") ;
+				//List<Object[]> listT1 = theManager.createNativeQuery(sql1.toString()).setMaxResults(1).getResultList() ;
+				boolean isFirstExist = theManager.createNativeQuery(sql1.toString()).setParameter("tim", timeFrom).setMaxResults(1).getResultList().size()>0?true:false ;
+				boolean isEndExist = theManager.createNativeQuery(sql1.toString()).setParameter("tim", timeTo).setMaxResults(1).getResultList().size()>0?true:false ;
+				
+				java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
+				if (cnt<1) {
+					return "" ;
+				}
+				if (!isFirstExist) {
+					ret.append(",").append(format.format(cal1.getTime())) ;
+					cnt-- ;
+				}
+				if (cnt<1) {
+					return ret.substring(1) ;
+				}
+				if (!isEndExist) {
+					cnt-- ;
+				}
+				if (cnt<1) {
+					ret.append(",").append(format.format(cal2.getTime())) ;
+					
+				} else {
+					StringBuilder sql = new StringBuilder() ;
+					sql.append(" select t.timeFrom as t1timeFrom,t1.timeFrom as t2timeFrom");
+					sql.append(" from WorkCalendarTime t ");
+					sql.append(" left join WorkCalendarTime t1 on t1.workCalendarDay_id=t.workCalendarDay_id"); 
+					sql.append(" left join WorkCalendarTime t2 on t2.workCalendarDay_id=t.workCalendarDay_id ");
+					sql.append(" where t.workCalendarDay_id = '")
+						.append(day.getId()).append("' and t.timeFrom between cast('")
+						.append(aBeginTime).append("' as time) and cast('")
+						.append(aEndTime).append("' as time) and t.timeFrom<t1.timeFrom ");
+					sql.append(" and t2.timeFrom between t.timeFrom and t1.timeFrom");
+					sql.append(" group by t.timeFrom,t1.timeFrom,t1.timeFrom-t.timeFrom");
+					sql.append(" having count(t2.id)=2");
+					sql.append(" order by t1.timeFrom-t.timeFrom desc,t.timeFrom desc");
+					List<Object[]> listT = theManager.createNativeQuery(sql.toString()).setMaxResults(cnt).getResultList() ;
+					int dop = cnt-listT.size() ;
+					StringBuilder ret1= new StringBuilder() ;
+					for (Object[] objs:listT) {
+						int rec=1 ;
+						if (dop>0) {
+							LOG.info("dop="+dop) ;
+							rec++ ;
+						}
+						ret1.insert(0,getInterval((java.sql.Time)objs[0],(java.sql.Time)objs[1],Long.valueOf(rec),false)) ;
+						ret1.insert(0,",") ;
+						dop-- ;
+					}
+					ret.append(ret1);
+					if (!isEndExist) {ret.append(",").append(format.format(cal1.getTime())) ;}
+				}
+				return ret.length()>0?ret.substring(1):"" ;
+			} else {
+				return getInterval(timeFrom, timeTo, aCountVisits, true) ;
+			}
+
+		 }
+		 return "" ;
+	 }
+	 
+	 private String getInterval(String aBeginTime, String aEndTime, Long aCountVisits,boolean aFirstExists) throws ParseException {
+		java.sql.Time timeFrom = DateFormat.parseSqlTime(aBeginTime) ;
+		java.sql.Time timeTo = DateFormat.parseSqlTime(aEndTime) ;
+		return getInterval(timeFrom, timeTo, aCountVisits, aFirstExists) ;
+	 }
+	 private String getInterval(java.sql.Time aBeginTime, java.sql.Time aEndTime, Long aCountVisits,boolean aFirstExists) throws ParseException {
+		LOG.info("c "+aBeginTime+" по "+aEndTime+" "+aCountVisits) ;
+		Calendar cal1 = java.util.Calendar.getInstance() ;
+		Calendar cal2 = java.util.Calendar.getInstance() ;
+		cal1.setTime(aBeginTime) ;
+		cal2.setTime(aEndTime) ;
+		int cnt = aCountVisits.intValue() ;
+		int hour1 = cal1.get(Calendar.HOUR) ;
+		int hour2 = cal2.get(Calendar.HOUR) ;
+		int min1 = cal1.get(Calendar.MINUTE) ;
+		int min2 = cal2.get(Calendar.MINUTE) ;
+		int dif = (hour2-hour1)*60 +min2- min1 ;
+		LOG.info("Кол-во минут="+dif) ;
+		if (dif<cnt) throw new IllegalDataException("Разница между временами должна быть больше кол-ва посещений")  ;
+		StringBuilder ret = new StringBuilder() ;
+		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
+		if (dif%cnt == 0) {
+			if (!aFirstExists) {
+				cnt=cnt+1 ;
+			}
+			int interval = dif/cnt ;
+			LOG.info("Интервал1="+interval) ;
+			if (interval<0) throw new IllegalDataException("Отрицательный интервал")  ;
+			if (!aFirstExists) {
+				cal1.add(Calendar.MINUTE, interval) ;
+			}
+			while (cal2.after(cal1)) {
+				//System.out.println(format.format(cal1.getTime())) ;
+				ret.append(",").append(format.format(cal1.getTime())) ;
+				cal1.add(java.util.Calendar.MINUTE, interval) ;
+			}
+		} else {
+			int interval = dif/cnt ;
+			LOG.info("Интервал2="+interval) ;
+			if (interval<0) throw new IllegalDataException("Отрицательный интервал")  ;
+			int dop = dif % cnt ;
+			if (!aFirstExists) {
+				cal1.add(Calendar.MINUTE, interval) ;
+				if (dop>0) {
+					dop-- ;
+					cal1.add(Calendar.MINUTE, 1) ;
+				}
+			}
+			while (cal2.after(cal1)) {
+				//System.out.println(format.format(cal1.getTime())) ;
+				java.sql.Time sqlTime = new java.sql.Time(cal1.getTime().getTime()) ;
+				ret.append(",").append(DateFormat.formatToTime(sqlTime)) ;
+				cal1.add(Calendar.MINUTE, interval) ;
+				if (dop>0) {
+					dop-- ;
+					cal1.add(Calendar.MINUTE, 1) ;
+				}
+			}			
+		}
+		LOG.info("Времена: "+(ret.length()>0?ret.substring(1):"")) ;
+		return ret.length()>0?ret.substring(1):"";
+	}
+			
+	// Создать новые времена по специалисту за определенное число
+	 public void getCreateNewTimesBySpecAndDate(String aDate
+			, Long aSpecialist, String aTimes) throws ParseException {
+		 
+		 if (aTimes!=null) {
+			 aTimes=aTimes.replace(" ", "") ;
+			 if (!aTimes.equals("")) {
+				 Date date = DateFormat.parseSqlDate(aDate) ;
+				 String[] times = aTimes.split(",") ;
+				 List<WorkCalendar> list = theManager
+					.createQuery("from WorkCalendar where workFunction_id=:wf")
+					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
+				 if (list.size()>0) {
+					 WorkCalendar wc = list.get(0) ;
+					 WorkCalendarDay day = createCalendarDay(wc,date) ;
+					 for (String time:times) {
+						 java.sql.Time t = DateFormat.parseSqlTime(time) ;
+						 createCalendarTime(t, day) ;
+					 }
+				 }
+			 }
+		 }
+		 
+	 }
+	 public void clearOldData(Long aLpu, Date aDateFrom, Date aDateTo) {
 		MisLpu lpu = theManager.find(MisLpu.class, aLpu)  ;
 		for (Worker w : lpu.getWorker()) {
 			
@@ -218,7 +438,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			}
 			if (isNewJour) {
 				List<JournalPatternCalendar> list1 = theManager
-					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (NoActive is null or cast(NoActive as integer)=0) and dateFrom<:dateCal and (dateTo is null or dateTo>:dateCal) order by dateFrom")
+					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (NoActive is null or cast(NoActive as integer)=0) and dateFrom<=:dateCal and (dateTo is null or dateTo>=:dateCal) order by dateFrom")
 					.setParameter("cal", aWorkCalendar)
 					.setParameter("dateCal",cal1.getTime())
 					.getResultList() ;

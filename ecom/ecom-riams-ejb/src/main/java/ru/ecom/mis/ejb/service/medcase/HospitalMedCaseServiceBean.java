@@ -57,7 +57,15 @@ import ru.nuzmsh.util.format.DateFormat;
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-
+    public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException {
+    	String[] ids = aIds.split(",") ;
+    	Date date = DateFormat.parseSqlDate(aDate) ;
+    	for (String id :ids) {
+    		theManager.createNativeQuery("update MedCase set dateFinish=:dat where id='"+id+"' and dtype='HospitalMedCase' and dischargeTime is null")
+    			.setParameter("dat", date).executeUpdate() ;
+    	}
+    	//return "" ;
+    }
     public String addressInfo(EntityManager aManager,Long aAddressId, Object[] aAddress) {
         StringBuilder sb = new java.lang.StringBuilder();
         String fullname = new StringBuilder().append(aAddress[1]).toString().trim() ;
@@ -298,7 +306,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleOperationByPatient(Long aSurOperation, Long aParentMedCase, Long aOperation, String aDate) throws ParseException {
     	StringBuilder sql = new StringBuilder() ;
     	Date date=DateFormat.parseSqlDate(aDate) ;
-    	sql.append("select so.id,convert(varchar(20),so.operationDate,104),so.operationTime,convert(varchar(20),so.operationDateTo,104),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end ")
+    	sql.append("select so.id,to_char(so.operationDate,'dd.mm.yyyy'),so.operationTime,to_char(so.operationDateTo,'dd.mm.yyyy'),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end ")
     			.append(" from medcase as mc")
     			.append(" left join SurgicalOperation as so on so.patient_id=mc.patient_id")
     			.append(" left join medcase as p on p.id=so.medcase_id ")

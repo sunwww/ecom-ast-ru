@@ -45,7 +45,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Время операции */
 	@Comment("Время операции")
-	@Persist @Required
+	@Persist 
 	@TimeString @DoTimeString
 	public String getOperationTime() {return theOperationTime;}
 	public void setOperationTime(String aOperationTime) {theOperationTime = aOperationTime;	}
@@ -171,7 +171,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Comment("Дата операции по")
 	@DateString
 	@DoDateString
-	@Persist @Required @MaxDateCurrent
+	@Persist  @MaxDateCurrent
 	public String getOperationDateTo() {return theOperationDateTo;}
 	public void setOperationDateTo(String aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
 
@@ -213,7 +213,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	
 	/** МКБ после операции */
 	@Comment("МКБ после операции")
-	@Persist @Required
+	@Persist 
 	public Long getIdc10After() {return theIdc10After;}
 	public void setIdc10After(Long aIdc10After) {theIdc10After = aIdc10After;}
 
@@ -235,7 +235,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	private String theSurgeonFunctions;
 	/** Время операции по */
 	@Comment("Время операции по")
-	@Persist @Required
+	@Persist
 	@TimeString
 	@DoTimeString
 	public String getOperationTimeTo() {return theOperationTimeTo;}
@@ -292,32 +292,32 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Профиль */
 	@Comment("Профиль")
-	@Persist @Required
+	@Persist 
 	public Long getProfile() {return theProfile;}
 	public void setProfile(Long aProfile) {theProfile = aProfile;}
 
 	/** Операция с использованием высоких медицинских технологий */
 	@Comment("Операция с использованием высоких медицинских технологий")
-	@Persist @Required
+	@Persist 
 	public Long getTechnology() {return theTechnology;}
 	public void setTechnology(Long aTechnology) {theTechnology = aTechnology;}
 
 	/** Показания для операции */
 	@Comment("Показания для операции")
-	@Persist @Required
+	@Persist 
 	public Long getAspect() {return theAspect;}
 	public void setAspect(Long aAspect) {theAspect = aAspect;}
 
 	/** Исход операции */
 	@Comment("Исход операции")
-	@Persist @Required
+	@Persist 
 	public Long getOutcome() {return theOutcome;}
 	public void setOutcome(Long aOutcome) {theOutcome = aOutcome;}
 
 	
 	/** Метод операции */
 	@Comment("Метод операции")
-	@Persist @Required
+	@Persist 
 	public Long getMethod() {return theMethod;}
 	public void setMethod(Long aMethod) {theMethod = aMethod;}
 

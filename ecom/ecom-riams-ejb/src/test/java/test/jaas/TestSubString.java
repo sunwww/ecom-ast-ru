@@ -14,6 +14,11 @@ import ru.nuzmsh.util.format.DateFormat;
 public class TestSubString {
 	public static void main(String[] args) throws ParseException {
 		//System.out.println(getParent("par1  hat par1 jjj", "par1","par2")) ;
+		getInterval("08:30","08:35",Long.valueOf(5)) ;
+		getInterval("08:30","10:00",Long.valueOf(7)) ;
+		getInterval("08:30","10:00",Long.valueOf(11)) ;
+		getInterval("11:30","10:00",Long.valueOf(10)) ;
+		/*
 		Time timeFrom = DateFormat.parseSqlTime("12:00") ;
 		Time timeTo = DateFormat.parseSqlTime("14:00") ;
 		int minute = 15 ; 
@@ -29,7 +34,54 @@ public class TestSubString {
 		cal.setTime(dat1) ;
 		System.out.println("weekmonthlast="+cal.getActualMaximum(Calendar.WEEK_OF_MONTH) );
 		System.out.println("weekmonthlast="+cal.getActualMaximum(Calendar.DAY_OF_MONTH) );
-		
+		*/
+	}
+	
+	static String getInterval(String aBeginTime, String aEndTime, Long aCountVisits) throws ParseException {
+		System.out.println("c "+aBeginTime+" по "+aEndTime+" "+aCountVisits) ;
+		java.sql.Time timeFrom = DateFormat.parseSqlTime(aBeginTime) ;
+		java.sql.Time timeTo = DateFormat.parseSqlTime(aEndTime) ;
+		Calendar cal1 = java.util.Calendar.getInstance() ;
+		Calendar cal2 = java.util.Calendar.getInstance() ;
+		cal1.setTime(timeFrom) ;
+		cal2.setTime(timeTo) ;
+		int cnt = aCountVisits.intValue() ;
+		int hour1 = cal1.get(Calendar.HOUR) ;
+		int hour2 = cal2.get(Calendar.HOUR) ;
+		int min1 = cal1.get(Calendar.MINUTE) ;
+		int min2 = cal2.get(Calendar.MINUTE) ;
+		int dif = (hour2-hour1)*60 +min2- min1 ;
+		if (dif<cnt) return "Разница между временами должна быть больше кол-ва посещений"  ;
+		StringBuilder ret = new StringBuilder() ;
+		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
+		if (dif%cnt == 0) {
+			int interval = dif/cnt ;
+			System.out.println("Интервал="+interval) ;
+			if (interval<0) return "Отрицательный интервал"  ;
+			while (cal2.after(cal1)) {
+				//System.out.println(format.format(cal1.getTime())) ;
+				ret.append(",").append(format.format(cal1.getTime())) ;
+				cal1.add(java.util.Calendar.MINUTE, interval) ;
+			}
+		} else {
+			int interval = dif/cnt ;
+			System.out.println("Интервал="+interval) ;
+			if (interval<0) return "Отрицательный интервал"  ;
+			int dop = dif % cnt ;
+			while (cal2.after(cal1)) {
+				//System.out.println(format.format(cal1.getTime())) ;
+				java.sql.Time sqlTime = new java.sql.Time(cal1.getTime().getTime()) ;
+				ret.append(",").append(DateFormat.formatToTime(sqlTime)) ;
+				cal1.add(java.util.Calendar.MINUTE, interval) ;
+				if (dop>0) {
+					dop-- ;
+					ret.append("+") ;
+					cal1.add(java.util.Calendar.MINUTE, 1) ;
+				}
+			}			
+		}
+		System.out.println(ret.substring(1)) ;
+		return ret.substring(1);
 	}
 	static void getWeek (Date aDateFrom, Date aDateTo) {
 		java.util.Calendar cal1 = java.util.Calendar.getInstance() ;

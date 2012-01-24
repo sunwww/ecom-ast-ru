@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import ru.ecom.expomc.ejb.domain.message.MessageLog;
+//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 import ru.ecom.expomc.ejb.services.check.result.ResultLog;
 
 /**
@@ -67,19 +67,19 @@ public class CheckResult  {
      * @param aMessage
      */
     public void debug(String aMessage) {
-        addLog(MessageLog.DEBUG, aMessage);
+        //addLog(MessageLog.DEBUG, aMessage);
     }
 
     public void info(String aMessage) {
-        addLog(MessageLog.INFO, aMessage);
+       // addLog(MessageLog.INFO, aMessage);
     }
 
     public void warn(String aMessage) {
-        addLog(MessageLog.WARN, aMessage);
+        //addLog(MessageLog.WARN, aMessage);
     }
 
     public void error(String aMessage) {
-        addLog(MessageLog.ERROR, aMessage);
+        //addLog(MessageLog.ERROR, aMessage);
     }
 
     public String toString() {

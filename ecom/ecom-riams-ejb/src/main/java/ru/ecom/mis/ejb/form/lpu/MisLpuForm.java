@@ -11,7 +11,6 @@ import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -380,4 +379,17 @@ public class MisLpuForm extends IdNameEntityForm {
 	/** Руководитель */
 	private Long theManager;
 
+	/** Приемное отделение */
+	@Comment("Приемное отделение")
+	@Persist
+	public Long getPigeonHole() {
+		return thePigeonHole;
+	}
+
+	public void setPigeonHole(Long aPigeonHole) {
+		thePigeonHole = aPigeonHole;
+	}
+
+	/** Приемное отделение */
+	private Long thePigeonHole;
 }

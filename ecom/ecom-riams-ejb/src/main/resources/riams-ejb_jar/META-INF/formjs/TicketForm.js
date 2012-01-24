@@ -19,6 +19,7 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setDateCreate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setTimeCreate(new java.sql.Time (date.getTime())) ;
 	aForm.setUsernameCreate(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	//aCtx.getSessionContext().set("dCreate","123");
 }
 function onPreDelete(aId, aCtx) {
 	var param = new java.util.HashMap() ;
