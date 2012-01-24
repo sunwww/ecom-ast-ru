@@ -193,7 +193,7 @@ public class ContractAccount extends BaseEntity{
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		StringBuilder res=new StringBuilder().append(theDateFrom!=null?format.format(theDateFrom):"нет даты открытия") ;
 		if (theDateFrom!=null) {
-			res.append("-").append(format.format(theDateTo)) ;
+			res.append("-").append(theDateTo!=null?format.format(theDateTo):"нет даты окончания") ;
 		} 
 		if (theBlock!=null && theBlock) res.append("(счет заблокирован");
 		return res.toString();

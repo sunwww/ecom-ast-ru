@@ -30,9 +30,12 @@ function printCoveringLetterByDay(aCtx,aParams) {
     +" left outer join Patient pat on m.patient_id = pat.id" 
     +" left join MisLpu as ml on ml.id=m.department_id "
     +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
     +" where m.DTYPE='HospitalMedCase' and m."+dateI+" = to_date('"+dateBegin+"','dd.mm.yyyy')"
     +" and m.deniedHospitalizating_id is null"
-    +"  "+emerIs+" order by m."+dateI+",pat.lastname,pat.firstname,pat.middlename";
+    +"  "+emerIs
+    +" and (ok.voc_code is null or ok.voc_code='643')"
+    +" order by m."+dateI+",pat.lastname,pat.firstname,pat.middlename";
 	
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -67,7 +70,21 @@ function printReestrByDay(aCtx,aParams) {
 		timeI="dischargeTime" ;
 		dischInfo="выбывшим " ;
 	} 
-	
+	var pigeonHole = aParams.get("pigeonHole") ;
+	var pigeonHoleName = "" ;
+	var pigeonHoleId = "" ;
+    if (pigeonHole!=null
+    		&& +pigeonHole>0) {
+    	pigeonHoleId = " and ml.pigeonHole_id='"+pigeonHole+"' " ;
+    	var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from VocPigeonHole vph where vph.id="+pigeonHole).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			pigeonHoleName = ob[0] ;
+			
+		}
+    }
+    map.put("pigeonHoleName",pigeonHoleName) ;
+    
 	var hour8=  aParams.get("hour8") ;
 	var period = "m."+dateI+"= to_date('"+dateBegin+"','dd.mm.yyyy')" ;
 	var hour8IsInfo="";
@@ -103,7 +120,7 @@ function printReestrByDay(aCtx,aParams) {
     +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
     +" where m.DTYPE='HospitalMedCase' and "+period+""
     +" and m.deniedHospitalizating_id is null"
-    +"  "+emerIs+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
+    +"  "+emerIs+pigeonHoleId+" order by ml.name,pat.lastname,pat.firstname,pat.middlename";
 	
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -283,6 +300,18 @@ function printAddressSheetArrival(aCtx, aParams) {
 	}
 	map.put("depAddress",depAddress) ;
 	map.put("depName",depName) ;
+	var pigeonHole = aParams.get("pigeonHole") ;
+	var pigeonHoleName = "" ;
+    if (pigeonHole!=null
+    		&& +pigeonHole>0) {
+    	var list = aCtx.manager.createNativeQuery("select vph.name from VocPigeonHole vph where vph.id="+dep).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			pigeonHoleName = ob[0] ;
+			
+		}
+    }
+    map.put("pigeonHoleName",pigeonHoleName) ;
 	var ids = ids1.split(",") ;
 	var ret = new java.util.ArrayList() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;

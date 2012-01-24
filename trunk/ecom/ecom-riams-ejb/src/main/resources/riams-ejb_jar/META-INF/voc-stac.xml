@@ -124,7 +124,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <voc id='vocIntoxication' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication'
-                names   = 'name'
+                names   = "name"
                 queried = 'name'
                 />
     </voc> 
@@ -133,12 +133,12 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     	<NativeVocService
     			from = 'VocOperation'
     			parent="(startActualDate is null or to_date(:parent,'dd.mm.yyyy')  >=startActualDate ) and (finishActualDate is null or finishActualDate>=to_date(:parent,'dd.mm.yyyy'))"
-    			names = "name||' (' || case when StartActualDate is null then 'нет даты' else TO_CHAR(StartActualDate,'DD.MM.YYYY') end ||'-'||case when FinishActualDate is null then 'нет даты' else TO_CHAR(FinishActualDate,'DD.MM.YYYY') end ||')'"
+    			names = "coalesce(code||' ','')||name"
     			nameId="id"
     			queryAppend=''
     			join=''
     			order=''
-    			queried = "(cast(id as varchar(10)) like :query or UPPER(name) like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :querId or code like :querId or UPPER(name) like UPPER(:query))"
     			 			
     	/>
     </voc> 

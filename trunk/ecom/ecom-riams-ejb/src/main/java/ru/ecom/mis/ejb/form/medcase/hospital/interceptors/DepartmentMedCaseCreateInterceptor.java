@@ -24,7 +24,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	DepartmentMedCaseForm form = (DepartmentMedCaseForm) aForm ;
     	HospitalMedCase parentSSL = manager.find(HospitalMedCase.class, aParentId) ;
     	if (parentSSL!=null) {
-    		if (parentSSL.getDateFinish()!=null) {
+    		if (parentSSL.getDateFinish()!=null && parentSSL.getDischargeTime()!=null) {
     			throw new IllegalStateException("Нельзя добавить случай лечения в отделении (СЛО) в закрытый случай стационарного лечения (ССЛ) !!!") ;
     		}
     		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()==Boolean.TRUE) {

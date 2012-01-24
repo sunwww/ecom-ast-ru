@@ -38,8 +38,8 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.expomc.ejb.domain.message.Message;
-import ru.ecom.expomc.ejb.domain.message.MessageChange;
-import ru.ecom.expomc.ejb.domain.message.MessageLog;
+//import ru.ecom.expomc.ejb.domain.message.MessageChange;
+//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlMultipleQueriesSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.ISqlSupports;
@@ -439,6 +439,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         message.setImportTime(aTime);
         theManager.persist(message);
         boolean ret = false;
+        /*
         for (ResultLog log : aResult.getLogs()) {
             MessageLog messageLog = new MessageLog();
             messageLog.setText(log.getMessage());
@@ -446,17 +447,18 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             messageLog.setMessage(message);
             theManager.persist(messageLog);
         }
-
+        */
         if(aCheck.getCheckType()==Check.TYPE_CHANGE) {
             Map<String, Object> map = aResult.getChanged();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                MessageChange change = new MessageChange();
+                /*MessageChange change = new MessageChange();
                 change.setMessage(message);
                 Object oldValue = aOldValues.get(entry.getKey()) ;
                 change.setOldValue(oldValue!=null ? oldValue.toString() : null);
                 change.setNewValue(entry.getValue()!=null ? entry.getValue().toString() : null);
                 change.setPropertyName(entry.getKey());
                 theManager.persist(change);
+                */
                 setPropertyValue(aEntity, entry.getKey(), entry.getValue());
                 aOldValues.put(entry.getKey(), entry.getValue()) ;
                 ret = true ;

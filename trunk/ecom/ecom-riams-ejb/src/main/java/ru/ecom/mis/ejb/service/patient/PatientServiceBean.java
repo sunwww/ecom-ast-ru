@@ -84,35 +84,12 @@ public class PatientServiceBean implements IPatientService {
 			res.append(list.get(0)[0]) ;
 		} else {
 			if (aStreet.startsWith("?")) return res.toString() ;
-			String lastKl = aKladr.equals("")?"30":aKladr.substring(aKladr.length()-1, aKladr.length()) ;
-			while (lastKl!=null&&lastKl.equals("0")) {
-				aKladr = aKladr.substring(0,aKladr.length()-1) ;
-				lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
-			}
-			
-			sql = new StringBuilder() ;
-			sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
-			list.clear() ;
-			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (list.size()>0) {
-				aKladr = ""+list.get(0)[1] ;
-				lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
-				while (lastKl!=null&&lastKl.equals("0")) {
+			if (aKladr!=null && !aKladr.equals("")) {
+				String lastKl = aKladr.equals("")?"30":aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+				
+				while (lastKl!=null&&!lastKl.equals("")&&lastKl.equals("0")) {
 					aKladr = aKladr.substring(0,aKladr.length()-1) ;
-					lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
-				}
-				sql = new StringBuilder() ;
-				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
-				list.clear() ;
-				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-				res.append(list.get(0)[0]) ;
-			} else {
-				sql = new StringBuilder() ;
-				sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
-				list.clear() ;
-				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-				if (list.size()>0) {
-					aKladr = ""+list.get(0)[1] ;
+					lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
 				}
 				sql = new StringBuilder() ;
 				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
@@ -123,20 +100,49 @@ public class PatientServiceBean implements IPatientService {
 					lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
 					while (lastKl!=null&&lastKl.equals("0")) {
 						aKladr = aKladr.substring(0,aKladr.length()-1) ;
-						lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+						lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
 					}
 					sql = new StringBuilder() ;
 					sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
 					list.clear() ;
 					list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 					res.append(list.get(0)[0]) ;
+				} else {
+					return getKladrByRayon(aRayon, aSity, aStreet) ;
 				}
-				
-
+			} else {
+				return getKladrByRayon(aRayon, aSity, aStreet) ;
 			}
-			
 		}
-
+		return res.toString() ;
+	}
+	private String getKladrByRayon(String aRayon, String aSity, String aStreet) {
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
+		List<Object[]> list ;
+		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		String kladr="";
+		if (list.size()>0) {
+			kladr = ""+list.get(0)[1] ;
+		}
+		sql = new StringBuilder() ;
+		sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
+		list.clear() ;
+		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			kladr = ""+list.get(0)[1] ;
+			String lastKl = kladr.substring(kladr.length()-1, kladr.length()) ;
+			while (lastKl!=null&&lastKl.equals("0")) {
+				kladr = kladr.substring(0,kladr.length()-1) ;
+				lastKl = kladr.length()>1?kladr.substring(kladr.length()-1, kladr.length()):null ;
+			}
+			sql = new StringBuilder() ;
+			sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
+			list.clear() ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			res.append(list.get(0)[0]) ;
+		}
 		return res.toString() ;
 	}
 	public String getInfoVocForFond(String aPassportType,String aAddress) {
@@ -266,7 +272,11 @@ public class PatientServiceBean implements IPatientService {
 					sql.append("update MedPolicy set ") ;
 					sql.append(" company_id=(select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
 					sql.append(", actualDateFrom=to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
-					sql.append(", actualDateTo=to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					if (pol[4]!=null && !pol[4].equals("")) {
+						sql.append(", actualDateTo=to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					} else {
+						sql.append(", actualDateTo=null") ;
+					}
 					sql.append(", commonNumber='").append(pol[5]).append("'") ;
 					sql.append(", type_id=(select id from VocMedPolicyOmc where code='").append(type).append("')") ;
 					sql.append(" where patient_id='").append(aPatientId).append("'");
@@ -279,7 +289,13 @@ public class PatientServiceBean implements IPatientService {
 					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id) values ('MedPolicyOmc'") ;
 					sql.append(", (select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
 					sql.append(", to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
-					sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					
+					if (pol[4]!=null && !pol[4].equals("")) {
+						sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					} else {
+						sql.append(", null") ;
+					}
+					//sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
 					sql.append(", '").append(pol[5]).append("'") ;
 					sql.append(", '").append(aPatientId).append("'");
 					sql.append(", '").append(pol[1]).append("'") ;
@@ -379,7 +395,7 @@ public class PatientServiceBean implements IPatientService {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
 		if (newpat!=null && oldpat!=null) {
-			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where id =:idold	").setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Award set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update BirthCase set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update BirthCase set mother_id =:idnew where mother_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();

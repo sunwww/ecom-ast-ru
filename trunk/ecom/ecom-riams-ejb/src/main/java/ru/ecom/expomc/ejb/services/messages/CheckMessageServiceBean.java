@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.expomc.ejb.domain.message.Message;
-import ru.ecom.expomc.ejb.domain.message.MessageChange;
+//import ru.ecom.expomc.ejb.domain.message.MessageChange;
 import ru.ecom.expomc.ejb.services.check.ICheck;
 import ru.ecom.expomc.ejb.services.check.ICheckServiceLocal;
 import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
@@ -80,6 +80,7 @@ public class CheckMessageServiceBean implements ICheckMessageService {
     public Collection<MessageChangeRow> listChanges(long aMessage) {
         Message message = theManager.find(Message.class, aMessage) ;
         LinkedList<MessageChangeRow> ret = new LinkedList<MessageChangeRow>();
+        /*
 
         for (MessageChange change : message.getChanges()) {
             MessageChangeRow row = new MessageChangeRow();
@@ -88,7 +89,7 @@ public class CheckMessageServiceBean implements ICheckMessageService {
             row.setNewValue(change.getNewValue());
             row.setMessageId(aMessage);
             ret.add(row) ;
-        }
+        }*/
         return ret ;
     }
 
