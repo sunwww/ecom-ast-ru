@@ -764,9 +764,16 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		System.out.println(aTableName);
 		System.out.println(aJson);
 		if (aTableName==null || aTableName.equals("")) {
-			JSONObject obj = new JSONObject(aJson);
+			JSONArray ar ;
+			if (aJson!=null && !aJson.equals("")) {
+				JSONObject obj =  new JSONObject(aJson) ;
+				ar = obj.getJSONArray("childs");
+			} else {
+				ar = new JSONArray() ;
+			}
+			
 	
-			JSONArray ar = obj.getJSONArray("childs");
+			//JSONArray ar = obj.getJSONArray("childs");
 			// Class entityClass = aEntity.getClass() ;
 			// ashMap<Object, Object> map = new HashMap<Object, Object>();
 			Set<Object> set = new HashSet<Object>();
