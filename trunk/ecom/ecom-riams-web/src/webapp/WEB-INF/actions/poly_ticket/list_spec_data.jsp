@@ -18,8 +18,9 @@
       <ecom:webQuery name="journal_priem" nativeSql=" select t.id as tid,m.number as mnumber
     , p.lastname||' '|| p.firstname||' '||p.middlename as fiopat,p.birthday
     ,  t.id as tid,t.date as tdate
-    ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo,mkb.code as mkbcode ,vr.name as vrname
-    ,case when t.talk=1 then 1 else null end as talk  
+    ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
+    ,mkb.code as mkbcode ,vr.name as vrname
+    ,case when cast(t.talk as int)=1 then 1 else null end as talk  
     from Ticket t left join medcard m on m.id=t.medcard_id     
     left join Patient p on p.id=m.person_id     
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id

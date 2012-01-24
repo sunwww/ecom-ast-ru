@@ -40,6 +40,12 @@ public class AddressSheetHospitalAction extends BaseAction {
         } else {
         	aRequest.setAttribute("hospType", "") ;
         }
+        if (form.getPigeonHole()!=null
+        		&&!form.getPigeonHole().equals(Long.valueOf(0))) {
+        	aRequest.setAttribute("pigeonHole", " and dep.pigeonHole_id='"+form.getPigeonHole()+"'") ;
+        } else {
+        	aRequest.setAttribute("pigeonHole", "") ;
+        }
         return aMapping.findForward("success");
     }
 }

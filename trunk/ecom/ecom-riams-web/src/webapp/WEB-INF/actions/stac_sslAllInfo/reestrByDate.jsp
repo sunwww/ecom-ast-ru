@@ -25,9 +25,15 @@
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      	<msh:autoComplete property="pigeonHole" fieldColSpan="2" 
+      		horizontalFill="true" label="Приемник"
+      		vocName="vocPigeonHole"
+      		/>
+      	<msh:checkBox property="hour8" label="8 часов" guid="fdsfsadf"/>
+      </msh:row>
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <msh:checkBox property="dischargeIs" label="Искать по дате выписки" guid="f5458f6-b5b8-4d48-a045-ba7b9f875245" />
         <msh:checkBox property="emergancyIs" label="Экстренные" guid="fdsfsadf"/>
-        <msh:checkBox property="hour8" label="8 часов" guid="fdsfsadf"/>
       </msh:row>
       <msh:row guid="Дата">
         <msh:textField property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -90,6 +96,12 @@
     		request.setAttribute("hour8IsInfo","") ;
     	}
     	request.setAttribute("period", period) ;
+    	String pigeonHole="" ;
+    	String pHole = request.getParameter("pigeonHole") ;
+    	if (pHole!=null && pHole.equals("") && pHole.equals("0")) {
+    		pigeonHole= " and dep.pigeonHole_id='"+pHole+"'" ;
+    	}
+    	request.setAttribute("pigeonHole", pigeonHole) ;
     	%>
     
     <msh:section>
@@ -110,7 +122,7 @@
      left join MisLpu as ml on ml.id=m.department_id 
      where m.DTYPE='HospitalMedCase' and ${period}
      and m.deniedHospitalizating_id is null
-      and  ${emerIs} order by m.${dateI},ml.name,pat.lastname,pat.firstname,pat.middlename
+      and  ${emerIs} ${pigeonHole} order by m.${dateI},ml.name,pat.lastname,pat.firstname,pat.middlename
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
@@ -136,7 +148,7 @@
      left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  
      where m.DTYPE='HospitalMedCase' and m.${dateI} = to_date('${param.dateBegin}','dd.mm.yyyy')
       and m.deniedHospitalizating_id is not null
-      and  ${emerIs} order by m.${dateI},pat.lastname,pat.firstname,pat.middlename
+      and  ${emerIs}  order by m.${dateI},pat.lastname,pat.firstname,pat.middlename
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />

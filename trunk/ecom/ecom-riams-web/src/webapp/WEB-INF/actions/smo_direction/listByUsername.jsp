@@ -15,7 +15,7 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/js-smo_direction-findDirectionByUsername.do"
+    <msh:form action="/smo_journalDirectionByUsername_list.do"
      defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
@@ -24,10 +24,10 @@
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Дата (dateChange)" colspan="1"><label for="dateChangeName" id="dateChangeLabel">Дата:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="dateChange" value="1">  создания
+        	<input type="radio" name="dateChange" value="createDate">  создания
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="dateChange" value="2">  приема
+        	<input type="radio" name="dateChange" value="dateStart">  приема
         </td>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -35,19 +35,7 @@
             <input type="submit" onclick="find()" value="Найти" />
           </td>
         </msh:row>
-        <%--
-        <msh:row>
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td>
-           
-
-      </msh:row>
-       --%>
+        
     </msh:panel>
     </msh:form>
     
@@ -60,17 +48,23 @@
     	} else {
     		request.setAttribute("dateEnd", date1) ;
     	}
+    	String dateSearch = request.getParameter("dateChange") ;
+    	if (dateSearch!=null && dateSearch.equals("dateStart")) {
+    		request.setAttribute("dateSearch", "dateStart") ;
+    	} else {
+    		request.setAttribute("dateSearch", "createDate") ;
+    	}
     	%>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска направлений ${info}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_direction" nativeSql="select  
-    to_CHAR(${dateSearch},'DD.MM.YYYY')||':'||coalesce(usernameCreate,'')||':${dateSearch1}' as idPar
-    ,${dateSearch} as dateSearch,usernameCreate,count(*) as cnt 
-    from Ticket where ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    to_CHAR(v.${dateSearch},'DD.MM.YYYY')||':'||coalesce(username,'')||':${dateSearch1}' as idPar
+    ,v.${dateSearch} as dateSearch,usernameCreate,count(*) as cnt 
+    from MedCase v where v.dtype='Visit' and v.${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy')
-    	 ${add} group by ${dateSearch},usernameCreate" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	 ${add} group by v.${dateSearch},v.username" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="poly_ticketsByUserData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>

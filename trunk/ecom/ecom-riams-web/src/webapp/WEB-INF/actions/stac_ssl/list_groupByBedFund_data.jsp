@@ -19,8 +19,8 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_admission" nativeSql="
-    select m.id,' '||p.lastname||' '||p.firstname||' '||p.middlename
-    ,d.name as depname,ss.code as sscode,p.birthday
+    select m.id,p.lastname||' '||p.firstname||' '||p.middlename as fio
+    ,d.name as depname,ss.code as sscode,p.birthday as birthday
     , m.dateStart as mdateStart
     ,coalesce(m.dateFinish,m.transferDate) as mdateFinish
     ,h.dateStart as hdateStart
@@ -29,13 +29,13 @@
 			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
 			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
 			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
-		  end
+		  end as cnt1
     ,	  case 
 			when (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)=0 then 1 
 			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)+1) 
 			else (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)
-		  end
-    ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id)
+		  end as cnt2
+    ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
     from MedCase as m 
     left join medcase as h on h.id=m.parent_id 
     left join statisticstub as ss on ss.id=h.statisticstub_id 
@@ -45,7 +45,7 @@
     left join mislpu as d on d.id=m.department_id 
     left join patient as p on p.id=m.patient_id 
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
-    where m.DTYPE='DepartmentMedCase' and ${dateType } between cast('${dateBegin }' as Date) and cast('${dateEnd }' as Date) 
+    where m.DTYPE='DepartmentMedCase' and ${dateType } between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
     and m.bedfund_id=${bedFund} ${addStatus} ${add } 
     order by p.lastname,p.firstname" 
     guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />

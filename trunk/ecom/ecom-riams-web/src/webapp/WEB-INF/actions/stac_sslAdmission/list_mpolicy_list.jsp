@@ -37,13 +37,13 @@
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
+<%--         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="1"> Неделя
         </td>
         <td onclick="this.childNodes[1].checked='checked';changePeriod()">
         	<input type="radio" name="period" value="2"> Месяц
-        </td>
+        </td> --%>
            <td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -71,7 +71,7 @@
     left join vocservicestream vss on vss.id=hosp.servicestream_id 
     left join patient p on p.id=hosp.patient_id 
     left join vocAdditionStatus vas on vas.id=p.additionStatus_id
-    where hosp.dateStart  between '${param.dateBegin}'  and '${param.dateEnd}' and vss.code in ('OBLIGATORYINSURANCE','PRIVATEINSURANCE') ${add} and $$CheckPatientOMC^ZMedPolicy(hosp.patient_id,hosp.dateStart) is not null group by p.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where hosp.dateStart  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') and vss.code in ('OBLIGATORYINSURANCE','PRIVATEINSURANCE') ${add} and $$CheckPatientOMC^ZMedPolicy(hosp.patient_id,hosp.dateStart) is not null group by p.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_hosp" action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Доп.статус" property="9"/>
@@ -90,21 +90,22 @@
     <% } else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
-    
+    <%--
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+     --%>
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
-     var period = document.forms[0].period ;
+    // var period = document.forms[0].period ;
     
-    
+    /*
     if ((+'${period}')==1) {
     	period[0].checked='checked' ;
     } else {
     	period[1].checked='checked' ;
-    }   
+    } */  
     if ((+'${typePatient}')==1) {
     	typePatient[0].checked='checked' ;
     } else if ((+'${typePatient}')==2) {
@@ -122,6 +123,7 @@
     	frm.target='_blank' ;
     	frm.action='stac_problemPolicy_print.do' ;
     }
+    /*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -184,7 +186,7 @@
 				 timeFormat : "24",
 				 eventName: "focus",
 				 onUpdate : catcalc
- 			});
+ 			});*/
     </script>
   </tiles:put>
 </tiles:insert>

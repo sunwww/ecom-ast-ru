@@ -54,7 +54,7 @@
 		
 		</div>
 </div>
-<script type='text/javascript' src='./dwr/interface/EpicrisisService.js'></script>
+<%--<script type='text/javascript' src='./dwr/interface/EpicrisisService.js'></script> --%>
 <script type="text/javascript">
      var theIs${name}EpicrisisDialogInitialized = false ;
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;

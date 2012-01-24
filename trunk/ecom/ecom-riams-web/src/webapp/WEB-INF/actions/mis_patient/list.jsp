@@ -14,6 +14,10 @@
     <msh:sideMenu>
     	<msh:sideLink roles="/Policy/Mis/Patient/SocialCard" key="ALT+2" action="/findSocPat.do" name="Поиск персоны из соц.карты" title="Поиск персоны из соц.карты"/>
     </msh:sideMenu>
+    <msh:sideMenu>
+    	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/JournalByUsername" name="Учет направлений" action="/smo_journalDirectionByUsername_list.do"/>
+    	<msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create" name="Создание дополнительного времени" action="/work_create_timeBySpecialist.do"/>
+    </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
   <msh:ifNotInRole roles="/Policy/Mis/Patient/SocialCard">

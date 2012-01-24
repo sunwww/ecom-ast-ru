@@ -44,7 +44,7 @@
         </msh:row>
         <msh:row guid="69052595-06cd-41b4-9362-7d1609e26759">
           <msh:autoComplete property="profile" label="Профиль" vocName="vocMzDepType" horizontalFill="true"/>
-          <msh:autoComplete showId="false" vocName="vocPropertyAdmin" hideLabel="false" property="propertyAdmin" viewOnlyField="false" label="Вид собственности" guid="15c7ac5f-10c9-4c1e-89f2-730642f775fc" horizontalFill="true" fieldColSpan="1" />
+          <msh:autoComplete showId="false" vocName="vocPigeonHole" property="pigeonHole" label="Приемник" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row guid="2398008e-85f4-4ed7-83f6-f2a186533ac5">
           <msh:autoComplete showId="false" hideLabel="false" property="subordination" viewOnlyField="false" label="Подчиненность" guid="a3031936-9397-4ed5-92cd-1d208165aba2" fieldColSpan="3" horizontalFill="true" vocName="vocSubordination" />

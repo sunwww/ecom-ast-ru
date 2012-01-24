@@ -21,6 +21,30 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class WorkCalendarServiceJs {
+	// Получить минимальное и максимальное время приема за день по специалисту
+	public String getIntervalBySpecAndDate(String aDate
+			, Long aSpecialist,HttpServletRequest aRequest) throws ParseException, NamingException {
+		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
+		return service.getIntervalBySpecAndDate(aDate, aSpecialist) ;
+	}
+			
+	// Получить новые времена по специалисту за определенное число
+	public String getTimesBySpecAndDate(String aDate
+			, Long aSpecialist, Long aCountVisits
+			, String aBeginTime, String aEndTime
+			, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
+		return service.getTimesBySpecAndDate(aDate, aSpecialist, aCountVisits, aBeginTime, aEndTime) ;
+		//return "" ;
+	}
+	// Создать новые времена по специалисту за определенное число
+	public String getCreateNewTimesBySpecAndDate(String aDate
+			, Long aSpecialist, String aTimes
+			, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
+		service.getCreateNewTimesBySpecAndDate(aDate, aSpecialist, aTimes) ;
+		return "Созданы" ;
+	}
 	public String generateBySpecialist(Long aWorkFunction, HttpServletRequest aRequest) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		java.util.Date date = new java.util.Date() ;

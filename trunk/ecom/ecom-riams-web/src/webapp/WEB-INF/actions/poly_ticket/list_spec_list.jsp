@@ -32,6 +32,11 @@
         	<input type="radio" name="typePatient" value="3">  все
         </td>
         </msh:row>
+        <msh:autoComplete vocName="workFunction" property="spec" 
+        horizontalFill="true" fieldColSpan="5"
+        label="Специалист" size="100"
+        	
+        />
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -64,20 +69,33 @@
     	} else {
     		request.setAttribute("dateEnd", date1) ;
     	}
+    	String spec =""+request.getParameter("spec") ;
+    	if (spec!=null && !spec.equals("") && !spec.equals("0") &!spec.equals("null")) {
+    		request.setAttribute("spec", " and t.workFunction_id='"+spec+"'") ;
+    	} else {
+    		request.setAttribute("spec", "") ;
+    	}
     	%>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select  to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}'||':'||t.workFunction_id,t.date
-    ,count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename
-    ,count(case when cast(t.talk as int)=1 then 1 else null end)
+    <ecom:webQuery name="journal_ticket" nativeSql="select  
+    to_CHAR(t.date,'DD.MM.YYYY')||':${param.typePatient}'||':'||t.workFunction_id as idPar
+    ,t.date as tdate
+    ,count(*) as cnt,vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+    ,count(case when cast(t.talk as int)=1 then 1 else null end) as cntTalk
     from Ticket t left join medcard as m on m.id=t.medcard_id 
+    left join Patient p on p.id=m.person_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join WorkFunction as wf on wf.id=t.workFunction_id 
-    left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+    left join Worker as w on w.id=wf.worker_id 
+    left join Patient as wp on wp.id=w.person_id 
+    inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  
     and to_date('${dateEnd}','dd.mm.yyyy')
-     and t.status='2'  ${add} group by t.date,t.workFunction_id,p.lastname,p.middlename,p.firstname,vwf.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+     and t.status='2'  ${add} ${spec} group by t.date
+     ,t.workFunction_id,wp.lastname,wp.middlename,wp.firstname,vwf.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket" action="poly_ticketsBySpecialistData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -101,19 +119,21 @@
     <ecom:webQuery name="journal_ticket_mkb" nativeSql="select 
     t.idc10_id||':${param.typePatient}'||':'||t.workFunction_id||':${param.dateBegin}:${param.dateEnd}' as idPar
     ,count(*) as cnt1
-    ,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename as doctor,mkb.code as mkbcode 
+    ,vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor,mkb.code as mkbcode 
     ,count(case when cast(t.talk as int)=1 then 1 else null end) as cntTalk
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join vocidc10 as mkb on mkb.id=t.idc10_id 
+    left join Patient p on p.id=m.person_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id 
-    left join Patient as p on p.id=w.person_id 
+    left join Patient as wp on wp.id=w.person_id 
     inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  
     and to_date('${dateEnd}','dd.mm.yyyy')
-     and t.status='2'  ${add} 
+     and t.status='2'  ${add} ${spec}
      group by t.workFunction_id,t.idc10_id
-     ,vwf.name,p.lastname,p.firstname,p.middlename,mkb.code
+     ,vwf.name,wp.lastname,wp.firstname,wp.middlename,mkb.code
      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_mkb" action="poly_ticketsBySpecialistMkbData.do" idField="1" noDataMessage="Не найдено">
@@ -135,12 +155,25 @@
     </msh:sectionContent>
     <msh:sectionTitle>Итог</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*),vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename, (select count(*) from Ticket t1 left join VocIdc10 as mkb on mkb.id=t1.idc10_id left join Medcard m1 on m1.id=t1.medcard_id where t1.date  between '${param.dateBegin}'  and '${param.dateEnd}' and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) 
-    ,count(case when cast(t.talk=1 as int) then 1 else null end),p.snils
-    from Ticket t left join medcard as m on m.id=t.medcard_id left join WorkFunction as wf on wf.id=t.workFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
+    <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*)
+    ,vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+    , (select count(*) from Ticket t1 left join VocIdc10 
+    	as mkb on mkb.id=t1.idc10_id left join Medcard m1 
+    	on m1.id=t1.medcard_id where t1.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
+    	  and to_date('${dateEnd}','dd.mm.yyyy') and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) as idccnt 
+    ,count(case when cast(t.talk as int)=1  then 1 else null end) as cnttalk,wp.snils
+    from Ticket t left join medcard as m on m.id=t.medcard_id 
+    left join Patient p on p.id=m.person_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join WorkFunction as wf on wf.id=t.workFunction_id 
+    left join Worker as w on w.id=wf.worker_id 
+    left join Patient as wp on wp.id=w.person_id 
+    inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy') 
-      and t.status='2' ${add} group by t.workFunction_id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      and t.status='2' ${add} ${spec} group by t.workFunction_id
+      ,vwf.name,wp.lastname,wp.firstname,wp.middlename,wp.snils
+      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>

@@ -113,7 +113,7 @@
      and to_date('${dateEnd}','dd.mm.yyyy') 
     and t.status='2' ${add}
     group by t.vocPaymentType_id,vss.name
-    ,vwf.name,p.lastname,p.middlename,p.firstname,mkb.code
+    ,p.lastname,p.middlename,p.firstname
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">

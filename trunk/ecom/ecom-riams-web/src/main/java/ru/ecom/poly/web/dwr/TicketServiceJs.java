@@ -15,6 +15,28 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	public String getSessionData(HttpServletRequest aRequest) {
+		StringBuilder res = new StringBuilder() ;
+		res.append(getSession(aRequest, "TicketService.Ticket.date")).append("@") ;
+		res.append(getSession(aRequest, "TicketService.Ticket.workFunction")).append("@") ;
+		res.append(getSession(aRequest, "TicketService.Ticket.workFunctionName")).append("@") ;
+		res.append(getSession(aRequest, "TicketService.Ticket.medServices")).append("@") ;
+		//res.append(aRequest.getAttribute("TicketService.Ticket.workFunction")).append("@") ;
+		//res.append(aRequest.getAttribute("TicketService.Ticket.workFunctionName")).append("@") ;
+		//res.append(aRequest.getAttribute("TicketService.Ticket.medServices")).append("@") ;
+		return res.toString() ;
+	}
+	private String getSession(HttpServletRequest aRequest,String aAttribute) {
+		return aRequest.getSession(true).getAttribute(aAttribute)!=null?(String)aRequest.getSession(true).getAttribute(aAttribute):"" ;
+	}
+	public String saveSession(String aDate,String aWorkFunction
+   			, String aWorkFunctionName, String aMedServices, HttpServletRequest aRequest) {
+		aRequest.getSession(true).setAttribute("TicketService.Ticket.date", aDate) ;
+		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunction", aWorkFunction) ;
+		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunctionName", aWorkFunctionName) ;
+		aRequest.getSession(true).setAttribute("TicketService.Ticket.medServices", aMedServices) ;
+		return "Сохранено" ;
+	}
 	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		return service.findDoubleBySpecAndDate(aId , aMedcard, aSpec, aDate) ;

@@ -222,6 +222,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp" />
         </action>
+        <action path='/smo_journalDirectionByUsername_list' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_direction/listByUsername.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_direction/listByUsername.jsp" />
+        </action>
         <action path='/contract_contractAccountMedServiciesView' type='ru.ecom.web.actions.base.ForwardAction'
                 validate='false'
                 scope="request"

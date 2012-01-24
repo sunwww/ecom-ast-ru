@@ -176,9 +176,12 @@
 	        </msh:row>
 	        <msh:row >
 	          <msh:textField property="passportCodeDivision" label="Код подраздел."/>
-	          <msh:textField property="birthPlace" label="Место рождения" horizontalFill="true" size="40" />
+	          <msh:textField property="birthPlace" label="Др. место рождения" horizontalFill="true" size="40" />
 	        </msh:row>
-        </msh:ifFormTypeIsView>
+         	<msh:row>
+        		<msh:autoComplete fieldColSpan="3" property="passportBirthPlace" label="Место рождения" horizontalFill="true" vocName="vocPassportBirthPlace"/>
+        	</msh:row>
+        	</msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="mis_patientForm">
 	        <msh:row guid="8f6ac7f2-e407-42e4-813c-950a6e2ab33a">
 	          <msh:textField property="passportDateIssued" label="Дата выдачи"  />
@@ -364,7 +367,7 @@
     	left join worker w1 on w1.id=wf1.worker_id
     	left join patient wp1 on wp1.id=w1.person_id
     	where m.patient_id=${param.id} and m.DTYPE='Visit'
-    	order by m.dateStart desc
+    	order by coalesce(m.dateStart,wcd.calendarDate) desc
     	" maxResult="1" />
     <msh:tableNotEmpty name="lastVisit1">
      <msh:section title="Последнее посещение" viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
@@ -575,21 +578,41 @@
       </td></tr></table>
       <!-- Открытые ССЛ -->
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/View" guid="5e0b8545-8dc8-48fd-a0ac-3a9f762f00dc">
-        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmission.do?id=${param.id}" 
-        createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" listUrl="stac_sslList.do?id=${param.id}" 
-        title="Открытые СЛС." guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
-          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
-          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
-			, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
-			, st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA;  left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   and MedCase.dateFinish is null and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
-          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
-            <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
-            <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
-            <msh:tableColumn columnName="Дата начала" identificator="false" property="2" guid="710b82e4-ebc3-4b1e-88bf-09acf713f389" />
-            <msh:tableColumn columnName="Кто начал" identificator="false" property="3" guid="cd760e39-ae11-4348-ac02-c4b3c0500e02" />
-            <msh:tableColumn columnName="Владелец" identificator="false" property="4" guid="77330937-9afa-4a11-b7f1-8f29303162df" />
-          </msh:table>
-        </msh:section>
+	      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+		        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmissionShort.do?id=${param.id}" 
+	        createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" listUrl="stac_sslList.do?id=${param.id}" 
+	        title="Открытые СЛС." guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
+	          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
+	          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+				, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
+				, st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA;  left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   and MedCase.dateFinish is null and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
+	          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
+	            <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
+	            <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
+	            <msh:tableColumn columnName="Дата начала" identificator="false" property="2" guid="710b82e4-ebc3-4b1e-88bf-09acf713f389" />
+	            <msh:tableColumn columnName="Кто начал" identificator="false" property="3" guid="cd760e39-ae11-4348-ac02-c4b3c0500e02" />
+	            <msh:tableColumn columnName="Владелец" identificator="false" property="4" guid="77330937-9afa-4a11-b7f1-8f29303162df" />
+	          </msh:table>
+	        </msh:section>
+	
+	      </msh:ifInRole>
+	      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+		        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmission.do?id=${param.id}" 
+		        createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" listUrl="stac_sslList.do?id=${param.id}" 
+		        title="Открытые СЛС." guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
+		          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
+		          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
+					, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
+					, st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA;  left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   and MedCase.dateFinish is null and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
+		          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
+		            <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
+		            <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
+		            <msh:tableColumn columnName="Дата начала" identificator="false" property="2" guid="710b82e4-ebc3-4b1e-88bf-09acf713f389" />
+		            <msh:tableColumn columnName="Кто начал" identificator="false" property="3" guid="cd760e39-ae11-4348-ac02-c4b3c0500e02" />
+		            <msh:tableColumn columnName="Владелец" identificator="false" property="4" guid="77330937-9afa-4a11-b7f1-8f29303162df" />
+		          </msh:table>
+		        </msh:section>
+	      </msh:ifNotInRole>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="e4c62deb-7fd7-43f2-a2a1-ba3e365bde45">
