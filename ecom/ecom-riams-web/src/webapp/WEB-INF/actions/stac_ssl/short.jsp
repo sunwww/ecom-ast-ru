@@ -177,4 +177,7 @@
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
+  <tiles:put name="title" type="string">
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
+  </tiles:put>
 </tiles:insert>

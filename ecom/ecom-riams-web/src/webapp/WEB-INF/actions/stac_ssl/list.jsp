@@ -50,6 +50,7 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
       <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" params="id" action="/entityParentPrepareCreate-stac_sslAdmission" name="Госпитализацию" title="Добавить случай лечения в стационаре" key="ALT+2" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" />
+      <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create,/Policy/Mis/MedCase/Stac/Ssl/ShortEnter" params="id" action="/entityParentPrepareCreate-stac_sslAdmissionShort" name="Госпитализацию (короткая)" title="Добавить случай лечения в стационаре" key="ALT+4" />
       <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Ext/Create" params="id" action="/entityParentPrepareCreate-stac_extssl" name="Госпитализацию в другом стационаре" title="Зарегистрировать госпитализацию в другом стационаре" key="ALT+3"/>
     </msh:sideMenu>
     <msh:sideMenu title="Перейти" guid="b43f7427-60be-4539-8b79-38a6882a8512">

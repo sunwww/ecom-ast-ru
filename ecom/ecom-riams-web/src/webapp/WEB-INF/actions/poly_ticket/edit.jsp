@@ -335,12 +335,18 @@
 				    		alert('Уже заведен талон посещения на '+$('date').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
 				    			 ;
                        } else {
-                       		document.forms[0].action = oldaction ;
-				    		document.forms[0].submit() ;
+                    	   	TicketService.saveSession($('date').value,$('workFunction').value
+                    	   			,$('workFunctionName').value,$('medServices').value, {
+                    	   		callback: function(aResult) {
+                    	   			document.forms[0].action = oldaction ;
+        				    		document.forms[0].submit() ;
+                    	   		}
+                    	   	})
+                       		
                        }
                    }
 	        	}
-	        	);
+	        	)
     		}
     		function getValue(aFld) {
     			if (aFld) {
@@ -354,6 +360,24 @@
     	</script>
     	
   </msh:ifFormTypeIsNotView>
+  <msh:ifFormTypeIsCreate formName="poly_ticketForm">
+  	<script type="text/javascript">
+   	TicketService.getSessionData( {
+   		
+   		callback: function(aResult) {
+   			//alert(aResult) ;
+   			if (aResult!=null&&aResult!=""&&(+$('workFunction').value<1)) {
+   				var val = aResult.split("@") ;
+   	   			if (val[0]!="") $('date').value = val[0] ;
+   	   			if (val[1]!="") $('workFunction').value=val[1] ;
+   	   			if (val[2]!="") $('workFunctionName').value=val[2];
+   	    		//if (theOtmoa_medServices && val[3]!="") theOtmoa_medServices.setIds(val[3]) ;
+   			}
+   		}
+   	});
+  	
+  	</script>
+  </msh:ifFormTypeIsCreate>
 </tiles:put>
 </tiles:insert>
 

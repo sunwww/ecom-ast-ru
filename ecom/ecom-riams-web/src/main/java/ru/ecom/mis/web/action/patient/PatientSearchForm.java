@@ -1,8 +1,10 @@
 package ru.ecom.mis.web.action.patient;
 
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.MinLength;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.transforms.DoTrimString;
 
@@ -33,4 +35,40 @@ public class PatientSearchForm extends BaseValidatorForm {
     private Long theLpu ;
     /** Фамилия */
     private String theLastname ;
+    
+    /** Дата выписки */
+    @DoDateString @DateString
+	public String getDischargeDate() {
+		return theDischargeDate;
+	}
+
+	public void setDischargeDate(String aDischargeDate) {
+		theDischargeDate = aDischargeDate;
+	}
+
+	/** Дата выписки */
+	private String theDischargeDate;
+	/** Искать в выписанных */
+	public Boolean getIsSearchDischarge() {
+		return theIsSearchDischarge;
+	}
+
+	public void setIsSearchDischarge(Boolean aIsSearchDischarge) {
+		theIsSearchDischarge = aIsSearchDischarge;
+	}
+
+	/** Искать в выписанных */
+	private Boolean theIsSearchDischarge;
+	/** String */
+	
+	public String getCheckedDischarge() {
+		return theCheckedDischarge;
+	}
+
+	public void setCheckedDischarge(String aCheckedDischarge) {
+		theCheckedDischarge = aCheckedDischarge;
+	}
+
+	/** String */
+	private String theCheckedDischarge;
 }

@@ -103,8 +103,7 @@
 				//$('rayon').value=adr[4] ;//
 				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6] ;
 				//alert(address);
-			}
-			PatientService.getInfoVocForFond(
+				PatientService.getInfoVocForFond(
 					passType,address,{
 						callback: function(aResult) {
 							var res = aResult.split('#') ;
@@ -126,7 +125,11 @@
 							cancel${name}FindPatientByFond() ;
 						}
 					}
-			)
+				);
+			} else {
+				cancel${name}FindPatientByFond() ;
+			}
+			
 			
 		}
      }

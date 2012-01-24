@@ -96,4 +96,22 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	private String theDateEnd;
 	/** Дата начала периода */
 	private String theDateBegin;
+	/**
+	 * Новое свойство
+	 */
+	@Comment("Новое свойство")
+	public Long getPigeonHole() {
+		return thePigeonHole;
+	}
+	/**
+	 * Новое свойство
+	 */
+	public void setPigeonHole(Long aPigeonHole) {
+		thePigeonHole = aPigeonHole;
+	}
+
+	/**
+	 * Новое свойство
+	 */
+	private Long thePigeonHole;
 }

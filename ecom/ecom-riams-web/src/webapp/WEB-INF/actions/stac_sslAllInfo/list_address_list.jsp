@@ -19,9 +19,13 @@
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
       <msh:row>
-      	<msh:autoComplete property="hospType" fieldColSpan="6" 
+      	<msh:autoComplete property="hospType" fieldColSpan="2" 
       		horizontalFill="true" label="Тип стационара"
       		vocName="vocHospType"
+      		/>
+      	<msh:autoComplete property="pigeonHole" fieldColSpan="2" 
+      		horizontalFill="true" label="Приемник"
+      		vocName="vocPigeonHole"
       		/>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
@@ -33,14 +37,14 @@
           </td>
       </msh:row>
       <msh:separator label="Общая информация при печати" colSpan="12"/>
-                          <msh:row>
-                                    <msh:autoComplete property="department" vocName="lpu" label="ЛПУ" 
-                                    	horizontalFill="true" fieldColSpan="12"/>
-                        	</msh:row>
-                          <msh:row>
-                                    <msh:autoComplete property="spec" vocName="workFunction" label="Ответственный" 
-                                    	horizontalFill="true" fieldColSpan="12"/>
-                        	</msh:row>
+       <msh:row>
+                 <msh:autoComplete property="department" vocName="lpu" label="ЛПУ" 
+                 	horizontalFill="true" fieldColSpan="12"/>
+     	</msh:row>
+       <msh:row>
+                 <msh:autoComplete property="spec" vocName="workFunction" label="Ответственный" 
+                 	horizontalFill="true" fieldColSpan="12"/>
+     	</msh:row>
     </msh:panel>
     </msh:form>
     
@@ -70,9 +74,11 @@
 	left outer join Patient pat on m.patient_id = pat.id  
 	left outer join StatisticStub stat on m.statisticstub_id=stat.id 
 	left outer join MisLpu lpu on m.department_id = lpu.id 
+	left join Omc_Oksm ok on pat.nationality_id=ok.id
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
-	${hospType} and m.deniedHospitalizating_id is null
+	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is null or ok.voc_code='643')
+	${pigeonHole}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">

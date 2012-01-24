@@ -113,16 +113,16 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	action='/print-statcard_four.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать истории болезни формат А4'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066" 
+    	name="Печать адресных листков (прибытия и убытия)"  params="id"  
+    	action='/print-listAddressHospital.do?m=printAddressSheetByHospital&s=HospitalPrintService' title='Печать адресных листков'
+    	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066" 
     	name="Печать стат.карты выбывшего из стационара" params="id"  
     	action='/print-066.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard033" 
     	name="Печать истории болезни и стат.карты выбывшего из стационара" params="id"  
     	action='/print-003.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
-    	/>
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066" 
-    	name="Печать адресных листков (прибытия и убытия)"  params="id"  
-    	action='/print-listAddressHospital.do?m=printAddressSheetByHospital&s=HospitalPrintService' title='Печать адресных листков'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать выписки" params="id"  

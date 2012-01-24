@@ -29,7 +29,7 @@
   	left join Patient wp on wp.id=w.person_id
   	left join MisLpu ml on ml.id=d.orderLpu_id
   	 
-  	where d.dtype='Visit' and d.createDate=CURRENT_DATE
+  	where d.dtype='Visit' and patient_id='${param.id}' and d.createDate=CURRENT_DATE
   	"/>
     <msh:table name="list" action="entityView-smo_direction.do" idField="1"
     viewUrl="entityShortView-smo_direction.do" 

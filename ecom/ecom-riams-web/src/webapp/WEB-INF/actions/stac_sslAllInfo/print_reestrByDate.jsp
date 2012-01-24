@@ -53,6 +53,13 @@
     		request.setAttribute("hour8IsInfo","") ;
     	}
     	request.setAttribute("period", period) ;
+    	String pigeonHole="" ;
+    	String pHole = request.getParameter("pigeonHole") ;
+    	if (pHole!=null && pHole.equals("") && pHole.equals("0")) {
+    		pigeonHole= " and dep.pigeonHole_id='"+pHole+"'" ;
+    	}
+    	request.setAttribute("pigeonHole", pigeonHole) ;
+    	
     	%>
 
     
@@ -73,7 +80,7 @@
      left join MisLpu as ml on ml.id=m.department_id 
      where m.DTYPE='HospitalMedCase' and ${period}
      and m.deniedHospitalizating_id is null
-      and  ${emerIs} order by m.${dateI},ml.name,pat.lastname,pat.firstname,pat.middlename
+      and  ${emerIs} ${pigeonHole} order by m.${dateI},ml.name,pat.lastname,pat.firstname,pat.middlename
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />

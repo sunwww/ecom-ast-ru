@@ -115,6 +115,7 @@
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') ${add} 
     group by m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name
+    order by d.name,vss.name,vas.name,vbt.name,vbst.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
    		<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">

@@ -29,7 +29,10 @@
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="СЛО">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_slo" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_slo" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
-            <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show"  key="CTRL+1"
+            <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Create"  key="CTRL+1"
+    	name="Перевод &larr;"   action="/javascript:goTransfer('.do')"  
+    	 title='Перевод' styleId="stac_sloTransfer" />
+            <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show"  key="CTRL+2"
     	name="Выписка &larr;"   action="/javascript:goDischarge('.do')"  
     	 title='Выписка' styleId="stac_sslDischarge" />
       </msh:sideMenu>
@@ -51,6 +54,7 @@
 
         <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}" params="id" action="/entityParentPrepareCreate-preg_childBirth" name="Описание родов" title="Описание родов" roles="/Policy/Mis/Pregnancy/ChildBirth/Create"/>
       </msh:sideMenu>
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
 	  <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений СЛО" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
@@ -77,6 +81,7 @@
       	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
       </msh:sideMenu>
+      </msh:ifNotInRole>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
         <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
       </msh:sideMenu>
@@ -86,7 +91,7 @@
     <!-- 
     	  - Случай стационарного лечения в отделении
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="transferDate" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="serviceStreamName" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="prevMedCase" guid="710eb92b-fc3f-4390-b32df6837280" />
       <msh:hidden property="parent" guid="710eb92b-fc3f-4b44-9390-b32df6837280" />
@@ -127,6 +132,7 @@
         <msh:row guid="f2aba5-68fb-4ccc-9982-7b4480cmca147">
           <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
           <msh:textField label="№палаты" property="roomNumber" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" />
           <msh:autoComplete property="roomType" vocName="vocRoomType" label="Тип палаты" horizontalFill="true"/>
@@ -134,6 +140,7 @@
          <msh:row>
           <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />
         </msh:row>
+        </msh:ifNotInRole>
         <msh:row>
         	<msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
         	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
@@ -321,6 +328,9 @@
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
       	function goDischarge() {
       		window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
+      	}
+      	function goTransfer() {
+      		window.location = 'entityParentPrepareCreate-stac_slo.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
       	</script>
   

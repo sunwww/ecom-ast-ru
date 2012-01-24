@@ -53,18 +53,35 @@
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 SELECT 
-MC.id,
-CA.balancesum,
-getKontragent(CA.id,' '),
-getDateNum(CA.id,' '),
-getSumKOplate(CA.id),
-getsaldoEnd(CA.id, ' ')
+MC.id
+,CA.balancesum
+,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
+,CCO.name) as kontragent
+,CA.id || ' '||to_char(CA.dateFrom,'dd.mm.yyyy') as dateNum
+,(select sum(CAMS.countMedService*CAMS.cost) 
+from ContractAccountMedService CAMS 
+where CAMS.account_id=CA.id)
+as koplateaccount
+,(select sum(CAMS.countMedService*CAMS.cost) 
+from ContractAccountMedService CAMS 
+where CAMS.account_id=CA.id)
+-
+(select sum(CAO.cost) 
+from ContractAccountOperation CAO 
+LEFT JOIN VocAccountOperation vao on vao.id = CAO.type_id
+where CAO.account_id=CA.id and vao.code='4' and 
+CAO.operationDate <= CA.dateFrom
+and CAO.repealOperation_id is null) as saldoend
+
 FROM 
   contractaccount as CA
 LEFT JOIN servedPerson SP ON CA.servedperson_id=SP.id
 LEFT JOIN medcontract MC ON SP.contract_id=MC.id 
-WHERE
-	CA.dateFrom ${dFrom} AND CA.dateFrom ${dTo} 
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+
+WHERE	CA.dateFrom ${dFrom} AND CA.dateFrom ${dTo} 
 			"/>
 
 				<msh:table name="finansReport" action="entityParentView-contract_medContract.do" idField="1">

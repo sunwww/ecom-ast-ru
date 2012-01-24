@@ -6,6 +6,7 @@
 
 	<form-beans>
         <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
+        <form-bean name="stac_sslAdmissionShortForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />
         <form-bean name="stac_extsslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm" />
         <form-bean name="stac_sslDischargeForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm" />
@@ -291,7 +292,7 @@
 		</action>
 		<action path='/stac_journalByInformationBesk'
 		    type='ru.ecom.web.actions.base.ForwardAction'
-		    name='mis_patientSearchForm' validate='false' scope='request'
+		    name='mis_patientSearchForm' validate='false' scope='session'
 		    input='/WEB-INF/actions/stac_sslAllInfo/listByInformationBesk.jsp'
 		    >
 		    <forward name="success" redirect="false"
@@ -336,7 +337,15 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/findByStatcard.jsp" />
         </action>
 		
-		
+        <action path='/stac_receivedWithoutPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_sslAdmission/list_receivedWithoutPolicy.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_receivedWithoutPolicy.jsp" />
+        </action>
+        		
         <action path='/stac_problemPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -345,6 +354,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_mpolicy_list.jsp" />
         </action>
+
         <action path='/stac_problemPolicy_print' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='stac_admissionJournalForm'
                 validate='false'

@@ -48,17 +48,17 @@
           <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" viewOnlyField="false" label="Рабочее место" guid="c61023b1-bf59-432f-8764-8a571b1eddf8" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="kinsman" label="Представитель" 
-        	parentId="smo_directionForm.patient" viewAction="entityParentView-mis_kinsman.do" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
-        </msh:row>
-        <msh:row guid="69487e8f-d832-47f8-b486-dd2cd97d11ca">
-          <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent"  label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
         </msh:row>
         <msh:row guid="16db3ed2-4536-4a64-9cac-b73390bf65d6">
           <msh:autoComplete showId="false" vocName="vocReason" property="visitReason" viewOnlyField="false" label="Цель визита" guid="5f53c276-d7de-423a-86f5-b523ed37e75d" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
-        	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
+        	<msh:autoComplete property="kinsman" label="Представитель" 
+        	parentId="smo_directionForm.patient" viewAction="entityParentView-mis_kinsman.do" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row guid="69487e8f-d832-47f8-b486-dd2cd97d11ca">
+          <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent"  label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="username" viewOnlyField="true" label="Пользователь"/>
@@ -80,12 +80,33 @@
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-smo_direction" name="Удалить" roles="/Policy/Mis/MedCase/Direction/Delete" />
         
       </msh:sideMenu>
+      <msh:sideMenu title="Добавить">
+            <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
+    	name="Направление &larr;"   action="/javascript:goNewDirection('.do')"  
+    	 title='Направление'  />
+      </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />
+      	<msh:sideLink params="id" action="/print-vis_ticket1.do?s=VisitPrintService&amp;m=printTalon1" name="Повторного талона" title="Печать повторного талона"  roles="/Policy/Mis/MedCase/Direction/Print1" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsView formName="smo_directionForm">
+  	
+        <script type="text/javascript">//var theBedFund = $('bedFund').value;
+      	function goNewDirection() {
+      		window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&orderLpu="+$('orderLpu').value+"&tmp="+Math.random() ;
+      	}
+      	</script>
+    </msh:ifFormTypeIsView>
+    <msh:ifFormTypeIsCreate formName="smo_directionForm">
+    	<script type="text/javascript">
+    		if ((+'${param.orderLpu}'>0) && (+$('orderLpu').value==0)) {
+    			orderLpuAutocomplete.setVocId('${param.orderLpu}') ;
+    		}
+    	</script>
+    </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
       <script type="text/javascript">
       //new dateutil.DateField($('datePlanName'));

@@ -98,6 +98,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    		action="/stac_reestrByHospital" name="По поступившим/ выбывшим из стационара за день"
 	    		styleId="stac_reestrByHospital"
 	    	/>
+	    	<msh:sideLink
+	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReceivedWithoutPolicy" key="ALT+9"
+	    		action="/stac_receivedWithoutPolicy_list" name="По поступившим без полиса"
+	    		styleId="stac_receivedWithoutPolicy"
+	    	/>
 	    	<msh:sideLink styleId="stac_reestrByDepartment"
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByDepartment" key="ALT+8"
 	    		action="/stac_reestrByDepartment" name="По отделению"

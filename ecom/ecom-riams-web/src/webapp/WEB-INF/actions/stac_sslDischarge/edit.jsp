@@ -33,7 +33,7 @@
     <!-- 
     	  - Случай стационарного лечения (выписка)
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_sslDischarge.do" defaultField="dateStart" guid="d9a511ed-3808-4b26-9c6b-c0c4655f3bfb" title="Случай стационарного лечения. ВЫПИСКА">
+    <msh:form action="/entityParentSaveGoView-stac_sslDischarge.do" defaultField="" guid="d9a511ed-3808-4b26-9c6b-c0c4655f3bfb" title="Случай стационарного лечения. ВЫПИСКА">
       <msh:hidden property="id" guid="ca766a3b-4eb3-4c57-8997-68fe5cb52623" />
       <msh:hidden property="patient" guid="7ad1d4c1-b642-4f31-98d4-a22c6cccf6d8" />
       <msh:hidden property="saveType" guid="dab3ef4c-4014-43b7-be41-c2398a50b816" />
@@ -167,14 +167,29 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
-    <tags:templateProtocol property="dischargeEpicrisis" name="Text"/>
-    <tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
+    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+    	<tags:templateProtocol property="dischargeEpicrisis" name="Text"/>
+    	<tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
+    </msh:ifNotInRole>
     <tags:stac_infoBySls form="stac_sslDischargeForm"/>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargeForm" guid="ad9ca7d1-36d7-41ac-a186-cf6fca58b389" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+        	<script type="text/javascript">
+        		$('outcomeName').select() ;
+        		$('outcomeName').focus() ;
+        	</script>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+        	<script type="text/javascript">
+        		$('dischargeEpicrisis').select() ;
+        		$('dischargeEpicrisis').focus() ;
+        	</script>
+        </msh:ifNotInRole>
+        
      <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">stac_sslDischargeForm
   	<script type="text/javascript">

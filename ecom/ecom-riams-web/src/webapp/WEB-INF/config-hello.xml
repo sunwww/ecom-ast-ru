@@ -22,6 +22,8 @@
     <form-bean name="work_groupWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.GroupWorkFunctionForm" />
     <form-bean name="work_workFunctionByWorkerForm" type="$$map$$work_workFunctionByWorkerForm" />
     <form-bean name="work_journalPatternCalendarForm" type="ru.ecom.mis.ejb.form.worker.JournalPatternCalendarForm" />
+    
+    <form-bean name="work_timeBySpecialistForm" type="ru.ecom.mis.web.action.worker.TimeBySpecialistForm" />
 
 <!--     <form-bean name="smo_visitForm" type="$$map$$smo_visitForm" /> -->
     <form-bean name="smo_visitForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm" />
@@ -121,6 +123,14 @@
                 input='/WEB-INF/actions/dis_document/swod.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/swod.jsp" />
+        </action>
+        <action path='/work_create_timeBySpecialist' type='ru.ecom.web.actions.base.ForwardAction'
+                name='work_timeBySpecialistForm'
+                validate='true'
+                scope="request"
+                input='/WEB-INF/actions/smo_direction/create_new_time_by_spec.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_direction/create_new_time_by_spec.jsp" />
         </action>
         <action path='/dis_documentByDate' type='ru.ecom.mis.web.action.disability.DocumentOpenListAction'
                 >

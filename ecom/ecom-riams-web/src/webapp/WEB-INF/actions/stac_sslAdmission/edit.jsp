@@ -136,12 +136,13 @@
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
           <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" parentAutocomplete="lpu" fieldColSpan="3" />
         </msh:row>
+        <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
+          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
+        </msh:row>
         <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
 	        <msh:row>
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicies" label="Прик.полис ОМС" horizontalFill="true" fieldColSpan="3" vocName="omcPolicyByPatient"/>
 	        </msh:row>
-        </msh:ifFormTypeIsCreate>
-        <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
 	        <msh:row>
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicyDmc" label="Прик.полис ДМС" horizontalFill="true" fieldColSpan="3" vocName="dmcPolicyByPatient"/>
 	        </msh:row>
@@ -158,9 +159,6 @@
 	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
 	        </msh:row>
         </msh:ifInRole>
-        <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
-          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
-        </msh:row>
         <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="2d66565b-265f-499f-9116-7755ec98c043">
           <msh:row guid="fafc8638-6d3f-4cf9-bb0a-5c7fe0b25e53">
             <td colspan="9">
