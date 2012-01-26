@@ -259,4 +259,13 @@ public class MedCaseForm extends IdEntityForm {
 
 	/** Закрыть */
 	private Long theIsCloseSpo;
+	
+	/** Гостиничная услуга */
+	@Comment("Гостиничная услуга")
+	@Persist
+	public Boolean getHotelServices() {return theHotelServices;}
+	public void setHotelServices(Boolean aHotelServices) {theHotelServices = aHotelServices;}
+
+	/** Гостиничная услуга */
+	private Boolean theHotelServices;
 }
