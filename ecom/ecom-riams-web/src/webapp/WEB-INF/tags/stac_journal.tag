@@ -100,7 +100,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	/>
 	    	<msh:sideLink
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReceivedWithoutPolicy" key="ALT+9"
-	    		action="/stac_receivedWithoutPolicy_list" name="По поступившим без полиса"
+	    		action="/stac_receivedWithoutPolicy_list" name="По госпитализациям без прикрепленных полисов"
 	    		styleId="stac_receivedWithoutPolicy"
 	    	/>
 	    	<msh:sideLink styleId="stac_reestrByDepartment"

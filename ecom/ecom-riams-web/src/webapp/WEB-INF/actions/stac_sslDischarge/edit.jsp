@@ -65,6 +65,9 @@
         <msh:hidden property="incapacity"/>
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>
+       <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+       	<msh:hidden property="hotelServices"/>
+       </msh:ifNotInRole>
               
       <msh:panel guid="ddf23842-kjhg-4da9-a2e6-1dd53c341551">
         <msh:separator label="Приемное отделение" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
@@ -135,6 +138,11 @@
         	<msh:autoComplete property="kinsman" label="Представитель (иног.)" viewAction="entityParentView-mis_kinsman.do" 
         	parentId="stac_sslDischargeForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
+	        <msh:row>
+	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" labelColSpan="3"/>
+	        </msh:row>
+        </msh:ifInRole>        
         <msh:row guid="03ac9346-99be-4d81-8696-9a1a8c339c38">
           <msh:autoComplete label="Исход" property="outcome" fieldColSpan="1" horizontalFill="true" guid="63d0b9-479f-8aef-0064a789fade" vocName="vocHospitalizationOutcome" />
           <msh:autoComplete label="Результат госп." property="result" fieldColSpan="1" horizontalFill="true" guid="63d091a8-90b9-479f-8aef-0064a789fade" vocName="vocHospitalizationResult" />

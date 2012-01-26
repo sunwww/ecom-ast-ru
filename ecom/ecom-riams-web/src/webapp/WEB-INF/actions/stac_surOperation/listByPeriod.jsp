@@ -39,7 +39,8 @@
     <msh:sectionTitle>Результаты поиска за период с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="select operationDate, count(id) from SurgicalOperation where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  group by operationDate " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_surOperation" nativeSql="select operationDate, count(id) from SurgicalOperation where 
+    operationDate  between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')  group by operationDate " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperation" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Количество операций" identificator="false" property="2" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -53,8 +54,10 @@ left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
 left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-where so.operationDate between '${param.dateBegin}' and '${param.dateEnd}'
-group by so.surgeon_id,vo.name
+where so.operationDate between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')
+group by so.operationDate,so.surgeon_id,so.operation_id
+,so.surgeon_id,vo.name 
+,vwf.name,p.lastname, p.firstname, p.middlename
 order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -89,7 +92,8 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
 
 	      left join Patient p on p.id=so.patient_id
 	      left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-	      left join VocOperation vo on vo.id=so.operation_id where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	      left join VocOperation vo on vo.id=so.operation_id
+	       where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" action="entityView-stac_surOperation.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
@@ -105,7 +109,7 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
     <% } else {%>
     	<i>Нет данных </i>
     	<% }   %>
-    
+    <%--
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
@@ -127,6 +131,6 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
 				 eventName: "focus"
  			});
     </script>
-    
+     --%>
   </tiles:put>
 </tiles:insert>
