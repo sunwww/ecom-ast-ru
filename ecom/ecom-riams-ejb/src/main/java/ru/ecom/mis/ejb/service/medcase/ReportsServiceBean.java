@@ -33,11 +33,14 @@ public class ReportsServiceBean implements IReportsService {
 		StringBuilder filter = new StringBuilder() ;
 		
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
-			filter.append(" and t.workFunction_id="+aSpecialist) ;
-			//aRequest.setAttribute("specInfo", service.getWorkFunctionInfo(form.getSpecialist())) ;
+			if (aIsTicket) {
+				filter.append(" and t.workFunction_id="+aSpecialist) ;
+			} else {
+				filter.append(" and t.workFunctionExecute_id="+aSpecialist) ;
+			}
 		}
 		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
-			filter.append(" and wf.workFunction_id="+aWorkFunction) ;
+				filter.append(" and wf.workFunction_id="+aWorkFunction) ;
 			//aRequest.setAttribute("workFunctionInfo", service.getVocWorkFunctionByIdInfo(form.getWorkFunction())) ;
 		}
 		if (aLpu!=null&&aLpu>Long.valueOf(0)){
@@ -59,23 +62,23 @@ public class ReportsServiceBean implements IReportsService {
 		StringBuilder filter = new StringBuilder() ;
 		filter.append("||':'") ;
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
-			filter.append("||t.workFunction_id") ;
+			filter.append("||").append(aSpecialist) ;
 		}
 		filter.append("||':'") ;
 		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
-			filter.append("||wf.workFunction_id") ;
+			filter.append("||").append(aWorkFunction) ;
 		}
 		filter.append("||':'") ;
 		if (aLpu!=null&&aLpu>Long.valueOf(0)){
-			filter.append("||w.lpu_id") ;
+			filter.append("||").append(aLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkFunction!=null&&aServiceStream>Long.valueOf(0)){
-			if (aIsTicket) {
-				filter.append("||t.vocPaymentType_id") ;
-			} else  {
-				filter.append("||t.serviceStream_id") ;
-			}
+		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+			//if (aIsTicket) {
+				filter.append("||").append(aServiceStream) ;
+			//} else  {
+				//filter.append("||min(t.serviceStream_id)") ;
+			//}
 		}
 		return filter.toString() ;
 	}

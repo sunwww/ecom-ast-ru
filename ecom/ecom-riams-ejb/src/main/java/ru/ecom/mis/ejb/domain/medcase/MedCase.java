@@ -288,6 +288,13 @@ abstract public class MedCase extends BaseEntity {
 	public Pregnancy getPregnancy() {return thePregnancy;}
 	public void setPregnancy(Pregnancy aPregnancy) {thePregnancy = aPregnancy;}
 
+	/** Гостиничная услуга */
+	@Comment("Гостиничная услуга")
+	public Boolean getHotelServices() {return theHotelServices;}
+	public void setHotelServices(Boolean aHotelServices) {theHotelServices = aHotelServices;}
+
+	/** Гостиничная услуга */
+	private Boolean theHotelServices;
 	/** Беременность */
 	private Pregnancy thePregnancy;
 	/** Время печати */
