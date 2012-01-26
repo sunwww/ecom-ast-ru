@@ -33,6 +33,9 @@
       <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
+       <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+       	<msh:hidden property="hotelServices"/>
+       </msh:ifNotInRole>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <msh:hidden property="compulsoryTreatment"/>
         <msh:hidden property="incapacity"/>
@@ -64,9 +67,17 @@
           <msh:autoComplete property="lpu" label="Лечебное учреждение" vocName="lpu" fieldColSpan="3" horizontalFill="true" guid="ee4b9-2961-42be-9a05-caff23" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="kinsman" label="Представитель (иног.)" 
+        	<msh:autoComplete property="kinsman" label="Представитель" 
         	parentId="stac_sslAdmissionForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
+	        <msh:row>
+	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" labelColSpan="3"/>
+	        </msh:row>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+        	<msh:hidden property="hotelServices"/>
+        </msh:ifNotInRole>
         <msh:row guid="f2haba5-68fb-4ccc-9982-7b4480cmca147">
           <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p8g16c" />

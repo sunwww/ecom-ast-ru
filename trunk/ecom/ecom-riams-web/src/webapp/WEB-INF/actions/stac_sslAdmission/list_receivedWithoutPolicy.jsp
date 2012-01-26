@@ -80,16 +80,25 @@ left join MisLpu dep on dep.id=hosp.department_id
 left join vocservicestream vss on vss.id=hosp.servicestream_id 
 left join patient p on p.id=hosp.patient_id 
 left join vocAdditionStatus vas on vas.id=p.additionStatus_id 
- where hosp.DTYPE='HospitalMedCase' and hosp.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
+left join medcase_medpolicy pol on pol.medCase_id=hosp.id
+ where hosp.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
+ 		
       and to_date('${param.dateEnd}','dd.mm.yyyy')
+      and hosp.DTYPE='HospitalMedCase'
  and (vss.code = 'OBLIGATORYINSURANCE' or vss.code='PRIVATEINSURANCE') 
-and (select count(*) from medcase_medpolicy pol where pol.medCase_id=hosp.id)=0
+
 and hosp.deniedHospitalizating_id is null
+group by hosp.id, dep.name, vss.name, hosp.dateStart, ss.code 
+    , vas.name , p.id , p.lastname,p.firstname,p.middlename 
+    , p.birthday 
+having count(pol.medCase_id)=0
 order by dep.name,vss.name,p.lastname,p.firstname,p.middlename
 
 
         "  />
-        <msh:table name="journal_hosp" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_hosp"
+        viewUrl="entitySubclassShortView-mis_medCase.do" 
+        action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Вид оплаты" property="3"/>

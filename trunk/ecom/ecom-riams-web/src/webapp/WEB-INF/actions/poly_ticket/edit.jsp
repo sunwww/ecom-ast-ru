@@ -361,6 +361,7 @@
     	
   </msh:ifFormTypeIsNotView>
   <msh:ifFormTypeIsCreate formName="poly_ticketForm">
+  <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
   	<script type="text/javascript">
    	TicketService.getSessionData( {
    		
@@ -377,6 +378,7 @@
    	});
   	
   	</script>
+  	</msh:ifNotInRole>
   </msh:ifFormTypeIsCreate>
 </tiles:put>
 </tiles:insert>
