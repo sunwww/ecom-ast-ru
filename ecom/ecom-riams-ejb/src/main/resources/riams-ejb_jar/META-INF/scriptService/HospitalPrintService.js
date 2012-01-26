@@ -642,6 +642,24 @@ function recordDisability(aContext,medCase) {
 	//map.put("test",list.get(0).getName()) ;
 }
 
+function recordAttendant(medCase,aCtx) {
+	if (medCase.hotelServices!=null && medCase.hotelServices) {
+		var kinsman = medCase.kinsman!=null?medCase.kinsman.kinsman:null ;
+		if (kinsman!=null) {
+			getAge("kinsman.age",kinsman.birthday,medCase.dateStart,aCtx.manager) ;
+			//map.put("kinsman.age",) ;
+			map.put("kinsman.sex",kinsman.sex!=null?kinsman.sex.name:"муж-1, жен-2") ;
+		} else {
+			map.put("kinsman.age","_________") ;
+			map.put("kinsman.sex","муж-1, жен-2")
+		}
+	} else {
+		map.put("kinsman.age","_________") ;
+		map.put("kinsman.sex","муж-1, жен-2")
+	}
+	
+}
+
 function recordMedCaseDefaultInfo(medCase) {
 	map.put("medCase",medCase) ;
 	map.put("sls.lpu", medCase.lpu) ;
@@ -678,7 +696,7 @@ function printStatCardInfo(aCtx, aParams) {
 	recordPolicy(medCase.policies) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase) ;
-
+	recordAttendant(medCase,aCtx) ;
 	recordDisability(aCtx,medCase) ;
 	
 	var depDirect = "" ;
@@ -688,7 +706,7 @@ function printStatCardInfo(aCtx, aParams) {
 			depDirect = "(дневное)" ;
 		}
 	}
-
+	
 	map.put("sls.departmentDirection",medCase.department) ;
 	map.put("sls.typeDirect",depDirect) ;
 	//if (medCase.diagnosClinical.establishDate.equals("")){
