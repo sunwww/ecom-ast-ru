@@ -54,16 +54,17 @@
 							    row.appendChild(td4);
 							
 							    // Наполняем ячейки
-							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >";
+							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
 				                   if (+aResult>0)  {
 				                   	td2.innerHTML =  aResult +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aResult+"' type='hidden' / >";
-				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aResult)*(+count);+"' size='9' readonly='true' />" ;
+				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aResult)*(+count)+"' size='9' readonly='true' />" ;
+				                   	//alert(+(+aResult)*(+count));
 				                   } else {
 				                   	td2.innerHTML = "0" ;
 				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
 				                   }
 				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
-				   			    $('sum'+cnt).readOnly=true ;
+				   			    //$('sum'+cnt).readOnly=true ;
 				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
 				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
 
@@ -83,7 +84,7 @@
 	</tiles:put>
 	<tiles:put name="body" type="string">
 	<script type="text/javascript">
-	function addRowOld(aName, aNameId, aCount, aPrice)
+	function addRowOld(aName, aNameId, aCount, aPrice, aContractAMS)
 	{
 	    // Считываем значения с формы
 		//alert(aNameId) ;
@@ -121,16 +122,16 @@
 		    row.appendChild(td4);
 		
 		    // Наполняем ячейки
-		    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >";
+		    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='"+aContractAMS+"' type='hidden' >";
                if (+aPrice>0)  {
                	td2.innerHTML =  aPrice +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aPrice+"' type='hidden' / >";
-               	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aPrice)*(+count);+"' size='9' readonly='true' />" ;
+               	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aPrice)*(+count)+"' size='9' readonly='true' />" ;
                } else {
                	td2.innerHTML = "0" ;
                	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
                }
 			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
-			    $('sum'+cnt).readOnly=true ;
+			    //$('sum'+cnt).readOnly=true ;
 			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
             eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
 
@@ -141,6 +142,7 @@
 	}
 	function checkSum() {
 		var costAll = 0;
+		var medServAll = "";
 		var cnt = +$('cnt').value ;
 		for (var i=1; i<=cnt;i++) {
 			if ($('count'+i)) {
@@ -149,10 +151,12 @@
 				var sum = (cost*count) ;
 				costAll = costAll + sum ;
 				$('sum'+i).value=sum ;
+				//medServAll = medServAll+$('service'+i).value+":"+cost+":"+count+"#";
 			}
 			
 		}
 		//$('cost'+i).value
+		//if(medServAll!=null)$('additionMedService').value=medServAll;
 		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
 		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
 	}
@@ -198,8 +202,7 @@
 </fieldset>
 </form>
 <br>
-
-<form action='contract_contractAccountMedServiciesSave.do'>
+<form action='/riams/contract_contractAccountMedServiciesSave.do'>
 <input id='id' name='id' type='hidden' value="${param.id}">
 <input id='cnt' name='cnt' type='hidden' value="0">
 <div id="divAllCount1"><h1>Сумма: 0 руб</h1></div>
@@ -217,6 +220,7 @@
     </tbody>
 </table>
 <div id="divAllCount2"><h1>Сумма: 0 руб</h1></div>
+<%/**<input id="additionMedService" name="additionMedService" value="0"/> */%>
 <input type='submit' value='сохранить' >
 </form>
 </br>
@@ -239,12 +243,12 @@
 			"/>
 			<ecom:webQuery name="meservc" nativeSql="
 			SELECT 
-  				MS.name, PP.cost, CAMS.countMedService, PMS.id
+  				MS.name, PP.cost, CAMS.countMedService, PMS.id as pmsid, CAMS.id as camsid
 			FROM 
   				contractAccountMedService AS CAMS
-			LEFT JOIN PriceMedService AS PMS ON  CAMS.medservice_id = PMS.id
-			LEFT JOIN MedService AS MS ON PMS.medService_id =MS.id
-			LEFT JOIN PricePosition AS PP ON PMS.pricePosition_id = PP.id
+			LEFT JOIN PricePosition AS PP ON CAMS.medservice_id = PP.id
+			left join pricemedservice PMS on PMS.priceposition_id = PP.id
+			left join medservice MS on MS.id = PMS.medservice_id
 			where CAMS.account_id=  ${param.id}
 			"/>
 			<%
@@ -252,8 +256,7 @@
 			out.println("<script>");
 			for (int i=0 ; i<list.size();i++) {
 				WebQueryResult res = (WebQueryResult)list.get(i) ;
-				
-				out.println("addRowOld('"+res.get1()+" ("+res.get2()+")'"+", "+res.get4()+", "+res.get3()+",'"+res.get2()+"');");				
+				out.println("addRowOld('"+res.get1()+" ("+res.get2()+")'"+", "+res.get4()+", "+res.get3()+",'"+res.get2()+"',"+res.get5()+");");				
 				
 			}	
 			out.println("   checkSum() ;");
