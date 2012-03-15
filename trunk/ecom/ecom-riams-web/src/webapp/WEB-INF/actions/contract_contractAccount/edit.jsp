@@ -1,3 +1,7 @@
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
+<%@page import="java.math.BigDecimal"%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -53,6 +57,7 @@
 							left join PricePosition pp on pp.id=pms.pricePosition_id
 							where CAMS.account_id = '${param.id}'
 			"/>
+				<div id="divAllCount1"><h1>Сумма: 0 руб</h1></div>
 				<msh:table name="medicalService" 
 				deleteUrl="entityParentDeleteGoParentView-contract_contractAccountMedService.do"
 				editUrl="entityParentEdit-contract_contractAccountMedService.do"
@@ -64,10 +69,22 @@
 					<msh:tableColumn columnName="Кол-во" property="5" />
 					<msh:tableColumn columnName="Стоимость" property="6" />
 				</msh:table>
+				<div id="divAllCount2"><h1>Сумма: 0 руб</h1></div>
 			</msh:section>
 			</msh:ifInRole>
 		</msh:ifFormTypeIsView>
-		
+		<%
+			List list= (List)request.getAttribute("medicalService");
+			out.println("<script>");
+			out.println("var sum = 0;");
+			for (int i=0 ; i<list.size();i++) {
+				WebQueryResult res = (WebQueryResult)list.get(i) ;
+				out.println("sum = sum*1 + ("+res.get6()+")*1;" ); 
+			}	
+			out.println("$('divAllCount1').innerHTML = '<h1>Сумма: '+sum+' руб.</h1>'"); 
+			out.println("$('divAllCount2').innerHTML = '<h1>Сумма: '+sum+' руб.</h1>'");
+			out.println("</script>");
+		%>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountForm" />
