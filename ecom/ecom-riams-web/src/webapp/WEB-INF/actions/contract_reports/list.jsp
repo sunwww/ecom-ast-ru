@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -36,7 +38,6 @@
 		if  (dateTo==null ||dateTo.equals("") ) {}
 		else if (dateFrom==null ||dateFrom.equals("") ) {}
 		else FromTo="C "+dFrom+" По "+dTo;
-		
 		%>
 
 			<form action="/riams/contract_reports.do" method="GET">
@@ -54,7 +55,7 @@
 			<ecom:webQuery name="finansReport" nativeSql="
 SELECT 
 MC.id
-,CA.balancesum
+,CASE WHEN CA.balancesum>0 THEN CA.balancesum ELSE '0.00' END
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
 ,CCO.name) as kontragent
 ,CA.id || ' '||to_char(CA.dateFrom,'dd.mm.yyyy') as dateNum
@@ -62,16 +63,21 @@ MC.id
 from ContractAccountMedService CAMS 
 where CAMS.account_id=CA.id)
 as koplateaccount
-,(select sum(CAMS.countMedService*CAMS.cost) 
-from ContractAccountMedService CAMS 
-where CAMS.account_id=CA.id)
--
-(select sum(CAO.cost) 
+,
+(select 
+CASE when sum(CAO.cost)>0 then sum(CAO.cost)  
+else 0 
+end  
 from ContractAccountOperation CAO 
-LEFT JOIN VocAccountOperation vao on vao.id = CAO.type_id
+LEFT JOIN VocAccountOperation vao on vao.id = CAO.type_id 
 where CAO.account_id=CA.id and vao.code='4' and 
-CAO.operationDate <= CA.dateFrom
-and CAO.repealOperation_id is null) as saldoend
+CAO.operationDate ${dTo}  
+and CAO.repealOperation_id is null)  
+- 
+(select sum(CAMS.countMedService*CAMS.cost)  
+from ContractAccountMedService CAMS 
+where CAMS.account_id=CA.id) 
+as saldoend
 
 FROM 
   contractaccount as CA
@@ -92,7 +98,24 @@ WHERE	CA.dateFrom ${dFrom} AND CA.dateFrom ${dTo}
 					<msh:tableColumn columnName="Сумма к оплате" property="5" />
 					<msh:tableColumn columnName="Исходящее сальдо" property="6" />
 				</msh:table>
+				<div id="divAllCount2">
+				Итого к оплате:
+				</div>
 			</msh:section>
+		<%
+			List list= (List)request.getAttribute("finansReport");
+			out.println("<script>");
+			out.println("var sum = 0;");
+			for (int i=0 ; i<list.size();i++) {
+				WebQueryResult res = (WebQueryResult)list.get(i) ;
+				out.println("sum = sum*1 + ("+res.get5()+")*1;" ); 
+			}	
+			out.println("$('divAllCount2').innerHTML = '<h1>Итого к оплате: '+sum+' руб.</h1>';");
+			if(request.getParameter("dateFrom")!=null) {out.println("$('dateFrom').value='"+request.getParameter("dateFrom")+"';");}
+			if(request.getParameter("dateTo")!=null) {out.println("$('dateTo').value='"+request.getParameter("dateTo")+"';");}
+			out.println("</script>");
+			
+		%>
 	</tiles:put>
 	<tiles:put  name='javascript' type='string'>
 	<script type="text/javascript">
