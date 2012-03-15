@@ -5,9 +5,9 @@ function PrinCertificate(aCtx, aParams){
 	var sqlQuery ="select MS.name as nm, CAMS.countMedService*PP.cost as cc " 
 			+", CAMS.countMedService as cnt " 
 			+" from ContractAccountMedService CAMS "
-			+" left join PriceMedService PMS ON PMS.id = CAMS.medservice_id"
+			+" left join PricePosition PP ON PP.id = CAMS.medservice_id"
+			+" left join PriceMedService PMS on pp.id=pms.pricePosition_id"
 			+" left join MedService MS ON MS.id = PMS.medService_id"
-			+" left join PricePosition pp on pp.id=pms.pricePosition_id"
 			+" where CAMS.account_id = ";
 	sqlQuery=sqlQuery+pid;
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
