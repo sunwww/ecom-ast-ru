@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -26,6 +28,12 @@
 					<msh:textField property="cost" label="Стоимость"/>
 					<msh:textField property="discount" label="Скидка"/>
 				</msh:row>
+
+				<ecom:webQuery name="sumCost" nativeSql="
+							select sum(CAMS.countMedService*CAMS.cost),1   
+							from ContractAccountMedService CAMS 
+							where CAMS.account_id= '1'
+				"/>
 				<!-- 
 				<msh:row>
 					<msh:autoComplete property="medcase" label="Случай медицинского обслуживания" vocName="MedCase" horizontalFill="true" />
@@ -81,6 +89,17 @@
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_contractAccountOperationForm">
 		</msh:ifFormTypeIsView>
+		<% 
+		List list= (List)request.getAttribute("sumCost");
+		out.println("<script>");
+		out.println("var sum = 0;");
+		for (int i=0 ; i<list.size();i++) {
+			WebQueryResult res = (WebQueryResult)list.get(i) ;
+			out.println("sum = sum*1 + ("+res.get1()+")*1;" ); 
+		}	
+		out.println("$('cost').value = sum"); 
+		out.println("</script>");
+		%>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountOperationForm" />
