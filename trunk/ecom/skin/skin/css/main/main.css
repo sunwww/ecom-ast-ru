@@ -675,8 +675,8 @@ div.formInfoMessage {
 }
 #content div.section div.sectionContent {
     border-left: 1px solid #999 ;
-    padding: 6px ;
-    margin-bottom: 8px ;
+    padding: 1px ;
+    margin-bottom: 4px ;
 }
 
 /* END CONTENT */
@@ -722,7 +722,7 @@ form table.debug {
 }
 
 form table.viewOnly td.label {
-	padding-top: 2px ;
+	padding-top: 1px ;
 	/*text-align: left ;*/
 	color: #333 ;
 }

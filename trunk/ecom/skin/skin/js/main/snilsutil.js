@@ -26,7 +26,7 @@ snilsutil.SnilsField = function(aElement) {
             } else if(size==11) {
             	theElement.value = theElement.value + " " ;
             } else if(size>14) {
-                theElement.value = theElement.value.substring(0,14) ;
+                theElement.value = theElement.value.trim().substring(0,14) ;
             }
         }
     }
