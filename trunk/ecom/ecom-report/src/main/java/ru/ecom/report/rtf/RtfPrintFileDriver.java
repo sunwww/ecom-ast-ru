@@ -25,6 +25,7 @@ public class RtfPrintFileDriver implements IPrintFileDriver {
 		d.theTemplateDir = templateDir ;
 		d.theKey = key ;
 		d.theWorkDir = new File(theWorkDir) ;
+		d.theLogin = "undefened" ;
 		return d;
 	}
 
@@ -46,7 +47,7 @@ public class RtfPrintFileDriver implements IPrintFileDriver {
 	}
 
 	public String getResultFilename() {
-		return theKey+"-"+theId+".rtf" ;
+		return theKey+"-"+theLogin+"-"+theId+".rtf" ;
 	}
 
 	public boolean isAccept(File aDir, String aKeyName) {
@@ -86,4 +87,10 @@ public class RtfPrintFileDriver implements IPrintFileDriver {
             }
         }
     }
+	/** Логин */
+	public String getLogin() {return theLogin;}
+	public void setLogin(String aLogin) {theLogin = aLogin;}
+
+	/** Логин */
+	private String theLogin;
 }

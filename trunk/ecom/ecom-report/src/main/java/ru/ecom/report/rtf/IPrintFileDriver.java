@@ -60,6 +60,6 @@ public interface IPrintFileDriver {
 	 */
 	String getResultFilename();
 	void print(ReplaceHelper aReplaceHelper, IValueGetter aValueGetter) throws RtfPrintException;
-
-
+	
+	public void setLogin(String aLogin) ;
 }

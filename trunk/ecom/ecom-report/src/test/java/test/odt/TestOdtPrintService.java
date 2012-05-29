@@ -33,13 +33,13 @@ public class TestOdtPrintService {
         System.out.println(odtFile.getAbsolutePath());
         String templateDir = "/home/stkacheva/test" ;
         String workDir ="/home/stkacheva/test" ;
-        String id = "pat1" ;
+        String id = "medServicies" ;
         java.sql.Date date = new java.sql.Date(new java.util.Date().getTime()) ;
     	SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy") ;
     	System.out.println(format.format(date)) ;
         try {
         	//IPrintFileDriver driver = new OdtPrintFileDriver().newInstance(id, odtFile, "statcard", workDir) ;
-            IPrintFileDriver driver = new OdtPrintFileDriver(".ods").newInstance(id, odtFile, "pat1", workDir) ;
+            IPrintFileDriver driver = new OdtPrintFileDriver(".odt").newInstance(id, odtFile, "medServicies", workDir) ;
             driver.prepare() ;
             
             InputStream os = new FileInputStream(driver.getOutputFile()) ;

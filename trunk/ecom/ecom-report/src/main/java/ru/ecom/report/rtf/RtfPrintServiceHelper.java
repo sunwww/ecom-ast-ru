@@ -6,6 +6,8 @@ import ru.ecom.report.replace.IValueInit;
 import ru.ecom.report.replace.SetValueException;
 import ru.ecom.report.util.ClassLoaderServiceHelper;
 
+import sun.awt.windows.ThemeReader;
+
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +32,16 @@ public class RtfPrintServiceHelper {
 	private static void log(String aStr) {
 		System.out.println(aStr) ;
 	}
-    public RtfPrintServiceHelper() {
+	public RtfPrintServiceHelper() {
+    	theDrivers.add(new OdtPrintFileDriver(".odt")) ;
+    	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
+    	theDrivers.add(new RtfPrintFileDriver()) ;
+    	theDrivers.add(new TxtPrintFileDriver()) ;
+        //theReplaceHelper.setRtfMode(true);
+        setRemovedTempFile(true) ;
+	}
+    public RtfPrintServiceHelper(Long aMaxLineLength) {
+    	
     	theDrivers.add(new OdtPrintFileDriver(".odt")) ;
     	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
     	theDrivers.add(new RtfPrintFileDriver()) ;
@@ -60,7 +71,7 @@ public class RtfPrintServiceHelper {
     	   .newInstance(id, templateDir, aKey, theWorkDir) ;
     	theReplaceHelper.setRtfMode(driver.isRtfReplaceMode());
     	
-    	
+    	driver.setLogin(theLogin) ;
     	DefaultRtfValueGetter valueGetter = new DefaultRtfValueGetter();
          try {
              //IValueInit valueInit = (IValueInit) theClassLoaderService.load(aClass);
@@ -109,52 +120,7 @@ public class RtfPrintServiceHelper {
 			throw new RuntimeException(e) ;
 		}
     }
-    /*
-    private String _print(String aKey, String aClass, Map<String,String> aParams) throws RtfPrintException {
-        DefaultRtfValueGetter valueGetter = new DefaultRtfValueGetter();
-        try {
-            IValueInit valueInit = (IValueInit) theClassLoaderService.load(aClass);
-            valueInit.init(aParams, valueGetter);
-            File templateFile = new File(theTemplateDir+"/"+aKey+".rtf") ;
-            String filename = aKey+"-"+System.currentTimeMillis()+".rtf" ;
-            File outFile = new File(theWorkDir+"/"+filename) ;
-            print(templateFile, outFile, valueGetter, "Cp1251") ;
-            return outFile.getName();
-        } catch (Exception e) {
-            throw new RtfPrintException("Ошибка печати: "+e.getMessage(),e) ;
-        } finally {
-            try {
-                valueGetter.clear();
-            } catch (EvalError evalError) {
-                evalError.printStackTrace() ;
-            }
-        }
-    }
-
-    private String getUniqueFilename(String aKey) {
-        String filename = aKey+"-"+System.currentTimeMillis()+".rtf" ;
-        return filename ;
-    }*/
     
-//    public String print(String aKey, IValueInit aValueInit, Map<String, String> aParams) throws RtfPrintException {
-//        DefaultRtfValueGetter valueGetter = new DefaultRtfValueGetter();
-//
-//        try {
-//            aValueInit.init(aParams, valueGetter);
-//            File templateFile = new File(theTemplateDir+"/"+aKey+".rtf") ;
-//            File outFile = new File(theWorkDir+"/"+getUniqueFilename(aKey)) ;
-//            print(templateFile,outFile, valueGetter);
-//            return outFile.getName() ;
-//        } catch (SetValueException e) {
-//            throw new RtfPrintException("Ошибка установки значений: "+e.getMessage(),e);
-//        } finally {
-//            try {
-//                valueGetter.clear();
-//            } catch (EvalError evalError) {
-//                evalError.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            }
-//        }
-//    }
 
 
     private IPrintFileDriver findDriver(String aKey) {
@@ -180,4 +146,11 @@ public class RtfPrintServiceHelper {
     private String theWorkDir ;
 	/** Удаление временных файлов */
 	private boolean theRemovedTempFile;
+	
+	/** Логин */
+	public String getLogin() {return theLogin;}
+	public void setLogin(String aLogin) {theLogin = aLogin;}
+
+	/** Логин */
+	private String theLogin;
 }
