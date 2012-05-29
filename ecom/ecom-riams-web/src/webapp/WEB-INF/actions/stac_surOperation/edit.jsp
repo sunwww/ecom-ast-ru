@@ -36,8 +36,7 @@
         </msh:row>
         </msh:ifNotInRole>
         <msh:separator label="Сведения об операции" colSpan="" guid="a7a51c304-335b4ade6f66" />
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-	        <msh:row guid="f7540b-4474-46c6-b162-828">
+ 	        <msh:row guid="f7540b-4474-46c6-b162-828">
 	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
 	          <msh:textField property="operationTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
 	        </msh:row>
@@ -45,17 +44,22 @@
 	          <msh:textField property="operationDateTo" label="Окончание дата" guid="e8599-31e6-4c99-a6f5-885caf" />
 	          <msh:textField property="operationTimeTo" label="время" guid="496b-8a35-f89732" />
 	        </msh:row>
-        </msh:ifNotInRole>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-	        <msh:row guid="f7540b-4474-46c6-b162-828">
-	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
-	        </msh:row>
-        </msh:ifInRole>
         <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
           <msh:autoComplete property="department" label="Отделение" guid="cfc50051-15f6-4b6f-a382-9c5387482c60" fieldColSpan="3" horizontalFill="true" vocName="vocLpuOtd" />
         </msh:row>
+        <msh:row>
+          <msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream" />
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical" />
+        </msh:row>     
+        <msh:ifFormTypeIsView formName="stac_surOperationForm">   
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="operation" label="Операция" size="60" guid="e22-9d6f-4c39-a6a1-302f14f" fieldColSpan="3" horizontalFill="true" vocName="vocOperation" />
+        </msh:row>
+        </msh:ifFormTypeIsView>
+        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
+          <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
         </msh:row>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
@@ -70,11 +74,11 @@
             </td>
           </msh:ifFormTypeIsNotView>
         </msh:row>
+        </msh:ifNotInRole>
         <msh:row guid="203625bc-d215-4f48-8ee3-44f48785755d">
           <msh:autoComplete horizontalFill="true" property="aspect" label="Показания" vocName="vocHospitalAspect" />
           <msh:autoComplete horizontalFill="true" vocName="vocOperationTechnology" property="technology" label="С испол. ВМТ"/>
         </msh:row>
-        </msh:ifNotInRole>
         
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
 	         <msh:row>
@@ -82,9 +86,6 @@
 	          <msh:checkBox property="minor" label="Малая операция" guid="a8774c57-1b50-4358-916d-ba51249357e7" />
 	        </msh:row>
         </msh:ifNotInRole>
-        <msh:row>
-        	<msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionByLpu" parentAutocomplete="department"/>
-        </msh:row>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">          
         
         <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
@@ -128,7 +129,15 @@
           <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome" />
         </msh:row>
         </msh:ifNotInRole>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+                <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="createUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
@@ -180,7 +189,7 @@
     	document.forms[0].action = 'javascript:isExistSurOperation()';
     	function isExistSurOperation() {
     		 
-    		HospitalMedCaseService.findDoubleOperationByPatient($('id').value,$('medCase').value,$('operation').value, $('operationDate').value
+    		HospitalMedCaseService.findDoubleOperationByPatient($('id').value,$('medCase').value,$('medService').value, $('operationDate').value
     		, {
                    callback: function(aResult) {
                    		//alert(aResult);
@@ -216,24 +225,57 @@
       <script type="text/javascript">
       departmentAutocomplete.setParentId($('lpu').value) ;
   	var oldValue = $('operationDate').value ;
-  	operationAutocomplete.setParentId($('operationDate').value) ;
+  	try {
+  		if (operationAutocomplete) operationAutocomplete.setParentId($('operationDate').value) ;
+	} catch(e) {
+		
+	}
   	
   	eventutil.addEventListener($('operationDate'), "change", 
   	function() {
   		changeParentMedService() ;
   	}) ;
   	eventutil.addEventListener($('operationDate'),'blur',function(){
+  		
   		if (oldValue!=$('operationDate').value) {
   			changeParentMedService() ;
+  			if ($('operationDateTo').value=="") {
+	  			$('operationDateTo').value=$('operationDate').value ;
+	  		}
   		}
   	}) ;
+  	/*eventutil.addEventListener($('operationDate'),'blur',function(){
+  		if (oldValue!=$('operationDate').value) {
+  			changeParentMedService() ;
+
+  		}
+  		
+  	}) ;*/
 
   	function changeParentMedService() {
-  		operationAutocomplete.setParentId($('operationDate').value) ;
-  		$('operation').value='' ;
-  		$('operationName').value='' ;
+  		
+  		
+  		try {if (operationAutocomplete) {
+  			var oper = $('operation').value ;
+  			operationAutocomplete.setParentId($('operationDate').value) ;
+  			operationAutocomplete.setVocId(oper) ;
+  		}} catch(e) {
+  			
+  		}
+  		var medService = $('medService').value ;
+  		medServiceAutocomplete.setParentId($('operationDate').value+'#'+$('surgeon').value+'#'+$('department').value) ;
+  		medServiceAutocomplete.setVocId(medService) ;
+  		
+  		//$('operationName').value='' ;
   		oldValue = $('operationDate').value ;
-  	}      </script>
+  	} 
+  	 surgeonAutocomplete.addOnChangeCallback(function() {
+  		changeParentMedService() ;
+  		});
+  	 departmentAutocomplete.addOnChangeCallback(function() {
+  		changeParentMedService() ;
+  		});
+  	</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>

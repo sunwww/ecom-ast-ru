@@ -43,6 +43,18 @@
         </td>
       </msh:row>
       <msh:row>
+        <td class="label" title="ЛПУ выдачи  (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ выдачи:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeLpu" value="1">  текущее
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeLpu" value="2">  из других ЛПУ
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeLpu" value="3">  все
+        </td>
+      </msh:row>
+      <msh:row>
         <td class="label" title="Искать в документах  (noActualityt)" colspan="1"><label for="noActualityName" id="noActualityLabel">Искать в документах:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="noActuality" value="1">  испорченных
@@ -52,6 +64,18 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="noActuality" value="3">  во всех
+        </td>
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Сортировать  (orderBy)" colspan="1"><label for="ordeByName" id="orderByLabel">Сортировка:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="orderBy" value="1">  по номеру
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="orderBy" value="2">  по дате
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="orderBy" value="3">  по ФИО
         </td>
       </msh:row>
       <msh:row>
@@ -106,7 +130,7 @@
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска обращений за  ${period}. ${infoSearch}</msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска обращений за  ${period}. ${infoSearch} ${anotherlpuinfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nativeSql="select dd.id,dd.issueDate as date1
     ,(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id) as date2
@@ -125,7 +149,7 @@
 	   	left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
 	   	left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
     	left join patient p on p.id=dc.patient_id
-     	where ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} order by ${dateGroup},dd.number "/>
+     	where ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
     <msh:table viewUrl="entityShortView-dis_document.do" name="journal_priem" action="entityParentView-dis_document.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата выдачи" property="2"/>
@@ -151,27 +175,25 @@
     var typeDate = document.forms[0].typeDate ;
     var noActuality = document.forms[0].noActuality ;
     
-    if ((+'${typeDate}')==1) {
-    	typeDate[0].checked='checked' ;
-    } else  if ((+'${typeDate}')==2) {
-    	typeDate[1].checked='checked' ;
-    } else {
-    	typeDate[2].checked='checked' ;
+    checkFieldUpdate('typeDate','${typeDate}',3) ;
+    checkFieldUpdate('noActuality','${noActuality}',3) ;
+    checkFieldUpdate('typeDocument','${typeDocument}',3) ;
+    checkFieldUpdate('orderBy','${orderBy}',1) ;
+    checkFieldUpdate('typeLpu','${typeLpu}',1) ;
+    
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	var aMax = chk.length ;
+    	if (aValue==null || aValue=="") aValue=aDefault ;
+    	if ((+aValue)>aMax) {
+    		chk[+aMax-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
     }
-    if ((+'${typeDocument}')==1) {
-    	typeDocument[0].checked='checked' ;
-    } else if ((+'${typeDocument}')==2) {
-    	typeDocument[1].checked='checked' ;
-    } else {
-    	typeDocument[2].checked='checked' ;
-    }
-    if ((+'${noActuality}')==1) {
-    	noActuality[0].checked='checked' ;
-    } else if ((+'${noActuality}')==2) {
-    	noActuality[1].checked='checked' ;
-    } else {
-    	noActuality[2].checked='checked' ;
-    }
+
+    
+
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;

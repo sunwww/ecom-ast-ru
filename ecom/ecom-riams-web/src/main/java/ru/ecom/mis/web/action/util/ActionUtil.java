@@ -20,5 +20,11 @@ public class ActionUtil {
 		aRequest.setAttribute(aNameParameter, typePat) ;		
 		return typePat ;
 	}
+	public static String setParameter(String aSession, String aNameParameter, String aValue ,HttpServletRequest aRequest) {
+		
+		aRequest.getSession(true).setAttribute(aSession+"."+aNameParameter, aValue) ;
+		aRequest.setAttribute(aNameParameter, aValue) ;		
+		return aValue ;
+	}
 
 }

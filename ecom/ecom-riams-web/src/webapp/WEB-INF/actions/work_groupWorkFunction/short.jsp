@@ -40,6 +40,28 @@
           <msh:tableColumn property="workerInfo" columnName="Сотрудник" guid="c7e6d86d-c0b9-4cc4-869e-71968f1b6481" />
         </msh:table>
       </msh:section>
+      
+            <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/View" guid="a4054052-1d42-4d0b-aef1-90c19bd53973">
+        <msh:section guid="sectionChilds" title="Журналы шаблонов">
+          <ecom:webQuery name="journals" nativeSql="select 
+          jpc.id,wcp.name,jpc.noActive,jpc.dateFrom,jpc.dateTo 
+          from JournalPatternCalendar jpc
+          left join WorkCalendarPattern wcp on wcp.id=jpc.pattern_id
+          where jpc.workCalendar_id='${param.id}'
+          " />
+          <msh:table deleteUrl="entityParentDeleteGoParentView-work_journalPatternCalendar.do" 
+          editUrl="entityParentEdit-work_journalPatternCalendar.do" 
+          viewUrl="entityShortView-work_journalPatternCalendar.do" 
+			name="journals" 
+			action="entityParentView-work_journalPatternCalendar.do" idField="1">
+            <msh:tableColumn columnName="ИД" property="1" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
+            <msh:tableColumn columnName="Информация о шаблоне" property="2" guid="a744754f-5212-4807-910f-e4b2333" />
+            <msh:tableColumn columnName="Отключен" property="3" guid="a744754f-5212-4807-910f-e1212" />
+            <msh:tableColumn columnName="Действует с" property="4" guid="a744754f-5212-4807-910f-333aec108" />
+            <msh:tableColumn columnName="Действует по" property="5" guid="a744754f-5212-4807-910f-333aec19" />
+          </msh:table>
+        </msh:section>
+      </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">

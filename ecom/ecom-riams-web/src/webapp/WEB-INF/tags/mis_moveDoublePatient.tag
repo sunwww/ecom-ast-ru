@@ -39,7 +39,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
 <script type="text/javascript">
      var theIs${name}DoublePatientDialogInitialized = false ;
      var the${name}DoublePatientDialog = new msh.widget.Dialog($('${name}DoublePatientDialog')) ;

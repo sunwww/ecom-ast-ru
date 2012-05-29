@@ -16,7 +16,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
       <ecom:webQuery name="journal_priem" nativeSql=" select t.id as tid,m.number as mnumber
-    , p.lastname||' '|| p.firstname||' '||p.middlename as fiopat,p.birthday
+    , p.lastname||' '|| p.firstname||' '||coalesce(p.middlename,'') as fiopat,p.birthday
     ,  t.id as tid,t.date as tdate
     ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
     ,mkb.code as mkbcode ,vr.name as vrname

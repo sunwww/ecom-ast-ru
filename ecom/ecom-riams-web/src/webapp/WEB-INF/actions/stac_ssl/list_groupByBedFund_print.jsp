@@ -10,7 +10,7 @@
     <%-- <msh:sectionTitle>Журнал пациентов в отделение по коечному фонду ${info} ${infoTypePat}</msh:sectionTitle>--%>
     <msh:sectionContent>
     <ecom:webQuery name="journal_admission" nativeSql="
-    select m.id,' '||p.lastname||' '||p.firstname||' '||p.middlename as fio
+    select m.id,p.lastname||' '||p.firstname||' '||p.middlename as fio
     ,d.name as depname,ss.code as sscode,p.birthday as birthday
     , m.dateStart as mdateStart
     ,coalesce(m.dateFinish,m.transferDate) as mdateFinish
@@ -36,8 +36,8 @@
     left join mislpu as d on d.id=m.department_id 
     left join patient as p on p.id=m.patient_id 
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
-    where m.DTYPE='DepartmentMedCase' and ${dateType } between between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
-    and m.bedfund_id=${bedFund} ${addStatus} ${add } 
+    where m.DTYPE='DepartmentMedCase' and ${dateType } between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
+    ${bedFund} ${addStatus} ${add } ${dep} ${servStream}
     order by p.lastname,p.firstname" 
     guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_admission" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">

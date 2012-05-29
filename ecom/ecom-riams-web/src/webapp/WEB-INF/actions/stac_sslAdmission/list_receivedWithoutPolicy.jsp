@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Просмотр данных по пациентам</msh:title>
+        <msh:title mainMenu="StacJournal">Просмотр данных по госпитализациям, без прикрепленных полисов</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -17,37 +17,86 @@
   <tiles:put name="body" type="string">
     <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    	<input type="hidden" name="s" value="HospitalPrintService"/>
+    	<input type="hidden" name="m" value="receivedWithoutPolicy"/>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Дополнительные параметры для реестра (в своде не учитываются)" colSpan="7"/>
       </msh:row>
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Длительность:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDuration" value="1">  более 3х дней
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"   colspan="2">
+        	<input type="radio" name="typeDuration" value="2" >  до 3х дней включительно
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDuration" value="3">  все
+        </td>
+        </msh:row>
+      <msh:row>
+        <td class="label" title="Поиск по пациентам (typePatientIs)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Пациенты:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatientIs" value="1">  включая состоящих
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"   colspan="3">
+        	<input type="radio" name="typePatientIs" value="2" >  только поступивших за период
+        </td>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="1">  экстренные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" >
+	        	<input type="radio" name="typeEmergency"  value="2">  плановые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="3">  все
+	        </td>
+        </msh:row>      
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="1">  региональные
+        	<input type="radio" name="typePatient" value="1">  иностранцы
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  иногородные
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typePatient" value="2">  проживающим в других регионах
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="3">  все
         </td>
         </msh:row>
+      <msh:row>
+        <msh:separator label="Основные параметры" colSpan="7"/>
+      </msh:row>
+
+        <msh:row>
+	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="1">  реестр по ОМС
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="2">  реестр по ОМС иног
+	        </td>
+	    </msh:row>
+	    <msh:row>
+	    	<td></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="3"  >  свод по отделениям
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="4"  >  общий свод по ЛПУ
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="5">  все
+	        </td>
+        </msh:row>
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
-        </msh:row>
-        <msh:row>
-<%--         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td> --%>
            <td>
             <input type="submit" onclick="find()" value="Найти" />
-          </td>
-           <td>
             <input type="submit" onclick="print()" value="Печать" />
           </td>
       </msh:row>
@@ -57,42 +106,74 @@
     <%
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
+    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String view = (String)request.getAttribute("typeView") ;
+    	String typePatientIs = (String)request.getAttribute("typePatientIs") ;
+    	if (dateEnd==null||dateEnd.equals("")) {
+    		request.setAttribute("dateEnd", date) ;
+    	} else {
+    		request.setAttribute("dateEnd", dateEnd) ;
+    	}
+    	if (typePatientIs!=null && typePatientIs.equals("1")) {
+    		request.setAttribute("isPat", " or hmc.dateFinish is null") ;
+    	}
+    	if (view!=null && (view.equals("1") || view.equals("5"))) {
     	%>
     
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
+    <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
+    
     <msh:sectionContent>
     <ecom:webQuery name="journal_hosp" nativeSql="
     
     select 
-    hosp.id as hospid
+    hmc.id as hospid
     , dep.name as depname
     , vss.name as vssname 
-    , hosp.dateStart as hospdateStart
+    , hmc.dateStart as hospdateStart
     , ss.code as statcard
     , vas.name as vasname
-    , p.id as pid
-    , p.lastname||' '||p.firstname||' '||p.middlename as fio
-    , p.birthday as pbirthday
-from Medcase hosp 
-left join StatisticStub ss on ss.id=hosp.statisticStub_id 
-left join MisLpu dep on dep.id=hosp.department_id 
-left join vocservicestream vss on vss.id=hosp.servicestream_id 
-left join patient p on p.id=hosp.patient_id 
-left join vocAdditionStatus vas on vas.id=p.additionStatus_id 
-left join medcase_medpolicy pol on pol.medCase_id=hosp.id
- where hosp.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
- 		
-      and to_date('${param.dateEnd}','dd.mm.yyyy')
-      and hosp.DTYPE='HospitalMedCase'
- and (vss.code = 'OBLIGATORYINSURANCE' or vss.code='PRIVATEINSURANCE') 
+    , pat.lastname||' '||pat.firstname||' '||pat.middlename || ' г.р. '|| pat.birthday as pbirthday
+    , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
+    when pvss.omccode='И0' then 'ИНОГ' else '' end as typePatient
+    , case when (select count(*) from medpolicy mp where
+     mp.patient_id=pat.id and
+    mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=hmc.dateStart and
+    (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
+    )>0 then 'Есть' else '' end  as policy
+    ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
+    ,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    ,hmc.dateFinish as hospdateFinish
+from Medcase hmc 
+left join StatisticStub ss on ss.id=hmc.statisticStub_id 
+left join MisLpu dep on dep.id=hmc.department_id 
+left join vocservicestream vss on vss.id=hmc.servicestream_id 
+left join patient pat on pat.id=hmc.patient_id 
+left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
+left join medcase_medpolicy pol on pol.medCase_id=hmc.id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join address2 adr on adr.addressId = pat.address_addressId
+ where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') 
+      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
+      and hmc.DTYPE='HospitalMedCase'
+ and (vss.code = 'OBLIGATORYINSURANCE') 
 
-and hosp.deniedHospitalizating_id is null
-group by hosp.id, dep.name, vss.name, hosp.dateStart, ss.code 
-    , vas.name , p.id , p.lastname,p.firstname,p.middlename 
-    , p.birthday 
-having count(pol.medCase_id)=0
-order by dep.name,vss.name,p.lastname,p.firstname,p.middlename
+and hmc.deniedHospitalizating_id is null
+${addPat} ${addEmergency} 
+group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
+    , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
+    , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
+    ,hmc.dateFinish
+having count(pol.medCase_id)=0 ${addDuration}
+order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
 
         "  />
@@ -100,32 +181,280 @@ order by dep.name,vss.name,p.lastname,p.firstname,p.middlename
         viewUrl="entitySubclassShortView-mis_medCase.do" 
         action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Вид оплаты" property="3"/>
-            <msh:tableColumn columnName="Дата поступления" property="4"/>
-            <msh:tableColumn columnName="№стат.карты" property="5"/>
-            <msh:tableColumn columnName="Доп.статус" property="6"/>
-            <msh:tableColumn columnName="ФИО пациента" property="8"/>
-            <msh:tableColumn columnName="Год рождения" property="9"/>
+            <msh:tableColumn columnName="Показания" property="10"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="№ стат. карты" property="5"/>
+            <msh:tableColumn columnName="Дата пост." property="4"/>
+            <msh:tableColumn columnName="Дата выписки" property="12"/>
+            <msh:tableColumn columnName="К.дни" property="11"/>
+            <msh:tableColumn columnName="Тип" property="8"/>
+            <msh:tableColumn columnName="ФИО пациента" property="7"/>
+            <msh:tableColumn columnName="Наличие страх. документов" property="9"/>
+            
         </msh:table>
     </msh:sectionContent>
 
     </msh:section>
-    <% } else {%>
+    
+    <%} if (view!=null && (view.equals("2") || view.equals("5"))) {
+    	%>
+    
+    <msh:section title="Не заполнено поле страховая компания. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
+    
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_hosp" nativeSql="
+    
+    select 
+    hmc.id as hospid
+    , dep.name as depname
+    , vss.name as vssname 
+    , hmc.dateStart as hospdateStart
+    , ss.code as statcard
+    , vas.name as vasname
+    , pat.lastname||' '||pat.firstname||' '||pat.middlename || ' г.р. '|| pat.birthday as pbirthday
+    , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
+    when pvss.omccode='И0' then 'ИНОГ' else '' end as typePatient
+    ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
+    ,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    ,hmc.dateFinish as hospdateFinish
+from Medcase hmc 
+left join StatisticStub ss on ss.id=hmc.statisticStub_id 
+left join MisLpu dep on dep.id=hmc.department_id 
+left join vocservicestream vss on vss.id=hmc.servicestream_id 
+left join patient pat on pat.id=hmc.patient_id 
+left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
+left join medcase_medpolicy pol on pol.medCase_id=hmc.id
+left join medpolicy mp on mp.id=pol.policies_id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join address2 adr on adr.addressId = pat.address_addressId
+ where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
+      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
+      and hmc.DTYPE='HospitalMedCase'
+ and (vss.code = 'OBLIGATORYINSURANCE') 
+
+and hmc.deniedHospitalizating_id is null
+and mp.dtype='MedPolicyOmcForeign' and mp.insuranceCompanyCode_id is null
+and mp.company_id is null
+${addPat} ${addEmergency} 
+group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
+    , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
+    , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
+    ,hmc.dateFinish
+having count(pol.medCase_id)>0 ${addDuration}
+order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
+        "  />
+        <msh:table name="journal_hosp"
+        viewUrl="entitySubclassShortView-mis_medCase.do" 
+        action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Вид оплаты" property="3"/>
+            <msh:tableColumn columnName="Показания" property="9"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="№ стат. карты" property="5"/>
+            <msh:tableColumn columnName="Дата пост." property="4"/>
+            <msh:tableColumn columnName="Дата выписки" property="11"/>
+            <msh:tableColumn columnName="К.дни" property="10"/>
+            <msh:tableColumn columnName="Тип" property="8"/>
+            <msh:tableColumn columnName="ФИО пациента" property="7"/>
+            
+        </msh:table>
+    </msh:sectionContent>
+
+    </msh:section>
+    
+    <%} 
+    if (view==null || view.equals("3") || view.equals("5")) { 
+    %>
+    <msh:section title="Свод">
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_list_swod" nativeSql="
+    select 
+    
+    dep.name as depname
+    , vss.name as vssname 
+    , count(*) as cnt
+    , count(case when hmc.emergency='1' then 1 else null end) as cntEmer
+    , count(case when hmc.emergency='1' then null else 1 end) as cntPlan
+	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then 1  
+     else null end) as typePatientInost
+	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then null  
+     when pvss.omccode='И0' then 1 else null end) as typePatientInog
+    , count(case when (select count(*) from medpolicy mp where
+     mp.patient_id=pat.id and
+    mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=hmc.dateStart and
+    (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
+    )>0 then 1 else null end)  as policy
+    
+    ,count (case when (
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	)>3 then 1 else null end) as sum3max
+    ,count (case when(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	)<=3 then 1 else null end) as sum3min
+   
+from Medcase hmc 
+left join StatisticStub ss on ss.id=hmc.statisticStub_id 
+left join MisLpu dep on dep.id=hmc.department_id 
+left join vocservicestream vss on vss.id=hmc.servicestream_id 
+left join patient pat on pat.id=hmc.patient_id 
+left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
+left join medcase_medpolicy pol on pol.medCase_id=hmc.id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join address2 adr on adr.addressId = pat.address_addressId
+ where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
+      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
+      and hmc.DTYPE='HospitalMedCase'
+ and (vss.code = 'OBLIGATORYINSURANCE') 
+
+and hmc.deniedHospitalizating_id is null
+and pol.medCase_id is null
+${addPat} 
+group by dep.name, vss.name
+
+order by dep.name,vss.name
+    
+    "/>
+    <msh:table name="journal_list_swod"
+         action="stac_receivedWithoutPolicy_list.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Отделение" property="1"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="2"/>
+            <msh:tableColumn columnName="Кол-во" property="3"/>
+            <msh:tableColumn columnName="Кол-во экстренных" property="4"/>
+            <msh:tableColumn columnName="Кол-во плановых" property="5"/>
+            <msh:tableColumn columnName="Кол-во иностр. гражд." property="6"/>
+            <msh:tableColumn columnName="Кол-во иног. гражд." property="7"/>
+            <msh:tableColumn columnName="Налич. страх. докум." property="8"/>
+            <msh:tableColumn columnName="Более 3х к/ дней" property="9"/>
+            <msh:tableColumn columnName="Менее 3х к/ дней" property="10"/>
+            
+        </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%} 
+    if (view==null || view.equals("4") || view.equals("5")) { 
+    %>
+    <msh:section title="Общий свод по потокам обслуживания">
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_list_swod_all" nativeSql="
+    select 
+    
+ vss.name as vssname 
+    , count(*) as cnt
+    , count(case when hmc.emergency='1' then 1 else null end) as cntEmer
+    , count(case when hmc.emergency='1' then null else 1 end) as cntPlan
+	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then 1  
+     else null end) as typePatientInost
+	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then null  
+     when pvss.omccode='И0' then 1 else null end) as typePatientInog
+    , count(case when (select count(*) from medpolicy mp where
+     mp.patient_id=pat.id and
+    mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=hmc.dateStart and
+    (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
+    )>0 then 1 else null end)  as policy
+    
+    ,count (case when (
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	)>3 then 1 else null end) as sum3max
+    ,count (case when(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	)<=3 then 1 else null end) as sum3min
+   
+from Medcase hmc 
+left join StatisticStub ss on ss.id=hmc.statisticStub_id 
+left join MisLpu dep on dep.id=hmc.department_id 
+left join vocservicestream vss on vss.id=hmc.servicestream_id 
+left join patient pat on pat.id=hmc.patient_id 
+left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
+left join medcase_medpolicy pol on pol.medCase_id=hmc.id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join address2 adr on adr.addressId = pat.address_addressId
+ where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
+      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
+      and hmc.DTYPE='HospitalMedCase'
+ and (vss.code = 'OBLIGATORYINSURANCE' or vss.code='PRIVATEINSURANCE') 
+
+and hmc.deniedHospitalizating_id is null
+and pol.medCase_id is null
+${addPat} 
+group by  vss.name
+
+order by vss.name
+    
+    "/>
+    <msh:table name="journal_list_swod_all"
+         action="stac_receivedWithoutPolicy_list.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+
+            <msh:tableColumn columnName="Поток обслуживания" property="1"/>
+            <msh:tableColumn columnName="Кол-во" property="2"/>
+            <msh:tableColumn columnName="Кол-во экстренных" property="3"/>
+            <msh:tableColumn columnName="Кол-во плановых" property="4"/>
+            <msh:tableColumn columnName="Кол-во иностр. гражд." property="5"/>
+            <msh:tableColumn columnName="Кол-во иног. гражд." property="6"/>
+            <msh:tableColumn columnName="Налич. страх. докум." property="7"/>
+            <msh:tableColumn columnName="Более 3х к/ дней" property="8"/>
+            <msh:tableColumn columnName="Менее 3х к/ дней" property="9"/>
+            
+        </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <% }} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
 
     <script type='text/javascript'>
-    var typePatient = document.forms[0].typePatient ;
+    //checkFieldUpdate('typeDate','${typeDate}',2) ;
+    checkFieldUpdate('typeView','${typeView}',5) ;
+    checkFieldUpdate('typeDuration','${typeDuration}',3) ;
+    checkFieldUpdate('typePatient','${typePatient}',3) ;
+    checkFieldUpdate('typePatientIs','${typePatientIs}',2) ;
+    //checkFieldUpdate('typeOperation','${typeOperation}',3) ;
+    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     
-    if ((+'${typePatient}')==1) {
-    	typePatient[0].checked='checked' ;
-    } else if ((+'${typePatient}')==2) {
-    	typePatient[1].checked='checked' ;
-    } else {
-    	typePatient[2].checked='checked' ;
-    }
-    function find() {
+  
+   function checkFieldUpdate(aField,aValue,aMax) {
+   	eval('var chk =  document.forms[0].'+aField) ;
+   	if ((+aValue)>aMax) {
+   		chk[+aMax-1].checked='checked' ;
+   	} else {
+   		chk[+aValue-1].checked='checked' ;
+   	}
+   }    function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
     	frm.action='stac_receivedWithoutPolicy_list.do' ;
@@ -133,7 +462,7 @@ order by dep.name,vss.name,p.lastname,p.firstname,p.middlename
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	frm.action='stac_receivedWithoutPolicy_print.do' ;
+    	frm.action='print-stac_receivedWithoutPolicy.do' ;
     }
     
     </script>

@@ -143,14 +143,27 @@
           <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
           <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+                <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslForm"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  	<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript">
+    /*
     	PatientService.infoByPolicy($('patient').value, {
     		callback: function(aResult) {
     			//alert(aResult) ;
@@ -161,7 +174,7 @@
     			$('medPolicyInformation').style.display = 'none' ;
     			}
     		}
-    	});
+    	});*/
     </script>  
   </tiles:put>
 </tiles:insert>

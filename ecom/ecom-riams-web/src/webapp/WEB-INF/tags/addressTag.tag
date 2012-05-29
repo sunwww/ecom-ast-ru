@@ -1,6 +1,7 @@
 <%@ tag pageEncoding="utf8" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ attribute name="nextField" required="false" description="" %>
+<%@ attribute name="fieldRayon" required="false" description="" %>
 
 <style type="text/css">
     #addressDialog {
@@ -208,11 +209,28 @@
         if ($('zipcode')) $('zipcode').value = $('addressZipcode').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
 
-        AddressService.getAddressString(addressPk, $('addressHouseNumber').value, $('addressHouseBuilding').value, $('addressFlatNumber1').value,$('addressZipcode').value, {
+        AddressService.getAddressString(addressPk, $('addressHouseNumber').value, $('addressHouseBuilding').value
+        		, $('addressFlatNumber1').value,$('addressZipcode').value, {
             callback: function(aString) {
                 $('addressPar').innerHTML = aString ;
+                //alert('${fieldRayon}') ;
+                if ('${fieldRayon}'!='') {
+                	AddressService.getAddressRayon(addressPk, $('addressHouseNumber').value
+                			,{callback: function(aResult) {
+                				//alert(aResult) ;
+                				if (aResult!='#' && aResult!='') {
+                					var res = aResult.split("#")
+                    				$('${fieldRayon}').value= res[0];
+                    				$('${fieldRayon}Name').value= res[1];
+                    				$('${nextField}').focus() ;
+                    				$('${nextField}').select() ;
+                				}
+                			}}) ;
+                	//${nextField}
+                
+                }
             }
-        } ) ;
+        }) ;
 
 
 //        var dlg = $('addressDialog') ;

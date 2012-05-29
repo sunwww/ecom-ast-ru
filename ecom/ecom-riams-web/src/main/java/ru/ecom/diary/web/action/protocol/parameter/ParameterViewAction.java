@@ -9,10 +9,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
-import ru.ecom.diary.ejb.service.protocol.IParameterService;
+
 import ru.ecom.diary.ejb.service.protocol.ParameterPage;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IEntityFormService;
+import ru.ecom.mis.ejb.service.diary.IParameterService;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 

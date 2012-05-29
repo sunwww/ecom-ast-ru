@@ -71,7 +71,9 @@
     left join vocservicestream vss on vss.id=hosp.servicestream_id 
     left join patient p on p.id=hosp.patient_id 
     left join vocAdditionStatus vas on vas.id=p.additionStatus_id
-    where hosp.dateStart  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') and vss.code in ('OBLIGATORYINSURANCE','PRIVATEINSURANCE') ${add} and $$CheckPatientOMC^ZMedPolicy(hosp.patient_id,hosp.dateStart) is not null group by p.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    where hosp.dateStart  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') 
+    and hosp.dtype='HospitalMedCase'
+    and vss.code in ('OBLIGATORYINSURANCE','PRIVATEINSURANCE') ${add} and $$CheckPatientOMC^ZMedPolicy(hosp.patient_id,hosp.dateStart) is not null group by p.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_hosp" action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Доп.статус" property="9"/>

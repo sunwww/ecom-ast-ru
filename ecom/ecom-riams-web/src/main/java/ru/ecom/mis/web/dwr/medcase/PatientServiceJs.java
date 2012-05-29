@@ -1,27 +1,91 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import java.util.Collection;
+
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.mis.web.webservice.FondWebService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.validator.validators.SnilsStringValidator;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class PatientServiceJs {
-	public String getInfoVocForFond(String aPassportType,String aAddress,HttpServletRequest aRequest) throws Exception {
+	public String getCodefByRegIcForeign(Long aArea, Long aCompany,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql
+		.append(" select smo.id,smo.name from Omc_SprSmo smo ")
+		.append(" left join Omc_KodTer ter on ter.okato=smo.fondokato ")
+		.append(" left join reg_ic com on com.ogrn=smo.voc_code ")
+		.append(" where ")
+		.append(" ter.id='").append(aArea)
+		.append("' and com.id='").append(aCompany).append("'");
+		System.out.println(sql) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next() ;
+			if (wqr.get1()!=null) {
+				return wqr.get1()+"#"+wqr.get2() ;
+			}
+		}
+		return "" ;
+	}
+	public String getRegIcForeignByCodef(Long aOgrnCompany,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql
+			.append(" select com.id,coalesce(com.omcCode,'')||' '||com.name from Omc_SprSmo smo ")
+			.append(" left join Omc_KodTer ter on ter.okato=smo.fondokato ")
+			.append(" left join reg_ic com on com.ogrn=smo.voc_code ")
+			.append(" where ")
+			.append(" smo.id='").append(aOgrnCompany).append("'")
+			;
+		//System.out.println(sql) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next() ;
+			if (wqr.get1()!=null) {
+				return wqr.get1()+"#"+wqr.get2() ;
+			}
+		}
+		return "" ;
+	}
+	public String getCodeByMedPolicyOmc(Long aType,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getInfoVocForFond(aPassportType,aAddress);
+		return service.getCodeByMedPolicyOmc(aType);
+		
+	}
+	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy,HttpServletRequest aRequest) throws Exception {
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		return service.getInfoVocForFond(aPassportType,aAddress,aPolicy);
 		
 	}
 	public boolean updateDataByFond(Long aPatientId, String aFiodr
-			,String aDocument,String aPolicy,String aAddress,HttpServletRequest aRequest) throws Exception {
+			,String aDocument,String aPolicy,String aAddress
+			, boolean aIsPatient, boolean aIsPolicy
+			, boolean aIsDocument, boolean aIsAddress,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.updateDataByFond(aPatientId, aFiodr, aDocument, aPolicy, aAddress);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return service.updateDataByFond(username,aPatientId, aFiodr, aDocument, aPolicy, aAddress,aIsPatient,aIsPolicy
+				, aIsDocument, aIsAddress);
 		
+	}
+	public Object checkPatientByPolicy(Long aPatientId, String aSeries, String aNumber,HttpServletRequest aRequest) throws Exception {
+		Object res = null;
+		//System.out.println("checking snils...") ;
+		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
+		//System.out.println(new Date()) ;
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		res = FondWebService.checkPatientByMedPolicy(aRequest, getPatientInfo(aPatientId, service),aSeries,aNumber) ;
+		
+		return res ;
 	}
 	public Object checkPatientBySnils(Long aPatientId, String aSnils,HttpServletRequest aRequest) throws Exception {
 		Object res = null;
@@ -29,7 +93,7 @@ public class PatientServiceJs {
 		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
 		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		res = FondWebService.checkPatientBySnils(getPatientInfo(aPatientId, service),aSnils) ;
+		res = FondWebService.checkPatientBySnils(aRequest, getPatientInfo(aPatientId, service),aSnils) ;
 		
 		return res ;
 	}
@@ -40,7 +104,7 @@ public class PatientServiceJs {
 		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
 		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		res = FondWebService.checkPatientByFioDr( getPatientInfo(aPatientId, service),aLastname, aFirstname
+		res = FondWebService.checkPatientByFioDr( aRequest, getPatientInfo(aPatientId, service),aLastname, aFirstname
 				, aMiddlename,  aBirthday) ;
 		return res ;
 	}
@@ -52,7 +116,7 @@ public class PatientServiceJs {
 		//System.out.println(new Date()) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		String type = service.getOmcCodeByPassportType(aType) ;
-		res = FondWebService.checkPatientByDocument(getPatientInfo(aPatientId, service),type, aSeries, aNumber) ;
+		res = FondWebService.checkPatientByDocument(aRequest, getPatientInfo(aPatientId, service),type, aSeries, aNumber) ;
 		return res ;
 	}
 	private PatientForm getPatientInfo(Long aPatientId, IPatientService aService) {

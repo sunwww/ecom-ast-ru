@@ -16,6 +16,10 @@
       <msh:panel guid="panel">
         <msh:row>
         	<msh:textField label="Код операции" property="code" />
+        	<msh:textField label="Ур.сложности" property="complexity" />
+        </msh:row>
+        <msh:row>
+        	<msh:textField label="Федеральный код" property="codeF" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>

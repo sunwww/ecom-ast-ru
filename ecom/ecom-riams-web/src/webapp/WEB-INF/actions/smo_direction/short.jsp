@@ -7,6 +7,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
+      	<msh:separator label="Печать" colSpan="4"/>
+      	<msh:link action="print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1&id=${param.id}" >талона</msh:link>
+    	<msh:link action="print-vis_ticket1.do?s=VisitPrintService&amp;m=printTalon1&id=${param.id}">1 часть талона</msh:link>
+    	<msh:link action="print-vis_ticket2.do?s=VisitPrintService&amp;m=printTalon1&id=${param.id}">2 часть талона</msh:link>
+  
     <!-- 
     	  - Проба
     	  -->

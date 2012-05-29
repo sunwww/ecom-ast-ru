@@ -56,6 +56,9 @@
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
+        <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+        <msh:sideLink action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
 	  <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений СЛО" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
@@ -149,7 +152,10 @@
           <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="omcStandart" fieldColSpan="6" label="ОМС стандарт" horizontalFill="true" vocName="omcStandart"/>
+        	<msh:autoComplete property="omcStandart" fieldColSpan="6" label="ОМС стандарт (врач)" horizontalFill="true" vocName="omcStandart"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="omcStandartExpert" fieldColSpan="6" label="ОМС стандарт (эксперт)" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
@@ -184,6 +190,17 @@
           <msh:textField property="dischargeTime" label="Время" viewOnlyField="true" guid="a8bfc5ac-8d19-4656-a30b-bd87da1918df" />
         </msh:row>
         </msh:ifFormTypeIsView>
+        <msh:row>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+            <msh:label property="username" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
@@ -267,6 +284,36 @@
         </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
+          <ecom:webQuery name="allSurgOper" nativeSql="select so.id
+          ,so.operationDate as sooperationDate,so.operationTime as soperationTime
+          ,coalesce(ms.code,vo.code,'')||' '||coalesce(ms.name,vo.name) as voname
+          , d.name as whoIs  
+          , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+          from SurgicalOperation as so 
+          left join VocOperation vo on vo.id=so.operation_id 
+          left join MedService ms on ms.id=so.medService_id
+          left join medcase parent on parent.id=so.medcase_id 
+          left join MisLpu d on d.id=so.department_id 
+          left join WorkFunction wf on wf.id=so.surgeon_id
+          left join Worker w on w.id=wf.worker_id
+          left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+          left join Patient wp on wp.id=w.person_id
+          where  
+           so.medCase_id=${param.id}
+          order by so.operationDate
+          "/>
+    <msh:tableNotEmpty name="allSurgOper">
+	    <msh:section title="Хирургические операции ">
+	    	<msh:table name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
+	    		<msh:tableColumn columnName="#" property="sn"/>
+	    		<msh:tableColumn columnName="Отделение" property="5"/>
+	    		<msh:tableColumn columnName="Дата" property="2"/>
+	    		<msh:tableColumn columnName="Время" property="3"/>
+	    		<msh:tableColumn columnName="Операция" property="4"/>
+	    		<msh:tableColumn columnName="Хирург" property="6"/>
+	    	</msh:table>
+	    </msh:section>
+    </msh:tableNotEmpty>      
       </msh:ifInRole>
       
       <msh:ifInRole roles="/Policy/Mis/MedCase/Transfusion/View">
@@ -326,6 +373,18 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
+        function viewOtherVisitsByPatient(d) {
+      	  //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
+      	  
+      	  getDefinition("js-smo_visit-infoShortByPatient.do?id="+$('patient').value, null); 
+        }
+        function viewOtherDiagnosisByPatient(d) {
+      	  getDefinition("js-smo_diagnosis-infoShortByPatient.do?id="+$('patient').value, null);
+        }
+        function viewOtherHospitalMedCase(d) {
+      	  getDefinition("js-stac_ssl-infoShortByPatient.do?id="+$('patient').value, null);
+        }
+
       	function goDischarge() {
       		window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
@@ -379,14 +438,15 @@
       	serviceStreamAutocomplete.addOnChangeCallback(function() {
       	 	updateLpuAndDate() ;
       	 });
-      	 
+      	updateLpuAndDate() ;
       	 function updateLpuAndDate() {
       		 var serviceStream=+$('serviceStream').value ;
       	 	$('lpuAndDate').value = $('department').value +"#"+serviceStream+"#" +$('dateStart').value;
       	 	//alert("lpuAndDate"+$('lpuAndDate').value) ;
       	 	lpuDate = $('department').value +"#"+$('dateStart').value ;
       	 	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
-      	 	bedFundAutocomplete.setVocId('');
+      	 	var id = $('bedFund').value ;
+      	 	bedFundAutocomplete.setVocId(id);
       	 }</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>

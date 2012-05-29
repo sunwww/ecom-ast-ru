@@ -12,7 +12,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.ejb.print.IPrintService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class PrintAction extends BaseAction {
@@ -26,6 +28,7 @@ public class PrintAction extends BaseAction {
         boolean isMultyId = !(aRequest.getParameter("multy")==null?true:aRequest.getParameter("multy").equals("")) ;
         //System.out.println("multy="+isMultyId) ;
         //aRequest.getParameterValues("id").length ;
+        String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
             if (key.equals("id") && isMultyId) {
@@ -37,10 +40,18 @@ public class PrintAction extends BaseAction {
 //            System.out.println("key = " + key);
 //            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
-        String filename = service.print(reportKey
+        String filename = service.print(login,reportKey
         		, aRequest.getParameter("s")
         		, aRequest.getParameter("m"), map) ;
-        return new ActionForward("../rtf/"+filename,true);
+        String next = aRequest.getParameter("next") ;
+        if (next!=null && !next.equals("")) {
+        	
+        	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
+        	return new ActionForward(next.replace("__", "?"),true);
+        } else {
+        	return new ActionForward("../rtf/"+filename,true);
+        }
+        
 	}
 	public static String convertToString(String aStr[]) {
 		StringBuilder ret = new StringBuilder() ;

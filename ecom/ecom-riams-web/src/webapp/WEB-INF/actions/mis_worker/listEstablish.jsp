@@ -46,6 +46,7 @@
 			                		<msh:toolbar>
 			                		<form >
 			                			<table>
+			                				
 				                		<msh:row>
 			                					<msh:textField property="beginDate" label="Дата начала"/>
 			                					<msh:textField property="finishDate" label="Дата окончания"/>
@@ -55,6 +56,12 @@
 			                					<input type='button' value='Генерировать календарь' onclick="javascript:generateWorkFunction('add','listPerson')" />
 			                					<input type='button' value='Очистить незанятые времена' onclick="javascript:deleteGenerate('add','listPerson')" />
 			                					<input type='button' value='Оформить неявки на прием' onclick="javascript:deleteNoAppearance('add','listPerson')" />
+			                				</th>
+				                		</msh:row>
+				                		<msh:row>
+				                			<th class='linkButtons' colspan="6">
+			                					<input type='button' value='Перенести сгенерированные времена с даты начала на дату окончания' onclick="javascript:moveDate('add','listPerson')" />
+			                					<font color="blue">если нет сгенерированных времен на дате окончания</font>>
 			                				</th>
 				                		</msh:row>
 		                					<msh:autoComplete parentId="${param.id}" property="pattern" horizontalFill="true"
@@ -91,13 +98,29 @@
   		if ($('beginDate')) new dateutil.DateField($('beginDate')) ;
   		if ($('finishDate')) new dateutil.DateField($('finishDate')) ;
   		function addNotWorking(add,list) {
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
   			alert('Установить не рабочее время') ;
+  			if (ids) {
+  				
+                window.location = 'cal_workCalendar-journal.do?functionJournal=addNotWorking&lpuId=${param.id}&beginDate='+$('beginDate').value+'&busy='+$('busy').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+            } else {
+                alert("Нет выделенных функций");
+            }  			
+  		}
+  		function moveDate(add,list) {
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
+  			if (ids) {
+  				
+                window.location = 'cal_workCalendar-journal.do?functionJournal=moveDate&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+            } else {
+                alert("Нет выделенных функций");
+            }  			
   		}
   		function generateWorkFunction(add,list) {
   			alert('Генерирование расписания по рабочим функциям') ;
   			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
                if (ids) {
-                   window.location = 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+                   window.location = 'cal_workCalendar-journal.do?functionJournal=generate&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
                    //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
                } else {
                    alert("Нет выделенных функций");
@@ -105,21 +128,42 @@
   		}
   		function addJournalPattern(add,list) {
   			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
+  			alert('Добавить шаблон') ;
   			if (ids) {
-  				
-                window.location = 'cal_workCalendar-addBusyPattern.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&pattern='+$('pattern').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+                window.location = 'cal_workCalendar-journal.do?functionJournal=addBusyPattern&lpuId=${param.id}&beginDate='+$('beginDate').value+'&pattern='+$('pattern').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
             } else {
                 alert("Нет выделенных функций");
             }
-  			alert('Добавить шаблон') ;
+  			
   		}
   		function deleteGenerate(add,list) {
+  			
   			alert('Удалить не использованное время') ;
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
+            if (ids) {
+                window.location = 'cal_workCalendar-journal.do?functionJournal=deleteFreeTime&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+                //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
+            } else {
+                alert("Нет выделенных функций");
+            }
+  			
   		}
   		function deleteNoAppearance(add,list) {
   			alert('Удалить все не якви:)') ;
+  			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
+            if (ids) {
+                window.location = 'cal_workCalendar-journal.do?functionJournal=deleteNoAppearance&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
+                //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
+            } else {
+                alert("Нет выделенных функций");
+            }
   		}
-  		
+  		if ('${param.beginDate}'!='') {
+  			$('beginDate').value='${param.beginDate}' ;
+  		}
+  		if ('${param.finishDate}'!='') {
+  			$('finishDate').value='${param.finishDate}' ;
+  		}
   	</script>
   </tiles:put>
 </tiles:insert>

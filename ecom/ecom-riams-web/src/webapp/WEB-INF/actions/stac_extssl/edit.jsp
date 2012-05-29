@@ -5,16 +5,25 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="style" type="string">
+        <style type="text/css">
 
+
+            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel {
+                color: blue ;
+            }
+        </style>
+     </tiles:put>
+  
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_extsslForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeAreViewOrEdit formName="stac_extsslForm" guid="c3694b44-f3ad-44fd-b4ee-a92ded473300">
  <msh:sideMenu title="Госпитализация в другом ЛПУ">
-        <msh:sideLink action="/entityParentEdit-stac_extssl" params="id" name="Изменить" title="Изменить" />
+        <msh:sideLink action="/entityParentEdit-stac_extssl" params="id" name="Изменить" title="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Ext/Edit"/>
+        <msh:sideLink action="/entityParentDeleteGoParentView-stac_extssl" params="id" name="Удалить" title="Удалить" key="ALT+DEL" roles="/Policy/Mis/MedCase/Stac/Ssl/Ext/Delete" />
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
-        <msh:sideLink action="/mis_patients"  name="Поиск пациента" />
 </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
@@ -59,7 +68,7 @@
 
         <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <msh:row>
-	        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
+	        <msh:autoComplete label="Причина госпитализации в псих. стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="2" fieldColSpan="2" horizontalFill="true"/>
         </msh:row>
 
         <msh:row>
@@ -71,11 +80,22 @@
         </msh:row>
         </msh:ifInRole>
         <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 закл.диаг." property="concludingMkb" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"
+        		fieldColSpan="3"
+        	/>
         </msh:row>
         <msh:row>
-	        <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>        
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+    	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:separator label="Дополнительно" colSpan="9" guid="777a7e06-fef8-40cc-ad41-bc3ee2511aab" />
         <msh:row guid="fa25468-6d3f-4cf9-bb0a-5c7fe0b25e53">
           <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
@@ -100,6 +120,27 @@
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
 
+  </tiles:put>
+  <tiles:put type="string" name="javascript">
+  	<script type="text/javascript">
+		try {
+		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
+      	 	setDiagnosisText('concludingMkb','concludingDiagnos');
+    });} catch(e) {
+    }
+		try {
+    if (clinicalMkbAutocomplete) clinicalMkbAutocomplete.addOnChangeCallback(function() {
+      	 	setDiagnosisText('clinicalMkb','clinicalDiagnos');
+    });} catch(e) {}
+    function setDiagnosisText(aFieldMkb,aFieldText) {
+			var val = $(aFieldMkb+'Name').value ;
+			var ind = val.indexOf(' ') ;
+			//alert(ind+' '+val)
+			if (ind!=-1) {
+				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+			}
+		}
+  	</script>
   </tiles:put>
 
 </tiles:insert>

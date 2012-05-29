@@ -10,6 +10,7 @@
         
         <form-bean name="poly_ticketForm"      type="ru.ecom.poly.ejb.form.TicketForm" />
         <form-bean name="poly_short_ticketForm"      type="ru.ecom.poly.ejb.form.ShortTicketForm" />
+        <form-bean name="poly_drugPrescriptionForm"      type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionByTicketForm" />
         <form-bean name="poly_prescriptionBlankForm"      type="ru.ecom.poly.ejb.form.PrescriptionBlankForm" />
         <form-bean name="poly_concomitantDiseaseForm"      type="ru.ecom.poly.ejb.form.ConcomitantDiseaseForm" />
         <form-bean name="poly_renderedServiceForm"      type="ru.ecom.poly.ejb.form.RenderedServiceForm" />
@@ -205,6 +206,14 @@
                 input='/WEB-INF/actions/smo_visit/f039_list.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_list.jsp"/>
+        </action>
+        <action path='/visit_journal_direction' type='ru.ecom.mis.web.action.medcase.journal.DirectionPatientByPoliclinic'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp"/>
         </action>
         <action path='/poly_f039_add_list' type='ru.ecom.poly.web.action.ticket.Form039Action'
                 name='poly_journalBySpecForm'

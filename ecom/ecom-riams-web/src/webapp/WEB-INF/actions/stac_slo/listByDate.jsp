@@ -16,7 +16,7 @@
   <tiles:put name="body" type="string">
     <msh:sectionTitle guid="88380872-1a21-47b8-8287-dd2e68aeeeb9">${param.departmentInfo}</msh:sectionTitle>
     <ecom:webQuery name="datelist" nativeSql="select m.id,m.dateStart,m.dateFinish,m.transferDate,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,sc.code from medCase m left join MedCase as sls on sls.id = m.parent_id left join StatisticStub as sc on sc.medCase_id=sls.id left outer join Patient pat on m.patient_id = pat.id where m.DTYPE='DepartmentMedCase' and m.department_id='${param.department}' and m.${param.dateSearch}=to_date('${param.id}','dd.mm.yyyy')" guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

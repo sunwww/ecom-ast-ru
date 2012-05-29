@@ -11,6 +11,9 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction='inform'/>
+    <msh:sideMenu title="Добавить">
+    	<msh:sideLink name="Диагноз" params="id" roles="/Policy/Mis/MedCase/Diagnosis/Create" key="ALT+2" action="/entityParentPrepareCreate-mis_diagnosis.do"/>
+    </msh:sideMenu>
     <msh:sideMenu guid="helloSideMenu-123">
       <msh:sideLink params="id" guid="Перейти к пациенту" action="/entityView-mis_patient" name="Пациент" />
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
@@ -41,7 +44,7 @@
     left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
     where  d.patient_id=${param.id} 
     order by d.establishDate" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
-    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="list" action="entityView-mis_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
       <msh:tableColumn columnName="ПО" property="7" />
       <msh:tableColumn columnName="Дата установления" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />

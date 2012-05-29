@@ -35,11 +35,20 @@
        <msh:row>
           <msh:autoComplete parentAutocomplete="insuranceCompanyArea" vocName="omcSprSmo" property='insuranceCompanyCode' fieldColSpan="5" horizontalFill="true" label="ОГРН СМО"/>
         </msh:row>
-        <msh:row guid="1b98bfa2-2d00-4f31-afcd-a129b21521a9">
+        <msh:ifFormTypeIsView formName="mis_medPolicyOmcForeignForm">
+        	<msh:row>
+        		<msh:textField property="ogrn" label="ОГРН" fieldColSpan="5" horizontalFill="true"/>
+        	</msh:row>
+        </msh:ifFormTypeIsView>
+        <msh:row>
+          <msh:autoComplete vocName="vocInsuranceCompanyAll" property="company" label="Страховая&nbsp;компания" horizontalFill="true" fieldColSpan="5"/>
+        </msh:row>
+        <msh:row>
           <msh:textField  property="insuranceCompanyCity" fieldColSpan="5" horizontalFill="true" guid="410bf207-c461-4be4-bbf5-a5d5f8a21f5d" />
         </msh:row>
-        <msh:row guid="37c668e7-a71a-4c90-99ad-03b976f501fd">
-          <msh:textField property="insuranceCompanyName" fieldColSpan="5" horizontalFill="true" guid="44682fdf-001f-4e02-a532-06f3008b950f" />
+
+        <msh:row>
+          <msh:textField property="insuranceCompanyName" viewOnlyField="true" fieldColSpan="5" horizontalFill="true" guid="44682fdf-001f-4e02-a532-06f3008b950f" />
         </msh:row>
         <msh:row guid="2cbb416c-2610-4eea-ba68-fca5916565d5">
           <msh:textField property="actualDateFrom" label="Дата действия с" guid="d7c90d82-baa2-4e68-823b-25cec7f1a3d6" />
@@ -85,19 +94,86 @@
     		
     		insuranceCompanyCodeAutocomplete.addOnChangeCallback(function() {
 	      	 	update() ;
+	      	 	updateCompany() ;
 	      	 });
+    		companyAutocomplete.addOnChangeCallback(function(){
+    			updateOgrn() ;
+    		});
 	      	 function update() {
 	      	 	var text ;
-	      	 	text = $('insuranceCompanyCodeName').value ;
-	      	 	//var cnt = text.indexOf(' ') ;
-	      	 	//if (cnt>0) {
-		      	 	//$('code').value=text.substring(0,cnt) ;
-		      	 	$('insuranceCompanyName').value=text;
-	      	 	//}
+	      	 	if ($('insuranceCompanyCodeName').value!='') {
+		      	 	text = $('insuranceCompanyCodeName').value ;
+	      	 	} else {
+	      	 		
+	      	 		var ind=$('companyName').value.indexOf(' ') ;
+	      	 		if (ind!=-1) {
+	      	 				text = $('companyName').value.substring(ind+1) ;
+	      	 		} else {
+	      	 			text = $('companyName').value ;
+	      	 		}
+	      	 		
+	      	 	}
+	      	 	$('insuranceCompanyName').value=text;
+   				$('insuranceCompanyNameReadOnly').value=text;
+		      	
+	      	 }
+	      	 function updateOgrn() {
+	      		PatientService.getCodefByRegIcForeign(
+	      				$('insuranceCompanyArea').value
+	      				,$('company').value
+	      				,{
+	      			callback:function(aResult) {
+	      				if (aResult!='') {
+	      					var sp = aResult.split('#') ;
+		      				$('insuranceCompanyCode').value = sp[0] ; 
+			      			$('insuranceCompanyCodeName').value= sp[1] ;
+	      				} else {
+		      				$('insuranceCompanyCode').value = '0' ; 
+			      			$('insuranceCompanyCodeName').value= '' ;
+	      				}
+	      				update() ;
+	      			}
+	      		}) ;
+	      	 }
+	      	 function updateCompany() {
+	      		PatientService.getRegIcForeignByCodef(
+	      				$('insuranceCompanyCode').value
+	      				,{
+	      			callback:function(aResult) {
+	      				if (aResult!='') {
+	      					var sp = aResult.split('#') ;
+		      				$('company').value = sp[0] ; 
+			      			$('companyName').value= sp[1] ;
+	      				} else {
+		      				$('company').value = '0' ; 
+			      			$('companyName').value= '' ;	      					
+	      				}
+	      				update() ;
+	      			}
+	      		}) ;
 	      	 }
     	</script>
-    </msh:ifFormTypeIsNotView>
+
+	    	<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+	    	<script type="text/javascript">
+	    		function isRequeredRZ() {
+	    			PatientService.getCodeByMedPolicyOmc($('type').value, {
+	                    callback: function(aResult) {
+	                 	  if (+aResult==3) {
+	                 		 $('commonNumber').className=" horizontalFill required";
+	                 	  } else {
+	                 		 $('commonNumber').className=" horizontalFill ";
+	                 	  }
+	                    }
+	 	        	});
+	    		}
+	    		isRequeredRZ() ;
+	    		typeAutocomplete.addOnChangeCallback(function() {isRequeredRZ() ;}) ;
+	    	</script>
+	    </msh:ifFormTypeIsNotView>
+    </tiles:put>
+    
   
-  </tiles:put>
+
 </tiles:insert>
 

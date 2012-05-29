@@ -15,35 +15,41 @@ public class GroupByBedFundDataAction extends BaseAction {
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		String idString = aRequest.getParameter("id") ;
-		int ind1 = idString.indexOf(":");
-		int ind2 = idString.indexOf(":",ind1+1);
-		int ind3 = idString.indexOf(":",ind2+1);
-		int ind4 = idString.indexOf(":",ind3+1);
-		int ind5 = idString.indexOf(":",ind4+1);
+		String[] idS = idString.split(":" ) ;
+		
 		
 		//int ind3 = parent.indexOf(":",ind2) ;
-		System.out.println("ind1="+ind1);
-		System.out.println("ind2="+ind2);
-		System.out.println("ind3="+ind3);
+		System.out.println("idS="+idS.length);
+		
 		//System.out.println("ind3="+ind3);
 		System.out.println("parent lpuAndDate="+idString) ;
-		String bedFund =idString.substring(0,ind1) ;
+		String bedFund =idS[0] ;
 		System.out.println("bedFund="+bedFund) ;
-		String dateBegin = idString.substring(ind1+1,ind2) ;
+		String dateBegin = idS[1] ;
 		System.out.println("dateBegin="+dateBegin) ;
-		String dateEnd = idString.substring(ind2+1,ind3) ;
+		String dateEnd = idS[2] ;
 		System.out.println("dateEnd="+dateEnd) ;
-		String dateType = idString.substring(ind3+1,ind4) ;
+		String dateType = idS[3] ;
 		System.out.println("dateType="+dateType) ;
-		String typePat = idString.substring(ind4+1,ind5) ;
+		String typePat = idS[4] ;
 		System.out.println("patType="+typePat);
-		String addStatus = idString.length()==ind5?"":idString.substring(ind5+1) ;
+		String addStatus = idS[5] ;
+		System.out.println("addStatus="+addStatus);
 		if (addStatus.equals("")) {
 			aRequest.setAttribute("addStatus", "and p.additionStatus_id is null") ;
+		} else if (addStatus.equals("-")) {
+			aRequest.setAttribute("addStatus", "") ;
 		} else {
 			aRequest.setAttribute("addStatus", "and p.additionStatus_id = "+addStatus) ;
 		}
-		
+		String servStream=idS[6] ;
+		if (!servStream.equals("")&&!servStream.equals("null") &&!servStream.equals("0")) {
+			aRequest.setAttribute("servStream", " and m.serviceStream_id="+servStream) ;
+		}
+		String dep = idS[7] ;
+		if (!dep.equals("")&&!dep.equals("null") &&!dep.equals("0")) {
+			aRequest.setAttribute("dep", " and m.department_id="+dep) ;
+		}		
 		
 		if (typePat.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
@@ -60,7 +66,11 @@ public class GroupByBedFundDataAction extends BaseAction {
 		aRequest.setAttribute("dateType", dateType);
 		aRequest.setAttribute("dateEnd", dateEnd);
 		aRequest.setAttribute("dateBegin", dateBegin);
-		aRequest.setAttribute("bedFund", bedFund);
+		if (bedFund.indexOf(",")==-1) {
+			aRequest.setAttribute("bedFund", " and m.bedfund_id="+bedFund);
+		} else {
+			aRequest.setAttribute("bedFund", " and (m.bedfund_id="+bedFund.replaceAll(",", " or m.bedfund_id=")+")") ;
+		}
 		String dateInfo = "поступления" ;
 		if (dateType.equals("m.dateFinish")) {
 			dateInfo="выписки" ;

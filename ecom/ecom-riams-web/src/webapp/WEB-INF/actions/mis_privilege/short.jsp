@@ -22,6 +22,7 @@
                 </msh:row>
                 <msh:row>
                 	<msh:checkBox property="active" label="Активность"/>
+                	<msh:checkBox property="takeover" label="Отказ от льготы"/>
                 </msh:row>
                 <msh:row>
                 	<msh:autoComplete property="category" label="Категория льготника" horizontalFill="true" fieldColSpan="3" vocName="vocPrivilegeCategory"/>

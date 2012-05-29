@@ -336,7 +336,7 @@
 				    			 ;
                        } else {
                     	   	TicketService.saveSession($('date').value,$('workFunction').value
-                    	   			,$('workFunctionName').value,$('medServices').value, {
+                    	   			,$('workFunctionName').value,$('medServices').value,$('emergency').checked, {
                     	   		callback: function(aResult) {
                     	   			document.forms[0].action = oldaction ;
         				    		document.forms[0].submit() ;
@@ -372,6 +372,17 @@
    	   			if (val[0]!="") $('date').value = val[0] ;
    	   			if (val[1]!="") $('workFunction').value=val[1] ;
    	   			if (val[2]!="") $('workFunctionName').value=val[2];
+   	   			if (val[4]!=""&&(+val[4]>0)) $('emergency').checked=true;
+   	   			
+   	   		var wf = +$("workFunction").value;
+    		if (wf=='') {wf=0;}
+    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("date").value) ;
+    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    		 TicketService.getMedServiceBySpec(wf,$('date').value,{
+	      	 		callback: function(aResult) {
+	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 		}
+	      	 	}) ;
    	    		//if (theOtmoa_medServices && val[3]!="") theOtmoa_medServices.setIds(val[3]) ;
    			}
    		}

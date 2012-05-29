@@ -14,7 +14,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <ecom:webQuery name="list" nativeSql=" select t.id as tid,m.number as mnumber
-    , p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||p.birthday as fio
+    , p.lastname||' '|| p.firstname||' '||coalesce(p.middlename,'') ||' г.р.'||p.birthday as fio
     ,t.dateCreate as tdateCreate,t.date as tdate
     ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
     ,mkb.code as mkbcode ,vr.name as vrname

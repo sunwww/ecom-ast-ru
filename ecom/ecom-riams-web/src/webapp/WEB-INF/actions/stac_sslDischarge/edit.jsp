@@ -140,7 +140,7 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
 	        <msh:row>
-	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" labelColSpan="3"/>
+	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" fieldColSpan="3"/>
 	        </msh:row>
         </msh:ifInRole>        
         <msh:row guid="03ac9346-99be-4d81-8696-9a1a8c339c38">
@@ -172,12 +172,26 @@
           <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
           <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+                <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+    	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
     	<tags:templateProtocol property="dischargeEpicrisis" name="Text"/>
     	<tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
+    	</msh:ifFormTypeIsNotView>
     </msh:ifNotInRole>
     <tags:stac_infoBySls form="stac_sslDischargeForm"/>
   </tiles:put>
@@ -191,6 +205,7 @@
         		$('outcomeName').focus() ;
         	</script>
         </msh:ifInRole>
+     <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">stac_sslDischargeForm
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
         	<script type="text/javascript">
         		$('dischargeEpicrisis').select() ;
@@ -199,7 +214,6 @@
         </msh:ifNotInRole>
         
      <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-     <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">stac_sslDischargeForm
   	<script type="text/javascript">
   		try {
   		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
@@ -226,21 +240,6 @@
   				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
   			}
   		}
-  		/*isOpenningSlo() ;
-  		function isOpenningSlo() {
-  			HospitalMedCaseService.isOpenningSlo( ${param.id}, {
-	                    callback: function(aResult) {
-		                        if (aResult!="") {
-		                        	if (confirm("Есть открытый СЛО:"+aResult+". Вы точно хотите оформить выписку?")) {
-								} else {
-									window.history.back() ;
-								}
-	                        }
-	                        
-	                    }
-	                }
-	            );
-  		}*/
   	</script>
   	</msh:ifFormTypeIsNotView>
   </tiles:put>

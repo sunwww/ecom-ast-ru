@@ -21,6 +21,7 @@ public class TicketServiceJs {
 		res.append(getSession(aRequest, "TicketService.Ticket.workFunction")).append("@") ;
 		res.append(getSession(aRequest, "TicketService.Ticket.workFunctionName")).append("@") ;
 		res.append(getSession(aRequest, "TicketService.Ticket.medServices")).append("@") ;
+		res.append(getSession(aRequest, "TicketService.Ticket.emergency")).append("@") ;
 		//res.append(aRequest.getAttribute("TicketService.Ticket.workFunction")).append("@") ;
 		//res.append(aRequest.getAttribute("TicketService.Ticket.workFunctionName")).append("@") ;
 		//res.append(aRequest.getAttribute("TicketService.Ticket.medServices")).append("@") ;
@@ -30,11 +31,12 @@ public class TicketServiceJs {
 		return aRequest.getSession(true).getAttribute(aAttribute)!=null?(String)aRequest.getSession(true).getAttribute(aAttribute):"" ;
 	}
 	public String saveSession(String aDate,String aWorkFunction
-   			, String aWorkFunctionName, String aMedServices, HttpServletRequest aRequest) {
+   			, String aWorkFunctionName, String aMedServices, boolean aEmergency, HttpServletRequest aRequest) {
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.date", aDate) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunction", aWorkFunction) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunctionName", aWorkFunctionName) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.medServices", aMedServices) ;
+		aRequest.getSession(true).setAttribute("TicketService.Ticket.emergency", aEmergency?"1":"0") ;
 		return "Сохранено" ;
 	}
 	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {

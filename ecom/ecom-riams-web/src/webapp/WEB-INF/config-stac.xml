@@ -20,6 +20,7 @@
 		<form-bean name="smo_spoForm"			           type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm"/>
 		<form-bean name="stac_temperatureCurveForm"        type="ru.ecom.mis.ejb.form.medcase.hospital.TemperatureCurveForm" />		
 		<form-bean name="stac_admissionJournalForm"	       type="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm" />
+		<form-bean name="stac_dischargeJournalForm"	       type="ru.ecom.mis.web.action.medcase.journal.DischargeJournalForm" />
 		<form-bean name="stac_departmentJournalForm"       type="ru.ecom.mis.web.action.medcase.journal.DepartmentJournalForm" />
 		<form-bean name="stac_deathCaseForm"               type="ru.ecom.mis.ejb.form.medcase.death.DeathCaseForm" />
 		<form-bean name="stac_deathReasonForm"             type="ru.ecom.mis.ejb.form.medcase.death.DeathReasonForm" />
@@ -51,6 +52,28 @@
 			</action>
 		-->
 
+        <action path='/stac_resultPatient_list' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_dischargeJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/result_patient_list.jsp" />
+        </action>
+        <action path='/stac_analysis_department_list' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/analysis_department_list.jsp" />
+        </action>
+        <action path='/stac_diagnosis_by_slo_list' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_diagnosis/list_by_slo.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_diagnosis/list_by_slo.jsp" />
+        </action>
         <action path='/stac_groupByBedFundList' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -271,7 +294,7 @@
 		</action>
 
 		<action path='/stac_reestrByHospital'
-		    type='ru.ecom.web.actions.base.ForwardAction'
+		    type='ru.ecom.mis.web.action.medcase.ReestrByHospitalMedCaseAction'
 		    name='stac_admissionJournalForm' validate='true' scope='request'
 		    input='/WEB-INF/actions/stac_sslAllInfo/reestrByDate.jsp'
 		   >
@@ -280,16 +303,7 @@
 		    />
 
 		</action>
-		<action path='/stac_print_reestrByHospital'
-		    type='ru.ecom.web.actions.base.ForwardAction'
-		    name='stac_admissionJournalForm' validate='true' scope='request'
-		    input='/WEB-INF/actions/stac_ssl/print_reestrByDate.jsp'
-		   >
-		    <forward name="success" redirect="false"
-		    	path='/WEB-INF/actions/stac_sslAllInfo/print_reestrByDate.jsp'
-		    />
-
-		</action>
+		
 		<action path='/stac_journalByInformationBesk'
 		    type='ru.ecom.web.actions.base.ForwardAction'
 		    name='mis_patientSearchForm' validate='false' scope='session'
@@ -337,7 +351,7 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/findByStatcard.jsp" />
         </action>
 		
-        <action path='/stac_receivedWithoutPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+        <action path='/stac_receivedWithoutPolicy_list' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"

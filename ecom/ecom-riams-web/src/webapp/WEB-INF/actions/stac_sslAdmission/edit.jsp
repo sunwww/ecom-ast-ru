@@ -72,7 +72,7 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
 	        <msh:row>
-	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" labelColSpan="3"/>
+	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" fieldColSpan="3"/>
 	        </msh:row>
         </msh:ifInRole>
         <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
@@ -199,8 +199,15 @@
         </mis:ifPatientIsWoman>
         <msh:separator label="Дополнительно" colSpan="9" guid="777a7e06-fef8-40cc-ad41-bc3ee2511aab" />
         <msh:row guid="fa25468-6d3f-4cf9-bb0a-5c7fe0b25e53">
-          <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
           <msh:checkBox property="noActuality" label="Недействительность" guid="6299a6be-428f-4a09-9db5-e4c60154b605" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>

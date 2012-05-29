@@ -22,7 +22,11 @@ import org.apache.commons.logging.LogFactory;
 public class AddressServiceJs {
     private final static Log LOG = LogFactory.getLog(AddressServiceJs.class) ;
     private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-    
+    public String getAddressRayon(Long aAddressId, String aHouse
+    		,HttpServletRequest aRequest) throws NamingException {
+    	IAddressService service = Injection.find(aRequest).getService(IAddressService.class);
+    	return service.getRayon(aAddressId, aHouse) ;
+    }
     public String getAddressNonresidentString(Long aTerritory, String aRegion
         	, Long aTypeSettlement
         	, String aSettlement

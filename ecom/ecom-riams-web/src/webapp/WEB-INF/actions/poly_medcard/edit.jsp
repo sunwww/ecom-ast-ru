@@ -105,6 +105,11 @@
     <msh:sideMenu title="Показать все">
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/entityParentList-poly_ticket" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
     </msh:sideMenu>
+    <msh:sideMenu title="Печать">
+    <msh:sideLink roles="/Policy/Mis/Patient/View"  key="CTRL+1"
+    	name="Амб. карта"   action="/javascript:goPrint('.do')"  
+    	 title='Амб.карты'  />
+    </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
     <tags:ticket_finds currentAction="medcard"/>    
     
@@ -127,7 +132,10 @@
     			}
     		}
     	});
-  	</script>
+      	function goPrint() {
+      		window.location = 'print-ambcard.do?s=PatientPrintService&m=printInfo&id='+$('person').value+"&tmp="+Math.random() ;
+      	}
+      	</script>
   </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
 </tiles:insert>

@@ -15,14 +15,43 @@
     <tags:template_menu currentAction="protocols"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <form />
-    <msh:table name="list" action="entityView-temp_protocol.do" idField="id" guid="c0ba5c22-fda6-4d4f-89c4-aa58abb1e9d8" navigationAction="js-temp_protocol-listTemplate.do">
+  	
+    
+		  	<msh:toolbar >
+			                	<tbody>
+			                		<msh:toolbar>
+			                		<form >
+			                			<table>
+				                		<msh:row>
+										    <td colspan="1" class='label'>
+										    <input type='checkbox' name='findByUsername' id='findByUsername' onClick='javascript:document.location.href="js-temp_protocol-listTemplate.do?findByUsername="+this.checked'>
+										    </td>
+										    <td colspan=3 class='findByUsernameLabel'>
+											    <label id='findByUsernameLabel' for="findByUsername"> Отображать только свои шаблоны </label>
+										    
+										    </td>
+					     				</msh:row>
+
+				                		</table>
+				                		</form>
+			                		</msh:toolbar>
+			                	</tbody>
+		  	</msh:toolbar>
+    <msh:table name="list" action="entityView-temp_protocol.do" idField="id" guid="c0ba5c22-fda6-4d4f-89c4-aa58abb1e9d8" navigationAction="js-temp_protocol-listTemplate.do?findByUsername=${findByUsername}">
       <msh:tableColumn columnName="Заголовок" property="title" guid="69ec188c-d4e3-4be5-8a75-e825fd37e296" />
       <msh:tableColumn columnName="Текст протокола" property="text" cssClass="preCell" guid="81b717f5-f9db-4033-aa22-c680b2126544" />
       <msh:tableColumn columnName="Категории" property="categoriesInfo" guid="6c34a7-4512-90aa-75e4e5ae6d63" />
       <msh:tableColumn columnName="Дата создания" property="date" guid="6c3be340-b4a7-4512-90aa-75e4e5ae6d63" />
       <msh:tableColumn columnName="Пользователь" property="username" guid="c28f06f0-c64a-4cdd-b84f-b1e081186496" />
     </msh:table>
+  </tiles:put>
+  <tiles:put type="string" name="javascript">
+  <script type="text/javascript">
+  if (+'${findByUsername}'>0) {
+	  $('findByUsername').checked=true ;
+  }
+  
+  </script>
   </tiles:put>
 </tiles:insert>
 

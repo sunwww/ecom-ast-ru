@@ -9,7 +9,7 @@
 
 <html:html xhtml="true" locale="true">
  <head>
-   <title>ЭкоМ: МИС</title>
+   <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
 	
@@ -28,7 +28,7 @@
 
     <body>
     <div id='header'>
-        <h1>ЭкоМ: МИС</h1>
+        <h1>МедОС</h1>
         <a href="<%=request.getContextPath()%>">
             <img src='/customer/images/main/logo-75x50.jpg' width='75' height="50"
                  alt='На главное меню' title='Переход на главное меню'/>
@@ -123,7 +123,7 @@
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
     <div id="footer">
-        <div id='copyright'>&copy; ООО КДЦ "ЭкоМ" (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
+        <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>
     <div id="divInstantMessage" class="instant_message">&nbsp;</div>

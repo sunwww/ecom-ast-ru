@@ -17,6 +17,9 @@
         <msh:row guid="00237e8b-4ca9-40a6-af95-6b44444">
           <msh:autoComplete  shortViewAction="entityShortView-cal_patternBySpec.do" parentId="work_journalPatternCalendarForm.workCalendar" vocName="workCalendarPattern" property="pattern" guid="3a3e4d1b-8802-467d-b205-715fb379b018" horizontalFill="true" fieldColSpan="3" viewAction="entitySubclassView-cal_pattern.do" />
         </msh:row>
+        <msh:row guid="00237e8b-4ca9-40a6-af95-6b44444">
+          <msh:autoComplete  vocName="vocWorkBusy" property="workBusy" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
         <msh:row guid="00237e8b-4ca9-40a6-af95-6b4e14bb9b74">
           <msh:checkBox property="noActive" label="Недействует" guid="65519dd8-f032-4a80-a311-e8df67b0c5ae" />
         </msh:row>

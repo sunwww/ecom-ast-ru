@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.action.medcase;
 
+import java.text.SimpleDateFormat;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +20,12 @@ public class GroupByBedFundListAction  extends BaseAction {
 		String typePat =ActionUtil.updateParameter("GroupByBedFund","typePatient","3", aRequest) ;
 		ActionUtil.updateParameter("GroupByBedFund","period","2", aRequest) ;
 		String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", aRequest) ;
-		
+		String typeSwod = ActionUtil.updateParameter("GroupByBedFund","typeSwod","1", aRequest) ;
+		String typeStatus = ActionUtil.updateParameter("GroupByBedFund","typeStatus","2", aRequest) ;
+		String typeView = ActionUtil.updateParameter("GroupByBedFund","typeView","2", aRequest) ;
+		String typeMKB = ActionUtil.updateParameter("DiagnosisBySlo","typeMKB","4", aRequest) ;
+		//SimpleDateFormat FORMAT_2 = new SimpleDateFormat("yyyy") ;
+    	
 		if (typePat.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp")) ;
@@ -42,6 +49,8 @@ public class GroupByBedFundListAction  extends BaseAction {
 			aRequest.setAttribute("dateT","m.dateStart") ;
 			aRequest.setAttribute("dateInfo", "поиск по дате поступления") ;
 		}
+		
+		
 		
 		return aMapping.findForward("success");
 	}

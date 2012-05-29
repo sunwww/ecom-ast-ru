@@ -23,7 +23,7 @@
     	  left join patient wp on wp.id=w.person_id   
     	   left join vocIdc10 mkb on mkb.id=t.idc10_id   
     	    left join vocreason vr on vr.id=t.visitreason_id    
-    	    where t.patient_id='${medcard}' and t.dateStart  =cast('${date}' as date)  
+    	    where t.patient_id='${medcard}' and t.dateStart  =to_date('${date}','dd.mm.yyyy')  
     	    and t.DTYPE='Visit' and t.workfunctionExecute_id='${workfunction}'  
     	    order by p.lastname" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="list" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">

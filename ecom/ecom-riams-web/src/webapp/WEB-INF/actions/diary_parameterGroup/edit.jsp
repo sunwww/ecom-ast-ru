@@ -19,7 +19,7 @@
     <msh:ifFormTypeAreViewOrEdit formName="diary_parameterGroupForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
       <msh:sideMenu title="Добавить" guid="adding">
         <msh:sideLink action="/entityParentPrepareCreate-diary_parameterGroup" name="Категорию" params="id" roles="/Policy/Diary/ParameterGroup/Create" guid="a05cafca-1220-455a-b608-b00ed338fdc3" />
-        <tags:diary_parameterCreate roles="/Policy/Diary/ParameterGroup/Parameter/Create" action="diary_parameterPrepareCreate.do?id=${param.id}" name="type" title="Параметр" />
+        <tags:diary_parameterCreate vocName="parameterType" document="параметра" roles="/Policy/Diary/ParameterGroup/Parameter/Create" action="diary_parameterPrepareCreate.do?id=${param.id}" name="type" title="Параметр" />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
         <tags:diary_additionMenu />

@@ -65,6 +65,9 @@
             scope='request' validate="false" name="diary_parameterForm">
             <forward name="success" path="/WEB-INF/actions/diary_parameter/file.jsp"/>
         </action>
+		<action path="/doc_create_type" type='ru.ecom.diary.web.action.protocol.DocumentPrepareCreateAction'
+            scope='request' validate="false" name="diary_parameterForm">
+        </action>
 
         <action path="/diary_templateView" 
         	type='ru.ecom.diary.web.action.protocol.template.TemplateViewAction'

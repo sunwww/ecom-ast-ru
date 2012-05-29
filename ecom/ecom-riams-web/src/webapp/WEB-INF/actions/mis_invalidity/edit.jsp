@@ -27,6 +27,10 @@
                 	<msh:checkBox property="incapable" label="Недееспособный"  horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
+                	<msh:textField property="lawCourtDate" label="Дата суда"/>
+                	<msh:autoComplete property="lawCourt" label="Суд" vocName="vocLawCourt" size="30" />
+                </msh:row>
+                <msh:row>
                 	<msh:textField property="revisionDate" label="Дата пересмотра"/>
                 	<msh:textField property="dateTo" label="Дата снятия инв."/>
                 </msh:row>

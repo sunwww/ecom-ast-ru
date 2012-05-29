@@ -36,7 +36,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}DoubleDialogInitialized = false ;
      var the${name}DoubleDialog = new msh.widget.Dialog($('${name}DoubleDialog')) ;

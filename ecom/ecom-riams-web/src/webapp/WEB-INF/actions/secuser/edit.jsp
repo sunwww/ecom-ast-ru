@@ -13,6 +13,9 @@
     <msh:form action="entitySaveGoView-secuser.do" defaultField="login" guid="f85bdd97-c59c-43c5-be7b-95fd11dc1344">
       <msh:hidden property="id" guid="f31c8b79-7309-4fd6-a1d7-da54e427baed" />
       <msh:hidden property="saveType" guid="6661bf96-cae4-4ae4-b216-4d9b622790d9" />
+      <msh:ifFormTypeIsCreate formName="secuserForm">
+      <msh:hidden property="workFunction"/>
+      </msh:ifFormTypeIsCreate>
       <msh:panel guid="020e354f-560d-48a7-8a14-9e9699027a3e">
         <msh:row guid="eb8c8794-7b03-49fb-abf9-b9c86d184477">
           <msh:textField property="login" label="Пользователь" guid="08315d12-8575-44d1-a6a1-408bf687b766" />
@@ -29,7 +32,8 @@
           <msh:textField property="fullname" label="Полное имя" size="50" horizontalFill="true" fieldColSpan="3" guid="fe5da194-9672-4c06-a8f2-be0d6a622b35" />
         </msh:row>
         <msh:row guid="71f70458-5150-4cdc-bf8d-a75ba0c26818">
-          <msh:textField property="password" label="Пароль" size="20" passwordEnabled="true" fieldColSpan="3" guid="9c145321-5a15-4d06-be73-881ddde7cf84" />
+          <msh:textField property="password" label="Пароль" size="20" passwordEnabled="true" fieldColSpan="1" guid="9c145321-5a15-4d06-be73-881ddde7cf84" />
+          <msh:checkBox property="isRemoteUser" label="Удаленный пол-ль"/>
         </msh:row>
         <msh:row guid="feafa852-b426-470a-baa1-46187ba71a45">
           <msh:textArea property="comment" label="Комментарий" horizontalFill="true" fieldColSpan="3" guid="d4fda195-9f04-4511-b5dc-a37a1691b735" />
@@ -104,7 +108,35 @@
         </msh:sideMenu>
  </tiles:put>
   <tiles:put name="javascript" type="string">
-    <script type="text/javascript">Element.addClassName($('mainMenuUsers'), "selected");</script>
+    <script type="text/javascript">
+    Element.addClassName($('mainMenuUsers'), "selected");
+    </script>
+    <msh:ifFormTypeIsCreate formName="secuserForm">
+    <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
+    <script type="text/javascript">
+    if ((+'${param.workFunction}'>0)&&($('workFunction'))) {
+    	$('workFunction').value='${param.workFunction}' ;
+    	
+    	WorkCalendarService.getInfoByWorkFunction(
+				//Long aCalendarDay, String aCalendarTime, Boolean aMinIs,
+				$('workFunction').value,
+		     {
+					callback: function(aResult) {
+						if (aResult!=null){
+							var s = aResult.split("#") ;
+							$('login').value = s[0] ;
+							$('fullname').value = s[1] ;
+							$('password').value = s[2] ;
+							$('comment').value = s[3] ;
+						}
+ 					}
+ 					, errorHandler: function(aMessage) {
+				     alert(aMessage) ;
+					}
+ 			 }	) ;
+    }
+    </script>
+    </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
 

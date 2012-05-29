@@ -12,10 +12,14 @@
     	  -->
     <msh:form guid="formHello" action="/entitySaveGoView-smo_direction" 
     defaultField="orderLpuName" >
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="patient" />
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="infoByPolicy" />
       <msh:panel guid="panel" colsWidth="10%, 10%, 10%">
+            	<msh:row>
+      		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
+      	</msh:row>
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
@@ -38,6 +42,29 @@
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
           <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" />
         </msh:row>
+        <msh:ifFormTypeIsNotView formName="smo_directionForm">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4" id="tdPreRecord"></td>
+        </msh:row>
+        </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateNewTime">
+        <msh:row>
+        	<msh:separator label="<a href='javascript:getWorkFunctionByUsername()'>Создание дополнительного времени</a>" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<td colspan="4" id="tdCreateNewTime">
+        		
+        		<div id="workFunctionByUsername">
+        			
+        		</div>
+        	</td>
+        </msh:row>
+        </msh:ifInRole>
+        </msh:ifFormTypeIsNotView>
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
           <msh:separator label="Дополнительные параметры" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
         </msh:row>
@@ -68,7 +95,12 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
-    <tags:smo_direction_time name="Time" workFuncId="workFunctionPlan" calenDayId="datePlan" calenTimeId="timePlan" />
+    
+    <msh:ifFormTypeIsNotView formName="smo_directionForm">
+    	<tags:smo_direction_time name="Time" workFuncId="workFunctionPlan" calenDayId="datePlan" calenTimeId="timePlan" />
+    	<tags:mis_double name='Ticket' title='Существующие направления в базе:'/>
+    	
+    </msh:ifFormTypeIsNotView>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="smo_directionForm" />
@@ -87,6 +119,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />
+      	<msh:sideLink params="id" action="/print-vis_ticket2.do?s=VisitPrintService&amp;m=printTalon1" name="Талона (верх. часть)" title="Печать талона (верх.часть)"  roles="/Policy/Mis/MedCase/Direction/Print" />
       	<msh:sideLink params="id" action="/print-vis_ticket1.do?s=VisitPrintService&amp;m=printTalon1" name="Повторного талона" title="Печать повторного талона"  roles="/Policy/Mis/MedCase/Direction/Print1" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -100,6 +133,14 @@
       	}
       	</script>
     </msh:ifFormTypeIsView>
+    <script type="text/javascript">//var theBedFund = $('bedFund').value;
+		if ($('infoByPolicy').value.length>0) {
+			$('medPolicyInformation').innerHTML = $('infoByPolicy').value + " <u>Направление к врачу по потоку обслуживания ОМС создаваться не будет!!!</u>";
+			$('medPolicyInformation').style.display = 'block' ;
+		} else {
+			$('medPolicyInformation').style.display = 'none' ;
+		}
+      	</script>
     <msh:ifFormTypeIsCreate formName="smo_directionForm">
     	<script type="text/javascript">
     		if ((+'${param.orderLpu}'>0) && (+$('orderLpu').value==0)) {
@@ -111,6 +152,60 @@
       <script type="text/javascript">
       //new dateutil.DateField($('datePlanName'));
       //new timeutil.TimeField($('timePlanName'));
+      var oldaction = document.forms[0].action ;
+      document.forms[0].action = 'javascript:isExistTicket()';
+      function isExistTicket() {
+ 		 if (!$('emergency').checked) {
+ 			 WorkCalendarService.checkPolicyByPatient($('patient').value,
+ 					 $('datePlanName').value,$('serviceStream').value
+ 					 ,
+ 			 {
+ 				 callback: function(aResult) {
+ 					 if (+aResult<1) {
+ 							checkDouble();
+ 				  	  } else {
+ 				  		  alert('У Вас стоит запрет на запись пациентов по ОМС без полиса!!!');
+ 				  	  } 
+ 					 }
+ 				 });
+ 		  } else {
+ 			 checkDouble();
+ 		  }
+ 		 
+ 		 }
+      function checkDouble() {
+    	  WorkCalendarService.findDoubleBySpecAndDate($('id').value,$('patient').value
+	    			  ,$('workFunctionPlan').value, $('datePlan').value
+	  		, {
+	                 callback: function(aResult) {
+	                 
+	                    if (aResult) {
+					    		showTicketDouble(aResult) ;
+					    		//('Уже сделано направление на '+$('date').value+' к специалисту данному пациенту') ;
+					    			 ;
+	                     } else {
+	                    	 document.forms[0].action = oldaction ;
+					    	 document.forms[0].submit() ;
+	                     }
+	                 }
+		        	}
+		        	); 
+      }
+      if ((+'${param.time}')>0 && ((+$('timePlan').value)==0)) {
+    	  WorkCalendarService.getDataByTime('${param.time}', {
+    		  callback:function(aResult) {
+    			  if (aResult!='') {
+        			  var res=aResult.split('#') ;
+        			  $('workFunctionPlan').value=res[0] ;
+        			  $('workFunctionPlanName').value=res[1] ;
+        			  $('datePlan').value=res[2] ;
+        			  $('datePlanName').value=res[3] ;
+        			  $('timePlan').value=res[4] ;
+        			  $('timePlanName').value=res[5] ;
+    			  }
+    		  }
+    	  }) ;
+      }
 	  	eventutil.addEventListener($('datePlanName'), eventutil.EVENT_KEY_UP, 
 	  		  	function() {
 		  		if ($('datePlanName').value.length==2) $('datePlanName').value=$('datePlanName').value+"." ; 
@@ -124,9 +219,61 @@
 	  	) ;
       
       workFunctionPlanAutocomplete.addOnChangeCallback(function(){
-  			updateDefaultDate() ;
+  		updateDefaultDate() ;
   		}) ;
-  		function updateDefaultDate() {
+      datePlanAutocomplete.addOnChangeCallback(function(){
+    	  getPreRecord() ;
+  		}) ;
+    function checkRecord(aId,aValue) {
+    	$('timePlan').value = aId; 
+    	$('timePlanName').value = aValue ;
+    }
+    
+    function getWorkFunctionByUsername() {
+    	WorkCalendarService.getWorkFunctionByUsername(
+      			{
+      				callback:function(aDateDefault) {
+    	$("workFunctionByUsername").innerHTML="<a href='javascript:hideNewTime()'>Скрыть</a><br/>"+aDateDefault ;
+    				}
+      			}) ;
+    }
+    function hideNewTime() {
+    	$("workFunctionByUsername").innerHTML="" ;
+    }
+    function get10DaysByWorkFunction(aWorkFunction) {
+    	WorkCalendarService.get10DaysByWorkFunction(aWorkFunction,
+    			{callback:function(aResult){
+    				$('divDayByWorkFunction').innerHTML = aResult ;
+    			}}) ;
+    }
+    function getTimeByDayAndWorkFunction(aWorkFunction,aWorkCalendarDay) {
+    	WorkCalendarService.getTimeByDayAndWorkFunction(aWorkFunction,aWorkCalendarDay,{
+    		callback:function(aResult) {
+    			$('divTimeByDayAndWorkFunction').innerHTML = aResult ;
+    		}
+    	}) ;
+    }
+    function addNewTimeBySpecialist(aWorkCalendarDay,aDate,aWorkFunction,aTime1,aTime2,aWorkFunctionInfo) {
+    	WorkCalendarService.addNewTimeBySpecialist(aDate,aWorkFunction,aTime1,aTime2,{
+    		callback:function(aResult) {
+    			$('divTimeByDayAndWorkFunction').innerHTML = aResult ;
+    			//getTimeByDayAndWorkFunction(aWorkFunction,aWorkCalendarDay) ;
+    			hideNewTime() ;
+    			$('workFunctionPlan').value=aWorkFunction ;
+  			    $('workFunctionPlanName').value=aWorkFunctionInfo ;
+  			    $('datePlan').value=aWorkCalendarDay ;
+  			    $('datePlanName').value=aDate ;
+  			    if (aResult!=null) {
+					$('timePlanName').value =  aResult.substring(aResult.indexOf("#")+1) ; ;
+					$('timePlan').value = aResult.substring(0,aResult.indexOf("#")) ;
+  			    }
+  			  	getPreRecord() ;
+    			//saveTimeWorkCalendar("4","105","08:00","ТКАЧЕВА СВЕТЛАНА ПЕТРОВНА","26.03.2012","1");
+    		}
+    	}) ;
+    }
+    
+  	function updateDefaultDate() {
   			WorkCalendarService.getDefaultDate($('workFunctionPlan').value,
   			{
   				callback:function(aDateDefault) {
@@ -139,10 +286,12 @@
   						
 	  					$('datePlan').value=calDayId ;
 				        $('datePlanName').value = calDayInfo;
+				        getPreRecord();
   					}
 	  				else {
 	  					$('datePlan').value=0 ;
 				        $('datePlanName').value = "";
+				        getPreRecord();
 	  				}
 	  			}
   			}
@@ -151,6 +300,26 @@
 			$('timePlanName').value = "";
   			
   		}
+  	function getPreRecord() {
+  		if ($('tdPreRecord')) {
+  			if (+$('datePlan').value>0) {
+  	  			WorkCalendarService.getPreRecord($('datePlan').value,
+  	  		  			{
+  	  		  				callback:function(aResult) {
+  	  		  					if (aResult!=null) {
+  	  		  						$('tdPreRecord').innerHTML=aResult;
+  	  		  					}
+  	  			  				else {
+  	  			  					$('tdPreRecord').innerHTML="";
+  	  			  				}
+  	  			  			}
+  	  		  			}
+  	  		  			) ;
+  	  			} else {
+  	  				$('tdPreRecord').innerHTML="";
+  	  			}
+  		}
+	}
   		</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>

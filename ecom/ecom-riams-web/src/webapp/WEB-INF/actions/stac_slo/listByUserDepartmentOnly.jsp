@@ -43,7 +43,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений в отделение  ${departmentInfo}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nativeSql="select ${dateSearch}, count(*) as all from medcase where dtype='DepartmentMedCase' and department_id='${department}'  and ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')  group by ${dateSearch} " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_priem" nativeSql="select to_char(${dateSearch},'dd.mm.yyyy'), count(*) as all from medcase where dtype='DepartmentMedCase' and department_id='${department}'  and ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')  group by ${dateSearch} " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" action="js-stac_slo-findByDate.do?action=stac_journalByUserDepartmentOnly&dateSearch=${dateSearch}&department=${department}&departmentInfo=${departmentInfo}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />

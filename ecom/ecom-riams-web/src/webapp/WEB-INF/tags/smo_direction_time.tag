@@ -228,6 +228,7 @@
 						callback: function(aTime) {
 							$('${calenTimeId}Name').value =  aTime.substring(aTime.indexOf("#")+1) ; ;
 							$('${calenTimeId}').value = aTime.substring(0,aTime.indexOf("#")) ;
+							getPreRecord() ;
      					}
      			 }) ;
 		the${name}WorkCalendarDialog.hide() ;     

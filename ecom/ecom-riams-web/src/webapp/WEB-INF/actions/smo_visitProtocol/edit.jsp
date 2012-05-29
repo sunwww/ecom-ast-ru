@@ -11,7 +11,9 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 <tiles:put name='body' type='string'>
-    <tags:templateProtocol  />
+	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" />
+    </msh:ifFormTypeIsNotView>
     <msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do" 
     defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" >
         <msh:hidden property="id"/>
@@ -38,7 +40,7 @@
                     <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
                     
                     <td colspan="2">
-                        <input type="button" value="Шаблон" onClick="showTemplateProtocol()"/>
+                        <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
                     </td>
                     
                     <tags:keyWord name="record" service="KeyWordService" methodService="getDecryption"/>
@@ -54,7 +56,11 @@
                 	<msh:textField property="time" label="Время" viewOnlyField="true"/>
                 	<msh:textField property="username" label="Пользователь" viewOnlyField="true"/>
                 </msh:row>
-                <msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+                        <msh:row>
                 	<msh:textField property="printDate" label="Дата печати" viewOnlyField="true"/>
                 	<msh:textField property="printTime" label="Время" viewOnlyField="true"/>
                 </msh:row>
@@ -101,7 +107,7 @@
     	<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
     		<script type="text/javascript">
     			if (confirm("Вы хотите создать дневник на основе шаблона?")) {
-    				showTemplateProtocol() ;
+    				showtmpTemplateProtocol() ;
     			} else {
     				if ($('dateRegistration').value!="") setFocusOnField('record') ;
 
