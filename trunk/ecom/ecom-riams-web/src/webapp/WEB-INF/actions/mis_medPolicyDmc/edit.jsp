@@ -22,7 +22,7 @@
                     <msh:textField property="polNumber" label="Номер" horizontalFill="true" size="30"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="vocInsuranceCompany" property="company" label="Страховая компания" horizontalFill="true" fieldColSpan="5"/>
+                    <msh:autoComplete vocName="vocInsuranceCompanyAll" property="company" label="Страховая компания" horizontalFill="true" fieldColSpan="5"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="actualDateFrom" label='Дата действия с' />

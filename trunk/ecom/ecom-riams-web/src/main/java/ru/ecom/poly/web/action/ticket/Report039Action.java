@@ -27,9 +27,9 @@ public class Report039Action  extends BaseAction {
 		aRequest.setAttribute("beginDate", form.getBeginDate()) ;
 		aRequest.setAttribute("finishDate", form.getFinishDate()) ;
 		//aRequest.setAttribute("specialist", form.getSpecialist()) ;
-		aRequest.setAttribute("queryTextBegin", repService.getTextQueryBegin(aTicketIs, groupBy, form.getBeginDate(), form.getFinishDate(), form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream())) ;
-		aRequest.setAttribute("queryTextEnd", repService.getTextQueryEnd(aTicketIs, groupBy, form.getBeginDate(), form.getFinishDate(), form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream())) ;
-		aRequest.setAttribute("filterInfo", repService.getFilterInfo(aTicketIs, form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream())) ;
+		aRequest.setAttribute("queryTextBegin", repService.getTextQueryBegin(aTicketIs, groupBy, form.getBeginDate(), form.getFinishDate(), form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream(),form.getWorkPlaceType())) ;
+		aRequest.setAttribute("queryTextEnd", repService.getTextQueryEnd(aTicketIs, groupBy, form.getBeginDate(), form.getFinishDate(), form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream(),form.getWorkPlaceType())) ;
+		aRequest.setAttribute("filterInfo", repService.getFilterInfo(aTicketIs, form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream(),form.getWorkPlaceType())) ;
 		aRequest.setAttribute("groupByTitle", repService.getTitle(groupBy)) ;
 		return aMapping.findForward("success") ;
 	}

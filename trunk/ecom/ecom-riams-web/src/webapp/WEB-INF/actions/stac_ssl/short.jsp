@@ -94,7 +94,18 @@
           <msh:checkBox label="Провизорность" property="provisional" guid="d8588d59-3adb-4485-af94-cadecb04f82b" />
           <msh:checkBox property="rareCase" label="Редкий случай" guid="6299a6be-428f-4a095" />
         </msh:row>
-      </msh:panel>
+        <msh:row>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+                <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="stac_sslForm">
       <msh:ifInRole roles="/Policy/Mis/MedPolicy/View">
@@ -175,6 +186,39 @@
           </msh:table>
         </msh:section>
       </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" guid="ea6d2cd5-0263-4602-960d-644c49ab4975">
+          <ecom:webQuery name="allSurgOper" nativeSql="select so.id
+          ,so.operationDate as sooperationDate,so.operationTime as soperationTime,vo.name as voname
+          , case when parent.DTYPE='HospitalMedCase' then 'Приемное отделение' when parent.DTYPE='DepartmentMedCase' then d.name else '' end as whoIs  
+          , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+          from SurgicalOperation as so 
+          left join VocOperation vo on vo.id=so.operation_id 
+          left join medcase parent on parent.id=so.medcase_id 
+          left join MisLpu d on d.id=parent.department_id 
+          left join WorkFunction wf on wf.id=so.surgeon_id
+          left join Worker w on w.id=wf.worker_id
+          left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+          left join Patient wp on wp.id=w.person_id
+          where ('DepartmentMedCase'=(select DTYPE from medcase where id=${param.id}) 
+          and  (so.medCase_id in (select id from medcase  where  parent_id=(select parent_id from medcase where id=${param.id} )) or so.medCase_id=(select parent_id from medcase where id=${param.id} )) ) or ('HospitalMedCase'=(select DTYPE from medcase where id=${param.id}) and  (so.medCase_id in (select id from medcase  where  parent_id=${param.id}) or so.medCase_id=${param.id}) )
+          order by so.operationDate
+          "/>
+    <msh:tableNotEmpty name="allSurgOper">
+	    <msh:section title="Просмотр всех хир.операций по СЛС, включая все СЛО">
+	    	<msh:table name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
+	    		<msh:tableColumn columnName="#" property="sn"/>
+	    		<msh:tableColumn columnName="Отделение" property="5"/>
+	    		<msh:tableColumn columnName="Дата" property="2"/>
+	    		<msh:tableColumn columnName="Время" property="3"/>
+	    		<msh:tableColumn columnName="Операция" property="4"/>
+	    		<msh:tableColumn columnName="Хирург" property="6"/>
+	    	</msh:table>
+	    </msh:section>
+    </msh:tableNotEmpty>
+      
+       
+      </msh:ifInRole>
+      
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">

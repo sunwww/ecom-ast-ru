@@ -66,6 +66,9 @@
     </msh:ifFormTypeIsView>    
   </tiles:put>
   <tiles:put name="side" type="string">
+    <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить">
+      <msh:sideLink key="ALT+N" action="/entityPrepareCreate-temp_protocol" name="Шаблон протокола" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Diary/Template/Create" />
+    </msh:sideMenu>
     <msh:sideMenu guid="5db0db09-9993-44cb-8477-a3fee5037b42" title="Шаблон протокола">
       <msh:sideLink key="ALT+1" action="/js-temp_protocol-listTemplate" name="⇧ Список шаблонов протоколов" guid="aa1d3bc4-7c77-483b-b355-0a50f799ba47" roles="/Policy/Diary/Template/View" />
       <msh:ifFormTypeIsView formName="temp_protocolForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">

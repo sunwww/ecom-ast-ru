@@ -10,16 +10,17 @@
     <tags:style_currentMenu currentAction="mis_medService" />
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
-        <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+        <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
       <msh:sideMenu title="Добавить" guid="adding">
-        <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create" guid="a05cafca-1220-455a-b608-b00ed338fdc3" />
-        <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения" guid="9994675c-40a3-4e84-a69a-6a146695f50d" />
+        <msh:sideLink action="/entityParentPrepareCreate-mis_medService_workFunction" name="Прикрепление раб.функции" params="id" roles="/Policy/Mis/MedService/VocWorkFunction/Create" />
+        <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create"  />
+        <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
         <tags:diary_additionMenu />
@@ -54,8 +55,16 @@
         	<msh:textField property="finishDate" label="Дата окончания"/>
         </msh:row>
         <msh:row>
-        	<ecom:oneToManyOneAutocomplete viewAction="entityView-voc_workFunction.do" label="Прикр. раб. функции" property="workFunctionServices" vocName="vocWorkFunction" colSpan="3"/>
+        	<msh:separator label="Услуга может оказываться:" colSpan="4"/>
         </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isHospital" label="В стационаре"/>
+        	<msh:checkBox property="isDayHospital" label="В дн.стационаре"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isPoliclinic" label="В поликлинике"/>
+        </msh:row>
+
         <msh:row>
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
          	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
@@ -72,12 +81,33 @@
         <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
+      <msh:ifFormTypeIsView formName="mis_medServiceForm">
+    <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
+    	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
+    		createUrl="entityParentPrepareCreate-mis_medService_workFunction.do?id=${param.id}"
+    		title="Прикрепление к рабочим функциям по отделениям" >
+    	<ecom:webQuery name="workFunc" nativeSql="
+    	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
+    	from WorkFunctionService wfs 
+    	left join MisLpu lpu on lpu.id=wfs.lpu_id 
+    	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
+    	where wfs.medService_id='${param.id}'
+    	"/>
+  		<msh:table selection="true" name="workFunc" 
+  		action="entityParentView-mis_medService_workFunction.do"
+  		editUrl="entityParentEdit-mis_medService_workFunction.do" 
+  		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medService_workFunction.do">
+            <msh:tableColumn property="2" columnName="Рабочая функция"  />
+            <msh:tableColumn property="3" columnName="ЛПУ" />
+        </msh:table>
+    	
+    	</msh:section>
+    </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
-      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="9f1dd6a4-a7b7-43e7-b205-85730bba6968">
         <msh:section title="Категории" guid="e681be03-dea7-4bce-96cf-aa600185f156">
           <ecom:webQuery  name="childMedService" nativeSql="
           	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
-          	 (select list(' '||vwf.name) from WorkFunctionService wfs left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id)
+          	 (select list(' '||vwf.name||coalesce('-'||lpu.name,'')) from WorkFunctionService wfs left join MisLpu lpu on lpu.id=wfs.lpu_id left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id)
           	 ,ms.code 
           	 from MedService ms left join VocMedService vms on vms.id=ms.vocMedService_id where ms.parent_id='${param.id}'
           " guid="childMedService" />
@@ -95,6 +125,8 @@
 			                					<input type='button' value='Добавить раб.функцию (если прикреп. услуга)' onclick="javascript:updateWorkFunction('add')" />
 			                					<input type='button' value='Убрать прикрепление раб.функции' onclick="javascript:updateWorkFunction('delete')" />
 			                					<msh:autoComplete property="function" horizontalFill="true" label="Раб. функция" vocName="vocWorkFunction"/>
+			                					<br/>
+			                					<msh:autoComplete property="lpu" horizontalFill="true" label="ЛПУ" vocName="lpu"/>
 			                				</th>
 				                		</tr>
 			                		</msh:toolbar>
@@ -110,10 +142,8 @@
 		      <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
           </msh:table>
         </msh:section>
-      </msh:ifFormTypeIsView>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
-      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="9f1dd6a7-43e7-b205-85730bba6968">
         <msh:section title="Шаблоны заключений" guid="e681be03-d0185f156">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
           <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
@@ -121,8 +151,8 @@
             <msh:tableColumn columnName="Информация" identificator="false" property="information" guid="0c047b7-ae6d-89e52e73b2e5" />
           </msh:table>
         </msh:section>
-      </msh:ifFormTypeIsView>
     </msh:ifInRole>
+      </msh:ifFormTypeIsView>
     
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -161,7 +191,7 @@
   		function updateWorkFunction(aAction) {
 			var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
 	  		if (ids) {
-  				document.location.href = "js-mis_medService-updateWorkFunction.do?id=${param.id}&"+ids+"&workFunction="+$('function').value+"&action="+aAction;
+  				document.location.href = "js-mis_medService-updateWorkFunction.do?id=${param.id}&"+ids+"&lpu="+$('lpu').value+"&workFunction="+$('function').value+"&action="+aAction;
   			} else {
   				alert("Нет выделенных категорий") ;
   			}  		

@@ -11,8 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 <tiles:put name='body' type='string'>
-    <tags:templateProtocol  />
-    <tags:prevTemplate  ticket="poly_protocolForm.ticket"/>
+    <tags:templateProtocol version="Ticket" idSmo="poly_protocolForm.ticket"  />
     <msh:form action="entityParentSaveGoView-poly_protocol.do" defaultField="dateRegistration">
       <msh:panel>
         <msh:hidden property="id"/>
@@ -29,13 +28,12 @@
                 </msh:row>
 
                 <msh:row>
-                    <msh:textArea property="record" rows="50" label="Текст протокола"
-                                      horizontalFill="true" fieldColSpan="4"/>
+                    <msh:textArea property="record" rows="50" size="100" label="Текст протокола"
+                                      fieldColSpan="4"/>
                     <msh:ifFormTypeIsNotView formName="poly_protocolForm">
                     <td colspan="1">
                         <input type="button" value="Шаблон" onClick="showTemplateProtocol()"/>
-                        <br/>
-                        <input type="button" value="Пред. протоколы по пациенту" onClick="showPrevProtocol()"/>
+                       
                     </td>
                     <tags:keyWord name="record" service="KeyWordService" methodService="getDecryption"/>
                     </msh:ifFormTypeIsNotView>
@@ -49,7 +47,22 @@
 
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
+            <msh:ifFormTypeIsView formName="poly_protocolForm">
+            <msh:section title="Лекарственное средство">
+            <ecom:webQuery nativeSql="select p.id as pid,p.drug_id as drugis,vdc.name as vdcname
+            from Prescription p 
+            left join VocDrugClassify vdc on vdc.id=p.drug_id
+            where p.diary_id='${param.id}'" name="drugs"/>
+	    		<msh:table name="drugs" 
+	    		action="entityParentView-poly_drugPrescription.do"
+	    		viewUrl="entityShortView-poly_drugPrescription.do"
+	    		 idField="1">
+	    			<msh:tableColumn property="sn" columnName="#"/>
+	    			<msh:tableColumn property="3" columnName="Лекарственное средство"/>
+	    		</msh:table>
+            </msh:section>
             
+            </msh:ifFormTypeIsView>
     </msh:form>
 </tiles:put>
 
@@ -71,6 +84,9 @@
             <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Delete" key='ALT+DEL' params="id"
                           action="/entityParentDeleteGoParentView-poly_protocol" name="Удалить"
                           confirm="Вы действительно хотите удалить?"/>
+            <msh:sideMenu title="Добавить">
+            	        <msh:sideLink roles="/Policy/Poly/DrugPrescription/Create" key="CTRL+4" params="id" action="/entityParentPrepareCreate-poly_drugPrescription" name="Лекарственное средство" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить назначение лекарственных средств" />
+            </msh:sideMenu>
             <msh:sideMenu title="Печать">
 	            <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key='ALT+3' params="id"
 	                          action="/print-protocol.do?m=printProtocol&s=PrintTicketService" name="Печать протокола"

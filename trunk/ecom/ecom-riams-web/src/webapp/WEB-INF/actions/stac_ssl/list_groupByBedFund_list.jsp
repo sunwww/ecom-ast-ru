@@ -1,4 +1,7 @@
-лш<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="java.util.Calendar"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
+<%@page import="java.util.Date"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -44,6 +47,46 @@
         	<input type="radio" name="typePatient" value="3">  все
         </td>
         </msh:row>
+      <msh:row>
+        <td class="label" title="Доп. статус (typeStatus)" colspan="1"><label for="typePatientName" id="typePatientLabel">Доп.статус:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeStatus" value="1">  отображать
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeStatus" value="2">  не отображать
+        </td>
+        </msh:row>
+      <msh:row>
+        <td class="label" title="Поток обслуживания (typeSwod)" colspan="1"><label for="typePatientName" id="typePatientLabel">Поток обслуживания:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeSwod" value="1">  отображать
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeSwod" value="2">  не отображать
+        </td>
+        </msh:row>
+        <msh:row>
+        <td class="label" title="Отображать (typeView)" colspan="1">
+        	<label for="typeViewName" id="typeViewLabel">Отображать:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="1">  реестр по дням
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="2">  свод
+        </td>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" fieldColSpan="4"
+        	label="Отделение" horizontalFill="true" vocName="lpu"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="serviceStream" fieldColSpan="4"
+        	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="bedSubType" fieldColSpan="4"
+        	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
+        </msh:row>
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -51,44 +94,82 @@
             <input type="submit" onclick="find()" value="Найти" />
           </td>
                   </msh:row>
-        <%--
-        <msh:row>
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="3"> День
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td>
-           
-
-      </msh:row>
-       --%>
     </msh:panel>
     </msh:form>
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
+    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	if (dateEnd==null||dateEnd.equals("")) {
+    		request.setAttribute("dateEnd", date) ;
+    	} else {
+    		request.setAttribute("dateEnd", dateEnd) ;
+    	}
+    	String period = date+":"+dateEnd ;
+    	
+    	String stat = (String)request.getParameter("typeStatus") ;
+    	String swod = (String)request.getParameter("typeSwod") ;
+    	String typeView = (String)request.getParameter("typeView") ;
+    	boolean isStat = true ;
+    	if (stat!=null && stat.equals("2")) {
+    		isStat = false ;
+    	}
+    	boolean isSwod = true ;
+    	if (swod!=null && swod.equals("2")) {
+    		isSwod = false ;
+    	}
+    	String dep = (String)request.getParameter("department") ;
+    	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
+    		request.setAttribute("dep", " and d.id="+dep) ;
+    		request.setAttribute("department",dep) ;
+    	} else {
+    		request.setAttribute("department","0") ;
+    	}
+    	String servStream = (String)request.getParameter("serviceStream") ;
+    	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
+    		request.setAttribute("servStream", " and vss.id="+servStream) ;
+    		request.setAttribute("serviceStream", servStream) ;
+    	} else {
+    		request.setAttribute("serviceStream", "0") ;
+    	}
+    	String bedSubType = (String)request.getParameter("bedSubType") ;
+    	if (bedSubType!=null && !bedSubType.equals("") && !bedSubType.equals("0")) {
+    		request.setAttribute("bedSubTypeSql", " and bf.bedSubType_id="+bedSubType);
+    		request.setAttribute("bedSubType", bedSubType) ;
+    	} else {
+    		request.setAttribute("bedSubType", "0") ;
+    	}
+    	if (typeView.equals("2")) {
+    		request.setAttribute("addGroup", "") ;
+    		request.setAttribute("addGroupId", "") ;
+    	} else {
+    		String dateT=(String)request.getAttribute("dateT") ;
+    		request.setAttribute("addGroup", ","+dateT) ;
+    		request.setAttribute("addGroupId", ",to_char("+dateT+",'dd.mm.yyyy') as dat") ;
+    		period="'||to_char("+dateT+",'dd.mm.yyyy')||':'||to_char("+dateT+",'dd.mm.yyyy')||'" ;
+    	}
+    	request.setAttribute("period", period) ;
+    	
     	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select  
-    	m.bedfund_id||':${param.dateBegin}:${param.dateEnd}:${dateT}:${param.typePatient }:'||
-    	case when p.additionStatus_id is null then '' else cast(p.additionStatus_id as varchar(10)) end 
+		<% 
+		//typeView="2" ;
+		
+		  if (isStat) {
+			//
+			if (isSwod) {
+			%>
+			    <ecom:webQuery name="journal_ticket" nativeSql="select  
+    	m.bedfund_id||':${period}:${dateT}:${param.typePatient }:'||
+    	case when p.additionStatus_id is null then '' else cast(p.additionStatus_id as varchar(10)) end
+    	||':${serviceStream}:${department}' 
     	as idparam
     	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*) as cnt
     	,vss.name as vssname
     	,sum(
     	  case 
 			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
-			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
 			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
 		  end
     	
@@ -97,12 +178,14 @@
     	,sum(
     	  case 
 			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
-			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end
     	
     	) as sum2
+    	${addGroupId}
     	,vas.name as vasname
+    	
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
@@ -113,71 +196,283 @@
     left join patient p on p.id=hmc.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-    where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') ${add} 
-    group by m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name
-    order by d.name,vss.name,vas.name,vbt.name,vbst.name
+    where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
+    ${dep} ${servStream} ${bedSubTypeSql}
+    group by m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name ${addGroup}
+    order by d.name,vss.name,vas.name,vbt.name,vbst.name ${addGroup}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <%} else { %>
+			    <ecom:webQuery name="journal_ticket_swod" nativeSql="select  
+    	list(''||m.bedFund_id)||':${period}:${dateT}:${param.typePatient }:'||
+    	case when p.additionStatus_id is null then '' else cast(p.additionStatus_id as varchar(10)) end
+    	||':${serviceStream}:${department}' 
+    	as idparam
+    	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*) as cnt
+    	,sum(
+    	  case 
+			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+		  end
+    	
+    	
+    	) as sum1
+    	,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    	${addGroupId}
+    	,vas.name as vasname
+    	
+    from MedCase as m 
+    left join MedCase as hmc on hmc.id=m.parent_id 
+    left join bedfund as bf on bf.id=m.bedfund_id 
+    left join vocservicestream as vss on vss.id=bf.servicestream_id 
+    left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
+    left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
+    left join mislpu as d on d.id=m.department_id 
+    left join patient p on p.id=hmc.patient_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
+    ${dep} ${servStream } ${bedSubTypeSql}
+    group by m.department_id,vbt.id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vas.name,d.name ${addGroup}
+    order by d.name,vas.name,vbt.name,vbst.name ${addGroup}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+			
+			<%
+    	}
+	} else { 
+		%> 
+		<style type="text/css">
+		td.statusPatient,th.statusPatient {
+			display: none;
+		} 
+		</style>
+		<%if (isSwod) { %>
+    <ecom:webQuery name="journal_ticket" nativeSql="select  
+    	m.bedfund_id||':${period}:${dateT}:${param.typePatient }:-'
+    	||':${serviceStream}:${department}' 
+    	as idparam
+    	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*) as cnt
+    	,vss.name as vssname
+    	,sum(
+    	  case 
+			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+		  end
+    	
+    	
+    	) as sum1
+    	,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    	${addGroupId}
+    from MedCase as m 
+    left join MedCase as hmc on hmc.id=m.parent_id 
+    left join bedfund as bf on bf.id=m.bedfund_id 
+    left join vocservicestream as vss on vss.id=bf.servicestream_id 
+    left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
+    left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
+    left join mislpu as d on d.id=m.department_id 
+    left join patient p on p.id=hmc.patient_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    where m.DTYPE='DepartmentMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
+    ${dep} ${servStream } ${bedSubTypeSql}
+    group by m.department_id,m.bedfund_id,vbst.id,vbt.name,vbst.name,vss.name,d.name ${addGroup}
+    order by d.name,vss.name,vbt.name,vbst.name ${addGroup}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <%} else { %>
+    <ecom:webQuery name="journal_ticket_swod" nativeSql="select  
+    	list(''||m.bedFund_id)||':${period}:${dateT}:${param.typePatient }:-'
+    	||':${serviceStream}:${department}' 
+    	as idparam
+    	, d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*) as cnt
+    	,sum(
+    	  case 
+			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+		  end
+    	
+    	
+    	) as sum1
+    	,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    	${addGroupId}
+    from MedCase as m 
+    left join MedCase as hmc on hmc.id=m.parent_id 
+    left join bedfund as bf on bf.id=m.bedfund_id 
+    left join vocservicestream as vss on vss.id=bf.servicestream_id 
+    left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
+    left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
+    left join mislpu as d on d.id=m.department_id 
+    left join patient p on p.id=hmc.patient_id
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    where m.DTYPE='DepartmentMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
+    ${dep} ${servStream } ${bedSubTypeSql}
+    group by m.department_id,vbst.id,vbt.id,vbt.name,vbst.name,d.name ${addGroup}
+    order by d.name,vbt.name,vbst.name ${addGroup}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+		   
+		<%} }%>
+<% 
+if (typeView.equals("2")) {
+	if (isSwod) { %>    
+	<msh:section>
+    <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
+    <msh:sectionContent>
+        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Статус пациента" property="9" cssClass="statusPatient"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="Поток обслужив." property="6"/>
+            <msh:tableColumn columnName="Профиль коек" property="3"/>
+            <msh:tableColumn columnName="Тип коек" property="4"/>
+            <msh:tableColumn columnName="Кол-во" property="5"/>
+            <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
+            <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
+        </msh:table>
+        
+    
    		<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
-        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Статус пациента" property="9"/>
-            <msh:tableColumn columnName="Отделение" property="2"/>
-            <msh:tableColumn columnName="Поток обслужив." property="6"/>
-            <msh:tableColumn columnName="Профиль коек" property="3"/>
-            <msh:tableColumn columnName="Тип коек" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="5"/>
-            <msh:tableColumn columnName="Сумма КД по СЛО" property="7"/>
-        </msh:table>
+        <style type="text/css">
+		td.NotViewInfoStac,th.NotViewInfoStac {
+			display: none;
+		} 
+		</style>
    		</msh:ifInRole>
-   		<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
-        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Статус пациента" property="9"/>
-            <msh:tableColumn columnName="Отделение" property="2"/>
-            <msh:tableColumn columnName="Поток обслужив." property="6"/>
-            <msh:tableColumn columnName="Профиль коек" property="3"/>
-            <msh:tableColumn columnName="Тип коек" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="5"/>
-            <msh:tableColumn columnName="Сумма КД по СЛО" property="7"/>
-            <msh:tableColumn columnName="Сумма КД по СЛС" property="8"/>
-        </msh:table>
-   		</msh:ifNotInRole>
+   		
     </msh:sectionContent>
     </msh:section>
-    <% } else {%>
+    <%} else { %>
+    <msh:section title="Свод по отделению и профилю коек ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
+		<msh:table name="journal_ticket_swod" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Статус пациента" property="8" cssClass="statusPatient"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="Профиль коек" property="3"/>
+            <msh:tableColumn columnName="Тип коек" property="4"/>
+            <msh:tableColumn columnName="Кол-во" property="5"/>
+            <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
+            <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
+        </msh:table>    
+    </msh:section>
+    <% }
+	
+} else {
+			Date datebegin = DateFormat.parseDate(date) ;
+			Date dateend = DateFormat.parseDate(dateEnd) ;
+			
+			Calendar calB = Calendar.getInstance() ;
+			calB.setTime(datebegin) ;
+			
+			Calendar calE = Calendar.getInstance() ;
+			calE.setTime(dateend) ;
+			
+			
+    	%>
+    	
+    	
+    	
+    	
+    	
+    	реестр по дням в разработке
+    	<%
+    	if (isSwod) { %>    
+    	<msh:section>
+        <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
+        <msh:sectionContent>
+            <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+                <msh:tableColumn columnName="#" property="sn"/>
+                <msh:tableColumn columnName="Статус пациента" property="10" cssClass="statusPatient"/>
+                <msh:tableColumn columnName="Отделение" property="2"/>
+                <msh:tableColumn columnName="Поток обслужив." property="6"/>
+                <msh:tableColumn columnName="Профиль коек" property="3"/>
+                <msh:tableColumn columnName="Тип коек" property="4"/>
+                 <msh:tableColumn columnName="Число" property="9" />
+                <msh:tableColumn columnName="Кол-во" property="5"/>
+                <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
+                <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
+            </msh:table>
+            
+        
+       		<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
+            <style type="text/css">
+    		td.NotViewInfoStac,th.NotViewInfoStac {
+    			display: none;
+    		} 
+    		</style>
+       		</msh:ifInRole>
+       		
+        </msh:sectionContent>
+        </msh:section>
+        <%} else { %>
+        <msh:section title="Свод по отделению и профилю коек ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
+    		<msh:table name="journal_ticket_swod" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+                <msh:tableColumn columnName="#" property="sn"/>
+                <msh:tableColumn columnName="Статус пациента" property="9" cssClass="statusPatient"/>
+                <msh:tableColumn columnName="Отделение" property="2"/>
+                <msh:tableColumn columnName="Профиль коек" property="3"/>
+                <msh:tableColumn columnName="Тип коек" property="4"/>
+                <msh:tableColumn columnName="Число" property="8" />
+                <msh:tableColumn columnName="Кол-во" property="5"/>
+                <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
+                <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
+            </msh:table>    
+        </msh:section>
+        <% }    	
+		}
+		} else {
+		
+		%>
+    
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
-    
+    <%--
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+     --%>
+     
     <script type='text/javascript'>
-    var typePatient = document.forms[0].typePatient ;
-     var typeDate = document.forms[0].typeDate ;
-     /* var period = document.forms[0].period ;
+    //var typePatient = document.forms[0].typePatient ;
+    //var typeDate = document.forms[0].typeDate ;
+    checkFieldUpdate('typeSwod','${typeSwod}',1) ;
+    checkFieldUpdate('typeDate','${typeDate}',2) ;
+    checkFieldUpdate('typePatient','${typePatient}',3) ;
+    checkFieldUpdate('typeStatus','${typeStatus}',2) ;
+    checkFieldUpdate('typeView','${typeView}',2) ;
     
-    
-    if ((+'${period}')==1) {
-    	period[1].checked='checked' ;
-    } else if ((+'${period}')==3) {
-    	period[0].checked='checked' ;
-    }else {
-    	period[2].checked='checked' ;
-    } */  
-    if ((+'${typeDate}')==1) {
-    	typeDate[0].checked='checked' ;
-    } else  if ((+'${typeDate}')==3) {
-    	typeDate[2].checked='checked' ;
-    } else {
-    	typeDate[1].checked='checked' ;
-    }
-    if ((+'${typePatient}')==1) {
-    	typePatient[0].checked='checked' ;
-    } else if ((+'${typePatient}')==2) {
-    	typePatient[1].checked='checked' ;
-    } else {
-    	typePatient[2].checked='checked' ;
+    function checkFieldUpdate(aField,aValue,aDefaulValue) {
+       	eval('var chk =  document.forms[0].'+aField) ;
+       	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+       	aValue=+aValue ;
+       	var max=chk.length ;
+       	if (aValue==0 || (aValue)>(max)) {
+       		chk[+aDefaulValue-1].checked='checked' ;
+       	} else {
+       		chk[+aValue-1].checked='checked' ;
+       	}
     }
     function find() {
     	var frm = document.forms[0] ;
@@ -188,78 +483,7 @@
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	frm.action='stac_groupByBedFundList.do' ;
-    }/*
-    function getPeriod() {
-    	//var period = document.forms[0].period ;
-    	for (i=0;i<period.length;i++) {
-    		if (period[i].checked) return +period[i].value ;
-    	}
-    	return 1 ;
     }
-    function changePeriod() {
-    	
-    	var field1 = document.getElementById("dateBegin").value;
-    	var field2 = document.getElementById("dateEnd");
-    	var date2 ;
-    	var date = new Date(field1.substring(0,4),(+field1.substring(5,7)-1),field1.substring(8)) ;
-    	if (getPeriod()==1) {
-		 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()+6) ;
-		 	//time += Date.WEEK; // substract one week
-		 } else if (getPeriod()==2) {
-		 	date2=new Date(date.getFullYear(),date.getMonth()+1,date.getDate()-1) ;
-		 } else {
-		 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-		 }
-		field2.value = date2.print("%Y-%m-%d");
-    }
-    function catcalc(cal) {
-			var date = cal.date;
-			var time = date.getTime() ;
-			 // use the _other_ field
-			 var field = document.getElementById("dateEnd");
-			 var date2 ;
-			 if (field == cal.params.inputField) {
-				 field = document.getElementById("dateBegin");
-				 if (getPeriod()==1) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()-6) ;
-				 	//date2 = new Date(time) ;
-				 } else if (getPeriod()==2) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth()-1,date.getDate()+1) ;
-				 	//date2 = new Date(time) ;
-				 } else{
-				 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-				 	
-				 }
-			 } else {
-				 if (getPeriod()==2) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth()+1,date.getDate()-1) ;
-				 	//time += Date.WEEK; // substract one week
-				 } else if (getPeriod()==1) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()+6) ;
-				 	//time += Date.WEEK; // substract one week
-				 } else {
-				 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-				 }
-			 }
-			 //var date2 = new Date(time);
-			 field.value = date2.print("%Y-%m-%d");
-	}
-			 Calendar.setup({
-				 inputField : "dateBegin", // id of the input field
-				 ifFormat : "%Y-%m-%d", // format of the input field
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
-			 });
-			 Calendar.setup({
-				 inputField : "dateEnd",
-				 ifFormat : "%Y-%m-%d",
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
- 			});*/
     </script>
   </tiles:put>
 </tiles:insert>

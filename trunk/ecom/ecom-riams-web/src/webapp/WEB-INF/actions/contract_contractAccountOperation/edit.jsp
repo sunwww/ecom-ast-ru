@@ -32,7 +32,7 @@
 				<ecom:webQuery name="sumCost" nativeSql="
 							select sum(CAMS.countMedService*CAMS.cost),1   
 							from ContractAccountMedService CAMS 
-							where CAMS.account_id= '1'
+							where CAMS.account_id= '${param.id }'
 				"/>
 				<!-- 
 				<msh:row>

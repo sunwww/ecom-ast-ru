@@ -55,6 +55,18 @@
 						<li><msh:link action="journal_surOperation.do" roles="/Policy/Mis/Journal/SurgicalOperation">
 	                            Журнал хирургических операций
 	                        </msh:link></li>
+						<li><msh:link action="stac_resultPatient_list.do" roles="/Policy/Mis/Journal/ResultHospitalization">
+	                            Журнал результатов госпитализации (в том числе по смерти)
+	                        </msh:link></li>
+						<li><msh:link action="stac_analysis_department_list.do" roles="/Policy/Mis/Journal/AnalysisWorkDepartment">
+	                            Анализ работы отделений
+	                        </msh:link></li>
+						<li><msh:link action="stac_attending_doctor_list.do" roles="/Policy/Mis/Journal/AttendingDoctor">
+	                            Журнал по лечащему врачу
+	                        </msh:link></li>
+						<li><msh:link action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
+	                            Журнал диагнозов по СЛО
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>

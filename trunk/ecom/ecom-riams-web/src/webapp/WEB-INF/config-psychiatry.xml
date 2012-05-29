@@ -16,7 +16,10 @@
     <form-bean name="psych_examinationForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricExaminationForm" />
     <form-bean name="psych_healthStateForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychicHealthStateForm" />
     <form-bean name="psych_lpuAreaPsychCareCardForm" type="ru.ecom.mis.ejb.form.psychiatry.LpuAreaPsychCareCardForm" />
-    <form-bean name="psych_observationForm" type="ru.ecom.mis.ejb.form.psychiatry.PsychiaticObservationForm" />
+    <form-bean name="psych_observationForm" 
+    	type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricObservationForm" />
+    <form-bean name="psych_careobservationForm" 
+    	type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricObservationByCareCardForm" />
     <form-bean name="psych_publicDangerousEffectForm" type="ru.ecom.mis.ejb.form.psychiatry.PublicDangerousEffectForm" />
     <form-bean name="psych_suicideForm" type="ru.ecom.mis.ejb.form.psychiatry.SuicideForm" />
 

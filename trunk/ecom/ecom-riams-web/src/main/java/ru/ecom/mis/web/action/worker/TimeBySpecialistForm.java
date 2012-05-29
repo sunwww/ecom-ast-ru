@@ -9,23 +9,21 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 
 public class TimeBySpecialistForm extends BaseValidatorForm {
 	/** Специалист */
-	@Required
 	public Long getSpecialist() {return theSpecialist;}
 	public void setSpecialist(Long aSpecialist) {theSpecialist = aSpecialist;}
 
 	/** Время с */
-	@TimeString @DoTimeString @Required
+	@TimeString @DoTimeString 
 	public String getTimeFrom() {return theTimeFrom;}
 	public void setTimeFrom(String aTimeFrom) {theTimeFrom = aTimeFrom;}
 
 	/** Время по */
-	@TimeString @DoTimeString @Required
+	@TimeString @DoTimeString 
 	public String getTimeTo() {return theTimeTo;}
 	public void setTimeTo(String aTimeTo) {theTimeTo = aTimeTo;}
 	
 
 	/** Кол-во посещений */
-	@Required
 	public Long getCountVisits() {return theCountVisits;}
 	public void setCountVisits(Long aCountVisits) {theCountVisits = aCountVisits;}
 
@@ -35,14 +33,8 @@ public class TimeBySpecialistForm extends BaseValidatorForm {
 
 	/** Дата */
 	@DateString @DoDateString
-	@Required
-	public String getDate() {
-		return theDate;
-	}
-
-	public void setDate(String aDate) {
-		theDate = aDate;
-	}
+	public String getDate() {return theDate;}
+	public void setDate(String aDate) {theDate = aDate;}
 
 	/** Дата */
 	private String theDate;
@@ -56,5 +48,26 @@ public class TimeBySpecialistForm extends BaseValidatorForm {
 	private String theTimeFrom;
 	/** Специалист */
 	private Long theSpecialist;
+	/** Перенести на дату */
+	@DateString @DoDateString
+	public String getMoveDate() {
+		return theMoveDate;
+	}
 
+	public void setMoveDate(String aMoveDate) {
+		theMoveDate = aMoveDate;
+	}
+	/** Перенести специалиста */
+	public Long getMoveSpecialist() {
+		return theMoveSpecialist;
+	}
+
+	public void setMoveSpecialist(Long aMoveSpecialist) {
+		theMoveSpecialist = aMoveSpecialist;
+	}
+
+	/** Перенести специалиста */
+	private Long theMoveSpecialist;
+	/** Перенести на дату */
+	private String theMoveDate;
 }

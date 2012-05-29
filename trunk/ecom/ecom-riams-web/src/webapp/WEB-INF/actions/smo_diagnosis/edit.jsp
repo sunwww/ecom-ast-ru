@@ -50,8 +50,18 @@
         <msh:row guid="921d61b3-ef1e-40b7-8275-c5c9c755ce89">
           <msh:autoComplete vocName="vocIdc10" property="idc10Reason" label="МКБ-10 причины травмы" guid="459b7b01-929f-440a-8cb8-e6e9340fd958" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="26f25ba9-b90a-4825-b37f-a24f1ecf67ff" />
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:row>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+          <msh:label property="createUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
   </tiles:put>

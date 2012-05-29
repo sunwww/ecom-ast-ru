@@ -26,8 +26,8 @@
         <msh:row guid="e8c385bf-26c7-479e-b13d-0dd8922c6cb3">
           <msh:autoComplete vocName="omcKodTer" property="insuranceCompanyArea" fieldColSpan="6" horizontalFill="true" guid="84f44c-cc5d-4e9a-9daf-80f16e5" label="Область нахождения СМО" />
        </msh:row>
-       <msh:row>
-          <msh:autoComplete vocName="omcSprSmo" property='insuranceCompanyCode' parentAutocomplete="insuranceCompanyArea" fieldColSpan="6" horizontalFill="true" label="ОГРН СМО"/>
+        <msh:row>
+          <msh:autoComplete vocName="vocInsuranceCompanyAll" property="company" label="Страховая&nbsp;компания" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>
         <msh:row guid="c95c097c-1243-413b-be05-d038a4d5af19">
           <msh:textField property="insuranceCompanyCity" fieldColSpan="6" horizontalFill="true" guid="515e0550-b6a0-4832-8975-844506ad1f1e" />
@@ -76,12 +76,12 @@
     <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForeignForm">
     	<script type="text/javascript">
     		
-    		insuranceCompanyCodeAutocomplete.addOnChangeCallback(function() {
+    	companyAutocomplete.addOnChangeCallback(function() {
 	      	 	update() ;
 	      	 });
 	      	 function update() {
 	      	 	var text ;
-	      	 	text = $('insuranceCompanyCodeName').value ;
+	      	 	text = $('companyName').value ;
 	      	 	//var cnt = text.indexOf(' ') ;
 	      	 	//if (cnt>0) {
 		      	 	//$('code').value=text.substring(0,cnt) ;

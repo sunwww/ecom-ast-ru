@@ -71,6 +71,7 @@ left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
 
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 group by dd.issueDate order by dd.issueDate "/>
     <msh:sectionTitle>Сводная таблица по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
@@ -124,6 +125,7 @@ left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
     
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 "/>
     <msh:sectionTitle>ИТОГ по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
@@ -180,6 +182,7 @@ left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table name="journal_issueDuplicate" action="dis_documentClose.do" idField="1">
@@ -233,6 +236,7 @@ left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 "
     />
     <msh:table name="journal_issueDuplicate_itog" action="dis_documentClose.do" idField="1">
@@ -283,6 +287,7 @@ left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table name="journal_duplicate" action="dis_documentClose.do" idField="1">
@@ -335,6 +340,7 @@ left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and dd.anotherlpu_id is null
 "
     />
     <msh:table name="journal_duplicate_itog" action="dis_documentClose.do" idField="1">

@@ -15,6 +15,11 @@ public class DocumentCloseAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
+        String noActuality = ActionUtil.updateParameter("DocumentClose","noActuality","3", aRequest) ;
+		String typeDate = ActionUtil.updateParameter("DocumentClose","typeDate","3", aRequest) ;
+		String typeDocument = ActionUtil.updateParameter("DocumentClose","typeDocument","3", aRequest) ;
+		String typeLpu= ActionUtil.updateParameter("DocumentClose","typeLpu","1", aRequest) ;
+		String orderBy = ActionUtil.updateParameter("DocumentClose","orderBy","1", aRequest) ;
 		DisabilitySearchForm form = (DisabilitySearchForm) aForm;
         if (form.validate(aMapping, aRequest).size()==0) {
             if (form.getBeginDate()!=null && !form.getBeginDate().equals("")) {
@@ -36,9 +41,33 @@ public class DocumentCloseAction extends BaseAction {
         aRequest.setAttribute("list"
                 , service.findPatient(form.getLpu(), form.getLpuArea(), form.getLastname()));
         */
-        String noActuality = ActionUtil.updateParameter("DocumentClose","noActuality","3", aRequest) ;
-		String typeDate = ActionUtil.updateParameter("DocumentClose","typeDate","3", aRequest) ;
-		String typeDocument = ActionUtil.updateParameter("GroupByBedFund","typeDocument","3", aRequest) ;
+        String dGroup = "" ;
+        if (typeDate!=null && typeDate.equals("1")) {
+        	dGroup="(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
+        	aRequest.setAttribute("dateGroup",dGroup) ;
+        	aRequest.setAttribute("dateSearch","max") ;
+        	aRequest.setAttribute("infoSearch"," Поиск по дате закрытия") ;
+        } else if (typeDate!=null&&typeDate.equals("2")) {
+        	dGroup = "(select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
+        	aRequest.setAttribute("dateGroup",dGroup) ;
+        	aRequest.setAttribute("dateSearch","min") ;
+        	aRequest.setAttribute("infoSearch"," Поиск по дате открытия") ;
+        } else {
+        	aRequest.setAttribute("dateSearch","issued") ;
+        	aRequest.setAttribute("infoSearch"," Поиск по дате выдачи") ;
+        	dGroup= "dd.issueDate" ;
+        	aRequest.setAttribute("dateGroup",dGroup) ;
+        }
+		if (orderBy!=null && orderBy.equals("1")) {
+			aRequest.setAttribute("orderByInfo", "по номерам больничных");
+			aRequest.setAttribute("orderBystatus", " dd.number ") ;        	
+		} else if (orderBy!=null && orderBy.equals("2")) {
+			aRequest.setAttribute("orderByInfo", "по дате выдачи");
+			aRequest.setAttribute("orderBystatus", " dd.issueDate, dd.number ") ;
+		} else {
+			aRequest.setAttribute("orderByInfo", "по ФИО");
+			aRequest.setAttribute("orderBystatus", "p.lastname,p.firstname,p.middlename,dd.number") ;        	
+		}
         if (typeDocument!=null && typeDocument.equals("1")) {
         	aRequest.setAttribute("typeDocumentInfo", "открытым документам");
         	aRequest.setAttribute("status", "(dd.isclose is null or cast(dd.isclose as int) =0) and ") ;        	
@@ -48,19 +77,6 @@ public class DocumentCloseAction extends BaseAction {
         } else {
         	aRequest.setAttribute("typeDocumentInfo", "всем документам");
         	aRequest.setAttribute("status", "") ;        	
-        }
-        if (typeDate!=null && typeDate.equals("1")) {
-        	aRequest.setAttribute("dateGroup","(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)") ;
-        	aRequest.setAttribute("dateSearch","max") ;
-        	aRequest.setAttribute("infoSearch"," Поиск по дате закрытия") ;
-        } else if (typeDate!=null&&typeDate.equals("2")) {
-        	aRequest.setAttribute("dateGroup","(select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)") ;
-        	aRequest.setAttribute("dateSearch","min") ;
-        	aRequest.setAttribute("infoSearch"," Поиск по дате открытия") ;
-        } else {
-        	aRequest.setAttribute("dateSearch","issued") ;
-        	aRequest.setAttribute("infoSearch"," Поиск по дате выдачи") ;
-        	aRequest.setAttribute("dateGroup", "dd.issueDate" );
         }
         if (noActuality!=null && noActuality.equals("1")) {
         	aRequest.setAttribute("statusNoActuality", "cast(dd.noActuality as int) =1 and ") ;
@@ -88,6 +104,16 @@ public class DocumentCloseAction extends BaseAction {
         	aRequest.setAttribute("primarity", " and dd.primarity_id="+form.getPrimarity()) ;
         } else {
         	aRequest.setAttribute("primarity", "") ;
+        }
+        if (typeLpu!=null && typeLpu.equals("1")) {
+        	aRequest.setAttribute("anotherlpu", " and dd.anotherLpu_id is null") ;
+        	aRequest.setAttribute("anotherlpuinfo", " с учетом выданных др. ЛПУ") ;
+        } else if (typeLpu!=null && typeLpu.equals("2")) {
+        	aRequest.setAttribute("anotherlpu", " and dd.anotherLpu_id is not null") ;
+        	aRequest.setAttribute("anotherlpuinfo", " без учета выданных др. ЛПУ") ;
+        } else {
+        	aRequest.setAttribute("anotherlpu", "") ;
+        	aRequest.setAttribute("anotherlpuinfo", "") ;
         }
         
 		return aMapping.findForward("success");

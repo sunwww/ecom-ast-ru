@@ -3,7 +3,11 @@ package ru.ecom.mis.web.webservice;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.List;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -12,8 +16,11 @@ import org.jdom.input.SAXBuilder;
 import org.tempuri.WS_MES_SERVER.wsdl.WSLocator;
 import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
 
+import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class FondWebService {
@@ -27,7 +34,7 @@ public class FondWebService {
 			,String aType, String aSeries,String aNumber) {
 		return "" ;
 	}
-	public static Object checkPatientBySnils(PatientForm aPatFrm, String aSnils)   throws Exception{
+	public static Object checkPatientBySnils(HttpServletRequest aRequest, PatientForm aPatFrm, String aSnils)   throws Exception{
 		
 		String result = null ;
 		WSLocator service = new WSLocator() ;
@@ -40,11 +47,27 @@ public class FondWebService {
         Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
         Element rz = cur1.getChild("rz") ;
-        return getInfoByPatient(aPatFrm,soap,rz.getText());
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText());
+		
+    }
+	public static Object checkPatientByMedPolicy(HttpServletRequest aRequest, PatientForm aPatFrm, String aSeries, String aNumber)   throws Exception{
+		
+		String result = null ;
+		WSLocator service = new WSLocator() ;
+        service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
+        //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
+        WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
+        result = (String)soap.get_RZ_from_POLIS(aSeries, aNumber, theLpu);
+        InputStream in = new ByteArrayInputStream(result.getBytes());
+        Document doc = new SAXBuilder().build(in);
+        Element root = doc.getRootElement();
+        Element cur1 = root.getChild("cur1") ;
+        Element rz = cur1.getChild("rz") ;
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText());
 		
     }
 	
-	public static Object checkPatientByFioDr(PatientForm aPatFrm, String aLastname,String aFirstname
+	public static Object checkPatientByFioDr(HttpServletRequest aRequest, PatientForm aPatFrm, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday) throws Exception  {
 		String result = null ;
 		WSLocator service = new WSLocator() ;
@@ -59,9 +82,9 @@ public class FondWebService {
         Element rze = cur1.getChild("rz") ;
         String rz = rze.getText() ;
         in.close() ;
-        return getInfoByPatient(aPatFrm,soap,rz);
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz);
     }
-	public static Object checkPatientByDocument(PatientForm aPatFrm, String aType, String aSeries,String aNumber) throws Exception  {
+	public static Object checkPatientByDocument(HttpServletRequest aRequest, PatientForm aPatFrm, String aType, String aSeries,String aNumber) throws Exception  {
 		String result = null ;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
@@ -74,16 +97,26 @@ public class FondWebService {
         Element rze = cur1.getChild("rz") ;
         String rz = rze.getText() ;
         in.close() ;
-        return getInfoByPatient(aPatFrm,soap,rz);
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz);
     }
-	private static String getInfoByPatient(PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException {
+	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException, NamingException, ParseException {
 		if (!aRz.equals("")) {
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
         	//System.out.println(result);
         	result =updateXml(result) ;
+        	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+    		
+			/*
         	
-        	
+			
+			;String aCompanyCode ;String aCompabyCodeF;String aCompanyOgrn; String aCompanyOkato
+			;String aDocumentType; String aDocumentSeries;String aDocumentNumber
+			;String aKladr;String aHouse; String aHouseBuilding; String aFlat;
+        	*/
+        	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
+			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+			//String commonNumber;
         	InputStream in = new ByteArrayInputStream(result.getBytes());
         	Document doc = new SAXBuilder().build(in);
         	Element root = doc.getRootElement();
@@ -101,7 +134,9 @@ public class FondWebService {
             sb.append("<th>").append("Умер?").append("</th>") ;
             sb.append("<th>").append("Дата смерти").append("</th>") ;
             sb.append("</tr>") ;
+            boolean isStart = true ;
             for (Element e:list_cur) {
+
             	sb.append("<tr>") ;
             	String f = e.getChildText("f") ;
             	String i = e.getChildText("i") ;
@@ -109,15 +144,14 @@ public class FondWebService {
             	String dr = upDate(e.getChildText("dr")) ;
             	
             	String ss =e.getChildText("ss") ;
-            	sb.append("<td>").append("<input type='radio' name='fondFiodr' id='fondFiodr' value='")
+            	sb.append("<td>").append("<input  onclick=\"patientcheck('patient')\" type='radio'")
+            	.append(isStart?" checked='true'":"") 
+            	.append(" name='fondFiodr' id='fondFiodr' value='")
     			.append(f).append("#").append(i).append("#")
     			.append(o).append("#").append(dr).append("#")
     			.append(ss).append("#").append(aRz).append("#")
     			.append("'/>").append("</td>") ;
-            	//System.out.println("---ФАМИЛИЯ:"+f) ;
-            	//System.out.println("---ИМЯ:"+i) ;
-            	//System.out.println("---ОТЧЕСТВО:"+o) ;
-            	
+           	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getLastname().equals(f)?"":" bgcolor='yellow'"):"").append(">").append(f).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
@@ -127,6 +161,10 @@ public class FondWebService {
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(upDate(e.getChildText("datadead"))).append("</td>") ;
              	sb.append("</tr>") ;
+            	if (isStart) {
+            		isStart=false ;
+            		lastname = f ; firstname = i ; middlename = o; birthday = dr ;snils=ss;
+            	}
             }
             sb.append("</table>") ;
             
@@ -140,6 +178,7 @@ public class FondWebService {
         	list_cur.clear() ;
         	//@SuppressWarnings("unchecked")
         	list_cur = root.getChildren("cur1");
+        	String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
         	sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
         	sb.append("<tr>");
         	//sb.append("<th>").append("").append("</th>") ;
@@ -174,12 +213,12 @@ public class FondWebService {
         		String current = el.getChildText("pz_actual") ;
         		String ac = "" ;
 
-            	sb.append("<td>").append("<input type='checkbox' name='fondPolicy' id='fondPolicy' value='")
-    				.append(sk).append("#")
-            		.append(serPol).append("#").append(numPol).append("#")
-            		.append(dpp).append("#");
+            	sb.append("<td>").append("<input type='checkbox'  onclick=\"patientcheck('policy')\" name='fondPolicy' id='fondPolicy' ");
+    				
             	if (current.equals("1")) {
             		String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
+            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
+                	
             		if (datEnd!=null) {
             			try {
             				java.sql.Date dat = DateFormat.parseSqlDate(datEnd) ;
@@ -192,10 +231,15 @@ public class FondWebService {
             			}
             			
             		}
-            		sb.append(datEnd).append("#") ;
-            		ac = " bgColor='#CFC'" ;
+            		sb.append(" checked='true' value='").append(sk).append("#")
+            		.append(serPol).append("#").append(numPol).append("#")
+            		.append(dpp).append("#").append(datEnd).append("#") ;
+            		ac = " bgColor='#CFC'  ";
+            		
             	} else {
-            		sb.append((ddosr!=null && !ddosr.equals(""))?ddosr:dpe).append("#") ;
+            		sb.append(" value='").append(sk).append("#")
+            		.append(serPol).append("#").append(numPol).append("#")
+            		.append(dpp).append("#").append((ddosr!=null && !ddosr.equals(""))?ddosr:dpe).append("#") ;
             	}
     			sb.append(aRz).append("#").append(current).append("#")
     				.append("'/>").append("</td>") ;
@@ -223,7 +267,8 @@ public class FondWebService {
             
             //@SuppressWarnings("unchecked")
 			list_cur = root.getChildren("cur1");
-			
+			String documentType = null, documentSeries = null, documentNumber = null ;
+			isStart=true ;
             sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
             sb.append("<tr>");
             sb.append("<th>").append("").append("</th>") ;
@@ -242,17 +287,24 @@ public class FondWebService {
         		String dn=el.getChildText("doc_n") ;
         		String dd = upDate(el.getChildText("doc_d")) ;
         		String dv = el.getChildText("doc_v") ;
-        		sb.append("<td>").append("<input type='radio' name='fondDocument' id='fondDocument' value='")
+
+        		sb.append("<td>").append("<input type='radio' ")
+            	//.append(isStart?" checked='true' ":"") 
+            	.append("name='fondDocument' id='fondDocument' value='")
     			.append(dt).append("#").append(ds).append("#")
     			.append(dn).append("#").append(dd).append("#")
     			.append(dv).append("#").append(aRz).append("#")
-    			.append("'/>").append("</td>") ;
+    			.append("' onclick=\"patientcheck('document')\"/>").append("</td>") ;
         		sb.append("<td").append(ac).append(">").append(dt).append("</td>");
         		sb.append("<td").append(ac).append(">").append(ds).append("</td>");
         		sb.append("<td").append(ac).append(">").append(dn).append("</td>");
         		sb.append("<td").append(ac).append(">").append(dd).append("</td>");
         		sb.append("<td").append(ac).append(">").append(dv).append("</td>");
             	sb.append("</tr>") ;
+        		if (isStart) {
+        			documentType=dt; documentSeries=ds; documentNumber=dn ;
+        			isStart=false ;
+        		}
             }
             sb.append("</table>") ;
             in.close() ;
@@ -267,7 +319,8 @@ public class FondWebService {
             list_cur.clear() ;
 			list_cur = root.getChildren("cur1");
             sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
-            
+            String kladr = null, house = null, houseBuilding = null, flat = null ;
+            isStart=true ;
             sb.append("<tr>") ;
             sb.append("<th></th>") ;
             sb.append("<th>").append("КЛАДР").append("</th>") ;
@@ -294,7 +347,10 @@ public class FondWebService {
         		String streetT = el.getChildText("street_t");
         		String provance = el.getChildText("province") ;
         		String index = el.getChildText("ssity") ;
-        		sb.append("<td>").append("<input type='radio' name='fondAdr' id='fondAdr' value='")
+        		
+        		sb.append("<td>").append("<input  onclick=\"patientcheck('address')\" type='radio' ")
+            	//.append(isStart?" checked='true' ":"") 
+            	.append("name='fondAdr' id='fondAdr' value='")
         			.append(kl).append("#").append(hn).append("#")
         			.append(hb).append("#").append(fn).append("#").append(r).append("#")
         			.append(sity).append("#").append(street).append("#").append(streetT).append("#")
@@ -310,12 +366,23 @@ public class FondWebService {
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getHouseBuilding().equals(hb)?"":" bgcolor='yellow'"):"").append(hb).append("</td>");
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFlatNumber().equals(fn)?"":" bgcolor='yellow'"):"").append(">").append(fn).append("</td>");
             	sb.append("</tr>") ;
+            	if (isStart=true) {
+        			kladr=kl; house=hn; houseBuilding=hb; flat =fn;
+        			isStart=false ;
+        		}
             }
             sb.append("</table>") ;
             in.close() ;
-            
+            service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
+            		, aRz
+            		, policySeries, policyNumber, policyDateFrom, policyDateTo
+            		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
+            		, companyCode, "", "", ""
+            		, documentType, documentSeries, documentNumber
+            		, kladr, house, houseBuilding, flat);
             return sb.toString() ;
         }
+		
 		return "нет данных" ;
 	}
 	private static String upDate(String aDate) {

@@ -27,7 +27,7 @@
     ,h.dateFinish as hdateFinish
     ,	  case 
 			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
-			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
+			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
 			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
 		  end as cnt1
     ,	  case 
@@ -46,7 +46,7 @@
     left join patient as p on p.id=m.patient_id 
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     where m.DTYPE='DepartmentMedCase' and ${dateType } between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
-    and m.bedfund_id=${bedFund} ${addStatus} ${add } 
+    ${bedFund} ${addStatus} ${add } ${dep} ${servStream}
     order by p.lastname,p.firstname" 
     guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">

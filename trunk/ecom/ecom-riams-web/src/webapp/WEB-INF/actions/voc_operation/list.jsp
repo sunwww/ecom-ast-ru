@@ -30,10 +30,14 @@
             
         <msh:hideException>
             <msh:section title='Результат поиска'>
-            	<ecom:webQuery name="opers" nativeSql="select id, code, name, startActualDate,finishActualDate from VocOperation where UPPER(name) like UPPER('%${name}%')"/>
+            	<ecom:webQuery name="opers" 
+            	nativeSql="select id, code, name, startActualDate,finishActualDate
+            	,complexity 
+            	from VocOperation where UPPER(name) like UPPER('%${name}%')"/>
                 <msh:table name="opers" action="entityView-voc_operation.do" idField="1" disableKeySupport="false">
                     <msh:tableColumn columnName="Код" property="2"/>
                     <msh:tableColumn columnName="Наименование" property="3"/>
+                    <msh:tableColumn property="6" columnName="Уровень сложности"/>
                     <msh:tableColumn columnName="Дата начала актуальности" property="4"/>
                     <msh:tableColumn columnName="Дата окончания актуальности" property="5"/>
                 </msh:table>

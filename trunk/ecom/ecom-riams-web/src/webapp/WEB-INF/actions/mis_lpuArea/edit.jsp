@@ -88,7 +88,6 @@
         <msh:sideLink key="ALT+5" roles="/Policy/Jaas/SecPolicy/Create" params="id" action="/mis_lpuAreaUpdateJaasPolicy" name="Перекрепить" title="Перекрепить население" guid="525ebc5e-181a-4ded-84ec-228d01869605" confirm="Перекрепить все население?" />
         <msh:sideLink key="ALT+6" roles="/Policy/Mis/LpuArea/View" params="id" action="/mis_bypassAreaExcelExport.do?type=area" name="Печать обходного листа" guid="b2a729f4-c83e-45af-ae91-a905d22ec44f" />
         <msh:sideLink key="ALT+DEL" roles="/Policy/Mis/LpuArea/Delete" params="id" action="/entityParentDeleteGoParentView-mis_lpuArea" name="Удалить" confirm="Удалить участок?" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
-        <msh:sideLink params="id" action="/psych_listByArea" name="Список пациентов по участкам"/>
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
   </tiles:put>

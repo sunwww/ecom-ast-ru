@@ -11,36 +11,61 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        
+        <msh:sideMenu>
+    	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecord" name="Пред. запись" action="/js-smo_direction-preRecorded.do"/>
+    	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecordMany" name="Пред. запись неск-ко специалистов" action="/js-smo_direction-preRecordedMany.do"/>
+    	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal" name="Журнал направленных" action="/visit_journal_direction.do"/>
+        </msh:sideMenu>
     </tiles:put>
     
   <tiles:put name="body" type="string">
     <msh:form action="/work_create_timeBySpecialist.do" defaultField="specialistName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:row>
+    	<msh:separator label="Выбор режима работы" colSpan="7"/>
+    </msh:row>
+    <msh:row>
+    <td onclick="this.childNodes[1].checked='checked';showCreateTime()"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >создание доп.времени</td>
+    <td onclick="this.childNodes[1].checked='checked';showMoveDay()"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >перенос рабочего дня</td>
+    <td onclick="this.childNodes[1].checked='checked';showMoveSpec()"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >замена врача </td>
+    <td onclick="this.childNodes[1].checked='checked';showClearDayBySpec()"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >очистить своб.времена</td>
+    
+    </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры " colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
-        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        	<msh:autoComplete fieldColSpan="3" vocName="workFunctionByDirect"
+        <msh:row>
+        	<msh:autoComplete fieldColSpan="5" vocName="workFunctionByDirect"
         	 property="specialist" label="Специалист" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete fieldColSpan="5" vocName="workFunctionByDirect"
+        	 property="moveSpecialist" label="Замена на спец-та" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="date" label="Дата" />
-	        <msh:textField property="countVisits" label="Кол-во"/>
+        	<msh:textField property="moveDate" label="Перенести на дату" />
         </msh:row>
         <msh:row>
 	        <msh:textField property="timeFrom" label="Начиная со времени"/>
 	        <msh:textField property="timeTo" label="Начиная со времени"/>
         </msh:row>
         <msh:row>
-        	<td>
+	        <msh:textField property="countVisits" label="Кол-во"/>
+        	<td colspan="3">
             	<input type="submit" onclick="find()" value="Найти" />
         	</td>
         </msh:row>
         <msh:row>
         	<msh:textArea property="times" label="Времена" fieldColSpan="3" horizontalFill="true"/>
-        	<td>
-        		<input type="button" onclick="generate()" value="Добавить" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="6" align="center">
+        		<input type="button" id="btnGenerate" name="btnGenerate" onclick="generate()" value="Добавить времена" />
+        		<input type="button" id="btnMoveSpec" name="btnMoveSpec" onclick="moveDays()" value="Перенести пациентов с одного дня на другой" />
+        	<%--	<input type="button" onclick="combineSpec()" value="Совместить пациентов одного специалиста с другого" />  --%>
+        		<input type="button" id="btnMoveDays" name="btnMoveDays" onclick="moveSpec()" value="Перенести пациентов с одного специалиста на другого" />
+        		<input type="button" id="btnShowClearDayBySpec" name="btnShowClearDayBySpec" onclick="clearTime()" value="Очистить незанятые времена" />
         	</td>
         </msh:row>
     </msh:panel>
@@ -79,7 +104,10 @@
     				 	}
     				    
     				    
-    				}}) ;
+    				},
+    	    		errorHandler: function(aMessage) {
+    	        		
+    	    		}}) ;
     }
     function getTimeBySpecAndDate() {
     	WorkCalendarService.getTimesBySpecAndDate($('date').value
@@ -91,7 +119,10 @@
     				 	//alert(aCount) ;
     				    $('times').value = aResult ;
     				    
-    				}}) ;
+    				},
+    	    		errorHandler: function(aMessage) {
+    	        		
+    	    		}}) ;
     }
     function generate() {
     	WorkCalendarService.getCreateNewTimesBySpecAndDate($('date').value
@@ -99,8 +130,106 @@
     			, {
     	  	 callback: function(aResult) {
     				 	alert(aResult) ;
-    				}}) ;
+    				},
+    		errorHandler: function(aMessage) {
+    		
+    		}
+    	}) ;
     }
+    function moveSpec() {
+    	WorkCalendarService.moveSpecialistPlanByDate($('date').value
+    			, $('moveDate').value , $('specialist').value, $('moveSpecialist').value
+    			, {
+    	  	 callback: function(aResult) {
+    				 	alert(aResult) ;
+    				},
+    		errorHandler: function(aMessage) {
+    			alert("Не удалось перенести! "+aMessage) ;
+    		}
+    	}) ;    
+    }
+    function moveDays() {
+    	WorkCalendarService.moveDatePlanBySpec($('date').value
+    			, $('moveDate').value, $('specialist').value
+    			, {
+    	  	 callback: function(aResult) {
+    				 	alert(aResult) ;
+    				},
+    		errorHandler: function(aMessage) {
+    			alert("Не удалось перенести! "+aMessage) ;
+    		}
+    	}) ;    
+    }
+    function clearTime() {
+    	WorkCalendarService.deleteEmptyCalendarDays($('date').value
+    			, $('moveDate').value, $('specialist').value
+    			, {
+    	  	 callback: function(aResult) {
+    				 	alert(aResult) ;
+    				},
+    		errorHandler: function(aMessage) {
+    			alert("Не удалось очистить времена! "+aMessage) ;
+    		}
+    	}) ;    
+    }
+    function showCreateTime() {
+    	$('btnGenerate').style.display='';
+    	$('btnMoveSpec').style.display='none';
+    	$('btnMoveDays').style.display='none';
+    	$('btnShowClearDayBySpec').style.display='none';
+    	$('specialistName').className = 'autocomplete horizontalFill required' ;
+    	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('date').className = 'required' ;
+    	$('moveDate').className = '' ;
+    	$('timeTo').className = 'required' ;
+    	$('timeFrom').className = 'required' ;
+    	$('countVisits').className = 'required' ;
+    	$('times').className = ' horizontalFill required' ;
+    }
+    function showMoveDay() {
+    	$('btnGenerate').style.display='none';
+    	$('btnMoveSpec').style.display='';
+    	$('btnMoveDays').style.display='none';
+    	$('btnShowClearDayBySpec').style.display='none';
+    	$('specialistName').className = 'autocomplete horizontalFill required' ;
+    	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('date').className = 'required' ;
+    	$('moveDate').className = 'required' ;
+    	$('timeTo').className = '' ;
+    	$('timeFrom').className = '' ;
+    	$('countVisits').className = '' ;
+    	$('times').className = ' horizontalFill' ;
+    }
+    function showMoveSpec() {
+    	$('btnGenerate').style.display='none';
+    	$('btnShowClearDayBySpec').style.display='none';
+    	$('btnMoveSpec').style.display='none';
+    	$('btnMoveDays').style.display='';
+    	$('specialistName').className = 'autocomplete horizontalFill required' ;
+    	$('moveSpecialistName').className = 'autocomplete horizontalFill required' ;
+    	$('date').className = 'required' ;
+    	$('moveDate').className = 'required' ;
+    	$('timeTo').className = '' ;
+    	$('timeFrom').className = '' ;
+    	$('countVisits').className = '' ;
+    	$('times').className = ' horizontalFill' ;
+    }
+    function showClearDayBySpec() {
+    	$('btnGenerate').style.display='none';
+    	$('btnShowClearDayBySpec').style.display='';
+    	$('btnMoveSpec').style.display='none';
+    	$('btnMoveDays').style.display='none';
+    	$('specialistName').className = 'autocomplete horizontalFill required' ;
+    	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('date').className = 'required' ;
+    	$('moveDate').className = 'required' ;
+    	$('timeTo').className = '' ;
+    	$('timeFrom').className = '' ;
+    	$('countVisits').className = '' ;
+    	$('times').className = ' horizontalFill'     	
+    }
+    showCreateTime() ;
+    document.forms[0].rdMode[0].checked=true ;
     
     </script>  
   </tiles:put>

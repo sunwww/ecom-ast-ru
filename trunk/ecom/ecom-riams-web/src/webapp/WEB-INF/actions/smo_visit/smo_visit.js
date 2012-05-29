@@ -13,8 +13,17 @@ function addDisabilityByRedirectFromVisit(aForm, aCtx) {
  
 function getCalDayId(aCtx) {
 	var calendarDayId = aCtx.request.getParameter("id") ;
+	//throw "3"+calendarDayId ;
 	if(calendarDayId==null) {
 		calendarDayId = aCtx.session.getAttribute("smo_visit.currentCalendarDay") ;
+		//throw "2"+calendarDayId ;
+		if (calendarDayId==null) {
+			calendarDayId=aCtx.invokeScript("SmoDirectionService", "findCurrentWorkCalendarDayByUser") ;
+			//throw "1"+calendarDayId ;
+			if (calendarDayId!=null) {
+				aCtx.session.setAttribute("smo_visit.currentCalendarDay", calendarDayId) ;
+			}
+		}
 	} else {
 		aCtx.session.setAttribute("smo_visit.currentCalendarDay", calendarDayId) ;
 	}
@@ -43,14 +52,16 @@ function findPolyAdmissions(aForm, aCtx) {
  * Поиск направлений за определенную дату
  */
 function findPolyAdmissionsBySpec(aForm, aCtx) {
-	setWorkerInfo(aCtx) ;
+	
 	var calendarDayId = getCalDayId(aCtx) ;
 	if(calendarDayId==null) {
-		calendarDayId = aCtx.session.getAttribute("smo_visit.currentCalendarDay") ;
+		setWorkerInfo(aCtx) ;
 	} else {
+		var workFuncId = aCtx.invokeScript("WorkerService", "getWorkFunctionByCalenDay", calendarDayId) ;
+		setWorkFunctionInfo(aCtx,calendarDayId,workFuncId) ;
 		aCtx.session.setAttribute("smo_visit.currentCalendarDay", calendarDayId) ;
 	}
-	var col = aCtx.invokeScript("SmoDirectionService", "findPolyAdmissions", calendarDayId) ;
+	//var col = aCtx.invokeScript("SmoDirectionService", "findPolyAdmissions", calendarDayId) ;
 	//aCtx.request.setAttribute("list", col) ;
 	if (calendarDayId==null) calendarDayId='-1' ;
 	aCtx.request.setAttribute("calenDayId",calendarDayId) ;

@@ -14,30 +14,12 @@
 			<tr>
 				<td class='col1'>
 				<div class='menu'>
-				<h2>Что появилось нового в ПО "Эком:МИС"?</h2>
+				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
-					<li><msh:link  action="ecom_release-20090815.do">
-					Август 2009 года
+					<li><msh:link  action="ecom_release-201204.do">
+					Апрель 2012 года
                         </msh:link></li>
-					<li><msh:link  action="ecom_release-20090915.do">
-					Сентябрь 2009 года
-                        </msh:link></li>
-					<li><msh:link  action="ecom_release-20091015.do">
-					Октябрь 2009 года
-                        </msh:link></li>
-					<li><msh:link  action="ecom_release-20091115.do">
-					Ноябрь 2009 года
-                        </msh:link></li>
-                        <li><msh:link  action="ecom_release-20091215.do">
-					Декабрь 2009 года
-                        </msh:link></li>
-                        <li><msh:link  action="ecom_release-20100115.do">
-					Январь 2010 года
-                        </msh:link></li>
-                        <li><msh:link  action="ecom_release-20100215.do">Февраль 2010 года</msh:link></li>
-                        <li><msh:link  action="ecom_release-20100315.do">Март 2010 года</msh:link></li>
-                        <li><msh:link  action="ecom_release-20100415.do">Апрель 2010 года</msh:link></li>
-                        <li><msh:link  action="ecom_release-20100515.do">Май 2010 года</msh:link></li>
+					
 				</ul>
 				</div>
 			</tr>

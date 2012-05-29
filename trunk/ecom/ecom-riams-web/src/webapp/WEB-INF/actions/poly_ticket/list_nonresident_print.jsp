@@ -28,7 +28,7 @@
     left join patient wp on wp.id=w.person_id    
     left join vocIdc10 mkb on mkb.id=t.idc10_id    
     left join vocreason vr on vr.id=t.vocreason_id    
-    where t.date  between '${param.dateBegin}'  and '${param.dateEnd}'  
+    where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')  
     and t.status='2' ${add}     order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />

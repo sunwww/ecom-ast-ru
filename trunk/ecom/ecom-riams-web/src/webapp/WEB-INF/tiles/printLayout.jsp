@@ -11,22 +11,8 @@
  <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
-	
-
-<!-- Дополнительное определение стиля -->
-<tiles:insert attribute="style" ignore='true'/>
-<!-- Дополнительное определение стиля END -->
-
-
  </head>
-
-    <body>
-        <tiles:insert attribute="title" ignore="true"/>
-        <tiles:insert attribute="body"/>
-
-
-
-
-    </body>
-
+<body>
+    <tiles:insert attribute="body"/>
+</body>
 </html:html>

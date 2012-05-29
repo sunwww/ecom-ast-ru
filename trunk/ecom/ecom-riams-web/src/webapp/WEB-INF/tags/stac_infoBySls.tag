@@ -30,12 +30,12 @@
         <msh:section title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>" guid="313bfb94-a58e-4041-be05-dacad7710873">
           <ecom:webQuery  name="allSLOs" nativeSql="select MedCase.id
           , MedCase.dateStart as mdateStart 
-          , MedCase.department_id||' '||postDep.Name as mdepartment      
+          , postDep.Name as mdepartment      
           , MedCase.transferDate as mtransferDate
-          , MedCase.transferDepartment_id||' '||tranDep.Name as mtransferDepartment        
+          , tranDep.Name as mtransferDepartment        
           , MedCase.dateFinish as mdateFinish
-          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
-          , op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker       
+          ,coalesce(osd.model,'-')||'('||coalesce(ose.model,'-')||')' as standart
+          ,coalesce(owf.code||' ','')||ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||'. '||substring(owp.middlename,1,1)||'.' as doctor       
           ,
           case when (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)=0 then 1
                when cast(BedFund.addCaseDuration as integer)=1 then (coalesce(MedCase.dateFinish,MedCase.transferDate,CURRENT_DATE)-MedCase.dateStart)+1
@@ -49,24 +49,28 @@
           end as bedCount
           , MedCase.entranceTime mentranceTime,MedCase.transferTime as mtransferTime,MedCase.dischargeTime as mdischargeTime            
           ,VocServiceStream.name as vssname
+          
+          
           from MedCase
-          left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA; 
-           left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
-           left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA; 
-            left outer join Patient op on ow.person_id           = op.id&#xA; 
+           left  join WorkFunction owf  on MedCase.ownerFunction_id       = owf.id &#xA;
+           left join Worker ow on ow.id=owf.worker_id
+           left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
+            left outer join Patient owp on ow.person_id           = owp.id&#xA; 
              left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tranDep.id&#xA; 
               left outer join MisLpu postDep on MedCase.department_id           = postDep.id&#xA;
                left join BedFund on BedFund.id=MedCase.bedFund_id 
           left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
+          left join OMC_STANDART osd on MedCase.omcStandart_id=osd.id
+          left join OMC_STANDART ose on MedCase.omcStandartExpert_id=ose.id
                left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
                where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'
                order by MedCase.dateStart,MedCase.entranceTime
                " guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
-          <msh:table name="allSLOs" action="entityParentView-stac_slo.do" idField="1" guid="a99e7bed-cb69-49df-bbe6-ac9718cd22e0">
+          <msh:table name="allSLOs" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="a99e7bed-cb69-49df-bbe6-ac9718cd22e0">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th colspan="1" />
-                <th colspan="4" class="rightBold">Поступление</th>
+                <th colspan="7" class="rightBold">Поступление</th>
                 <th colspan="3" class="rightBold">Перевод</th>
                 <th colspan="2" class="rightBold">Выписка</th>
                 <th colspan="1" />
@@ -77,6 +81,8 @@
             <msh:tableColumn columnName="Время" property="10" />
             <msh:tableColumn columnName="Отделение" property="3" cssClass="rightBold" guid="e52974a2-76d9-404c-bd22-78f28d3456ed" />
             <msh:tableColumn columnName="Поток" property="13" cssClass="rightBold" />
+            <msh:tableColumn property="8" columnName="Леч. врач"/>
+            <msh:tableColumn property="7" columnName="Стандарт"/>
             <msh:tableColumn columnName="Дата" property="4" guid="26ab551e-5512-4c99-91bd-ea0e083e98cb" />
             <msh:tableColumn columnName="Время" property="11" />
             <msh:tableColumn columnName="Отделение" property="5" cssClass="rightBold" guid="cedd2007-2476-48d1-b24c-92a4606d2eca" />
@@ -88,11 +94,14 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" guid="ea6d2cd5-0263-4602-960d-644c49ab4975">
           <ecom:webQuery name="allSurgOper" nativeSql="select so.id
-          ,so.operationDate as sooperationDate,so.operationTime as soperationTime,vo.name as voname
+          ,so.operationDate as sooperationDate
+          ,so.operationTime as soperationTime
+          ,coalesce(ms.code,vo.code,'')||' '||coalesce(ms.name,vo.name) as voname
           , case when parent.DTYPE='HospitalMedCase' then 'Приемное отделение' when parent.DTYPE='DepartmentMedCase' then d.name else '' end as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           from SurgicalOperation as so 
           left join VocOperation vo on vo.id=so.operation_id 
+          left join MedService ms on ms.id=so.medService_id
           left join medcase parent on parent.id=so.medcase_id 
           left join MisLpu d on d.id=parent.department_id 
           left join WorkFunction wf on wf.id=so.surgeon_id
@@ -105,7 +114,8 @@
           "/>
     <msh:tableNotEmpty name="allSurgOper">
 	    <msh:section title="Просмотр всех хир.операций по СЛС, включая все СЛО">
-	    	<msh:table name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
+	    	<msh:table name="allSurgOper" 
+	    	action="entityParentView-stac_surOperation.do" idField="1">
 	    		<msh:tableColumn columnName="#" property="sn"/>
 	    		<msh:tableColumn columnName="Отделение" property="5"/>
 	    		<msh:tableColumn columnName="Дата" property="2"/>

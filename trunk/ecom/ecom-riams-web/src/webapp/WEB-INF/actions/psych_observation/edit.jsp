@@ -13,6 +13,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="careCard" />
+      <msh:hidden property="lpuAreaPsychCareCard" />
       <msh:panel>
         <msh:row>
         	<msh:textField property="startDate" label="Дата начала"/>
@@ -36,5 +37,7 @@
       <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_observation" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Edit" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_observation" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Delete"  />
     </msh:sideMenu>
+
   </tiles:put>
+
 </tiles:insert>

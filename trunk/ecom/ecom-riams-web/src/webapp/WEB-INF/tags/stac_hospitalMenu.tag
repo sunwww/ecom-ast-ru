@@ -48,6 +48,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	action="/javascript:gotoPregHistory('${param.id}','.do')" name="История родов" 
     	title="История родов" roles="/Policy/Mis/Pregnancy/History/View" styleId="preg_pregHistory" />
     	--%>
+        <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/View" 
     	name="Милиция" params="id"  
     	action='/entityParentList-stac_criminalMessages' title='Сообщения в милицию'
@@ -98,7 +100,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="stac_slo"
     	/>
 
-            <msh:sideLink styleId="stac_protocol" params="id" action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"/>
+    <msh:sideLink styleId="stac_protocol" params="id" action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"/>
+    
 </msh:sideMenu>
 
 
@@ -120,13 +123,17 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	name="Печать стат.карты выбывшего из стационара" params="id"  
     	action='/print-066.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
     	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066All" 
+    	name="Печать стат.карты выбывшего из стационара" params="id"  
+    	action='/print-066_all.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
+    	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard033" 
     	name="Печать истории болезни и стат.карты выбывшего из стационара" params="id"  
     	action='/print-003.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать выписки" params="id"  
-    	action='/print-discharge.do?m=printBilling&s=HospitalPrintService' title='Печать выписки'
+    	action='/print-discharge_hospital.do?m=printBilling&s=HospitalPrintService' title='Печать выписки'
     	/>
      <mis:sideLinkForWoman roles="" classByObject="MedCase" id="${param.id}"
      	action="/print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC" 
@@ -180,8 +187,16 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete">
-		<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
+		
 		<script type="text/javascript">
+		  function viewOtherVisitsByPatient(d) {
+			  //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
+			  
+			  getDefinition("js-smo_visit-infoShortByPatient.do?id="+$('patient').value, null); 
+		  }
+		  function viewOtherDiagnosisByPatient(d) {
+			  getDefinition("js-smo_diagnosis-infoShortByPatient.do?id="+$('patient').value, null);
+		  }
   		function deleteDischarge(aId) {
   			HospitalMedCaseService.deleteDischarge(
      		'${param.id}', {

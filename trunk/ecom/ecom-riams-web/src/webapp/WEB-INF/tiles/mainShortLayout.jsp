@@ -9,7 +9,7 @@
 
 <html:html xhtml="true" locale="true">
  <head>
-   <title>ЭкоМ: МИС</title>
+   <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
 	

@@ -11,6 +11,10 @@ function findDirections(aForm, aCtx) {
 function findDirectionByUsername(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/smo_direction/listByUsername.jsp") ;
 }
-
-
+function preRecorded(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_direction/pre-recorded1.jsp") ;
+}
+function preRecordedMany(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_direction/pre-recorded-many.jsp") ;
+}
  

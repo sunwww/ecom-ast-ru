@@ -16,6 +16,18 @@
   <tiles:put name="body" type="string">
     <msh:form action="/journal_surOperation.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="1">  свод по датам
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="2">  свод по хирургам и операциям
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="3">  реестр
+        </td>
+      </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -31,16 +43,18 @@
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
-    
+    String dateEnd = (String)request.getParameter("dateEnd") ;
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+    request.setAttribute("dateEnd", dateEnd) ;
     if (date!=null && !date.equals("")) {
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска за период с ${param.dateBegin} по ${dateEnd}.</msh:sectionTitle>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="select operationDate, count(id) from SurgicalOperation where 
-    operationDate  between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')  group by operationDate " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_surOperation" nativeSql="select to_char(operationDate,'dd.mm.yyyy'), count(id) from SurgicalOperation where 
+    operationDate  between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')  group by operationDate " />
     <msh:table name="journal_surOperation" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Количество операций" identificator="false" property="2" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -48,17 +62,21 @@
     </msh:sectionContent>
     <msh:sectionTitle>Разбивка по хирургам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select so.operationDate||':'||so.surgeon_id||':'||so.operation_id,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename, vo.name,count(*) from SurgicalOperation so
+    <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
+    '${param.dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.operation_id as id
+    ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
+    , vo.name as voname,count(*) as cnt 
+    from SurgicalOperation so
 left join vocoperation vo on vo.id=so.operation_id
 left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
 left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-where so.operationDate between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')
-group by so.operationDate,so.surgeon_id,so.operation_id
-,so.surgeon_id,vo.name 
+where so.operationDate between to_date('${param.dateBegin}','dd.mm.yyyy') 
+and to_date('${dateEnd}','dd.mm.yyyy')
+group by so.surgeon_id,so.operation_id,vo.name 
 ,vwf.name,p.lastname, p.firstname, p.middlename
-order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -67,11 +85,12 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
     </msh:sectionContent>    
     <msh:sectionTitle>Реестр хирургических операций</msh:sectionTitle>
     <msh:sectionContent>
-	    <ecom:webQuery name="journal_surOperation1" nativeSql="select so.id
-	    ,to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'), vo.name as voname,
-	    (select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id )
-	    ,p.lastname||' '||p.firstname||' '||p.middlename ||' гр '||to_char(p.birthday,'DD.MM.YYYY'),
-	    (select list(' '||vam.name|| ' '|| a.duration||' мин '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) 
+	    <ecom:webQuery name="journal_surOperation1" nativeSql="select so.id as id
+	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(so.operationDate,'DD.MM.YYYY')) as operDate
+	    , vo.name as voname
+	    ,(select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id ) as surgOper 
+	    ,p.lastname||' '||p.firstname||' '||p.middlename ||' гр '||to_char(p.birthday,'DD.MM.YYYY') as patientInfo,
+	    (select list(' '||vam.name|| ' '|| a.duration||' мин '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) as aneth 
 	    from Anesthesia a
 	    left join VocAnesthesiaMethod vam on vam.id=a.method_id
 	    left join WorkFunction wf on wf.id=a.anesthesist_id
@@ -93,7 +112,10 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
 	      left join Patient p on p.id=so.patient_id
 	      left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 	      left join VocOperation vo on vo.id=so.operation_id
-	       where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	       where operationDate 
+	        between to_date('${param.dateBegin}','dd.mm.yyyy')
+	          and to_date('${dateEnd}','dd.mm.yyyy')  
+	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" action="entityView-stac_surOperation.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
@@ -109,28 +131,6 @@ order by p.lastname,p.firstname,p.middlename    " guid="4a720225-8d94-4b47-bef3-
     <% } else {%>
     	<i>Нет данных </i>
     	<% }   %>
-    <%--
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
-    <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
-    <script type='text/javascript'>
     
-			 Calendar.setup({
-				 inputField : "dateBegin", // id of the input field
-				 ifFormat : "%Y-%m-%d", // format of the input field
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus"
-			 });
-			 Calendar.setup({
-				 inputField : "dateEnd",
-				 ifFormat : "%Y-%m-%d",
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus"
- 			});
-    </script>
-     --%>
   </tiles:put>
 </tiles:insert>

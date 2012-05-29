@@ -41,7 +41,7 @@
     left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
     where  d.patient_id=${param.id} 
     order by d.establishDate" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
-    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="list" action="entityView-mis_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
       <msh:tableColumn columnName="ПО" property="7" />
       <msh:tableColumn columnName="Дата установления" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />

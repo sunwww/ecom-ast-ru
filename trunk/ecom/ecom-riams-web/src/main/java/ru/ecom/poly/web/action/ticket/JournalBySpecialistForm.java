@@ -65,6 +65,28 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 		theServiceStream = aServiceStream;
 	}
 
+	/** Место обслуживания */
+	@Comment("Место обслуживания")
+	public Long getWorkPlaceType() {return theWorkPlaceType;}
+	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;}
+	
+	/** Внешний направитель */
+	@Comment("Внешний направитель")
+	public Long getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Направитель */
+	@Comment("Направитель")
+	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
+	public void setOrderWorkFunction(Long aOrderWorkFunction) {theOrderWorkFunction = aOrderWorkFunction;}
+
+	/** Направитель */
+	private Long theOrderWorkFunction;
+	/** Внешний направитель */
+	private Long theOrderLpu;
+
+	/** Место обслуживания */
+	private Long theWorkPlaceType;
 	/** Поток обслуживания */
 	private Long theServiceStream;
 	/** ЛПУ */
@@ -85,5 +107,14 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 	private Long thePrimaryInYear;
 	/** Специалист */
 	private Long theSpecialist;
+	
+	/** Направитель */
+	@Comment("Направитель")
+	public Long getOrderFunction() {return theOrderFunction;}
+	public void setOrderFunction(Long aOrderFunction) {theOrderFunction = aOrderFunction;}
 
+
+	/** Направитель */
+	private Long theOrderFunction;
+	
 }

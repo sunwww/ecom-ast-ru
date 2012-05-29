@@ -24,16 +24,25 @@
     		<span id='${name}FindPatientByFondText'/>
     	</msh:row>
     </msh:panel>
+    	<msh:row>
+    		<msh:separator label="Обновить данные" colSpan="8"/>
+    	</msh:row>
+    	<msh:row>
+    		<msh:checkBox property="is${name}Patient" label="Пациент"/>
+    		<msh:checkBox property="is${name}Policy" label="Полис"/>
+    		<msh:checkBox property="is${name}Document" label="Документы"/>
+    		<msh:checkBox property="is${name}Address" label="Адрес"/>
+    	</msh:row>
         <msh:row>
-            <td colspan="6" align="center">
+            <td colspan="8" align="center">
           <!--       <input type="button" value='Создать нового пациента' onclick='javascript:next${name}FindPatientByFond()'/> 
           -->
-                <input type="button" value='Выделить все' 
-                onclick='javascript:checkedAll${name}FindPatientByFond(true)'/>
+ <!--                <input type="button" value='Выделить все' 
+                onclick='javascript:checkedAll${name}FindPatientByFond(true)'/> 
                 <input type="button" value='Отменить выделение' 
-                onclick='javascript:checkedAll${name}FindPatientByFond(false)'/>
-                <input type="button" value='Обновить данные пациента' 
-                onclick='javascript:update${name}FindPatientByFond()'/>
+                onclick='javascript:checkedAll${name}FindPatientByFond(false)'/>  -->
+                <input type="button" value='Обновить данные' 
+                onclick='javascript:update${name}FindPatientByFond()' id="button${name}Update"/>
                 <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FindPatientByFond()'/>
             </td>
         </msh:row>
@@ -42,21 +51,55 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
+
 <script type="text/javascript"><!--
      var theIs${name}FindPatientByFondInitialized = false ;
      var the${name}FindPatientByFond = new msh.widget.Dialog($('${name}FindPatientByFond')) ;
      // Показать
-     function show${name}FindPatientByFond(aText) {
+     function show${name}FindPatientByFond(aText,aError) {
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}FindPatientByFondInitialized) {
          	init${name}FindPatientByFond() ;
           }
-         $('${name}FindPatientByFondText').innerHTML = aText ;
+         if (aError) {
+             $('${name}FindPatientByFondText').innerHTML = "<b color='red'>ОШИБКА:"+aText+"</b>" ;
+         } else {
+             if (aText!=null) {
+                 $('${name}FindPatientByFondText').innerHTML = aText ;
+                 try {var frm = document.forms['frmFond'] ;
+        		 if (getCheckedCheckBox(frm,"fondPolicy","&")!='') {
+        			 $('is${name}Policy').checked=true ;
+        		 } else {
+        			 $('is${name}Policy').checked=false ;
+        		 }
+                 }catch(e) {
+                	 
+                 }
+                 PatientButtonView(1) ;
+             } else {
+                 $('${name}FindPatientByFondText').innerHTML = "ДАННЫЕ ПО ПАЦИЕНТУ НЕ НАЙДЕНЫ" ;
+             }
+         }
          the${name}FindPatientByFond.show() ;
 
      }
-
+     function patientcheck(param) {
+    	 if (param=='patient') {
+    		 $('is${name}Patient').checked=true ;
+    	 } else {if (param=='address') {
+    		 $('is${name}Address').checked=true ;
+    	 } else {if (param=='document') {
+    		 $('is${name}Document').checked=true ;
+    	 } else {if (param=='policy') {
+    		 var frm = document.forms['frmFond'] ;
+    		 if (getCheckedCheckBox(frm,"fondPolicy","&")!='') {
+    			 $('is${name}Policy').checked=true ;
+    		 } else {
+    			 $('is${name}Policy').checked=false ;
+    		 }
+    		 
+    	 }}}}
+     }
      // Отмена
      function update${name}FindPatientByFond() {
         var frm = document.forms['frmFond'] ;
@@ -67,6 +110,8 @@
 		if(+$('id').value>0) {
 			PatientService.updateDataByFond(
 		     		$('id').value,fondFiodr,fondDocument,fondPolicy,fondAdr
+		     		,$('is${name}Patient').checked,$('is${name}Policy').checked
+		     		,$('is${name}Document').checked,$('is${name}Address').checked
 		     		 ,{
 		                   callback: function(aString) {
 		                      alert("Данные обновлены") ;
@@ -82,6 +127,7 @@
 				$('middlename').value=fiodr[2] ;
 				$('birthday').value=fiodr[3] ;
 				if (fiodr[4]!=null) $('snils').value=fiodr[4] ;
+				if (fiodr[5]!=null) $('commonNumber').value=fiodr[5] ;
 			}
 			var passType = "" ;
 			var address = "" ;
@@ -94,6 +140,33 @@
 				$('passportDateIssued').value=doc[3] ;
 				$('passportWhomIssued').value=doc[4] ;
 			}
+			var policyInfo = "";
+			if (fondPolicy!="") {
+				$('attachedByPolicy').checked =true ;
+				$('createNewOmcPolicy').checked=true ;
+				checkAttachedByPolicyOmc() ;
+				onCreateNewOmcPolicyWithFocus() ;
+				var pol = fondPolicy.split("&") ;
+				var ind = 0 ;
+				var policy="";
+				if (pol.length==1) {
+					policy = pol[ind].split("#") ;
+				} else {
+					for (var i=0;i<pol.length;i++) {
+						policy = pol[i].split("#") ;
+						if (+policy[6]==1) break ;
+						
+					}
+				}
+				
+				$('policyOmcForm.commonNumber').value = policy[5];
+				$('policyOmcForm.series').value = policy[1];
+				$('policyOmcForm.polNumber').value = policy[2];
+				$('policyOmcForm.actualDateFrom').value = policy[3];
+				$('policyOmcForm.actualDateTo').value = policy[4];
+				policyInfo=policy[0]+"#"+policy[1] ;
+				//alert(fondPolicy) ;
+			}
 			if (fondAdr!="") {
 				var adr = fondAdr.split("#") ;
 				//$('address').value=adr[0] ;//
@@ -103,8 +176,9 @@
 				//$('rayon').value=adr[4] ;//
 				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6] ;
 				//alert(address);
-				PatientService.getInfoVocForFond(
-					passType,address,{
+			} 
+			PatientService.getInfoVocForFond(
+					passType,address,policyInfo,{
 						callback: function(aResult) {
 							var res = aResult.split('#') ;
 							if (res[0]!="") {
@@ -122,16 +196,31 @@
 								}
 								
 							}
+							if (res[5]&&res[5]!=null) {
+								$('policyOmcForm.company').value=res[5] ;
+								$('policyOmcForm.companyName').value=res[6] ;
+							}
+							if (res[7]&&res[7]!=null) {
+								$('policyOmcForm.type').value=res[7] ;
+								$('policyOmcForm.typeName').value=res[8] ;
+							}
+							$('sexName').focus() ;
+							$('sexName').select() ;
 							cancel${name}FindPatientByFond() ;
 						}
 					}
 				);
-			} else {
-				cancel${name}FindPatientByFond() ;
-			}
+
 			
 			
 		}
+     }
+     function ${name}ButtonView(aView) {
+    	 if (+aView>0) {
+    		 $('button${name}Update').style.display='' ;
+    	 } else {
+    		 $('button${name}Update').style.display='none' ;
+    	 }
      }
      // Отмена
      function cancel${name}FindPatientByFond() {

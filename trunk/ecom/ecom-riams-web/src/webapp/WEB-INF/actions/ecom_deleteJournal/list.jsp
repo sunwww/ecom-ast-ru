@@ -18,6 +18,7 @@
             <msh:tableColumn property="deleteTime" columnName="Время	"/>
             <msh:tableColumn property="loginName" columnName="Пользователь"/>
             <msh:tableColumn property="className" columnName="Объект"/>
+            <msh:tableColumn property="serialization" columnName="Описание"/>
         </msh:table>
     </tiles:put>
 </tiles:insert>

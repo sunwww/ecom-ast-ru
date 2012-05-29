@@ -44,7 +44,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}RWDialogInitialized = false ;
      var the${name}RWDialog = new msh.widget.Dialog($('${name}RWDialog')) ;

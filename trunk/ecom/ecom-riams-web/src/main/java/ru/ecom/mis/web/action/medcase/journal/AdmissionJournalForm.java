@@ -1,9 +1,12 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
+import javax.persistence.UniqueConstraint;
+
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
@@ -114,4 +117,69 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	 * Новое свойство
 	 */
 	private Long thePigeonHole;
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	public Long getServiceStream() {
+		return theServiceStream;
+	}
+
+	public void setServiceStream(Long aServiceStream) {
+		theServiceStream = aServiceStream;
+	}
+
+	/** Поток обслуживания */
+	private Long theServiceStream;
+	
+	/** Приоритет */
+	@Comment("Приоритет")
+	public Long getPriority() {
+		return thePriority;
+	}
+
+	public void setPriority(Long aPriority) {
+		thePriority = aPriority;
+	}
+
+	/** Приоритет */
+	private Long thePriority;
+	
+	/** Тип регистрации */
+	@Comment("Тип регистрации")
+	public Long getRegistrationType() {
+		return theRegistrationType;
+	}
+
+	public void setRegistrationType(Long aRegistrationType) {
+		theRegistrationType = aRegistrationType;
+	}
+
+	/** Тип регистрации */
+	private Long theRegistrationType;
+	
+	/** Тип коек */
+	@Comment("Тип коек")
+	public Long getBedSubType() {
+		return theBedSubType;
+	}
+
+	public void setBedSubType(Long aBedSubType) {
+		theBedSubType = aBedSubType;
+	}
+
+	/** Тип коек */
+	private Long theBedSubType;
+	/** Фильтр */
+	@Comment("Фильтр")
+	@DoUpperCase
+	public String getFilterAdd() {
+		return theFilterAdd;
+	}
+
+	public void setFilterAdd(String aFilterAdd) {
+		theFilterAdd = aFilterAdd;
+	}
+
+	/** Фильтр */
+	private String theFilterAdd;
 }

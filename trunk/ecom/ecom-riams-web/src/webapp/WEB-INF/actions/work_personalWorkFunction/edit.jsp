@@ -27,8 +27,16 @@
         <msh:row guid="39f80ce0-5e25-41b9-a530-d406d84bfc00">
           <msh:autoComplete viewAction="userView.do" vocName="secUser" property="secUser" label="Вход в систему" guid="8754e635-11ce-4c73-b398-4479988fd60d" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="32b9f690-c7a7-4814-98b9-10d0c72029e5">
-          <msh:checkBox property="archival" label="Архив" guid="85aa5ac4-8e41-4557-846e-8eca235fd031" />
+        <msh:row>
+          <msh:textField property="registrationInterval" label="Интервал регистр." horizontalFill="true"/>
+          <msh:checkBox property="archival" label="Архив" />
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isSurgical" label="Оперирующий"/>
+        	<msh:checkBox property="isInstrumentNurse" label="Опер.сестра"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isAdministrator" label="Начальник"/>
         </msh:row>
         <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
         	<msh:row>
@@ -74,6 +82,7 @@
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-work_personalWorkFunction" name="Изменить" roles="/Policy/Mis/Worker/WorkFunction/Create" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-work_personalWorkFunction" name="Удалить" roles="/Policy/Mis/Worker/WorkFunction/Delete" />
         <msh:sideLink action="/javascript:generationCalendar('.do')"  name="Генерировать" roles="/Policy/Mis/Worker/WorkCalendar/View" />
+        <msh:sideLink action="/javascript:createSecUser('.do')"  name="Добавить пользователя" roles="/Policy/Jaas/SecUser/Create" styleId="createSecUser"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="53f4a828-71f4-4c29-a2e8-fd61ff083187">
         <msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_workCalendar" name="Календарь" title="Добавить календарь" guid="2f18fed4-7259-479a-97df-ff073fc4569d" />
@@ -98,6 +107,10 @@
 						}
      			 }	) ;
   			}
+  	      	 function createSecUser() {
+  	      		window.location = 'entityPrepareCreate-secuser.do?workFunction='+$('id').value+"&tmp="+Math.random() ;
+  	      	 }
+  	      	if (+$('secUser').value>0) $('createSecUser').style.display='none' ;
   		</script>
   	</msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="work_personalWorkFunctionForm" guid="eca3ffa2-a4a5-44ff-a97c-1d18b8cbe521">
@@ -105,13 +118,16 @@
       	workFunctionAutocomplete.addOnChangeCallback(function() {
       	 	updateGroup() ;
       	 });
+      	
       	 function updateGroup() {
       	 	groupAutocomplete.setParentId(getWorkerAndFunction()) ;
       	 	groupAutocomplete.setVocId('');
       	 }
       	 function getWorkerAndFunction() {
       	 	return $('workFunction').value+"#"+$('worker').value ;
-      	 }</script>
+      	 }
+
+      	 </script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>

@@ -150,48 +150,62 @@
       <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/View" guid="f950bd96-a00b-4497-ad74-61fa7a713004">
       <td>
         <msh:section title="Движение по участку." createRoles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Create" createUrl="entityParentPrepareCreate-psych_lpuAreaPsychCareCard.do?id=${param.id}"
-        listUrl="entityParentList-psych_lpuAreaPsychCareCard.do?id=${param.id}"
         >
-          <msh:sectionContent guid="bed88479-5b63-4d93-98a9-ee37dde8ce22">
+          
             <ecom:webQuery name="lpuAreas" nativeSql="select pl.id as plid,pl.startDate as plStartDate
-            ,pl.finishDate as plFinishDate ,la.number as laname
-            ,(select list(isnull(vpdg.name,isnull(vpac.name,' '))) 
+            ,coalesce(pl.finishDate,pl.transferDate) as plFinishDate ,la.number as laname
+            ,(select list(coalesce(to_char(po.startDate,'dd.mm.yyyy'),'')||' '||isnull(vpdg.name,isnull(vpac.name,' '))) 
             	from PsychiaticObservation po  
             	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
             	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
-            	where po.careCard_id=pl.careCard_id and po.startDate>=pl.startDate 
-            	and ( pl.finishDate is null or po.startDate<pl.finishDate)
-            ) from LpuAreaPsychCareCard pl  
+            	where po.careCard_id=pl.careCard_id and po.lpuAreaPsychCareCard_id=pl.id
+            ),vpor.name as vporname,vptr.name as vptrname
+            ,vpsor.name as vpsorname from LpuAreaPsychCareCard pl  
             left join LpuArea la on la.id=pl.lpuArea_id 
+            left join VocPsychObservationReason vpor on vpor.id=pl.observationReason_id
+            left join VocPsychTransferReason vptr on vptr.id=pl.transferReason_id
+            left join VocPsychStrikeOffReason vpsor on vpsor.id=pl.stikeOffReason_id
             where pl.careCard_id='${param.id}' order by pl.startDate
             "/>
+            <msh:tableEmpty name="lpuAreas">
+            	<a href="js-psych_careCard-createComissia.do?id=${param.id}">Создать данные по комиссии</a>
+            </msh:tableEmpty>
             <msh:table name="lpuAreas" idField="1" action="entityParentView-psych_lpuAreaPsychCareCard.do">
-              <msh:tableColumn property="2" columnName="Дата взятия"/>
-              <msh:tableColumn property="3" columnName="Дата снятия"/>
               <msh:tableColumn property="4" columnName="Участок"/>
               <msh:tableColumn property="5" columnName="Наблюдения"/>
+              <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="6" columnName="Причина взятия"/>
+              <msh:tableColumn property="3" columnName="Дата снятия (перевода)"/>
+              <msh:tableColumn property="7" columnName="Причина перевода"/>
+              <msh:tableColumn property="8" columnName="Причина снятия"/>
             </msh:table>
-          </msh:sectionContent>
+          
         </msh:section>
+     </td>
+     <td valign="top">
+     	<msh:section  title="Дин. наблюдения (АДН+АПЛ)"
+     	createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" 
+     	createUrl="entityParentPrepareCreate-psych_careobservation.do?id=${param.id}"
+     	>
+     	<ecom:webQuery name="dinObservation" nativeSql="select po.id as poid
+     		,to_char(po.startDate,'dd.mm.yyyy') as stratDate
+     		,to_char(po.finishDate,'dd.mm.yyyy') as finishDate
+     		,vpdg.name as vpdgname,vpac.name as vpacname
+            	from PsychiaticObservation po  
+            	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
+            	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
+            	where po.careCard_id=${param.id} and po.lpuAreaPsychCareCard_id is null
+           "/>
+           <msh:table name="dinObservation" idField="1" action="entityParentView-psych_careobservation.do">
+              <msh:tableColumn property="4" columnName="Наблюдение"/>
+              <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="3" columnName="Дата снятия (перевода)"/>
+            </msh:table>
+     	</msh:section>
      </td>
       </msh:ifInRole>
       
-      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View" guid="be0c3268-8280-4e65-b73a-e5933fea4741">
-      <td>
-        <msh:section title="Динамика наблюдений." createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" createUrl="entityParentPrepareCreate-psych_observation.do?id=${param.id}"
-        listUrl="entityParentList-psych_observation.do?id=${param.id}">
-          <msh:sectionContent guid="252153e1-1c93-469a-8184-4d61f6fa08e3">
-            <ecom:parentEntityListAll attribute="observations" formName="psych_observationForm" guid="d2316e2f-aafe-44ad-9dda-aa73f1506131" />
-            <msh:table name="observations" idField="id" action="entityParentView-psych_observation.do" guid="c3767948-f614-492c-ba65-560430eb7646">
-              <msh:tableColumn property="startDate" columnName="Дата начала"/>
-              <msh:tableColumn property="finishDate" columnName="Дата окончания"/>
-              <msh:tableColumn property="ambulatoryCareInfo" columnName="Вид наблюдения"/>
-              <msh:tableColumn property="dispensaryGroupInfo" columnName="Группа"/>
-            </msh:table>
-          </msh:sectionContent>
-        </msh:section>
-        </td>
-      </msh:ifInRole>
+
       </tr></table>
     
     <!-- Инвалидность -->

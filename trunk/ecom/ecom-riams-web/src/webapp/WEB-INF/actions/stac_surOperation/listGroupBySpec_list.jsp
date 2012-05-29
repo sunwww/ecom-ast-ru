@@ -66,7 +66,14 @@
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="
-    select  bf.id||':${param.dateBegin}:${param.dateEnd}:${dateT}:${param.typePatient }' , d.name as dname,vbt.name as vbtname,vbst.name as vbstname,count(*),vss.name as vssname,sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',m.dateStart,ifnull(m.dateFinish,m.transferDate,m.DateFinish))),sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',hmc.dateStart,hmc.DateFinish)) 
+    select  bf.id||':${param.dateBegin}:${param.dateEnd}:${dateT}:${param.typePatient }' as id
+    , d.name as dname
+    ,vbt.name as vbtname
+    ,vbst.name as vbstname
+    ,count(*) as cnt
+    ,vss.name as vssname
+    ,sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',m.dateStart,coalesce(m.dateFinish,m.transferDate))) as daysSlo
+    ,sum($$GetBedDays^ZExpCheck('000'|| (case when bf.addCaseDuration=1 then 'J' else 'A' end) || '00',hmc.dateStart,hmc.DateFinish))  as daysSls
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 

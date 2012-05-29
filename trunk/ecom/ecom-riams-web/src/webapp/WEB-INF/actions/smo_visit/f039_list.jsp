@@ -46,6 +46,10 @@
         		horizontalFill="true" fieldColSpan="6" size="70"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="workPlaceType" vocName="vocWorkPlaceType"
+        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        </msh:row>        
+        <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="1">  датам
@@ -66,12 +70,37 @@
         </msh:row>
         <msh:row>
         	<td></td>
-	        <td colspan="3" onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="5">Поток обслуживания  
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="5">Поток обслуж.  
 	        </td>
-
+	        <td colspan="3" onclick="this.childNodes[1].checked='checked';" style="text-align: left">
+	        	<input type="radio" name="typeGroup" value="6">Место обслуж.  
+	        </td>
         </msh:row>
         <msh:row>
+	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="1">  реестр
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView" value="2">  039 форма
+	        </td>
+        </msh:row>
+        <msh:row>
+        	<td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView" value="3"  >  039 форма по месяцам
+	        </td>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="1">  039 bis
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView" value="2">  039 cons
+	        </td>
+        </msh:row>        <msh:row>
         <td colspan="3" class="buttons">
 			<input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_f039_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 			<input type="button" title="Печать" onclick="this.value=&quot;Печать&quot;; getId(0);this.form.action=&quot;print-f039.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">
@@ -96,37 +125,37 @@ ${queryTextBegin}
 ,count(*) as cntAll
 ,count(case when (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil
 ,count(case when 
-	(to_date(to_char(t.dateStart,'dd.mm')||'.'
+	(to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) 
 	then 1 else null end) as cntAll17
 ,count(case when 
-	(to_date(to_char(t.dateStart,'dd.mm')||'.'
+	(to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntAll60
 ,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllnessAll
 ,count(case when vr.code='ILLNESS' 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnes17
 ,count(case when vr.code='ILLNESS' and 
-	(to_date(to_char(t.dateStart,'dd.mm')||'.'
+	(to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntIllnes60
 ,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProfAll
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHomeAll
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnesHome17
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-2),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnesHome01
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) 
 	then 1 else null end) as cntIllnesHome60
 ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntProfHome17
 ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(to_char(t.dateStart,'dd.mm')||'.'
+	and (to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-2),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntProfHome01
 ,count(case when (vss.code='OBLIGATORYINSURANCE') then 1 else null end) as cntOMC
 ,count(case when (vss.code='BUDGET') then 1 else null end) as cntBudget
@@ -181,6 +210,7 @@ ${queryTextEnd}
  			+":"+$('workFunction').value
  			+":"+$('lpu').value
  			+":"+$('serviceStream').value
+ 			+":"+$('workPlaceType').value
  			+":0";
 		//aSpecialist, aWorkFunction, aLpu, aServiceStream
 		//aGroupBy, aStartDate, aFinishDate

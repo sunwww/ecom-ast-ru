@@ -10,8 +10,8 @@
 	  request.setAttribute("dopCareCard","") ;
 	  request.setAttribute("addParam",".do?ispat=1") ;
   }else {
-	  request.setAttribute("queryDop","pcc.patient_id=(select patient_id from PsychiatricCareCard where id='"+request.getParameter("id")+"')");
-	  request.setAttribute("form","psych_careCardForm");
+	  request.setAttribute("queryDop","po.lpuAreaPsychCareCard_id='"+request.getParameter("id")+"' ");
+	  request.setAttribute("form","psych_lpuAreaPsychCareCardForm");
 	  request.setAttribute("dopCareCard","Redirect") ;
 	  request.setAttribute("addParam","") ;
   }

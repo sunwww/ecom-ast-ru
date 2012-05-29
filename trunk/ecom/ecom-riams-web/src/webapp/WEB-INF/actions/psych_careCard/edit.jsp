@@ -49,6 +49,9 @@
           <msh:checkBox property="firstTimeDiseased" label="Впервые в жизни заболевший" guid="fc6dda3a-0acb-48de-ae14-dcc5bffbc022" />
           <msh:checkBox property="convictionsBeforeCare" label="Судимость до обращения к психиатру" guid="88e32876-cbd9-40e8-9d05-1caf9ac40188" />
         </msh:row>
+        <msh:row>
+        	<msh:checkBox property="updateDates" label="Обновлять даты по дате начала заболевания" fieldColSpan="3"/>
+        </msh:row>
         <msh:row guid="4be2b2b2-ba15-4738-beb4-9ec9920b3b3c">
           <msh:textField property="illnessStartDate" label="Дата начала заболевания" guid="cbf2bfdc-af29-4314-8c17-f8a9983a7ccc" />
           <msh:textField property="firstPsychiatricVisitDate" label="Дата 1 обращ. к психиатру" guid="f764c785-7925-4fe9-9fad-4b8f605198a8" />
@@ -73,6 +76,10 @@
         </msh:row>
         <msh:row guid="5fbeb0ef-1d87-407f-9c0c-a73ffbefca51">
           <msh:textArea property="notes" label="Примечание" fieldColSpan="4" guid="4f7a1064-703f-4bd2-b6d4-e1fa029e8adc" />
+        </msh:row>
+        <msh:row guid="24ce0983-813b-4cc4-a329-f7487c49b66c">
+          <msh:textField viewOnlyField="true" property="dateRegistration" label="Дата регистрации" horizontalFill="true" size="10" guid="e4905c10-14f2-471f-a07a-9d3119230614" />
+          <msh:textField viewOnlyField="true" property="registrator" label="Регистратор" horizontalFill="true" size="10" guid="e4905c10-14f2-471f-a07a-9d3119230614" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="3" guid="b2bee8d9-b811-4475-bd13-16b678d5a2dd" />
       </msh:panel>
@@ -131,7 +138,7 @@
 		    left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
 		    where  cc.id=${param.id} 
 		    group by d.idc10_id,d.priority_id order by d.establishDate" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
-		    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+		    <msh:table name="list" action="entityView-mis_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 		      <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
 		      <msh:tableColumn columnName="ПО" property="8" />
 		      <msh:tableColumn columnName="1 раз регистр." property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
@@ -150,48 +157,62 @@
       <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/View" guid="f950bd96-a00b-4497-ad74-61fa7a713004">
       <td>
         <msh:section title="Движение по участку." createRoles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Create" createUrl="entityParentPrepareCreate-psych_lpuAreaPsychCareCard.do?id=${param.id}"
-        listUrl="entityParentList-psych_lpuAreaPsychCareCard.do?id=${param.id}"
         >
-          <msh:sectionContent guid="bed88479-5b63-4d93-98a9-ee37dde8ce22">
+          
             <ecom:webQuery name="lpuAreas" nativeSql="select pl.id as plid,pl.startDate as plStartDate
-            ,pl.finishDate as plFinishDate ,la.number as laname
-            ,(select list(isnull(vpdg.name,isnull(vpac.name,' '))) 
+            ,coalesce(pl.finishDate,pl.transferDate) as plFinishDate ,la.number as laname
+            ,(select list(coalesce(to_char(po.startDate,'dd.mm.yyyy'),'')||' '||isnull(vpdg.name,isnull(vpac.name,' '))) 
             	from PsychiaticObservation po  
             	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
             	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
-            	where po.careCard_id=pl.careCard_id and po.startDate>=pl.startDate 
-            	and ( pl.finishDate is null or po.startDate<pl.finishDate)
-            ) from LpuAreaPsychCareCard pl  
+            	where po.careCard_id=pl.careCard_id and po.lpuAreaPsychCareCard_id=pl.id
+            ),vpor.name as vporname,vptr.name as vptrname
+            ,vpsor.name as vpsorname from LpuAreaPsychCareCard pl  
             left join LpuArea la on la.id=pl.lpuArea_id 
+            left join VocPsychObservationReason vpor on vpor.id=pl.observationReason_id
+            left join VocPsychTransferReason vptr on vptr.id=pl.transferReason_id
+            left join VocPsychStrikeOffReason vpsor on vpsor.id=pl.stikeOffReason_id
             where pl.careCard_id='${param.id}' order by pl.startDate
             "/>
+            <msh:tableEmpty name="lpuAreas">
+            	<a href="js-psych_careCard-createComissia.do?id=${param.id}">Создать данные по комиссии</a>
+            </msh:tableEmpty>
             <msh:table name="lpuAreas" idField="1" action="entityParentView-psych_lpuAreaPsychCareCard.do">
-              <msh:tableColumn property="2" columnName="Дата взятия"/>
-              <msh:tableColumn property="3" columnName="Дата снятия"/>
               <msh:tableColumn property="4" columnName="Участок"/>
               <msh:tableColumn property="5" columnName="Наблюдения"/>
+              <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="6" columnName="Причина взятия"/>
+              <msh:tableColumn property="3" columnName="Дата снятия (перевода)"/>
+              <msh:tableColumn property="7" columnName="Причина перевода"/>
+              <msh:tableColumn property="8" columnName="Причина снятия"/>
             </msh:table>
-          </msh:sectionContent>
+          
         </msh:section>
+     </td>
+     <td valign="top">
+     	<msh:section  title="Дин. наблюдения (АДН+АПЛ)"
+     	createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" 
+     	createUrl="entityParentPrepareCreate-psych_careobservation.do?id=${param.id}"
+     	>
+     	<ecom:webQuery name="dinObservation" nativeSql="select po.id as poid
+     		,to_char(po.startDate,'dd.mm.yyyy') as stratDate
+     		,to_char(po.finishDate,'dd.mm.yyyy') as finishDate
+     		,vpdg.name as vpdgname,vpac.name as vpacname
+            	from PsychiaticObservation po  
+            	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
+            	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
+            	where po.careCard_id=${param.id} and po.lpuAreaPsychCareCard_id is null
+           "/>
+           <msh:table name="dinObservation" idField="1" action="entityParentView-psych_careobservation.do">
+              <msh:tableColumn property="4" columnName="Наблюдение"/>
+              <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="3" columnName="Дата снятия (перевода)"/>
+            </msh:table>
+     	</msh:section>
      </td>
       </msh:ifInRole>
       
-      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View" guid="be0c3268-8280-4e65-b73a-e5933fea4741">
-      <td>
-        <msh:section title="Динамика наблюдений." createRoles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Create" createUrl="entityParentPrepareCreate-psych_observation.do?id=${param.id}"
-        listUrl="entityParentList-psych_observation.do?id=${param.id}">
-          <msh:sectionContent guid="252153e1-1c93-469a-8184-4d61f6fa08e3">
-            <ecom:parentEntityListAll attribute="observations" formName="psych_observationForm" guid="d2316e2f-aafe-44ad-9dda-aa73f1506131" />
-            <msh:table name="observations" idField="id" action="entityParentView-psych_observation.do" guid="c3767948-f614-492c-ba65-560430eb7646">
-              <msh:tableColumn property="startDate" columnName="Дата начала"/>
-              <msh:tableColumn property="finishDate" columnName="Дата окончания"/>
-              <msh:tableColumn property="ambulatoryCareInfo" columnName="Вид наблюдения"/>
-              <msh:tableColumn property="dispensaryGroupInfo" columnName="Группа"/>
-            </msh:table>
-          </msh:sectionContent>
-        </msh:section>
-        </td>
-      </msh:ifInRole>
+
       </tr></table>
     
     <!-- Инвалидность -->
@@ -200,20 +221,21 @@
    			<msh:sectionTitle>Инвалидности по психическому заболеванию
    			</msh:sectionTitle>
    			<msh:sectionContent>
-	    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.revisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate, viwp.name as viwpname from invalidity i left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code is null or mkb.code like 'F%' )" name="invalidities"/>
+	    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.lastRevisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid
+	    		,i.incapable,i.nextRevisionDate, viwp.name as viwpname,i.withoutExam from invalidity i left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code is null or mkb.code like 'F%' )" name="invalidities"/>
 	    		<msh:table name="invalidities" action="entityParentView-mis_invalidity.do" idField="1">
 	    			<msh:tableColumn property="sn" columnName="#"/>
 	    			<msh:tableColumn property="6" columnName="Группа инвалидности"/>
 	    			<msh:tableColumn property="2" columnName="Дата постановки (впервые)"/>
 	    			<msh:tableColumn property="3" columnName="Дата установления"/>
-	    			<msh:tableColumn property="4" columnName="Дата пересмотра"/>
+	    			<msh:tableColumn property="4" columnName="Дата посл. пересмотра"/>
 	    			<msh:tableColumn property="11" columnName="Дата след. пересмотра"/>
-	    			<msh:tableColumn property="12" columnName="Вид места работы"/>
+	    			<msh:tableColumn property="13" columnName="Без переосв."/>
+	    			<msh:tableColumn property="5" columnName="Дата снятия (с учета)"/>
 	    			<msh:tableColumn property="7" columnName="Диагноз"/>
 	    			<msh:tableColumn property="8" columnName="Инвалид с детства"/>
 	    			<msh:tableColumn property="9" columnName="Инвалид ВОВ"/>
-	    			<msh:tableColumn property="10" columnName="Трудоспособен"/>
-	    			<msh:tableColumn property="5" columnName="Дата снятия (с учета)"/>
+	    			<msh:tableColumn property="10" columnName="Недеесп."/>
 	    		</msh:table>
    			</msh:sectionContent>
    		</msh:section>
@@ -257,19 +279,19 @@
             select ct.id,ct.orderNumber,ct.registrationDate,ct.decisionDate,vlc.name as vlcname
             	,vcca.name as vccaname
             	,vpct.name as vkname 
-            	,to_char(COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))-cast(ct.decisionDate as integer),'9 999')
+            	,to_char(COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))-cast(ct.decisionDate as integer),'9 999') as day1 
             	,to_char(
             		COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))
             		-(select min(cast(ct1.decisionDate as integer))  from CompulsoryTreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.orderNumber=ct.orderNumber)
             	
-            	,'9 999')
-            	 ,vpctR.code as vpctRcode,ct.dateReplace,vlcR.code as vlcRcode
+            	,'9 999') as day2
+            	 ,vpctdR.name as vpctdRcode,ct.dateReplace as ctdateReplace,vlcR.name as vlcRcode
             from CompulsoryTreatment ct
             left join VocLawCourt vlc on vlc.id=ct.lawCourt_id
             left join VocLawCourt vlcR on vlcR.id=ct.lawCourtReplace_id
             left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
             left join VocPsychCompulsoryTreatment vpct on vpct.id=ct.kind_id
-            left join VocPsychCompulsoryTreatment vpctR on vpctR.id=ct.courtDecisionReplace_id
+            left join vocPsychCourtTreatmentDecision vpctdR on vpctdR.id=ct.courtDecisionReplace_id
             where ct.careCard_id=${param.id} order by ct.decisionDate
             "/>
             <msh:table idField="1" name="compulsoryTreatments" action="entityParentView-psych_compulsoryTreatment.do" guid="d0c8c1bc-8947-483f-a682-bf6cab9fef9f">
@@ -366,6 +388,39 @@
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="psych_careCardForm" guid="786cb94b-6b42-4361-909b-7a230436395e" />
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsCreate formName="psych_careCardForm">
+  	<script type="text/javascript">
+  		$('updateDates').checked = true ;
+  	</script>
+  </msh:ifFormTypeIsCreate>
+	  <msh:ifFormTypeIsNotView formName="psych_careCardForm">
+	  	<script type="text/javascript">
+	  	eventutil.addEventListener($('illnessStartDate'), eventutil.EVENT_KEY_DOWN, 
+	  		  	function() {
+	  		setDates() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('illnessStartDate'), eventutil.EVENT_KEY_UP, 
+	  		  	function() {
+	  		setDates() ;
+	  		  	}) ;
+	  	//eventutil.addEventListener($('illnessStartDate'), "change", 
+	  	//	  	function() {
+	  	//	setDates() ;
+	  	//	  	}) ;
+	  	eventutil.addEventListener($('illnessStartDate'), "blur", 
+	  		  	function() {
+	  		setDates() ;
+	  		  	}) ;
+	  	function setDates() {
+	  		if ($('updateDates').checked) {
+	  			$('firstPsychiatricVisitDate').value = $('illnessStartDate').value ;
+	  			$('startDate').value = $('illnessStartDate').value ;
+	  		}
+	  	}
+	  	</script>
+	  </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 

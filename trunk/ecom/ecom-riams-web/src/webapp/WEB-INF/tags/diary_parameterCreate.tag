@@ -3,9 +3,11 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
-<%@ attribute name="action" required="true" description="Сссылка" %>
+<%@ attribute name="action" required="true" description="Ссылка" %>
 <%@ attribute name="roles" required="true" description="Роли" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
+<%@ attribute name="document" required="true" description="Заголовок" %>
+<%@ attribute name="vocName" required="true" description="Заголовок" %>
 
 <msh:sideLink roles="${roles}" name="${title}" action=" javascript:show${name}CreateType('.do') " />
 
@@ -18,13 +20,14 @@
 </style>
 
 <div id='${name}CreateParameterDialog' class='dialog'>
-    <h2>Выберите тип создаваемого параметра</h2>
+    <h2>Выберите тип создаваемого ${document}</h2>
     <div class='rootPane'>
     
 <form>
     <msh:panel>
         <msh:row>
-        	<msh:autoComplete label="Тип параметра" property="${name}Type"                  vocName="parameterType"    horizontalFill="true" size="50"/>
+        	<msh:autoComplete label="Тип ${document}" property="${name}Type"
+        	     vocName="${vocName}"    horizontalFill="true" size="50"/>
         </msh:row>
     </msh:panel>
         <msh:row>

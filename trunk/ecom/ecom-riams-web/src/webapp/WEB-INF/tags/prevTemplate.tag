@@ -21,7 +21,7 @@
 	            <msh:row>
 		        	<msh:autoComplete label="Информация о протоколе" 
 		        		property="${name}PrevProtocol" parentId="${ticket}"                 
-		        		vocName="protocolByPatient"   
+		        		vocName="protocolTicketByPatient"   
 		        		fieldColSpan="5" horizontalFill="true"/>
 		        </msh:row>
 		        <msh:row>

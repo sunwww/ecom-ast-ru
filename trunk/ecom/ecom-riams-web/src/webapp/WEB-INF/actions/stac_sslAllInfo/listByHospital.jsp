@@ -55,6 +55,7 @@
  count(m.id) as all from medcase m where m.dtype='HospitalMedCase' and m.${dateSearch} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  and ( m.noActuality is null or cast(m.noActuality as integer)=0)
 
 group by m.${dateSearch}
+order by m.${dateSearch}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" action="js-stac_sslAllInfo-findByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">

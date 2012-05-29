@@ -13,7 +13,7 @@ function updateEndDate(aForm, aCtx) {
 function updateWorkFunction(aForm, aCtx) {
 	var ids=Packages.ru.ecom.jaas.web.action.JaasUtil.convertToString(aCtx.request.getParameterValues("ids"));
 	var id=aCtx.request.getParameter("id") ;
-	aCtx.invokeScript("VocService", "updateWorkFunctionByMedService", ids,aCtx.request.getParameter("workFunction"),aCtx.request.getParameter("action"));
+	aCtx.invokeScript("VocService", "updateWorkFunctionByMedService", ids,aCtx.request.getParameter("workFunction"),aCtx.request.getParameter("lpu"),aCtx.request.getParameter("action"));
 	return aCtx.createForward("/entityParentView-mis_medService.do?id="+id) ;
 }
 function deleteMedService(aForm, aCtx) {

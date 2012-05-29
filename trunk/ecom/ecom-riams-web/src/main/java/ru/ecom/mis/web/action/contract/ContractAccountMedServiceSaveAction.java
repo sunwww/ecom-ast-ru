@@ -22,8 +22,10 @@ public class ContractAccountMedServiceSaveAction extends BaseAction {
 		String idS ;
 		idS = aRequest.getParameter("id");
 		int cntRec = Integer.valueOf(aRequest.getParameter("cnt"));
+		System.out.println("----cnt="+ cntRec) ;
 		Long account = ConvertSql.parseLong(idS) ;
 		for(int i=1; i<=cntRec;i++){
+			Long oldid = ConvertSql.parseLong(aRequest.getParameter("oldid"+i));
 			String price = aRequest.getParameter("cost"+i) ;
 			BigDecimal cost = new BigDecimal(price);
 			Integer cnt = Integer.valueOf(aRequest.getParameter("count"+i)) ;
@@ -31,8 +33,9 @@ public class ContractAccountMedServiceSaveAction extends BaseAction {
 			if(cnt!=null && cnt>Long.valueOf(0) 
 					&&priceMedService!=null && priceMedService>Long.valueOf(0)
 					)  {
+				System.out.println("---oldid="+oldid) ;
 				System.out.println("---add account="+account+"----service="+ priceMedService+"----cnt="+ cnt+"---cost="+ cost) ;
-				service.addMedServiceByAccount(account, priceMedService, cnt, cost) ;
+				service.addMedServiceByAccount(account, priceMedService, cnt, cost, oldid) ;
 			}
 		}
 		

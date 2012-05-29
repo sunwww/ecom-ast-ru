@@ -89,11 +89,13 @@
 										                         var executed,planned,workCalendarDayId ;
 										                         var pos=aString2.indexOf("#") ;
 										                         var pos1=aString2.indexOf("#",pos+1) ;
+										                         var pos2=aString2.indexOf("#",pos1+1) ;
 										                        
 										                         workCalendarDayId = aString2.substr(0,pos);
 										                         
 										                         executed = aString2.substring(pos+1,pos1);
-										                         planned =aString2.substring(pos1+1);
+										                         planned =aString2.substring(pos1+1,pos2);
+										                         prerecord =aString2.substring(pos2+1);
 										                         
 											                     if (+workCalendarDayId==0) {
 											                        $('workCalendarComment${name}').innerHTML="На <b>"+ 
@@ -103,7 +105,8 @@
 												                      info = 
 													                      "Дата:<b> "+the${name}Date+"</b><br>"
 												                          +"Кол-во  направленных пациентов:<b> "+planned+"</b><br>"
-													                      +"Кол-во принятых пациентов:<b> "+executed+"</b>"
+													                      +"Кол-во принятых пациентов:<b> "+executed+"</b><br>"
+													                      +"Кол-во пред.направленных пациентов:<b>"+prerecord+"</b>"
 													                      //+"ИД<br>"+workCalendarDayId
 													                      ;
 											                     	 $('workCalendarComment${name}').innerHTML=info ;

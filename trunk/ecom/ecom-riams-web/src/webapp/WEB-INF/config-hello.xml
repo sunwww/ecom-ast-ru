@@ -8,6 +8,7 @@
     
 
     <form-bean name="smo_diagnosisForm" type="ru.ecom.mis.ejb.form.medcase.DiagnosisForm" />
+    <form-bean name="mis_diagnosisForm" type="ru.ecom.mis.ejb.form.patient.DiagnosisForm" />
     <form-bean name="cal_workFunctionForm" type="ru.ecom.ejb.form.hello.HelloForm" />
     <form-bean name="test_testForm" type="ru.ecom.mis.ejb.form.diet.TestForm" />
     <form-bean name="des_destinationForm" type="ru.ecom.ejb.form.hello.HelloForm" />
@@ -61,23 +62,14 @@
     <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
     <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
     
-    <form-bean name="smo_visitProtocolForm" type="ru.ecom.poly.ejb.form.protocol.VisitProtocolForm" />
     
-    <form-bean name="mis_workerNewForm" type="ru.ecom.ejb.form.hello.HelloForm" />
     <!-- <form-bean name="work_awardForm" type="$$map$$work_awardForm" />  -->
     <form-bean name="work_staffForm" type="$$map$$work_staffForm" />
     <form-bean name="work_staffUnitForm" type="$$map$$work_staffUnitForm" />
-    <form-bean name="work_workBookRecordForm" type="$$map$$work_workBookRecordForm" />
-    <form-bean name="rec_specialistForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="rec_dateForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="rec_timeForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="rec_recordingForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="rec_myRecordsForm" type="ru.ecom.ejb.form.hello.HelloForm" />
 
     <form-bean name="mis_mortalityReportDateForm" type="ru.ecom.mis.ejb.form.mortality.MortalityReportDateForm" />
     <form-bean name="mis_birthReportDateForm" type="ru.ecom.mis.ejb.form.birth.BirthReportDateForm" />
     <form-bean name="mis_lpuFond" type="$$map$$mis_lpuFondForm" />
-    <form-bean name="mis_testForm" type="$$map$$mis_testForm" />
     
     <form-bean name="dis_searchForm" type="ru.ecom.mis.web.action.disability.DisabilitySearchForm"/>
   </form-beans>

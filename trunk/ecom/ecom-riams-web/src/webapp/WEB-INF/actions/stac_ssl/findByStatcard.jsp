@@ -53,7 +53,10 @@
             			left join Patient p on p.id=m.patient_id
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
-            			where ss.dtype='StatisticStubExist' and ss.code like '%${param.number}%' ${onlyYearS}"
+            			where ss.dtype='StatisticStubExist' 
+            			and ss.code like '%${param.number}%' ${onlyYearS}
+            			
+            			"
             	/>
                 <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
 				      <msh:tableColumn columnName="Год" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
