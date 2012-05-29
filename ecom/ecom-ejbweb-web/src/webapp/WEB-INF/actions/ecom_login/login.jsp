@@ -6,7 +6,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru-RU" xml:lang="ru-RU">
 <head>
-    <title>Эком: МИC</title>
+    <title>МедОС</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 
     <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
@@ -15,7 +15,7 @@
 
 <body>
 <div id='header'>
-    <h1>Эком: МИC</h1>
+    <h1>МедОС</h1>
     <a href="#1">
         <img src='/skin/images/main/logo-75x50.jpg' width='75' height="50"
              alt='На главную' title='Переход на основную страницу'/>
@@ -84,7 +84,7 @@
 <div id="footer">
     <a id='1' href='#2'></a>
 
-    <div id='copyright'>&copy; ООО КДЦ "ЭкоМ" (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )</div>
+    <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )</div>
 </div>
 
     <script type="text/javascript">
