@@ -2135,7 +2135,7 @@ if(size==11){
 _205.value=_205.value+" ";
 }else{
 if(size>14){
-_205.value=_205.value.substring(0,14);
+_205.value=_205.value.trim().substring(0,14);
 }
 }
 }
@@ -2773,6 +2773,9 @@ this.setVocId(_2b5.value);
 this.setParentId=function(_2bc){
 _2b9=_2bc;
 };
+this.getParentId=function(){
+return _2b9;
+};
 this.setUrl=function(aUrl){
 _2b0=aUrl;
 this.setVocId(_2b5.value);
@@ -3054,6 +3057,9 @@ _2da.setUrl(aUrl);
 };
 this.setParentId=function(_2e6){
 _2da.setParentId(_2e6);
+};
+this.getParentId=function(){
+return _2da.getParentId();
 };
 this.setParent=function(_2e7){
 _2dd=_2e7;

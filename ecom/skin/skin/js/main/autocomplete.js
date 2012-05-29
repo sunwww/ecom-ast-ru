@@ -291,7 +291,10 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
     }
 
     this.setParentId = function(aParentId) {
-        theParentId = aParentId ;
+    	theParentId = aParentId ;
+    }
+    this.getParentId = function() {
+        return theParentId  ;
     }
 
     this.setUrl = function(aUrl) {
@@ -666,7 +669,10 @@ msh_autocomplete.Autocomplete = function() {
     }
 
     this.setParentId = function(aParentId) {
-        theAction.setParentId(aParentId) ;
+    	theAction.setParentId(aParentId) ;
+    }
+    this.getParentId = function() {
+        return theAction.getParentId() ;
     }
 
     this.setParent = function(aParent) {
