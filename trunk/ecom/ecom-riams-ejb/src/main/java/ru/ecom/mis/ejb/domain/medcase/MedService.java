@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -120,13 +119,8 @@ public class MedService extends BaseEntity{
 	/** Рабочие функции */
 	@Comment("Рабочие функции")
 	@OneToMany(mappedBy="medService", cascade=CascadeType.ALL)
-	public List<WorkFunctionService> getWorkFunctionServices() {
-		return theWorkFunctionServices;
-	}
-
-	public void setWorkFunctionServices(List<WorkFunctionService> aWorkFunctionServices) {
-		theWorkFunctionServices = aWorkFunctionServices;
-	}
+	public List<WorkFunctionService> getWorkFunctionServices() {return theWorkFunctionServices;}
+	public void setWorkFunctionServices(List<WorkFunctionService> aWorkFunctionServices) {	theWorkFunctionServices = aWorkFunctionServices;}
 
 	/** Рабочие функции */
 	private List<WorkFunctionService> theWorkFunctionServices;
@@ -151,5 +145,35 @@ public class MedService extends BaseEntity{
 	/** Справочная услуга */
 	private VocMedService theVocMedService;
 	
+	/** Уровонь сложности */
+	@Comment("Уровонь сложности")
+	public Long getComplexity() {return theComplexity;}
+	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
+	/** Уровонь сложности */
+	private Long theComplexity;
+	
+	/** Поликлиническая услуга */
+	@Comment("Поликлиническая услуга")
+	public Boolean getIsPoliclinic() {return theIsPoliclinic;}
+	public void setIsPoliclinic(Boolean aIsPoliclinic) {theIsPoliclinic = aIsPoliclinic;}
+
+	/** Поликлиническая услуга */
+	private Boolean theIsPoliclinic;
+	
+	/** Круглосуточный стационар */
+	@Comment("Круглосуточный стационар")
+	public Boolean getIsHospital() {return theIsHospital;}
+	public void setIsHospital(Boolean aHospital) {theIsHospital = aHospital;}
+
+	/** Круглосуточный стационар */
+	private Boolean theIsHospital;
+	
+	/** Дневной стационар */
+	@Comment("Дневной стационар")
+	public Boolean getIsDayHospital() {return theIsDayHospital;}
+	public void setIsDayHospital(Boolean aIsDayHospital) {theIsDayHospital = aIsDayHospital;}
+
+	/** Дневной стационар */
+	private Boolean theIsDayHospital;
 
 }

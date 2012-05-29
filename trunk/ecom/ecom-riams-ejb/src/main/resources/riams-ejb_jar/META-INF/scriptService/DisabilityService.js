@@ -4,6 +4,7 @@ function printNoActuality(aCtx, aParams) {
 	var typeDate = aParams.get("typeDate") ;
 	var beginDateR = aParams.get("beginDate") ;
 	var endDateR = aParams.get("endDate") ;
+
 	var noActuality = aParams.get("noActuality") ;
 	var closeReason = aParams.get("closeReason") ;
 	var primarity = aParams.get("primarity") ;
@@ -13,7 +14,11 @@ function printNoActuality(aCtx, aParams) {
 	var sqlReason = "" ;
 	if (+disabilityReason>0) {sqlReason = sqlReason+" and dd.disabilityReason_id="+disabilityReason ;}
 	if (+closeReason>0) {sqlReason = sqlReason+" and dd.closeReason_id="+closeReason ;}
-    if (+primarity>0) { sqlReason= " and dd.primarity_id="+primarity ;} 
+	if (+primarity>0) { sqlReason= sqlReason+" and dd.primarity_id="+primarity ;}
+	var typeLpu = aParams.get("typeLpu") ;
+	if (+typeLpu==1) { sqlReason= sqlReason+" and dd.anotherLpu_id is null" ;}
+    if (+typeLpu==2) { sqlReason= sqlReason+" and dd.anotherLpu_id is not null" ;}
+    
 	var status ="";
 	if (typeDocument!=null && typeDocument=="1") {
     	status="cast(dd.isclose as int) =1 and " ;
@@ -22,18 +27,27 @@ function printNoActuality(aCtx, aParams) {
     } 
 	var dateGroup ;
 	if (typeDate!=null && typeDate=="1") {
-    	dateGroup="(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
-    } else if (typeDate!=null&&typeDate=="2") {
-    	dateGroup="(select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
+		dateGroup="(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
+	} else if (typeDate!=null&&typeDate=="2") {
+		dateGroup="(select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
+	} else {
+		dateGroup="dd.issueDate" ;
+	}
+	var orderBy = aParams.get("orderBy") ;
+	var order  ;
+	if (orderBy!=null && orderBy=="1") {
+		order="dd.number" ;
+    } else if (orderBy!=null&&orderBy=="2") {
+    	order="dd.issueDate,dd.number" ;
     } else {
-    	dateGroup="dd.issueDate" ;
+    	order="p.lastname,p.firstname,p.middlename,dd.number" ;
     }
 	//var statusNoActuality="cast(dd.noActuality as int) =1 and " ;
-    var beginDate = Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(beginDateR) ;
+    var beginDate =beginDateR ;
     
     var endDate = beginDate ;
     if (endDateR!=null && !endDateR.equals("")) {
-    	endDate = Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(endDateR)  ;
+    	endDate = endDateR  ;
     }
     var sql = "select dd.id as ddid,to_char(dd.issueDate,'dd.MM.yyyy') as date1"
        +" ,dd.number as dnumber,dd.hospitalizedNumber as ddhosnumber"
@@ -51,7 +65,9 @@ function printNoActuality(aCtx, aParams) {
 		+" left join vocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id "
         +" 	where "+status+" "
         //+statusNoActuality
-        +" "+ dateGroup +" between cast('"+beginDate+"' as date) and cast('"+endDate+"' as date) "+sqlReason+" and mdd.id is not null order by "+dateGroup+",dd.number " ;
+        +" "+ dateGroup +" between to_date('"+beginDate+"','dd.mm.yyyy') and to_date('"
+        +endDate+"' ,'dd.mm.yyyy') "+sqlReason+" and mdd.id is not null order by "
+        +order ;
     //throw sql ;
     var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
     var listR = new java.util.ArrayList() ;
@@ -98,7 +114,10 @@ function printJournal(aCtx, aParams) {
 	var sqlReason = "" ;
 	if (+disabilityReason>0) {sqlReason = sqlReason+" and dd.disabilityReason_id="+disabilityReason ;}
 	if (+closeReason>0) {sqlReason = sqlReason+" and dd.closeReason_id="+closeReason ;}
-    if (+primarity>0) { sqlReason= " and dd.primarity_id="+primarity ;} 
+    if (+primarity>0) { sqlReason= sqlReason+" and dd.primarity_id="+primarity ;} 
+	var typeLpu = aParams.get("typeLpu") ;
+	if (+typeLpu==1) { sqlReason= sqlReason+" and dd.anotherLpu_id is null" ;}
+    if (+typeLpu==2) { sqlReason= sqlReason+" and dd.anotherLpu_id is not null" ;}
     var status="" ;
 	if (typeDocument!=null && typeDocument=="1") {
     	status="cast(dd.isclose as int) =1 and " ;
@@ -126,6 +145,15 @@ function printJournal(aCtx, aParams) {
     if (endDateR!=null && !endDateR.equals("")) {
     	endDate = Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(endDateR)  ;
     }
+	var orderBy = aParams.get("orderBy") ;
+	var order  ;
+	if (orderBy!=null && orderBy=="1") {
+		order="dd.number" ;
+    } else if (orderBy!=null&&orderBy=="2") {
+    	order="dd.issueDate,dd.number" ;
+    } else {
+    	order="p.lastname,p.firstname,p.middlename,dd.number" ;
+    }
     var sql = "select dd.id as ddid,to_char(dd.issueDate,'dd.MM.yyyy') as date1"
        +" ,dd.number as ddnumber,dd.hospitalizedNumber as ddhosnumber"
        +" ,p.lastname||' '||p.firstname||' '||p.middlename as pat"
@@ -140,7 +168,7 @@ function printJournal(aCtx, aParams) {
 		+" left join vocidc10 mkbP on mkbP.id=dd.idc10_id"
 		+" left join vocidc10 mkbF on mkbF.id=dd.idc10Final_id"
 		+" left join vocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id "
-        +" 	where "+status+" "+statusNoActuality+" "+ dateGroup +" between cast('"+beginDate+"' as date) and cast('"+endDate+"' as date) "+sqlReason+" order by "+dateGroup+" " ;
+        +" 	where "+status+" "+statusNoActuality+" "+ dateGroup +" between cast('"+beginDate+"' as date) and cast('"+endDate+"' as date) "+sqlReason+" order by "+order+" " ;
     
     var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
     var listR = new java.util.ArrayList() ;

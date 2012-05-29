@@ -53,6 +53,18 @@ public class WorkCalendarTimeInterval extends WorkCalendarTimePattern{
 	public void setVisitTime(Integer aVisitTime) {
 		theVisitTime = aVisitTime;
 	}
+	/** Кол-во визитов */
+	@Comment("Кол-во визитов")
+	public Integer getCountVisits() {
+		return theCountVisits;
+	}
+
+	public void setCountVisits(Integer aCountVisits) {
+		theCountVisits = aCountVisits;
+	}
+
+	/** Кол-во визитов */
+	private Integer theCountVisits;
 	/**
 	 * Среднее время на визит
 	 */

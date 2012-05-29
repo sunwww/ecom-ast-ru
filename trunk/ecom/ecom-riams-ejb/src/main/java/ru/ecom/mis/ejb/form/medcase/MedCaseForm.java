@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase;
 
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -60,12 +59,6 @@ public class MedCaseForm extends IdEntityForm {
 	@Persist
 	public Long getParent() {return theParent;}
 	public void setParent(Long aNewProperty) {theParent = aNewProperty;}
-
-	/** Тип СМО */
-	@Comment("Тип СМО")
-	@Persist
-	public Long getMedCaseType() {return theMedCaseType;}
-	public void setMedCaseType(Long aNewProperty) {theMedCaseType = aNewProperty;}
 
 	/** Недействительность */
 	@Comment("Недействительность")
@@ -196,6 +189,27 @@ public class MedCaseForm extends IdEntityForm {
 	public Integer getChildbirthAmount() {return theChildbirthAmount;}
 	public void setChildbirthAmount(Integer aChildbirthAmount) {theChildbirthAmount = aChildbirthAmount;}
 
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+
+	/** Пользователь последний, изменявший запись */
+	@Comment("Пользователь последний, изменявший запись")
+	@Persist
+	public String getEditUsername() {
+		return theEditUsername;
+	}
+
+	public void setEditUsername(String aEditUsername) {
+		theEditUsername = aEditUsername;
+	}
+
+	/** Пользователь последний, изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private String theEditDate;
 	/** Количество родов */
 	private Integer theChildbirthAmount;
 	/** Какая по счету беременность */
@@ -240,8 +254,6 @@ public class MedCaseForm extends IdEntityForm {
 	private Long theStartWorker;
 	/** Недействительность */
 	private Boolean theNoActuality;
-	/** Тип СМО */
-	private Long theMedCaseType;
 	/** Родительский СМО */
 	private Long theParent;
 	/** Дата начала */
@@ -268,4 +280,19 @@ public class MedCaseForm extends IdEntityForm {
 
 	/** Гостиничная услуга */
 	private Boolean theHotelServices;
+	
+	/** Дефект */
+	@Comment("Дефект")
+	@Persist
+	public Long getMedCaseDefect() {
+		return theMedCaseDefect;
+	}
+
+	public void setMedCaseDefect(Long aMedCaseDefect) {
+		theMedCaseDefect = aMedCaseDefect;
+	}
+
+	/** Дефект */
+	private Long theMedCaseDefect;
 }
+

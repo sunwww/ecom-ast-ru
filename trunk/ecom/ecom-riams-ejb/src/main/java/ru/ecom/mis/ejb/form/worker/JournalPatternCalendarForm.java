@@ -23,7 +23,7 @@ public class JournalPatternCalendarForm extends IdEntityForm {
 
 	/** Шаблон календаря */
 	@Comment("Шаблон календаря")
-	@Persist @Required
+	@Persist 
 	public Long getPattern() {return thePattern;}
 	public void setPattern(Long aPattern) {thePattern = aPattern;}
 
@@ -69,5 +69,19 @@ public class JournalPatternCalendarForm extends IdEntityForm {
 	private String theDateFrom;
 	/** Шаблон календаря */
 	private Long thePattern;
-
+	/**
+	 * Тип занятости
+	 */
+	@Comment("Тип занятости")
+	@Persist @Required
+	public Long getWorkBusy() {
+		return theWorkBusy;
+	}
+	public void setWorkBusy(Long aWorkBusy) {
+		theWorkBusy = aWorkBusy;
+	}
+	/**
+	 * Тип занятости
+	 */
+	private Long theWorkBusy;
 }

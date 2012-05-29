@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
@@ -17,6 +20,7 @@ import ru.nuzmsh.util.format.DateFormat;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "insuranceCompanyCode" },table="MedPolicy") })
 public class MedPolicyOmcForeign extends MedPolicy{
 	/** Город Страховщика */
 	@Comment("Город Страховщика")
@@ -86,5 +90,20 @@ public class MedPolicyOmcForeign extends MedPolicy{
 	private OmcKodTer theInsuranceCompanyRegion;
 	/** Город Страховщика */
 	private String theInsuranceCompanyCity;
+	
+	/** ОГРН страховщика */
+	@Comment("ОГРН страховщика")
+	public String getInsuranceCompanyOgrn() {return theInsuranceCompanyOgrn;}
+	public void setInsuranceCompanyOgrn(String aInsuranceCompanyOgrn) {theInsuranceCompanyOgrn = aInsuranceCompanyOgrn;}
+
+	/** ОГРН страховщика */
+	private String theInsuranceCompanyOgrn;
+	
+	@Transient
+	public String getOgrn() {
+		if (theInsuranceCompanyCode!=null) return theInsuranceCompanyCode.getCode() ;
+		if (getCompany()!=null) return getCompany().getOgrn() ;
+		return "" ;
+	}
 
 }

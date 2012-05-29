@@ -17,6 +17,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
 import sun.awt.windows.ThemeReader;
@@ -27,7 +28,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
-		DischargeMedCaseForm form=(DischargeMedCaseForm)aForm ;
+		HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
 		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
 		
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;

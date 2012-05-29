@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.licence.Document;
 import ru.ecom.mis.ejb.domain.patient.Patient;
@@ -24,6 +26,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Льгота")
 @Table(schema="SQLUser")
+@AIndexes(
+	@AIndex(properties={"person"})
+)
 public class Privilege extends BaseEntity {
 	
 	/** Категория льготников */
@@ -81,12 +86,20 @@ public class Privilege extends BaseEntity {
 	@Transient
 	public String getInfo() {
 		StringBuilder ret = new StringBuilder() ;
-		if (thePrivilegeCode!=null) ret.append(thePrivilegeCode.getName()) ;
+		if (thePrivilegeCode!=null) ret.append(thePrivilegeCode.getCode()).append(". ").append(thePrivilegeCode.getName()) ;
 		if (theDocument!=null) {
 			ret.append(theDocument.getSeriaDoc()).append(" ").append(theDocument.getNumberDoc()) ;
 		}
 		return ret.toString() ;
 	}
+	
+	/** Отказ от льготы */
+	@Comment("Отказ от льготы")
+	public Boolean getTakeover() {return theTakeover;}
+	public void setTakeover(Boolean aTakeover) {theTakeover = aTakeover;}
+
+	/** Отказ от льготы */
+	private Boolean theTakeover;
 	
 	/** Код льготы */
 	private VocPrivilegeCode thePrivilegeCode;

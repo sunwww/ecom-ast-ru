@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
 
 import ru.ecom.address.ejb.domain.address.Address;
@@ -54,6 +55,7 @@ import ru.nuzmsh.util.format.DateFormat;
  */
 @Stateless
 @Remote(IHospitalMedCaseService.class)
+@SecurityDomain("other")
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
@@ -159,12 +161,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	if (aDateFinish==null || aDateFinish.equals("")) {
     		aDateFinish = "CURRENT_DATE";
     	} else {
-    		aDateFinish = new StringBuilder().append("convert(DATE,'").append(aDateFinish).append("',104)").toString();
+    		aDateFinish = new StringBuilder().append("to_date('").append(aDateFinish).append("','dd.mm.yyyy')").toString();
     	}
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select TO_DATE(operationDate,'DD.MM.YYYY'),convert(varchar(5),operationTime,114),convert(varchar(5),operationTimeTo,114),vo.name as voname from SurgicalOperation so left join VocOperation vo on vo.id=so.operation_id where so.patient_id='")
+    	sql.append("select to_char(operationDate,'DD.MM.YYYY') as operDate1,cast(operationTime as varchar(5)) as timeFrom,cast(operationTimeTo as varchar(5)) as timeTo,vo.name as voname from SurgicalOperation so left join VocOperation vo on vo.id=so.operation_id where so.patient_id='")
     		.append(aPatient)
-    		.append("' and so.operationDate between convert(DATE,'").append(aDateStart).append("',104) and ").append(aDateFinish).append(" order by so.operationDate") ;
+    		.append("' and so.operationDate between to_date('").append(aDateStart).append("','dd.mm.yyyy') and ").append(aDateFinish).append(" order by so.operationDate") ;
     	List<Object[]> opers = theManager.createNativeQuery(sql.toString()).getResultList() ;
     	StringBuilder res = new StringBuilder() ;
     	for (Object[] obj :opers) {
@@ -312,12 +314,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.append(" left join medcase as p on p.id=so.medcase_id ")
     			.append(" left join mislpu as d on d.id=p.department_id ")
 //    			.append(" left join vocservicestream as vss on vss.id=so.servicestream_id")
-    			.append(" where mc.id=:mcid and so.operation_id=:usl and so.operationDate=:dat") ;
-    	System.out.println("sql="+sql) ;
-    	System.out.println("parentmedcase="+aParentMedCase) ;
-    	System.out.println("suroperation="+aSurOperation) ;
-    	System.out.println("operation="+aOperation) ;
-    	System.out.println("date="+aDate) ;
+    			.append(" where mc.id=:mcid and so.medService_id=:usl and so.operationDate=:dat") ;
+    	//System.out.println("sql="+sql) ;
+    	//System.out.println("parentmedcase="+aParentMedCase) ;
+    	//System.out.println("suroperation="+aSurOperation) ;
+    	//System.out.println("operation="+aOperation) ;
+    	//System.out.println("date="+aDate) ;
     	if (aSurOperation!=null && aSurOperation>0) {
     		sql.append(" and so.id!='").append(aSurOperation).append("'") ;
     	}
@@ -418,7 +420,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     				throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
     			}
     		}
-    		StatisticStubStac.changeStatCardNumber(aMedCase, aNewStatCardNumber, "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber", theManager, theContext);
+    		StatisticStubStac.changeStatCardNumber(aMedCase, aNewStatCardNumber, theManager, theContext);
     	} catch(Exception e) {
     		throw new IllegalArgumentException(e.getMessage());
     	}

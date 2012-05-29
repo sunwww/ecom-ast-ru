@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.domain.lpu;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -400,6 +401,14 @@ public class MisLpu extends BaseEntity {
 	public void setPigeonHole(VocPigeonHole aPigeonHole) {
 		thePigeonHole = aPigeonHole;
 	}
+	
+	/** Интервал разрешенной регистрации */
+	@Comment("Интервал разрешенной регистрации")
+	public Integer getRegistrationInterval() {return theRegistrationInterval;}
+	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
+
+	/** Интервал разрешенной регистрации */
+	private Integer theRegistrationInterval;
 
 	/** Приемное отделение */
 	private VocPigeonHole thePigeonHole;

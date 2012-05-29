@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -22,16 +23,18 @@ public class LpuAllValueVoc implements IAllValue {
 	
 	//@SuppressWarnings("unchecked")
 	public Collection<VocValue> listAll(AllValueContext aContext) {
-		List<MisLpu> lpus = aContext.getEntityManager().createQuery("from MisLpu where parent_id is null order by name").getResultList() ;
+		//List<MisLpu> lpus = aContext.getEntityManager().createQuery("from MisLpu where parent_id is null order by name").getResultList() ;
+		List<Object[]> lpus = aContext.getEntityManager().createNativeQuery("select id,name from MisLpu where parent_id is null order by name").getResultList() ;
 		LinkedList<VocValue> ret = new LinkedList<VocValue>() ;
 		
 		InterceptorContext context = new InterceptorContext(aContext.getEntityManager(), aContext.getSessionContext()) ;
 		
-		for(MisLpu lpu : lpus) {
+		for(Object[] lpu : lpus) {
 			 try {
-				 theSecurity.checkParent("View", lpu.getId(), context) ;
+				 Long id = ConvertSql.parseLong(lpu[0]) ;
+				 theSecurity.checkParent("View", id, context) ;
 				 //aContext.getEntityManager().refresh(lpu);
-				 add(ret, lpu, "",aContext.getEntityManager()) ;
+				 add(ret, id, ""+lpu[1], "",aContext.getEntityManager()) ;
 			 } catch (IllegalStateException e) {
 				 
 			 }
@@ -39,15 +42,16 @@ public class LpuAllValueVoc implements IAllValue {
 		return ret;
 	}
 	
-	private static void add(List<VocValue> aValues, MisLpu aLpu, String aAppend
+	private static void add(List<VocValue> aValues, Long aLpuId, String aLpuName, String aAppend
 			, EntityManager aManager) {
-		String name = aAppend + aLpu.getName() ;
+		String name = aAppend + aLpuName ;
 		//aManager.refresh(aLpu);
-		aValues.add(new VocValue(String.valueOf(aLpu.getId()), name)) ;
+		aValues.add(new VocValue(String.valueOf(aLpuId), name)) ;
 		
-		for(MisLpu lpu : aLpu.getSubdivisions()) {
-			
-			add(aValues, lpu, ".    "+aAppend,aManager) ;
+		List<Object[]> lpus = aManager.createNativeQuery("select id,name from MisLpu where parent_id='"+aLpuId+"' order by name").getResultList() ;
+		for(Object[] lpu : lpus) {
+			Long id = ConvertSql.parseLong(lpu[0]) ;
+			add(aValues, id, ""+lpu[1], ".    "+aAppend,aManager) ;
 			//System.out.println("lpu=     ."+aAppend+lpu.getId()+"--"+lpu.getName()) ;
 		}
 	}

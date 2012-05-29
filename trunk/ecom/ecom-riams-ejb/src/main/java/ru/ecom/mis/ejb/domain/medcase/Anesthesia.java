@@ -13,6 +13,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -45,6 +46,14 @@ public class Anesthesia extends BaseEntity{
 	/** Метод */
 	private VocAnesthesiaMethod theMethod;
 	
+	/** Вид анестезии */
+	@Comment("Вид анестезии")
+	@OneToOne
+	public VocAnesthesia getType() {return theType;}
+	public void setType(VocAnesthesia aType) {theType = aType;}
+
+	/** Вид анестезии */
+	private VocAnesthesia theType;
 	/** Длительность в минутах */
 	@Comment("Длительность в минутах")
 	public Integer getDuration() {

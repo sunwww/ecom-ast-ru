@@ -26,7 +26,7 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseDefect;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
@@ -87,8 +87,8 @@ abstract public class MedCase extends BaseEntity {
 	/** Тип СМО*/
 	@Comment("Тип СМО")
 	@OneToOne
-	public VocMedCaseType getMedCaseType() {return theMedCaseType;}
-	public void setMedCaseType(VocMedCaseType aNewProperty) {theMedCaseType = aNewProperty;}
+	public VocMedCaseDefect getMedCaseDefect() {return theMedCaseDefect;}
+	public void setMedCaseDefect(VocMedCaseDefect aNewProperty) {theMedCaseDefect = aNewProperty;}
 
 	/** Недействительность */
 	@Comment("Недействительность")
@@ -293,6 +293,25 @@ abstract public class MedCase extends BaseEntity {
 	public Boolean getHotelServices() {return theHotelServices;}
 	public void setHotelServices(Boolean aHotelServices) {theHotelServices = aHotelServices;}
 
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+
+	/** Пользователь последний, изменявший запись */
+	@Comment("Пользователь последний, изменявший запись")
+	public String getEditUsername() {
+		return theEditUsername;
+	}
+
+	public void setEditUsername(String aEditUsername) {
+		theEditUsername = aEditUsername;
+	}
+
+	/** Пользователь последний, изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private Date theEditDate;
 	/** Гостиничная услуга */
 	private Boolean theHotelServices;
 	/** Беременность */
@@ -326,7 +345,7 @@ abstract public class MedCase extends BaseEntity {
 	/**Родительский СМО */
 	private MedCase theParent;
 	/**Тип СМО */
-	private VocMedCaseType theMedCaseType;
+	private VocMedCaseDefect theMedCaseDefect;
 	/**Недействительность */
 	private boolean theNoActuality;
 	/** Первый исполнитель*/
@@ -377,4 +396,31 @@ abstract public class MedCase extends BaseEntity {
 
 	/** Осложнение при операции */
 	private Long theComplication;
+	/** Отделение */
+	@Comment("Отделение")
+	@OneToOne
+	public MisLpu getDepartment() {return theDepartment;}
+	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+	/** Отделение (текст) */
+	@Comment("Отделение (текст)")
+	@Transient
+	public String getDepartmentInfo() {
+		return theDepartment!=null? theDepartment.getName():"";
+	}
+	/** Отделение */
+	private MisLpu theDepartment;
+	
+	/** Дата направления */
+	@Comment("Дата направления")
+	public Date getOrderDate() {
+		return theOrderDate;
+	}
+
+	public void setOrderDate(Date aOrderDate) {
+		theOrderDate = aOrderDate;
+	}
+
+
+	/** Дата направления */
+	private Date theOrderDate;
 }

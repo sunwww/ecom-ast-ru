@@ -1,7 +1,24 @@
-function onView(aForm, aMedCase, aCtx) {
+/**
+ * При просмотре
+ */
+function onView(aForm, aEntity, aContext) {
+	/*var view = new Packages.ru.ecom.jaas.ejb.domain.ViewJournal() ;
+	var date = new java.util.Date();
+	view.setIdObject(aEntity.id) ;
+	view.setClassObject("Admission") ;
+	view.setUsername(aContext.sessionContext.callerPrincipal.name) ;
+	view.setViewDate(new java.sql.Date(date.getTime())) ;
+	view.setViewTime(new java.sql.Time(date.getTime())) ;
+	aContext.manager.persist(view) ;
+	*/
 }
 
+
 function onPreCreate(aForm, aCtx) {
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
+
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
+	        , aForm.getDateStart(), aForm.getEntranceTime());
 	onPreSave(aForm,null,aCtx)
     var date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
     var cal = java.util.Calendar.getInstance() ;
@@ -17,6 +34,7 @@ function onPreCreate(aForm, aCtx) {
 	if (ret==true) {
 		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
 	}
+	
 }
 function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
@@ -70,34 +88,52 @@ function onSave(aForm,aEntity,aCtx) {
 		.setParameter("lpu",aForm.lpu)
 		.setParameter("idSLS",aForm.id)
 		.executeUpdate() ;
-
+	var aStatCardNumber = aForm.statCardNumber ;
+	
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
-	var aStatCardNumber = aForm.statCardNumber ;
-	if (aStatCardNumber!=null && aStatCardNumber!="" && (+aForm.id>0)) {
-		var year = aForm.dateStart.substring(6) ;
-		//throw ""+year ;
-		var list = aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist' and medCase_id='"+aForm.id+"'")
-			.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
-		if (list.size()==0) {
-			var alwaysCreate = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
-			if (!alwaysCreate) {
-    			if (aForm.deniedHospitalizating>0) {
-    				throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
-    			}
-    		}
-			Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.id, aStatCardNumber, "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber", aCtx.manager, aCtx.getSessionContext());
-		} else {
-			ret = false ;
+	if (aForm.deniedHospitalizating>0) {} else {
+		var sql = "select m.id, ss.code from MedCase  m "
+			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
+			+" where m.patient_id='"+aForm.patient
+			+"' and m.dateStart=to_date('"+aForm.dateStart+"','dd.mm.yyyy')"
+			+" and m.dtype='HospitalMedCase' and m.department_id='"+aForm.department
+			+"' and m.deniedHospitalizating_id is null " ;
+		if (+aForm.id>0) {
+			sql = sql+" and m.id!='"+aForm.id+"'" ;
+		}	
+			;
+		//throw sql ;
+		var list = aCtx.manager.createNativeQuery(sql)
+	//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
+				.getResultList() ;
+		if (list.size()>0) {
+			var obj = list.get(0) ;
+			throw "Уже оформлена госпитализация за "+aForm.dateStart+" <a href='entitySubclassView-mis_medCase.do?id="+obj[0]+"'>№стат.карты "+obj[1]+"</a>" ;
 		}
-		
 	}
+	if (aEntity!=null) {
+		var date = new java.util.Date() ;
+		aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+		//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+		aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	}
+	if (aForm.dateFinish!=null && aForm.dateFinish!=""
+		  &&aForm.dischargeTime!=null &&aForm.dischargeTime!="") {
+			var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
+			var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
+			if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки "+
+			aForm.dateFinish+" "+aForm.dischargeTime+" должна быть больше, чем дата поступления "+aForm.dateStart+" "
+			+aForm.entranceTime;
+			
+		}
+	
 	//if (ret==true) {
 	//	throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
 	//}
 
-	var stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour") ;
+	var stat=aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateHour) ;
 	var psych=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/IsPsychiatry") ;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	
@@ -131,5 +167,63 @@ function onPreSave(aForm,aEntity, aCtx) {
                throw "При госпитализации пациента нужно указывать отделение и профиль коек!";
            }*/
     }
+    if (aEntity!=null && aEntity.getDeniedHospitalizating()!=null
+    		&&+aForm.getDeniedHospitalizating()==0) {
+    	var statCardNumber = aForm.statCardNumber ;
+    	if (statCardNumber==null || statCardNumber=="") {
+    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
+    		
+    		if (hand) throw "Не указан номер стат. карты" ;
+    	} else{
+    		var year = aForm.getDateStart().substring(6) ;
+    		//throw ""+year ;
+    		var list = aCtx.getManager()
+    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
+    			.setParameter("number", statCardNumber)
+    			.setParameter("year",java.lang.Long.valueOf(year))
+    			.getResultList() ;
+    		
+    		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
+    	}
+    }
+    // Обработка стат. карты
+    /*
+    var stub = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac(aEntity,aCtx.getSessionContext(),aCtx.getManager());
+	
+	var statCardNumber = aForm.getStatCardNumber() ;
+	if (statCardNumber!=null && statCardNumber!="" && (+aForm.getId()>0)) {
+		var year = aForm.getDateStart().substring(6) ;
+		//throw ""+year ;
+		var list = aCtx.getManager()
+				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
+			.setParameter("number", statCardNumber)
+			.setParameter("year",java.lang.Long.valueOf(year))
+			.getResultList() ;
+		
+		if (list.size()==0) {
+			var alwaysCreate = aCtx.getSessionContext()
+				.isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.AlwaysStatCardNumber) ;
+			if (!alwaysCreate) {
+    			if (+aForm.getDeniedHospitalizating()>0) {
+    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
+    				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.removeStatCardNumber(aCtx.getManager(), aCtx.getSessionContext(),aEntity);
+    			} else {
+    				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.getId(), statCardNumber, aCtx.getManager(), aCtx.getSessionContext());
+    			}
+    		} else {
+    			Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.getId(), statCardNumber, aCtx.getManager(), aCtx.getSessionContext());    			
+    		}
+			
+		} else {
+			if (+aForm.getDeniedHospitalizating()==0) {
+				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.createStacCardNumber(aForm.getId(),  aCtx.getManager(), aCtx.getSessionContext());
+			} else {
+				
+				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.removeStatCardNumber(aCtx.getManager(), aCtx.getSessionContext(),aEntity);
+				//throw "remove" ;
+			}
+		}
+		
+	} */
        
 }

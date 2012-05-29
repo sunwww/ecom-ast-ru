@@ -1,6 +1,6 @@
 <vocconfig>
 
-    <voc id='protocolByPatient' type='NativeVocService'>
+    <voc id='protocolTicketByPatient' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" Diary as d "
 		    	parent='t1.id=:parent '
@@ -13,9 +13,32 @@
 		    />
 
     </voc>
+    <voc id='protocolVisitByPatient' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" Diary as d "
+		    	parent='m1.id=:parent '
+		    	nameId="d.id"
+		    	join=" left join MedCase as m on m.id=d.medCase_id 
+		    	left join MedCase m1 on m1.patient_id=m.patient_id
+		    	left join WorkFunction wf on wf.id=m.workFunctionExecute_id
+		    	left join Worker w on w.id=wf.worker_id
+		    	left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+		    	left join Patient p on p.id=w.person_id "
+		    	queryAppend=" d.dtype='Protocol' 
+		    	and m.dtype='Visit' 
+		    	and m1.dtype='Visit' "
+		    	order=""
+		    	queried=" to_char(m.dateStart,'DD.MM.YYYY') like (:query) "
+		    	names = " to_char(m.dateStart,'DD.MM.YYYY')||' '||vwf.name||' '|| p.lastname ||' '|| p.firstname ||' '|| p.middlename "
+		    />
 
-    <voc id='parameterType' type='AllValueHelper'>
-        <IAllValue>ru.ecom.diary.ejb.service.protocol.ParameterTypeValueVoc</IAllValue>
+    </voc>
+
+    <voc id='parameterType' type='XmlFileVocService'>
+        <XmlFileVocService filename="/META-INF/diary/parameter-config.xml"/>
+    </voc>
+    <voc id='documentType' type='XmlFileVocService'>
+        <XmlFileVocService filename="/META-INF/diary/document-polic-config.xml"/>
     </voc>
     
     <voc id='TemplateProtocol' type='EntityVocService'>

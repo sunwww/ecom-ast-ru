@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -157,4 +156,51 @@ public class LpuAreaPsychCareCard extends BaseEntity{
   * Наблюдения
   */
  private List<PsychiaticObservation> theObservations;
+ 
+ /** Дата создания */
+@Comment("Дата создания")
+public Date getCreateDate() {
+	return theCreateDate;
+}
+
+public void setCreateDate(Date aCreateDate) {
+	theCreateDate = aCreateDate;
+}
+/** Дата редактирования */
+@Comment("Дата редактирования")
+public Date getEditDate() {
+	return theEditDate;
+}
+
+public void setEditDate(Date aEditDate) {
+	theEditDate = aEditDate;
+}
+/** Пользователь, создавший запись */
+@Comment("Пользователь, создавший запись")
+public String getCreateUsername() {
+	return theCreateUsername;
+}
+
+public void setCreateUsername(String aCreateUsername) {
+	theCreateUsername = aCreateUsername;
+}
+/** Пользователь, последний редактировавший запись */
+@Comment("Пользователь, последний редактировавший запись")
+public String getEditUsername() {
+	return theEditUsername;
+}
+
+public void setEditUsername(String aEditUsername) {
+	theEditUsername = aEditUsername;
+}
+
+/** Пользователь, последний редактировавший запись */
+private String theEditUsername;
+/** Пользователь, создавший запись */
+private String theCreateUsername;
+
+/** Дата редактирования */
+private Date theEditDate;
+/** Дата создания */
+private Date theCreateDate;
 }

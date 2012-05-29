@@ -1,8 +1,14 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionPreCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -22,6 +28,12 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Направление", nameProperties= "id", view="entityParentView-smo_direction.do")
 @Parent(property="patient", parentForm= PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Direction")
+@AParentPrepareCreateInterceptors(
+		@AParentEntityFormInterceptor(DirectionPreCreateInterceptor.class)
+)
+@AViewInterceptors(
+		@AEntityFormInterceptor(DirectionViewInterceptor.class)
+)
 public class DirectionMedCaseForm extends ShortMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")

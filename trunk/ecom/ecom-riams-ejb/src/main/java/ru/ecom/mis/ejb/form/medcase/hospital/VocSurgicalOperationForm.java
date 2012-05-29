@@ -2,7 +2,10 @@ package ru.ecom.mis.ejb.form.medcase.hospital;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperation;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -42,7 +45,31 @@ public class VocSurgicalOperationForm extends IdEntityForm {
 	@Persist @DateString @DoDateString
 	public String getFinishActualDate() {return theFinishActualDate;}
 	public void setFinishActualDate(String aFinishActualDate) {theFinishActualDate = aFinishActualDate;}
+	/** Уровонь сложности */
+	@Comment("Уровонь сложности")
+	@Persist
+	public Long getComplexity() {return theComplexity;}
+	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
 
+	/** Код федеральный */
+	@Comment("Код федеральный")
+	@Persist
+	public String getCodeF() {return theCodeF;}
+	public void setCodeF(String aCodeF) {theCodeF = aCodeF;}
+
+	/** Отделения */
+	@Comment("Отделения")
+	@Persist @PersistManyToManyOneProperty(collectionGenericType=MisLpu.class)
+	public String getDepartments() {return theDepartments;}
+	public void setDepartments(String aDepartments) {theDepartments = aDepartments;}
+
+	
+	/** Отделения */
+	private String theDepartments;
+	/** Код федеральный */
+	private String theCodeF;
+	/** Уровонь сложности */
+	private Long theComplexity;
 	/** Дата окончания актуальности */
 	private String theFinishActualDate;
 	/** Дата начала актуальности */

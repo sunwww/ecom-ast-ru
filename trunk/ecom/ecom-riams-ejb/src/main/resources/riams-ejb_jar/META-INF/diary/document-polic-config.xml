@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameterconfig>
+    <parameter id='1' type='DischargeDocument' name='Выписка из медицинской карты' 
+    	action='entityParentPrepareCreate-doc_discharge'>
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Краткий анамнез...' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='dischargeDocument'/>
+	</parameter>
+    <parameter id='2' type='DirectionDocument' name='Направление в другое ЛПУ' 
+    	action='entityParentPrepareCreate-doc_direction'>
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Обоснование направления' fieldColSpan='3' required='true'>
+    			<keyword>Необходим дополнительный осмотр...</keyword>
+    		</field>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='directionDocument'/>
+    	
+	</parameter>
+</parameterconfig>

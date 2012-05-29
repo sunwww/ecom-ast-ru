@@ -3,14 +3,11 @@ package ru.ecom.mis.ejb.domain.patient;
 import static javax.persistence.CascadeType.ALL;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostPersist;
@@ -46,7 +43,6 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocResidenceConditions;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
-import ru.ecom.mis.ejb.domain.worker.Award;
 import ru.ecom.mis.ejb.domain.worker.Education;
 import ru.ecom.mis.ejb.domain.worker.LanguageSkill;
 import ru.ecom.mis.ejb.domain.worker.Qualification;
@@ -69,6 +65,8 @@ import ru.nuzmsh.util.format.DateFormat;
    	    @AIndex(unique = false, properties= {"dtype"})
    	  , @AIndex(unique = false, properties= {"patientSync"})
    	    , @AIndex(unique = false, properties= {"snils"})
+   	    , @AIndex(unique = false, properties= {"passportNumber"})
+   	    , @AIndex(unique = false, properties= {"passportSeries"})
    	    , @AIndex(unique = false, properties= {"editDate"})
    	  , @AIndex(unique = false, properties= {"createDate"})
       //, @AIndex(unique = false, properties= {"sex"})
@@ -90,6 +88,13 @@ import ru.nuzmsh.util.format.DateFormat;
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
 public class Patient extends BaseEntity{
+	/** Телефон */
+	@Comment("Телефон")
+	public String getPhone() {return thePhone;}
+	public void setPhone(String aPhone) {thePhone = aPhone;}
+
+	/** Телефон */
+	private String thePhone;
 	
 	/** DTYPE */
 	@Comment("DTYPE")
@@ -516,7 +521,7 @@ public class Patient extends BaseEntity{
     }
     public void setPatientInfo(String aPatientInfo) { }
 
-    @Comment("Информация паспорта")
+    /*@Comment("Информация паспорта")
     @Transient
     public String getPassportInfo() {
         final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.yyyy");
@@ -532,7 +537,7 @@ public class Patient extends BaseEntity{
         sb.append(" ") ;
         addNotEmpty(sb, thePassportWhomIssued) ;
         return sb.toString() ;
-    }
+    }*/
 
     private static void addNotEmpty(StringBuilder aSb, String aValue) {
         if(!StringUtil.isNullOrEmpty(aValue)) {
@@ -905,16 +910,16 @@ public class Patient extends BaseEntity{
 	  * Дееспособный
 	  */
 	 @Comment("Дееспособный")
-	 public Boolean getCapable() {
-	  return theCapable;
+	 public Boolean getIncapable() {
+	  return theIncapable;
 	 }
-	 public void setCapable(Boolean aCapable) {
-	  theCapable = aCapable;
+	 public void setIncapable(Boolean aCapable) {
+	  theIncapable = aCapable;
 	 }
 	 /**
 	  * Дееспособный
 	  */
-	 private Boolean theCapable;
+	 private Boolean theIncapable;
 	 /**
 	  * Дата первого заполнения
 	  */
@@ -1007,4 +1012,12 @@ public class Patient extends BaseEntity{
 
 	/** Справочник по месту рождения */
 	private VocPassportBirthPlace thePassportBirthPlace;
+	
+	/** Единый номер застрахованного */
+	@Comment("Единый номер застрахованного")
+	public String getCommonNumber() {return theCommonNumber;}
+	public void setCommonNumber(String aNumber) {theCommonNumber = aNumber;}
+
+	/** Единый номер застрахованного */
+	private String theCommonNumber;
 }

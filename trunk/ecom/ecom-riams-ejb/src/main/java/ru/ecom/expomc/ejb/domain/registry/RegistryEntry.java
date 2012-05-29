@@ -28,7 +28,7 @@ import ru.nuzmsh.util.StringUtil;
 //        , @AIndex(properties = {"time"})
 //        , @AIndex(name="timePolis", properties={"time", "insuranceCompany", "SPolis", "NPolis"})
 //        })
-
+/*
 @NamedQueries({
 @NamedQuery(name = "registryEntry.byGroupWorking"
         , query = "from RegistryEntry where time=:time and insuranceCompany=:company and sgroup='10'"
@@ -52,6 +52,7 @@ import ru.nuzmsh.util.StringUtil;
         , @NamedQuery(name = "registryEntry.byCompany"
         	, query = "from RegistryEntry where time=:time and insuranceCompany=:company and billNumber=:bill")
         })
+        */
 @Table(schema="SQLUser")
 public class RegistryEntry extends LpuFond implements IImportData, IUrlEditable{
 

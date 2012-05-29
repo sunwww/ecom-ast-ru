@@ -4,6 +4,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.jaas.ejb.form.SecUserForm;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -70,6 +71,30 @@ public class WorkFunctionForm extends IdEntityForm{
 	public String getCode() {return theCode;}
 	public void setCode(String aCode) {theCode = aCode;}
 
+	/** Хирургическая специальность */
+	@Comment("Хирургическая специальность")
+	@Persist
+	public Boolean getIsSurgical() {return theIsSurgical;}
+	public void setIsSurgical(Boolean aIsSurgical) {theIsSurgical = aIsSurgical;}
+
+	/** Администратор */
+	@Comment("Администратор")
+	@Persist
+	public Boolean getIsAdministrator() {return theIsAdministrator;}
+	public void setIsAdministrator(Boolean aAdministrator) {theIsAdministrator = aAdministrator;}
+
+	/** Интервал разрешенной регистрации */
+	@Comment("Интервал разрешенной регистрации")
+	@Persist
+	public Integer getRegistrationInterval() {return theRegistrationInterval;}
+	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
+
+	/** Интервал разрешенной регистрации */
+	private Integer theRegistrationInterval;
+	/** Администратор */
+	private Boolean theIsAdministrator;
+	/** Хирургическая специальность */
+	private Boolean theIsSurgical;
 	/** Код специалиста */
 	private String theCode;
 	/** Поместить в архив? */
@@ -84,4 +109,17 @@ public class WorkFunctionForm extends IdEntityForm{
 	private Long theWorkFunction;    
 	/** ЛПУ */
 	private Long theLpuRegister;
+	/** Операционная сестра */
+	@Comment("Операционная сестра")
+	@Persist
+	public Boolean getIsInstrumentNurse() {
+		return theIsInstrumentNurse;
+	}
+
+	public void setIsInstrumentNurse(Boolean aOperationSister) {
+		theIsInstrumentNurse = aOperationSister;
+	}
+
+	/** Операционная сестра */
+	private Boolean theIsInstrumentNurse;
 }

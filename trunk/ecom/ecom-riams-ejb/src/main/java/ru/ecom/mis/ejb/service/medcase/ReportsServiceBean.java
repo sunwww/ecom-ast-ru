@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
@@ -23,13 +24,15 @@ public class ReportsServiceBean implements IReportsService {
 			title = "Специальность" ;
 		} else if (aGroupBy.equals("5")) {
 			title = "Поток обслуживания" ;
+		} else if (aGroupBy.equals("6")) {
+			title = "Место обслуживания" ;
 		} else {
 			title = "Дата" ;
 		}
 		return title ;
 	}
 	public String getFilter(Boolean aIsTicket, Long aSpecialist
-			, Long aWorkFunction, Long aLpu, Long aServiceStream) {
+			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
@@ -55,10 +58,17 @@ public class ReportsServiceBean implements IReportsService {
 			}
 			//aRequest.setAttribute("serviceStreamInfo", service.getVocServiceStreamByIdInfo(form.getServiceStream())) ;
 		}
+		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
+			if (aIsTicket) {
+				filter.append(" and t.vocServicePlace_id="+aWorkPlaceType) ;
+			} else  {
+				filter.append(" and t.workPlaceType_id="+aWorkPlaceType) ;
+			}
+		}
 		return filter.toString() ;
 	}
 	public String getFilterId(Boolean aIsTicket, Long aSpecialist
-			, Long aWorkFunction, Long aLpu, Long aServiceStream) {
+			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		filter.append("||':'") ;
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
@@ -75,7 +85,15 @@ public class ReportsServiceBean implements IReportsService {
 		filter.append("||':'") ;
 		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
 			//if (aIsTicket) {
-				filter.append("||").append(aServiceStream) ;
+			filter.append("||").append(aServiceStream) ;
+			//} else  {
+			//filter.append("||min(t.serviceStream_id)") ;
+			//}
+		}
+		filter.append("||':'") ;
+		if (aWorkPlaceType!=null&& aWorkPlaceType>Long.valueOf(0)){
+			//if (aIsTicket) {
+				filter.append("||").append(aWorkPlaceType) ;
 			//} else  {
 				//filter.append("||min(t.serviceStream_id)") ;
 			//}
@@ -83,7 +101,7 @@ public class ReportsServiceBean implements IReportsService {
 		return filter.toString() ;
 	}
 	public String getFilterInfo(EntityManager aManager, boolean aIsTicket, Long aSpecialist
-			, Long aWorkFunction, Long aLpu, Long aServiceStream) {
+			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		
 		if (aSpecialist>Long.valueOf(0)){
@@ -102,15 +120,19 @@ public class ReportsServiceBean implements IReportsService {
 			VocServiceStream vss = aManager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
+		if (aWorkPlaceType>Long.valueOf(0)){
+			VocWorkPlaceType vwpt = aManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
+			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
+		}
 		return filter.toString() ;
 	}
 
 	public String getFilterInfo(boolean aIsTicket, Long aSpecialist
-			, Long aWorkFunction, Long aLpu, Long aServiceStream) {
-		return getFilterInfo(theManager, aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream) ;
+			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
+		return getFilterInfo(theManager, aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType) ;
 	}
 	public String getTextQueryBegin(boolean aIsTicket, String aGroupBy,String aStartDate, String aFinishDate
-			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream) {
+			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder sql = new StringBuilder() ;
 		String id = "" ;
 		String name = "" ;
@@ -133,6 +155,14 @@ public class ReportsServiceBean implements IReportsService {
 				id = "t.serviceStream_id" ;
 			}
 			name = "vss.name" ;
+		} else if (aGroupBy.equals("6")) {
+			//vocWorkFunction
+			if (aIsTicket) {
+				id = "t.vocServicePlace_id" ;
+			} else {
+				id = "t.workPlaceType_id" ;
+			}
+			name = "vwpt.name" ;
 		} else{
 			//date
 			if (aIsTicket) {
@@ -146,13 +176,13 @@ public class ReportsServiceBean implements IReportsService {
 		
 		sql.append("SELECT '").append(aStartDate).append(":")
 		.append(aFinishDate).append(":'||").append(id).append("||':")
-		.append(aGroupBy).append("'").append(getFilterId(aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream)).append(" as id") ;
+		.append(aGroupBy).append("'").append(getFilterId(aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream, aWorkPlaceType)).append(" as id") ;
 		sql.append(",").append(name).append(" as tfield") ;
 		
 		return sql.toString() ;
 	}
 	public String getTextQueryEnd(boolean aIsTicket, String aGroupBy,String aStartDate, String aFinishDate
-			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream) {
+			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder sql = new StringBuilder() ;
 		String group = "" ;
 		String order = "" ;
@@ -176,6 +206,14 @@ public class ReportsServiceBean implements IReportsService {
 				group= "t.serviceStream_id,vss.name" ;
 			}
 			order = "vss.name" ;
+		} else if (aGroupBy.equals("6")) {
+			//vocWorkFunction
+			if (aIsTicket) {
+				group = "t.vocServicePlace_id,vwpt.name" ;
+			} else {
+				group= "t.workPlaceType_id,vwpt.name" ;
+			}
+			order = "vwpt.name" ;
 		} else{
 			//date
 			if (aIsTicket) {
@@ -221,11 +259,51 @@ public class ReportsServiceBean implements IReportsService {
 		sql.append(" BETWEEN TO_DATE('").append(aStartDate).append("','dd.mm.yyyy') and TO_DATE('").append(aFinishDate).append("','dd.mm.yyyy')");
 		if (aIsTicket) {
 			sql.append(" and t.status='2'") ;
+		} else {
+			sql.append(" and (t.noActuality is null or t.noActuality='0')") ;
 		}
 		sql.append(" ") ;
-		sql.append(getFilter(aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream)) ;
+		sql.append(getFilter(aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType)) ;
 		sql.append(" GROUP BY ").append(group).append(" ORDER BY ").append(order).append("");
 		return sql.toString() ;
+	}
+	
+	
+	public String getFilterInfoByOrder(Long aSpecialist
+			, Long aWorkFunction, Long aLpu
+			, Long aServiceStream, Long aWorkPlaceType
+			, Long aOrderLpu, Long aOrderWF) {
+		StringBuilder filter = new StringBuilder() ;
+		
+		if (aSpecialist>Long.valueOf(0)){
+			WorkFunction wf = theManager.find(WorkFunction.class,aSpecialist) ;
+			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
+		}
+		if (aWorkFunction>Long.valueOf(0)){
+			VocWorkFunction vwf = theManager.find(VocWorkFunction.class, aWorkFunction) ;
+			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
+		}
+		if (aLpu>Long.valueOf(0)){
+			MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
+			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
+		}
+		if (aServiceStream>Long.valueOf(0)){
+			VocServiceStream vss = theManager.find(VocServiceStream.class, aServiceStream) ;
+			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
+		}
+		if (aWorkPlaceType>Long.valueOf(0)){
+			VocWorkPlaceType vwpt = theManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
+			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
+		}
+		if (aOrderLpu>Long.valueOf(0)){
+			MisLpu vwpt = theManager.find(MisLpu.class, aOrderLpu) ;
+			filter.append(" Внешний направитель: ").append(vwpt.getName()) ;
+		}
+		if (aOrderWF>Long.valueOf(0)){
+			WorkFunction owf = theManager.find(WorkFunction.class, aOrderWF) ;
+			filter.append(" Направитель: ").append(owf.getWorkFunctionInfo()) ;
+		}
+		return filter.toString() ;
 	}
 	@PersistenceContext EntityManager theManager ;
 

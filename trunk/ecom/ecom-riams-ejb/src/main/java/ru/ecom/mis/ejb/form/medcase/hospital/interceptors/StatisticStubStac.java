@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 
+import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubNew;
@@ -35,8 +37,8 @@ public class StatisticStubStac {
     private final static Logger LOG = Logger.getLogger(StatisticStubStac.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     private final static String theDiscargeOnlyCurrentDay = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay" ;
-	public StatisticStubStac(HospitalMedCase aMedCase, SessionContext aContext, EntityManager aManager, String aRolesAlwaysStatCardNumber) {
-		setRolesAlwaysStatNumber(aRolesAlwaysStatCardNumber);
+	public StatisticStubStac(HospitalMedCase aMedCase, SessionContext aContext, EntityManager aManager) {
+		//setRolesAlwaysStatNumber(aRolesAlwaysStatCardNumber);
 		setMedCase(aMedCase);
 		setEntityManager(aManager);
 		setContext(aContext);
@@ -64,10 +66,11 @@ public class StatisticStubStac {
      */
     public boolean isStatCardNumberMustCreate() {
     	boolean ret ;
-    	if (!theContext.isCallerInRole(theRolesAlwaysStatCardNumber)) {
-    		ret = StringUtil.isNullOrEmpty(theMedCase.getStatCardNumber())
-                ||   ( StringUtil.isNullOrEmpty(theMedCase.getStatCardNumber()) && theContext.isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber"))
-                ||   ( StringUtil.isNullOrEmpty(theMedCase.getStatCardNumber()) && theMedCase.getDeniedHospitalizating()==null	&& (theMedCase.getIsAmbulanseDialis()|| !theMedCase.getAmbulanceTreatment())) ;
+    	if (!theContext.isCallerInRole(AlwaysStatCardNumber)) {
+    		ret = (theMedCase.getDeniedHospitalizating()==null	
+                		&& (theMedCase.getAmbulanceTreatment()==null
+                		|| !theMedCase.getAmbulanceTreatment())
+                		) ;
     	} else {
     		ret = true;
     	}
@@ -76,7 +79,7 @@ public class StatisticStubStac {
     }
     public boolean isStatCardMustDelete() {
     	boolean ret ;
-    	if (!theContext.isCallerInRole(theRolesAlwaysStatCardNumber)) {
+    	if (!theContext.isCallerInRole(AlwaysStatCardNumber)) {
     		ret = theMedCase.getDeniedHospitalizating()!=null && theMedCase.getStatisticStub()!=null ;
     	} else {
     		ret = false;
@@ -93,14 +96,19 @@ public class StatisticStubStac {
      * @return новый  номер стат. карты
      * @ejb.permission role-name = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber"
      */
-    public static boolean changeStatCardNumber(long aSlsId, String aNewStatCardNumber, String aRoleChange,
+    public static boolean changeStatCardNumber(long aSlsId, String aNewStatCardNumber,
     		EntityManager aManager, SessionContext aContext) throws EJBException {
-    	//if (!aContext.isCallerInRole(aRoleChange)) {
+    	String oldStatCard="" ;
+    	String username = aContext.getCallerPrincipal().toString() ;
+    	if (aContext.isCallerInRole(ChangeStatCardNumber)) {
+    		
         	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aSlsId);
             if (medCase == null) {
                 throw new IllegalArgumentException("Нет ССЛ с ИД " + aSlsId);
             }
-            // если плановая и отказ в госпитализации, то можно убрать номер стат карты
+        	oldStatCard = medCase.getStatisticStub()!=null?medCase.getStatisticStub().getCode():"" ;
+            
+        	// если плановая и отказ в госпитализации, то можно убрать номер стат карты
             if (StringUtil.isNullOrEmpty(aNewStatCardNumber) && medCase.getStatisticStub()!=null && !medCase.getEmergency() && (medCase.getDeniedHospitalizating())!=null) {
             	StatisticStubRestored restored = new StatisticStubRestored();
             	//aManager.refresh(restored);
@@ -108,6 +116,7 @@ public class StatisticStubStac {
             	restored.setYear(medCase.getStatisticStub().getYear());
             	aManager.persist(restored);
                 medCase.getStatisticStub().setCode(medCase.getStatisticStub().getCode() + "/DELETED");
+                setChangeJournal(aSlsId, oldStatCard, aNewStatCardNumber, username, aManager);
                 return true;
             } else {
                 if (StringUtil.isNullOrEmpty(aNewStatCardNumber)) {
@@ -145,14 +154,35 @@ public class StatisticStubStac {
                     	if (restorednum!=null) aManager.remove(restorednum);
                         medCase.getStatisticStub().setCode(aNewStatCardNumber);
                     }
+                    setChangeJournal(aSlsId, oldStatCard, aNewStatCardNumber, username, aManager);
                     return true;
                 } catch (Exception e) {
                     throw new IllegalStateException(new StringBuffer().append("Ошибка изменения номера стат. карты: ").append(e.getMessage()).toString());
                 }
             }
-    	//}
-         //  return false ; 
-
+        	
+    	} else {
+    		throw new IllegalStateException(new StringBuffer().append("Нет прав для изменения номера стат.карты!!!").toString());
+    	}
+    	
+    	
+    	
+    }
+    private static void setChangeJournal(Long aSlsId, String aOldStatCard,String aNewStatCardNumber
+    		,String aUsername,EntityManager aManager) {
+    	ChangeJournal jour = new ChangeJournal() ;
+    	jour.setSerializationAfter(aOldStatCard) ;
+    	jour.setSerializationBefore(aNewStatCardNumber) ;
+		jour.setLoginName(aUsername) ;
+		jour.setClassName(StatisticStubExist.class.getName()) ; 
+		jour.setObjectId(String.valueOf(aSlsId)) ;
+		
+		Date date = new Date() ;
+		
+		jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+		jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+		jour.setStatus(Long.valueOf(0)) ;
+		aManager.persist(jour) ;
     }
     
     
@@ -169,14 +199,19 @@ public class StatisticStubStac {
     	return isStatCardNumberExists(aStatCardNumber, Long.valueOf(aYear));
     }
     @SuppressWarnings("unchecked")
-	public boolean isStatCardNumberExists(String aStatCardNumber, Long aYear) {
-    	List<StatisticStubExist> states = theEntityManager.createQuery("FROM StatisticStub WHERE year = :year AND code = :number AND DTYPE = 'StatisticStubExist'")
-		.setParameter("number",aStatCardNumber)
-		.setParameter("year", aYear).setMaxResults(1).getResultList();
+    public static boolean isStatCardNumberExists(EntityManager aManager,String aStatCardNumber, Long aYear) {
+    	List<StatisticStubExist> states = aManager.createQuery("FROM StatisticStub WHERE year = :year AND code = :number AND DTYPE = 'StatisticStubExist'")
+    			.setParameter("number",aStatCardNumber)
+    			.setParameter("year", aYear).setMaxResults(1).getResultList();
     	boolean ret =(states==null||states.isEmpty())? false:true ; 
-    LOG.debug(new StringBuffer().append("Exist: ")
-    		.append(aStatCardNumber).append(" =").append(ret));
-    return ret;
+    	LOG.debug(new StringBuffer().append("Exist: ")
+    			.append(aStatCardNumber).append(" =").append(ret));
+    	return ret;
+    	
+    }
+    
+	public boolean isStatCardNumberExists(String aStatCardNumber, Long aYear) {
+    	return isStatCardNumberExists(theEntityManager, aStatCardNumber, aYear);
     	
     }
     
@@ -219,72 +254,49 @@ public class StatisticStubStac {
      * , а также наличие номера
      * стат карты.
      */
-    public boolean isStacStardMustRemove() {
-        return !theContext.isCallerInRole("/Policy/Stac/Admission/AlwaysCreateStatCardNumber")
-         && (theMedCase.getStatisticStub() != null
-            && ( theMedCase.getDeniedHospitalizating() != null
-                || (theMedCase.getAmbulanceTreatment()!=null && theMedCase.getAmbulanceTreatment().equals(Boolean.TRUE))
-               )) ;
+    public static boolean isStacStardMustRemove(SessionContext aContext, HospitalMedCase aMedCase) {
+    	System.out.println((!aContext.isCallerInRole(AllowRestoredStatCard))) ;
+    	System.out.println(aMedCase.getStatisticStub()) ;
+    	System.out.println(aMedCase.getDeniedHospitalizating()) ;
+        return 
+        		aMedCase.getStatisticStub() != null 
+        		&& (!aContext.isCallerInRole(AllowRestoredStatCard))
+        		&& (aMedCase.getDeniedHospitalizating() != null
+                || (aMedCase.getAmbulanceTreatment()!=null
+                && aMedCase.getAmbulanceTreatment().equals(Boolean.TRUE))
+               ) ;
 
+    }
+    public void removeStatCardNumber() {
+    	removeStatCardNumber(theEntityManager, theContext, theMedCase) ;
     }
     
     /**
      * Убираем номер стат. карты
      */
-    public void removeStatCardNumber() throws EJBException {
-        if (!isStacStardMustRemove()) {
-            return ;
+    public static void removeStatCardNumber(EntityManager aManager
+    		, SessionContext aContext
+    		, HospitalMedCase aMedCase) throws EJBException {
+        if (!isStacStardMustRemove(aContext,aMedCase)) {
+        	//throw new IllegalArgumentException("не надо удалять") ;
+        	return ;
         }
 
-        if (theMedCase.getIsAmbulanseDialis()) {
-           LOG.debug(" Удаление номер стат. карты из диализа " + theMedCase);
-           theEntityManager.remove(theMedCase.getStatisticStub());
-           theMedCase.setStatisticStub(null);
-        	//StatisticStubExist stubexist = theMedCase.getStatisticStub() ;
-        	/*
-        	StatisticStubRestored stubrestored = new StatisticStubRestored();
-        	stubrestored.setCode(stubexist.getCode());
-        	stubrestored.setYear(stubexist.getYear());
-        	theEntityManager.persist(stubrestored);
-        	theEntityManager.refresh(stubrestored);
-        	*/
-            //theMedCase.setStatisticStub(null);
+        if (aMedCase.getIsAmbulanseDialis()) {
+           LOG.debug(" Удаление номер стат. карты из диализа " + aMedCase);
+           aManager.remove(aMedCase.getStatisticStub());
+           aMedCase.setStatisticStub(null);
+        	
         } else {
-        	StatisticStubExist stubexist = theMedCase.getStatisticStub() ;
+        	StatisticStubExist stubexist = aMedCase.getStatisticStub() ;
         	StatisticStubRestored stubrestored = new StatisticStubRestored();
         	stubrestored.setCode(stubexist.getCode());
         	stubrestored.setYear(stubexist.getYear());
-        	theMedCase.setStatisticStub(null);
-        	theEntityManager.persist(stubrestored);
+        	aMedCase.setStatisticStub(null);
+        	aManager.persist(stubrestored);
         	//theEntityManager.refresh(stubrestored);
-        	theEntityManager.remove(stubexist);
+        	aManager.remove(stubexist);
         }
-            //LOG.debug(" Удаление номер стат. карты " + getStatCardNumber());
-            /*String statCardNumber = theMedCase.getStatCardNumber();
-            StringTokenizer st = new StringTokenizer(statCardNumber, "-");
-            //long id = Long.parseLong(st.nextToken());
-            if(!st.hasMoreTokens()) {
-                //theMedCase.setStatCardNumber(null);
-            } else {
-                //LOG.debug("id = " + id);
-                //long year = getYear() ;
-                //theMedCase.setStatCardNumber(null);
-                //StatisticStubRestored stubres = new StatisticStubRestored();
-                //stubres.setYear(year);
-                //stubres.setCode(new StringBuffer().append(id).toString());
-                /*ILogic logic = null;
-                try {
-                    logic = LogicPool.getLogic(theEntityContext());
-                        LOG.debug("year = " + year);
-                        logic.setString("StacSTATREPN", id + "", "Kod", "1", "%God:" + year);
-                } catch (Exception e) {
-                    LOG.debug("e = " + e, e);
-                    throw new EJBException("Ошибка получения последнего номера стат. карты" + e);
-                } finally {
-                    LogicPool.closeEjb(logic);
-                }*/
-            
-        
     }
 
 
@@ -295,18 +307,170 @@ public class StatisticStubStac {
      * @return -1 если нет восстановленных номеров
      */
     @SuppressWarnings("unchecked")
+    private static StatisticStubRestored getRestoredStatCard(EntityManager aManager, Long aYear
+    		, Boolean aIsRestored
+    		) {
+    	List<StatisticStubRestored> states = null ;
+    	if (aIsRestored) {
+    		states = aManager.createQuery("from StatisticStub where year = :year and DTYPE='StatisticStubRestored'")
+    				.setParameter("year",aYear).setMaxResults(1).getResultList();
+    	}
+    	return (states!=null && !states.isEmpty()) ? states.get(0) : null ; 
+    }
+    /**
+     * Первый попавшийся восстановленный номер стат. карты
+     *
+     * @return -1 если нет восстановленных номеров
+     */
+    @SuppressWarnings("unchecked")
 	private StatisticStubRestored getRestoredStatCard() {
     	List<StatisticStubRestored> states = null ;
-    	if (theContext.isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AllowRestoredStatCard")) {
+    	if (theContext.isCallerInRole(AllowRestoredStatCard)) {
     		states = theEntityManager.createQuery("from StatisticStub where year = :year and DTYPE='StatisticStubRestored'")
     			.setParameter("year",getYear()).setMaxResults(1).getResultList();
     	}
     	return (states!=null && !states.isEmpty()) ? states.get(0) : null ; 
     }
     
-    private String prepareStatCardNumber(long aStatCardId) {
-        String yy = new SimpleDateFormat("yy").format(theMedCase.getDateStart());
-        return aStatCardId + "-" + yy;
+    private static String prepareStatCardNumber(long aStatCardId,java.sql.Date aDateStart) {
+    	String yy = new SimpleDateFormat("yy").format(aDateStart);
+    	return aStatCardId + "-" + yy;
+    }
+    
+    /**
+    * Создание следующего порядкового номера статкарты и сохранение
+    * Вызывать после сохранения всех полей
+    */
+    public static void createStacCardNumber(long aSlsId, String aStatCardNumberByHand , EntityManager aManager, SessionContext aContext) throws EJBException{
+    	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aSlsId);
+    	if (medCase.getStatisticStub()!=null) {
+    		changeStatCardNumber(aSlsId, aStatCardNumberByHand, aManager, aContext) ;
+    		return ;
+    	}
+    	if (aContext.isCallerInRole(CreateStatCardNumberByHand) && (aStatCardNumberByHand!=null && !aStatCardNumberByHand.equals(""))) {
+    		if (CAN_DEBUG) LOG.debug("  Создание номера стат карты вручную [ номер стат.карты = " + aStatCardNumberByHand + "]");
+            if (CAN_DEBUG) LOG.debug("  Создание номера стат карты вручную [ номер стат.карты = " + aSlsId + "]");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(medCase.getDateStart());
+            Long year = Long.valueOf(cal.get(Calendar.YEAR)) ;
+            if (StatisticStubStac.isStatCardNumberExists(aManager, aStatCardNumberByHand, year)) {
+                throw new IllegalArgumentException("Номер стат. карты " +aStatCardNumberByHand + " уже существует за этот год");
+            }
+            StatisticStubExist statcard = new StatisticStubExist();
+            statcard.setCode(aStatCardNumberByHand);
+            statcard.setYear(year);
+            statcard.setMedCase(medCase);
+            medCase.setStatisticStub(statcard);
+            aManager.persist(statcard) ;
+            //StringTokenizer st = new StringTokenizer(aForm.getStatCardNumber()," -");
+            //int number = Integer.parseInt(st.nextToken()) ;
+//        StacSTATNPrimaryKey statPk = new StacSTATNPrimaryKey(cal.get(Calendar.YEAR), number);
+//        StacSTATNUtil.getLocalHome().create(statPk) ;
+        } else {
+            if (CAN_DEBUG) LOG.debug("Создание номера стат. карты автоматически");
+            //stub.createStacCardNumber();
+	        
+	    	boolean ret ;
+	    	if (!aContext.isCallerInRole(AlwaysStatCardNumber)) {
+	    		ret = (medCase.getDeniedHospitalizating()==null	
+	                		&& (medCase.getAmbulanceTreatment()==null
+	                		|| !medCase.getAmbulanceTreatment())
+	                		) ;
+	    	} else {
+	    		ret = true;
+	    	}
+	    	if (!ret) return ;
+	    	String nextStatCardNumber;
+	    	SimpleDateFormat format = new SimpleDateFormat("yyyy") ;
+	        Long year = Long.valueOf(format.format(medCase.getDateStart())) ;
+	        if (medCase.getIsAmbulanseDialis()) {
+	            System.out.println(" dialis....") ;
+	            nextStatCardNumber = new StringBuffer().append(medCase.getPatient().getId()).toString();
+	            StatisticStubExist statstub = new StatisticStubExist();
+	            statstub.setCode(nextStatCardNumber);
+	            
+	            statstub.setYear(year);
+	            statstub.setMedCase(medCase);
+	            medCase.setStatisticStub(statstub);
+	        } else {
+	        	System.out.println(" начало создание....") ;
+	            //Long year = getYear() ;
+	            StatisticStubRestored restored =null ;
+	            boolean next ;
+	            do {
+	            	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
+	            	boolean isRestored = aContext.isCallerInRole(AllowRestoredStatCard) ;
+	            	StatisticStubRestored restoredb = getRestoredStatCard(aManager,year,isRestored) ;
+	            	if (restoredb==null) break ;
+	                boolean existnum = isStatCardNumberExists(aManager, restoredb.getCode(), restoredb.getYear());
+	                next = false ;
+	                if (existnum) {
+	                	aManager.remove(restoredb);
+	                    next =  true;
+	                    
+	                } else {
+	                	next = false ;
+	                	restored = restoredb ;
+	                	//break;
+	                }
+	            } while(next); 
+	            
+	            if (restored!=null) {
+	            	//long restoredId=Long.valueOf(restored.getCode()) ;
+	                if (CAN_DEBUG) LOG.debug("Берем номер из восстановленных");
+	            	// берем номер из восстановленных
+	            	//TODO доделать удаление из восстановленных номеров
+	                StatisticStubExist stubexist = new StatisticStubExist();
+	                aManager.persist(stubexist);
+	                //theEntityManager.refresh(stubexist);
+	                stubexist.setCode(restored.getCode());
+	                stubexist.setYear(year);
+	                stubexist.setMedCase(medCase);
+	                aManager.remove(restored);
+	                medCase.setStatisticStub(stubexist);
+	            } else {
+	            	//создаем новый номер
+	                if (CAN_DEBUG) LOG.debug("Создание новый номер");
+	            	List<StatisticStubNew> rows = aManager.createQuery("from StatisticStub where year='"+year+"' and DTYPE='StatisticStubNew'")
+	            		//.setParameter("year", year)
+	            		.setMaxResults(1).getResultList();
+	            	long nextId ;
+	        		//int year_int = year.intValue() ;
+	        		StatisticStubNew stubnew ;
+	            	if (rows!=null && !rows.isEmpty()) {
+	            		stubnew = rows.get(0);
+	            		nextId = Long.valueOf(stubnew.getCode()) ;
+	            	} else {
+	            		nextId = Long.valueOf(1) ;
+	            		stubnew = new StatisticStubNew();
+	            		stubnew.setYear(year);
+	            		
+	            		//theEntityManager.refresh(stubnew);
+	            	}
+	        		stubnew.setCode(""+(nextId+1));
+	        		aManager.persist(stubnew);
+	        		java.sql.Date dateStart = medCase.getDateStart() ;
+	        		nextStatCardNumber = prepareStatCardNumber(nextId,dateStart);
+	            	if(CAN_DEBUG)LOG.debug("Просмотр");
+	                while (!isStatCardNumberFree(nextStatCardNumber,aManager)) {
+	                    nextId++;
+	            		stubnew.setCode(""+(nextId+1));
+	                    nextStatCardNumber = prepareStatCardNumber(nextId,dateStart) ;
+	                }
+	            	if(CAN_DEBUG)LOG.debug("Запись нового номера стат.карты = "+nextStatCardNumber);
+	                StatisticStubExist stubexist = new StatisticStubExist();
+	                //
+	                //theEntityManager.refresh(stubexist);
+	                stubexist.setCode(nextStatCardNumber);
+	                stubexist.setYear(year);
+	                stubexist.setMedCase(medCase);
+	                aManager.persist(stubexist);
+	            	//theMedCase.setStatCardNumber(nextStatCardNumber);
+	                medCase.setStatisticStub(stubexist);
+	            	
+	            }
+	        }
+        }
     }
 
     /**
@@ -384,12 +548,13 @@ public class StatisticStubStac {
             	}
         		stubnew.setCode(""+(nextId+1));
         		theEntityManager.persist(stubnew);
-        		nextStatCardNumber = prepareStatCardNumber(nextId);
+        		java.sql.Date dateStart = theMedCase.getDateStart() ;
+        		nextStatCardNumber = prepareStatCardNumber(nextId,dateStart);
             	if(CAN_DEBUG)LOG.debug("Просмотр");
                 while (!isStatCardNumberFree(nextStatCardNumber)) {
                     nextId++;
             		stubnew.setCode(""+(nextId+1));
-                    nextStatCardNumber = prepareStatCardNumber(nextId) ;
+                    nextStatCardNumber = prepareStatCardNumber(nextId,dateStart) ;
                 }
             	if(CAN_DEBUG)LOG.debug("Запись нового номера стат.карты = "+nextStatCardNumber);
                 StatisticStubExist stubexist = new StatisticStubExist();
@@ -403,55 +568,24 @@ public class StatisticStubStac {
                 theMedCase.setStatisticStub(stubexist);
             	
             }
-        	/*
-        	 
-        	 ILogic logic = null;
-            try {
-                long year = getAdmissionYear();
-                logic = LogicPool.getLogic(getEntityContext());
-
-                synchronized (SYNC_CREATE_STAT_CARD_NUMBER) {
-                    long restoredId = getRestoredStatCardId();
-                    if (CAN_DEBUG) LOG.debug("restoredId = " + restoredId);
-                    if (restoredId != -1) { // берем номер из восстановленных
-                        logic.delete("StacSTATREPN", restoredId+"", "%God:"+getAdmissionYear()) ;
-
-                        setStatCardNumber(prepareStatCardNumber(restoredId));
-
-                    } else { // создаем новый номер
-                        String last = logic.getLastId("StacSTATN", "%God:" + year);
-                        LOG.debug("last = " + last);
-//                        System.out.println("last = " + last);
-                        long lastId = last != null ? Long.parseLong(last) : 0;
-                        long nextId = lastId + 1;
-
-                        nextStatCardNumber = prepareStatCardNumber(nextId) ;
-                        logic.setString("StacSTATN", nextId + "", "Kod", "1", "%God:" + year);
-                        // сохранение
-                        while (!isStatCardNumberFree(nextStatCardNumber)) {
-                            logic.setString("StacSTATN", nextId + "", "Kod", "1", "%God:" + year);
-                            nextId++;
-                            nextStatCardNumber = prepareStatCardNumber(nextId) ;
-                        }
-                        setStatCardNumber(nextStatCardNumber);
-                    }
-                }
-            } catch (Exception e) {
-                LOG.debug("e = " + e, e);
-                throw new EJBException("Ошибка получения последнего номера стат. карты" + e);
-            } finally {
-                LogicPool.closeEjb(logic);
-            }
-            */
+        	
         }
     }
 
     // Свободный номер ли?
-	@SuppressWarnings("unchecked")
-	private boolean isStatCardNumberFree(String aStatCardNumber)  {
-        //Collection col = StacSLSUtil.getLocalHome().findByKowQuery("SLSidkart:" + aStatCardNumber);
+    @SuppressWarnings("unchecked")
+    private boolean isStatCardNumberFree(String aStatCardNumber)  {
+    	//Collection col = StacSLSUtil.getLocalHome().findByKowQuery("SLSidkart:" + aStatCardNumber);
     	//return col.isEmpty();
     	List<StatisticStubExist> states = theEntityManager.createQuery("from StatisticStub where code = :number and DTYPE='StatisticStubExist'").setParameter("number",aStatCardNumber).getResultList();       
+    	return (states==null || states.isEmpty());
+    }
+    // Свободный номер ли?
+	@SuppressWarnings("unchecked")
+	private static boolean isStatCardNumberFree(String aStatCardNumber,EntityManager aManager)  {
+        //Collection col = StacSLSUtil.getLocalHome().findByKowQuery("SLSidkart:" + aStatCardNumber);
+    	//return col.isEmpty();
+    	List<StatisticStubExist> states = aManager.createQuery("from StatisticStub where code = :number and DTYPE='StatisticStubExist'").setParameter("number",aStatCardNumber).getResultList();       
     	return (states==null || states.isEmpty());
     }
 
@@ -473,18 +607,6 @@ public class StatisticStubStac {
 	public EntityManager getEntityManager() {return theEntityManager;}
 	public void setEntityManager(EntityManager aEntityManager) {theEntityManager = aEntityManager;	}
 	
-
-	/** Роль: всегда создавать номер стат.карты */
-	public String getRolesAlwaysStatNumber() {
-		return theRolesAlwaysStatCardNumber;
-	}
-
-	public void setRolesAlwaysStatNumber(String aRolesAlwaysStatCardNumber) {
-		theRolesAlwaysStatCardNumber = aRolesAlwaysStatCardNumber;
-	}
-
-	/** Роль: всегда создавать номер стат.карты */
-	private String theRolesAlwaysStatCardNumber;
 	/** EntityContext */
 	private EntityManager theEntityManager;
 	/** Год создания случая стационарного лечения */
@@ -493,4 +615,11 @@ public class StatisticStubStac {
 	private SessionContext theContext;
 	/** Случай стационарного лечения */
 	private HospitalMedCase theMedCase;
+	public static String AllowRestoredStatCard = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AllowRestoredStatCard" ;
+	public static String AlwaysStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber" ;
+	public static String CreateStatCardNumberByHand="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand" ;
+	public static String CreateHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour" ;
+	public static String EditHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour" ;
+	public static String ChangeStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" ;
+	public static String CreateStatCardBeforeDeniedByHand = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand" ;
 }

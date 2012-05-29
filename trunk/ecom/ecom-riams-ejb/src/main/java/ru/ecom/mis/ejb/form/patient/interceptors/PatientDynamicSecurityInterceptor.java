@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.patient.interceptors;
 
 import java.lang.annotation.ElementType;
+import java.util.Date;
+
 
 import ru.ecom.ejb.services.entityform.interceptors.IDynamicSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
 import ru.ecom.mis.ejb.domain.patient.Patient;
@@ -16,7 +19,9 @@ import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterceptor {
 
 	public void check(String aPolicyAction, Object aId, InterceptorContext aContext) {
-		//System.out.println("check "+aId+" "+aPolicyAction+" "+aContext.getTarget());
+		
+		
+		System.out.println("check "+aId+" "+aPolicyAction+" "+aContext.getTarget());
 		if(!aContext.getSessionContext().isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck")) {
 			boolean canCheck = 
 				("View".equals(aPolicyAction) && aContext.getTarget().equals(ElementType.METHOD))

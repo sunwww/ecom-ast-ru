@@ -21,16 +21,42 @@ function printProtocol(aCtx, aParams) {
 	//var list = aCtx.manager.createQuery("from Protocol where medCase_id=:sls")
 		//.setParameter("sls",medCase.id).getResultList();
 	//var protocol = !list.isEmpty()?list.iterator().next().record:"";
+	var id =new java.lang.Long(aParams.get("id")) ; 
 	var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
-		, new java.lang.Long(aParams.get("id"))) ;
+		, id) ;
 	map.put("prot.date",protocol.dateRegistration);
 	map.put("prot.time",protocol.timeRegistration);
 	map.put("protocol",protocol);
 	map.put("prot.spec",protocol.specialistInfo);
 	//map.put("prot.rec",protocol.record) ;
 	recordMultiText("prot.rec", protocol.record) ;
-	//map.put("prot.ticket",) ;
+	map.put("prot.ticket",protocol.ticket) ;
+	map.put("prot.idc10",protocol.ticket!=null && protocol.ticket.idc10!=null?protocol.ticket.idc10.code+". "+protocol.ticket.idc10.name:"") ;
+	var nListDPT = new java.util.ArrayList() ;
 	if (protocol.ticket!=null) {
+		
+		var listDPT = aCtx.manager.createQuery("from DrugPrescriptionByTicket where diary=:diary order by id")
+		.setParameter("diary",protocol)
+		.getResultList();
+		var j=1 ;
+		
+		for (var i=0; i < listDPT.size(); i++) {
+			var obj = listDPT.get(i) ;
+			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			par.set1(""+(j++)) ;
+			if (obj.getDrug()!=null) {
+				par.set2(obj.getNumberPrescript()!=null?obj.getNumberPrescript():"") ;
+				par.set3(obj.getDrug().getName()!=null?obj.getDrug().getName():"--") ;
+				par.set4(obj.amountUnit!=null?(+obj.amountString>0?obj.amountString:1)+" "+obj.amountUnit.code:"") ;
+				par.set5(obj.frequencyUnit!=null?(+obj.frequengy>0?obj.frequengy+"":"")+" "+obj.frequencyUnit.code:"") ;
+				par.set6(obj.durationUnit!=null?(+obj.duration>0?obj.duration:1)+" "+obj.durationUnit.name:"") ;
+				par.set7(obj.method!=null?obj.method.name:"") ;
+				nListDPT.add(par) ;
+			} else {
+				
+			}
+			
+		}
 		var medcard = protocol.ticket.medcard ;
 		if (medcard!=null) {
 			map.put("prot.medcard",medcard.number) ;
@@ -45,6 +71,12 @@ function printProtocol(aCtx, aParams) {
 		map.put("prot.medcard","") ;
 		map.put("prot.patient","") ;
 	}
+	if (nListDPT.size()>0) {
+		map.put("drugInfo","Лекарственные назначения:") ;
+	} else{
+		map.put("drugInfo","") ;
+	}
+	map.put("drugs",nListDPT) ;
 	return map ;
 }
 

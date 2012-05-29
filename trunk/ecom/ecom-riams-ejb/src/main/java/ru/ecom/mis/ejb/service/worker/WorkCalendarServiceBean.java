@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.live.domain.journal.DeleteJournal;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
@@ -33,6 +34,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeExample;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
@@ -49,7 +51,190 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	
 	private final static Logger LOG = Logger.getLogger(WorkCalendarServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	public void moveDate(Long aWorkFunction, Date aDateFrom, Date aDateTo) {
+		List<WorkCalendar> list = theManager
+				.createQuery("from WorkCalendar where workFunction_id=:wf")
+				.setParameter("wf", aWorkFunction).getResultList() ;
+		//WorkCalendarPattern pattern = theManager.find(WorkCalendarPattern.class, aPattern);
+		
+		for (WorkCalendar wc:list) {
+			List<Object> list1 = theManager.createNativeQuery("select id from WorkCalendarDay where workCalendar_id='"
+					+wc.getId()+"' and calendarDate=:dat").setParameter("dat", aDateTo).getResultList() ;
+			if (list1.size()==0) {
+				theManager.createNativeQuery("update WorkCalendarDay set calendarDate=:datTo where workCalendar_id='"
+						+wc.getId()+"' and calendarDate=:datFrom").setParameter("datTo", aDateTo).setParameter("datFrom", aDateFrom).executeUpdate() ;
+			}
+		}
+	}
+	public void moveSpecialist(Long aWorkFunctionMove, Long aWorkFunctionOrig, Date aDateFrom, Date aDateTo){
+		List<WorkCalendar> list = theManager
+				.createQuery("from WorkCalendar where workFunction_id=:wf")
+				.setParameter("wf", aWorkFunctionMove).getResultList() ;
+		List<WorkCalendar> list1 = theManager
+				.createQuery("from WorkCalendar where workFunction_id=:wf")
+				.setParameter("wf", aWorkFunctionOrig).getResultList() ;
+			//WorkCalendarPattern pattern = theManager.find(WorkCalendarPattern.class, aPattern);
+		if (list1.size()>0) {
+			WorkCalendar wc1 = list1.get(0) ;
+		
+			for (WorkCalendar wc:list) {
+				List<Object> list2 = theManager.createNativeQuery("select id from WorkCalendarDay where workCalendar_id='"
+						+wc1.getId()+"' and calendarDate between :dat1 and :dat2").setParameter("dat1", aDateFrom).setParameter("dat2", aDateTo).getResultList() ;
+				if (list2.size()==0) {
+					theManager.createNativeQuery("update WorkCalendarDay set workCalendar_id="+wc1.getId()+" where workCalendar_id='"
+							+wc.getId()+"' and calendarDate between :dat1 and :dat2").setParameter("dat1", aDateFrom).setParameter("dat2", aDateTo).executeUpdate() ;
+				} else {
+					throw new IllegalArgumentException(
+							"Уже создан день!!!"
+							
+							) ; 
+				}
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"Ошибка при перемещении!!!"
+					
+					) ; 
+		}
+	}
+	public void deleteWorkCalendarTime(Long aTime) {
+		WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTime) ;
+		if (wct.getMedCase()!=null || wct.getPrePatient()!=null || wct.getPrePatientInfo()!=null &&!wct.getPrePatientInfo().equals("")) {
+			throw new IllegalArgumentException(
+					"Ошибка при удалении!!!"
+					
+					) ; 
+		} else {
+			theManager.remove(wct) ;
+		}
+	}
+	public String deletePreRecord(String aUsername, Long aTime) {
+		WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTime) ;
+		if (wct.getMedCase()==null) {
+			DeleteJournal dj = new DeleteJournal() ;
+			java.util.Date date = new java.util.Date() ;
+			dj.setDeleteDate(new java.sql.Date(date.getTime())) ;
+			dj.setDeleteTime(new Time(date.getTime())) ;
+			dj.setClassName("WorkFunctionTime PreRecord") ;
+			StringBuilder comment = new StringBuilder() ;
+			comment.append(wct.getPrePatientInfo()!=null?wct.getPrePatientInfo():"")
+				.append(" # ").append(wct.getPrePatient()!=null?wct.getPrePatient().getFio():"") ;
+			WorkCalendarDay wcd = wct.getWorkCalendarDay() ;
+			WorkFunction wf = wcd.getWorkCalendar()!=null?wcd.getWorkCalendar().getWorkFunction():null ;
+			comment.append(" # ").append(wcd!=null?wcd.getCalendarDate():"") ;
+			comment.append(" # ").append(wct.getTimeFrom()) ;
+			comment.append(" # ").append(wf.getInfo());
+			dj.setSerialization(comment.toString()) ;
+			dj.setObjectId(String.valueOf(wct.getId())) ;
+			dj.setLoginName(aUsername) ;
+			
+			wct.setPrePatient(null) ;
+			wct.setPrePatientInfo(null) ;
+			theManager.persist(wct) ;
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select wct.id as wctid,wc.id as wcid,wcd.id as wcddid,to_char(wcd.calendarDate,'dd.mm.yyyy') as calendardate,wf.workFunction_id from workcalendartime wct")
+			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+			.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+			.append(" left join workfunction wf on wc.workFunction_id=wf.id")
+			.append(" where wct.id='").append(aTime).append("'")
+			//.append("' and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='') ") 
+			;
+			//System.out.println("sql="+sql) ;
+			List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (l.size()>0) {
+				Object[] obj = l.get(0) ;
+				theManager.persist(dj) ;
+				return new StringBuilder().append(obj[1]).append("#").append(obj[2])
+						.append("#").append(obj[3]).append("#")
+						.append(obj[4]).toString() ;
+			}
+		}
+		throw new IllegalArgumentException(
+				"Ошибка при удалении!!!"
+				
+				) ; 
+	}
+	public String preRecordByPatient(String aUsername,Long aTime
+			,String aPatientInfo,Long aPatientId) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select wct.id as wctid,wc.id as wcid,wcd.id as wcddid,to_char(wcd.calendarDate,'dd.mm.yyyy') as calendardate,wf.workFunction_id from workcalendartime wct")
+		.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+		.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+		.append(" left join workfunction wf on wc.workFunction_id=wf.id")
+		.append(" where wct.id='").append(aTime)
+		.append("' and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='') ") ;
+		//System.out.println("sql="+sql) ;
+		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (l.size()>0) {
+			//System.out.println("patid="+aPatientId) ;
+			sql = new StringBuilder() ;
+			if (aPatientId!=null && aPatientId>Long.valueOf(0)) {
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			} else {
+				String info = aPatientInfo.replace("#", " ").toUpperCase() ;
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			}
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			Object[] obj = l.get(0) ;
+			return new StringBuilder().append(obj[1]).append("#").append(obj[2])
+					.append("#").append(obj[3]).append("#")
+					.append(obj[4]).toString() ;
+			
+		} else {
+			StringBuilder err = new StringBuilder() ;
+			throw new IllegalArgumentException(
+					err.append("Ошибка при записи!!!")
+					
+					.toString()) ;
+		}
+		
+	}
+	public void preRecordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime
+			,String aPatientInfo,Long aPatientId) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select wct.id,wc.id from workcalendartime wct")
+			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+			.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+			.append(" left join workfunction wf on wc.workFunction_id=wf.id")
+			.append(" where wct.id='").append(aTime)
+			.append("' and wcd.id='").append(aDay)
+			.append("' and wc.id='").append(aSpecialist)
+			.append("' and wf.workFunction_id='").append(aFunction)
+			.append("' and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='') ") ;
+		System.out.println("sql="+sql) ;
+		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (l.size()>0) {
+			//System.out.println("patid="+aPatientId) ;
+			sql = new StringBuilder() ;
+			if (aPatientId!=null && aPatientId>Long.valueOf(0)) {
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			} else {
+				String info = aPatientInfo.replace("#", " ").toUpperCase() ;
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			}
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			
+			
+		} else {
+			StringBuilder err = new StringBuilder() ;
+			throw new IllegalArgumentException(
+					err.append("Ошибка при записи!!!")
+					
+					.toString()) ;
+		}
+		
+	}
+	private String getInfoByCreate(String aFldDate,String aFldTime) {
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+		//java.sql.Time time = new java.sql.Time (date.getTime());
+		SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+        //TIME_FORMAT.format(time) ;
+		StringBuilder ret = new StringBuilder() ;
+		ret.append(aFldDate).append("=to_date('").append(format.format(date)).append("','dd.mm.yyyy')") ;
+		ret.append(",").append(aFldTime).append("='").append(TIME_FORMAT.format(date)).append("'") ;
+        return ret.toString() ; 
+	}
 	public String getIntervalBySpecAndDate(String aDate
 			, Long aSpecialist) throws ParseException {
 		Date date = DateFormat.parseSqlDate(aDate) ;
@@ -127,7 +312,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 				
 				java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
 				if (cnt<1) {
-					return "" ;
+					return getInterval(timeFrom, timeTo, aCountVisits, true) ;
 				}
 				if (!isFirstExist) {
 					ret.append(",").append(format.format(cal1.getTime())) ;
@@ -193,12 +378,16 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		cal1.setTime(aBeginTime) ;
 		cal2.setTime(aEndTime) ;
 		int cnt = aCountVisits.intValue() ;
-		int hour1 = cal1.get(Calendar.HOUR) ;
-		int hour2 = cal2.get(Calendar.HOUR) ;
+		int hour1 = cal1.get(Calendar.HOUR_OF_DAY) ;
+		int hour2 = cal2.get(Calendar.HOUR_OF_DAY) ;
 		int min1 = cal1.get(Calendar.MINUTE) ;
 		int min2 = cal2.get(Calendar.MINUTE) ;
 		int dif = (hour2-hour1)*60 +min2- min1 ;
-		LOG.info("Кол-во минут="+dif) ;
+		/*LOG.info("Кол-во минут="+dif) ;
+		LOG.info("Кол-во минут1="+min1) ;
+		LOG.info("Кол-во минут2="+min2) ;
+		LOG.info("Кол-во часов1="+hour1) ;
+		LOG.info("Кол-во часов2="+hour2) ;*/
 		if (dif<cnt) throw new IllegalDataException("Разница между временами должна быть больше кол-ва посещений")  ;
 		StringBuilder ret = new StringBuilder() ;
 		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
@@ -244,9 +433,9 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		return ret.length()>0?ret.substring(1):"";
 	}
 			
-	// Создать новые времена по специалисту за определенное число
+	 // Создать новые времена по специалисту за определенное число
 	 public void getCreateNewTimesBySpecAndDate(String aDate
-			, Long aSpecialist, String aTimes) throws ParseException {
+			 , Long aSpecialist, String aTimes) throws ParseException {
 		 
 		 if (aTimes!=null) {
 			 aTimes=aTimes.replace(" ", "") ;
@@ -254,8 +443,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 				 Date date = DateFormat.parseSqlDate(aDate) ;
 				 String[] times = aTimes.split(",") ;
 				 List<WorkCalendar> list = theManager
-					.createQuery("from WorkCalendar where workFunction_id=:wf")
-					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
+						 .createQuery("from WorkCalendar where workFunction_id=:wf")
+						 .setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
 				 if (list.size()>0) {
 					 WorkCalendar wc = list.get(0) ;
 					 WorkCalendarDay day = createCalendarDay(wc,date) ;
@@ -268,11 +457,37 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		 }
 		 
 	 }
-	 public void clearOldData(Long aLpu, Date aDateFrom, Date aDateTo) {
-		MisLpu lpu = theManager.find(MisLpu.class, aLpu)  ;
-		for (Worker w : lpu.getWorker()) {
-			
-		}
+	// Создать новые времена по специалисту за определенное число
+	 public String addCreateNewTimeBySpecAndDate(String aDate
+			, Long aSpecialist, String aTime) throws ParseException {
+		 
+		 if (aTime!=null) {
+			 aTime=aTime.replace(" ", "") ;
+			 if (!aTime.equals("")) {
+				 Date date = DateFormat.parseSqlDate(aDate) ;
+				 List<WorkCalendar> list = theManager
+					.createQuery("from WorkCalendar where workFunction_id=:wf")
+					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
+				 if (list.size()>0) {
+					 WorkCalendar wc = list.get(0) ;
+					 WorkCalendarDay day = createCalendarDay(wc,date) ;
+					 java.sql.Time t = DateFormat.parseSqlTime(aTime) ;
+					 Long tid = createCalendarTime(t, day) ;
+					 return tid!=null?new StringBuilder().append(tid)
+							 .append("#").append(aTime).toString():"" ;
+				 }
+			 }
+		 }
+		 return "" ;
+	 }
+	public void deleteEmptyCalendarDays(Long aWorkFunction, Date aDateFrom, Date aDateTo) {
+		List<WorkCalendar> list = theManager
+				.createQuery("from WorkCalendar where workFunction_id=:wf")
+				.setParameter("wf", aWorkFunction).getResultList() ;
+			//WorkCalendarPattern pattern = theManager.find(WorkCalendarPattern.class, aPattern);
+			for (WorkCalendar wc:list) {
+				deleteCalendarDaysByWorkFunction(wc,aDateFrom,aDateTo) ;
+			}
 	}
 	public void addBusyPatternByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate, Long aPattern) {
 		//WorkFunction wf = theManager.find(WorkFunction.class, aWorkFunction) ;
@@ -292,7 +507,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("from JournalPatternCalendar  where workCalendar=:wc")
 			//.append(aWorkCalendar.getId())
-			.append(" and dateFrom>=:dateFrom and dateTo<=:dateTo") ;
+			.append("  and dateFrom>=:dateFrom and dateTo<=:dateTo") ;
 		List<JournalPatternCalendar> list = theManager
 				.createQuery(sql.toString())
 				.setParameter("wc", aWorkCalendar)
@@ -374,8 +589,20 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			//System.out.println("-----res to="+format.format(jpc.getDateTo())) ;
 		}
 	}
-	public void addNotBusyPattern(Long aWorkCalendar,Date aDateFrom, Date aDateTo, Long aBusy) {
-		
+	public void addNotBusyPattern(Long aWorkFunction,Date aDateFrom, Date aDateTo, Long aReason) {
+		List<WorkCalendar> list = theManager
+				.createQuery("from WorkCalendar where workFunction_id=:wf")
+				.setParameter("wf", aWorkFunction).getResultList() ;
+		VocWorkBusy workBusy = theManager.find(VocWorkBusy.class, aReason);
+		for (WorkCalendar wc:list) {
+			JournalPatternCalendar jpc = new JournalPatternCalendar() ;
+			jpc.setDateFrom(aDateFrom) ;
+			jpc.setDateTo(aDateTo) ;
+			jpc.setWorkBusy(workBusy) ;
+			jpc.setWorkCalendar(wc) ;
+			jpc.setNoActive(Boolean.FALSE) ;
+			theManager.persist(jpc) ;
+		}
 	}
 	
 	public void generateCalendarByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate) {
@@ -438,7 +665,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			}
 			if (isNewJour) {
 				List<JournalPatternCalendar> list1 = theManager
-					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (NoActive is null or cast(NoActive as integer)=0) and dateFrom<=:dateCal and (dateTo is null or dateTo>=:dateCal) order by dateFrom")
+					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (workBusy_id is null or workBusy.isWorking='1') and (NoActive is null or cast(NoActive as integer)=0) and dateFrom<=:dateCal and (dateTo is null or dateTo>=:dateCal) order by dateFrom")
 					.setParameter("cal", aWorkCalendar)
 					.setParameter("dateCal",cal1.getTime())
 					.getResultList() ;
@@ -458,77 +685,85 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			}
 			
 			
+			List<Object> cnt = theManager
+					.createNativeQuery("select count(*) from JournalPatternCalendar jpc left join VocWorkBusy  vwb on vwb.id=jpc.workBusy_id  where jpc.workCalendar_id=:cal and (jpc.noActive is null or jpc.noActive='0') and (vwb.isWorking is null or vwb.isWorking='0') and jpc.dateFrom<=:dateCal and (jpc.dateTo is null or jpc.dateTo>=:dateCal) ") 
+					.setParameter("cal", aWorkCalendar.getId())
+					.setParameter("dateCal",new Date(cal1.getTime().getTime()))
+					.getResultList() ;
 			
-
-			if (jpc==null) {
+			System.out.println("------------<>----выходной день cnt="+cnt) ;
+			Long cntNotBusy = cnt.size()>0?ConvertSql.parseLong(cnt.get(0)):null ;
+			
+			if (cntNotBusy!=null&&cntNotBusy>Long.valueOf(0) || jpc==null) {
 				
+				deleteEmptyCalendarDays(aWorkCalendar, new Date(cal1.getTime().getTime()), new Date(cal1.getTime().getTime()));
+				//throw new IllegalDataException(""+cntNotBusy) ;
 			} else {
-				//System.out.println("------------<>----jpc="+jpc) ;
-				//System.out.println("------------<>----jpc id="+jpc.getId()) ;
-				//System.out.println("------------<>----jpc from="+jpc.getDateFrom()) ;
-				//System.out.println("------------<>----jpc to="+jpc.getDateTo()) ;
-				String weekDaySt = String.valueOf(weekDay) ;
-				String monthOrder = getOrderWeek(cal1,weekMonth);
-				WorkCalendarPattern pattern = jpc.getPattern() ;
-				if (pattern!=null) {
-					// Поиск алгоритма по профдню WorkCalendarProphDayAlgorithm
-					StringBuilder sql = new StringBuilder() ;
-					
-					sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" left join VocWeekMonthOrder vwmo on vwmo.id=wca.monthOrder_id").append(" left join VocWeekDay vwd on vwd.id=wca.weekDay_id").append(" where dtype='WorkCalendarProphDayAlgorithm' and pattern_id=:pattern").append(" and (wca.monthDay=:monthDay or vwmo.code=:monthOrder").append(" and vwd.code=:weekDay)") ;
-					Query query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("monthDay", monthDay).setParameter("monthOrder", monthOrder).setParameter("weekDay", weekDaySt) ;
-					if (query.getResultList().isEmpty()) {
-						// Поиск алгоритма по датам WorkCalendarDatesAlgorithm
-						sql = new StringBuilder() ;
-						boolean nextSearch =true ;
-						Date dateCur = new Date(cal1.getTime().getTime()) ;
-						sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" where wca.dtype='WorkCalendarDatesAlgorithm' and pattern_id=:pattern").append(" and :day between wca.dateFrom and wca.dateTo") ;
-						query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("day", cal1.getTime());
-						//System.out.println("----------------WorkCalendarDatesAlgorithm=");
-						nextSearch= !getParrentDay(aWorkCalendar, dateCur, query) ;
-						//System.out.println("----------------WorkCalendarDatesAlgorithm="+listA.size());
+				// Проверка есть ли не рабочее время на специалиста
+				// else {
+				
+					String weekDaySt = String.valueOf(weekDay) ;
+					String monthOrder = getOrderWeek(cal1,weekMonth);
+					WorkCalendarPattern pattern = jpc.getPattern() ;
+					if (pattern!=null) {
+						// Поиск алгоритма по профдню WorkCalendarProphDayAlgorithm
+						StringBuilder sql = new StringBuilder() ;
 						
-						// Поиск алгоритма по дням недели WorkCalendarWeekAlgorithm
-						if (nextSearch) {  
+						sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" left join VocWeekMonthOrder vwmo on vwmo.id=wca.monthOrder_id").append(" left join VocWeekDay vwd on vwd.id=wca.weekDay_id").append(" where dtype='WorkCalendarProphDayAlgorithm' and pattern_id=:pattern").append(" and (wca.monthDay=:monthDay or vwmo.code=:monthOrder").append(" and vwd.code=:weekDay)") ;
+						Query query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("monthDay", monthDay).setParameter("monthOrder", monthOrder).setParameter("weekDay", weekDaySt) ;
+						if (query.getResultList().isEmpty()) {
+							// Поиск алгоритма по датам WorkCalendarDatesAlgorithm
 							sql = new StringBuilder() ;
+							boolean nextSearch =true ;
+							Date dateCur = new Date(cal1.getTime().getTime()) ;
+							sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" where wca.dtype='WorkCalendarDatesAlgorithm' and pattern_id=:pattern").append(" and :day between wca.dateFrom and wca.dateTo") ;
+							query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("day", cal1.getTime());
+							//System.out.println("----------------WorkCalendarDatesAlgorithm=");
+							nextSearch= !getParrentDay(aWorkCalendar, dateCur, query) ;
+							//System.out.println("----------------WorkCalendarDatesAlgorithm="+listA.size());
 							
-							sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ")
-							.append(" left join VocWorkWeek vww on vww.id=wca.workWeek_id")
-							.append(" left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id")
-							.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")
-							.append(" where dtype='WorkCalendarWeekAlgorithm' and pattern_id=:pattern")	
-							.append(" and cast(vww.code as int)>=:dayBy and (wca.parity_id is null ")	
-							.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
-							.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
-							query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("dayBy", weekDay).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
-							System.out.println("----------------WorkCalendarWeekAlgorithm=");
-							System.out.println("----------------dayBy="+weekDay);
-							nextSearch = !getParrentDay(aWorkCalendar, dateCur, query) ;
-							//System.out.println("----------------WorkCalendarWeekAlgorithm="+listA.size());
-						}
-						if (nextSearch) {
-						//if (false) {
-							// Поиск алгоритма по неделям WorkCalendarWeekDaysAlgorithm
-							sql = new StringBuilder() ;
-							String daySymbol = getWeekDaySymbol(weekDayV) ;
-							if (daySymbol!=null) {
-								sql.append("select wca.id,wca.").append(daySymbol)
-								.append("_id from WorkCalendarAlgorithm wca ")
+							// Поиск алгоритма по дням недели WorkCalendarWeekAlgorithm
+							if (nextSearch) {  
+								sql = new StringBuilder() ;
+								
+								sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ")
+								.append(" left join VocWorkWeek vww on vww.id=wca.workWeek_id")
 								.append(" left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id")
-								.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")	
-								.append(" where dtype='WorkCalendarWeekDaysAlgorithm' and pattern_id=:pattern")	
-								.append(" and wca.").append(daySymbol).append("_id is not null")
-								.append(" and (wca.parity_id is null ")
+								.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")
+								.append(" where dtype='WorkCalendarWeekAlgorithm' and pattern_id=:pattern")	
+								.append(" and cast(vww.code as int)>=:dayBy and (wca.parity_id is null ")	
 								.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
 								.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
-								query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
-								System.out.println("----------------WorkCalendarWeekDaysAlgorithm=");
-								getParrentDay(aWorkCalendar, dateCur, query) ;
-								//System.out.println("----------------WorkCalendarWeekDaysAlgorithm="+listA.size());
+								query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("dayBy", weekDay).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
+								System.out.println("----------------WorkCalendarWeekAlgorithm=");
+								System.out.println("----------------dayBy="+weekDay);
+								nextSearch = !getParrentDay(aWorkCalendar, dateCur, query) ;
+								//System.out.println("----------------WorkCalendarWeekAlgorithm="+listA.size());
 							}
-						
+							if (nextSearch) {
+							//if (false) {
+								// Поиск алгоритма по неделям WorkCalendarWeekDaysAlgorithm
+								sql = new StringBuilder() ;
+								String daySymbol = getWeekDaySymbol(weekDayV) ;
+								if (daySymbol!=null) {
+									sql.append("select wca.id,wca.").append(daySymbol)
+									.append("_id from WorkCalendarAlgorithm wca ")
+									.append(" left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id")
+									.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")	
+									.append(" where dtype='WorkCalendarWeekDaysAlgorithm' and pattern_id=:pattern")	
+									.append(" and wca.").append(daySymbol).append("_id is not null")
+									.append(" and (wca.parity_id is null ")
+									.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
+									.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
+									query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
+									System.out.println("----------------WorkCalendarWeekDaysAlgorithm=");
+									getParrentDay(aWorkCalendar, dateCur, query) ;
+									//System.out.println("----------------WorkCalendarWeekDaysAlgorithm="+listA.size());
+								}
+							
+						//	}
+							
 						}
-						
-						
 					}
 				}
 			}
@@ -647,10 +882,10 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	 * Добавляем новый WorkCalendarTime по времени (aTime) и дню (aWorkCalendarDay)
 	 *  Проверяем, не занято ли такое время
 	 */
-	private void createCalendarTime(java.sql.Time aTime, WorkCalendarDay aWorkCalendarDay) {
+	private Long createCalendarTime(java.sql.Time aTime, WorkCalendarDay aWorkCalendarDay) {
 		LOG.info(new StringBuilder().append("----------++createCalendarTime").toString()) ;
 		// проверяем на занятость
-		if (aTime== null) return ;
+		if (aTime== null) return null ;
 		List<WorkCalendarTime> list = theManager.createQuery(
 			// "from WorkCalendarTime where medCase is null "
 			 "from WorkCalendarTime where"
@@ -665,9 +900,9 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			//Time sqlTime = new java.sql.Time(aTime.getTime()) ;
 			t.setTimeFrom(aTime) ;
 			theManager.persist(t) ;
+			return t.getId() ;
 		}	
-		
-		
+		return null ;
 	}	
 	private void  deleteUnMedCasesCalendarTimes(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
 		theManager.createNativeQuery(
@@ -676,7 +911,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 				+"      ( select  WorkCalendarDay.id from WorkCalendarDay where  "
 		        +"          WorkCalendarDay.workCalendar_id =:cal_id and WorkCalendarDay.calendarDate between :dateFrom and :dateTo and WorkCalendarTime.workCalendarDay_id=WorkCalendarDay.id"
 		        +"      )"
-		        +"   and WorkCalendarTime.medcase_id is null"
+		        +"   and WorkCalendarTime.medcase_id is null and WorkCalendarTime.prePatient_id is null and WorkCalendarTime.prePatientInfo is null"
 		       // +"   and WorkCalendarTime.id not in (select medcase.timePlan_id from medcase)"
 		       )
 		        .setParameter("cal_id", aCalendar.getId())
@@ -697,6 +932,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		        .setParameter("day_id", aWorkCalendarDay.getId())
 				.executeUpdate() ;
 	}
+
 	private void deleteEmptyCalendarDays(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
 		LOG.info(new StringBuilder().append("---------->>deleteEmptyCalendarDays").toString()) ;
 		theManager.createNativeQuery(

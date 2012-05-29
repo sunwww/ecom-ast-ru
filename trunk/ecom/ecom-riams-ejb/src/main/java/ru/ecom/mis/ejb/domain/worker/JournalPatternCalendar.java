@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
  * Журнал шаблона календаря
@@ -75,4 +76,19 @@ public class JournalPatternCalendar extends BaseEntity {
 	private WorkCalendarPattern thePattern;
 //	/** Рабочая функция */
 //	private WorkFunction theWorkFunction;
+	/**
+	 * Тип занятости
+	 */
+	@Comment("Тип занятости")
+	@OneToOne
+	public VocWorkBusy getWorkBusy() {
+		return theWorkBusy;
+	}
+	public void setWorkBusy(VocWorkBusy aWorkBusy) {
+		theWorkBusy = aWorkBusy;
+	}
+	/**
+	 * Тип занятости
+	 */
+	private VocWorkBusy theWorkBusy;
 }

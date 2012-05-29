@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCodeArticle;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocLawCourt;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCompulsoryTreatment;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCourtTreatmentDecision;
 
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
@@ -191,16 +192,16 @@ private Date theRegistrationDate;
 	/** Решение заменено на */
 	@Comment("Решение заменено на")
 	@OneToOne
-	public VocPsychCompulsoryTreatment getCourtDecisionReplace() {
+	public VocPsychCourtTreatmentDecision getCourtDecisionReplace() {
 		return theCourtDecisionReplace;
 	}
 
-	public void setCourtDecisionReplace(VocPsychCompulsoryTreatment aCourtDecisionReplace) {
+	public void setCourtDecisionReplace(VocPsychCourtTreatmentDecision aCourtDecisionReplace) {
 		theCourtDecisionReplace = aCourtDecisionReplace;
 	}
 
 	/** Решение заменено на */
-	private VocPsychCompulsoryTreatment theCourtDecisionReplace;
+	private VocPsychCourtTreatmentDecision theCourtDecisionReplace;
 	/** Суд, заменивший тип принудительного лечения */
 	private VocLawCourt theLawCourtReplace;
 	/** Дата замены */

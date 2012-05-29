@@ -1,4 +1,40 @@
 var map = new java.util.HashMap() ;
+
+function printDocument(aCtx,aParams) {
+	//var map = new java.util.HashMap() ;
+	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.licence.InternalDocuments
+		, new java.lang.Long(aParams.get("id"))) ;
+	var medCase = doc.medCase ;
+	var list = aCtx.manager.createNativeQuery("select mp.id,mp.patient_id from MedPolicy mp where mp.patient_id='"+doc.medCase.patient.id+"' and mp.DTYPE like 'MedPolicyOmc%' AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))")
+	.getResultList();
+	if (list.size()>0) {
+		var pol = list.get(0)[0] ;
+		var policy = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy
+				, new java.lang.Long(pol)) ;
+		map.put("policyOmc", policy!=null? policy.text : "") ;
+	} else {
+		map.put("policyOmc", "") ;
+	}
+	map.put("pat", medCase.patient) ;
+	map.put("id", medCase.getId()) ;
+	map.put("medCase", medCase) ;
+	var currentDate = new Date() ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	recordMultiText("history", doc.history) ;
+	recordMultiText("diagnosis", doc.diagnosis) ;
+	var wf = medCase.workFunctionPlan ;
+	var pers = wf.worker!=null?wf.worker.person:null;
+	var spec = "_____________________" ;
+	if (pers!=null) {
+		spec=pers.lastname+" "+pers.firstname+" "+pers.middlename
+	} 
+	map.put("specCODE",wf.code!=null?wf.code:"_____________") ;
+	map.put("doc.workFunctionInfo",(wf.workFunction!=null?wf.workFunction.name:"_____________")+" " + spec) ;
+	map.put("doc.date",medCase.dateStart!=null?FORMAT_2.format(medCase.dateStart):"") ;
+	map.put("doc.mkbCode",doc.idc10!=null?doc.idc10.code:"") ;
+	return map ;
+}
 function printBakExp(aCtx, aParams) {
 	var map = new java.util.HashMap() ;
 	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
@@ -52,7 +88,7 @@ function printVisit(aCtx, aParams) {
 		if (diag.priority!=null && diag.priority.id == 1) {
 		if (!diagText1.equals("")) diagText1 = diagText1 +"; "; 
 			diagText1 = diagText1 +  diag.name ;
-			diagMkb1 = diagMkb1 + " " + diag.idc10Text;
+			diagMkb1 = diagMkb1 + " " + +diag.idc10!=null?diag.idc10.code:"";
 			diagAcuity = diagAcuity + " " + ( diag.acuity!=null?diag.acuity.name:"");
 			diagPrimary = diagPrimary + " " + ( diag.primary!=null?diag.primary.name:"");
 			if (diag.traumaType!=null) {diagTravm = diagTravm + " " + diag.traumaType.name}
@@ -62,19 +98,19 @@ function printVisit(aCtx, aParams) {
 		if (diag.priority!=null && diag.priority.id == 2) {
 		if (!diagText2.equals("")) diagText2 = diagText2 +"; ";
 			diagText2 = diagText2 +  diag.name ;
-			diagMkb2 = diagMkb2 + " " + diag.idc10Text;
+			diagMkb2 = diagMkb2+" "+diag.idc10!=null?diag.idc10.code:"" ; 
 		
 		}
 		if (diag.priority!=null && diag.priority.id == 3) {
 			if (!diagText3.equals("")) diagText3 = diagText3 +"; ";
 			diagText3 = diagText3 +  diag.name ;
-			diagMkb3 = diagMkb3 + " " + diag.idc10Text;
+			diagMkb3 = diagMkb3 + " " + +diag.idc10!=null?diag.idc10.code:"";
 		
 		}
 		if (diag.priority!=null && diag.priority.id == 4) {
 			if (!diagText4.equals("")) diagText4 = diagText4 +"; ";
 			diagText4 = diagText4 +  diag.name ;
-			diagMkb4 = diagMkb4 + " " + diag.idc10Text;
+			diagMkb4 = diagMkb4 + " " + +diag.idc10!=null?diag.idc10.code:"";
 		
 		}
 	}

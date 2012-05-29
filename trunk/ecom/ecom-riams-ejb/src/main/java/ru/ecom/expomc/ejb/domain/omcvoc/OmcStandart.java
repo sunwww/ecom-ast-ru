@@ -13,7 +13,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(name = "OMC_STANDART",schema="SQLUser")
 @AIndexes
 (
-	@AIndex(unique = false, properties = "model")
+		{	@AIndex(unique = false, properties = "model")
+	, @AIndex(unique = false, properties = "idcList")
+		}
 )
 public class OmcStandart extends VocBaseEntity {
 	/** Idc list */

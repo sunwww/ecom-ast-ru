@@ -9,6 +9,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.report.replace.IValueGetter;
@@ -24,21 +25,29 @@ public class PrintServiceBean implements IPrintService {
 	public String print(String aKey
 			, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
+		return print("user", aKey, aServiceName, aMethodName, aParams);		
+	}
+	public String print(String aLogin, String aKey
+			, String aServiceName
+			, String aMethodName, Map<String,String> aParams) {
 		try {
 			// получение данных
 			Map<String, Object> values = (Map<String, Object>) theInjection
 					.invoke(aServiceName, aMethodName, new Object[] { aParams });
 			// печать
-            RtfPrintServiceHelper service = new RtfPrintServiceHelper();
             EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+            //Long maxLengthLine = ConvertSql.parseLong(config.get("text.line.length.max", "77")) ;
+            RtfPrintServiceHelper service = new RtfPrintServiceHelper();
             String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
             boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1")?true:false;
             
             
             service.setWorkDir(config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf"));
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
+            //service.set
             System.out.println("removedTemp = "+removedTemp) ;
             service.setRemovedTempFile(removedTemp);
+            service.setLogin(aLogin) ;
             return service.print(aKey, new ValueInit(values), new HashMap<String, String>()) ;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

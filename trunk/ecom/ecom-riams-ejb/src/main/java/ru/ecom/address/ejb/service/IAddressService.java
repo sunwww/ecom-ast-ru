@@ -13,5 +13,6 @@ public interface IAddressService {
         	, String aHouseNumber
         	, String aHouseBuilding, String aFlatNumber, String aZipCode);
     public String getZipcode(Long aAddress5, Long aAddress6) ;
+    public String getRayon(Long aAddressId, String aHouse);
 
 }

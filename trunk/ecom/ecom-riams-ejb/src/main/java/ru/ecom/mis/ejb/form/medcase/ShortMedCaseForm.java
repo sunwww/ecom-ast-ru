@@ -73,4 +73,27 @@ public class ShortMedCaseForm extends ChildMedCaseForm{
 	private Long theWorkFunctionPlan;
 	/** Планируемая дата исполнения */
 	private Long theDatePlan;
+	/** Инфо по полису */
+	@Comment("Инфо по полису")
+	public String getInfoByPolicy() {
+		return theInfoByPolicy;
+	}
+
+	public void setInfoByPolicy(String aInfoByPolicy) {
+		theInfoByPolicy = aInfoByPolicy;
+	}
+
+	/** Инфо по полису */
+	private String theInfoByPolicy;
+	
+	/** Дата направления */
+	@Comment("Дата направления")
+	@DateString @DoDateString
+	@Persist
+	public String getOrderDate() {return theOrderDate;}
+	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+
+	/** Дата направления */
+	private String theOrderDate;
 }
+

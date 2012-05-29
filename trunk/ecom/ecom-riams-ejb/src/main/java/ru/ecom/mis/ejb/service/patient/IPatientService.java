@@ -13,13 +13,24 @@ import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 /**
  */
 public interface IPatientService {
-	
+	public void insertCheckFondData(
+			String aLastname,String aFirstname,String aMiddlename,String aBirthday
+			,String aSnils
+			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
+			,String aPolicyDateFrom, String aPolicyDateTo
+			,String aUsername, String aCheckType
+			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
+			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			) throws ParseException ;
+	public String getCodeByMedPolicyOmc(Long aType) ;
 	public boolean isNaturalPerson(Long aPatient) ;
 	public void createNaturalPerson(Long aPatient) ;	
 	
-	public String getInfoVocForFond(String aPassportType,String aAddress) ;
-	public boolean updateDataByFond(Long aPatientId, String aFiodr
-			,String aDocument,String aPolicy,String aAddress) ;
+	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) ;
+	public boolean updateDataByFond(String aUsername,Long aPatientId, String aFiodr
+			,String aDocument,String aPolicy,String aAddress,boolean aIsPatient, boolean aIsPolicy
+			, boolean aIsDocument, boolean aIsAddress) ;
 	public PatientForm getPatientById(Long aId) ;
 	public String getOmcCodeByPassportType(Long aPassportType);
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;

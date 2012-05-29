@@ -34,7 +34,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties="medCase"),
-	@AIndex(properties="patient"),
+	//@AIndex(properties="registrationType"),
+	//@AIndex(properties="acuity"),
+	//@AIndex(properties="primary"),
+	//@AIndex(properties="priority"),
+	//@AIndex(properties="idc10"),
 	@AIndex(properties={"patient","idc10"}),
 	@AIndex(properties={"patient","idc10","establishDate","priority"}),
 	@AIndex(properties={"patient","idc10","establishDate"})
@@ -449,4 +453,34 @@ public class Diagnosis extends BaseEntity {
 
 	/** Характер заболевания */
 	private VocIllnesPrimary theIllnesPrimary;
+	
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Пользователь, последний изменявший запись */
+	@Comment("Пользователь, последний изменявший запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата создания */
+	private Date theCreateDate;
+
 }

@@ -1,4 +1,4 @@
-package ru.ecom.poly.ejb.form.protocol;
+package ru.ecom.mis.ejb.form.medcase;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -6,9 +6,9 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
+import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -31,12 +31,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 //@Parent(property = "medCase", parentMapForm = "$$map$$smo_visitForm")
 @Parent(property = "medCase", parentForm = MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Protocol")
+/*
 @ASaveInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
 )
 @ACreateInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
 )
+*/
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
@@ -98,5 +100,25 @@ public class VisitProtocolForm extends ProtocolForm {
 	private Long theType;
 	/** ВИзит */
 	private Long theMedCase;
-	/** Визит */
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+
+	/** Пользователь последний, изменявший запись */
+	@Comment("Пользователь последний, изменявший запись")
+	@Persist
+	public String getEditUsername() {
+		return theEditUsername;
+	}
+
+	public void setEditUsername(String aEditUsername) {
+		theEditUsername = aEditUsername;
+	}
+
+	/** Пользователь последний, изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private String theEditDate;
 }

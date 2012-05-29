@@ -10,31 +10,48 @@ function deleteByMedService(aCtx,aIds) {
 	aCtx.manager.createNativeQuery("delete from MedService where id in ("+aIds+")").executeUpdate() ;
 	return ;
 }
-function updateWorkFunctionByMedService(aCtx,aIds, aWorkFunction, aAction) {
-	if (aAction=="delete") deleteWorkFunctionByMedService(aCtx,aIds, aWorkFunction) ;
-	if (aAction=="add") addWorkFunctionByMedService(aCtx,aIds, aWorkFunction) ;
+function updateWorkFunctionByMedService(aCtx,aIds, aWorkFunction, aLpu, aAction) {
+	if (aAction=="delete") deleteWorkFunctionByMedService(aCtx,aIds, aWorkFunction, aLpu) ;
+	if (aAction=="add") addWorkFunctionByMedService(aCtx,aIds, aWorkFunction, aLpu) ;
 	return ;
 }
-function deleteWorkFunctionByMedService(aCtx,aIds, aWorkFunction) {
-	var ids = aIds.split(",") ; ;
+function deleteWorkFunctionByMedService(aCtx,aIds, aWorkFunction, aLpu) {
+	var ids = aIds.split(",") ; 
+	var add="" ;
+	if (+aLpu>0) add=" and lpu_id='"+aLpu+"'" ;
 	for (var i = 0; i< ids.length ; i++) {
 		var s = ids[i];
-	    aCtx.manager.createNativeQuery("delete from WorkFunctionService where medService_id ='"+s+"' and vocWorkFunction_id='"+aWorkFunction+"'") 
+	    aCtx.manager.createNativeQuery("delete from WorkFunctionService where medService_id ='"+s+"' and vocWorkFunction_id='"+aWorkFunction+"'"+add) 
 			.executeUpdate() ;
     }
 	return ;
 }
-function addWorkFunctionByMedService(aCtx,aIds, aWorkFunction) {
-	var ids = aIds.split(",") ; ;
+function addWorkFunctionByMedService(aCtx,aIds, aWorkFunction,aLpu) {
+	if (+aWorkFunction<1) return  ;
+	var ids = aIds.split(",") ; 
+	var vwf = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction,java.lang.Long.valueOf(aWorkFunction)) ;
+	var lpu = null ;
+	if (+aLpu>0) lpu = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,java.lang.Long.valueOf(aLpu)) ;
 	for (var i = 0; i< ids.length ; i++) {
       var s = ids[i];
+      //throw "select count(*) from WorkFunctionService where medService_id='"+s+"' and vocWorkFunction_id='"+aWorkFunction+"'" ;
       var cnt=aCtx.manager.createNativeQuery("select count(*) from WorkFunctionService where medService_id='"+s+"' and vocWorkFunction_id='"+aWorkFunction+"'").getSingleResult() ;
       if (+cnt==0) {
-      	var cnt1=aCtx.manager.createNativeQuery("select count(*) from MedService where id='"+s+"' and vocMedService_id is not null").getSingleResult() ;
-      	if (+cnt1>0) {
-	      aCtx.manager.createNativeQuery("insert into WorkFunctionService set medService_id ='"+s+"' , vocWorkFunction_id='"+aWorkFunction+"'") 
-			.executeUpdate() ;
-		}
+      	//var cnt1=aCtx.manager.createNativeQuery("select count(*) from MedService where id='"+s+"' and vocMedService_id is not null").getSingleResult() ;
+      	//if (+cnt1>0) {
+    	  var ms = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,java.lang.Long.valueOf(s)) ;
+    	  if (ms.vocMedService!=null) {
+    		  var wfs = new Packages.ru.ecom.mis.ejb.domain.worker.WorkFunctionService() ;
+      		
+      		
+      		wfs.setMedService(ms) ;
+      		wfs.setVocWorkFunction(vwf) ;
+      		wfs.setLpu(lpu) ;
+	      //aCtx.manager.createNativeQuery("insert into WorkFunctionService set medService_id ='"+s+"' , vocWorkFunction_id='"+aWorkFunction+"'") 
+			//.executeUpdate() ;
+      		aCtx.manager.persist(wfs) ;
+    	  }
+		//}
 	  }
     }
 	return ;

@@ -33,7 +33,14 @@ function onPreSave(aForm,aEntity , aCtx) {
 	aForm.setPassword(Packages.ru.ecom.jaas.ejb.service.SecUserServiceBean.getHashPassword(aForm.getLogin(),aForm.getPassword())) ;	
 	aForm.setIsHash(true) ;
 }
-
+function onCreate(aForm, aEntity, aContext) {
+	if (+aForm.workFunction>0) {
+		var wf = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction
+				,aForm.workFunction) ;
+		wf.setSecUser(aEntity) ;
+		aContext.manager.persist(wf) ;
+	}
+}
 function errorThrow(aList) {
 	if (aList==null || aList.size()>0) {
 		if (aList==null) throw "Имя пользователя обязательно!!!";

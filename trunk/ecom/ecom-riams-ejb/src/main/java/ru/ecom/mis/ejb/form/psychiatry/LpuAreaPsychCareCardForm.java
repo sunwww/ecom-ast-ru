@@ -2,7 +2,11 @@ package ru.ecom.mis.ejb.form.psychiatry;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.psychiatry.LpuAreaPsychCareCard;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
+import ru.ecom.mis.ejb.form.psychiatry.interceptor.LpuAreaPsychPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -19,6 +23,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Движение по участку", nameProperties= "id",list="entityParentList-psych_lpuAreaPsychCareCard.do",listComment="список по пациенту", view="entityParentView-psych_lpuAreaPsychCareCard.do")
 @Parent(property="careCard", parentForm=PsychiatricCareCardForm.class,orderBy="startDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(LpuAreaPsychPreCreateInterceptor.class)
+)
 public class LpuAreaPsychCareCardForm extends IdEntityForm {
 	 /**
 	  * Дата прихода на участок
@@ -126,4 +133,79 @@ public class LpuAreaPsychCareCardForm extends IdEntityForm {
 	private String theTransferDate;
 	/** Участок ЛПУ (ИНФО) */
 	private String theLpuAreaInfo;
+	
+	 /** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DoDateString @DateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, последний редактировавший запись */
+	@Comment("Пользователь, последний редактировавший запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний редактировавший запись */
+	private String theEditUsername;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Дата создания */
+	private String theCreateDate;
+	
+	/** Наблюдения */
+	@Comment("Наблюдения")
+	public Long getAmbulatoryCare() {return theAmbulatoryCare;}
+	public void setAmbulatoryCare(Long aObservation) {theAmbulatoryCare = aObservation;}
+
+	/** Группа */
+	@Comment("Группа")
+	public Long getDispensaryGroup() {
+		return theDispensaryGroup;
+	}
+
+	public void setDispensaryGroup(Long aDispensaryGroup) {
+		theDispensaryGroup = aDispensaryGroup;
+	}
+
+	/** Группа */
+	private Long theDispensaryGroup;
+	/** Наблюдения */
+	private Long theAmbulatoryCare;
+	
+	/** old date start */
+	@Comment("old date start")
+	public String getOldStartDate() {
+		return theOldStartDate;
+	}
+
+	public void setOldStartDate(String aOldStartDate) {
+		theOldStartDate = aOldStartDate;
+	}
+	
+	/** old finish date */
+	@Comment("old finish date")
+	public String getOldFinishDate() {
+		return theOldFinishDate;
+	}
+
+	public void setOldFinishDate(String aOldFinishDate) {
+		theOldFinishDate = aOldFinishDate;
+	}
+
+	/** old finish date */
+	private String theOldFinishDate;
+	/** old date start */
+	private String theOldStartDate;
 }

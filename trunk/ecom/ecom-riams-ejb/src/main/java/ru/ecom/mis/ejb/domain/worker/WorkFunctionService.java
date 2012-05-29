@@ -2,11 +2,13 @@ package ru.ecom.mis.ejb.domain.worker;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -23,6 +25,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"vocWorkFunction"})
 	,@AIndex(properties={"medService"})
 	,@AIndex(properties={"vocWorkFunction","medService"})
+	,@AIndex(properties={"vocWorkFunction","lpu"})
 })
 @Table(schema="SQLUser")
 public class WorkFunctionService extends BaseEntity{
@@ -54,5 +57,14 @@ public class WorkFunctionService extends BaseEntity{
 
 	/** Мед. услуга */
 	private MedService theMedService;
+	
+	/** ЛПУ */
+	@Comment("ЛПУ")
+	@OneToOne
+	public MisLpu getLpu() {return theLpu;}
+	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+
+	/** ЛПУ */
+	private MisLpu theLpu;
 
 }

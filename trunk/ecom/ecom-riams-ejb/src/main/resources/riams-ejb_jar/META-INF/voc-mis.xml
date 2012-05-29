@@ -1,12 +1,12 @@
 <vocconfig>
-	<voc id="priceMedServiceByContractAccout" type="NativeVocService">
+<voc id="priceMedServiceByContractAccout" type="NativeVocService">
 		<NativeVocService
-			from="PriceMedService PMS"
+			from="PricePosition PP"
                 parent='CA.id = :parent'
-                nameId="pms.id"
+                nameId="pp.id"
                 queryAppend=""
                 join="
-                	left join PricePosition PP ON PP.priceList_id = PMS.pricePosition_id
+                	left join PriceMedService PMS ON PP.priceList_id = PMS.pricePosition_id
 					left join MedContract MC ON MC.priceList_id = PP.priceList_id
 					left join ServedPerson SP ON SP.contract_id=MC.id
 					left join ContractAccount CA ON CA.servedPerson_id=sp.id
@@ -79,18 +79,18 @@
 			from="WorkCalendarPattern wcp"
                 parent='(wc.id = :parent or wc1.id=:parent)'
                 nameId="wcp.id"
-                queryAppend=" (wcp.workFunction_id is null or wcp.workFunction_id = wc.workFunction_id) and (wf1.DTYPE='GroupWorkFunction' and wf.dtype='PersonalWorkFunction')"
+                queryAppend=" (wcp.workFunction_id is null or wcp.workFunction_id = wc.workFunction_id)"
                 join="
                 left join worker w on w.lpu_id=wcp.lpu_id
-                left join workfunction wf1 on wf1.lpu_id=wcp.lpu_id
+                left join workfunction wf1 on wf1.lpu_id=wcp.lpu_id and wf1.DTYPE='GroupWorkFunction'
                 left join workcalendar wc1 on wc1.workfunction_id=wf1.id
-                left join workfunction wf on wf.worker_id=w.id
+                left join workfunction wf on wf.worker_id=w.id and wf.dtype='PersonalWorkFunction'
                 left join workcalendar wc on wc.workfunction_id=wf.id
                 
 				"
                 order=""
                 names   = "wcp.name"
-	    		queried=" wcp.name like :query"
+	    		queried=" (cast(wcp.id as varchar(5)) like :querId or wcp.name like :query) "
 			/>
 	</voc>
 
@@ -260,21 +260,7 @@
     	/>
     
     </voc>
-    <!-- 
-    <voc id='medServiceForCategory' type='NativeVocService'>
-    	<NativeVocService
-    			from = 'MedService'
-    			parent="parent_id=$piece(:parent,'#',1) and (startDate is null or cast(cast($$ini^Zcdat($piece(:parent,'#',2),7) as date) as integer) >=cast(startDate as integer)) and (finishDate is null or cast(finishDate as integer)>=cast(cast($$ini^Zcdat($piece(:parent,'#',2),7) as date) as integer))"
-    			names = "name||'(' || ifnull(startdate,'нет даты',to_CHAR(startDate,'DD.MM.YYYY')) ||'-'||ifnull(finishdate,'нет даты',TO_CHAR(finishDate,'DD.MM.YYYY')) ||')'"
-    			nameId="id"
-    			queryAppend='vocMedService_id is not null'
-    			join=''
-    			order=''
-    			queried = "(id like :query or name like UPPER(:query))"
-    			 			
-    	/>
-    
-    </voc> -->
+
     <voc id='medServiceForSpec' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
@@ -284,7 +270,7 @@
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend='ms.vocMedService_id is not null'
+    			queryAppend="ms.vocMedService_id is not null and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
     			queried = "(ms.code like :query or ms.name like UPPER(:query))"
@@ -472,7 +458,15 @@
                 entity  = 'ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany'
                 names   = 'omcCode,name'
                 queried = 'omcCode,name'
-                queryAppend = 'deprecated = false'
+                queryAppend = '(deprecated is null or deprecated = false) and (isRegion=true)'
+                />
+    </voc>
+    <voc id='vocInsuranceCompanyAll' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany'
+                names   = 'omcCode,name'
+                queried = 'omcCode,name'
+                queryAppend = '(deprecated is null or deprecated = false)'
                 />
     </voc>
 
@@ -872,7 +866,7 @@
     			parent = " wct.workCalendarDay_id = :parent "
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null "
+    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
     			order =''
     			nameId='wct.id'
     			join=''
@@ -941,6 +935,18 @@
     			names  = "case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
     			queried =" (cast(wf.id as varchar(10)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
     			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0)"
+    			order =''
+    			nameId='wf.id'
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
+    	/>
+    </voc>
+    <voc id='workFunctionIsSurgical' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'WorkFunction as wf '
+    			parent = ""
+    			names  = "case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			queried =" (cast(wf.id as varchar(10)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
+    			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or wf.archival='0') and (wf.isSurgical='1')"
     			order =''
     			nameId='wf.id'
     			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '

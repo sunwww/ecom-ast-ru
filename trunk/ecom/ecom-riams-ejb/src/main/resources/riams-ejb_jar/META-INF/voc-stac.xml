@@ -128,6 +128,8 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
+    
+    
     <!-- Справочник операций -->
     <voc id='vocOperation' type='NativeVocService'>
     	<NativeVocService
@@ -142,6 +144,27 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			 			
     	/>
     </voc> 
+    <voc id='medServiceOperation' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService ms'
+    			parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
+    					 and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
+    					 and wf.id=:par2 and (wfs.lpu_id is null or wfs.lpu_id=:par3)
+    					 and ms.vocMedService_id is not null and vst.code='OPERATION'"
+    			names = "coalesce(ms.code||' ','')||ms.name"
+    			nameId="ms.id"
+    			queryAppend=""
+    			join=' left join VocServiceType vst on vst.id=ms.serviceType_id
+    			       left join WorkFunctionService wfs on wfs.medService_id=ms.id
+    			       left join WorkFunction wf on wfs.vocWorkFunction_id=wf.workFunction_id
+    			       '
+    			order=''
+    			queried = "(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
+		    	parentSplitCount="3" />
+    </voc>
+    
+    
+    
     <!-- Справочник осложнений -->
     <voc id='vocComplication' type='EntityVocService'>
         <EntityVocService

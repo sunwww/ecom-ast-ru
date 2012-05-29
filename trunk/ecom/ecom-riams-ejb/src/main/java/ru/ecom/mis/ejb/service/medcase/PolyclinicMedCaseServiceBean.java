@@ -154,8 +154,18 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                    .setParameter("date", date)
                    .getSingleResult();
 				Object planned = theManager.createNativeQuery("select count(id) from medcase"
-					+" where workfunctionplan_id =:workFunction"
-                   +" and datePlan_id=:workCalendarDay"
+						+" where workfunctionplan_id =:workFunction"
+						+" and datePlan_id=:workCalendarDay"
+						)
+//						.setParameter("workFunction",aWorkFunction)
+						.setParameter("workFunction",workFunc)
+						.setParameter("workCalendarDay", workCalendarDayId)
+						.getSingleResult();
+				Object prerecord = theManager.createNativeQuery("select count(distinct wct.id) from workCalendarTime wct"
+					+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id"
+					+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id"
+					+" where wcd.id=:workCalendarDay and wc.workFunction_id =:workFunction"
+                   +" and wct.medCase_id is null and (wct.prePatient_id is not null or wct.prePatientInfo is not null and wct.prePatientInfo!='')"
 						)
 //						.setParameter("workFunction",aWorkFunction)
                    .setParameter("workFunction",workFunc)
@@ -164,8 +174,9 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 				System.out.println("day="+workCalendarDayId) ;
 				System.out.println("exec="+executed) ;
 				System.out.println("plan="+planned) ;
+				System.out.println("prerecord="+prerecord) ;
 				return new StringBuilder().append(workCalendarDayId).append("#")
-						.append(executed).append("#").append(planned).toString();
+						.append(executed).append("#").append(planned).append("#").append(prerecord).toString();
 				
 	}
 }

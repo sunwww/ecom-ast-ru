@@ -1,12 +1,7 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
-import java.sql.Date;
-
-import javax.persistence.ManyToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.psychiatry.LpuAreaPsychCareCard;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiaticObservation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -24,12 +19,12 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Динамика наблюдений", nameProperties= "id",list="entityParentList-psych_observation.do",listComment="список по пациенту", view="entityParentView-psych_observation.do")
 @Parent(property="lpuAreaPsychCareCard", parentForm=LpuAreaPsychCareCardForm.class,orderBy="startDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation")
-public class PsychiaticObservationForm extends IdEntityForm {
+public class PsychiatricObservationForm extends IdEntityForm {
 	/**
 	  * Карта обратившегося за психиатрической помощью
 	  */
 	 @Comment("Карта обратившегося за психиатрической помощью")
-	 @Persist @Required
+	 @Persist 
 	 public Long getCareCard() {
 	  return theCareCard;
 	 }

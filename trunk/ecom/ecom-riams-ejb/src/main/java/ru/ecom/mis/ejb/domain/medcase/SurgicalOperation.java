@@ -30,6 +30,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationTechnology;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -38,9 +39,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties="medCase"),
 	@AIndex(properties="operationDate"),
-	@AIndex(properties={"operationDate","surgeon"}),
-	@AIndex(properties={"operationDate","surgeon","operation"}),
-	@AIndex(properties="patient")
+	@AIndex(properties={"surgeon"}),
+	//@AIndex(properties={"operationDate","surgeon"}),
+	@AIndex(properties={"operation"}),
+	@AIndex(properties={"medService"}),
+	@AIndex(properties="patient"),
+	@AIndex(properties="serviceStream")
     }) 
 @Table(schema="SQLUser")
 public class SurgicalOperation extends BaseEntity {
@@ -134,6 +138,7 @@ public class SurgicalOperation extends BaseEntity {
 	public String getSurgeonInfo(){
 		return theSurgeon!=null?theSurgeon.getWorkFunctionInfo():"";
 	}
+	/*
 	@Comment("Отделение инфо")
 	@Transient
 	public String getDepartmentInfo() {	return theDepartment!=null ? theDepartment.getName():"";}
@@ -145,7 +150,7 @@ public class SurgicalOperation extends BaseEntity {
 	@Comment("Операция инфо")
 	@Transient
 	public String getOperationInfo(){return theOperation!=null ? theOperation.getName():"";}
-
+	*/
 	/** Лечебное учреждение 
 	@Comment("Лечебное учреждение")
 	@Transient
@@ -412,5 +417,52 @@ public class SurgicalOperation extends BaseEntity {
 	private Time theOperationTime;
 	/** Дата операции */
 	private Date theOperationDate;
+	
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Пользователь, последний изменявший запись */
+	@Comment("Пользователь, последний изменявший запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата создания */
+	private Date theCreateDate;
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@OneToOne
+	public VocServiceStream getServiceStream() {return theServiceStream;}
+	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+
+	/** Поток обслуживания */
+	private VocServiceStream theServiceStream;
+	
+	/** Мед. услуга */
+	@Comment("Мед. услуга")
+	@OneToOne
+	public MedService getMedService() {return theMedService;}
+	public void setMedService(MedService aMedService) {theMedService = aMedService;}
+
+	/** Мед. услуга */
+	private MedService theMedService;
 
 }

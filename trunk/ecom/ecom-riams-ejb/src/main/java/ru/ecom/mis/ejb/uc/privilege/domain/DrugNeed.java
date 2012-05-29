@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 
@@ -19,6 +21,9 @@ import ru.nuzmsh.util.StringUtil;
 @Entity
 @Comment("Лекарственное средство")
 @Table(schema="SQLUser")
+@AIndexes(
+		@AIndex(properties={"privilege"})
+	)
 public class DrugNeed extends BaseEntity {
 
 	/** Льгота */

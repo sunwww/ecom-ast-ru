@@ -120,16 +120,7 @@ public class MedServiceForm extends IdEntityForm  {
 	public String getServiceTypeInfo() {return theServiceTypeInfo;}
 	public void setServiceTypeInfo(String aServiceTypeInfo) {theServiceTypeInfo = aServiceTypeInfo;}
 
-	/** Прикрепленные рабочие функции */
-	@Comment("Прикрепленные рабочие функции")
-	@Persist @PersistManyToManyOneProperty(parentProperty="medService_id"
-	,tableName="WorkFunctionService", valueProperty="vocWorkFunction_id"
-	,collectionGenericType=MedService.class)
-	public String getWorkFunctionServices() {return theWorkFunctionServices;}
-	public void setWorkFunctionServices(String aWorkFunctionServices) {theWorkFunctionServices = aWorkFunctionServices;}
 
-	/** Прикрепленные рабочие функции */
-	private String theWorkFunctionServices;
 
 	/** Тип услуги (инфо) */
 	private String theServiceTypeInfo;
@@ -155,4 +146,32 @@ public class MedServiceForm extends IdEntityForm  {
 	private Long theParent;
 	/** Справочная услуга */
 	private Long theVocMedService;
+	
+	/** Поликлиническая услуга */
+	@Comment("Поликлиническая услуга")
+	@Persist
+	public Boolean getIsPoliclinic() {return theIsPoliclinic;}
+	public void setIsPoliclinic(Boolean aIsPoliclinic) {theIsPoliclinic = aIsPoliclinic;}
+
+	/** Поликлиническая услуга */
+	private Boolean theIsPoliclinic;
+	
+	/** Круглосуточный стационар */
+	@Comment("Круглосуточный стационар")
+	@Persist
+	public Boolean getIsHospital() {return theIsHospital;}
+	public void setIsHospital(Boolean aHospital) {theIsHospital = aHospital;}
+
+	/** Круглосуточный стационар */
+	private Boolean theIsHospital;
+	
+	/** Дневной стационар */
+	@Comment("Дневной стационар")
+	@Persist
+	public Boolean getIsDayHospital() {return theIsDayHospital;}
+	public void setIsDayHospital(Boolean aIsDayHospital) {theIsDayHospital = aIsDayHospital;}
+
+	/** Дневной стационар */
+	private Boolean theIsDayHospital;
+
 }

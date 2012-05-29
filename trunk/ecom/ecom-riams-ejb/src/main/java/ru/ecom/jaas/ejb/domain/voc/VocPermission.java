@@ -15,7 +15,7 @@ public class VocPermission extends VocBaseEntity {
 	@OneToOne
 	public VocObjectPermission getObject() {return theObject;}
 	public void setObject(VocObjectPermission aObject) {theObject = aObject;}
-
+	
 	/** Объект */
 	private VocObjectPermission theObject;
 }

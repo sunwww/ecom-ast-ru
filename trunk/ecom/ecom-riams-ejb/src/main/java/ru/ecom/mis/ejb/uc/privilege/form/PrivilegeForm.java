@@ -156,6 +156,13 @@ public class PrivilegeForm extends IdEntityForm {
 	private String theEndDate;
 	/** Дата начала */
 	private String theBeginDate;
-	
+	/** Отказ от льготы */
+	@Comment("Отказ от льготы")
+	@Persist
+	public Boolean getTakeover() {return theTakeover;}
+	public void setTakeover(Boolean aTakeover) {theTakeover = aTakeover;}
+
+	/** Отказ от льготы */
+	private Boolean theTakeover;	
 }
 

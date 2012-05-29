@@ -9,8 +9,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionSaveInterceptor;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentMedCaseCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentViewInterceptor;
@@ -314,4 +312,17 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 
 	/** Стандарт */
 	private Long theOmcStandart;
+	/** Омс стандарт, установленный экспертом */
+	@Comment("Омс стандарт, установленный экспертом")
+	@Persist
+	public Long getOmcStandartExpert() {
+		return theOmcStandartExpert;
+	}
+
+	public void setOmcStandartExpert(Long aOmcStandartExpert) {
+		theOmcStandartExpert = aOmcStandartExpert;
+	}
+
+	/** Омс стандарт, установленный экспертом */
+	private Long theOmcStandartExpert;
 }

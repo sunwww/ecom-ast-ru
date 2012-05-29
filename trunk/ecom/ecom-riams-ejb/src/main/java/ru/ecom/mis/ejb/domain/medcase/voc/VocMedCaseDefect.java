@@ -12,6 +12,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Справочник типов СМО (СМО, СПО, ССО, СЛО, визит, услуга)")
 @Table(schema="SQLUser")
-public class VocMedCaseType extends VocBaseEntity {
+public class VocMedCaseDefect extends VocBaseEntity {
 
 }

@@ -16,15 +16,14 @@ import java.math.BigDecimal;
 @Stateless
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
-	public void addMedServiceByAccount(Long aAccount,Long aPriceMedService, Integer aCount, BigDecimal aPrice) {
+	public void addMedServiceByAccount(Long aAccount,Long aPriceMedService, Integer aCount, BigDecimal aPrice, Long oldid) {
 		StringBuilder sql = new StringBuilder() ;
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;
 		PriceMedService service = theManager.find(PriceMedService.class, aPriceMedService);
-		sql.append("from ContractAccountMedService where account=:account and medService=:service");
+		sql.append("from ContractAccountMedService where id=:CAMS");
 		
 		List<ContractAccountMedService> list = theManager.createQuery(sql.toString())
-				.setParameter("account", account)
-				.setParameter("service", service)
+				.setParameter("CAMS", oldid)
 				.getResultList() ;
 		if (list.size()>0) {
 			/*sql.append("update contractAccountMedservice SET CountMedService = '");
@@ -58,9 +57,13 @@ public class ContractServiceBean implements IContractService {
 	public String getCostByMedService(Long aPriceMedService,String aDate) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pp.cost ") ;
-		sql.append(" from PriceMedService pms ");
-		sql.append(" left join PricePosition pp on pp.id=pms.pricePosition_id where pms.id='")
+		sql.append(" from PricePosition pp ");
+		sql.append(" where pp.id='")
 		.append(aPriceMedService).append("'") ;
+		//sql.append("select pp.cost ") ;
+		//sql.append(" from PriceMedService pms ");
+		//sql.append(" left join PricePosition pp on pp.id=pms.pricePosition_id where pms.id='")
+		//.append(aPriceMedService).append("'") ;
 		List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		Object obj = null ;
 		if (list.size()>0) {

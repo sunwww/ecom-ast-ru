@@ -30,13 +30,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class MedPolicyOmcForeignForm extends MedPolicyForm {
 	/** Город СМО */
 	@Comment("Город СМО")
-	@Persist @Required @DoUpperCase
+	@Persist @DoUpperCase
 	public String getInsuranceCompanyCity() {return theInsuranceCompanyCity;}
 	public void setInsuranceCompanyCity(String aOMCCity) {theInsuranceCompanyCity = aOMCCity;}
 
 	/** Название СМО */
 	@Comment("Название СМО")
-	@Persist @Required @DoUpperCase
+	@Persist @DoUpperCase
 	public String getInsuranceCompanyName() {return theInsuranceCompanyName;}
 	public void setInsuranceCompanyName(String aOMCName) {theInsuranceCompanyName = aOMCName;}
 
@@ -59,7 +59,7 @@ public class MedPolicyOmcForeignForm extends MedPolicyForm {
 	@Persist @Required
 	public Long getType() {return theType;}
 	public void setType(Long aType) {theType = aType;}
-
+	
 	/** Тип полиса */
 	private Long theType;
 	/** ОГРН СМО, выдавшей паспорт */
@@ -70,5 +70,14 @@ public class MedPolicyOmcForeignForm extends MedPolicyForm {
 	private String theInsuranceCompanyName;
 	/** Город СМО */
 	private String theInsuranceCompanyCity;
+	
+	/** ОГРН */
+	@Comment("ОГРН")
+	@Persist
+	public String getOgrn() {return theOgrn;}
+	public void setOgrn(String aOgrn) {theOgrn = aOgrn;}
+
+	/** ОГРН */
+	private String theOgrn;
 
 }

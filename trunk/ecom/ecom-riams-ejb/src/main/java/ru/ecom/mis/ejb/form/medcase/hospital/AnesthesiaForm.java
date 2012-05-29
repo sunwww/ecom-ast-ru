@@ -30,7 +30,15 @@ public class AnesthesiaForm extends IdEntityForm {
 	public void setMethod(Long aMethod) {
 		theMethod = aMethod;
 	}
+	
+	/** Вид анестезии */
+	@Comment("Вид анестезии")
+	@Persist
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
 
+	/** Вид анестезии */
+	private Long theType;
 	/** Метод */
 	private Long theMethod;
 	
@@ -50,7 +58,7 @@ public class AnesthesiaForm extends IdEntityForm {
 	
 	/** Описание */
 	@Comment("Описание")
-	@Persist @Required
+	@Persist 
 	public String getDescription() {
 		return theDescription;
 	}

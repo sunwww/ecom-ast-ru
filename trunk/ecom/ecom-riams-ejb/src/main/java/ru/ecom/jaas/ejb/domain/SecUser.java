@@ -19,6 +19,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     @AIndex(properties= ("login"))
     ,@AIndex(properties= ("fullname"))
     ,@AIndex(properties="disable")
+    ,@AIndex(properties="isRemoteUser")
 })
 @Table(schema="SQLUser")
 public class SecUser extends BaseEntity {
@@ -59,6 +60,13 @@ public class SecUser extends BaseEntity {
 	public Boolean getIsHash() {return theIsHash;}
 	public void setIsHash(Boolean aIsHash) {theIsHash = aIsHash;}
 
+	/** Удаленный пользователь */
+	@Comment("Удаленный пользователь")
+	public Boolean getIsRemoteUser() {return theIsRemoteUser;}
+	public void setIsRemoteUser(Boolean aIsRemoteUser) {theIsRemoteUser = aIsRemoteUser;}
+
+	/** Удаленный пользователь */
+	private Boolean theIsRemoteUser;
 	/** Закеширован */
 	private Boolean theIsHash;
 	/** Отключен */

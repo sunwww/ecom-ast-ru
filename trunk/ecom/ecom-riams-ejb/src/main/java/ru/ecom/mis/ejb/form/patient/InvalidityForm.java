@@ -370,4 +370,20 @@ public class InvalidityForm extends IdEntityForm{
 	private Boolean theInitial;
 	/** Недееспособный */
 	private Boolean theIncapable;
+	/** Суд */
+	@Comment("Суд")
+	@Persist
+	public Long getLawCourt() {return theLawCourt;}
+	public void setLawCourt(Long aLawCourt) {theLawCourt = aLawCourt;}
+
+	/** Дата суда */
+	@Comment("Дата суда")
+	@Persist @DoDateString @DateString
+	public String getLawCourtDate() {return theLawCourtDate;}
+	public void setLawCourtDate(String aLawCourtDate) {theLawCourtDate = aLawCourtDate;}
+
+	/** Дата суда */
+	private String theLawCourtDate;
+	/** Суд */
+	private Long theLawCourt;
 }
