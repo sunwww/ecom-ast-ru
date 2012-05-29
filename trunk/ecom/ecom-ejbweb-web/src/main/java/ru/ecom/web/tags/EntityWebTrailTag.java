@@ -23,7 +23,9 @@ import ru.ecom.ejb.services.entityform.ParentUtil;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.WebTrailUtil;
 import ru.ecom.ejb.services.entityform.map.MapClassLoader;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.web.actions.entity.AbstractEntityAction;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.map.WebMapClassLoaderHelper;
 import ru.ecom.web.util.EntityInjection;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
@@ -104,7 +106,8 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             //loader.setMapClassLoader(request);
             MapClassLoader loader = new MapClassLoader(Thread.currentThread().getContextClassLoader()) ; 
             JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
-            print(service, sb, sbTitle, type, id, true, createState, false, loader, request, js) ;
+            String username = LoginInfo.find(request.getSession(true)).getUsername() ;
+            print(service, sb, sbTitle, type, id, true, createState, false, loader, request, js,username) ;
             //loader.unsetMapClassLoader();
             
             out.println(sb) ;
@@ -136,7 +139,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
 
     private void print(IParentEntityFormService aService, StringBuilder aSb, StringBuilder aSbTitle, String aClazzName
             , Object aId, boolean aFirst, boolean aCreateState, boolean aSecond, ClassLoader aLoader
-            , HttpServletRequest aRequest,JavaScriptContext js) throws NoSuchMethodException, IllegalAccessException, EntityFormException, ParseException, InvocationTargetException, IOException, ClassNotFoundException, InstantiationException {
+            , HttpServletRequest aRequest,JavaScriptContext js,String aUsername) throws NoSuchMethodException, IllegalAccessException, EntityFormException, ParseException, InvocationTargetException, IOException, ClassNotFoundException, InstantiationException {
 
     	if (CAN_DEBUG) {
     		LOG.debug("print() [ aSb = " + aSb+", \n\taSbTitle="+aSbTitle+", \n\taClassName="+aClazzName+", \n\taId="+aId
@@ -164,6 +167,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         String[] propertyNames = WebTrailUtil.getPropertiesName(aClazz) ;
         WebTrail webTrail = (WebTrail) aClazz.getAnnotation(WebTrail.class) ;
         String comment = webTrail.comment() ;
+        
         if(aFirst) {
             js.println("if($('mainFormLegend')) {");
             js.println(" $('mainFormLegend').innerHTML = '"+comment+"' ;") ;
@@ -190,7 +194,13 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         
         if (CAN_DEBUG)
 			LOG.debug("    print: parentAnnotation = " + parent); 
-        
+        int level = 1 ;
+        if (!aCreateState && webTrail.journal()) {
+        	
+        	 aService.saveView(ConvertSql.parseLong(aId), aUsername, entityName,aClazz.getSimpleName(), aFirst?1:2);
+        }
+       
+
         if(parent!=null) {
             Object parentId ;
             if(aFirst && aCreateState) {
@@ -222,7 +232,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
                     printList(aSb, webTrail.listComment(), parentId, webTrail.list(),webTrail.shortList());
                 }
 
-                print(aService, aSb, aSbTitle, parentClass.getName(), parentId, false, aCreateState, aFirst, aLoader, aRequest, js); // FIXME MapClassLoader
+                print(aService, aSb, aSbTitle, parentClass.getName(), parentId, false, aCreateState, aFirst, aLoader, aRequest, js,aUsername); // FIXME MapClassLoader
             }
         }
     }
