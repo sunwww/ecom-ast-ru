@@ -33,8 +33,8 @@ public class SecPolicy {
      * @param aTimeString
      * @throws IllegalStateException 
      */
-    public static void checkPolicyCreateHour(SessionContext aContext, String aHourPolicy, String aDateString, String aTimeString) {
-        if (aContext.isCallerInRole(aHourPolicy)) {
+    public static void checkPolicyCreateHour(SessionContext aContext, String aDateString, String aTimeString) {
+        if (aContext.isCallerInRole(StatisticStubStac.CreateHour)) {
         	try {
                 Date enteredDate = DateConverter.createDateTime(aDateString, aTimeString);
                 checkPolicyCreateHour(enteredDate);
@@ -67,14 +67,14 @@ public class SecPolicy {
      * @param aSls
      * @throws IllegalStateException
      */
-    public static void checkPolicyEditHour(SessionContext aContext, String aPolicy, HospitalMedCase aSls) {
+    public static void checkPolicyEditHour(SessionContext aContext , HospitalMedCase aSls) {
         if(CAN_TRACE) {
             LOG.debug("aContext = " + aContext);
-            LOG.debug("aPolicy = " + aPolicy);
+            LOG.debug("aPolicy = " + StatisticStubStac.EditHour);
         }
 
-        if (aContext.isCallerInRole(aPolicy)) {
-            if (CAN_TRACE) LOG.debug(" У пользователя есть роль = " + aPolicy);
+        if (aContext.isCallerInRole(StatisticStubStac.EditHour)) {
+            if (CAN_TRACE) LOG.debug(" У пользователя есть роль = " + StatisticStubStac.EditHour);
             Date admissionDate = DateConverter.createDateTime(aSls.getDateStart(), DateFormat.formatToTime(aSls.getEntranceTime()));
             if (CAN_TRACE) LOG.debug(" Дата поступления = " + admissionDate);
             if (admissionDate != null) {

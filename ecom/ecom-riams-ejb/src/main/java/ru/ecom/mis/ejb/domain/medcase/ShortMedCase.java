@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -153,5 +154,6 @@ abstract public class ShortMedCase extends MedCase{
 		return theWorkFunctionExecute!=null ? theWorkFunctionExecute.getWorkFunctionInfo():"" ;
 	}
 		
+
 
 }

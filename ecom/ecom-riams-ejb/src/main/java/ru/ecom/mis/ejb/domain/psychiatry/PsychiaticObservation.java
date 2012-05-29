@@ -19,6 +19,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties={"careCard"})
+	,@AIndex(properties={"lpuAreaPsychCareCard"})
 	,@AIndex(properties={"careCard","startDate"})
 })
 @Table(schema="SQLUser")

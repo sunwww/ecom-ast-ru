@@ -13,6 +13,8 @@ import javax.persistence.Transient;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -26,6 +28,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+    @AIndex(properties="username")
+    }) 
 public class TemplateProtocol extends BaseEntity {
     /** Заголовок */
     public String getTitle() { return theTitle ; }

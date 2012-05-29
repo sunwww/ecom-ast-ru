@@ -42,18 +42,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 //    @AIndex(properties="parent", table="MedCase")
-    @AIndex(properties="statisticStub", table="MedCase")
+	@AIndex(properties="statisticStub", table="MedCase")
+    ,@AIndex(properties="result", table="MedCase")
 }) 
 @Table(schema="SQLUser")
 public class HospitalMedCase extends LongMedCase {
 
 
 
-	/** Внешний направитель (ЛПУ) */
-	@Comment("Внешний направитель (ЛПУ)")
-	@OneToOne
-	public MisLpu getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
 
 
 	/** Диагнозы */
@@ -100,10 +96,6 @@ public class HospitalMedCase extends LongMedCase {
 	public String getSupplyOrderNumber() {return theSupplyOrderNumber;}
 	public void setSupplyOrderNumber(String aSupplyOrderNumber) {theSupplyOrderNumber = aSupplyOrderNumber;}
 
-	/** Дата направления */
-	@Comment("Дата направления")
-	public Date getOrderDate() {return theOrderDate;}
-	public void setOrderDate(Date aOrderDate) {theOrderDate = aOrderDate;}
 
 	/** Время заболевания до госпитализации */
 	@Comment("Время заболевания до госпитализации")
@@ -468,8 +460,7 @@ public class HospitalMedCase extends LongMedCase {
 	private VocHospitalizationOutcome theOutcome;
 	/** Время заболевания до госпитализации */
 	private VocPreAdmissionTime thePreAdmissionTime;
-	/** Дата направления */
-	private Date theOrderDate;
+
 	/** Номер наряда доставки */
 	private String theSupplyOrderNumber;
 	/** Номер направления */
@@ -487,8 +478,7 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Диагнозы */
 	private List<Diagnosis> theDiagnosis;
-	/** Внешний направитель (ЛПУ) */
-	private MisLpu theOrderLpu;
+
 	/** Рабочая функция направителя */
 	private WorkFunction theOrderWorkFunction;
 	/** Результат RW */
@@ -542,7 +532,7 @@ public class HospitalMedCase extends LongMedCase {
 				if (m instanceof DepartmentMedCase) {
 					DepartmentMedCase d = (DepartmentMedCase) m ;
 					VocBedSubType vbst = (d.getBedFund()!=null&&d.getBedFund().getBedSubType()!=null)?d.getBedFund().getBedSubType():null ;
-					if (vbst.getCode()!=null&&vbst.getCode().equals("2")) {
+					if (vbst!=null && vbst.getCode()!=null&&vbst.getCode().equals("2")) {
 						return DurationUtil.getDurationMedCase(getDateStart(), getDateFinish(),0,1);
 					}
 				}
@@ -550,6 +540,14 @@ public class HospitalMedCase extends LongMedCase {
 		}
 		return DurationUtil.getDurationMedCase(getDateStart(), getDateFinish(),0);
 	}
+	/** Кем направлен */
+	@Comment("Кем направлен")
+	@OneToOne
+	public MisLpu getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Кем направлен */
+	private MisLpu theOrderLpu;
 	// /** Вид травмы */
 	// @Comment("Вид травмы")
 	// @OneToOne

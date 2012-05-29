@@ -153,5 +153,19 @@ public class DepartmentMedCase extends HospitalMedCase {
 
 	/** Стандарт */
 	private OmcStandart theOmcStandart;
+	
+	/** Омс стандарт, установленный экспертом */
+	@Comment("Омс стандарт, установленный экспертом")
+	@OneToOne
+	public OmcStandart getOmcStandartExpert() {
+		return theOmcStandartExpert;
+	}
+
+	public void setOmcStandartExpert(OmcStandart aOmcStandartExpert) {
+		theOmcStandartExpert = aOmcStandartExpert;
+	}
+
+	/** Омс стандарт, установленный экспертом */
+	private OmcStandart theOmcStandartExpert;
 
 }

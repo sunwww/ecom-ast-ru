@@ -24,6 +24,8 @@ import ru.nuzmsh.forms.validator.transforms.DoTrimString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
+import ru.nuzmsh.forms.validator.validators.MaxLength;
+import ru.nuzmsh.forms.validator.validators.MinLength;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.SnilsString;
 import ru.nuzmsh.forms.validator.validators.VInputFIOByMaskOmc;
@@ -36,7 +38,8 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 @EntityFormPersistance(clazz = Patient.class)
 @Comment("Персона")
 @WebTrail(comment = "Персона", nameProperties = {"patientInfo","patientSync"}
-	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do")
+	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do"
+			,journal=true)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient")
 @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
 
@@ -53,7 +56,15 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 )
 public class PatientForm extends IdEntityForm {
     
-    
+	/** Телефон */
+	@Comment("Телефон")
+	@Persist
+	public String getPhone() {return thePhone;}
+	public void setPhone(String aPhone) {thePhone = aPhone;}
+
+	/** Телефон */
+	private String thePhone;
+
     @Comment("Синхронизация пациента")
     @Persist @DoUpperCase
     public String getPatientSync() {
@@ -670,11 +681,11 @@ public class PatientForm extends IdEntityForm {
 	  */
 	 @Comment("Дееспособный")
 	 @Persist
-	 public Boolean getCapable() {
-	  return theCapable;
+	 public Boolean getIncapable() {
+	  return theIncapable;
 	 }
-	 public void setCapable(Boolean aCapable) {
-	  theCapable = aCapable;
+	 public void setIncapable(Boolean aCapable) {
+	  theIncapable = aCapable;
 	 }
 		/** Почтовый индекс */
 		@Comment("Почтовый индекс")
@@ -703,7 +714,7 @@ public class PatientForm extends IdEntityForm {
 	 /**
 	  * Дееспособный
 	  */
-	 private Boolean theCapable;
+	 private Boolean theIncapable;
 	 /**
 	  * Дата первого заполнения
 	  */
@@ -826,15 +837,19 @@ public class PatientForm extends IdEntityForm {
 	/** Справочник по месту рождения */
 	@Comment("Справочник по месту рождения")
 	@Persist
-	public Long getPassportBirthPlace() {
-		return thePassportBirthPlace;
-	}
-
-	public void setPassportBirthPlace(Long aPassportBirthPlace) {
-		thePassportBirthPlace = aPassportBirthPlace;
-	}
+	public Long getPassportBirthPlace() {return thePassportBirthPlace;}
+	public void setPassportBirthPlace(Long aPassportBirthPlace) {thePassportBirthPlace = aPassportBirthPlace;}
 
 	/** Справочник по месту рождения */
 	private Long thePassportBirthPlace;
+	
+	/** Единый номер застрахованного */
+	@Comment("Единый номер застрахованного")
+	@Persist @MaxLength(value = 16) @MinLength(value = 16)
+	public String getCommonNumber() {return theCommonNumber;}
+	public void setCommonNumber(String aNumber) {theCommonNumber = aNumber;}
+
+	/** Единый номер застрахованного */
+	private String theCommonNumber;
 	
 }

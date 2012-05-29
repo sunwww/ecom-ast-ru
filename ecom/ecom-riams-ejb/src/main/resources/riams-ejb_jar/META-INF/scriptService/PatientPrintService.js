@@ -30,10 +30,13 @@ function printInfo(aCtx, aParams) {
 	var inv=listInv.size()>0?listInv.get(0):null;
 	var groupInv = inv!=null?inv.group:null ;
 	map.put("groupInv",groupInv) ;
-	var priv = patient.privileges.size()>0?patient.privileges.get(0):null ;
+	var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
+		.setParameter("pat",patient).setMaxResults(1).getResultList() ;
+	var priv = listPriv.size()>0?patient.privileges.get(0):null ;
 	map.put("priv.info","") ;
 	map.put("strax",null) ;
 	map.put("priv.doc",priv!=null?priv.document:null) ;
+	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
 	var date = new java.util.Date() ;
 	var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(date) ;

@@ -31,7 +31,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AViewInterceptors(
         @AEntityFormInterceptor(DischargeMedCaseViewInterceptor.class)
 )
-		@ASaveInterceptors(
+@ASaveInterceptors(
         @AEntityFormInterceptor(DischargeMedCaseSaveInterceptor.class)
 )
 public class DischargeMedCaseForm extends AdmissionMedCaseForm {

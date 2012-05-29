@@ -38,6 +38,47 @@ function findListTemplate(aContext, aId, aCnt, aNext) {
 	}
 	return ret ;
 }
+/**
+* Поиск
+*/
+function findListTemplateByUser(aContext, aId, aCnt, aNext) {
+	var list ;
+	var username=aContext.sessionContext.callerPrincipal.name ;
+	var ret = new java.util.ArrayList() ;
+	//if (aCnt==0) aCnt=10 ;
+	if (aNext < 0) {
+		if (aCnt<0) aCnt = aCnt*(-1) ;
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from TemplateProtocol where username='"+username+"' order by id desc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from TemplateProtocol where username='"+username+"' and id < "+aId+" order by id desc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListTemplate(aContext,"",aCnt,1) ;
+			}
+			
+		}
+		
+		for (var i=list.size()-1 ; i>=0 ; i--) {
+			var temp = list.get(i) ;
+			ret.add(protocolMap(temp)) ;
+			
+		}
+	} else {
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from TemplateProtocol where  username='"+username+"' order by id asc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from TemplateProtocol where username='"+username+"' and id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListTemplate(aContext,"",aCnt,-1) ;
+			}
+		}
+		for (var i=0 ; i< list.size() ; i++) {
+			var temp = list.get(i) ;
+			ret.add(protocolMap(temp)) ;
+		}
+	}
+	return ret ;
+}
 function findListCalendarTemplate(aContext, aId, aCnt, aNext) {
 	var list ;
 	var ret = new java.util.ArrayList() ;

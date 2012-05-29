@@ -45,37 +45,38 @@ function f039(aCtx,aParams) {
 	var obj = aParams.get('id').split(":") ;
 	var beginDate = obj[0] ;
 	var finishDate = obj[1] ;
-	var ticketIs = obj[7] ;
-	var specialist=null,workFunction=null, lpu=null, serviceStream=null,groupBy="1" ;
+	var ticketIs = obj[8] ;
+	var specialist=null,workFunction=null, lpu=null, serviceStream=null,workPlaceType=null,groupBy="1" ;
 	if (obj.length>=3&&+obj[2]>0) groupBy = obj[2] ;
 	if (obj.length>=4&&+obj[3]>0) specialist = java.lang.Long.valueOf(obj[3]) ;
 	if (obj.length>=5&&+obj[4]>0) workFunction = java.lang.Long.valueOf(obj[4]) ;
 	if (obj.length>=6&&+obj[5]>0) lpu = java.lang.Long.valueOf(obj[5]) ;
 	if (obj.length>=7&&+obj[6]>0) serviceStream = java.lang.Long.valueOf(obj[6]) ;
-	if (obj.length>=8) ticketIs = (+(obj[7])>0)? true: false;
+	if (obj.length>=8&&+obj[7]>0) workPlaceType = java.lang.Long.valueOf(obj[7]) ;
+	if (obj.length>=9) ticketIs = (+(obj[8])>0)? true: false;
 	//throw ticketIs?"yes"+obj[7]:"no" ;
 	var service = new Packages.ru.ecom.mis.ejb.service.medcase.ReportsServiceBean() ;
 	var queryTextBegin = service.getTextQueryBegin(ticketIs, groupBy
-		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream) ;
+		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	var queryTextEnd = service.getTextQueryEnd(ticketIs, groupBy
-		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream) ;
+		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	var vd = ticketIs?"":"Start" ;
 	var sql= queryTextBegin
 		+" ,count(*) as cntAll"
 		+" ,count(case when (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil"
-		+" ,count(case when (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll17"
-		+" ,count(case when (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAll60"
+		+" ,count(case when (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll17"
+		+" ,count(case when (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAll60"
 		+" ,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllness"
-		+" ,count(case when vr.code='ILLNESS' and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
-		+" ,count(case when vr.code='ILLNESS' and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnes60"
+		+" ,count(case when vr.code='ILLNESS' and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
+		+" ,count(case when vr.code='ILLNESS' and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnes60"
 		+" ,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProfAll"
 		+" ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHomeAll"
 		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll"
-		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome17"
-		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-2),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome01"
-		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesHome60"
-		+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome17"
-		+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-2),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome01"
+		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome17"
+		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-2),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome01"
+		+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-60),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesHome60"
+		+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome17"
+		+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-2),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome01"
 		+" ,count(case when (vss.code='OBLIGATORYINSURANCE') then 1 else null end) as cntOMC"
 		+" ,count(case when (vss.code='BUDGET') then 1 else null end) as cntBudget"
 		+" ,count(case when (vss.code='CHARGED') then 1 else null end) as cntCharged"
@@ -109,44 +110,46 @@ function f039add(aCtx,aParams) {
 	var finishDate = obj[1] ;
 	var specialist=null,workFunction=null, lpu=null, serviceStream=null,groupBy="1" ;
 	var ticketIs = true ;
+	var specialist=null,workFunction=null, lpu=null, serviceStream=null,workPlaceType=null,groupBy="1" ;
 	if (obj.length>=3&&+obj[2]>0) groupBy = obj[2] ;
 	if (obj.length>=4&&+obj[3]>0) specialist = java.lang.Long.valueOf(obj[3]) ;
 	if (obj.length>=5&&+obj[4]>0) workFunction = java.lang.Long.valueOf(obj[4]) ;
 	if (obj.length>=6&&+obj[5]>0) lpu = java.lang.Long.valueOf(obj[5]) ;
 	if (obj.length>=7&&+obj[6]>0) serviceStream = java.lang.Long.valueOf(obj[6]) ;
-	if (obj.length>=8) ticketIs = +(obj[7])>0? true: false;
+	if (obj.length>=8&&+obj[7]>0) workPlaceType = java.lang.Long.valueOf(obj[7]) ;
+	if (obj.length>=9) ticketIs = (+(obj[8])>0)? true: false;
 	
 	var service = new Packages.ru.ecom.mis.ejb.service.medcase.ReportsServiceBean() ;
 	var queryTextBegin = service.getTextQueryBegin(ticketIs, groupBy
-		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream) ;
+		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	var queryTextEnd = service.getTextQueryEnd(ticketIs, groupBy
-		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream) ;
+		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	
 	var vd = ticketIs?"":"Start" ;
 	var sql= queryTextBegin
 	+" ,count(*) as cntAll"
-	+" ,count(case when (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll14"
+	+" ,count(case when (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll14"
 	
-	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll14V"
+	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntAll14V"
 	
-	+" ,count(case when (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
-	+"          and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday)	then 1 else null end) as cntAll17"
+	+" ,count(case when (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
+	+"          and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday)	then 1 else null end) as cntAll17"
 	
-	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
-	+"          and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday)	then 1 else null end) as cntAll17V"
+	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
+	+"          and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday)	then 1 else null end) as cntAll17V"
 	
-	+" ,count(case when (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAllold"
+	+" ,count(case when (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAllold"
 	
-	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAlloldV"
+	+" ,count(case when (ad1.domen=5 or ad2.domen=5) and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntAlloldV"
 	
 	+" ,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllness"
 	
-	+" ,count(case when vr.code='ILLNESS' and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
+	+" ,count(case when vr.code='ILLNESS' and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
 	
-	+" ,count(case when vr.code='ILLNESS' and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
-	+"          and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
+	+" ,count(case when vr.code='ILLNESS' and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
+	+"          and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnes17"
 	
-	+" ,count(case when vr.code='ILLNESS' and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesold"
+	+" ,count(case when vr.code='ILLNESS' and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesold"
 	
 	+" ,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProf"
 	
@@ -154,21 +157,21 @@ function f039add(aCtx,aParams) {
 	
 	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome"
 	
-	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome14"
+	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome14"
 	
-	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
-	+"          and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome17"
+	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
+	+"          and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntIllnesHome17"
 	
-	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesHomeold"
+	+" ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntIllnesHomeold"
 	
 	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntProfHome"
 	
-	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome14"
+	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome14"
 	
-	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
-	+"          and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome17"
+	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-15),'dd.mm.yyyy')>=p.birthday) " 
+	+"          and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')<p.birthday) then 1 else null end) as cntProfHome17"
 	
-	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(to_char(t.date"+vd+",'dd.mm')||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntProfHomeold"
+	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntProfHomeold"
 	
 		+queryTextEnd;
 	
@@ -246,7 +249,7 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 	+" ||case when p.BuildingHousesNonresident is not null and p.BuildingHousesNonresident!='' then ' корп.'|| p.BuildingHousesNonresident else '' end" 
 	+"||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end"
 	+"   else '' "
-	+"  end"
+	+"  end as address"
 	//+",$$ByPatient^ZAddressLib(p.id)"
 	+",vr.name as vrname"
 	+",m.number"

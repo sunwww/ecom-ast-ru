@@ -9,6 +9,7 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -40,7 +41,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     			.setParameter("parentId", aParentId)
     			.getSingleResult() ;
     		if (listDep!=null && ConvertSql.parseLong(listDep).equals(Long.valueOf(0))) {
-    			prepareForCreationFirstSlo(form, parentSSL) ;
+    			prepareForCreationFirstSlo(form, parentSSL,manager) ;
     		} else {
     			prepareForCreationNextSlo(form,parentSSL,manager) ;
     		}
@@ -54,13 +55,15 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     /**
      * Новый первый случай лечения в отделении
      * */
-    private void prepareForCreationFirstSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCase ) {
+    private void prepareForCreationFirstSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCase ,EntityManager aManager) {
         aForm.setDateStart(DateFormat.formatToDate(aMedCase.getDateStart()));
         aForm.setEntranceTime(DateFormat.formatToTime(aMedCase.getEntranceTime()));
         aForm.setPatient(aMedCase.getPatient().getId());
         if (aMedCase.getDepartment()!=null) {
         	aForm.setDepartment(aMedCase.getDepartment().getId());
+        	aForm.setServiceStream(aMedCase.getServiceStream()!=null?aMedCase.getServiceStream().getId():null);
         	aForm.addDisabledField("department");
+        	aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCase.getHospType())) ;
         }
         
         aForm.setlpuAndDate(new StringBuilder().append(aForm.getDepartment()).append(":")
@@ -77,12 +80,12 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	aForm.setPatient(aMedCaseParent.getPatient().getId());
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select max(ms1.dateFinish) as maxdatefinish")
-    		.append(",ms.id, to_char(ms.transferDate,'dd.mm.yyyy') as mstransferdate,cast(ms.transferTime as varchar(5)) as mstransfertime,ms.transferDepartment_id as mstransferdepartment,ms.lpu_id as mslpu")
+    		.append(",ms.id, to_char(ms.transferDate,'dd.mm.yyyy') as mstransferdate,cast(ms.transferTime as varchar(5)) as mstransfertime,ms.transferDepartment_id as mstransferdepartment,ms.lpu_id as mslpu,ms.serviceStream_id as msservicestream")
     		.append(" from MedCase as ms ")
     		.append(" left join MedCase as ms1 on ms1.parent_id=ms.parent_id and ms1.dtype='DepartmentMedCase'")
     		.append(" left join MedCase as ms2 on ms2.prevMedCase_id=ms.id and ms2.dtype='DepartmentMedCase'")
     		.append(" where ms.parent_id =:parentId and ms.DTYPE='DepartmentMedCase' ")
-    		.append(" group by ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id,ms2.id")
+    		.append(" group by ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id,ms2.id,ms.serviceStream_id")
     		.append(" having ms2.id is null ")
     		.append(" order by ms.transferDate desc,ms.transferTime desc");
     	//sql.append("select max(ms.dateFinish),ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id")
@@ -102,6 +105,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
                 aForm.setEntranceTime((String)obj[3]);
                 aForm.setPrevMedCase(ConvertSql.parseLong(obj[1]));
                 aForm.setDepartment(ConvertSql.parseLong(obj[4]));
+                aForm.setServiceStream(ConvertSql.parseLong(obj[6])) ;
+                aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCaseParent.getHospType())) ;
     		} else {
     			throw new IllegalStateException("Нет лечения в отделении с переводом") ;
     		}
@@ -169,4 +174,22 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         }
     }
      */
+    
+    private Long getBedFund(EntityManager aManager, Long aDepartment, Long aServiceStream, String aDateFrom,VocHospType aHospType) {
+    	String bedSubType = aHospType!=null?(aHospType.getCode().startsWith("DAY")?"2":"1"):"1" ;
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select bf.id,vbst.id from BedFund bf ") ;
+		sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
+		sql.append(" where bf.lpu_id='").append(aDepartment)
+			.append("' and bf.serviceStream_id='").append(aServiceStream)
+			.append("' and to_date('").append(aDateFrom)
+			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
+		sql.append(" and vbst.code='").append(bedSubType).append("'");
+		List<Object[]> idT = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (idT.size()==1) {
+			return ConvertSql.parseLong(idT.get(0)[0]) ;
+		}
+		return null ;
+		
+    }
 }

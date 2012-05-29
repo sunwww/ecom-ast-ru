@@ -10,6 +10,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -20,8 +21,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Рабочая функция")
 @AIndexes({
-	@AIndex(properties="archival")
-	,@AIndex(properties="workFunction")
+	//@AIndex(properties="archival")
+	@AIndex(properties="workFunction")
 	//,@AIndex(properties={"archival","workFunction"})
 	,@AIndex(properties={"code"})
 })
@@ -127,7 +128,48 @@ abstract public class WorkFunction extends BaseEntity {
 	public String getCode() {return theCode;}
 	public void setCode(String aCode) {theCode = aCode;}
 
+	/** Хирургическая специальность */
+	@Comment("Хирургическая специальность")
+	public Boolean getIsSurgical() {return theIsSurgical;}
+	public void setIsSurgical(Boolean aIsSurgical) {theIsSurgical = aIsSurgical;}
+
+	/** Администратор */
+	@Comment("Администратор")
+	public Boolean getIsAdministrator() {return theIsAdministrator;}
+	public void setIsAdministrator(Boolean aAdministrator) {theIsAdministrator = aAdministrator;}
+
+	/** WorkPlace */
+	@Comment("WorkPlace")
+	@OneToOne
+	public WorkPlace getWorkPlace() {return theWorkPlace;}
+	public void setWorkPlace(WorkPlace aWorkPlace) {theWorkPlace = aWorkPlace;}
+
+	/** WorkPlace */
+	private WorkPlace theWorkPlace;
+	/** Администратор */
+	private Boolean theIsAdministrator;
+	/** Хирургическая специальность */
+	private Boolean theIsSurgical;
 	/** Код специалиста */
 	private String theCode;
+	
+	/** Интервал разрешенной регистрации */
+	@Comment("Интервал разрешенной регистрации")
+	public Integer getRegistrationInterval() {return theRegistrationInterval;}
+	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
 
+	/** Интервал разрешенной регистрации */
+	private Integer theRegistrationInterval;
+	/** Операционная сестра */
+	@Comment("Операционная сестра")
+	public Boolean getIsInstrumentNurse() {
+		return theIsInstrumentNurse;
+	}
+
+	public void setIsInstrumentNurse(Boolean aOperationSister) {
+		theIsInstrumentNurse = aOperationSister;
+	}
+
+	/** Операционная сестра */
+	private Boolean theIsInstrumentNurse;
 }

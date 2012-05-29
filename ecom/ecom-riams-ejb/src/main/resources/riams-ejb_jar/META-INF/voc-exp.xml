@@ -248,8 +248,8 @@
     <voc id="omcStandart" type="EntityVocService">
     	<EntityVocService
     		entity="ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart"
-    		names='model,name'
-    		queried="model,name"
+    		names='model,name,idcList'
+    		queried="model,name,idcList"
     	/>
     </voc>
     <voc id='vocQualityEstimationMark' type='NativeVocService'>

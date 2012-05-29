@@ -29,6 +29,31 @@ public class RegInsuranceCompany extends VocIdNameOmcCode {
 	public String getSmocode() {return theSmocode;}
 	public void setSmocode(String aSmocode) {theSmocode = aSmocode;}
 
+	
+	/** Региональная компания */
+	@Comment("Региональная компания")
+	public Boolean getIsRegion() {
+		return theIsRegion;
+	}
+
+	public void setIsRegion(Boolean aIsRegion) {
+		theIsRegion = aIsRegion;
+	}
+
+	/** ОГРН */
+	@Comment("ОГРН")
+	public String getOgrn() {
+		return theOgrn;
+	}
+
+	public void setOgrn(String aOgrn) {
+		theOgrn = aOgrn;
+	}
+
+	/** ОГРН */
+	private String theOgrn;
+	/** Региональная компания */
+	private Boolean theIsRegion;
 	/** Код СМО */
 	private String theSmocode;
 

@@ -3,16 +3,14 @@ package ru.ecom.mis.ejb.form.patient;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.patient.MedPolicy;
-import ru.ecom.mis.ejb.form.patient.interceptors.MedPolicyPreCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxLength;
@@ -79,19 +77,19 @@ public class MedPolicyForm extends IdEntityForm {
 
     /** Фамилия */
 	@Comment("Фамилия")
-	@Persist
+	@Persist @DoUpperCase
 	public String getLastname() {return theLastname;	}
 	public void setLastname(String aLastname) {theLastname = aLastname;	}
 
 	/** Имя */
 	@Comment("Имя")
-	@Persist
+	@Persist @DoUpperCase
 	public String getFirstname() {return theFirstname;	}
 	public void setFirstname(String aFirstname) {theFirstname = aFirstname;	}
 
 	/** Отчество */
 	@Comment("Отчество")
-	@Persist
+	@Persist @DoUpperCase
 	public String getMiddlename() {return theMiddlename;	}
 	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
 
@@ -137,4 +135,34 @@ public class MedPolicyForm extends IdEntityForm {
     private String theSeries ;
     /** Страховая компания */
     private Long theCompany ;
+	/** Тип подтверждения по полису */
+	@Comment("Тип подтверждения по полису")
+	@Persist
+	public Long getConfirmationType() {return theConfirmationType;}
+	public void setConfirmationType(Long aConfirmationType) {theConfirmationType = aConfirmationType;}
+
+	/** Тип подтверждения по полису */
+	private Long theConfirmationType;
+	
+	/** Дата подтверждения */
+	@Comment("Дата подтверждения")
+	@Persist @DateString @DoDateString
+	public String getConfirmationDate() {return theConfirmationDate;}
+	public void setConfirmationDate(String aConfirmationDate) {theConfirmationDate = aConfirmationDate;}
+	/** Дата подтверждения */
+	private String theConfirmationDate;
+	
+	/** Дата рождения */
+	@Comment("Дата рождения")
+	@Persist @DateString @DoDateString
+	public String getBirthday() {
+		return theBirthday;
+	}
+
+	public void setBirthday(String aBirthday) {
+		theBirthday = aBirthday;
+	}
+
+	/** Дата рождения */
+	private String theBirthday;
 }

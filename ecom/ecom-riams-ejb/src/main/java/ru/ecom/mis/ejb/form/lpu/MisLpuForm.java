@@ -1,8 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -392,4 +390,12 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Приемное отделение */
 	private Long thePigeonHole;
+	/** Интервал разрешенной регистрации */
+	@Comment("Интервал разрешенной регистрации")
+	@Persist
+	public Integer getRegistrationInterval() {return theRegistrationInterval;}
+	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
+
+	/** Интервал разрешенной регистрации */
+	private Integer theRegistrationInterval;
 }

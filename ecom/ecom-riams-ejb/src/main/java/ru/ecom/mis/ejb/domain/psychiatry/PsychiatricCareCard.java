@@ -352,4 +352,22 @@ public class PsychiatricCareCard extends BaseEntity{
   * Пациент
   */
  private Patient thePatient;
+ /**
+  * Дата заведения карты *
+  */
+ public Date getDateRegistration() {return theDateRegistration;}
+ public void setDateRegistration(Date aDateRegistration) {theDateRegistration = aDateRegistration;    }
+
+ /**
+  * Регистратор *
+  */
+ public String getRegistrator() {return theRegistrator;}
+ public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
+
+ /**
+  * Регистратор *
+  */
+ private String theRegistrator;
+ /** Дата заведения карты */
+ private Date theDateRegistration;
 }

@@ -23,18 +23,18 @@ function checkPermission(aCtx,  aParam) {
 	var sql ="select count(*),cast(p.editPeriodFrom as integer),cast(p.editPeriodTo as integer),to_char(p.editPeriodFrom,'dd.mm.yyyy'),to_char(p.editPeriodTo,'dd.mm.yyyy')" ;
 	//throw vop[1] ;
 	sql=sql+" from Permission p"
-		+" left join vocObjectPermission vop on vop.id=p.object_id"
-		+" left join vocPermission vp on vp.id=p.permission_id"
-		+" left join SecUser su on su.id=p.username_id"
-		+" where p.dtype='UserPermission'"
-		+" and CURRENT_DATE between coalesce(p.dateFrom,CURRENT_DATE) and coalesce(p.dateTo,CURRENT_DATE) "
-		+" and (su.login='"+username+"' or p.username_id is null)"
-		+" and p.object_id='"+vop+"' "
-		+" and vp.code='"+permission+"' " 
-		;
+	+" left join vocObjectPermission vop on vop.id=p.object_id"
+	+" left join vocPermission vp on vp.id=p.permission_id"
+	+" left join SecUser su on su.id=p.username_id"
+	+" where p.dtype='UserPermission'"
+	+" and CURRENT_DATE between coalesce(p.dateFrom,CURRENT_DATE) and coalesce(p.dateTo,CURRENT_DATE) "
+	+" and (su.login='"+username+"' or p.username_id is null)"
+	+" and p.object_id='"+vop+"' "
+	+" and vp.code='"+permission+"' " 
+	;
 	if (id>0) sql=sql+" and (p.idObject='"+id+"' or p.idObject ='' or p.idObject is null) " ;
 	var list = aCtx.manager.createNativeQuery(sql)
-		.getResultList();
+	.getResultList();
 	//throw sql ;
 	if (+list.size()==0) {
 		// Нет существует ограничение
@@ -43,7 +43,7 @@ function checkPermission(aCtx,  aParam) {
 	var check ;
 	if (id>0) {
 		var sql_check = "select count(*), cast("+vop[3]+" as integer) from "+vop[2]
-			+" where id="+id ;
+		+" where id="+id ;
 		//throw sql_check ;
 		
 		check = aCtx.manager.createNativeQuery(sql_check).getResultList().get(0);
@@ -56,7 +56,7 @@ function checkPermission(aCtx,  aParam) {
 	for (var i=0;i<list.size();i++) {
 		var perm = list.get(i) ;
 		//if (id==0) throw "perm1="+perm[1] +"perm2="+perm[2] +" check="+ check[1] +"sql"+sql_check;
-			var c =0;
+		var c =0;
 		if (+perm[1]>0 && +check[1]>0 && +perm[1]>check[1]) {
 			//throw "perm1="+perm[1] +" check="+ check[1] ;
 		} else {
@@ -72,7 +72,7 @@ function checkPermission(aCtx,  aParam) {
 			}
 		}
 	} 
-
+	
 	return 0 ;
 }
 function findLogginedSecUserId(aCtx) {
@@ -123,6 +123,34 @@ function findLogginedWorkFunctionList(aCtx) {
 	return list ;
 }
 
+function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
+	var username = aCtx.sessionContext.callerPrincipal.name ;
+	var sql = "select wf.id as wfid";
+	if (aWorkPlan!=null) { 
+		sql=sql+",max(wf1.id) as wf1id";
+		sql=sql+",max(wf2.id) as wf2id"
+	} else {
+		sql=sql+",wf.id as wfid1";
+		sql=sql+",wf.id as wfid2";
+	}
+	sql=sql+" from WorkFunction wf "
+		+" left join SecUser su on su.id=wf.secUser_id"
+		+" left join worker w on  w.id=wf.worker_id"
+		+" left join worker w1 on w.person_id=w1.person_id" ;
+	if (aWorkPlan!=null) { 
+		sql=sql+" left join workFunction wf1 on wf1.id='"+aWorkPlan+"' and wf1.worker_id=w1.id "
+		sql=sql+" left join workFunction wf2 on wf2.group_id=wf1.id "
+	}
+	sql=sql	+" where su.login = '"+username+"'  group by wf.id";
+		
+	var list = aCtx.manager.createNativeQuery(sql)
+		//.setParameter("login", username) 
+		//.setParameter("plWF",aWorkPlan)
+		.getResultList() ;
+	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser" ;
+	var obj = list.get(0) ;
+	return obj[1]!=null?obj[1]: (obj[2]!=null?obj[2] : obj[0])  ;
+}
 function getWorkFunctionByCalenDay(aCtx, aCalenDayId) {
 	if (aCalenDayId==null) {
 		return new java.lang.Long.valueOf("0") ;

@@ -2,8 +2,11 @@ package ru.ecom.mis.ejb.form.psychiatry;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiatricCareCard;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.form.psychiatry.interceptor.CareCardPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -20,12 +23,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Карта обратившегося за психиатрической помощью", nameProperties= "cardNumber",list="entityParentList-psych_careCard.do", view="entityParentView-psych_careCard.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(CareCardPreCreateInterceptor.class)
+)
 public class PsychiatricCareCardForm extends IdEntityForm {
 	 /**
 	  * Дата взятия на учет
 	  */
 	 @Comment("Дата взятия на учет")
-	 @Persist @DateString @DoDateString @Required
+	 @Persist @DateString @DoDateString 
 	 public String getStartDate() {
 	  return theStartDate;
 	 }
@@ -122,7 +128,7 @@ public class PsychiatricCareCardForm extends IdEntityForm {
 	  * Дата начала заболевания
 	  */
 	 @Comment("Дата начала заболевания")
-	 @Persist @DateString @DoDateString @Required
+	 @Persist @DateString @DoDateString 
 	 public String getIllnessStartDate() {
 	  return theIllnessStartDate;
 	 }
@@ -253,4 +259,41 @@ public class PsychiatricCareCardForm extends IdEntityForm {
 	  * Пациент
 	  */
 	 private Long thePatient;
+	 /**
+	  * Дата заведения карты *
+	  */
+	 @DoDateString @DateString @Persist
+	 public String getDateRegistration() {return theDateRegistration;}
+	 public void setDateRegistration(String aDateRegistration) {theDateRegistration = aDateRegistration;    }
+
+	 /**
+	  * Регистратор *
+	  */
+	 @Persist
+	 public String getRegistrator() {return theRegistrator;}
+	 public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
+
+	 /**
+	  * Регистратор *
+	  */
+	 private String theRegistrator;
+	 /** Дата заведения карты */
+	 private String theDateRegistration;
+	/**
+	 * Новое свойство
+	 */
+	@Comment("Обновлять даты")
+	public Boolean getUpdateDates() {
+		return theUpdateDates;
+	}
+	/**
+	 * Новое свойство
+	 */
+	public void setUpdateDates(Boolean a_Property) {
+		theUpdateDates = a_Property;
+	}
+	/**
+	 * Новое свойство
+	 */
+	private Boolean theUpdateDates;
 }

@@ -9,6 +9,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
@@ -26,6 +29,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Длительный СМО")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="ownerFunction", table="MedCase")
+}) 
 public abstract class LongMedCase extends MedCase{
 	
 	
@@ -70,11 +76,6 @@ public abstract class LongMedCase extends MedCase{
 	public Time getDischargeTime() {return theDischargeTime;}
 	public void setDischargeTime(Time aDischargeTime) {theDischargeTime = aDischargeTime;	}
 	
-	/** Отделение */
-	@Comment("Отделение")
-	@OneToOne
-	public MisLpu getDepartment() {return theDepartment;}
-	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
 	
 	
 
@@ -87,8 +88,7 @@ public abstract class LongMedCase extends MedCase{
 
 	/** Рабочая функция лечащего врача */
 	private WorkFunction theOwnerFunction;
-	/** Отделение */
-	private MisLpu theDepartment;
+
 	/** Время выписки */
 	private Time theDischargeTime;
 	/** Время поступления */
@@ -173,12 +173,7 @@ public abstract class LongMedCase extends MedCase{
 		return DurationUtil.getDuration(getDateStart(), getDateFinish());
 	}
 
-	/** Отделение (текст) */
-	@Comment("Отделение (текст)")
-	@Transient
-	public String getDepartmentInfo() {
-		return theDepartment!=null? theDepartment.getName():"";
-	}
+
 	// [end]
 
 }

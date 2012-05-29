@@ -61,6 +61,22 @@ public class SecUserForm  extends IdEntityForm {
 	public Boolean getIsHash() {return theIsHash;}
 	public void setIsHash(Boolean aIsHash) {theIsHash = aIsHash;}
 
+	/** Удаленный пользователь */
+	@Comment("Удаленный пользователь")
+	@Persist
+	public Boolean getIsRemoteUser() {return theIsRemoteUser;}
+	public void setIsRemoteUser(Boolean aIsRemoteUser) {theIsRemoteUser = aIsRemoteUser;}
+
+	
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Рабочая функция */
+	private Long theWorkFunction;
+	/** Удаленный пользователь */
+	private Boolean theIsRemoteUser;
 	/** Закеширован */
 	private Boolean theIsHash;
 	/** Отключен */

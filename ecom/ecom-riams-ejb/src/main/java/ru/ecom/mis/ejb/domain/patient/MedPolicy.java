@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
+import ru.ecom.mis.ejb.domain.patient.voc.VocPolicyConfirmationType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -19,11 +20,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @AIndexes({
-		@AIndex(name="Index1", unique = false, properties={"series","polNumber","company"})
-		, @AIndex(name ="Index2", properties={"patient","polNumber"})
+		/*@AIndex(name="Index1", unique = false, properties={"series","polNumber","company"})
+		,@AIndex(name ="Index2", properties={"patient","polNumber"})
 		, @AIndex(name="Index3", properties={"patient","series","polNumber"})
-		,@AIndex(name="Index3", properties={"patient"})		
+		,@AIndex(name="Index5", properties={"patient"})		
 		,@AIndex(name="Index4", properties={"patient","actualDateFrom","actualDateTo"})
+		*/
+	@AIndex(properties={"series"})
+	,@AIndex(properties={"polNumber"})
+	,@AIndex(properties={"patient"})		
+	,@AIndex(properties={"actualDateTo"})
+	,@AIndex(properties={"actualDateFrom"})
+	,@AIndex(properties={"commonNumber"})
+	,@AIndex(properties={"company"})
+	,@AIndex(properties={"insuranceCompanyArea"})
 })
 @Table(schema="SQLUser")
 abstract public class MedPolicy extends BaseEntity {
@@ -116,5 +126,43 @@ abstract public class MedPolicy extends BaseEntity {
 
 	/** Область нахождения СМО */
 	private OmcKodTer theInsuranceCompanyArea;
+	
+	/** Дата подтверждения */
+	@Comment("Дата подтверждения")
+	public Date getConfirmationDate() {
+		return theConfirmationDate;
+	}
+
+	public void setConfirmationDate(Date aConfirmationDate) {
+		theConfirmationDate = aConfirmationDate;
+	}
+	/** Тип подтверждения по полису */
+	@Comment("Тип подтверждения по полису")
+	@OneToOne
+	public VocPolicyConfirmationType getConfirmationType() {
+		return theConfirmationType;
+	}
+
+	public void setConfirmationType(VocPolicyConfirmationType aConfirmationType) {
+		theConfirmationType = aConfirmationType;
+	}
+
+	/** Тип подтверждения по полису */
+	private VocPolicyConfirmationType theConfirmationType;
+	/** Дата подтверждения */
+	private Date theConfirmationDate;
+	
+	/** Дата рождения */
+	@Comment("Дата рождения")
+	public Date getBirthday() {
+		return theBirthday;
+	}
+
+	public void setBirthday(Date aBirthday) {
+		theBirthday = aBirthday;
+	}
+
+	/** Дата рождения */
+	private Date theBirthday;
 
 }

@@ -276,4 +276,37 @@ public class DiagnosisForm extends IdEntityForm {
 	public void setIllnesPrimary(Long aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
 
 	/** Характер заболевания */
-	private Long theIllnesPrimary;}
+	private Long theIllnesPrimary;
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DoDateString @DateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	
+	/** Пользователь, последний изменявший запись */
+	@Comment("Пользователь, последний изменявший запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата создания */
+	private String theCreateDate;
+}

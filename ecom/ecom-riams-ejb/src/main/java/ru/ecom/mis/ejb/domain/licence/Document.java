@@ -44,5 +44,34 @@ public class Document extends BaseEntity {
     private String theSeriaDoc ;
     /** Номер документа */
     private String theNumberDoc ;
+    
+    /** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Пользователь, последний редактировавший запись */
+	@Comment("Пользователь, последний редактировавший запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, последний редактировавший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата создания */
+	private Date theCreateDate;
 
 }

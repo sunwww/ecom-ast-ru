@@ -19,7 +19,7 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		if (!form.isTypeCreate() && form.getSaveType()==form.TYPE_SAVE) {
 			try {
-				SecPolicy.checkPolicyEditHour(aContext.getSessionContext(), "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour", medCase) ;
+				SecPolicy.checkPolicyEditHour(aContext.getSessionContext(), medCase) ;
 			} catch(Exception e){
 				form.getPage();
 				form.setTypeViewOnly() ;
@@ -27,7 +27,7 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
 			}
 			
 		}
-        if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber")) {
+        if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.ChangeStatCardNumber)) {
             form.addDisabledField("statCardNumber");
         }
         

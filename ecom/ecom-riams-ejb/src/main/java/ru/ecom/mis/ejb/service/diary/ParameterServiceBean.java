@@ -1,4 +1,4 @@
-package ru.ecom.diary.ejb.service.protocol;
+package ru.ecom.mis.ejb.service.diary;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
+import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -17,11 +18,14 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
+import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
+import ru.ecom.diary.ejb.service.protocol.ParameterPage;
+import ru.ecom.diary.ejb.service.protocol.ParameterType;
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.diary.ejb.service.protocol.field.ErrorByField;
 import ru.ecom.diary.ejb.service.protocol.field.LabelField;
@@ -31,6 +35,7 @@ import ru.ecom.diary.ejb.service.protocol.field.TextField;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
 import ru.nuzmsh.util.StringUtil;
 /**
  * Сервис для работы с параметрами
@@ -38,7 +43,9 @@ import ru.nuzmsh.util.StringUtil;
  *
  */
 @Stateless
+@Local(IParameterService.class)
 @Remote(IParameterService.class)
+@SecurityDomain("other")
 public class ParameterServiceBean implements IParameterService{
 	
 	public List<ParameterType> loadParameterType()  {
@@ -64,6 +71,38 @@ public class ParameterServiceBean implements IParameterService{
 		//StringBuilder ret = new StringBuilder() ;
 	}
 	
+	public String getActionByDocument(Long aId,
+			String aDocument) throws IOException {
+		LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
+		InputStream in = null;
+		try {
+			in = getInputStream(theFileDocumentParameter) ;
+			LOG.info(new StringBuilder().append("		file=").append(in).toString());
+			Document doc = new SAXBuilder().build(in);
+			Element parConfigElement = doc.getRootElement();
+			for (Object o : parConfigElement.getChildren()) {
+				Element parElement = (Element) o;
+				if("parameter".equals(parElement.getName())) {
+					Long key = Long.valueOf(parElement.getAttributeValue("id"));
+					if (key==null) {
+						throw new IllegalArgumentException("Нет атрибута id");
+					}
+					if (key.equals(aId)) return parElement.getAttributeValue("action") ;
+				} else {
+					LOG.warn("Нет поддержки элемента "+parElement.getName());
+				}
+			}
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		} 
+		finally {
+			in.close();
+		}
+		LOG.info("Done.") ;
+		
+		
+		return null ;
+	}
 	private ParameterPage loadParameterFromFile(String aResourceString,Long aId,
 			ParameterForm aParameterForm, ActionErrors aErrors) throws IOException {
         LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
@@ -326,6 +365,7 @@ public class ParameterServiceBean implements IParameterService{
 	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
 	private final static Logger LOG = Logger.getLogger(ParameterServiceBean.class) ;
 	String theFileDiaryParameter = "/META-INF/diary/parameter-config.xml" ;
+	String theFileDocumentParameter = "/META-INF/diary/document-polic-config.xml" ;
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
     @Resource SessionContext theContext ;

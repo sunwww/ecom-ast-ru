@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -45,7 +44,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Время операции */
 	@Comment("Время операции")
-	@Persist 
+	@Persist @Required
 	@TimeString @DoTimeString
 	public String getOperationTime() {return theOperationTime;}
 	public void setOperationTime(String aOperationTime) {theOperationTime = aOperationTime;	}
@@ -64,7 +63,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Операция */
 	@Comment("Операция")
-	@Persist @Required
+	@Persist 
 	public Long getOperation() {return theOperation;}
 	public void setOperation(Long aOperation) {theOperation = aOperation;}
 
@@ -115,34 +114,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=VocComplication.class)
 	public String getComplications() {return theComplications;	}
 	public void setComplications(String aComplications) {theComplications = aComplications;}
-		
-	/** Хирург инфо */
-
-	@Comment("Хирург инфо")
-	@Persist
-	public String getSurgeonsInfo() {return theSurgeonsInfo;	}
 	
-	public void setSurgeonsInfo(String aSurgeonsInfo) {theSurgeonsInfo = aSurgeonsInfo;}
-	
-	/** Отделение инфо */
-	@Comment("Отделение инфо")
-	@Persist
-	public String getDepartmentInfo() {return theDepartmentInfo;}
-	public void setDepartmentInfo(String aDepartmentInfo) {theDepartmentInfo = aDepartmentInfo;}
-	
-	/** Анестезия инфо */
-	@Comment("Анестезия инфо")
-	@Persist
-	public String getAnesthesiaInfo() {return theAnesthesiaInfo;}
-	public void setAnesthesiaInfo(String aAnesthesiaInfo) {theAnesthesiaInfo = aAnesthesiaInfo;}
-
-	
-	/** Операция инфо */
-	@Comment("Операция инфо")
-	@Persist
-	public String getOperationInfo() {return theOperationInfo;	}
-	public void setOperationInfo(String aOperationInfo) {theOperationInfo = aOperationInfo;}
-
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
@@ -154,12 +126,6 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Persist @IntegerString @DoIntegerString
 	public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
 	public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
-
-	/** Рабочая функция врача, проводившего операцию info */
-	@Comment("Рабочая функция врача, проводившего операцию info")
-	@Persist 
-	public String getSurgeonInfo() {return theSurgeonInfo;}
-	public void setSurgeonInfo(String aSurgeonInfo) {theSurgeonInfo = aSurgeonInfo;}
 
 	///** Рабочая функция врача, проводившего операцию */
 	//@Comment("Рабочая функция врача, проводившего операцию")
@@ -304,7 +270,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Показания для операции */
 	@Comment("Показания для операции")
-	@Persist 
+	@Persist @Required
 	public Long getAspect() {return theAspect;}
 	public void setAspect(Long aAspect) {theAspect = aAspect;}
 
@@ -363,21 +329,11 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Рабочая функция врача, проводившего операцию */
 	private Long theSurgeon;
-	/** Рабочая функция врача, проводившего операцию info */
-	private String theSurgeonInfo;
 	/** Кол-во  анастезии */
 	private String theAnesthesiaAmount;
 	
 	/** Лечебное учреждение */
 	private Long theLpu;
-	/** Операция инфо */
-	private String theOperationInfo;
-	/** Анестезия инфо */
-	private String theAnesthesiaInfo;
-	/** Отделение инфо */
-	private String theDepartmentInfo;
-	/** Хирург инфо */
-	private String theSurgeonsInfo;
 	/** Осложнения */
 	private String theComplications;
 	/** Пациент */
@@ -403,4 +359,54 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */
 	private String theOperationDate;
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DoDateString @DateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	
+	/** Пользователь, последний изменявший запись */
+	@Comment("Пользователь, последний изменявший запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist @Required
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+
+	/** Поток обслуживания */
+	private Long theServiceStream;
+
+	/** Пользователь, последний изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата создания */
+	private String theCreateDate;
+	
+	/** Мед. услуга */
+	@Comment("Мед. услуга")
+	@Persist @Required
+	public Long getMedService() {return theMedService;}
+	public void setMedService(Long aMedService) {theMedService = aMedService;}
+
+	/** Мед. услуга */
+	private Long theMedService;
 }

@@ -27,8 +27,60 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
 		
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
-		StatisticStubStac stub = new StatisticStubStac(medCase,aContext.getSessionContext(),aContext.getEntityManager(),"/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber");
+		Long id = medCase.getId() ;
+		
+		StatisticStubStac stub = new StatisticStubStac(medCase,aContext.getSessionContext(),aContext.getEntityManager());
+		
+		String statCardNumber = form.getStatCardNumber() ;
+		String stubCode = medCase.getStatisticStub()!=null?medCase.getStatisticStub().getCode():null;
+		if (statCardNumber!=null && statCardNumber!="" && (id>Long.valueOf(0))
+				&& stubCode!=null&&!stubCode.equals(statCardNumber)
+				) {
+			
+			String year = form.getDateStart().substring(6) ;
+			//throw ""+year ;
+			List<Object[]> list = aContext.getEntityManager()
+					.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
+				.setParameter("number", statCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
+			
+			if (list.size()==0) {
+				boolean alwaysCreate = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
+				if (!alwaysCreate) {
+	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()>Long.valueOf(0)) {
+	    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
+	    				StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
+	    			} else {
+	    				StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+	    			}
+	    		} else {
+	    			StatisticStubStac.changeStatCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());    			
+	    		}
+				
+			} else {
+				if (form.getDeniedHospitalizating().equals(Long.valueOf(0))) {
+					StatisticStubStac.createStacCardNumber(id,statCardNumber,  aContext.getEntityManager(), aContext.getSessionContext());
+				} else {
+					
+					StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
+					//throw "remove" ;
+				}
+			}
+			
+		} else {
+			List<Object> list = aContext.getEntityManager().createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist'")
+				//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
+				.getResultList() ;
+			if (list.size()==0) {
+				//if (aForm.deniedHospitalizating==0) {
+					StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+				//} else {
+					
+				//}	
+			}
+		}
+		
 		stub.removeStatCardNumber() ;
+		
 		boolean adding1is = (!isEmpty(form.getOrderDiagnos()) || (!isEmpty(form.getOrderMkb()))) ;
 		boolean adding2is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb()))) ;
 		if (adding1is || adding2is) {

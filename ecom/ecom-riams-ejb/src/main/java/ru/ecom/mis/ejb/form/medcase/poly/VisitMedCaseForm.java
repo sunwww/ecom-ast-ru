@@ -1,8 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -24,6 +27,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Визит", nameProperties= "id", view="entityParentView-smo_visit.do", shortView="entityShortView-smo_visit.do")
 @Parent(property="patient", parentForm= PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Visit")
+@AViewInterceptors(
+		@AEntityFormInterceptor(DirectionViewInterceptor.class)
+)
 public class VisitMedCaseForm extends ShortMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
@@ -177,7 +183,19 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 
 	/** Поток обслуживания */
 	private Long theServiceStream;
-		
-	
+	/** Отделение (текст) */
+	@Comment("Отделение (текст)")
+	@Persist
+	public String getDepartmentInfo() {return theDepartmentInfo;}
+	public void setDepartmentInfo(String aDepartmentInfo) {theDepartmentInfo = aDepartmentInfo;}
+	/** Отделение */
+	@Comment("Отделение")
+	@Persist
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	/** Отделение */
+	private Long theDepartment;
+	/** Отделение (текст) */
+	private String theDepartmentInfo;	
 
 }

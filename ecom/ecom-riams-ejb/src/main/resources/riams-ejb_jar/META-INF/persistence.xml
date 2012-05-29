@@ -7,7 +7,9 @@
 		<class>ru.ecom.ejb.services.live.domain.LiveTransaction</class>
 		<class>ru.ecom.ejb.services.live.domain.LiveEntity</class>
 		<class>ru.ecom.ejb.services.live.domain.LiveProperty</class>
+		<class>ru.ecom.ejb.services.live.domain.journal.ViewJournal</class>
 		<class>ru.ecom.ejb.services.live.domain.journal.DeleteJournal</class>
+		<class>ru.ecom.ejb.services.live.domain.journal.ChangeJournal</class>
 
 		<!-- Hello -->
 		<class>ru.ecom.ejb.domain.hello.Hello</class>

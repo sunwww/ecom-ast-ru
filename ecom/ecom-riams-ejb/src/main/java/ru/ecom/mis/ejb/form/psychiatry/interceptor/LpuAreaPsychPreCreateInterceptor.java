@@ -1,0 +1,65 @@
+package ru.ecom.mis.ejb.form.psychiatry.interceptor;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.jdom.IllegalDataException;
+
+import ru.ecom.ejb.sequence.service.ISequenceService;
+import ru.ecom.ejb.services.entityform.IEntityForm;
+import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.IFormInterceptor;
+import ru.ecom.mis.ejb.form.psychiatry.LpuAreaPsychCareCardForm;
+import ru.ecom.mis.ejb.form.psychiatry.PsychiatricCareCardForm;
+import ru.nuzmsh.util.format.DateFormat;
+
+public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor, IFormInterceptor {
+
+	public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
+		LpuAreaPsychCareCardForm form = (LpuAreaPsychCareCardForm) aForm ;
+		String sql = "select count(*),count(case when transferDate is null and finishDate is null then 1 else null end),to_char(max(coalesce(transferDate,finishDate)),'dd.mm.yyyy') from LpuAreaPsychCareCard where careCard_id='"+aParentId+"'" ;
+		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql)
+				.setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			Object[] objs = list.get(0) ;
+			Long cnt = ConvertSql.parseLong(objs[0]) ;
+			Long cntConsisting = ConvertSql.parseLong(objs[1]) ;
+			if (cnt==null || cnt.equals(Long.valueOf(0))) {
+				sql = "select to_char(pcc.startDate,'dd.mm.yyyy') as dateStart,pcc.observationReason_id as vporid from PsychiatricCareCard pcc  where pcc.id='"+aParentId+"'" ;
+				List<Object[]> list1 = aContext.getEntityManager().createNativeQuery(sql)
+						.setMaxResults(1).getResultList() ;
+				if (list1.size()>0) {
+					Object[] objs1 = list1.get(0) ;
+					if (objs1[0]!=null && objs1[1]!=null) {
+						form.setStartDate(""+objs1[0]) ;
+						form.setObservationReason(ConvertSql.parseLong(objs1[1])) ;
+					} else {
+						throw new IllegalArgumentException("Перед созданием движения по участкам необходимо указать дату взятия на учет и причину наблюдения") ;
+					}
+				}
+			} else {
+				if (cntConsisting==null || cntConsisting.equals(Long.valueOf(0))) {
+					form.setStartDate(""+objs[2]) ;
+				} else if (cntConsisting.equals(Long.valueOf(1))) {
+					
+				} else {
+					throw new IllegalArgumentException("Более 2х открытых движений по участкам!!!") ;
+				}
+			}
+		} else {
+			
+		}
+		Date dateThis =new Date() ;
+		form.setCreateDate(DateFormat.formatToDate(dateThis)) ;
+		form.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString());
+	}
+
+	public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
+		intercept(aForm, aEntity, null, null);
+		
+	}
+}

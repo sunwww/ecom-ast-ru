@@ -61,13 +61,15 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	@Transient
 	public String getLpuFullname() {
 		StringBuilder sb = new StringBuilder() ;
-		MisLpu lpu = theLpu ;
+		//MisLpu lpu = theLpu ;
+		//sb.append(lpu!=null?lpu.getName():"") ;
+		/*
 		while (lpu!=null) {
 			sb.insert(0, lpu.getName()) ;
 			lpu = lpu.getParent() ;
 			if(lpu!=null) sb.insert(0," / ") ;
-		}
-		return sb.toString() ;
+		}*/
+		return "" ;
 	}
 	public void setLpuFullname(String aLpuFullname) {}
 	/** ЛПУ */

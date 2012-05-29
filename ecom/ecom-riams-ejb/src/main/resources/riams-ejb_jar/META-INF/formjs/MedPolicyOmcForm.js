@@ -10,6 +10,9 @@ function onPreCreate(aForm, aCtx) {
 	*/
 	checkPeriod(aForm) ;
 	checkNumSerSmo(aCtx,aForm,"") ;
+	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
+	}
 	//throw "select top 1 CheckOMIPolicy('"
     //	+series+"','"+number+"','"+smo+"',0,'"+sgr+"','"+rayon+"') from MedPolicy" ;
 
@@ -17,11 +20,23 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
+	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
+	}
 	var add =" and id!="+aForm.id ;
 	checkPeriod(aForm) ;
 	checkNumSerSmo(aCtx,aForm,add) ;
 }
-
+function onSave(aForm, aEntity, aCtx) {
+	if (aEntity.commonNumber!=null&&aEntity.commonNumber!='') {
+		aEntity.patient.setCommonNumber(aEntity.commonNumber) ;
+	}
+}
+function onCreate(aForm, aEntity, aCtx) {
+	if (aEntity.commonNumber!=null&&aEntity.commonNumber!='') {
+		aEntity.patient.setCommonNumber(aEntity.commonNumber) ;
+	}
+}
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {
 		var error =":";

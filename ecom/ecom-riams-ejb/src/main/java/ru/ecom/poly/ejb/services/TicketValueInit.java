@@ -51,7 +51,7 @@ public class TicketValueInit implements IValueGetter  {
         if (prs.getBirthday() != null)
             theMap.put("Birthday", prs.getBirthday().toString());
         // Удостоверяние личности
-        theMap.put("PassportInfo", prs.getPassportInfo());
+        //theMap.put("PassportInfo", prs.getPassportInfo());
         // Адрес
         if (prs.getAddress() != null)
             theMap.put("Address", prs.getAddress().getAddressInfo());

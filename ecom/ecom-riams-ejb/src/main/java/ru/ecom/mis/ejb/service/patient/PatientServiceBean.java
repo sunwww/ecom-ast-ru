@@ -35,7 +35,9 @@ import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
+import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
@@ -54,7 +56,13 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-	
+	public String getCodeByMedPolicyOmc(Long aType) {
+		VocMedPolicyOmc type =null;
+		if (aType!=null) {
+			type = theManager.find(VocMedPolicyOmc.class, aType) ;
+		}
+		return type==null?"0":type.getCode() ;
+	}
 	
 	public boolean isNaturalPerson(Long aPatient) {
 		StringBuilder sql = new StringBuilder() ;
@@ -145,7 +153,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return res.toString() ;
 	}
-	public String getInfoVocForFond(String aPassportType,String aAddress) {
+	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select id,name from VocIdentityCard where omcCode='").append(aPassportType).append("'" ) ;
@@ -175,37 +183,74 @@ public class PatientServiceBean implements IPatientService {
 		} else {
 			res.append("##");
 		}
+		if (aPolicy!=null &&!aPolicy.equals("")) {
+			String pol[] = aPolicy.split("#") ;
+			sql = new StringBuilder() ;
+			sql.append("select id,omcCode||' '||name from REG_IC where omcCode='").append(pol[0]).append("'" ) ;
+			list.clear() ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (list.size()>0) {
+				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+			} else {
+				res.append("##");
+			}
+			String type=getTypePolicy(pol[1]) ;
+			sql = new StringBuilder() ;
+			sql.append("select id,id||' '||name from VocMedPolicyOmc where code='").append(type).append("'" ) ;
+			list.clear() ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (list.size()>0) {
+				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+			} else {
+				res.append("##");
+			}
+		} else {
+			res.append("##");
+			res.append("##");
+		}
 		return res.toString() ;
 	}
-	public boolean updateDataByFond(Long aPatientId, String aFiodr
-			,String aDocument,String aPolicy,String aAddress) {
+	public boolean updateDataByFond(String aUsername, Long aPatientId, String aFiodr
+			,String aDocument,String aPolicy,String aAddress
+			,boolean aIsPatient, boolean aIsPolicy
+			, boolean aIsDocument, boolean aIsAddress) {
+		String[] fiodr =null;
+		String curDate = DateFormat.formatToDate(new java.util.Date()) ;
+		
 		if (aFiodr!=null && !aFiodr.equals("")) {
-			String[] fiodr = aFiodr.split("#") ;
-			if (aPatientId!=null &&aPatientId>Long.valueOf(0)) {
-				StringBuilder sql = new StringBuilder() ;
-				
-				if (!fiodr[0].startsWith("?")) {
-					sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
-					sql.append(", firstname='").append(fiodr[1]).append("'") ;
-					sql.append(", middlename='").append(fiodr[2]).append("'") ;
-					sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
-					sql.append(", snils='").append(fiodr[4]).append("'") ;
-					sql.append(" where id='").append(aPatientId).append("'") ;
-					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-				} else {
-					sql.append("update Patient set ") ;
-					//sql.append("lastname='").append(fiodr[0]).append("'") ;
-					//sql.append(", firstname='").append(fiodr[1]).append("'") ;
-					//sql.append(", middlename='").append(fiodr[2]).append("'") ;
-					sql.append(" birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
-					sql.append(", snils='").append(fiodr[4]).append("'") ;
-					sql.append(" where id='").append(aPatientId).append("'") ;
-					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			fiodr = aFiodr.split("#") ;
+			if ( aIsPatient) {
+				if (aPatientId!=null &&aPatientId>Long.valueOf(0) ) {
+					StringBuilder sql = new StringBuilder() ;
 					
+					if (!fiodr[0].startsWith("?")) {
+						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
+						sql.append(", firstname='").append(fiodr[1]).append("'") ;
+						sql.append(", middlename='").append(fiodr[2]).append("'") ;
+						sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+						sql.append(", snils='").append(fiodr[4]).append("'") ;
+						sql.append(", commonNumber='").append(fiodr[5]).append("'") ;
+						sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
+						sql.append(", editUsername='").append(aUsername).append("'") ;
+						sql.append(" where id='").append(aPatientId).append("'") ;
+						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+					} else {
+						sql.append("update Patient set ") ;
+						//sql.append("lastname='").append(fiodr[0]).append("'") ;
+						//sql.append(", firstname='").append(fiodr[1]).append("'") ;
+						//sql.append(", middlename='").append(fiodr[2]).append("'") ;
+						sql.append(" birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+						sql.append(", snils='").append(fiodr[4]).append("'") ;
+						sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
+						sql.append(", editUsername='").append(aUsername).append("'") ;
+						sql.append(" where id='").append(aPatientId).append("'") ;
+						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+						
+					}
 				}
 			}
 		}
-		if (aDocument!=null &&!aDocument.equals("")) {
+		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
 			String[] doc = aDocument.split("#") ;
 			StringBuilder sql = new StringBuilder() ;
 			if (!doc[0].startsWith("?")) {
@@ -214,6 +259,8 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
 				sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
 				sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
+				sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
+				sql.append(", editUsername='").append(aUsername).append("'") ;
 				sql.append(" where id='").append(aPatientId).append("'") ;
 				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 			} else {
@@ -222,12 +269,14 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(", passportDateIssued=to_date('").append(doc[3]).append("','dd.mm.yyyy')") ;
 				//sql.append(", passportWhomIssued='").append(doc[4]).append("'") ;
 				sql.append(", passportType_id=(select id from VocIdentityCard where omcCode='").append(doc[0]).append("')") ;
+				sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
+				sql.append(", editUsername='").append(aUsername).append("'") ;
 				sql.append(" where id='").append(aPatientId).append("'") ;
 				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				
 			}
 		}
-		if (aAddress!=null &&!aAddress.equals("")) {
+		if (aAddress!=null &&!aAddress.equals("") &&aIsAddress) {
 			String[] adr = aAddress.split("#") ;
 			StringBuilder sql = new StringBuilder() ;
 			String kladr = adr[0] ;
@@ -243,13 +292,18 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(", houseBuilding='").append(adr[2]).append("'") ;
 			sql.append(", flatNumber='").append(adr[3]).append("'") ;
 			sql.append(", rayon_id=(select id from VocRayon where code='").append(rayon).append("')") ;
+			sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
+			sql.append(", editUsername='").append(aUsername).append("'") ;
 			sql.append(" where id='").append(aPatientId).append("'") ;
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 		}
-		if (aPolicy!=null && !aPolicy.equals("")) {
+		if (aPolicy!=null && !aPolicy.equals("") &&aIsPolicy) {
 			String[] pols = aPolicy.split("&") ;
+			
 			for (String p:pols) {
 				String[] pol = p.split("#") ;
+				System.out.println(pol.length) ;
+				System.out.println(p) ;
 				StringBuilder sql = new StringBuilder() ;
 				sql.append("select count(*) from medpolicy ") ;
 				sql.append(" where patient_id='").append(aPatientId).append("'");
@@ -257,20 +311,15 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(" and polNumber='").append(pol[2]).append("'") ;
 				Object cnt =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 				Long cntL = ConvertSql.parseLong(cnt) ;
-				String type = "" ;
-				if (pol[1]!=null) {
-					if (pol[1].startsWith("0") && pol[1].length()<4) {
-						type = "2" ;
-					} else if (pol[1].startsWith("0") && pol[1].length()>3) {
-						type = "3" ;
-					} else {
-						type ="1" ;
-					}
-				}
+				
+				String type = getTypePolicy(pol[1]) ;
 				if (cntL!=null &&cntL>Long.valueOf(0)) {
 					sql = new StringBuilder() ;
-					sql.append("update MedPolicy set ") ;
-					sql.append(" company_id=(select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
+					sql.append("update MedPolicy set lastname='").append(fiodr[0]).append("'") ;
+					sql.append(", firstname='").append(fiodr[1]).append("'") ;
+					sql.append(", middlename='").append(fiodr[2]).append("'") ;
+					sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
+					sql.append(", company_id=(select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
 					sql.append(", actualDateFrom=to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
 					if (pol[4]!=null && !pol[4].equals("")) {
 						sql.append(", actualDateTo=to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
@@ -279,33 +328,93 @@ public class PatientServiceBean implements IPatientService {
 					}
 					sql.append(", commonNumber='").append(pol[5]).append("'") ;
 					sql.append(", type_id=(select id from VocMedPolicyOmc where code='").append(type).append("')") ;
+					sql.append(", confirmationDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
 					sql.append(" where patient_id='").append(aPatientId).append("'");
 					sql.append(" and series='").append(pol[1]).append("'") ;
 					sql.append(" and polNumber='").append(pol[2]).append("'") ;
+					
 					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				} else {
-					
 					sql = new StringBuilder() ;
-					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id) values ('MedPolicyOmc'") ;
-					sql.append(", (select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
-					sql.append(", to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
-					
-					if (pol[4]!=null && !pol[4].equals("")) {
-						sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
-					} else {
-						sql.append(", null") ;
+					sql.append("select count(*) from medpolicy ") ;
+					sql.append(" where series='").append(pol[1]).append("'") ;
+					sql.append(" and polNumber='").append(pol[2]).append("'") ;
+					Object cnt1 =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+					Long cntL1 = ConvertSql.parseLong(cnt1) ;
+					if (cntL1.equals(Long.valueOf(0))) {
+						sql = new StringBuilder() ;
+						sql = sql.append("select id,omcCode from REG_IC where omcCode='").append(pol[0]).append("' order by id desc") ;
+						List<Object[]> idS = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+						sql = new StringBuilder() ;
+						sql = sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
+						List<Object[]> idT = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+						if (idS.size()>0 && idT.size()>0) {
+							sql = new StringBuilder() ;
+							sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id,lastname,firstname,middlename,birthday, confirmationDate) values ('MedPolicyOmc'") ;
+							sql.append(", '").append(idS.get(0)[0]).append("'") ;
+							sql.append(", to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
+							
+							if (pol[4]!=null && !pol[4].equals("")) {
+								sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+							} else {
+								sql.append(", null") ;
+							}
+							//sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+							sql.append(", '").append(pol[5]).append("'") ;
+							sql.append(", '").append(aPatientId).append("'");
+							sql.append(", '").append(pol[1]).append("'") ;
+							sql.append(", '").append(pol[2]).append("','").append(idT.get(0)[0]).append("','").append(fiodr[0]).append("'") ;
+						sql.append(",'").append(fiodr[1]).append("'") ;
+						sql.append(",'").append(fiodr[2]).append("'") ;
+						sql.append(", to_date('").append(fiodr[3]).append("','dd.mm.yyyy'),to_date('").append(curDate).append("','dd.mm.yyyy'))") ;
+							theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+						}
 					}
-					//sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
-					sql.append(", '").append(pol[5]).append("'") ;
-					sql.append(", '").append(aPatientId).append("'");
-					sql.append(", '").append(pol[1]).append("'") ;
-					sql.append(", '").append(pol[2]).append("',(select id from VocMedPolicyOmc where code='").append(type).append("'))") ;
-					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				}
 				
 			}
 		}
 		return true ;
+	}
+	public void insertCheckFondData(
+			String aLastname,String aFirstname,String aMiddlename,String aBirthday
+			,String aSnils
+			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
+			,String aPolicyDateFrom, String aPolicyDateTo
+			,String aUsername, String aCheckType
+			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
+			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			) throws ParseException {
+		PatientFond fond = new PatientFond() ;
+		fond.setLastname(aLastname) ;
+		fond.setFirstname(aFirstname) ;
+		fond.setMiddlename(aMiddlename) ;
+		fond.setLastname(aLastname) ;
+		fond.setBirthday(DateFormat.parseSqlDate(aBirthday)) ;
+		fond.setCommonNumber(aCommonNumber) ;
+		fond.setPolicyNumber(aPolicyNumber) ;
+		fond.setPolicySeries(aPolicySeries) ;
+		fond.setPolicyDateFrom(DateFormat.parseSqlDate(aPolicyDateFrom));
+		fond.setPolicyDateTo(DateFormat.parseSqlDate(aPolicyDateTo)) ;
+		fond.setCheckDate(new java.sql.Date(new java.util.Date().getTime())) ;
+		fond.setChecker(aUsername) ;
+		fond.setCheckType(aCheckType) ;
+		fond.setCompanyCode(aCompanyCode) ;
+		fond.setCompabyCodeF(aCompabyCodeF) ;
+		fond.setCompanyOgrn(aCompanyOgrn);
+		fond.setCompanyOkato(aCompanyOkato);
+		fond.setDocumentNumber(aDocumentNumber);
+		fond.setDocumentSeries(aDocumentSeries);
+		fond.setDocumentType(aDocumentType);
+		fond.setKladr(aKladr);
+		fond.setSnils(aSnils);
+		fond.setHouse(aHouse) ;
+		fond.setHouseBuilding(aHouseBuilding);
+		fond.setFlat(aFlat) ;
+		
+		theManager.persist(fond) ;
+		return ;
 	}
 	public PatientForm getPatientById(Long aId) {
 		//Patient p = theManager.find(Patient.class, aId) ;
@@ -370,9 +479,6 @@ public class PatientServiceBean implements IPatientService {
 		} catch (Exception e) {
 			
 		}
-		
-		
-		
 	}
     
     public String infoMedPolicy(Long aPatient) {
@@ -424,7 +530,10 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("	update WorkBook set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Worker set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Kinsman set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("	update Kinsman set kinsman_id =:idnew where kinsman_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("	update PsychiatricCareCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("	update WorkCalendarTime set prepatient_id =:idnew where prepatient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("	update WorkCalendarTime set PersonReserve_id =:idnew where PersonReserve_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			
 		}
 	}
 	
@@ -883,6 +992,20 @@ public class PatientServiceBean implements IPatientService {
 		} else {
 			return null ;
 		}
+	}
+	private String getTypePolicy(String pol) {
+		String type="" ;
+		if (pol!=null) {
+			if (pol.startsWith("0") && pol.length()<4) {
+				type = "2" ;
+			} else if (pol.startsWith("0") && pol.length()>3) {
+				type = "3" ;
+			} else {
+				type ="1" ;
+			}
+		}
+		return type ;
+
 	}
 
 	private static Object getFirst(Query aQuery) {

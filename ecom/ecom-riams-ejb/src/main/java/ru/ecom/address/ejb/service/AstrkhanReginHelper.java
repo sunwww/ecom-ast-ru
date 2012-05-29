@@ -35,9 +35,9 @@ public class AstrkhanReginHelper {
 		theKladrHash.put("3000700000000","КР") ; // Красноя
 		theKladrHash.put("3000800000000","ЛМ") ; // Лиманский
 		theKladrHash.put("3000900000000","НР") ; // Нариман
-		theKladrHash.put("3000100000000","ПР") ; // Приволж
-		theKladrHash.put("3000110000000","ХР") ; // Харабали
-		theKladrHash.put("3000120000000","Ч") ; // Черноярский
+		theKladrHash.put("3001000000000","ПР") ; // Приволж
+		theKladrHash.put("3001100000000","ХР") ; // Харабали
+		theKladrHash.put("3001200000000","Ч") ; // Черноярский
 		theKladrHash.put("3000000200000","КЯ") ; // Знаменск
 		
 		theNameHash.put("К","Кировский") ;
@@ -84,6 +84,10 @@ public class AstrkhanReginHelper {
 	public String getOmcRayonName(Address aAddress, String aHouse, EntityManager aManager) {
 		String key = getOmcRayon(aAddress, aHouse, aManager);
 		return key!=null ? theNameHash.get(key) : key ;
+	}	
+	public String getOmcRayonNameKey(Address aAddress, String aHouse, EntityManager aManager) {
+		String key = getOmcRayon(aAddress, aHouse, aManager);
+		return key ;
 	}	
 	
 	private String findBySoato(Address address, EntityManager aManager) {

@@ -2,7 +2,11 @@ function onPreCreate(aForm, aCtx) {
 	onPreSave(aForm,aCtx)
 }
 function onPreSave(aForm,aEntity, aCtx) {
+	var date = new java.util.Date() ;
 	// Проверка введенных данных
+	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay") ;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
@@ -38,6 +42,22 @@ function onPreSave(aForm,aEntity, aCtx) {
 				;
 		}
 	}
+	var loper = aCtx.manager.createNativeQuery("select so.id as soid,to_char(so.operationDate,'') as operdate ,so1.id as so1id,so1.operationDate as oper1date "
+          + " from MedCase as smo" 
+          +" left join surgicaloperation so on so.medcase_id=smo.id"
+          +" left join medcase smo1 on smo1.parent_id=smo.id"
+          +" left join surgicaloperation so1 on so1.medcase_id=smo1.id"
+          +" where smo.id='"+aForm.id+"' "
+          +" and (so.operationDate>to_date('"+aForm.dateFinish+"','dd.mm.yyyy')"
+          +" or so1.operationDate>to_date('"+aForm.dateFinish+"','dd.mm.yyyy'))"
+          +"").getResultList();
+	if (loper.size()>0) {
+		var obj = loper.get(0)
+		throw "Дата выписки должна быть больше, чем дата операции <a href='entityParentEdit-stac_surOperation.do?id="+
+		+(obj[0]!=null?obj[0]:obj[2])+"'>"+
+		(obj[0]!=null?obj[1]:obj[3])+"</a>"
+		;
+	}
 	if (stat) {
 		
 			var cal1 = java.util.Calendar.getInstance() ;
@@ -63,5 +83,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 				}
 		}
 	}
+	
 
 }

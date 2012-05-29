@@ -16,21 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 			@AIndex(unique= false, properties = {"lpu"})
 		}
 	)
-public class OperatingRoom extends BaseEntity {
-	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+public class OperatingRoom extends WorkPlace {
 
-	/** Лечебное учреждение */
-	@Comment("Лечебное учреждение")
-	@ManyToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-
-	/** Лечебное учреждение */
-	private MisLpu theLpu;
-	/** Название */
-	private String theName;
 
 }

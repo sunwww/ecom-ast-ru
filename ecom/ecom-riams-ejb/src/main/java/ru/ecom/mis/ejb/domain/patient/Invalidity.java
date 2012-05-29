@@ -17,6 +17,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityHealthViolation;
 import ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityVitalRestriction;
 import ru.ecom.mis.ejb.domain.patient.voc.VocInvalidWorkPlace;
 import ru.ecom.mis.ejb.domain.patient.voc.VocProfileIllness;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocLawCourt;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -367,5 +368,21 @@ public class Invalidity extends BaseEntity{
 
 	/** Недееспособный */
 	private Boolean theIncapable;
+	
+	/** Суд */
+	@Comment("Суд")
+	@OneToOne
+	public VocLawCourt getLawCourt() {return theLawCourt;}
+	public void setLawCourt(VocLawCourt aLawCourt) {theLawCourt = aLawCourt;}
+
+	/** Дата суда */
+	@Comment("Дата суда")
+	public Date getLawCourtDate() {return theLawCourtDate;}
+	public void setLawCourtDate(Date aLawCourtDate) {theLawCourtDate = aLawCourtDate;}
+
+	/** Дата суда */
+	private Date theLawCourtDate;
+	/** Суд */
+	private VocLawCourt theLawCourt;
 
 }

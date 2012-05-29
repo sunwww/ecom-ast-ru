@@ -57,7 +57,10 @@ public class TicketServiceBean implements ITicketService {
     	sqlMain.append("select ms.id, ms.code||' '||ms.name ")
     		.append(" from MedService ms")
     		.append(" left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id ")
-    		.append(" where wf.id='").append(aSpec).append("' and ((ms.startDate is null or cast('").append(dat).append("' as date) >=ms.startDate) and (ms.finishDate is null or ms.finishDate>=cast('").append(dat).append("' as date))) and ms.vocMedService_id is not null") ;
+    		.append(" where wf.id='").append(aSpec)
+    		.append("' and ((ms.startDate is null or to_date('").append(dat)
+    		.append("','yyyy-mm-dd') >=ms.startDate) and (ms.finishDate is null or ms.finishDate>=to_date('")
+    		.append(dat).append("','yyyy-mm-dd'))) and ms.vocMedService_id is not null") ;
     	System.out.println(sqlMain) ;
     	List<Object[]> list = theManager.createNativeQuery(sqlMain.toString())
 //    		.setParameter("date", )

@@ -2,6 +2,10 @@
  * Перед созданием
  */
 function onPreCreate(aForm, aContext) {
+	var date = new java.util.Date() ;
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+	aForm.setUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 	var listDep ;
 	if (aForm.prevMedCase >0) {
 		listDep=aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id=:prev")
@@ -30,6 +34,13 @@ function onPreSave(aForm,aEntity, aContext) {
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime)
 	var transferIs = false ;
 	var prof = "ALLTIMEHOSP" ;
+	if (aEntity!=null) {
+		var date = new java.util.Date() ;
+		aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+		//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+		aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
+		
+	}
 	var bedFund = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.BedFund, aForm.bedFund) ;
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
 	if (bedFund!=null && bedFund.bedSubType!=null) {

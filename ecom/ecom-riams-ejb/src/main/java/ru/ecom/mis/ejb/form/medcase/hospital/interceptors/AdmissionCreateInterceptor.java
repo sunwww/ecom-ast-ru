@@ -19,22 +19,25 @@ public class AdmissionCreateInterceptor implements IFormInterceptor {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
-		try {
+		/*try {
 		AdmissionMedCaseForm form = (AdmissionMedCaseForm)aForm;
 		//HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		
 		if (CAN_DEBUG) LOG.debug("Проверка даты поступления для ./CreateHour ...");
-		SecPolicy.checkPolicyCreateHour(aContext.getSessionContext(), "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour"
+		SecPolicy.checkPolicyCreateHour(aContext.getSessionContext()
 			        , form.getDateStart(), form.getEntranceTime());
 		theEntityManager = aContext.getEntityManager() ;
 		theMedCase = (HospitalMedCase)aEntity;
-        if (CAN_DEBUG) LOG.debug("создание номера стат карты ...");
+        
+		if (CAN_DEBUG) LOG.debug("создание номера стат карты ...");
        // String oldStatNumber=form.getStatCardNumber() ;
         //medCase.setStatCardNumber("");
+        
         boolean isCreateStatCardNumberByHand = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand");
         if (CAN_DEBUG) LOG.debug(" aForm.getStatCardNumber() = " + form.getStatCardNumber());
         if (CAN_DEBUG) LOG.debug(" isCreateStatCardNumberByHand = " + isCreateStatCardNumberByHand);
-        StatisticStubStac stub = new StatisticStubStac(theMedCase,aContext.getSessionContext(),aContext.getEntityManager(),"/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber");
+        
+        StatisticStubStac stub = new StatisticStubStac(theMedCase,aContext.getSessionContext(),aContext.getEntityManager());
         if (stub.isStatCardNumberMustCreate()) {
         	
     		if (CAN_DEBUG) LOG.debug("Номер карты должен создаваться...");
@@ -65,6 +68,7 @@ public class AdmissionCreateInterceptor implements IFormInterceptor {
 			
 			throw new IllegalArgumentException(e.getMessage());
 		}
+		*/
 
 		
 	}

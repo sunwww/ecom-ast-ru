@@ -49,7 +49,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Дата начала */
 	@Comment("Дата начала") 
 	@DateString @DoDateString 
-	@Persist @MaxDateCurrent
+	@Persist @MaxDateCurrent @Required
 	public String getDateStart() {return theDateStart;	}
 	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
 	
@@ -264,7 +264,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	/** Время поступления */
 	@Comment("Время поступления")
-	@Persist 
+	@Persist @Required
 	@DoTimeString @TimeString
 	public String getEntranceTime() {return theEntranceTime;}
 	public void setEntranceTime(String aEntranceTime) {theEntranceTime = aEntranceTime;}

@@ -60,13 +60,27 @@ public class WorkCalendarTimeIntervalForm extends WorkCalendarTimePatternForm{
 	 * Среднее время на визит
 	 */
 	@Comment("Среднее время на визит")
-	@Persist @Required
+	@Persist 
 	public Integer getVisitTime() {
 		return theVisitTime;
 	}
 	public void setVisitTime(Integer aVisitTime) {
 		theVisitTime = aVisitTime;
 	}
+	
+	/** Кол-во визитов */
+	@Comment("Кол-во визитов")
+	@Persist
+	public Integer getCountVisits() {
+		return theCountVisits;
+	}
+
+	public void setCountVisits(Integer aCountVisits) {
+		theCountVisits = aCountVisits;
+	}
+
+	/** Кол-во визитов */
+	private Integer theCountVisits;
 	/**
 	 * Среднее время на визит
 	 */

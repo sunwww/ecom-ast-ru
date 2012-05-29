@@ -50,8 +50,8 @@ public class PregnancyServiceBean implements IPregnancyService {
 		return list.size()>0?list.iterator().next().getId(): null;
 	}
 	public boolean isWomanByPatient(Long aPatient) {
-		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from patient p left join vocsex vs on vs.id=p.sex_id where p.id='"+aPatient+"'").setMaxResults(1).getResultList() ;
-		return res.size()>0?isWomanByPatient(res.get(0)[0]):false ;
+		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from patient p left join vocsex vs on vs.id=p.sex_id where p.id='"+aPatient+"' and vs.omcCode='2'").setMaxResults(1).getResultList() ;
+		return res.size()>0?true:false ;
 		//Patient pat = theManager.find(Patient.class, aPatient) ;
 		//return isWomanByPatient(pat) ;
 	}
@@ -61,14 +61,11 @@ public class PregnancyServiceBean implements IPregnancyService {
 		//Patient pat = medCase.getPatient() ;
 		//if (pat==null && medCase.getParent()!=null) pat = medCase.getParent().getPatient() ;
 		if (aMedCase==null) aMedCase=Long.valueOf(0) ;
-		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from MedCase m left join patient p on p.id=m.patient_id left join vocsex vs on vs.id=p.sex_id where m.id="+aMedCase+"").setMaxResults(1).getResultList() ;
+		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from MedCase m left join patient p on p.id=m.patient_id left join vocsex vs on vs.id=p.sex_id where m.id="+aMedCase+" and vs.omcCode='2'").setMaxResults(1).getResultList() ;
 
-		return res.size()>0?isWomanByPatient(res.get(0)[0]):false ;
+		return res.size()>0?true:false ;
 	}
-	private boolean isWomanByPatient(Patient aPatient) {
-		return (aPatient!=null && aPatient.getSex()!=null && aPatient.getSex().getOmcCode().equals("2") )? true :false;
-		
-	}
+
 	private boolean isWomanByPatient(Object aOmcCode) {
 		return (aOmcCode!=null && String.valueOf(aOmcCode).equals("2") )? true :false;
 		

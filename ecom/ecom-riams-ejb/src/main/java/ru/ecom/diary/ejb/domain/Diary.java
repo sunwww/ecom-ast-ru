@@ -42,7 +42,25 @@ public class Diary extends BaseEntity {
 	@Comment("Время создания")
 	public Time getTime() {return theTime;}
 	public void setTime(Time aTime) {theTime = aTime;}
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
 
+	/** Пользователь последний, изменявший запись */
+	@Comment("Пользователь последний, изменявший запись")
+	public String getEditUsername() {
+		return theEditUsername;
+	}
+
+	public void setEditUsername(String aEditUsername) {
+		theEditUsername = aEditUsername;
+	}
+
+	/** Пользователь последний, изменявший запись */
+	private String theEditUsername;
+	/** Дата редактирования */
+	private Date theEditDate;
 	/** Время создания */
 	private Time theTime;
     /** Ключевые слова */

@@ -58,11 +58,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
 	public void setOrderWorkFunction(Long aOrderWorkFunction) {theOrderWorkFunction = aOrderWorkFunction;}
 
-	/** Внешний направитель (ЛПУ) */
-	@Comment("Внешний направитель (ЛПУ)")
-	@Persist
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
 	
 	/** Экстренность */
 	@Comment("Экстренность")
@@ -100,12 +95,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public String getSupplyOrderNumber() {return theSupplyOrderNumber;	}
 	public void setSupplyOrderNumber(String aSupplyOrderNumber) {theSupplyOrderNumber = aSupplyOrderNumber;}
 	
-	/** Дата направления */
-	@Comment("Дата направления")
-	@DateString @DoDateString
-	@Persist
-	public String getOrderDate() {return theOrderDate;}
-	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
 
 	/** Время заболевания до госпитализации */
 	@Comment("Время заболевания до госпитализации")
@@ -554,8 +543,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theEntranceTime;
 	/** Время заболевания до госпитализации */
 	private Long thePreAdmissionTime;
-	/** Дата направления */
-	private String theOrderDate;
+
 	/** Номер наряда доставки */
 	private String theSupplyOrderNumber;
 	/** Номер направления */
@@ -568,8 +556,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theExternalId;
 	/** Экстренность */
 	private Boolean theEmergency;
-	/** Внешний направитель (ЛПУ) */
-	private Long theOrderLpu;
+
 	
 	/** Исполнитель	 */
 	private Long theStartWorker;
@@ -580,4 +567,22 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	/** Рабочая функция направителя */
 	private Long theOrderWorkFunction;
 
+	/** Дата направления */
+	@Comment("Дата направления")
+	@DateString @DoDateString
+	@Persist
+	public String getOrderDate() {return theOrderDate;}
+	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+
+	/** Дата направления */
+	private String theOrderDate;
+	
+	/** Направитель */
+	@Comment("Направитель")
+	@Persist
+	public Long getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Направитель */
+	private Long theOrderLpu;
 }

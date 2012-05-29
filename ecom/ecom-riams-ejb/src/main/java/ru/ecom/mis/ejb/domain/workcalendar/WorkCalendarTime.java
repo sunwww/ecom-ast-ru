@@ -1,9 +1,11 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -12,6 +14,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -27,7 +30,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique = false, properties = {"medCase","workCalendarDay","timeFrom"}),
 	@AIndex(unique = false, properties = {"workCalendarDay"}),
-	@AIndex(unique = false, properties = {"timeFrom"})
+	@AIndex(unique = false, properties = {"timeFrom"}),
+	@AIndex(unique = false, properties = {"prePatient"}),
+	@AIndex(unique = false, properties = {"prePatientInfo"})
 })
 @Table(schema="SQLUser")
 public class WorkCalendarTime extends BaseEntity{
@@ -140,9 +145,58 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Нерабочее время */
 	private Boolean theRest;
 	
+	/** Пациент информации */
+	@Comment("Пациент информации")
+	public String getPrePatientInfo() {
+		return thePrePatientInfo;
+	}
+
+	public void setPrePatientInfo(String aPatientInfo) {
+		thePrePatientInfo = aPatientInfo;
+	}
 	
+	/** Пациент пред.пациента */
+	@Comment("Пациент пред.пациента")
+	@OneToOne
+	public Patient getPrePatient() {return thePrePatient;}
+	public void setPrePatient(Patient aPrePatient) {thePrePatient = aPrePatient;}
+
+	/** Пациент пред.пациента */
+	private Patient thePrePatient;
+
+	/** Пациент информации */
+	private String thePrePatientInfo;
 	
+	/** Пользователь, создавший пред.запись */
+	@Comment("Пользователь, создавший пред.запись")
+	public String getCreatePreRecord() {
+		return theCreatePreRecord;
+	}
 
+	public void setCreatePreRecord(String aCreatePreRecord) {
+		theCreatePreRecord = aCreatePreRecord;
+	}
+	
+	/** Дата создания предварительной записи */
+	@Comment("Дата создания предварительной записи")
+	public Date getCreateDatePreRecord() {return theCreateDatePreRecord;}
+	public void setCreateDatePreRecord(Date aCreateDatePreRecord) {theCreateDatePreRecord = aCreateDatePreRecord;}
 
+	/** Время создания предварительной записи */
+	@Comment("Время создания предварительной записи")
+	public Time getCreateTimePreRecord() {
+		return theCreateTimePreRecord;
+	}
 
+	public void setCreateTimePreRecord(Time aCreateTimePreRecord) {
+		theCreateTimePreRecord = aCreateTimePreRecord;
+	}
+
+	/** Время создания предварительной записи */
+	private Time theCreateTimePreRecord;
+	/** Дата создания предварительной записи */
+	private Date theCreateDatePreRecord;
+	/** Пользователь, создавший пред.запись */
+	private String theCreatePreRecord;
+	
 }
