@@ -89,6 +89,43 @@ public class ConvertSql {
 		return tst==1 ;
 		
 	}
+	public static String translate(String aString) {
+		aString = aString.toLowerCase() ;
+		aString = aString.replaceAll("а", "a") ;
+		aString = aString.replaceAll("б", "b") ;
+		aString = aString.replaceAll("в", "v") ;
+		aString = aString.replaceAll("г", "g") ;
+		aString = aString.replaceAll("д", "d") ;
+		aString = aString.replaceAll("е", "e") ;
+		aString = aString.replaceAll("ё", "e") ;
+		aString = aString.replaceAll("ж", "zh") ;
+		aString = aString.replaceAll("з", "z") ;
+		aString = aString.replaceAll("и", "i") ;
+		aString = aString.replaceAll("й", "i") ;
+		aString = aString.replaceAll("к", "k") ;
+		aString = aString.replaceAll("л", "l") ;
+		aString = aString.replaceAll("м", "m") ;
+		aString = aString.replaceAll("н", "n") ;
+		aString = aString.replaceAll("о", "o") ;
+		aString = aString.replaceAll("п", "p") ;
+		aString = aString.replaceAll("р", "r") ;
+		aString = aString.replaceAll("с", "s") ;
+		aString = aString.replaceAll("т", "t") ;
+		aString = aString.replaceAll("у", "u") ;
+		aString = aString.replaceAll("ф", "f") ;
+		aString = aString.replaceAll("х", "h") ;
+		aString = aString.replaceAll("ц", "ts") ;
+		aString = aString.replaceAll("ч", "ch") ;
+		aString = aString.replaceAll("ш", "sh") ;
+		aString = aString.replaceAll("щ", "shch") ;
+		aString = aString.replaceAll("ъ", "") ;
+		aString = aString.replaceAll("ы", "y") ;
+		aString = aString.replaceAll("ь", "") ;
+		aString = aString.replaceAll("э", "e") ;
+		aString = aString.replaceAll("ю", "yu") ;
+		aString = aString.replaceAll("я", "ya") ;
+		return aString ;
+	}
 	 /*
 	 ;---check Mkb2 equals Mkb1  
 	ChSub(Mkb1,Mkb2) 

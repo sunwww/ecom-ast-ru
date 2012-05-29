@@ -217,6 +217,51 @@ public class WebQueryResult implements Serializable {
 	public void set22(Object a22) {
 		the22 = a22;
 	}
+	/** 23 */
+	public Object get23() {
+		return the23;
+	}
+
+	public void set23(Object a23) {
+		the23 = a23;
+	}
+
+	/** 24 */
+	public Object get24() {
+		return the24;
+	}
+
+	public void set24(Object a24) {
+		the24 = a24;
+	}
+
+	/** 25 */
+	public Object get25() {
+		return the25;
+	}
+
+	public void set25(Object a25) {
+		the25 = a25;
+	}
+
+	/** 26 */
+	public Object get26() {
+		return the26;
+	}
+
+	public void set26(Object a26) {
+		the26 = a26;
+	}
+
+
+	/** 26 */
+	private Object the26;
+	/** 25 */
+	private Object the25;
+	/** 24 */
+	private Object the24;
+	/** 23 */
+	private Object the23;
 
 	/** 22 */
 	private Object the22;

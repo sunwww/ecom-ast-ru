@@ -18,4 +18,5 @@ public @interface WebTrail {
     String shortView() default "";
     String shortList() default "";
     String listComment() default "Список" ;
+    boolean journal() default false ;
 }

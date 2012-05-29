@@ -22,4 +22,6 @@ public interface IParentEntityFormService extends IFormService {
      */
     public <E extends IEntityForm> Collection<E> listAll(Class<E> type, Object aParentId) throws EntityFormException ;
     public  Collection<IEntityForm> listAll(String aClassName, Object aParentId) throws EntityFormException ;
+    public void saveView(Long aId, String aUsername,String aComment, String aFormName,Integer aLevelWebTrail) ;
+    	
 }

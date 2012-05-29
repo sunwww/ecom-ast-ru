@@ -133,14 +133,28 @@ public class XmlVocValueLoader {
         	String queryAppend = elm.getAttributeValue("queryAppend") ;
         	String parent = elm.getAttributeValue("parent") ;
         	if(StringUtil.isNullOrEmpty(parent)) {
-                parent = elm.getAttributeValue("parentProperty") ;
-            }
+        		parent = elm.getAttributeValue("parentProperty") ;
+        	}
         	String order = elm.getAttributeValue("order");
         	//String split = elm.getAttributeValue("queriedSplit");
         	String splitFields = elm.getAttributeValue("queriedSplitCount");
         	String splitParent = elm.getAttributeValue("parentSplitCount");
         	NativeVocService service = new NativeVocService(from, names,nameId, join, queryAppend,queried, parent, order,splitFields,splitParent) ;
         	put(aHash, key, service) ;
+        } else if("XmlFileVocService".equals(type)){
+        	Element elm = aElement.getChild("XmlFileVocService") ;
+            if (elm == null) throw new IllegalStateException("Нет элемента XmlFileVocService у справочника " + key);
+        	//String[] names = getAsArray(elm.getAttributeValue("names")) ;
+        	String filename = elm.getAttributeValue("filename") ;
+        	String parent = elm.getAttributeValue("parent") ;
+        	if(StringUtil.isNullOrEmpty(parent)) {
+                parent = elm.getAttributeValue("parentProperty") ;
+            }
+        	//Element iAllValueElement = aElement.getChild("IAllValue");
+            if (StringUtil.isNullOrEmpty(filename)) throw new IllegalStateException("Пустой элемент filename");
+            XmlFileVocService service = new XmlFileVocService(filename) ;
+            
+            put(aHash, key, service) ;
         } else if("TreeNativeVocService".equals(type)) {
         	Element elm = aElement.getChild("TreeNativeVocService") ;
         	String[] fields = getAsArray(elm.getAttributeValue("names")) ;

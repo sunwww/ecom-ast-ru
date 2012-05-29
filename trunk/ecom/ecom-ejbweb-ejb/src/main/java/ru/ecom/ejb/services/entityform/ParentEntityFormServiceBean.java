@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 
 import javax.ejb.Local;
@@ -23,6 +24,8 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.ejb.services.entityform.interceptors.IDynamicParentSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.live.domain.journal.ViewJournal;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 
@@ -34,6 +37,19 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
 
     private final static Logger LOG = Logger.getLogger(ParentEntityFormServiceBean.class) ;
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    
+    public void saveView(Long aId, String aUsername, String aComment, String aFormName,Integer aLevelWebTrail) {
+		ViewJournal view = new ViewJournal() ;
+		Date date = new java.util.Date();
+		view.setIdObject(aId) ;
+		view.setClassObject(aFormName) ;
+		view.setUsername(aUsername) ;
+		view.setViewDate(new java.sql.Date(date.getTime())) ;
+		view.setViewTime(new java.sql.Time(date.getTime())) ;
+		view.setLevelWebTrail(aLevelWebTrail) ;
+		view.setComment(aComment) ;
+		theManager.persist(view) ;
+    }
 
     public IEntityForm prepareToCreate(String aFormClassName, Object aParentId) throws EntityFormException {
     	return convertToMapForm(aFormClassName, prepareToCreate(loadMapForm(aFormClassName), aParentId));
