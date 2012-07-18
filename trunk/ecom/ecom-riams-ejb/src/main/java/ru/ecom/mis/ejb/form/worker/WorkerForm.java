@@ -19,7 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz= Worker.class)
 @Comment("Сотрудник")
 @WebTrail(comment = "Сотрудник", nameProperties= "workerInfo", view="entityView-mis_worker.do", list="entityParentList-mis_worker.do")
-@Parent(property="lpu", parentForm= MisLpuForm.class)
+@Parent(property="lpu", parentForm= MisLpuForm.class,orderBy="person.lastname,person.firstname,person.middlename")
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/Worker")
 public class WorkerForm extends IdEntityForm {
     
