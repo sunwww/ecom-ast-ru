@@ -48,11 +48,6 @@ public class InternalDocuments extends Document {
 	public String getDiagnosis() {return theDiagnosis;}
 	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
 
-	/** СМО */
-	@Comment("СМО")
-	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
 
 	/** Код диагноза */
 	@Comment("Код диагноза")
@@ -62,8 +57,6 @@ public class InternalDocuments extends Document {
 
 	/** Код диагноза */
 	private VocIdc10 theIdc10;
-	/** СМО */
-	private MedCase theMedCase;
 	/** Диагноз */
 	private String theDiagnosis;
 	/** Куда направлен */

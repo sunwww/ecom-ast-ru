@@ -3,9 +3,11 @@ package ru.ecom.mis.ejb.domain.licence;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -65,6 +67,13 @@ public class Document extends BaseEntity {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** СМО */
+	@Comment("СМО")
+	@OneToOne
+	public MedCase getMedCase() {return theMedCase;}
+	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	/** СМО */
+	private MedCase theMedCase;
 	/** Пользователь, последний редактировавший запись */
 	private String theEditUsername;
 	/** Дата редактирования */
