@@ -44,6 +44,33 @@ public class DateFormat {
     
     public static Date parseDate(String aDate,String aFormat) throws ParseException {
     	SimpleDateFormat FORMAT_1 = new SimpleDateFormat(aFormat);
+    	Date ret ;
+    	if(StringUtil.isNullOrEmpty(aDate)) {
+    		ret = null ;
+    	} else {
+    		if(aDate.indexOf(',')>=0) aDate = aDate.replace(',', '.') ;
+    		ret =  FORMAT_1.parse(aDate) ;
+    	}
+    	if(ret!=null) {
+    		final Date minDate = new Date(-3786836400000L) ;
+    		if(ret.before(minDate)) {
+    			Calendar cal = Calendar.getInstance() ;
+    			cal.setTime(ret);
+    			if(cal.get(Calendar.YEAR)<35) {
+    				cal.add(Calendar.YEAR, 2000) ;
+    			} else if(cal.get(Calendar.YEAR)<100) {
+    				cal.add(Calendar.YEAR, 1900) ;
+    			}
+    			ret = cal.getTime() ;
+    		}
+    		if(ret.before(minDate)) {
+    			throw new IllegalArgumentException("Дата "+FORMAT_1.format(ret)+" не должна быть меньше "+FORMAT_1.format(minDate)) ;
+    		}
+    	}
+    	return ret ;
+    }
+    public static java.sql.Date parseSqlDate(String aDate,String aFormat) throws ParseException {
+    	SimpleDateFormat FORMAT_1 = new SimpleDateFormat(aFormat);
         Date ret ;
         if(StringUtil.isNullOrEmpty(aDate)) {
             ret = null ;
@@ -67,7 +94,7 @@ public class DateFormat {
 			    throw new IllegalArgumentException("Дата "+FORMAT_1.format(ret)+" не должна быть меньше "+FORMAT_1.format(minDate)) ;
 			}
 		}
-        return ret ;
+        return new java.sql.Date(ret.getTime()) ;
     }
     public static Date parseDate(String aDate) throws ParseException {
         return parseDate(aDate,"dd.MM.yyyy") ;
