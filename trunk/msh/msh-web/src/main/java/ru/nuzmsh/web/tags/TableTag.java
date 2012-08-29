@@ -330,7 +330,13 @@ public class TableTag extends AbstractGuidSupportTag {
     	theFunctionEditName="goToPage('" + aAction+"','";
     }
     private synchronized void createViewFunctionName(String aAction) {
-    	theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
+    	if (aAction.indexOf("?")==-1) {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
+    	} else if(aAction.endsWith("&")) {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("id=").toString();
+    	} else {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
+    	}
     }
     
     private String getDeleteFunctionName(String aId) {
