@@ -7,6 +7,17 @@ function onCreate(aForm, aSurgOper, aCtx) {
 		if (aSurgOper.getMedCase().getParent()!=null && aSurgOper.getMedCase().getParent().getPatient()!=null)
 			aSurgOper.patient = aSurgOper.getMedCase().getParent().getPatient() ;
 	}
+	if (+aForm.anaesthetist>0 && +aForm.anesthesia>0) {
+		var anes = new Packages.ru.ecom.mis.ejb.domain.medcase.Anesthesia() ;
+		var anaesthetist = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction
+				,aForm.anaesthetist) ;
+		var anesthesia = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod
+				,aForm.anesthesia) ;
+		anes.setMethod(anesthesia) ;
+		anes.setAnesthesist(anaesthetist) ;
+		anes.setSurgicalOperation(aSurgOper) ;
+		aCtx.manager.persist(anes) ;
+	}
 	
 }
 function onPreSave(aForm,aEntity, aCtx) {

@@ -240,7 +240,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	/** Отделение */
 	@Comment("Отделение")
-	@Persist 
+	@Persist @Required
 	public Long getDepartment() {return theDepartment;}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
 	

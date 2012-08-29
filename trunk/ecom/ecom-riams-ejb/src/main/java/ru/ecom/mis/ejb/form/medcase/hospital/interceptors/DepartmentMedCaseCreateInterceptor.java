@@ -10,6 +10,7 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -24,7 +25,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	EntityManager manager = aContext.getEntityManager();
     	DepartmentMedCaseForm form = (DepartmentMedCaseForm) aForm ;
     	HospitalMedCase parentSSL = manager.find(HospitalMedCase.class, aParentId) ;
+    	
     	if (parentSSL!=null) {
+    		if (parentSSL.getDeniedHospitalizating()!=null) {
+    			throw new IllegalStateException("При отказе от госпитализации случай лечения в отделении (СЛО) не заводится!!! ВСЕ осмотры и назначения оформляются в госпитализации (СЛС)");
+    		} 
     		if (parentSSL.getDateFinish()!=null && parentSSL.getDischargeTime()!=null) {
     			throw new IllegalStateException("Нельзя добавить случай лечения в отделении (СЛО) в закрытый случай стационарного лечения (ССЛ) !!!") ;
     		}
@@ -47,6 +52,19 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		}
     		if (parentSSL.getLpu()!=null) form.setLpu(parentSSL.getLpu().getId());
     		form.setTypeCreate() ;
+    		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
+    				&&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
+        		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
+            	List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null") 
+        				.setParameter("login", username)
+        				.setParameter("lpu", form.getDepartment()) 
+        				.setMaxResults(1)
+        				.getResultList() ;
+        		if (listwf.size()>0) {
+        			Object[] wf = listwf.get(0) ;
+        			form.setOwnerFunction(ConvertSql.parseLong(wf[0])) ;
+        		}
+        	}
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай лечения. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}

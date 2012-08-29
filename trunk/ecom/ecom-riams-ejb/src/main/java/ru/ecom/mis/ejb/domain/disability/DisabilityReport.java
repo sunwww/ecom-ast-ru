@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -41,4 +43,17 @@ public class DisabilityReport extends BaseEntity {
 
 	/** Строка */
 	private Long theLineR;
+	
+	/** Дата окончания */
+	@Comment("Дата окончания")
+	public Date getFinishDate() {
+		return theFinishDate;
+	}
+
+	public void setFinishDate(Date aFinishDate) {
+		theFinishDate = aFinishDate;
+	}
+
+	/** Дата окончания */
+	private Date theFinishDate;
 }

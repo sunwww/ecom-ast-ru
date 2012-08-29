@@ -13,6 +13,30 @@
 		    />
 
     </voc>
+	    <voc id='vocPhoneMessageSubType' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" VocPhoneMessageSubType as vst "
+		    	parent='vst.type_id=:parent'
+		    	nameId="vst.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vst.id like cast(:querId as varchar(5)) or UPPER(vst.name) like UPPER(:query)) "
+		    	names = "vst.name"
+		    />
+    </voc>
+	    <voc id='vocPhoneMessageEmploye' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" VocPhoneMessageEmploye as ve "
+		    	parent='ve.organization_id=:parent'
+		    	nameId="ve.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (ve.id like cast(:querId as varchar(5)) or UPPER(ve.name) like UPPER(:query)) "
+		    	names = "ve.name"
+		    />
+    </voc>
 	    <voc id='dmcPolicyByPatient' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" MedPolicy as mp "
@@ -85,11 +109,33 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
+    <voc id='vocAbortion' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion'
+                names   = 'code,name'
+                queried = 'code,name'
+                />
+    </voc> 
     <voc id='vocPediculosis' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis'
                 names   = 'name'
                 queried = 'name'
+                />
+    </voc> 
+    <voc id='vocCriminalPhoneMessageType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType'
+                names   = 'name'
+                queried = 'name'
+                queryAppend = 'isCriminal=true'
+                />
+    </voc> 
+    <voc id='vocPhoneMessageOrganization' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageOrganization'
+                names   = 'name,phoneNumber'
+                queried = 'name,phoneNumber'
                 />
     </voc> 
     
@@ -150,7 +196,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
     					 and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
     					 and wf.id=:par2 and (wfs.lpu_id is null or wfs.lpu_id=:par3)
-    					 and ms.vocMedService_id is not null and vst.code='OPERATION'"
+    					 and ms.vocMedService_id is not null and (vst.code='OPERATION' or vst.code='SURVEY')"
     			names = "coalesce(ms.code||' ','')||ms.name"
     			nameId="ms.id"
     			queryAppend=""
@@ -228,6 +274,18 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 parent  = 'parent'
        queryConvertType = "UPPER_CASE"
+        />
+     </voc> 
+    <voc id='vocLpuHospOtd' type='NativeVocService'>
+        <NativeVocService
+                from="MisLpu ml"
+                names="ml.name"
+                parent='ml.parent_id = :parent'
+                nameId="ml.id"
+                queryAppend=" vlf.code='3' "
+                join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id"
+                order=""
+	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
      </voc> 
      

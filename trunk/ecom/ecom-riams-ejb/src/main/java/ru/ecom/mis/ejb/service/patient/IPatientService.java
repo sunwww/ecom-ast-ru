@@ -13,6 +13,9 @@ import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 /**
  */
 public interface IPatientService {
+	public float getImageCompress() ;
+	public String getImageDir();
+	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
 	public void insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils

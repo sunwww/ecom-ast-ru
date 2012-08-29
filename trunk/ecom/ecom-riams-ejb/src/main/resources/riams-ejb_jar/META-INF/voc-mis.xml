@@ -278,6 +278,25 @@
     	/>
     
     </voc>
+    <voc id='medServiceForDirect' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService ms'
+    			parent="m.id=:parent 
+    			and (wfs.lpu_id is null or wf.dtype='PersonalWorkFunction' and wfs.lpu_id=w.lpu_id or wf.dtype='GroupWorkFunction' and wfs.lpu_id=wf.lpu_id )
+    			and (ms.startDate is null or wcd.calendardate  >=ms.startDate) 
+    			and (ms.finishDate is null or ms.finishDate>=wcd.calendardate)
+    			"
+    			
+    			names = "ms.code||' '||ms.name"
+    			nameId="ms.id"
+    			queryAppend="ms.vocMedService_id is not null and ms.isPoliclinic='1'"
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join medcase m on m.workFunctionPlan_id=wf.id left join WorkCalendarDay wcd on wcd.id=m.datePlan_id left join worker w on w.id=wf.worker_id'
+    			order=''
+    			queried = "(ms.code like :query or ms.name like UPPER(:query))"
+    			 			
+    	/>
+    
+    </voc>
     <voc id='medServiceDop' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService'
@@ -952,6 +971,18 @@
     			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
     	/>
     </voc>
+    <voc id='workFunctionIsInstrumentNurse' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'WorkFunction as wf '
+    			parent = ""
+    			names  = "case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			queried =" (cast(wf.id as varchar(10)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
+    			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or wf.archival='0') and (wf.isInstrumentNurse='1')"
+    			order =''
+    			nameId='wf.id'
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
+    	/>
+    </voc>
     <voc id="medcardLast" type="NativeVocService">
     	<NativeVocService
     		from="Medcard m"
@@ -1087,6 +1118,13 @@ left join medcase smoP on smoP.owner_id=w.id "
                 entity  = 'ru.ecom.jaas.ejb.domain.SecUser'
                 names   = 'login, fullname'
                 queried = 'login, fullname'
+        />
+    </voc> 
+    <voc id='secGroup' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.jaas.ejb.domain.SecGroup'
+                names   = 'name'
+                queried = 'name'
         />
     </voc> 
 

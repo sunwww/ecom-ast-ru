@@ -186,7 +186,7 @@ function printReestrByDay(aCtx,aParams) {
 	var ids = aParams.get("id") ;
 	var id = ids.split(":") ;
 	var dateBegin = id[3] ;
-	var typeDate = id[2] ;
+	var typeDate = +id[2] ;
 	var typeHour = id[1] ;
 	var typeEmergency = id[0] ;
 	var emer = "" ;
@@ -206,9 +206,11 @@ function printReestrByDay(aCtx,aParams) {
 	var pigeonHole = id[4] ;
 	var pigeonHoleName = "все" ;
 	var pigeonHoleId = "" ;
+	var pigeonHoleId1 = "" ;
 	if (pigeonHole!=null
 			&& +pigeonHole>0) {
 		pigeonHoleId = " and ml.pigeonHole_id='"+pigeonHole+"' " ;
+		pigeonHoleId1 = " and (ml1.pigeonHole_id='"+pigeonHole+"' or ml.pigeonHole_id='"+pigeonHole+"') " ;
 		var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from VocPigeonHole vph where vph.id="+pigeonHole).setMaxResults(1).getResultList() ;
 		if (list.size()>0) {
 			var ob = list.get(0) ;
@@ -236,15 +238,15 @@ function printReestrByDay(aCtx,aParams) {
     var dateI = null ; var period = "" ;
 	var timeI = null ; var period1 = "" ;
 	var dateInfo = "состоящим" ;
-	if (typeDate!=null && typeDate.equals("1")) {
+	if (typeDate==1) {
 		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
 		dateI = "dateStart" ; timeI = "entranceTime" ;
 		dateInfo="поступившим" ;
-	} else if (typeDate!=null && typeDate.equals("2")) {
+	} else if (typeDate==2) {
 		dateI = "dateFinish" ; timeI = "dischargeTime" ;
 		dateInfo="выписанным" ;
 	} else {
-		dateI= "dateStart" ; timeI = "entranceTime" ;
+		dateI= null ; timeI = null ;
 		period=" and m.dateFinish is null " ;
 		period1=null ;
 		dateInfo="состоящим" ;
@@ -339,54 +341,59 @@ function printReestrByDay(aCtx,aParams) {
 		retDep.add(parDep) ;
 	} 
 	map.put("listDep",retDep) ;
-	
-	var sql = "select" 
-    +" m.id as mid"
-    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart"
-    +" ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish"
-    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
-    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
-    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
-    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
-    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
-    +" ,vdh.name "
-    +", case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'"  
-    +" when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient"
-    +" from MedCase as m  "
-    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
-    +" left outer join Patient pat on m.patient_id = pat.id" 
-    +" left join MisLpu as ml on ml.id=m.department_id "
-    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
-    +" left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id"
-    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
-	+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
-	+" left join address2 adr on adr.addressId = pat.address_addressId"
-    +" where m.DTYPE='HospitalMedCase' "+period+""
-    +" and m.deniedHospitalizating_id is not null"
-    +"  "+emer+departmentId+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
-	
-	
-	
-	var deniedlist = new java.util.ArrayList() ;
-	var j=1 ;
-	
-	if (period1!=null) {
-		var list1 = aCtx.manager.createNativeQuery(sql).getResultList() ;
-	
-		for (var i=0; i < list1.size(); i++) {
-			var obj = list1.get(i) ;
-			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-			par.set1(""+(j++)) ;
-			par.set2(obj[10]) ;
-			par.set3(obj[4]) ;
-			par.set4(obj[11]) ;
-			par.set5(obj[2]) ;
-			par.set6(obj[12]) ;
-			deniedlist.add(par) ;
+	if (dateI!=null) {
+		var sql = "select" 
+	    +" m.id as mid"
+	    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart"
+	    +" ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish"
+	    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
+	    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
+	    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
+	    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
+	    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
+	    +" ,vdh.name "
+	    +", case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'"  
+	    +" when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient"
+	    +" from MedCase as m  "
+	    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
+	    +" left outer join Patient pat on m.patient_id = pat.id" 
+	    +" left join MisLpu as ml on ml.id=m.department_id "
+	    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+	    +" left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id"
+	    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
+		+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
+		+" left join address2 adr on adr.addressId = pat.address_addressId"
+		+" left join SecUser su on su.login=m.username"
+		+" left join WorkFunction wf on wf.secUser_id=su.id"
+		+" left join Worker w on w.id=wf.worker_id"
+		+" left join MisLpu ml1 on ml1.id=w.lpu_id "
+	    +" where m.DTYPE='HospitalMedCase' "+period+""
+	    +" and m.deniedHospitalizating_id is not null"
+	    +"  "+emer+pigeonHoleId1+departmentId+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
+		
+		var deniedlist = new java.util.ArrayList() ;
+		var j=1 ;
+		
+		if (period1!=null) {
+			var list1 = aCtx.manager.createNativeQuery(sql).getResultList() ;
+		
+			for (var i=0; i < list1.size(); i++) {
+				var obj = list1.get(i) ;
+				var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+				par.set1(""+(j++)) ;
+				par.set2(obj[10]) ;
+				par.set3(obj[4]) ;
+				par.set4(obj[11]) ;
+				par.set5(obj[2]) ;
+				par.set6(obj[12]) ;
+				deniedlist.add(par) ;
+			}
+		//throw ""+deniedlist.size() ;
 		}
-	//throw ""+deniedlist.size() ;
+		map.put("listDenied",deniedlist) ;
+	} else {
+		map.put("listDenied",new java.util.ArrayList()) ;
 	}
-	map.put("listDenied",deniedlist) ;
 	return map ;
 }
 function printAddressSheetByHospital(aCtx, aParams) {
@@ -620,7 +627,7 @@ function printSurOperation(aCtx,aParams) {
 	map.put("so",surOperation) ;
 	map.put("medCase",medCase) ;
 	map.put("pat",medCase.patient) ;
-	var list=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename),list(' '||vam.name||' (кол-во '||a.duration||')') from Anesthesia a"
+	var list=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename) as anes,list(' '||vam.name||' (кол-во '||a.duration||')') as methodan from Anesthesia a"
 		+" left join WorkFunction awf on awf.id=a.anesthesist_id"
 		+" left join Worker aw on aw.id=awf.worker_id"
 		+" left join Patient awp on awp.id=aw.person_id"
@@ -629,12 +636,12 @@ function printSurOperation(aCtx,aParams) {
 		+" where a.surgicalOperation_id=:id group by a.surgicalOperation_id"
 	) .setParameter("id",surOperation.id).setMaxResults(1).getResultList() ;
 	var list1=aCtx.manager.createNativeQuery("select "
-	+" ss1.code,ss.code"
-	+" from MedCase d"
-	+" left join MedCase h on h.id=d.parent_id and h.dtype='HOSPITALMEDCASE'"
-	+" left join StatisticStub ss on ss.id=h.statisticStub_id"
-	+" left join StatisticStub ss1 on ss1.id=d.statisticStub_id"
-	+" where d.id=:id"
+		+" coalesce(ss1.code,ss.code) as ss1,ss.code as ss2"
+		+" from MedCase d"
+		+" left join MedCase h on h.id=d.parent_id and h.dtype='HospitalMedCase'"
+		+" left join StatisticStub ss on ss.id=h.statisticStub_id"
+		+" left join StatisticStub ss1 on ss1.id=d.statisticStub_id"
+		+" where d.id=:id"
 	).setParameter("id",medCase.id).setMaxResults(1).getResultList() ;
 	var anes = list.size()>0?list.get(0):null ;
 	map.put("surOper.anesthesist",anes!=null?(anes[0]!=null?anes[0]:""):"") ;
@@ -857,10 +864,10 @@ function recordPatient(medCase,aCtx) {
 	}
 	
 	//Вид оплаты
-	recordServiseStream("stream",medCase) ;
+	//recordServiseStream("stream",medCase) ;
 	
 	//Вид травмы
-	recordTrauma("Trauma",medCase) ;
+	//recordTrauma("Trauma",medCase) ;
 
 }
 
@@ -907,33 +914,144 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 	getDiagnos("sls.diagnosisConcominant",medCase.diagnosConcominant);
 
 	map.put("sls.hospitalization",medCase.hospitalization) ;
-	map.put("sls.emergency",medCase.emergency) ;
 	map.put("sls.kinsInfo",medCase.kinsman!=null?medCase.kinsman.info:"") ;
 	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
 			+", case when dateFinish is not null then vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
-			+", case when dateFinish is not null then d.name else '' end as dname"
+			+", case when dateFinish is not null then d.name else '' end as dname,d.id as did"
+			+", case when dateFinish is not null then wf.code else '' end as worker"
 			+" from MedCase dmc "
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
 			+" left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
 			+" left join Worker w on w.id=wf.worker_id "
 			+" left join Patient p on p.id=w.person_id "
-			+" where dmc.parent_id='"+medCase.id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart ").getResultList();
+			+" where dmc.parent_id='"+medCase.id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();
 		var otd = "";
-		var lech = ""
+		var lech = "" ;
+		var lechCode = "" ;
 		var lastotd = "";
+		var lastotdId="" ;
 		for (var i=0; i<otds.size(); i++) {
 			var dep = otds.get([i]) ;
 			if (otd!="") {otd += ", ";}
 			otd += dep[0] +" "+" c "+dep[1]+" по "+dep[2] ;
 			lech += dep[3] ;
+			
 			lastotd += dep[4] ;
+			lastotdId = dep[5] ;
+			lechCode=dep[6] ;
 		}
 		map.put("sls.departments",otd) ;
 		map.put("sls.owner",lech) ;
+		map.put("sls.ownercode",lechCode) ;
 		map.put("sls.lastOtd",lastotd) ;
-}
+		recordZavOtd(aCtx,lastotdId,"dep.zav") ;
+		slsId = medCase.id ;
+		recordDiagnosis(aCtx,slsId,"1","2","diagnosis.order.main") ;
+		recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
+		recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
+		recordDiagnosis(aCtx,slsId,"4","3","diagnosis.clinic.related") ;
+		recordDiagnosis(aCtx,slsId,"4","4","diagnosis.clinic.complication") ;
+		recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
+		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
+		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
+		recordDisability(aCtx,slsId,"dis") ;
 
+}
+function recordZavOtd(aCtx,aLastOtdId,aField) {
+	if (+aLastOtdId>0) {
+		var sql = "select p.lastname||' '||p.firstname||' '||p.middlename,wf.id,p.lastname " 
+			+" from workfunction wf " 
+			+" left join worker w on w.id=wf.worker_id"
+			+" left join patient p on p.id=w.person_id"
+			+" where w.lpu_id='"+aLastOtdId+"' and wf.isAdministrator='1'" ;
+		var list = aCtx.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var obj=list.get(0) ;
+			map.put(aField+".info",obj[0]);
+			map.put(aField+".lastname",obj[2]);
+		} else {
+			map.put(aField+".info",null);
+			map.put(aField+".lastname",null);
+		}
+	} else {
+		map.put(aField+".info",null);
+		map.put(aField+".lastname",null);
+	}
+}
+function printConsentBySlo(aCtx,aParams) {
+	var sloId=new java.lang.Long(aParams.get("id")) ;
+	
+	var parDep = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	var ret = new java.util.ArrayList() ;
+	ret.add(parDep) ;
+	var ret1 = new java.util.ArrayList() ;
+	var params=[["consent",4],["direct",1],["rejection",2]] ;
+	//throw +aParams.get("consent4") ;
+	for (var i0=0;i0<params.length;i0++) {
+		var par=params[i0] ;
+		for (var i=1;i<=par[1];i++) {
+			var param = +aParams.get(par[0]+i) ;
+			if (param>0) {map.put(par[0]+i,ret)} else {map.put(par[0]+i,ret1)}
+		}
+	}
+	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase
+			, sloId) ;
+	var pat = medCase.patient ;
+	map.put("pat",pat) ;
+	getAge("patInfo.age",pat.birthday,medCase.parent.dateStart,aCtx.manager,0) ;
+	map.put("medCase",medCase) ;
+	map.put("dep.name",medCase.department!=null?medCase.department.name:"") ;
+	var currentDate = new java.util.Date() ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	map.put("current.date",FORMAT_2.format(currentDate)) ;
+	map.put("sls.dateStart",medCase.parent.dateStart) ;
+	//map.put("pat.age",) ;
+	var username = aCtx.sessionContext.callerPrincipal.name ;
+	var list = aCtx.manager.createNativeQuery("select p.lastname, p.firstname,p.middlename " 
+			+ " from SecUser su " 
+			+ " left join WorkFunction wf on wf.secuser_id=su.id " 
+			+ " left join Worker w on w.id=wf.worker_id "
+			+ " left join Patient p on p.id=w.person_id "
+			+ " where login = :login and p.id is not null") 
+		.setParameter("login", username).setMaxResults(1).getResultList() ;
+	if (list.size()>0) {
+		var obj=list.get(0) ;
+		map.put("current.worker.lastname",obj[0]) ;
+		map.put("current.worker.firstname",obj[1]) ;
+		map.put("current.worker.middlename",obj[2]) ;
+	} else {
+		map.put("current.worker.lastname","") ;
+		map.put("current.worker.firstname","") ;
+		map.put("current.worker.middlename","") ;
+	}
+	var worker = medCase.ownerFunction!=null?medCase.ownerFunction.worker:null ;
+	var wpat = worker!=null?worker.person:null ;
+	map.put("slo.owner.lastname",wpat!=null?wpat.lastname:"") ;
+	map.put("slo.owner.firstname",wpat!=null?wpat.firstname:"") ;
+	map.put("slo.owner.middlename",wpat!=null?wpat.middlename:"") ;
+	
+	recordZavOtd(aCtx,medCase.department!=null?medCase.department.id:null,"administrator.dep") ;
+	var list1=aCtx.manager.createNativeQuery("select "
+			+" coalesce(ss1.code,ss.code),ss.code"
+			+" from MedCase d"
+			+" left join MedCase h on h.id=d.parent_id and h.dtype='HospitalMedCase'"
+			+" left join StatisticStub ss on ss.id=h.statisticStub_id"
+			+" left join StatisticStub ss1 on ss1.id=d.statisticStub_id"
+			+" where d.id=:id"
+		).setParameter("id",sloId).setMaxResults(1).getResultList() ;
+	var card1="" ;
+	if (list1.size()>0) {
+		var card = list1.get(0) ;
+		if (card[0]!=null) {card1=card[0];} else {if (card[1]!=null) card1=card[1] ;}
+	}
+	map.put("statcard",	card1) ;
+	recordDiagnosis(aCtx,sloId,"4","1","diagnosis.main","DepartmentMedCase") ;
+	recordDiagnosis(aCtx,sloId,"4","3","diagnosis.related","DepartmentMedCase") ;
+	recordDiagnosis(aCtx,sloId,"4","4","diagnosis.complication","DepartmentMedCase") ;
+	
+	return map ;
+}
 function printStatCardInfo(aCtx, aParams) {
 	var slsId=aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
@@ -977,6 +1095,7 @@ function printStatCardInfo(aCtx, aParams) {
 	//?getDiagnos("sls.diagnosisComplication",medCase.diagnosComplication);
 	//11в сопутствующий
 	//?getDiagnos("sls.diagnosisConcominant",medCase.diagnosConcominant);
+	/*
 	recordDiagnosis(aCtx,slsId,"1","2","diagnosis.order.main") ;
 	recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
 	recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
@@ -985,13 +1104,15 @@ function printStatCardInfo(aCtx, aParams) {
 	recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
 	recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
 	recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
+	recordDisability(aCtx,slsId,"dis") ;
+	*/
 	recordSloBySls(aCtx,slsId,"listSlo") ;
 	recordSurgicalOperationBySls(aCtx,slsId,"listOper") ;
-	recordDisability(aCtx,slsId,"dis") ;
+	
 	return map ;
 }
 function recordDisability(aContext,aSlsId,aField) {
-	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateFrom),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname from DisabilityCase dc"
+	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname from DisabilityCase dc"
 		+" 	left join Patient pat on pat.id=dc.patient_id"
 		+" 	left join MedCase sls on sls.patient_id=pat.id"
 		+" 	left join DisabilityDocument dd on dd.disabilityCase_id=dc.id"
@@ -1014,7 +1135,8 @@ function recordDisability(aContext,aSlsId,aField) {
 	}
 }
 
-function recordDiagnosis(aCtx,aSlsId,aRegistrationType,aPriority,aField) {
+function recordDiagnosis(aCtx,aSlsId,aRegistrationType,aPriority,aField,aDtype) {
+	if (aDtype==null || aDtype=='') aDtype='HospitalMedCase' ;
 	var sql="select sls.id,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code= '"+aPriority+"'  then mkb.code else null end) as diagCode"
 		+" ,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code='"+aPriority+"' then diag.name else null end) as diagText" 
 		+" from MedCase sls" 
@@ -1022,7 +1144,7 @@ function recordDiagnosis(aCtx,aSlsId,aRegistrationType,aPriority,aField) {
 		+" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id"
 		+" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
 		+" left join VocIdc10 mkb on mkb.id=diag.idc10_id"
-		+" where sls.id='"+aSlsId+"' and sls.dtype='HospitalMedCase'"
+		+" where sls.id='"+aSlsId+"' and sls.dtype='"+aDtype+"'"
 		+" group by sls.id" ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	if (list.size()>0) {
@@ -1095,10 +1217,8 @@ function recordSurgicalOperationBySls(aCtx,aSlsId,aField) {
 		+" 	then to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'___:___')||' '||case when so.operationTimeTo is null then '' else '-'||coalesce(cast(so.operationTimeTo as varchar(5)),'___:___') end"
 		+" else to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'___:___')||'-'||to_char(so.operationDateTo,'dd.mm.yyyy')||' '||case when so.operationTimeTo is null then '' else ' '||coalesce(cast(so.operationTimeTo as varchar(5)),'___:___') end"
 		+" end as operdate2"
-		+" ,coalesce(owf.code"
-		+" ,ovwf.code||' '||owp.lastname||' '||substring(owp.firstname,1,1)||substring(owp.middlename,1,1)"
-		+" ,owp.lastname||' '||substring(owp.firstname,1,1)||substring(owp.middlename,1,1)) as surgeon3"
-		+" ,dep.id as depid4,dep.name as depname5,vo.code as vocode6,vo.name as voname7"
+		+" ,case when owf.code!=null and owf.code!='' then owf.code else case when ovwf.code!=null and ovwf.code!='' then ovwf.code else '' end||' '||owp.lastname||' '||substring(owp.firstname,1,1)||substring(owp.middlename,1,1) end as surgeon3"
+		+" ,dep.id as depid4,dep.name as depname5,coalesce(vo.code,ms.code) as vocode6,coalesce(vo.name,ms.name) as voname7"
 		+" ,list(vc.name) as vcname8,list(vc.code) as vccode9,list(vam.code) as vacode10"
 		+" ,case when so.endoscopyuse='1' then 'X' else '' end as endoscopyuse11"
 		+" ,case when so.laseruse='1' then 'X' else '' end as laseruse12"
@@ -1112,6 +1232,7 @@ function recordSurgicalOperationBySls(aCtx,aSlsId,aField) {
 		+" left join Patient owp on owp.id=ow.person_id"
 		+" left join MisLpu dep on dep.id=so.department_id"
 		+" left join VocOperation vo on vo.id=so.operation_id"
+		+" left join MedService ms on ms.id=so.medService_id"
 		+" left join SurgicalOperation_VocComplication sovc on so.id = sovc.surgicaloperation_id"
 		+" left join VocComplication vc on vc.id=sovc.complications_id"
 		+" left join Anesthesia an on so.id = an.surgicaloperation_id"
@@ -1121,7 +1242,7 @@ function recordSurgicalOperationBySls(aCtx,aSlsId,aField) {
 		+" group by so.id,so.operationdate,so.operationdateto"
 		+" ,so.operationtime,so.operationtimeto"
 		+" ,owf.code,ovwf.code,owp.lastname,owp.firstname,owp.middlename,dep.id,dep.name,vo.code,vo.name"
-		+" ,so.base,so.endoscopyuse, so.laseruse, so.cryogenicuse,vss.name" ;
+		+" ,so.base,so.endoscopyuse, so.laseruse, so.cryogenicuse,vss.name,ms.code,ms.name" ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
 	
@@ -1210,7 +1331,15 @@ function printProtocols(aCtx, aParams) {
 		mapS.timeRegistration=FORMAT_3.format(protocol.timeRegistration);
 		mapS.dateRegistration=FORMAT_2.format(protocol.dateRegistration);
 		mapS.specialistInfo=protocol.specialistInfo ;
-		mapS.typeInfo= protocol.medCase!=null?protocol.medCase.info:"";
+		mapS.setTicket(null) ;
+		mapS.setTypeInfo("") ;
+		var protType=protocol.type ;
+		if (protType!=null) {
+			mapS.typeInfo=protType.name ;
+			//var protType = protType.isPrintAdministrator ;
+			mapS.setTicket(protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
+		}
+		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
 		/*var n = '\n'  ;
 		var items = protocol.record.split(n) ;
 		//mapS.setId(service.id) ;
@@ -1223,6 +1352,7 @@ function printProtocols(aCtx, aParams) {
 		}
 		*/
 		mapS.setRecord(recordMultiValue(protocol.record));
+		
 		//mapS.typeInfo = protocol.medCase.info
 		ret.add(mapS) ;
 		
@@ -1295,13 +1425,24 @@ function printProtocol (aCtx,aParams){
 	map.put("prot.spec",protocol.specialistInfo);
 	map.put("medCase.info",protocol.medCase.info) ;
 	recordMultiText("prot.rec", protocol.record) ;
-
+	
+	var protType=protocol.type ;
+	if (protType!=null) {
+		map.put("typeInfo",protType.name) ;
+		//var protType = protType.isPrintAdministrator ;
+		map.put("ticket",protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
+	} else {
+		map.put("ticket",null) ;
+		map.put("typeInfo",null) ;
+	}
+	
 	return map ;
 }
 	// получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
-function getAge(aKey,aBirthday,aDate,aManager) {
+function getAge(aKey,aBirthday,aDate,aManager,aType) {
+	if (aType==null) aType=3 ;
 	if (aDate!=null && aBirthday!=null) {
-		map.put(aKey,Packages.ru.nuzmsh.util.date.AgeUtil.getAgeCache(aDate,aBirthday,3)) ;	
+		map.put(aKey,Packages.ru.nuzmsh.util.date.AgeUtil.getAgeCache(aDate,aBirthday,aType)) ;	
 	} else {
 		map.put(aKey,"");
 	}
@@ -1338,74 +1479,6 @@ function getDiagnos(aKey,aDiag) {
 	}
 }
 
-function recordServiseStream(aKey,aMedCase) {
-	var k1="<text:span text:style-name=\"T23\">" ;
-	var k2="</text:span>" ;
-	if(aMedCase.serviceStream!=null){
-		if(aMedCase.serviceStream.code=="OBLIGATORYINSURANCE"){
-			map.put(aKey,k1+"ОМС – 1"+k2+"; Бюджет – 2; Платные услуги – 3; в т.ч. ДМС – 4; Другое – 5.") ;
-		 }
-		if(aMedCase.serviceStream.code=="BUDGET"){
-			map.put(aKey,"ОМС – 1; "+k1+"Бюджет – 2"+k2+"; Платные услуги – 3; в т.ч. ДМС – 4; Другое – 5.") ;
-		 }
-		if(aMedCase.serviceStream.code=="CHARGED"){
-			map.put(aKey,"ОМС – 1; Бюджет – 2"+k1+"; Платные услуги – 3;"+k2+" в т.ч. ДМС – 4; Другое – 5.") ;
-		 }		
-		if(aMedCase.serviceStream.code=="PRIVATEINSURANCE"){
-			map.put(aKey,"ОМС – 1; Бюджет – 2; Платные услуги – 3;"+k1+" в т.ч. ДМС – 4;"+k2+" Другое – 5.") ;
-		 }	
-		}
-	else map.put(aKey,"ОМС – 1; Бюджет – 2; Платные услуги – 3; в т.ч. ДМС – 4;"+k1+" Другое – 5."+k2) ;
-}
-
-function recordTrauma(aKey,aMedCase) {
-	var k1="<text:span text:style-name=\"T23\">" ;
-	var k2="</text:span>" ;
-	if(aMedCase.trauma!=null){
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("1")){
-			map.put(aKey,k1+"промышленная-1;"+k2+" транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("2")){
-			map.put(aKey,"промышленная-1;"+k1+" транспортная-2;"+k2+" в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("3")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч."+k1+" ДТП-3"+k2+"; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("4")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3;"+k1+" с/хоз.-4;"+k2+" прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("5")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; "+k1+"прочие-5"+k2+";непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("6")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная:"+k1+" бытовая-6"+k2+"; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("7")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6;"+k1+" уличная-7"+k2+";транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("8")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;"+k1+"транспортная-8;"+k2+" в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("9")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч."+k1+" ДТП-9"+k2+"; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("10")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; "+k1+"школьная-10"+k2+"; спортивная-11; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("11")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; "+k1+"спортивная-11"+k2+"; противоправная травма-12; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("12")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; "+k1+"противоправная травма-12"+k2+"; прочие-13.") ;
-		 }
-		if(aMedCase.Diagnosis.traumaType.omcCode.equals("13")){
-			map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; "+k1+"прочие-13"+k2+".") ;
-		 }
-	}
-	else map.put(aKey,"промышленная-1; транспортная-2; в т.ч. ДТП-3; с/хоз.-4; прочие-5;непроизводственная: бытовая-6; уличная-7;транспортная-8; в т.ч. ДТП-9; школьная-10; спортивная-11; противоправная травма-12; прочие-13.") ;
-}
-
-
 function recordVocProba(aKey, aValue, aMin, aMax) {
 	for (i=aMin;i<=aMax;i++) {
 		map.put(aKey+i+".k1","");
@@ -1422,22 +1495,13 @@ function recordMultiText(aKey, aValue) {
 	var ret = new java.lang.StringBuilder () ;
 	var val = aValue!=null?"" +aValue:"" ;
 	var n = /\n/ ;
-	//val=val.replace("&", "&amp;") ;
-	//val=val.replace("<", "&lt;");
-	//val=val.replace(">", "&gt;");
-	
 	var items = val.split(n);
 	var list = new java.util.ArrayList() ;
-	//ret.append("</text:p>") ;
 	for (var i = 0; i < items.length; i++) {
-		//ret.append("<text:p text:style-name=\"P6\">") ;
-		//ret.append("<text:tab/>") ;
 		var prot = Packages.ru.ecom.poly.ejb.form.protocol.ProtocolForm() ;
 		prot.setRecord(items[i]);
 		list.add(prot);
-		//ret.append("</text:p>") ;
 	}
-	//ret.append("<text:p>") ;
 	map.put(aKey,list) ;
 }
 function recordMultiValue(aValue) {
@@ -1445,14 +1509,10 @@ function recordMultiValue(aValue) {
 	var val = aValue!=null?"" +aValue:"" ;
 	var n = /\n/ ;
 	var items = val.split(n);
-	//ret.append("</text:p>") ;
 	for (var i = 0; i < items.length; i++) {
-		//ret.append("<text:p>") ;
-		//ret.append("<text:tab/>") ;
 		ret.append(items[i]);
 		ret.append("<text:line-break/>") ;
 	}
-	//ret.append("<text:p>") ;
 	return ret.toString() ;
 }
 function recordBoolean(aKey) {

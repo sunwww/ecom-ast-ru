@@ -41,6 +41,18 @@ public class GroupByDate implements Serializable {
 	public Long getCnt2() {return theCnt2;}
 	public void setCnt2(Long aCnt2) {theCnt2 = aCnt2;}
 
+	/** Кол-во койко дней */
+	@Comment("Кол-во койко дней")
+	public Long getCntDays() {
+		return theCntDays;
+	}
+
+	public void setCntDays(Long aCntDays) {
+		theCntDays = aCntDays;
+	}
+
+	/** Кол-во койко дней */
+	private Long theCntDays;
 	/** Кол-во 2 */
 	private Long theCnt2;
 	/** Кол-во 1 */

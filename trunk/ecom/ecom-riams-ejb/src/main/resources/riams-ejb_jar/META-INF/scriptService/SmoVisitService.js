@@ -11,20 +11,24 @@ function printDirectionByTime(aCtx,aParams) {
 	sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";
 	sql=sql+" , coalesce(p.patientSync,p1.patientSync) as sync, case when wct.medCase_id is null then '(Пред. запись)' else '' end as pred,wct.prePatientInfo ";
 	sql=sql+" , case when m.dateStart is null then '' else '+' end as priem";
+	sql=sql+", 'Каб.: '||list(wpl.name)||'.' as wpname" ;
 	sql=sql+" from WorkCalendarTime wct" ; 
-	sql=sql+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id " +
-			"left join Medcase m on m.id=wct.medCase_id "+
-			"left join WorkCalendar wc on wc.id=wcd.workCalendar_id " +
-			"left join WorkFunction wf on wf.id=wc.workFunction_id " +
-			"left join VocWorkFunction vwf on vwf.id=wf.workFunction_id " +
-			"left join Worker w on w.id=wf.worker_id " +
-			"left join patient wp on wp.id=w.person_id " +
-			"left join Patient p on p.id=wct.prePatient_id " +
-			" left join Patient p1 on p1.id=m.patient_id " +
-			"left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE " ;
+	sql=sql+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id " 
+			+" left join Medcase m on m.id=wct.medCase_id "
+			+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id " 
+			+" left join WorkFunction wf on wf.id=wc.workFunction_id " 
+			+" left join WorkPlace_WorkFunction wpf on wpf.workFunctions_id=wf.id" 
+			+" left join WorkPlace wpl on wpl.id=wpf.workPlace_id and wpl.dtype='ConsultingRoom'" 
+			+" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id " 
+			+" left join Worker w on w.id=wf.worker_id " 
+			+" left join patient wp on wp.id=w.person_id " 
+			+" left join Patient p on p.id=wct.prePatient_id " 
+			+" left join Patient p1 on p1.id=m.patient_id " 
+			+" left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE " ;
 	sql=sql+" and wct.id = '"+wctId+"' " ;
 	sql=sql+" group by wct.id,wct.prePatient_id,m.dateStart, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,wct.medcase_id,p1.patientSync,p1.lastname,p1.firstname,p1.middlename" ;
 	sql=sql+" order by wcd.calendarDate,wct.timeFrom" ;
+	//throw sql ;
 	var ret = new java.util.ArrayList() ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	if (list.size()>0) {
@@ -36,7 +40,7 @@ function printDirectionByTime(aCtx,aParams) {
 		var obj = list.get(ind) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		par.setSn(ind+1) ;
-		for (var i=1;i<=8;i++) {
+		for (var i=1;i<=10;i++) {
 			//var i1=i-2 ;
 			eval("par.set"+i+"(obj["+i+"]!=null?obj["+i+']:"");') ;
 			
@@ -116,11 +120,14 @@ function printDirectionByPatient(aCtx,aParams) {
 	sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";
 	sql=sql+" , coalesce(p.patientSync,p1.patientSync) as sync, case when wct.medCase_id is null then '(Пред. запись)' else '' end as pred ";
 	sql=sql+" , case when m.dateStart is null then '' else '+' end as priem";
+	sql=sql+" , 'Каб.: '||list(wpl.name)||'.' as wpname";
 	sql=sql+" from WorkCalendarTime wct" ; 
 	sql=sql+" left join Medcase m on m.id=wct.medCase_id";
 	sql=sql+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id";
 	sql=sql+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id";
 	sql=sql+" left join WorkFunction wf on wf.id=wc.workFunction_id";
+	sql=sql+" left join WorkPlace_WorkFunction wpf on wpf.workFunctions_id=wf.id" ;
+	sql=sql+" left join WorkPlace wpl on wpl.id=wpf.workPlace_id and wpl.dtype='ConsultingRoom'" ;
 	sql=sql+" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
 			" left join Worker w on w.id=wf.worker_id" +
 			" left join patient wp on wp.id=w.person_id" +
@@ -142,7 +149,7 @@ function printDirectionByPatient(aCtx,aParams) {
 		var obj = list.get(ind) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		par.setSn(ind+1) ;
-		for (var i=1;i<=8;i++) {
+		for (var i=1;i<=9;i++) {
 			//var i1=i-2 ;
 			eval("par.set"+i+"(obj["+i+"]!=null?obj["+i+']:"");') ;
 			
@@ -239,7 +246,7 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		sql = sql+" and t.hospitalization_id='"+primary+"'" ;
 	}
 	if (rayon!=null && (+rayon>0)) {
-		sql = "left join patient p on p.id = t.patient_id "+sql+" and p.rayon_id='"+rayon+"'" ;
+		sql = sql+" and p.rayon_id='"+rayon+"'" ;
 	}
 	sql = 
 		"select t.id ,to_char(t.dateStart,'dd.MM.yyyy')||' '||cast(timeExecute as varchar(5)) as dateexecute"
@@ -263,12 +270,13 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		//+",$$ByPatient^ZAddressLib(p.id)"
 		+",vr.name as vrname"
 		+",t.id"
-		+",(select list(mp.series||' '||mp.polNumber||' '||ri.name||' ('||to_char(mp.actualDateFrom,'dd.MM.yyyy')||'-'||to_char(mp.actualDateTo,'dd.MM.yyyy')||')') from medpolicy mp left join reg_ic ri on ri.id=mp.company_id where mp.patient_id=p.id "
+		+",(select list(mp.series||' '||mp.polNumber||' '||ri.name||' ('||to_char(mp.actualDateFrom,'dd.MM.yyyy')||coalesce('-'||to_char(mp.actualDateTo,'dd.MM.yyyy')||')','-нет даты окончания')) from medpolicy mp left join reg_ic ri on ri.id=mp.company_id where mp.patient_id=p.id "
 		+" and t.dateStart between mp.actualDateFrom and COALESCE(mp.actualDateTo,CURRENT_DATE)) as policy"
 		+", vh.code as vhcode "
 		//+",list(mkb.code) as mkbcode,t.directHospital, "
 		+", (select list (mkb.code) from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.medCase_id=t.id) as diag"
 		+", vss.name as vssname"
+		+", (select list (ms.name) from medcase ser left join medservice ms on ms.id=ser.medService_id where ser.parent_id=t.id and ser.dtype='ServiceMedCase') as usl"
 		+" from Medcase t "
 		+" left join patient p on p.id=t.patient_id " 
 		+" left join vocrayon vr on vr.id=p.rayon_id "
@@ -320,6 +328,7 @@ function visitFrm(aVisit,aSn) {
 	frm.setConcomitantDiseases(aVisit[11]!=null?aVisit[11]:"") ; //mkb
 	frm.setDirectHospital(false) ;
 	frm.setMedServices(aVisit[12]); // serviceStream
+	frm.setUsernameCreate(aVisit[13]) ; // service
 	return frm ;
 }
 
@@ -340,6 +349,7 @@ function visitMap(aVisit,aSn) {
 	map1.put("primary",aVisit[10]) ;
 	map1.put("serviceStream",aVisit[12]) ;
 	map1.put("spec",aVisit[2]) ;
+	map1.put("usernameCreate",aVisit[13]) ;
 	return map1 ;
 }
 

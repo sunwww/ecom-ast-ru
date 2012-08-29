@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.lpu;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.OperatingRoom;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -10,13 +9,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
-@Comment("ЛПУ")
+@Comment("Операционная")
 @EntityForm
 @EntityFormPersistance(clazz = OperatingRoom.class)
 @WebTrail(comment = "Операционная", nameProperties = "name", view = "entityView-mis_operatingRoom.do")
-@Parent(property = "lpu", parentForm = MisLpuForm.class)
+@Parent(property = "lpu", parentForm = FloorBuildingForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu/OperatingRoom")
-public class OperatingRoomForm  extends IdEntityForm {
+public class OperatingRoomForm  extends WorkPlaceForm {
 	/** Название */
 	@Comment("Название")
 	@Persist

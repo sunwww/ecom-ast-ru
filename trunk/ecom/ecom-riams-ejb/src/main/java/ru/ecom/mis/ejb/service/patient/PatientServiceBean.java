@@ -28,7 +28,10 @@ import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
+import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
@@ -56,6 +59,38 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
+	public String getImageDir() {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String workDir =config.get("tomcat.image.dir", "/opt/tomcat/webapps/docmis/");
+		return workDir ;
+		
+	}
+	public float getImageCompress() {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String comp = config.get("tomcat.image.compress", "0.5") ;
+		return Float.valueOf(comp) ;
+	}
+	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) {
+		ExternalDocument doc = new ExternalDocument() ;
+		doc.setReferenceTo(aReferenceTo) ;
+		doc.setReferenceCompTo(aReferenceComp) ;
+		java.util.Date date = new java.util.Date() ;
+		doc.setCreateDate(new java.sql.Date(date.getTime())) ;
+		doc.setCreateUsername(aUsername) ;
+		doc.setCreateTime(new java.sql.Time(date.getTime()));
+		if (aObject.equals("Patient")) {
+			Patient pat = theManager.find(Patient.class, aObjectId) ;
+			doc.setPatient(pat) ;
+		} else if (aObject.equals("MedCase")) {
+			MedCase mc = theManager.find(MedCase.class, aObjectId) ;
+			doc.setMedCase(mc) ;
+		} else {
+			throw new IllegalStateException("Не определен object типа:"+aObject);
+		}
+		VocExternalDocumentType type = theManager.find(VocExternalDocumentType.class, aType) ;
+		doc.setType(type) ;
+		theManager.persist(doc) ;
+	}
 	public String getCodeByMedPolicyOmc(Long aType) {
 		VocMedPolicyOmc type =null;
 		if (aType!=null) {

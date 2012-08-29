@@ -69,7 +69,6 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Анестизия */
 	@Comment("Анестезия")
-	@Persist
 	public Long getAnesthesia() {return theAnesthesia;}
 	public void setAnesthesia(Long aAnesthesia) {theAnesthesia = aAnesthesia;	}
 
@@ -123,7 +122,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Кол-во  анастезии */
 	@Comment("Кол-во  анастезии")
-	@Persist @IntegerString @DoIntegerString
+	@IntegerString @DoIntegerString
 	public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
 	public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
 
@@ -144,7 +143,6 @@ public class SurgicalOperationForm extends IdEntityForm{
 	
 	/** Анестезиолог */
 	@Comment("Анестезиолог")
-	@Persist
 	public Long getAnaesthetist() {return theAnaesthetist;}
 	public void setAnaesthetist(Long aAnaesthetist) {theAnaesthetist = aAnaesthetist;}
 
@@ -407,6 +405,15 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public Long getMedService() {return theMedService;}
 	public void setMedService(Long aMedService) {theMedService = aMedService;}
 
+
 	/** Мед. услуга */
 	private Long theMedService;
+	/** Аборта */
+	@Comment("Аборта")
+	@Persist
+	public Long getAbortion() {return theAbortion;}
+	public void setAbortion(Long aAbortion) {theAbortion = aAbortion;}
+
+	/** Аборта */
+	private Long theAbortion;
 }

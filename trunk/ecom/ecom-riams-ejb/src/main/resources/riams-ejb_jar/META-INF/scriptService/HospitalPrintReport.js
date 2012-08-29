@@ -1,0 +1,640 @@
+var map = new java.util.HashMap() ;
+
+function executeSql(aName,aManager,aSql) {
+	var listReestr = aManager.createNativeQuery(aSql).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	//aCntCols++ ;
+	var j=1 ;
+	for (var ind=0 ; ind< listReestr.size() ; ind++) {
+		var obj = listReestr.get(ind) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.setSn((j++)) ;
+		for (var i=1;i<=obj.length;i++) {
+			var i1=i-1 ;
+			eval("par.set"+i+"(obj["+i1+"]!=null?obj["+i1+']:"");') ;
+		}
+		ret.add(par) ;
+	}
+	map.put(aName,ret) ;
+}
+
+
+
+function printDiagnosisJournal(aCtx,aParams) {
+	var mkbCode ;
+	var mkbLike ;
+	var mkbName ;
+	var dep ;
+	var servStream ;
+	var fldDate ;
+	var dateBegin = aParams.get("dateBegin");
+	var dateEnd ;
+	var bedSubTypeSql ;
+	var filterAdd ;
+	var regType ;
+	var bedSubTypeSql ;
+	var filterSql ;
+	var mkbNameGroup ;
+
+
+    //if (dateBegin!=null && dateBegin!="")  {
+    	 dateEnd = aParams.get("dateEnd") ;
+    	if (dateEnd==null||dateEnd=="") {
+    		dateEnd=dateBegin ;
+    	}
+    	
+    	var stat = aParams.get("typeStatus") ;
+    	var typeMKB = +aParams.get("typeMKB") ;
+    	var typeDate = +aParams.get("typeDate") ;
+    	 mkbCode = "mkb.code" ;
+    	 mkbName = "mkb.name" ;
+    	 mkbLike = "0" ;
+    	
+    		if (typeMKB==1) {mkbName="substring(mkb.code,1,1)";mkbCode="substring(mkb.code,1,1)" ;mkbLike="1";} 
+    		else if (typeMKB==2) {mkbName="substring(mkb.code,1,2)";mkbCode="substring(mkb.code,1,2)" ;mkbLike="1";}
+    		else if (typeMKB==3) {mkbName="substring(mkb.code,1,3)";mkbCode="substring(mkb.code,1,3)" ;mkbLike="1";}
+    	//request.setAttribute("mkbName",mkbName) ;
+    	mkbNameGroup=(mkbName=="mkb.name")?",mkb.name":"" ;
+    	//request.setAttribute("mkbCode",mkbCode) ;
+    	//request.setAttribute("mkbLike",mkbLike) ;
+    	fldDate = "slo.dateFinish" ;
+    	if (typeDate!=null) {
+    		if (typeDate==1) {fldDate="slo.dateStart" ;} 
+    		else if (typeDate==3) {fldDate="slo.transferDate" ;}
+    	} 
+    	//request.setAttribute("fldDate",fldDate) ;
+    	var isStat = true ;
+    	if (stat!=null && stat.equals("2")) {
+    		isStat = false ;
+    	}
+
+    	 dep = +aParams.get("department") ;
+    	if (dep>0) {
+    		dep= " and slo.department_id="+dep ;
+    		//request.setAttribute("department",dep) ;
+    	} else {
+    		dep= "";
+    		//request.setAttribute("department","0") ;
+    	}
+    	 servStream = +aParams.get("serviceStream") ;
+    	if (servStream>0) {
+    		servStream= " and vss.id="+servStream ;
+    		//request.setAttribute("serviceStream", servStream) ;
+    	} else {
+    		servStream= "";
+    		//request.setAttribute("serviceStream", "0") ;
+    	}
+    	 regType = +aParams.get("registrationType") ;
+    	if (regType>0) {
+    		regType=" and diag.registrationType_id="+regType ;
+    	} else {regType=""}
+    	 priority = +aParams.get("priority") ;
+    	if (priority>0) {
+    		prioritySql=" and diag.priority_id="+priority ;
+    	} else {
+    		prioritySql ="" ;
+    	}
+    	 bedSubType = +aParams.get("bedSubType") ;
+    	if (bedSubType>0) {
+    		bedSubTypeSql=" and bf.bedSubType_id="+bedSubType ;
+    	} else {
+    		bedSubTypeSql="" ;
+    	}
+    	var filter = aParams.get("filterAdd") ;
+    	var filterSql="" ;
+    	if (filter!=null && filter!="") {
+    		filter = filter.toUpperCase() ;
+    		filterAdd=filter ;
+    		var fs=filter.split("-") ;
+    		if (fs.length>1) {
+    			filterSql=" and mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'" ;
+    		} else {
+    			filterSql=" and mkb.code like '"+filter.trim()+"%'" ;
+    		}
+    		
+    	}
+	
+	
+	var sql="select "+mkbCode+"||':"+mkbLike+":"+dep+":"+servStream+":"+fldDate+":"+dateBegin+":"+dateEnd+":'||vpd.id||':'||vdrt.id||':"+bedSubTypeSql+":"+filterAdd+"' as id "
+		+ " ,"+mkbCode+" as mkb,count(distinct slo.id) as cntSlo,vpd.name as vpdname,vdrt.name as vdrtname" 
+		+ " ,"+mkbName+" as mkbname"
+		+ " ,count(distinct sls.id) as cntSls"
+		+ " ,count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end) as cntDischarge"
+		+ " ,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeath"
+		+ " ,round(sum("
+		+ " 	distinct "
+		+ " 	  cast(case" 
+		+ " 		when (sls.dateFinish is null or sls.dischargeTime is null) then 0" 
+		+ " 		when (sls.dateFinish-sls.dateStart)=0 then 1 "
+		+ " 		when bf.addCaseDuration='1' then ((sls.dateFinish-sls.dateStart)+1)" 
+		+ " 		else (sls.dateFinish-sls.dateStart) end "
+		+ " 		||'.'|| sls.id as decimal)"
+		+ " 			)"
+		+ " 	-sum(distinct" 
+		+ " 	  cast('0.'|| case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else 0 end as decimal))"
+		+ " 	  ,0) as cntSlsDays"
+		+ " ,"
+		+ " case when count(distinct case" 
+		+ " when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id" 
+		+ " else null end)>0 "
+		+ " then"
+		+ " 	round(("
+		+ " 	sum("
+		+ " 	distinct" 
+		+ " 	  cast(case" 
+		+ " 		when (sls.dateFinish is null or sls.dischargeTime is null) then 0" 
+		+ " 		when (sls.dateFinish-sls.dateStart)=0 then 1" 
+		+ " 		when bf.addCaseDuration='1' then ((sls.dateFinish-sls.dateStart)+1)" 
+		+ " 		else (sls.dateFinish-sls.dateStart) end" 
+		+ " 		||'.'|| sls.id as decimal)"
+		+ " 			)"
+		+ " 	-sum(distinct" 
+		+ " 	  cast('0.'|| case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else 0 end as decimal))"
+		+ " 	 )"
+		+ " 	/count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end),1)"
+		+ " 	else 0 end as cntSrDays"
+		+ " ,count(distinct case when so.id is null then sls.id else null end) as cntOper"
+		+ " from Diagnosis diag"
+		+ " left join VocIdc10 mkb on mkb.id=diag.idc10_id"
+		+ " left join MedCase slo on slo.id=diag.medCase_id"
+		+ " left join MedCase sls on sls.id=slo.parent_id"
+		+ " left join MedCase aslo on aslo.parent_id=sls.id"
+		+ " left join SurgicalOperation so on so.medcase_id=aslo.id"
+		+ " left join VocHospitalizationResult vhr on vhr.id=sls.result_id"
+		+ " left join BedFund bf on bf.id=slo.bedFund_id"
+		+ " left join VocServiceStream vss on vss.id=slo.serviceStream_id"
+		+ " left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id"
+		+ " left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
+		+ " where "+fldDate+" between to_date('"+dateBegin+"','dd.mm.yyyy')"
+		+ " 	and to_date('"+dateEnd+"','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'"
+		+ " 	"+servStream+" "+dep+" "+prioritySql+" "+regType+" "+bedSubTypeSql+""
+		+ " 	"+filterSql+""
+		+ " group by "+mkbCode+",vpd.id,vpd.name,vdrt.id,vdrt.name "+mkbNameGroup+""
+		+ " order by "+mkbCode+",vpd.id,vdrt.id" ;
+	executeSql("list",aCtx.manager,sql) ;
+	return map ;
+}
+function printJournalByDay(aCtx,aParams) {
+	var ids = aParams.get("id") ;
+	var id = ids.split(":") ;
+	var dateBegin = id[3] ;
+	var typeDate = +id[2] ;
+	var typeHour = id[1] ;
+	var typeEmergency = id[0] ;
+	var emer = "" ;
+	var emerInfo = "все" ;
+	if (+typeEmergency==1) {
+		emer=" and m.emergency='1' " ;
+		emerInfo="экстренно" ;
+	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+		emer=" and (m.emergency is null or m.emergency = '0')" ;
+		emerInfo="планово" ;
+	} 
+	map.put("emerInfo",emerInfo) ;
+	
+	var dateI = "dateStart" ;
+	var timeI = "entranceTime" ;
+	
+	var pigeonHole = id[4] ;
+	var pigeonHoleName = "все" ;
+	var pigeonHoleId = "" ;
+	var pigeonHoleId1 = "" ;
+	if (pigeonHole!=null
+			&& +pigeonHole>0) {
+		pigeonHoleId = " and ml.pigeonHole_id='"+pigeonHole+"' " ;
+		pigeonHoleId1 = " and (ml1.pigeonHole_id='"+pigeonHole+"' or ml.pigeonHole_id='"+pigeonHole+"') " ;
+		var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from VocPigeonHole vph where vph.id="+pigeonHole).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			pigeonHoleName = ob[0] ;
+			
+		}
+	}
+	map.put("pigeonHoleName",pigeonHoleName) ;
+	
+	var department = id[5] ;
+	var departmentName = "все" ;
+	var departmentId = "" ;
+    if (department!=null
+    		&& +department>0) {
+    	departmentId = " and ml.id='"+department+"' " ;
+    	var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from MisLpu vph where vph.id="+department).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			pigeonHoleName = ob[0] ;
+			
+		}
+    }
+    map.put("departmentName",departmentName) ;
+    
+    var dateI = null ; var period = "" ;
+	var timeI = null ; var period1 = "" ;
+	var dateInfo = "состоящим" ;
+	if (typeDate==1) {
+		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
+		dateI = "dateStart" ; timeI = "entranceTime" ;
+		dateInfo="поступившим" ;
+	} else if (typeDate==2) {
+		dateI = "dateFinish" ; timeI = "dischargeTime" ;
+		dateInfo="выписанным" ;
+	} else {
+		dateI= null ; timeI = null ;
+		period=" and m.dateFinish is null " ;
+		period1=null ;
+		dateInfo="состоящим" ;
+	}
+	
+	var date = dateBegin ;
+	var dat = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(date) ;
+    var cal = java.util.Calendar.getInstance() ;
+    cal.setTime(dat) ;
+    cal.add(java.util.Calendar.DAY_OF_MONTH, 1) ;
+    var format=new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+    var date1=format.format(cal.getTime()) ;
+    if (dateI!=null) {
+    	//aRequest.setAttribute("dateI", dateI) ;
+    	if (typeHour!=null && typeHour.equals("1")) {
+    		
+			period = " and ((m."+dateI+"= to_date('"+date+"','dd.mm.yyyy') and m."+timeI+">= cast('08:00' as time) )"
+					+" or (m."+dateI+"= to_date('"+date1+"','dd.mm.yyyy') and m."+timeI+"< cast('08:00' as time) )"
+			+")" ;
+    		hourInfo=" (8 часов)";
+    	} else if (typeHour!=null && typeHour.equals("2")) {
+			period = " and ((m."+dateI+"= to_date('"+date+"','dd.mm.yyyy') and m."+timeI+">= cast('09:00' as time) )"
+					+" or (m."+dateI+"= to_date('"+date1+"','dd.mm.yyyy') and m."+timeI+"< cast('09:00' as time) )"
+			+")" ;
+    		hourInfo=" (9 часов)" ;
+    	} else {
+    		period = " and m."+dateI+"= to_date('"+date+"','dd.mm.yyyy')" ;
+    		hourInfo="" ;
+    	}
+		period1=period ;
+    }
+	var sql = "select" 
+		    +" m.id as mid"
+		    +" ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5))||case when m.emergency='1' then ' (Э)' else ' (П)' end as mdateStart"
+		    +" ,'('||coalesce(pat.patientSync,'')||') '"
+		    +" ||' '||pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
+		    +" , ("
+		    +" 	cast(to_char(m.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)"
+		    +" 	+case when (cast(to_char(m.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(m.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(m.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end"
+		    +" ) as age"
+			+", case when pat.address_addressId is not null "
+			+"          then coalesce(adr.fullname,adr.name) || "
+			+"               case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end" +
+					" ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end" +
+					"||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end"
+			+"       when pat.territoryRegistrationNonresident_id is not null"
+			+"          then okt.name||' '||pat.RegionRegistrationNonresident||' '||oq.name||' '||pat.SettlementNonresident"
+			+"               ||' '||ost.name||' '||pat.StreetNonresident||"
+			//+"               coalesce(' д.'||pat.HouseNonresident,'') ||coalesce(' корп.'|| pat.BuildingHousesNonresident,'') ||coalesce(' кв. '|| pat.ApartmentNonresident,'')"
+			+"               case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end" 
+			+" ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" 
+			+"||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end"
+			+"   else '' "
+			+"  end as address"
+			+" ,coalesce(oml.name,of.name,'') as omlname"
+			+" ,case when m.deniedHospitalizating_id is null then ml.name else '' end as mlname"
+		    +" ,sc.code as sccode"
+		    +" , list(case when vdrt.code='1' then diag.name else '' end) as diag"
+			+" ,coalesce(to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5))"
+			+" ||' '||coalesce(vho.name,'')||' '||coalesce(tml.name,''),'')  as finishresult"
+		    +", case when m.relativeMessage='1' then 'Да' else '' end as relativemessage"
+			+" ,vdh.name as vdhname"
+			+" ,case when m.deniedHospitalizating_id is not null then vh.name else '' end as vhname"
+		    +" from MedCase as m  "
+		    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
+		    +" left outer join Patient pat on m.patient_id = pat.id" 
+		    +" left join MisLpu as ml on ml.id=m.department_id "
+		    +" left join diagnosis diag on diag.medcase_id=m.id"
+		    +" left join VocDiagnosisRegistrationType vdrt on diag.registrationType_id=vdrt.id"
+		    +" left join MisLpu as oml on oml.id=m.orderLpu_id "
+		    +" left join MisLpu as tml on tml.id=m.moveToAnotherLpu_id "
+		    +" left join OMC_FRM of on m.orderType_id=of.id"
+		    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+		    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
+			+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
+			+" left join address2 adr on adr.addressId = pat.address_addressId"
+			+" left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id"
+			+" left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id"
+			+" left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id"
+		    +" left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id"
+		    +" left join VocHospitalizationOutcome vho on vho.id=m.outcome_id"
+		    +" left join VocHospitalization vh on vh.id=m.hospitalization_id"
+		    +" where m.DTYPE='HospitalMedCase' "+period+""
+		    //+" and m.deniedHospitalizating_id is null"
+		    //+" and m.department_id='"+depId+"'"
+		    +"  "+emer+pigeonHoleId+departmentId
+		    +" group by m.id,m.dateStart,m.entranceTime,pat.lastname,pat.middlename,pat.firstname,pat.birthday"
+		    +" ,m.datefinish,m.dischargeTime,pat.address_addressid,adr.fullname,adr.name,pat.housenumber"
+		    +" ,pat.housebuilding,pat.flatnumber,pat.territoryregistrationnonresident_id,okt.name"
+		    +" ,pat.regionregistrationnonresident,oq.name,pat.settlementnonresident,ost.name,pat.streetnonresident"
+		    +" ,pat.housenonresident,pat.buildinghousesnonresident,pat.apartmentnonresident,oml.name"
+		    +" ,of.name,m.deniedhospitalizating_id,ml.name,sc.code,m.emergency,pat.id,pat.patientsync"
+		    +" ,ok.voc_code,pvss.omccode,adr.kladr,vdh.name,vho.name,tml.name,m.relativeMessage,vh.name"
+		    +" order by m.dateStart,m.entranceTime";
+			
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(i+1)) ;
+		for (var j=2;j<=obj.length;j++) {
+			eval("par.set"+(j)+"(obj[j-1]);") ;
+		}
+		ret.add(par) ;
+	}
+	map.put("list",ret) ;
+	return map ;
+}
+
+
+function formatDate(aDate) {
+	  var dd = aDate.getDate()
+	  if ( dd < 10 ) dd = '0' + dd;
+	  var mm = aDate.getMonth()+1
+	  if ( mm < 10 ) mm = '0' + mm;
+	  var yy = aDate.getFullYear() % 100;
+	  if ( yy < 10 ) yy = '0' + yy;
+	  return dd+'.'+mm+'.'+yy;
+}
+function getDate(aDateS,aDay) {
+	
+	var d = (""+aDateS).split(".") ;
+	var dd=new Date(d[2],d[1]-1,d[0]+aDay) ;
+	return formatDate(dd) ;
+}
+function printReport007(aCtx,aParams) {
+	var date1 = aParams.get("dateBegin");
+	var department = aParams.get("department") ;
+	var date2 = getDate(date1,1) ;
+	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,vbst.name as vbstname" 
+		+"  from medcase slo"
+		+"  left join patient pat on pat.id=slo.patient_id"
+		+"  left join medcase sls on sls.id=slo.parent_id"
+		+"  left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+"  left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" left join bedfund bf on bf.id=slo.bedfund_id"
+		+" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id"
+		+" left join vocservicestream vss on vss.id=bf.servicestream_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+"  LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId" 
+		+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
+		+"  where "
+		+"  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"'"
+		+"   and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
+		+"  slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		+" and (slo.datefinish is null or slo.datefinish >= to_date('"+date1+"','dd.mm.yyyy') or"
+		+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
+		+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+" group by bf.bedsubtype_id,vbst.name" ;
+	var sql = "select vss.name as vssname"
+		+" ,count(distinct case when (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime"
+		+" or to_date('"+date1+"','dd.mm.yyyy')>slo.datestart)"
+		+"  and (to_date('"+date1+"','dd.mm.yyyy')>slo.datestart or"
+		+" slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		+" and (slo.datefinish is null "
+		+" or slo.datefinish > to_date('"+date1+"','dd.mm.yyyy')" 
+		+" or slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>cast('09:00' as time))"
+		+" and (slo.transferdate is null "
+		+" or slo.transferdate > to_date('"+date1+"','dd.mm.yyyy')" 
+		+" or"
+		+" slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>cast('09:00' as time))"
+		+"  then slo.id else null end)"
+		+" as cnt5CurrentFrom"
+		+" ,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)"
+		+" as cnt6Entrance"
+		+" ,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)"
+		+" as cnt7EntranceDayHosp"
+		+" ,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) "
+		+" and (ad1.domen=5 or ad2.domen=5)"
+		+" then slo.id else null end)"
+		+" as cnt8EntranceVillagers"
+		+" ,count(distinct case when slo.prevmedcase_id is null and(slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) "
+		+" and ("
+		+" cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)"
+		+" +case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end"
+		+" )<18"
+		+" then slo.id else null end)"
+		+" as cnt9EntranceTo17"
+		+" ,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) "
+		+" and 60<=("
+		+" cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)"
+		+" +case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end"
+		+" )"
+		+" then slo.id else null end)"
+		+" as cnt10EntranceFrom60"
+		+" ,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)"
+		+" as cnt11TransferOutOtherDepartment"
+		+" ,count(distinct case when (slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
+		+" or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)"
+		+" as cnt12TransferInOtherDepartment"
+		+" ,count(distinct case when vhr.code!='11' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" as cnt13Finished"
+		+" ,count(distinct case when vho.code='4' and vhr.code!='11' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" as cnt14FinishedOtherHospital"
+		+" ,count(distinct case when vho.code='3' and vhr.code!='11' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" as cnt15FinishedHourHospital"
+		+" ,count(distinct case when vho.code='2' and vhr.code!='11' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" as cnt16FinishedDayHospital"
+		+" ,count(distinct case when vhr.code='11' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" as cnt17Death"
+		+" ,count(distinct case when" 
+		+" 		("
+		+" 			slo.transferdate is null"
+		+" 			or slo.transferdate > to_date('"+date2+"','dd.mm.yyyy')"
+		+" 			or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and slo.transfertime>cast('09:00' as time)"
+		+" 		) and ("
+		+" 			slo.datefinish is null or"
+		+" 			slo.datefinish > to_date('"+date2+"','dd.mm.yyyy')"
+		+" 			or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and slo.dischargetime>cast('09:00' as time)"
+		+" 		)"
+		+" 	 then slo.id else null end"
+		+" )"
+		+"  as cnt18CurrentTo"
+		+" ,count(distinct case when sls.hotelServices='1' then slo.id else null end)"
+		+" -count(distinct case when sls.hotelServices='1' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
+		+" -count(distinct case when sls.hotelServices='1' and (slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
+		+" or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)"
+		+"  as cnt19CurrentMother"
+		+" ,count(distinct slo.id) as cntAll"
+		+"  from medcase slo"
+		+"  left join patient pat on pat.id=slo.patient_id"
+		+"  left join medcase sls on sls.id=slo.parent_id"
+		+"  left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+"  left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" left join bedfund bf on bf.id=slo.bedfund_id"
+		+" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id"
+		+" left join vocservicestream vss on vss.id=bf.servicestream_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+"  LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId" 
+		+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
+		+"  where "
+		+"  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"'"
+		+"   and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
+		+"  slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		+" and (slo.datefinish is null or slo.datefinish >= to_date('"+date1+"','dd.mm.yyyy') or"
+		+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
+		+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+" and bf.bedsubtype_id=";
+	var sqlGr = " group by vbst.name,bf.serviceStream_id,vss.name" ;
+	var list1 = aCtx.manager.createNativeQuery(sql1).getResultList() ;
+	
+	if (list1.size()>0) {
+		var retBST = new java.util.ArrayList() ;
+		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		for (var i=0; i < list1.size(); i++) {
+			var ret = new java.util.ArrayList() ;
+			var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			var objBST = list1.get(i) ;
+			var BSTname = ""+ objBST[1];
+			parBST.set1(BSTname) ;
+			//j=1 ;
+			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			var parSum = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			var list = aCtx.manager.createNativeQuery(sql+"'"+objBST[0]+"' "+sqlGr).getResultList() ;
+			for (var ii=0; ii < list.size(); ii++) {
+				var obj = list.get(ii) ;
+				var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+				//par.set1(""+(j++)) ;
+				for (var jj=0;jj<obj.length;jj++) {
+					eval("par.set"+(jj+1)+"('"+obj[jj]+"')");
+					eval("parSum.set"+(jj+1)+"(+parSum.get"+(jj+1)+"()+'"+obj[jj]+"')");
+				}
+				ret.add(par) ;
+			}
+			parBST.set2(ret) ;
+			parBST.set3(parSum) ;
+			retBST.add(parBST) ;
+		}
+	}
+	map.put("listSwod",retBST) ;
+	// Список поступивших
+	var asql1 = "select ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevMedCase_id is not null then '('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)"
+		//+" and slo.prevMedCase_id is not null"
+		+" and (vht.code is null or vht.code!='ALLTIMEHOSP')"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	//Поступивших из круглосуточного стационара
+	var asql2 = "select ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevMedCase_id is not null then '('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
+		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)"
+		//+" and slo.prevMedCase_id is not null"
+		+" and (vht.code='ALLTIMEHOSP')"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	// Список выписанных
+	var asql3 = "select"
+		+"     	ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+" and vho.code!='2' and vho.code!='3' and vho.code!='4'"
+		+" and vhr.code!='11'"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	// Список переведенных в  другие отделения больницы
+	var asql4 = "select ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
+		+" or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	// Список переведенных в другие стационары
+	var asql5 = "select ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+" and (vho.code='2' or vho.code='3' or vho.code='4')"
+		+" and vhr.code!='11'"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	// Список умерших
+	var asql6 = "select ss.code as sscode"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+" from medcase slo"
+		+" left join medcase sls on sls.id=slo.parent_id"
+		+" left join statisticstub ss on ss.medcase_id=sls.id"
+		+" left join patient pat on slo.patient_id=pat.id"
+		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
+		+" left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
+		+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
+		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+" and vhr.code='11'"
+		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	var maxStr = 0 ;
+	var list1,list2,list3,list4,list5,list6 ;
+	for (var i=1;i<=6;i++) {
+		eval("list"+i+" = aCtx.manager.createNativeQuery(asql"+i+").getResultList() ;") ;
+		eval("if (list"+i+".size()>maxStr) {maxStr=list"+i+".size()}") ;
+	}
+	var retReestr = new java.util.ArrayList() ;
+	for (var i=0;i<maxStr;i++) {
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		for (var j=1;j<=6;j++) {
+			var str = "if (list"+j+".size()>=(i+1)) {par.set"+j+"(list"+j+".get(i)[1]) ;} else {par.set"+j+"('') ;}" ;
+			eval(str) ;
+			retReestr.add(par) ;
+		}
+	}
+	map.put("listPat",retReestr) ;
+	return map ;
+}

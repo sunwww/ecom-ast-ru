@@ -41,12 +41,6 @@ public class InternalDocumentsForm extends DocumentForm{
 	public String getDiagnosis() {return theDiagnosis;}
 	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
 
-	/** СМО */
-	@Comment("СМО")
-	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-
 	/** Код диагноза */
 	@Comment("Код диагноза")
 	@Persist
@@ -55,8 +49,6 @@ public class InternalDocumentsForm extends DocumentForm{
 
 	/** Код диагноза */
 	private Long theIdc10;
-	/** СМО */
-	private Long theMedCase;
 	/** Диагноз */
 	private String theDiagnosis;
 	/** Куда направлен */

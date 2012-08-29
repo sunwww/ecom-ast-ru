@@ -19,7 +19,7 @@ function onSave(aForm, aEntity, aContext) {
 function checkUsl(aServiceType,aMedService,aForm) {
 	if (+aMedService>0 && aServiceType==0) throw "При указании услуги необходимо указывать ее тип!!!";
 	if (+aMedService==0) {
-		aForm.workFunctionServices="{\"childs\":[]}" ;
+		//aForm.workFunctionServices="{\"childs\":[]}" ;
 	}
 }
 function checkPeriod(aStartDate,aFinishDate) {

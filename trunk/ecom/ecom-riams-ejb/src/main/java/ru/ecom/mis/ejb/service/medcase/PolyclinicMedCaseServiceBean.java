@@ -108,26 +108,72 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
     @Resource
 	SessionContext theContext ;
 	public Long getWorkCalendar(Long aWorkFunction) {
-		
-		List<Object[]> list = theManager.createNativeQuery("select wc.id,case when wf.group_id is null then wc.id else (select wc1.id from WorkCalendar as wc1 where wc1.workFunction_id = wf.group_id ) end from WorkCalendar as wc"
-					+	" left join WorkFunction as wf on wf.id=wc.workFunction_id"
-					+" where wc.workFunction_id = :funct")
+		if (aWorkFunction>Long.valueOf(0)) {
+			List<Object[]> list = theManager.createNativeQuery("select wc.id,case when wf.group_id is null then wc.id else wcg.id end "
+					+" from WorkFunction as wf"
+					+	" left join WorkCalendar as wc on wf.id=wc.workFunction_id"
+					+	" left join WorkCalendar as wcg on wf.group_id=wcg.workFunction_id"
+					+" where wc.workFunction_id = :funct and (wcg.id is not null or wc.id is not null) order by wcg.id,wc.id")
 			.setParameter("funct", aWorkFunction)
 			.getResultList() ;
-		if(list.size()==0) {
-			StringBuffer err = new StringBuffer() ;
-			throw
-				new IllegalArgumentException(
-						err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и календарем")
-						.toString()
-					);	
+			if(list.size()==0) {
+				StringBuffer err = new StringBuffer() ;
+				throw
+					new IllegalArgumentException(
+							err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и календарем")
+							.toString()
+						);	
+			}
+			StringBuilder ret = new StringBuilder() ;
+			ret.append(list.get(0)[1]) ;
+			
+			System.out.println("workfunction = "+aWorkFunction) ;
+			System.out.println("workcalendar = "+ret) ;
+			return Long.valueOf(ret.toString());
+		} else {
+			String username = theContext.getCallerPrincipal().toString() ;
+			List<Object[]> list = theManager.createNativeQuery("select wc.id  as wcid,case when wf.group_id is null then wc.id else "
+					+" wcg.id end  as wcname from WorkFunction as wf"
+					+" left join WorkCalendar as wc on wf.id=wc.workFunction_id"
+					+" left join WorkCalendar as wcg on wf.group_id=wcg.workFunction_id"
+					+" left join SecUser su on su.id=wf.secUser_id"
+					+" where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
+			.setParameter("username", username)
+			.getResultList() ;
+			if(list.size()==0) {
+				list.clear() ;
+				
+				list = theManager.createNativeQuery("select wc.id as wcid, case when wf.group_id is not null then wcg.id else wc.id end as wcname"
+					+" from WorkFunction wf"
+					+" left join Worker w on w.id=wf.worker_id"
+					+" left join Worker sw on sw.person_id=w.person_id"
+					+" left join WorkFunction as swf on swf.worker_id=sw.id"
+					+" left join SecUser su on su.id=swf.secUser_id"
+					+" left join WorkCalendar wc on wc.workFunction_id=wf.id"
+					+" left join WorkCalendar wcg on wcg.workFunction_id=wf.group_id"
+					+" where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
+				.setParameter("username", username)
+				.getResultList() ;
+				//System.out.println("workcalendar = "+list) ;
+				if (list.size()==0||list.get(0)[1]==null) {
+					//System.out.println("workcalendar = "+(list.size()>0?list.get(0)[0]+"-"+list.get(0)[1]:"---")) ;
+					StringBuffer err = new StringBuffer() ;
+					throw
+						new IllegalArgumentException(
+								err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и календарем")
+								.toString()
+							);	
+				}
+			}
+			StringBuilder ret = new StringBuilder() ;
+			ret.append(list.get(0)[1]) ;
+			
+			System.out.println("workfunction = "+aWorkFunction) ;
+			System.out.println("workcalendar = "+ret) ;
+			return Long.valueOf(ret.toString());
+			
 		}
-		StringBuilder ret = new StringBuilder() ;
-		ret.append(list.get(0)[1]) ;
 		
-		System.out.println("workfunction = "+aWorkFunction) ;
-		System.out.println("workcalendar = "+ret) ;
-		return Long.valueOf(ret.toString());
 	}
 
 	public String getWorkCalendarDay(Long aWorkCalendar,Long aWorkFunction, String aCalendarDate) throws ParseException {
