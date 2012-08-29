@@ -1,5 +1,8 @@
 package ru.ecom.mis.ejb.domain.licence;
 
+import java.sql.Date;
+import java.sql.Time;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -10,6 +13,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -48,6 +52,142 @@ public class ExternalDocument extends Document {
 	public void setReferenceCompTo(String aReferenceCompTo) {
 		theReferenceCompTo = aReferenceCompTo;
 	}
+	
+	/**
+	 * Фамилия пациента
+	 */
+	@Comment("Фамилия пациента")
+	
+	public String getPatientLastname() {
+		return thePatientLastname;
+	}
+	public void setPatientLastname(String aPatientLastname) {
+		thePatientLastname = aPatientLastname;
+	}
+	/**
+	 * Фамилия пациента
+	 */
+	private String thePatientLastname;
+	/**
+	 * Имя пациента
+	 */
+	@Comment("Имя пациента")
+	
+	public String getPatientFirstname() {
+		return thePatientFirstname;
+	}
+	public void setPatientFirstname(String aPatientFirstname) {
+		thePatientFirstname = aPatientFirstname;
+	}
+	/**
+	 * Имя пациента
+	 */
+	private String thePatientFirstname;
+	/**
+	 * Отчество пациента
+	 */
+	@Comment("Отчество пациента")
+	
+	public String getPatientMiddlename() {
+		return thePatientMiddlename;
+	}
+	public void setPatientMiddlename(String aPatientMiddlename) {
+		thePatientMiddlename = aPatientMiddlename;
+	}
+	/**
+	 * Отчество пациента
+	 */
+	private String thePatientMiddlename;
+	/**
+	 * Дата рождения пациента
+	 */
+	@Comment("Дата рождения пациента")
+	
+	public Date getPatientBirthday() {
+		return thePatientBirthday;
+	}
+	public void setPatientBirthday(Date aPatientBirthday) {
+		thePatientBirthday = aPatientBirthday;
+	}
+	/**
+	 * Дата рождения пациента
+	 */
+	private Date thePatientBirthday;
+	/**
+	 * Пол пациента
+	 */
+	@Comment("Пол пациента")
+	@OneToOne
+	public VocSex getPatientSex() {
+		return thePatientSex;
+	}
+	public void setPatientSex(VocSex aPatientSex) {
+		thePatientSex = aPatientSex;
+	}
+	/**
+	 * Пол пациента
+	 */
+	private VocSex thePatientSex;
+	/**
+	 * Направитель
+	 */
+	@Comment("Направитель")
+	
+	public String getOrderer() {
+		return theOrderer;
+	}
+	public void setOrderer(String aOrderer) {
+		theOrderer = aOrderer;
+	}
+	/**
+	 * Направитель
+	 */
+	private String theOrderer;
+	/**
+	 * Дата направления
+	 */
+	@Comment("Дата направления")
+	
+	public Date getOrderDate() {
+		return theOrderDate;
+	}
+	public void setOrderDate(Date aOrderDate) {
+		theOrderDate = aOrderDate;
+	}
+	/**
+	 * Дата направления
+	 */
+	private Date theOrderDate;
+	/**
+	 * Время направления
+	 */
+	@Comment("Время направления")
+	
+	public Time getOrderTime() {
+		return theOrderTime;
+	}
+	public void setOrderTime(Time aOrderTime) {
+		theOrderTime = aOrderTime;
+	}
+	/**
+	 * Время направления
+	 */
+	private Time theOrderTime;
+	/**
+	 * Направившее ЛПУ (подразделение)
+	 */
+	@Comment("Направившее ЛПУ (подразделение)")
+	
+	public String getOrderLpu() {
+		return theOrderLpu;
+	}
+	public void setOrderLpu(String aOrderLpu) {
+		theOrderLpu = aOrderLpu;
+	}
+	/**
+	 * Направившее ЛПУ (подразделение)
+	 */
+	private String theOrderLpu;
 
 	/** Ссылка на сжатый файл */
 	private String theReferenceCompTo;
