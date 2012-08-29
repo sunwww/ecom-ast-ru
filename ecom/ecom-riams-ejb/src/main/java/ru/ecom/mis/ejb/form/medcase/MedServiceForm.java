@@ -173,5 +173,10 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Дневной стационар */
 	private Boolean theIsDayHospital;
-
+	/** Уровонь сложности */
+	@Comment("Уровонь сложности")
+	public Long getComplexity() {return theComplexity;}
+	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
+	/** Уровонь сложности */
+	private Long theComplexity;
 }

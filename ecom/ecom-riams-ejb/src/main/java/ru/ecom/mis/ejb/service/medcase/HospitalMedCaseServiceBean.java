@@ -57,14 +57,41 @@ import ru.nuzmsh.util.format.DateFormat;
 @Remote(IHospitalMedCaseService.class)
 @SecurityDomain("other")
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
+	
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    
+    public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
+    	HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
+    	sls.setDischargeEpicrisis(aDischargeEpicrisis) ;
+    	theManager.persist(sls) ;
+    }
     public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException {
     	String[] ids = aIds.split(",") ;
-    	Date date = DateFormat.parseSqlDate(aDate) ;
+    	//Date date = DateFormat.parseSqlDate(aDate) ;
+    	
     	for (String id :ids) {
-    		theManager.createNativeQuery("update MedCase set dateFinish=:dat where id='"+id+"' and dtype='HospitalMedCase' and dischargeTime is null")
-    			.setParameter("dat", date).executeUpdate() ;
+    		Object cnt = theManager.createNativeQuery("select count(*) from medcase where id='"+id+"' and dateStart<=to_date('"+aDate+"','dd.mm.yyyy') and dischargeTime is null and deniedHospitalizating_id is null")
+    		//.setParameter("dat", date)
+    		.getSingleResult() ;
+    		Long cntL = ConvertSql.parseLong(cnt) ;
+    		if (cntL>Long.valueOf(0)) {
+        		theManager.createNativeQuery("update MedCase set dateFinish=to_date('"+aDate+"','dd.mm.yyyy') where id='"+id+"' and dtype='HospitalMedCase' and dischargeTime is null")
+    				//.setParameter("dat", date)
+    				.executeUpdate() ;
+    		} else {
+        		List<Object[]> list = theManager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null then 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null then 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('"+aDate+"','dd.mm.yyyy') then 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='"+id+"'")
+        	    		//.setParameter("dat", date)
+        	    		.getResultList() ;
+        		if (list.size()>0) {
+        			Object[] objs = list.get(0) ;
+        			throw new IllegalArgumentException(
+        					new StringBuilder().append("Пациент:").append(objs[0])
+        					.append(objs[1]!=null?" стат.карта №"+objs[1]:"")
+        					.append(" ОШИБКА:").append(objs[2]).toString() 
+        					); 
+        		}
+    		}
     	}
     	//return "" ;
     }
@@ -628,21 +655,22 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     // Открытые случаи госпитализации по дате поступления
     public List<GroupByDate> findOpenHospitalGroupByDate() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select t.dateStart,count(t.id),count(t1.id) from MedCase as t left join MedCase as t1 on t1.parent_id=t.id and t1.dateStart=t.dateStart where t.DTYPE='HospitalMedCase' and (cast(t.noActuality as int)=0 or t.noActuality is null) and t.dateFinish is null and t.deniedHospitalizating_id is null and (t.ambulanceTreatment is null or cast(t.ambulanceTreatment as int)=0) and t1.prevMEdCase_id is null group by t.dateStart") ;
+		sql.append("select to_char(t.dateStart,'dd.mm.yyyy') as dateStart,count(t.id) as cnt1,count(t1.id) as cnt2,CURRENT_DATE-t.dateStart as cntDays from MedCase as t left join MedCase as t1 on t1.parent_id=t.id and t1.dateStart=t.dateStart where t.DTYPE='HospitalMedCase' and (cast(t.noActuality as int)=0 or t.noActuality is null) and t.dateFinish is null and t.deniedHospitalizating_id is null and (t.ambulanceTreatment is null or cast(t.ambulanceTreatment as int)=0) and t1.prevMEdCase_id is null group by t.dateStart order by t.dateStart") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.getResultList() ;
 		LinkedList<GroupByDate> ret = new LinkedList<GroupByDate>() ;
 		long i =0 ;
 		for (Object[] row: list ) {
 			GroupByDate result = new GroupByDate() ;
-			Date date = (Date)row[0] ;
+			String date = new StringBuilder().append(row[0]).toString() ;
 			result.setCnt(ConvertSql.parseLong(row[1])) ;
 			result.setCnt1(ConvertSql.parseLong(row[2])) ;
 			//result.setCnt2(ConvertSql.parseLong(row[3])) ;
-			result.setDate(date) ;
-			result.setDateInfo(DateFormat.formatToDate(date)) ;
+			//result.setDate(date) ;
+			result.setDateInfo(date) ;
 			result.setComment(new StringBuilder().append(row[2]).toString()) ;
 			result.setSn(++i) ;
+			result.setCntDays(ConvertSql.parseLong(row[3]));
 			ret.add(result) ;
 		}
 		return ret ;

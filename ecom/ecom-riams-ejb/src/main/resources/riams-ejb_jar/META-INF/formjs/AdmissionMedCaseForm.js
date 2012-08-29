@@ -93,6 +93,14 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
+	if (aForm.getEmergency()==null || !aForm.getEmergency()) {
+		if (+aForm.orderType>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+		if (+aForm.intoxication>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+		if (+aForm.preAdmissionDefect>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+		if (aForm.supplyOrderNumber!=null&&aForm.supplyOrderNumber!="") throw "При плановой госпитализации раздел доставлен не заполняется" ;
+		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+	}
+	
 	if (aForm.deniedHospitalizating>0) {} else {
 		var sql = "select m.id, ss.code from MedCase  m "
 			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
@@ -154,8 +162,9 @@ function onPreSave(aForm,aEntity, aCtx) {
     if ( (aForm.getAmbulanceTreatment()!=null && aForm.getAmbulanceTreatment()) 
        || (aForm.getDeniedHospitalizating()!=null && aForm.getDeniedHospitalizating()!=0)
        ) {
-			if (aForm.getDepartment()!=null && aForm.getDepartment()!=0)
-			 throw "При отказе от госпитализации и/или амбулаторном лечении поле отделение не заполняется!";
+			if (aForm.getDepartment()!=null && aForm.getDepartment()!=0) {
+			 //throw "При отказе от госпитализации и/или амбулаторном лечении поле отделение не заполняется!";
+			}
     } else {
            if (aForm.getDepartment()==null || aForm.getDepartment()==0) {
                throw "При госпитализации пациента нужно указывать отделение!";

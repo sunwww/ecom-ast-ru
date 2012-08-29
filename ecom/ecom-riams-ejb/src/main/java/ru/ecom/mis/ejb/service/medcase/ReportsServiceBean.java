@@ -275,31 +275,31 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aOrderLpu, Long aOrderWF) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null && aSpecialist>Long.valueOf(0)){
 			WorkFunction wf = theManager.find(WorkFunction.class,aSpecialist) ;
 			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
 		}
-		if (aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null && aWorkFunction>Long.valueOf(0)){
 			VocWorkFunction vwf = theManager.find(VocWorkFunction.class, aWorkFunction) ;
 			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
 		}
-		if (aLpu>Long.valueOf(0)){
+		if (aLpu!=null && aLpu>Long.valueOf(0)){
 			MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
 			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
 		}
-		if (aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null && aServiceStream>Long.valueOf(0)){
 			VocServiceStream vss = theManager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
-		if (aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null && aWorkPlaceType>Long.valueOf(0)){
 			VocWorkPlaceType vwpt = theManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
 			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
 		}
-		if (aOrderLpu>Long.valueOf(0)){
+		if (aOrderLpu!=null && aOrderLpu>Long.valueOf(0)){
 			MisLpu vwpt = theManager.find(MisLpu.class, aOrderLpu) ;
 			filter.append(" Внешний направитель: ").append(vwpt.getName()) ;
 		}
-		if (aOrderWF>Long.valueOf(0)){
+		if (aOrderWF!=null && aOrderWF>Long.valueOf(0)){
 			WorkFunction owf = theManager.find(WorkFunction.class, aOrderWF) ;
 			filter.append(" Направитель: ").append(owf.getWorkFunctionInfo()) ;
 		}

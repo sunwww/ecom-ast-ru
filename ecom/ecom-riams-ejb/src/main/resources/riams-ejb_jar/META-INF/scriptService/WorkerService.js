@@ -1,3 +1,19 @@
+function replaceWorkFunction(aCtx,aParam) {
+	if (+aParam>0) {
+		
+	var username=aCtx.sessionContext.callerPrincipal.name ;
+	var sqluser = "select id as suid,login as sulogin from secuser where login='"+username+"'" ;
+	var listuser = aCtx.manager.createNativeQuery(sqluser).getResultList();
+	//throw username ;
+	if (listuser.size()>0) {
+		var suId=listuser.get(0)[0] ;
+		//throw suId+" username="+username ;
+		aCtx.manager.createNativeQuery("update WorkFunction set secuser_id=null where secuser_id='"+suId+"'").executeUpdate() ;
+		aCtx.manager.createNativeQuery("update WorkFunction set secuser_id='"+suId+"' where id='"+aParam+"'").executeUpdate() ;
+	}
+	}
+	
+}
 /**
  * Информация о текущем сотруднике, вошедшем в систему
  * @return Worker
@@ -122,7 +138,16 @@ function findLogginedWorkFunctionList(aCtx) {
 	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser" ;	
 	return list ;
 }
-
+function getGroupByWorkFunction(aCtx,aWorkFunction) {
+	var sql = "select group_id,id from workfunction where id='"+aWorkFunction+"'" ;
+	var list = aCtx.manager.createNativeQuery(sql)
+		.getResultList() ;
+	if (list.size()>0) {
+		var obj = list.get(0) ;
+		return +obj[0]  ;
+	}
+	return 0 ;
+}
 function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
 	var sql = "select wf.id as wfid";
@@ -139,7 +164,7 @@ function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 		+" left join worker w1 on w.person_id=w1.person_id" ;
 	if (aWorkPlan!=null) { 
 		sql=sql+" left join workFunction wf1 on wf1.id='"+aWorkPlan+"' and wf1.worker_id=w1.id "
-		sql=sql+" left join workFunction wf2 on wf2.group_id=wf1.id "
+		sql=sql+" left join workFunction wf2 on wf2.group_id='"+aWorkPlan+"' and wf2.worker_id=w1.id "
 	}
 	sql=sql	+" where su.login = '"+username+"'  group by wf.id";
 		

@@ -13,25 +13,40 @@
                queried = 'code,name'
           />
      </voc>
-     <voc id='vocCriminalCodeArticle' type='EntityVocService'>
-          <EntityVocService
-               entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCodeArticle'
-               names   = 'code,name'
-               queried = 'code,name'
+     <voc id='vocCriminalCodeArticle' type='NativeVocService'>
+          <NativeVocService
+               from=" vocCriminalCodeArticle as vcca "
+		    	parent=''
+		    	nameId="vcca.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vcca.code like UPPER(:querId) or vcca.name like UPPER(:query)) "
+		    	names = "vcca.code||' '||vcca.name"
           />
      </voc>
-     <voc id='vocInvalidityHealthViolation' type='EntityVocService'>
-          <EntityVocService
-               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityHealthViolation'
-               names   = 'name'
-               queried = 'code,name'
+     <voc id='vocInvalidityHealthViolation' type='NativeVocService'>
+          <NativeVocService
+               from=" VocInvalidityHealthViolation as vcca "
+		    	parent=''
+		    	nameId="vcca.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vcca.code like UPPER(:querId) or vcca.name like UPPER(:query)) "
+		    	names = "vcca.code||' '||vcca.name"
           />
      </voc>
-     <voc id='vocInvalidityVitalRestriction' type='EntityVocService'>
-          <EntityVocService
-               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidityVitalRestriction'
-               names   = 'name'
-               queried = 'code,name'
+     <voc id='vocInvalidityVitalRestriction' type='NativeVocService'>
+          <NativeVocService
+               from=" VocInvalidityVitalRestriction as vcca "
+		    	parent=''
+		    	nameId="vcca.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vcca.code like UPPER(:querId) or vcca.name like UPPER(:query)) "
+		    	names = "vcca.code||' '||vcca.name"
           />
      </voc>
      <voc id='vocInvalidWorkPlace' type='EntityVocService'>

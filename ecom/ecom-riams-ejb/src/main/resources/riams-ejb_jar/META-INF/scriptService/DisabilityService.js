@@ -20,10 +20,10 @@ function printNoActuality(aCtx, aParams) {
     if (+typeLpu==2) { sqlReason= sqlReason+" and dd.anotherLpu_id is not null" ;}
     
 	var status ="";
-	if (typeDocument!=null && typeDocument=="1") {
-    	status="cast(dd.isclose as int) =1 and " ;
-    } else if (typeDocument!=null && typeDocument=="2") {
-    	status="(dd.isclose is null or cast(dd.isclose as int) =0) and " ;        	
+	if (typeDocument!=null && typeDocument=="2") {
+    	status="dd.isclose='1' and " ;
+    } else if (typeDocument!=null && typeDocument=="1") {
+    	status="(dd.isclose is null or dd.isclose='0') and " ;        	
     } 
 	var dateGroup ;
 	if (typeDate!=null && typeDate=="1") {
@@ -101,7 +101,7 @@ function printNoActuality(aCtx, aParams) {
 	return map ;
 }
 function printJournal(aCtx, aParams) {
-	var typeDocument = aParams.get("typeDocument") ;
+	var typeDocument = +aParams.get("typeDocument") ;
 	var typeDate = aParams.get("typeDate") ;
 	var beginDateR = aParams.get("beginDate") ;
 	var endDateR = aParams.get("endDate") ;
@@ -119,11 +119,11 @@ function printJournal(aCtx, aParams) {
 	if (+typeLpu==1) { sqlReason= sqlReason+" and dd.anotherLpu_id is null" ;}
     if (+typeLpu==2) { sqlReason= sqlReason+" and dd.anotherLpu_id is not null" ;}
     var status="" ;
-	if (typeDocument!=null && typeDocument=="1") {
+	if (typeDocument==1) {
     	status="cast(dd.isclose as int) =1 and " ;
-    } else if (typeDocument!=null && typeDocument=="2") {
+    } else {if (typeDocument==2) {
     	status="(dd.isclose is null or cast(dd.isclose as int) =0) and " ;        	
-    } 
+    } }
 	var dateGroup ;
 	if (typeDate!=null && typeDate=="1") {
     	dateGroup="(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
@@ -344,9 +344,9 @@ function printDocument(aCtx, aParams) {
 			var doctorAdd = workerAdd!=null?workerAdd.person:null ;
 			lastDoctor = doctor ;
 			recordChar(vwf!=null?vwf.shortName:"",9,"doc.record"+i+".doctor.post") ;
-			recordChar(doctor!=null?doctor.lastname+" "+doctor.firstname.substring(0,1)+" "+doctor.middlename.substring(0,1):"",14,"doc.record"+i+".doctor.fio") ;
+			recordChar(doctor!=null?doctor.lastname+" "+doctor.firstname.substring(0,1)+""+doctor.middlename.substring(0,1):"",14,"doc.record"+i+".doctor.fio") ;
 			recordChar(vwfAdd!=null?vwfAdd.shortName:"",9,"doc.record"+i+".doctorAdd.post") ;
-			recordChar(doctorAdd!=null?doctorAdd.lastname+" "+doctorAdd.firstname.substring(0,1)+" "+doctorAdd.middlename.substring(0,1):"",14,"doc.record"+i+".doctorAdd.fio") ;
+			recordChar(doctorAdd!=null?doctorAdd.lastname+" "+doctorAdd.firstname.substring(0,1)+""+doctorAdd.middlename.substring(0,1):"",14,"doc.record"+i+".doctorAdd.fio") ;
 		}
 	}
 	recordChar(doc.mainWorkDocumentNumber,12,"doc.maindoc.number") ;

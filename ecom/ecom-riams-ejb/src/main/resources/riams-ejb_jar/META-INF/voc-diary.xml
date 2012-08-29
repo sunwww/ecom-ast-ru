@@ -23,13 +23,16 @@
 		    	left join WorkFunction wf on wf.id=m.workFunctionExecute_id
 		    	left join Worker w on w.id=wf.worker_id
 		    	left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+		    	left join WorkFunction wf1 on wf1.id=m1.ownerFunction_id
+		    	left join Worker w1 on w1.id=wf1.worker_id
+		    	left join VocWorkFunction vwf1 on vwf1.id=wf1.workFunction_id 
+		    	left join Patient p1 on p1.id=w1.person_id 
 		    	left join Patient p on p.id=w.person_id "
 		    	queryAppend=" d.dtype='Protocol' 
-		    	and m.dtype='Visit' 
-		    	and m1.dtype='Visit' "
+		    	 "
 		    	order=""
 		    	queried=" to_char(m.dateStart,'DD.MM.YYYY') like (:query) "
-		    	names = " to_char(m.dateStart,'DD.MM.YYYY')||' '||vwf.name||' '|| p.lastname ||' '|| p.firstname ||' '|| p.middlename "
+		    	names = "case when m.dtype='Visit' then 'Поликл.' when m.dtype='DepartmentMedCase' then 'СЛО' when m.dtype='HospitalMedCase' then 'СЛС' when m.dtype='ServiceMedCase' then 'Услуга' else '' end||' '|| to_char(m.dateStart,'DD.MM.YYYY')||' '||coalesce(vwf.name||' '|| p.lastname ||' '|| p.firstname ||' '|| p.middlename,vwf1.name||' '|| p1.lastname ||' '|| p1.firstname ||' '|| p1.middlename) "
 		    />
 
     </voc>

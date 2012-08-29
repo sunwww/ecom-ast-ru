@@ -2,8 +2,6 @@ package ru.ecom.poly.ejb.domain.protocol;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -64,6 +62,7 @@ public class Protocol extends Diary {
 	
 	/** Тип протокола */
 	@Comment("Тип протокола")
+	@OneToOne
 	public VocTypeProtocol getType() {return theType;}
 	public void setType(VocTypeProtocol aType) {theType = aType;}
 	

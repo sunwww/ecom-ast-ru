@@ -10,4 +10,16 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocPsychObservationReason extends VocBaseEntity{
+	 /** Первичная */
+	@Comment("Первичная")
+	public Boolean getIsPrimary() {
+		return theIsPrimary;
+	}
+
+	public void setIsPrimary(Boolean aIsPrimary) {
+		theIsPrimary = aIsPrimary;
+	}
+
+	/** Первичная */
+	private Boolean theIsPrimary;
 }

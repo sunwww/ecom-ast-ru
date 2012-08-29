@@ -1,10 +1,13 @@
 package ru.ecom.diary.ejb.form;
 
+import javax.persistence.ManyToMany;
+
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -84,6 +87,14 @@ public class TemplateProtocolForm  extends IdEntityForm {
 	public String getCategoriesInfo() {return theCategoriesInfo;}
 	public void setCategoriesInfo(String aCategoriesInfo) {theCategoriesInfo = aCategoriesInfo;}
 
+	/** Группы пользователей */
+	@Comment("Группы пользователей")
+	@Persist @PersistManyToManyOneProperty(collectionGenericType = SecGroup.class)
+	public String getSecGroups() {return theSecGroups;}
+	public void setSecGroups(String aSecGroups) {theSecGroups = aSecGroups;}
+
+	/** Группы пользователей */
+	private String theSecGroups;
 	/** Категории инфо*/
 	private String theCategoriesInfo;
 	/** Информация по шаблону протокола */

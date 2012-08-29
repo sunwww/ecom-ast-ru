@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -83,5 +84,4 @@ public class SecUser extends BaseEntity {
     private String theLogin ;
     /** Пароль */
     private String thePassword ;
-
 }

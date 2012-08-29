@@ -30,9 +30,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique = false, properties = {"medCase","workCalendarDay","timeFrom"}),
 	@AIndex(unique = false, properties = {"workCalendarDay"}),
-	@AIndex(unique = false, properties = {"timeFrom"}),
-	@AIndex(unique = false, properties = {"prePatient"}),
-	@AIndex(unique = false, properties = {"prePatientInfo"})
+	@AIndex(unique = false, properties = {"timeFrom"})
+	//,@AIndex(unique = false, properties = {"prePatient"})
+	//,@AIndex(unique = false, properties = {"prePatientInfo"})
 })
 @Table(schema="SQLUser")
 public class WorkCalendarTime extends BaseEntity{
@@ -121,6 +121,7 @@ public class WorkCalendarTime extends BaseEntity{
 	
 	/** Резерв персоны */
 	@Comment("Резерв персоны")
+	@OneToOne
 	public Patient getPersonReserve() {
 		return thePersonReserve;
 	}

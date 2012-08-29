@@ -197,5 +197,19 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	private Long theDepartment;
 	/** Отделение (текст) */
 	private String theDepartmentInfo;	
+	
+	/** medServices */
+	@Comment("medServices")
+	public String getMedServices() {return theMedServices;}
+	public void setMedServices(String aMedServices) {theMedServices = aMedServices;}
 
+	/** medServices */
+	private String theMedServices;
+	/** Предварительный прием */
+	@Comment("Предварительный прием")
+	public Boolean getIsPreRecord() {return theIsPreRecord;}
+	public void setIsPreRecord(Boolean aIsPreRecord) {theIsPreRecord = aIsPreRecord;}
+
+	/** Предварительный прием */
+	private Boolean theIsPreRecord;
 }

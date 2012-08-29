@@ -97,9 +97,9 @@ public class Patient extends BaseEntity{
 	private String thePhone;
 	
 	/** DTYPE */
-	@Comment("DTYPE")
-	public String getDTYPE() {return theDTYPE;}
-	public void setDTYPE(String aDTYPE) {theDTYPE = aDTYPE;}
+	//@Comment("DTYPE")
+	//public String getDTYPE() {return theDTYPE;}
+	//public void setDTYPE(String aDTYPE) {theDTYPE = aDTYPE;}
 
 	/** Вакцинации */
 	@Comment("Вакцинации")
@@ -539,11 +539,11 @@ public class Patient extends BaseEntity{
         return sb.toString() ;
     }*/
 
-    private static void addNotEmpty(StringBuilder aSb, String aValue) {
-        if(!StringUtil.isNullOrEmpty(aValue)) {
-            aSb.append(aValue) ;
-        }
-    }
+    //private static void addNotEmpty(StringBuilder aSb, String aValue) {
+    //    if(!StringUtil.isNullOrEmpty(aValue)) {
+    //        aSb.append(aValue) ;
+    //    }
+    //}
     @Comment("Информация по адресу")
 	@Transient
     public String getAddressInfo() {
@@ -716,7 +716,7 @@ public class Patient extends BaseEntity{
 	private OmcOksm theNationality;
     
 	/** DTYPE */
-	private String theDTYPE;
+	//private String theDTYPE;
 	/** Вакцинации */
 	private List<Vaccination> theVaccinations;
 	/** Сотрудники */

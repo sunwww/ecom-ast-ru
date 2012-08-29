@@ -1,5 +1,64 @@
 var map = new java.util.HashMap() ;
-
+function categoryForeignNationals(aCtx,aParams) {
+	var finishDate = aParams.get("finishDate");
+	var beginDate = aParams.get("beginDate");
+	var sql = "select coalesce(p.nationality_id,0)||':${param.beginDate}:${param.finishDate}',vn.name as vnname,count(*) as cntAll"
+			+" ,count(distinct case when m.dtype='Visit' then m.id else null end) as polic"
+			+" ,count(distinct case when m.dtype='Visit' and vss.code='CHARGED' then m.id else null end) as policCh"
+			+" ,count(distinct case when m.dtype='HospitalMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') then m.id else null end) as hospitAll"
+			+" ,count(distinct case when m.dtype='HospitalMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') and vss.code='CHARGED' then m.id else null end) as hospitAllCh"
+			+" ,count(distinct case when m.dtype='HospitalMedCase' and vht.code='DAYTIMEHOSP' then m.id else null end) as hospitDn"
+			+" ,count(distinct case when m.dtype='HospitalMedCase' and vht.code='DAYTIMEHOSP'and vss.code='CHARGED' then m.id else null end) as hospitDnCh"
+			+" from medcase m"
+			+" left join patient p on p.id=m.patient_id"
+			+" left join Omc_Oksm vn on vn.id=p.nationality_id"
+			+" left join VocHospType vht on vht.id=m.hospType_id"
+			+" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+			+" where (m.dtype='Visit' or m.dtype='HospitalMedCase')" 
+			+" and m.dateStart between to_date('"+beginDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')"
+			+" group by p.nationality_id,vn.name" ;
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	
+	var ret = new java.util.ArrayList() ;
+	
+	for (var i=0;i<list.size();i++) {
+		var wq = Packages.ru.ecom.ejb.services.query.WebQueryResult() ;
+		var obj = list.get(i) ;
+		wq.setSn(i+1) ;
+		for (var j=1;j<=7;j++) {
+			eval("wq.set"+j+"(obj["+(j)+"])") ;
+		}
+		ret.add(wq) ;
+	}
+	map.put("list",ret) ;
+	
+	var sql="select coalesce(p.nationality_id,0)||':${param.beginDate}:${param.finishDate}',vn.name as vnname"
+		+" ,count(distinct t.id) as polic"
+		+" ,count(distinct case when vss.code='CHARGED' then t.id else null end) as policCh "
+		+" from Ticket t"
+		+" left join MedCard m on m.id=t.medCard_id"
+		+" left join patient p on p.id=m.person_id"
+		+" left join Omc_Oksm vn on vn.id=p.nationality_id"
+		+" left join VocServiceStream vss on vss.id=t.vocPaymentType_id"
+		+" where t.date between to_date('"+beginDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')"
+		+" group by p.nationality_id,vn.name " ;
+	var list1 = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	
+	var ret1 = new java.util.ArrayList() ;
+	
+	for (var i=0;i<list1.size();i++) {
+		var wq = Packages.ru.ecom.ejb.services.query.WebQueryResult() ;
+		var obj = list1.get(i) ;
+		wq.setSn(i+1) ;
+		for (var j=1;j<=7;j++) {
+			eval("wq.set"+j+"(obj["+(j)+"])") ;
+		}
+		ret1.add(wq) ;
+	}
+	map.put("list1",ret1) ;
+	map.put("period",beginDate+"-"+finishDate) ;
+	return map ;
+}
 function printDocument(aCtx,aParams) {
 	//var map = new java.util.HashMap() ;
 	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.licence.InternalDocuments

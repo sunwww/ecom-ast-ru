@@ -16,6 +16,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -95,6 +96,15 @@ public class TemplateProtocol extends BaseEntity {
 		
 		return ret.length()>2?ret.substring(2).toString():ret.toString() ;
 	}
+	
+	/** Группы пользователей */
+	@Comment("Группы пользователей")
+	@ManyToMany
+	public List<SecGroup> getSecGroups() {return theSecGroups;}
+	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+
+	/** Группы пользователей */
+	private List<SecGroup> theSecGroups;
 
 	/** Параметры протокола */
 	private List<Parameter> theParameters;

@@ -19,5 +19,23 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Тип протокола")
 public class VocTypeProtocol extends VocBaseEntity {
+	/** Печать подписи зав. отделения */
+	@Comment("Печать подписи зав. отделения")
+	public Boolean getIsPrintAdministrator() {return theIsPrintAdministrator;}
+	public void setIsPrintAdministrator(Boolean aIsPrintAdministrator) {theIsPrintAdministrator = aIsPrintAdministrator;}
+	
+	/** Печать заголовка */
+	@Comment("Печать заголовка")
+	public Boolean getIsPrintTitle() {
+		return theIsPrintTitle;
+	}
 
+	public void setIsPrintTitle(Boolean aIsPrintTitle) {
+		theIsPrintTitle = aIsPrintTitle;
+	}
+
+	/** Печать заголовка */
+	private Boolean theIsPrintTitle;
+	/** Печать подписи зав. отделения */
+	private Boolean theIsPrintAdministrator;
 }

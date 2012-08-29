@@ -25,7 +25,7 @@ function printInfo(aCtx, aParams) {
 		map.put("card.code","") ;
 		map.put("card.cardIndex","") ;
 	}
-	var listInv = aCtx.manager.createQuery("from Invalidity where patient_id=:pat order by dateFrom desc")
+	var listInv = aCtx.manager.createQuery("from Invalidity where patient_id=:pat and (nextRevisionDate>=CURRENT_DATE or withoutExam='1') order by dateFrom desc,revisionDate desc,lastRevisionDate desc")
 	.setParameter("pat",patient.id).setMaxResults(1).getResultList() ;
 	var inv=listInv.size()>0?listInv.get(0):null;
 	var groupInv = inv!=null?inv.group:null ;

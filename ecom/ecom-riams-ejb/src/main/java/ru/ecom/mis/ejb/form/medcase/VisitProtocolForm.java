@@ -76,13 +76,13 @@ public class VisitProtocolForm extends ProtocolForm {
 	
 	/** Дата печати */
 	@Comment("Дата печати")
-	@DateString @DoDateString
+	@Persist @DateString @DoDateString
 	public String getPrintDate() {return thePrintDate;}
 	public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
 	
 	/** Время печати */
 	@Comment("Время печати")
-	@DoTimeString @TimeString
+	@Persist @DoTimeString @TimeString
 	public String getPrintTime() {return thePrintTime;}
 	public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
 
