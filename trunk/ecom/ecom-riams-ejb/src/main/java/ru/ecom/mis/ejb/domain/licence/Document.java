@@ -68,18 +68,6 @@ public class Document extends BaseEntity {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {
-		return theCreateTime;
-	}
-
-	public void setCreateTime(Time aCreateTime) {
-		theCreateTime = aCreateTime;
-	}
-
-	/** Время создания */
-	private Time theCreateTime;
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
@@ -95,5 +83,13 @@ public class Document extends BaseEntity {
 	private String theCreateUsername;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Время создания */
+	private Time theCreateTime;
 
 }
