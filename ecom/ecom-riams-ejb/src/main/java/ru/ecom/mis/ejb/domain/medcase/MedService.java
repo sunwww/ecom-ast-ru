@@ -32,7 +32,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 @AIndexes({
     @AIndex(properties="parent"),
     @AIndex(properties={"parent","startDate","finishDate"}),
-    @AIndex(properties={"startDate","finishDate","vocMedService"})
+    @AIndex(properties={"startDate","finishDate","vocMedService"}),
+    @AIndex(properties={"serviceType"})
     }) 
 @Table(schema="SQLUser")
 public class MedService extends BaseEntity{

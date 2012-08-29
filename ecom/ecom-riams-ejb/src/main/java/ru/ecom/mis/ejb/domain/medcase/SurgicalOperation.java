@@ -21,6 +21,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperation;
@@ -464,5 +465,13 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Мед. услуга */
 	private MedService theMedService;
+	
+	/** Аборта */
+	@Comment("Аборта")
+	public VocAbortion getAbortion() {return theAbortion;}
+	public void setAbortion(VocAbortion aAbortion) {theAbortion = aAbortion;}
+
+	/** Аборта */
+	private VocAbortion theAbortion;
 
 }

@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageEmploye;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
@@ -20,6 +23,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="medCase")
+})
 public class PhoneMessage extends BaseEntity {
 
 	/**
@@ -46,6 +52,14 @@ public class PhoneMessage extends BaseEntity {
 	public String getRecieverFio() {return theRecieverFio;}
 	public void setRecieverFio(String aRecieverFio) {theRecieverFio = aRecieverFio;}
 
+	/** Фамилия принявшего сообщение */
+	@Comment("Фамилия принявшего сообщение")
+	@OneToOne
+	public VocPhoneMessageEmploye getRecieverEmploye() {return theRecieverEmploye;}
+	public void setRecieverEmploye(VocPhoneMessageEmploye aRecieverEmploye) {theRecieverEmploye = aRecieverEmploye;}
+
+	/** Фамилия принявшего сообщение */
+	private VocPhoneMessageEmploye theRecieverEmploye;
 	/** Должность принявшего сообщение*/
 	private String theRecieverPost;
 	/** Фамилия принявшего */
@@ -195,11 +209,61 @@ public class PhoneMessage extends BaseEntity {
 	 * Случай медицинского обслуживания
 	 */
 	private MedCase theMedCase;
-	
-	@Transient
-	public String getWorkerInfo() {return theWorker!=null ? theWorker.getDoctorInfo():"";}
-	@Transient
-	public String getWorkFunctionInfo() {return theWorkFunction!=null? theWorkFunction.getWorkFunctionInfo():"";}
-	
+		
 
+	/** Подтип сообщения*/
+	@Comment("Подтип сообщения")
+	@OneToOne
+	public VocPhoneMessageSubType getPhoneMessageSubType() {return thePhoneMessageSubType;}
+	/** Подтип сообщения*/
+	public void setPhoneMessageSubType(VocPhoneMessageSubType a_Property) {
+		thePhoneMessageSubType = a_Property;
+	}
+
+
+	/** Подтип сообщения*/
+	private VocPhoneMessageSubType thePhoneMessageSubType;
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;	}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Пользователь, которые последним редактировал запись */
+	@Comment("Пользователь, которые последним редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Дата редакции */
+	@Comment("Дата редакции")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+
+	/** Время редакции */
+	@Comment("Время редакции")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+
+	/** Время редакции */
+	private Time theEditTime;
+	/** Дата редакции */
+	private Date theEditDate;
+	/** Пользователь, которые последним редактировал запись */
+	private String theEditUsername;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата создания */
+	private Date theCreateDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
 }
