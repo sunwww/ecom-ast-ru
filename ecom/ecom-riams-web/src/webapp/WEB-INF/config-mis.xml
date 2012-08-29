@@ -213,6 +213,13 @@
         <form-bean name="voc_drugForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm" />
         <form-bean name="voc_drugLNForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugLicensedNameForm" />
         
+        <!-- Документы -->
+        <form-bean name="licence_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm" />
+		<form-bean name="licence_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterForm" />
+		<form-bean name="licence_documentParameterGroupForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterGroupForm" />
+		<form-bean name="licence_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm" />
+		<form-bean name="licence_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
+	
 	</form-beans>
 
 	<global-forwards></global-forwards>
@@ -226,6 +233,14 @@
                 input='/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp" />
+        </action>
+        <action path='/service_kdl' type='ru.ecom.mis.web.action.kdl.KdlAction'
+                
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/service/kdl.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/service/kdl.jsp" />
         </action>
         <action path='/smo_journalDirectionByUsername_list' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
