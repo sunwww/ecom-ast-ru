@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -124,6 +125,19 @@ public class EntityHelper {
     	if(superclass.getSimpleName().equals("OmcAbstractVoc")) return aClass ;
     	return getSuperClass(superclass) ;
     }
+    private Class getSuperClass1(Class aClass) {
+    	if (aClass == null) return null ;
+    	if (aClass.isPrimitive()) return aClass;
+    	if (aClass.equals(BaseEntity.class)) return null ;
+    	Class superclass = aClass.getSuperclass();
+    	if (superclass==null) return aClass ;
+    	if (superclass.isPrimitive()) return aClass;
+    	if(superclass.equals(BaseEntity.class)) return aClass ;
+    	if(superclass.equals(VocBaseEntity.class)) return aClass ;
+    	if(superclass.equals(VocIdCodeName.class)) return aClass ;
+    	if(superclass.getSimpleName().equals("OmcAbstractVoc")) return aClass ;
+    	return getSuperClass(superclass) ;
+    }
 	public boolean isCacheable(Class aEntityClass) {
 		boolean ret =  !aEntityClass.isAnnotationPresent(MappedSuperclass.class) ;
 		if(ret) {
@@ -186,6 +200,12 @@ public class EntityHelper {
         Table table = (Table) aEntitClass.getAnnotation(Table.class) ;
         return (table==null || table.name().equals("")) ? aEntitClass.getSimpleName() : table.name() ;
     }
+    public String getSuperTableName(Class aEntityClass) {
+    	Class clazz = getSuperClass1(aEntityClass);
+        Table table = null;
+        if (clazz!=null) table = (Table) clazz.getAnnotation(Table.class) ;
+        return (table==null || table.name().equals("")) ? clazz.getSimpleName() : table.name() ;
+    }
     
     public String getColumnName(Class aEntityClass, String aProperty) throws NoSuchMethodException {
         //String methodName = PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
@@ -207,5 +227,17 @@ public class EntityHelper {
         }
         return aProperty ;
     }
-    
+	@SuppressWarnings("rawtypes")
+	public String getIdColumn(Class aClass){
+		String ret = "id";
+		if (aClass!=null){
+			@SuppressWarnings("unchecked")
+			AttributeOverride attributeOverride = (AttributeOverride) aClass.getAnnotation(AttributeOverride.class);
+			if (attributeOverride!=null){
+				Column column = attributeOverride.column();
+				if (column!=null) ret=column.name();
+			}
+		}
+		return ret;
+	}   
 }
