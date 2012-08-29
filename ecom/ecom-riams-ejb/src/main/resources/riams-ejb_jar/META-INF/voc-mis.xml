@@ -1671,4 +1671,25 @@ left join medcase smoP on smoP.owner_id=w.id "
     		queried = "name"
     	/>
     </voc>
+    <voc id='vocDocumentParameter' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocDocumentParameterGroup' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocExternalDocumentType' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
 </vocconfig>
