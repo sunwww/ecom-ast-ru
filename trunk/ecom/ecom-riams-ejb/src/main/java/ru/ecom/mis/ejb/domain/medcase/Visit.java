@@ -59,17 +59,6 @@ public class Visit extends ShortMedCase{
 	public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
 	
 	
-	/**Сообщения об инфекции */
-	@Comment("Сообщения об инфекции")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<PhoneMessage> getInfectiousMessages() {return theInfectiousMessages;}
-	public void setInfectiousMessages(List<PhoneMessage> aNewProperty) {theInfectiousMessages = aNewProperty;}
-
-	/** Сообщения в милицию*/
-	@Comment("Сообщения в милицию")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<PhoneMessage> getMilitiaMessages() {return theMilitiaMessages;}
-	public void setMilitiaMessages(List<PhoneMessage> aNewProperty) {theMilitiaMessages = aNewProperty;}
 
 	/** Результат визита */
 	@Comment("Результат визита")
@@ -110,10 +99,6 @@ public class Visit extends ShortMedCase{
 	private MisLpu theOrderLpu;
 	/**Диагнозы*/
 	private List<Diagnosis> theDiagnosis;
-	/**Сообщения об инфекции*/
-	private List<PhoneMessage> theInfectiousMessages;
-	/**Сообщения в милицию*/
-	private List<PhoneMessage> theMilitiaMessages;
 	/** Результат визита */
 	private VocVisitResult theVisitResult;
 	/** Цель визита */

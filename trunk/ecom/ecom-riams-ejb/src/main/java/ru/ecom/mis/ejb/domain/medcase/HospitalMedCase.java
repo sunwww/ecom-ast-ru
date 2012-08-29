@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -30,7 +29,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
-import ru.ecom.mis.ejb.domain.patient.MedPolicy;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -66,14 +64,8 @@ public class HospitalMedCase extends LongMedCase {
 	/** Сообщения об инфекции */
 	@Comment("Сообщения об инфекции")
 	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<PhoneMessage> getInfectiousMessages() {return theInfectiousMessages;}
-	public void setInfectiousMessages(List<PhoneMessage> aNewProperty) {theInfectiousMessages = aNewProperty;}
-
-	/** Сообщения в милицию */
-	@Comment("Сообщения в милицию")
-	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<PhoneMessage> getMilitiaMessages() {return theMilitiaMessages;}
-	public void setMilitiaMessages(List<PhoneMessage> aNewProperty) {theMilitiaMessages = aNewProperty;}
+	public List<PhoneMessage> getMessages() {return theMessages;}
+	public void setMessages(List<PhoneMessage> aNewProperty) {theMessages = aNewProperty;}
 
 	/** Дефекты догоспитального этапа */
 	@Comment("Дефекты догоспитального этапа")
@@ -469,10 +461,8 @@ public class HospitalMedCase extends LongMedCase {
 	private String theSupplyType;
 	/** Дефекты догоспитального этапа */
 	private VocPreAdmissionDefect thePreAdmissionDefect;
-	/** Сообщения в милицию */
-	private List<PhoneMessage> theMilitiaMessages;
 	/** Сообщения об инфекции */
-	private List<PhoneMessage> theInfectiousMessages;
+	private List<PhoneMessage> theMessages;
 	/** Внешний идентификатор */
 	private String theExternalId;
 

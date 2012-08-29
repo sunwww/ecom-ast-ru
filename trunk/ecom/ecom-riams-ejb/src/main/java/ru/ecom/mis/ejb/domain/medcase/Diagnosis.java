@@ -33,15 +33,16 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @AIndexes({
-	@AIndex(properties="medCase"),
+	@AIndex(properties="medCase")
+	,@AIndex(properties={"medCase","idc10"})
 	//@AIndex(properties="registrationType"),
 	//@AIndex(properties="acuity"),
 	//@AIndex(properties="primary"),
 	//@AIndex(properties="priority"),
 	//@AIndex(properties="idc10"),
-	@AIndex(properties={"patient","idc10"}),
-	@AIndex(properties={"patient","idc10","establishDate","priority"}),
-	@AIndex(properties={"patient","idc10","establishDate"})
+	,@AIndex(properties={"patient","idc10"})
+	,@AIndex(properties={"patient","idc10","establishDate","priority"})
+	,@AIndex(properties={"patient","idc10","establishDate"})
     }) 
 @Table(schema="SQLUser")
 public class Diagnosis extends BaseEntity {

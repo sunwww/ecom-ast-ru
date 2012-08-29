@@ -423,4 +423,6 @@ abstract public class MedCase extends BaseEntity {
 
 	/** Дата направления */
 	private Date theOrderDate;
+	
+
 }
