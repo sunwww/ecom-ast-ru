@@ -10,7 +10,6 @@ import ru.ecom.ejb.domain.simple.VocBaseEntity;
  * 1 - больничное учреждение
  * 2 - амбулаторно-поликлиническое учреждение
  * @author stkacheva
- *
  */
 @Entity
 @Table(schema="SQLUser")

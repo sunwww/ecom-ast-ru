@@ -13,7 +13,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(
 		{
-			@AIndex(unique= false, properties = {"lpu"})
+//			@AIndex(unique= false, properties = {"lpu"})
 		}
 	)
 public class OperatingRoom extends WorkPlace {
