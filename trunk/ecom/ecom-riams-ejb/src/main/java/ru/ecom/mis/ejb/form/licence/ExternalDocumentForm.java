@@ -1,8 +1,8 @@
 package ru.ecom.mis.ejb.form.licence;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
+import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -16,86 +16,52 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
 @EntityFormPersistance(clazz = ExternalDocument.class)
-@Comment("")
-@WebTrail(comment = "", nameProperties= "id", list="entityParentList-licence_externalDocument.do", view="entityParentView-licence_externalDocument.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ExternalDocumentForm extends IdEntityForm{
-	/**
-	 * Ссылка на сжатый файл
-	 */
-	@Comment("Ссылка на сжатый файл")
-	@Persist
-	public String getReferenceCompTo() {
-		return theReferenceCompTo;
-	}
-	public void setReferenceCompTo(String aReferenceCompTo) {
-		theReferenceCompTo = aReferenceCompTo;
-	}
-	/**
-	 * Ссылка на сжатый файл
-	 */
-	private String theReferenceCompTo;
-	/**
-	 * Комментарий
-	 */
-	@Comment("Комментарий")
-	@Persist
-	public String getComment() {
-		return theComment;
-	}
-	public void setComment(String aComment) {
-		theComment = aComment;
-	}
-	/**
-	 * Комментарий
-	 */
-	private String theComment;
-	/**
-	 * Пациент
-	 */
-	@Comment("Пациент")
-	@Persist
-	public Long getPatient() {
-		return thePatient;
-	}
-	public void setPatient(Long aPatient) {
-		thePatient = aPatient;
-	}
-	/**
-	 * Пациент
-	 */
-	private Long thePatient;
-	/**
-	 * Тип документа
-	 */
-	@Comment("Тип документа")
-	@Persist
-	public Long getType() {
-		return theType;
-	}
-	public void setType(Long aType) {
-		theType = aType;
-	}
-	/**
-	 * Тип документа
-	 */
-	private Long theType;
-	/**
-	 * Ссылка на файл
-	 */
+@Comment("Внешние документы")
+@WebTrail(comment = "Внешние документы", nameProperties = "id",view = "entityParentView-doc_externalDocument.do"
+		,shortView="entityShortView-doc_externalDocument.do")
+@Parent(property = "patient", parentForm = PatientForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document/External")
+public class ExternalDocumentForm extends DocumentForm {
+	/** Ссылка на файл */
 	@Comment("Ссылка на файл")
 	@Persist
 	public String getReferenceTo() {
 		return theReferenceTo;
 	}
-	public void setReferenceTo(String aReferenceTo) {
-		theReferenceTo = aReferenceTo;
+
+	public void setReferenceTo(String aLinkFile) {
+		theReferenceTo = aLinkFile;
 	}
-	/**
-	 * Ссылка на файл
-	 */
+	/** Ссылка на сжатый файл */
+	@Comment("Ссылка на сжатый файл")
+	@Persist
+	public String getReferenceCompTo() {
+		return theReferenceCompTo;
+	}
+
+	public void setReferenceCompTo(String aReferenceCompTo) {
+		theReferenceCompTo = aReferenceCompTo;
+	}
+
+	/** Ссылка на сжатый файл */
+	private String theReferenceCompTo;
+	/** Ссылка на файл */
 	private String theReferenceTo;
+	@Comment("Пациент")
+	@Persist
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
+
+	/** Комментарий */
+	@Comment("Комментарий")
+	@Persist
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+
+	/** Комментарий */
+	private String theComment;
+	/** Пациент */
+	private Long thePatient;
 	/**
 	 * Фамилия пациента
 	 */
@@ -207,8 +173,7 @@ public class ExternalDocumentForm extends IdEntityForm{
 	 * Время направления
 	 */
 	@Comment("Время направления")
-	@Persist
-	@TimeString @DoTimeString
+	@Persist @TimeString @DoTimeString
 	public String getOrderTime() {
 		return theOrderTime;
 	}
@@ -235,3 +200,4 @@ public class ExternalDocumentForm extends IdEntityForm{
 	 */
 	private String theOrderLpu;
 }
+
