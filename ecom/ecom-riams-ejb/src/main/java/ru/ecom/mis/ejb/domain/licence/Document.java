@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -67,6 +68,18 @@ public class Document extends BaseEntity {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {
+		return theCreateTime;
+	}
+
+	public void setCreateTime(Time aCreateTime) {
+		theCreateTime = aCreateTime;
+	}
+
+	/** Время создания */
+	private Time theCreateTime;
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
