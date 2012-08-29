@@ -23,8 +23,9 @@
       <msh:hidden property="username"/>
       <msh:hidden property="createDate"/>
       <msh:hidden property="startWorker"/>
-            <msh:hidden property="infoByPolicy" />
-            <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
+      <msh:hidden property="infoByPolicy" />
+      <msh:hidden property="isPreRecord" />
+      <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
                   	<msh:row>
       		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
@@ -89,6 +90,15 @@
         <msh:row>
           <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunctionExecute" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
+        <%--
+        <msh:ifFormTypeIsNotView formName="smo_visitForm">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/View">
+        <msh:row>
+	        <ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="3"/>
+	    </msh:row>        
+	    </msh:ifInRole>
+	    </msh:ifFormTypeIsNotView>
+	     --%>
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
@@ -104,7 +114,12 @@
         	<msh:label property="editDate" label="Дата редак."/>
           	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="8" labelSave="Принять пациента" labelSaving="Принять пациента..." />
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" labelSave="Принять пациента" labelSaving="Принять пациента..." />
+        <msh:ifFormTypeIsNotView formName="smo_visitForm">
+        <msh:row>
+        	<td colspan="3" align="right"><input type="button" onclick="preRecord()" value="Предварительный прием"></td>
+        </msh:row>
+        </msh:ifFormTypeIsNotView>
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView1212" formName="smo_visitForm">
@@ -128,6 +143,20 @@
             <msh:tableColumn columnName="Специалист" property="specialistInfo" guid="96c6570b-360d-46a5-9fc5-2f9c63ad1912" />
           </msh:table>
         </msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
+      	<msh:section title="Услуги" createUrl="entityParentPrepareCreate-smo_medService.do?id=${param.id}" createRoles="/Policy/Mis/MedCase/MedService/Create">
+      		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name,mc.medServiceAmount
+      		from MedCase mc 
+      		left join MedService ms on mc.medService_id=ms.id
+      		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
+      		"/>
+      		<msh:table name="services" action="entityParentView-smo_medService.do" 
+      	 	 viewUrl="entityShortView-smo_medService.do" idField="1" >
+      			<msh:tableColumn columnName="Название услуги" property="2"/>
+      			<msh:tableColumn columnName="Кол-во" property="3"/>
+      		</msh:table>
+      	</msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Document/Internal/View">
       	<msh:section title="Документы">
@@ -218,6 +247,54 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  
+  <msh:ifFormTypeIsNotView formName="smo_visitForm">
+  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+  	<script type="text/javascript">
+  	var frm = document.forms[0] ;
+  	frm.action='javascript:checkVisit()' ;
+  	function checkVisit() {
+  		TicketService.checkHospital($('dateStart').value,$('patient').value,$('serviceStream').value
+  		,{callback: function(aString) {
+        	//alert(aString) ;
+            if (aString!=null) {
+            	alert("Человек находился в больнице "+aString+" по ОМС его оформить за этот период нельзя!!!") ;
+            } else {
+             	frm.action= "entitySaveGoView-smo_visit.do";
+             	frm.submit() ;
+             }
+         }}) ;
+  	}
+  	function preRecord() {
+  		$('isPreRecord').value='1' ;
+  		document.forms[0].submit() ;
+  	}
+  	</script>
+  </msh:ifFormTypeIsNotView>
+  <%--
+  <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
+  <msh:ifFormTypeIsNotView formName="smo_visitForm">
+  
+  <script type="text/javascript">
+  var oldValue = $('dateStart').value ;
+  if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+  eventutil.addEventListener($('dateStart'),'blur',function(){
+		if (oldValue!=$('dateStart').value) {
+			var wf = +$("workFunctionExecute").value;
+  		if (wf=='') {wf=0;}
+			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
+  		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+  		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+	      	 		callback: function(aResult) {
+	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 		}
+	      	 	}) ;
+		}
+	}) ;
+  </script>
+  </msh:ifFormTypeIsNotView>
+  </msh:ifInRole>
+   --%>
   <script type="text/javascript">
 	  function printDischarge() {
 		  if (confirm('Вы хотите распечатать выписку по заключению без изменений?')) {
@@ -258,39 +335,12 @@
     </script>
   </msh:ifInRole>
   <msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/PrintNotView">
-  	<msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintDouble">
   	<script type="text/javascript">
   	function printVisit() {
-	  	TemplateProtocolService.getCountSymbolsInProtocol ('${param.id}'  , {
-	  		 callback: function(aCount) {
-				 	//alert(aCount) ;
-				     if (aCount>2760) {
-				          window.location.href = "print-visit1.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;
-				     } else {
-	
-				     	 window.location.href = "print-visit.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;
-	
-				     }
-				    
-				}}) ;
+	  		window.location.href = "print-visit.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;
 			$('isPrintInfo').checked='checked' ;
     }
   	</script>
-  	</msh:ifInRole>
-  	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/PrintDouble">
-  	<script type="text/javascript">
-  	function printVisit() {
-	  	TemplateProtocolService.getCountSymbolsInProtocol ('${param.id}'  , {
-	  		 callback: function(aCount) {
-				 	//alert(aCount) ;
-				     window.location.href = "print-visit.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;				    
-				}}) ;
-			$('isPrintInfo').checked='checked' ;
-    }
-  	</script>
-  	</msh:ifNotInRole>
-  	
-    
   </msh:ifNotInRole>
   <script type="text/javascript">
   var isPrint=0, isDiary=0, isDiag=0, isCloseSpo=0 ;

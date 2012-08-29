@@ -26,6 +26,26 @@
           </msh:sectionContent>
           </msh:section>
       </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View">
+      	<msh:section createRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" createUrl="entityParentPrepareCreate-stac_criminalMessages.do?id=${param.id}" title="Сообщения в милицию">
+      		<ecom:webQuery name="milMessages" nativeSql="
+      		select cpm.id,vpmt.name as vpmtname,cpm.whenEventOccurred
+      		,cpm.place,vpmo.name as vpmoname
+      		 from PhoneMessage cpm
+      		left join VocPhoneMessageType vpmt on cpm.phoneMessageType_id=vpmt.id
+      		left join VocPhoneMessageOutcome vpmo on vpmo.id=cpm.outcome_id
+      		where cpm.medCase_id='${param.id}' and cpm.dtype='CriminalPhoneMessage'
+      		"/>
+      		<msh:table name="milMessages" 
+      		viewUrl="entityShortView-stac_criminalMessages.do"
+      		action="entityParentView-stac_criminalMessages.do" idField="1">
+      			<msh:tableColumn property="2" columnName="Тип"/>
+      			<msh:tableColumn property="3" columnName="Когда"/>
+      			<msh:tableColumn property="4" columnName="Место"/>
+      			<msh:tableColumn property="5" columnName="Исход"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="0cbf528e-b3d1-48bb-9d50-a878dbbd0c4e">
         <msh:section title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>" guid="313bfb94-a58e-4041-be05-dacad7710873">
           <ecom:webQuery  name="allSLOs" nativeSql="select MedCase.id
@@ -96,11 +116,10 @@
           <ecom:webQuery name="allSurgOper" nativeSql="select so.id
           ,so.operationDate as sooperationDate
           ,so.operationTime as soperationTime
-          ,coalesce(ms.code,vo.code,'')||' '||coalesce(ms.name,vo.name) as voname
+          ,ms.code||' '||ms.name as voname
           , case when parent.DTYPE='HospitalMedCase' then 'Приемное отделение' when parent.DTYPE='DepartmentMedCase' then d.name else '' end as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           from SurgicalOperation as so 
-          left join VocOperation vo on vo.id=so.operation_id 
           left join MedService ms on ms.id=so.medService_id
           left join medcase parent on parent.id=so.medcase_id 
           left join MisLpu d on d.id=parent.department_id 

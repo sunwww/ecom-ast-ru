@@ -72,10 +72,10 @@
         </msh:row>
 
         <msh:row>
-        	<msh:checkBox property="compulsoryTreatment" label="Принудительное лечение"/>
+        	<msh:checkBox property="compulsoryTreatment" label="Недобровольная госпитализация (статья 29)" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:checkBox property="incapacity" label="Недееспособный (статья 29)"/>
+        	<msh:checkBox property="incapacity" label="Недееспособный"/>
         	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
         </msh:row>
         </msh:ifInRole>

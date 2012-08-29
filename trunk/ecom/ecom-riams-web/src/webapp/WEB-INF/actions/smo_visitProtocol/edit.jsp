@@ -9,10 +9,25 @@
 
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="style" type="string">
+        <style type="text/css">            
+            .protocols {
+				left:0px;  width:99%; 
+				top:0px;  height:55em;
+			}
+			#epicriPanel {
+			width:100%;
+			}
+			.record {
+			width:100%;
+			}
+        </style>
+
+    </tiles:put>
 
 <tiles:put name='body' type='string'>
 	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-    	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" />
+    	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>
     <msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do" 
     defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" >
@@ -32,23 +47,26 @@
                     <msh:textField label="Дата" property="dateRegistration" fieldColSpan="1" guid="b58ehb-b971-441e-9a90-58019c07" />
                     <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  guid="b3hb-b971-441e-9a90-8019c07" />
                 </msh:row >
-                
+                <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
+                	<msh:row>
+                		<msh:autoComplete property="type" fieldColSpan="3" label="Тип протокола" horizontalFill="true"
+                		vocName="vocTypeProtocol"/>
+	                </msh:row>
+                </msh:ifInRole>
                 <msh:row>
-                    <msh:textArea property="record" label="Текст протокола:"
-                                      size="100" rows="30" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
+                    <msh:textArea property="record" label="Текст:"
+                                      size="100" rows="25" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
                     
-                    <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-                    
-                    <td colspan="2">
-                        <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
-                    </td>
-                    
-                    <tags:keyWord name="record" service="KeyWordService" methodService="getDecryption"/>
-                    </msh:ifFormTypeIsNotView>
-                    <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
-                    <td></td>
-                    </msh:ifFormTypeIsView>
                 </msh:row>
+                <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+                <msh:row>
+                    <td colspan="3" align="right">
+                        <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+                    </td>
+                    <tags:keyWord name="record" service="KeyWordService" methodService="getDecryption"/>
+                </msh:row>
+                </msh:ifFormTypeIsNotView>
                 <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
                 
                 <msh:row>
@@ -104,6 +122,26 @@
     
 
     <tiles:put name='javascript' type='string'>
+    	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    	<script type="text/javascript">
+    	var isChangeSizeEpicrisis=1 ;
+		function changeSizeEpicrisis() {
+			if (isChangeSizeEpicrisis==1) {
+				Element.addClassName($('record'), "protocols") ;
+				if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Уменьшить' ;
+				isChangeSizeEpicrisis=0 ;
+			} else {
+				Element.removeClassName($('record'), "protocols") ;
+				if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Увеличить' ;
+				isChangeSizeEpicrisis=1;
+			}
+		}
+		eventutil.addEventListener($('record'), "dblclick", 
+	  		  	function() {
+					changeSizeEpicrisis() ;
+	  		  	}) ;
+    	</script>
+    	</msh:ifFormTypeIsNotView>
     	<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
     		<script type="text/javascript">
     			if (confirm("Вы хотите создать дневник на основе шаблона?")) {

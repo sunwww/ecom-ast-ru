@@ -10,12 +10,15 @@
     <msh:form guid="123" action="entityParentSaveGoView-mis_operatingRoom.do" defaultField="name">
       <msh:hidden property="id" guid="67476bdd-7eb2-4eac-8512-9476a6e2d5ad" />
       <msh:hidden property="saveType" guid="0a37e6e5-4875-4dae-a226-50fba9990881" />
-      <msh:hidden property="lpu" guid="e38246ea-4a88-40fb-8f4d-3986e8856332" />
+      <msh:hidden property="parent" guid="e38246ea-4a88-40fb-8f4d-3986e8856332" />
       <msh:panel guid="04fd7a8f-37bc-4492-996b-5778911d56cc">
         <msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d">
         	<msh:textField property="name" label="Наименование" size="100"/>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="4" guid="9279e49d-2ee0-426b-9024-b06947a1f0a8" />
+        <msh:row>
+	        <msh:autoComplete property="lpu" fieldColSpan="3" vocName="lpu" horizontalFill="true"/>
+        </msh:row>
+        <msh:submitCancelButtonsRow colSpan="3" guid="9279e49d-2ee0-426b-9024-b06947a1f0a8" />
       </msh:panel>
     </msh:form>
   </tiles:put>

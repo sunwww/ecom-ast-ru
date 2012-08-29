@@ -42,6 +42,15 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+		<action path='/journal_militiaMessage'
+		    type='ru.ecom.mis.web.action.medcase.journal.AdmissionJournalSearchAction'
+		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    input='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
+		    />
+		</action>	
 		<!--        <action     path = "/mis_lpuAreaSave"
 			type = 'ru.ecom.web.actions.parententity.SaveAction'
 			scope = 'request'
@@ -65,6 +74,13 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/analysis_department_list.jsp" />
+        </action>
+        <action path='/stac_report_007' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report007.jsp" />
         </action>
         <action path='/stac_diagnosis_by_slo_list' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
                 name='stac_admissionJournalForm'
@@ -168,7 +184,7 @@
         </action>
 		<action path='/stac_journalByHospital'
 		    type='ru.ecom.mis.web.action.medcase.journal.AdmissionJournalSearchAction'
-		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    name='stac_admissionJournalForm' validate='true' scope='session'
 		    input='/WEB-INF/actions/stac_sslAllInfo/listByHospital.jsp'
 		    >
 		    <forward name="success" redirect="false"
@@ -358,6 +374,14 @@
                 input='/WEB-INF/actions/stac_sslAdmission/list_receivedWithoutPolicy.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_receivedWithoutPolicy.jsp" />
+        </action>
+        <action path='/stac_print_protocol' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_slo/print_protocol_by_current.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/print_protocol_by_current.jsp" />
         </action>
         		
         <action path='/stac_problemPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'

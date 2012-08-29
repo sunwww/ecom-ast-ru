@@ -18,25 +18,14 @@
         <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
         <msh:hidden property="medCase" guid="77b53bb5-1d6f-4816-852d-2a0612d33303" />
         <msh:hidden property="lpu" guid="57298530-fc77-496f-b415-e903df05a0e8" />
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="2" fieldColSpan="2"/>
         </msh:row>
         <msh:separator label="Сведения до операции" colSpan="" guid="a7a51c30-4065-4ab85b4ade6f66" />
-        <msh:row guid="03b71d93-07b4-4070-a1da-3f8752c80442">
-          <msh:textArea rows="6" hideLabel="false" property="preoperativeEpicrisis" viewOnlyField="false" label="Предоперационный эпикриз" guid="531235ed-942f-48b0-8c00-d3d30f7da592" fieldColSpan="3" />
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="eb0595fe-a9ab-4033-8bd7-ec5ce3fd35e2">
-            <td colspan="1">
-              <input type="button" value="Шаблон" onClick="showPreoperativeEpicrisisTempTemplateProtocol()" />
-            </td>
-          </msh:ifFormTypeIsNotView>
-        </msh:row>
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:autoComplete property="idc10Before" label="МКБ до операции" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
         </msh:row>
-        </msh:ifNotInRole>
         <msh:separator label="Сведения об операции" colSpan="" guid="a7a51c304-335b4ade6f66" />
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
 	        <msh:row guid="f7540b-4474-46c6-b162-828">
 	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
 	          <msh:textField property="operationTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
@@ -45,36 +34,29 @@
 	          <msh:textField property="operationDateTo" label="Окончание дата" guid="e8599-31e6-4c99-a6f5-885caf" />
 	          <msh:textField property="operationTimeTo" label="время" guid="496b-8a35-f89732" />
 	        </msh:row>
-        </msh:ifNotInRole>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
 	        <msh:row guid="f7540b-4474-46c6-b162-828">
 	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
 	        </msh:row>
-        </msh:ifInRole>
         <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
           <msh:autoComplete property="department" label="Отделение" guid="cfc50051-15f6-4b6f-a382-9c5387482c60" fieldColSpan="3" horizontalFill="true" vocName="vocLpuOtd" />
         </msh:row>
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="operation" label="Операция" size="60" guid="e22-9d6f-4c39-a6a1-302f14f" fieldColSpan="3" horizontalFill="true" vocName="vocOperation" />
         </msh:row>
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
+          <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
+        </msh:row>
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
           <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
         </msh:row>
         <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
           <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
-            <td colspan="1">
-              <input type="button" value="Шаблон" onClick="showOperationTextTempTemplateProtocol()" />
-            </td>
-          </msh:ifFormTypeIsNotView>
         </msh:row>
         <msh:row guid="203625bc-d215-4f48-8ee3-44f48785755d">
           <msh:autoComplete horizontalFill="true" property="aspect" label="Показания" vocName="vocHospitalAspect" />
           <msh:autoComplete horizontalFill="true" vocName="vocOperationTechnology" property="technology" label="С испол. ВМТ"/>
         </msh:row>
-        </msh:ifNotInRole>
         
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
 	         <msh:row>
@@ -140,9 +122,6 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
-      <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp" />
-      <tags:templateProtocol property="operationText" name="OperationTextTemp" />
-      <tags:templateProtocol property="preoperativeEpicrisis" name="PreoperativeEpicrisisTemp" />
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_surOperationForm" guid="e71c21cc-2a77-4d16-9ee0-ba293d19a42b">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View" guid="9a06820c-3f3b-4744-880d-06aa1745888d">
@@ -179,70 +158,6 @@
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
-  <tiles:put name="javascript" type="string">
-    <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
-    <script type="text/javascript">// <![CDATA[//
-    	
-    	var oldaction = document.forms[0].action ;
-    	document.forms[0].action = 'javascript:isExistSurOperation()';
-    	function isExistSurOperation() {
-    		 
-    		HospitalMedCaseService.findDoubleOperationByPatient($('id').value,$('medCase').value,$('operation').value, $('operationDate').value
-    		, {
-                   callback: function(aResult) {
-                   		//alert(aResult);
-                      if (aResult) {
-				    		showMedServiceDouble(aResult) ;
-                       } else {
-                       		document.forms[0].action = oldaction ;
-				    		document.forms[0].submit() ;
-                       }
-                   }
-	        	}
-	        	);
-    	}
-    		
-    	//]]>
-    	</script>
-    	
-  </msh:ifFormTypeIsNotView>
-  
-    <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="8b68bb61-7bc0-425e-b09c-7361891144b1">
-    	  <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-    	  <script type="text/javascript">
-    	  	$('numberInJournal').focus() ;
-    	  	$('numberInJournal').select() ;
-    	  </script>
-    	  </msh:ifNotInRole>
-    	  <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-    	  <script type="text/javascript">
-    	  	$('operationDate').focus() ;
-    	  	$('operationDate').select() ;
-    	  </script>
-    	  </msh:ifInRole>
-      <script type="text/javascript">
-      departmentAutocomplete.setParentId($('lpu').value) ;
-  	var oldValue = $('operationDate').value ;
-  	operationAutocomplete.setParentId($('operationDate').value) ;
-  	
-  	eventutil.addEventListener($('operationDate'), "change", 
-  	function() {
-  		changeParentMedService() ;
-  	}) ;
-  	eventutil.addEventListener($('operationDate'),'blur',function(){
-  		if (oldValue!=$('operationDate').value) {
-  			changeParentMedService() ;
-  		}
-  	}) ;
 
-  	function changeParentMedService() {
-  		operationAutocomplete.setParentId($('operationDate').value) ;
-  		$('operation').value='' ;
-  		$('operationName').value='' ;
-  		oldValue = $('operationDate').value ;
-  	}      </script>
-    </msh:ifFormTypeIsNotView>
-  </tiles:put>
 </tiles:insert>
 

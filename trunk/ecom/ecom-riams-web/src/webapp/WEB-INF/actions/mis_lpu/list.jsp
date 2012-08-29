@@ -13,6 +13,9 @@
             <msh:sideLink key='ALT+N' roles="/Policy/Mis/MisLpu/Create" params="" action="/entityPrepareCreate-mis_lpu" name="Добавить ЛПУ" />
 
         </msh:sideMenu>
+        <msh:sideMenu title="Перейти">
+	      <msh:sideLink key="ALT+1" action="/entityParentList-mis_buildingPlace.do?id=-1" name="Список зданий" roles="/Policy/Mis/WorkPlace/View"/>
+        </msh:sideMenu>
     </tiles:put>
 
     <tiles:put name='body' type='string' >

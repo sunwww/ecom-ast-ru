@@ -129,7 +129,7 @@
         <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
           <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:separator label="Доставлен" colSpan="9" guid="f2136abf-c311-42e4-86ad-c24b7da708d5" />
+        <msh:separator label="Доставлен (только для экстренных больных)" colSpan="9" guid="f2136abf-c311-42e4-86ad-c24b7da708d5" />
         <msh:row guid="e811bd41-db0a-4275-b786-75f958759453">
           <msh:autoComplete showId="false" vocName="vocOmcFrm" hideLabel="false" property="orderType" viewOnlyField="false" guid="ff2a0045-c4fc-4efd-9bcd-f84951ac74a2" horizontalFill="true" />
           <msh:textField property="supplyOrderNumber" label="Номер наряда" guid="63f0777e-6c0f-4ea9-b389-8a620004a456" />
@@ -145,7 +145,10 @@
         </msh:row>
         <msh:separator label="*Госпитализация" colSpan="9" guid="4909ac97-3ad7-4eab-a657-1d103779ed47" />
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
-          <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" parentAutocomplete="lpu" fieldColSpan="3" />
+          <msh:autoComplete property="department" label="Отделение" vocName="vocLpuHospOtd" horizontalFill="true" parentAutocomplete="lpu" fieldColSpan="3" />
+        </msh:row>
+        <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
+          <msh:autoComplete property="ownerFunction" label="Деж. врач отд." vocName="workFunctionByLpu" horizontalFill="true" parentAutocomplete="department" fieldColSpan="3" />
         </msh:row>
         <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
@@ -163,10 +166,10 @@
 		        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:checkBox property="compulsoryTreatment" label="Принудительное лечение"/>
+	        	<msh:checkBox property="compulsoryTreatment" label="Недобровольная госпитализация лечение (статья 29)" fieldColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:checkBox property="incapacity" label="Недееспособный (статья 29)"/>
+	        	<msh:checkBox property="incapacity" label="Недееспособный"/>
 	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
 	        </msh:row>
         </msh:ifInRole>

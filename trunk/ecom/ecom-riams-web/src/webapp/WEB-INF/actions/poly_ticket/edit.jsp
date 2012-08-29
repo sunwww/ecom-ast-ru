@@ -335,13 +335,21 @@
 				    		alert('Уже заведен талон посещения на '+$('date').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
 				    			 ;
                        } else {
-                    	   	TicketService.saveSession($('date').value,$('workFunction').value
-                    	   			,$('workFunctionName').value,$('medServices').value,$('emergency').checked, {
-                    	   		callback: function(aResult) {
-                    	   			document.forms[0].action = oldaction ;
-        				    		document.forms[0].submit() ;
-                    	   		}
-                    	   	})
+                     		TicketService.checkHospitalByMedcard($('date').value,document.forms[0].medcard.value,$('vocPaymentType').value
+                     		  		,{callback: function(aString) {
+                     		        	//alert(aString) ;
+                     		            if (aString!=null) {
+                     		            	alert("Человек находился в больнице "+aString+" по ОМС его оформить за этот период нельзя!!!") ;
+                     		            } else {
+                                    	   	TicketService.saveSession($('date').value,$('workFunction').value
+                                    	   			,$('workFunctionName').value,$('medServices').value,$('emergency').checked, {
+                                    	   		callback: function(aResult) {
+                                    	   			document.forms[0].action = oldaction ;
+                        				    		document.forms[0].submit() ;
+                                    	   		}
+                                    	   	});
+                     		             }
+                     		         }}) ;
                        		
                        }
                    }

@@ -10,7 +10,7 @@
     	  - Рабочая функция к специалистам
     	  -->
     <msh:form guid="formHello" action="/entityParentSaveGoView-work_personalWorkFunction.do" defaultField="workFunctionName"
-    title="<a href='entityView-work_personalWorkFunction.do?id=${param.id}'>Групповая рабочая функция</a>">
+    title="<a href='entityView-work_personalWorkFunction.do?id=${param.id}'>Рабочая функция</a>">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="lpuRegister" guid="384a5a43-d9f9-464e-a36b-bcf6e2e8c6d4" />
@@ -55,7 +55,30 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>
-    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="work_personalWorkFunctionForm">
+    <msh:sideLink action="/javascript:createSecUser('.do')"  name="Добавить пользователя" roles="/Policy/Jaas/SecUser/Create" styleId="createSecUser"/>
+  	<msh:ifFormTypeIsView formName="work_personalWorkFunctionForm">
+		<script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
+  		<script type="text/javascript">
+  			function generationCalendar(){
+  				WorkCalendarService.generateBySpecialist(
+					//Long aCalendarDay, String aCalendarTime, Boolean aMinIs,
+					${param.id},
+			     {
+						callback: function(aTime) {
+							alert(aTime) ;
+     					}
+     					, errorHandler: function(aMessage) {
+					     alert(aMessage) ;
+						}
+     			 }	) ;
+  			}
+  	      	 function createSecUser() {
+  	      		window.location = 'entityPrepareCreate-secuser.do?workFunction='+$('id').value+"&tmp="+Math.random() ;
+  	      	 }
+  	      	if (+$('secUser').value>0) $('createSecUser').style.display='none' ;
+  		</script>
+  	</msh:ifFormTypeIsView>
+  	<msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="work_personalWorkFunctionForm">
       <msh:section guid="sectionChilds" title="Календарь">
         <ecom:parentEntityListAll guid="parentEntityListChilds" formName="cal_workCalendarForm" attribute="childs" />
         <msh:table viewUrl="entityShortView-cal_workCalendar.do" guid="tableChilds" name="childs" action="entityParentView-cal_workCalendar.do" idField="id">

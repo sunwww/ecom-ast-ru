@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="StacJournal">Список СЛО </msh:title>
@@ -36,8 +36,10 @@
 			else (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)
 		  end as cnt2
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
+    ,vhr.name as vhrname
     from MedCase as m 
     left join medcase as h on h.id=m.parent_id 
+    left join VocHospitalizationResult vhr on vhr.id=h.result_id
     left join statisticstub as ss on ss.id=h.statisticstub_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
@@ -63,6 +65,7 @@
 		      <msh:tableColumn columnName="Дата выписки (стац)" property="9" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 		      <msh:tableColumn columnName="К.Д по стац" property="11"/>
 		      <msh:tableColumn columnName="Диагноз" property="12"/>
+		      <msh:tableColumn columnName="Результат госпитализации" property="13"/>
 		      
 		     </msh:table>
       </msh:ifNotInRole>
@@ -77,6 +80,7 @@
 	      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 	      <msh:tableColumn columnName="К.Д по отд" property="10"/>
 	      <msh:tableColumn columnName="Диагноз" property="12"/>
+	      <msh:tableColumn columnName="Результат госпитализации" property="13"/>
       
           </msh:table>
       

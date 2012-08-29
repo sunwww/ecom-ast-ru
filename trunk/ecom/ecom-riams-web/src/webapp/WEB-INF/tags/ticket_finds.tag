@@ -34,7 +34,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		title="Дубли талонов по специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketdouble"/>
 	<msh:sideLink name="Проблемы с полисами" action="/poly_problemTickets_list.do" 
-		title="Проблемы с полисами по талонам" roles="/Policy/Poly/Ticket/View"
+		title="Проблемы с полисами по талонам" roles="/Policy/Poly/Ticket/PolicyProblem"
 		styleId="ticketsByProblemWithMpolicy"/>
 </msh:sideMenu>
 <msh:sideMenu title="Статистика">

@@ -24,7 +24,18 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
         Long lpu ;
         String onlyMonth = aRequest.getParameter("onlyMonth") ;
-        if (onlyMonth==null || onlyMonth.equals("") ||  (onlyMonth.equals("true") ||onlyMonth.equals("1") || onlyMonth.equals("on"))) {
+        String onlyMonthH = aRequest.getParameter("onlyMonthH") ;
+    	if (onlyMonth ==null && onlyMonthH==null) onlyMonthH = (String)aRequest.getSession(true).getAttribute("ByDepartmentAdmission.onlyMonth") ;
+        
+    	if ((onlyMonth==null && onlyMonthH==null) 
+    			|| (onlyMonthH!=null && onlyMonthH.equals("1"))
+    			||  ( onlyMonth!=null &&onlyMonthH==null &&( onlyMonth.equals("true") 
+    					||onlyMonth.equals("1") 
+    					|| onlyMonth.equals("on"))
+    					)) {
+    		
+    		aRequest.setAttribute("onlyMonth",1) ;
+    		aRequest.getSession(true).setAttribute("ByDepartmentAdmission.onlyMonth", "1") ;
         	Date cur = new Date() ;
         	Calendar cal = Calendar.getInstance() ;
         	cal.setTime(cur) ;
@@ -32,18 +43,25 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         	Date prev = cal.getTime() ;
         	SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd") ;
         	aRequest.setAttribute("onlyMonth",1) ;
-        	String per = new StringBuilder().append("between cast('").append(FORMAT_1.format(prev)).append("' as date)  and cast('").append(FORMAT_1.format(cur)).append("' as date)").toString() ;
+        	String per = new StringBuilder().append("between to_date('").append(FORMAT_1.format(prev)).append("','yyyy-mm-dd')  and to_date('").append(FORMAT_1.format(cur)).append("','yyyy-mm-dd')").toString() ;
+        	aRequest.setAttribute("onlyMonthInfo", " ЗА МЕСЯЦ");
         	aRequest.setAttribute("onlyMonthH", new StringBuilder().append(" and m.dateStart ").append(per).toString());
         	aRequest.setAttribute("onlyMonthD", new StringBuilder().append(" and d.transferDate ").append(per).toString());
-        } else {
-        	aRequest.setAttribute("onlyMonth",0) ;
-        }
+    	} else {
+    		aRequest.setAttribute("onlyMonth",0) ;
+    		aRequest.setAttribute("onlyMonthS", "");
+    		aRequest.getSession(true).setAttribute("ByDepartmentAdmission.onlyMonth", "0") ;
+    	}
         if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
             if (aForm!=null) {
             	DepartmentJournalForm form =(DepartmentJournalForm) aForm ;
             	lpu = form.getDepartment() ;
-            	if (lpu==null || lpu==0) {
-            		form.addMessage(new FormMessage("Укажите отделение поиска")) ;
+            	
+            	if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            		lpu=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
+            		if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            			form.addMessage(new FormMessage("Укажите отделение поиска")) ;
+            		}
             	}
             	
             } else{

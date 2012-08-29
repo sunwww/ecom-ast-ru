@@ -111,7 +111,7 @@
 	     from SurgicalOperation so
 	      left join Patient p on p.id=so.patient_id
 	      left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-	      left join VocOperation vo on vo.id=so.operation_id where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	      left join MedService vo on vo.id=so.medService_id where operationDate  between '${param.dateBegin}'  and '${param.dateEnd}'  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" action="entityView-stac_surOperation.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>

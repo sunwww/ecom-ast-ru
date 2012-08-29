@@ -199,6 +199,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/f039_list.jsp"/>
         </action>
+        <action path='/poly_directOtherSpecialist' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp"/>
+        </action>
         <action path='/visit_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
                 name='poly_journalBySpecForm'
                 validate='true'
@@ -214,6 +222,38 @@
                 input='/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp"/>
+        </action>
+        <action path='/journal_visits_list' type='ru.ecom.mis.web.action.medcase.journal.VisitPatientByPoliclinic'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_visits.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_visits.jsp"/>
+        </action>
+        <action path='/journal_nationality_smo_list' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_nationality.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality.jsp"/>
+        </action>
+        <action path='/journal_nationality_smo_data' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_nationality_data.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality_data.jsp"/>
+        </action>
+        <action path='/journal_visit_diagnosis' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='stac_admissionJournalForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_diagnosis.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_diagnosis.jsp"/>
         </action>
         <action path='/poly_f039_add_list' type='ru.ecom.poly.web.action.ticket.Form039Action'
                 name='poly_journalBySpecForm'

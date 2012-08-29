@@ -79,6 +79,11 @@
 
         </msh:row>
         <msh:row>
+        	<td></td>
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="7">Соц. статус  
+	        </td>
+        </msh:row>        <msh:row>
         <td colspan="6" class="buttons" style="text-align: left">
 			<input type="button" title="Найти [CTRL+ENTER]" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;poly_f039_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 			<input type="button" title="Печать [CTRL+ENTER]" onclick="this.value=&quot;Печать&quot;; getId(0);this.form.action=&quot;print-f039.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">

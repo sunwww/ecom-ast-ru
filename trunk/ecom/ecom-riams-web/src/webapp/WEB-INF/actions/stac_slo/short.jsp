@@ -221,7 +221,7 @@
           , d.name as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           from SurgicalOperation as so 
-          left join VocOperation vo on vo.id=so.operation_id 
+          left join MedService vo on vo.id=so.medService_id 
           left join medcase parent on parent.id=so.medcase_id 
           left join MisLpu d on d.id=so.department_id 
           left join WorkFunction wf on wf.id=so.surgeon_id
@@ -247,5 +247,8 @@
       </msh:ifInRole>
       </msh:ifFormTypeIsView>
     
+  </tiles:put>
+    <tiles:put name="title" type="string">
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>
 </tiles:insert>

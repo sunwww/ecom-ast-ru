@@ -62,6 +62,14 @@
 	          <msh:textField property="dateFrom" label="Дата начала" guid="71bb6108-4449-460b-aaca-0c7419683133" />
 	          <msh:textField property="dateTo" label="Дата окончания" guid="31e70e41-3526-4a9e-b746-263d6e81e657" />
 	        </msh:row>
+        <msh:ifFormTypeIsNotView formName="dis_documentForm">
+        	<msh:row>
+        		<msh:textField property="info" labelColSpan="2" fieldColSpan="2" horizontalFill="true"
+        			label="Количество дней нетрудоспособности" viewOnlyField="true"/>
+        		
+        	</msh:row>
+        </msh:ifFormTypeIsNotView>        
+	        
 	        <msh:row>
 	          <msh:autoComplete vocName="vocDisabilityRegime" property="regime" label="Режим" guid="a0252f86-792b-4992-a278-5cb0d1a1bc27" fieldColSpan="3" horizontalFill="true" />
 	        </msh:row>
@@ -253,6 +261,53 @@
 	  		$('otherNumberReadOnly').value=$('job').value.substring(0,29).toUpperCase() ;	
 	  	}
 	  	setJob() ;
+	  	
+
+	  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_DOWN, 
+	  		  	function() {
+		  			setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_UP, 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateFrom'), "change", 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateFrom'), "blur", 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_DOWN, 
+	  		  	function() {
+		  			setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_UP, 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateTo'), "change", 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	eventutil.addEventListener($('dateTo'), "blur", 
+	  		  	function() {
+	  				setPeriod() ;
+	  		  	}) ;
+	  	function setPeriod() {
+	  		try {
+	  			if ($('dateFrom').value.length==10 &&  $('dateTo').value.length==10) {
+		  			var dateTo = new Date($('dateTo').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+		  			var dateFrom = new Date($('dateFrom').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+		  			var one_day=1000*60*60*24 ;
+		  			$('infoReadOnly').value=1+((dateTo.getTime()-dateFrom.getTime())/one_day) ;
+	  			}
+	  		} catch(e) {
+	  			//alert('222') ;
+	  		}
+	  	}
+	  	setPeriod() ;
 	 </script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>
@@ -273,14 +328,20 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink params="id" 
-      	name="документа нетрудоспособности" key="ALT+6" 
-      	action="/print-disability.do?s=DisabilityService&amp;m=printDocument"/>
+      	name="шаблон 1" key="ALT+6" 
+      	action="/print-disability_1.do?s=DisabilityService&amp;m=printDocument"/>
       	<msh:sideLink params="id" 
-      	name="НЕЗАКРЫТОГО документа нетрудоспособности" key="ALT+7" 
-      	action="/print-disability.do?s=DisabilityService&amp;m=printDocument"/>
+      	name="НЕЗАКРЫТЫЙ шаблон 1" key="ALT+7" 
+      	action="/print-disability_1.do?s=DisabilityService&amp;m=printDocument"/>
       	<msh:sideLink params="id" 
-      	name="документа нетрудоспособности ОТСТУП 4" key="ALT+8" 
-      	action="/print-disability4.do?s=DisabilityService&amp;m=printDocument"/>
+      	name="шаблон 2" key="ALT+8" 
+      	action="/print-disability_2.do?s=DisabilityService&amp;m=printDocument"/>
+      	<msh:sideLink params="id" 
+      	name="шаблон 3"  
+      	action="/print-disability_3.do?s=DisabilityService&amp;m=printDocument"/>
+      	<msh:sideLink params="id" 
+      	name="шаблон 4"  
+      	action="/print-disability_4.do?s=DisabilityService&amp;m=printDocument"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_record" roles="/Policy/Mis/Disability/Case/Document/Record/Create" name="Продление" guid="0634b894-60e2-4b73-acee-7bf7316a77fc" title="Продлить листок нетрудоспособности" key="CTRL+1" />

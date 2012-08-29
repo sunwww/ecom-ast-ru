@@ -4,6 +4,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="patientField" required="true" description="Поле Id пациента" %>
 
 <style type="text/css">
     #${name}FindPatientByFond {
@@ -107,9 +108,9 @@
 		var fondDocument = getCheckedRadio(frm,"fondDocument") ;
 		var fondPolicy = getCheckedCheckBox(frm,"fondPolicy","&") ;
 		var fondAdr = getCheckedRadio(frm,"fondAdr") ;
-		if(+$('id').value>0) {
+		if(+$('${patientField}').value>0) {
 			PatientService.updateDataByFond(
-		     		$('id').value,fondFiodr,fondDocument,fondPolicy,fondAdr
+		     		$('${patientField}').value,fondFiodr,fondDocument,fondPolicy,fondAdr
 		     		,$('is${name}Patient').checked,$('is${name}Policy').checked
 		     		,$('is${name}Document').checked,$('is${name}Address').checked
 		     		 ,{

@@ -14,7 +14,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-            <msh:form action="/smo_goingToSmo.do" defaultField="number" method="GET">
+            <msh:form action="/smo_goingToSmo.do" defaultField="number" >
                 <msh:panel>
                     <msh:row>
                     <msh:hidden property="id"/>

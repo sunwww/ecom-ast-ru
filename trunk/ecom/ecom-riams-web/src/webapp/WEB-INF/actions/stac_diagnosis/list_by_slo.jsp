@@ -17,6 +17,8 @@
   <tiles:put name="body" type="string">
     <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    	<input type="hidden" name="m" id="m" value="printDiagnosisJournal"/>
+    	<input type="hidden" name="s" id="s" value="HospitalPrintReport"/>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -81,6 +83,7 @@
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
+	            <input type="submit" onclick="print()" value="Печать" />
 	          </td>
         </msh:row>
     </msh:panel>
@@ -164,9 +167,9 @@
     	%>
 		<ecom:webQuery name="diag_list" nativeSql="
 		select ${mkbCode}||':${mkbLike}:${dep}:${servStream}:${fldDate}:${param.dateBegin}:${dateEnd}:'||vpd.id||':'||vdrt.id||':${bedSubTypeSql}:${filterAdd}' as id
-		,${mkbCode} as mkb,count(*),vpd.name as vpdname,vdrt.name as vdrtname 
+		,${mkbCode} as mkb,count(distinct slo.id) as cntSlo,vpd.name as vpdname,vdrt.name as vdrtname 
 		,${mkbName} as mkbname
-		,count(distinct sls.id)
+		,count(distinct sls.id) as cntSls
 		,count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end) as cntDischarge
 		,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeath
 		,round(sum(
@@ -201,10 +204,13 @@
 			 )
 			/count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end),1)
 			else 0 end as cntSrDays
+		,count(distinct case when so.id is null then sls.id else null end) as cntOper
 		from Diagnosis diag
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join MedCase slo on slo.id=diag.medCase_id
 		left join MedCase sls on sls.id=slo.parent_id
+		left join MedCase aslo on aslo.parent_id=sls.id
+		left join SurgicalOperation so on so.medcase_id=aslo.id
 		left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 		left join BedFund bf on bf.id=slo.bedFund_id
 		left join VocServiceStream vss on vss.id=slo.serviceStream_id
@@ -225,6 +231,7 @@
 			<msh:tableColumn property="6" columnName="Наименование болезни"/>
 			<msh:tableColumn property="3" columnName="Кол-во СЛО"/>
 			<msh:tableColumn property="7" columnName="Кол-во госпитализаций"/>
+			<msh:tableColumn property="12" columnName="Кол-во госпитализаций с операцией"/>
 			<msh:tableColumn property="8" columnName="Кол-во выписанных"/>
 			<msh:tableColumn property="10" columnName="Кол-во к/дней"/>
 			<msh:tableColumn property="11" columnName="Средний к/день"/>
@@ -243,7 +250,7 @@
     //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
     //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
     
-    function checkFieldUpdate(aField,aValue,aDefaulValue) {
+    function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	var max = chk.length ;
        	aValue=+aValue ;
@@ -262,7 +269,7 @@
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	//frm.action='stac_groupByBedFundList.do' ;
+    	frm.action='print-stac_journalDiag.do' ;
     }
     </script>
   </tiles:put>

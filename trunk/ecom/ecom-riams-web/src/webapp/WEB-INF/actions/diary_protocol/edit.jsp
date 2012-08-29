@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 <tiles:put name='body' type='string'>
-    <tags:templateProtocol />
+    <tags:templateProtocol voc="protocolTicketByPatient"/>
 
     <msh:form action="entitySaveGoView-diary_protocol" defaultField="record">
         <msh:hidden property="id"/>

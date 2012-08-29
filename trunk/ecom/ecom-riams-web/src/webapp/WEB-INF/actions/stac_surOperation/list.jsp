@@ -10,15 +10,41 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityView-stac_surOperation.do" idField="id" guid="9b3ab5f4-4e7c-45ab-8a40-25664427af5c">
-      <msh:tableColumn columnName="Дата" property="operationDate" guid="f0ef0a0a-4690-4a70-a7df-5811b6813952" />
-      <msh:tableColumn columnName="Время" property="operationTime" guid="6cbe7939-e697-4a44-9277-70f9b2a9f8a4" />
-      <msh:tableColumn columnName="Операция" property="operationInfo" guid="42cd2d67-593d-4525-8203-6eb91a63a969" />
-      <msh:tableColumn columnName="Хирург" property="surgeonInfo" guid="805b92e3-4d45-4918-9b8a-3a629591e030" />
-      <msh:tableColumn columnName="Ассистенты" property="surgeonsInfo" guid="8045-4918-9b8a-3a629591e030" />
-      <msh:tableColumn columnName="Основная" property="base" guid="f79525b3-b84f-4a3c-b625-969175f79494" />
-      <msh:tableColumn columnName="Анестезия" property="anesthesiaInfo" guid="9e13f15a-244b-44fc-afc4-4eff79114103" />
-    </msh:table>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
+          <ecom:webQuery name="allSurgOper" nativeSql="select so.id
+          ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime
+          ,ms.code||' '||ms.name as voname
+          , d.name as whoIs  
+          , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+          ,substring(so.operationText,1,100)||' ...' as operationText
+          from SurgicalOperation as so 
+          left join MedService ms on ms.id=so.medService_id
+          left join medcase parent on parent.id=so.medcase_id 
+          left join MisLpu d on d.id=so.department_id 
+          left join WorkFunction wf on wf.id=so.surgeon_id
+          left join Worker w on w.id=wf.worker_id
+          left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+          left join Patient wp on wp.id=w.person_id
+          where  
+           so.medCase_id=${param.id}
+          order by so.operationDate
+          "/>
+    <msh:tableNotEmpty name="allSurgOper">
+	    <msh:section title="Хирургические операции " createUrl="entityParentPrepareCreate-stac_surOperation.do?id=${param.id}"
+	    createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
+	    	<msh:table viewUrl="entityShortView-stac_surOperation.do"
+	    	editUrl="entityParentEdit-stac_surOperation.do"  
+	    	name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
+	    		<msh:tableColumn columnName="#" property="sn"/>
+	    		<msh:tableColumn columnName="Дата и время" property="2"/>
+	    		<msh:tableColumn columnName="Операция" property="3"/>
+	    		<msh:tableColumn columnName="Хирург" property="5"/>
+	    		<msh:tableColumn cssClass="preCell" property="6" columnName="Протокол операции"/>
+	    		<msh:tableColumn columnName="Отделение" property="4"/>
+	    	</msh:table>
+	    </msh:section>
+    </msh:tableNotEmpty>    
+    </msh:ifInRole>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="73fe6c01-daa2-49fb-af12-20402ea5695b">

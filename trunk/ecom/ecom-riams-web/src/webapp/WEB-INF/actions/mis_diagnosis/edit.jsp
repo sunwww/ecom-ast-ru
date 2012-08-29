@@ -76,18 +76,29 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
+      <msh:ifFormTypeAreViewOrEdit formName="mis_diagnosisForm">
         <msh:sideMenu>
-            <msh:ifFormTypeAreViewOrEdit formName="mis_diagnosisForm">
-		        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_diagnosis" name="Изменить" roles="/Policy/Mis/MedCase/Diagnosis/Edit" />
-		        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_diagnosis" name="Удалить" roles="/Policy/Mis/MedCase/Diagnosis/Delete" />
-            </msh:ifFormTypeAreViewOrEdit>
+	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_diagnosis" name="Изменить" roles="/Policy/Mis/MedCase/Diagnosis/Edit" />
+	        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_diagnosis" name="Удалить" roles="/Policy/Mis/MedCase/Diagnosis/Delete" />
         </msh:sideMenu>
+        <msh:sideMenu title="Добавить">
+	        <msh:sideLink guid="sideLinkEdit" key="ALT+3" 
+	          action="/entityEdit-mis_diagnosis" name="Диагноз &larr;"
+	         action="/javascript:goNewDiagnosis('.do')" 
+	         roles="/Policy/Mis/MedCase/Diagnosis/Create" />
+        </msh:sideMenu>
+      </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>
 <tiles:put name="javascript" type="string">
+
 	  	<script type="text/javascript">
-	  	idc10Autocomplete.addOnChangeCallback(function() {
-		      	 	setDiagnosisText('idc10','name');
+	  	try {
+		  	idc10Autocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('idc10','name');
 		    });
+	  	} catch(e) {
+	  		
+	  	}
 	  		function setDiagnosisText(aFieldMkb,aFieldText) {
 	  			var val = $(aFieldMkb+'Name').value ;
 	  			var ind = val.indexOf(' ') ;
@@ -96,6 +107,9 @@
 	  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
 	  			}
 	  		}
+	  		function goNewDiagnosis() {
+	      		window.location = 'entityParentPrepareCreate-mis_diagnosis.do?id='+$('patient').value+"&tmp="+Math.random() ;
+	      	}
 	  	</script>
 	  </tiles:put>  
 

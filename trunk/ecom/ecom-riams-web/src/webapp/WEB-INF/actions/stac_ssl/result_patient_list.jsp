@@ -83,11 +83,17 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="2"  >  свод по отделениям
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView" value="3"  >  свод по отделениям без учета отд., которые не входят в ОМС 
+	        </td>
+        </msh:row>
+        <msh:row>
+        	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="3"  >  общий свод по ЛПУ
+	        	<input type="radio" name="typeView" value="4"  >  общий свод по ЛПУ
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="4">  все
+	        	<input type="radio" name="typeView" value="5">  все
 	        </td>
         </msh:row>
         <msh:row>
@@ -121,13 +127,15 @@
     	}
     	String dep = (String) request.getParameter("department") ; 
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
+    		request.setAttribute("depIsNoOmc", " and (dmc.department_id='"+dep+"' or d.isNoOmc='1' and pdmc.department_id='"+dep+"')");
     		request.setAttribute("dep", " and dmc.department_id='"+dep+"'");
     		request.setAttribute("dep1", " and hmc1.department_id='"+dep+"'");
     	} else {
+    		request.setAttribute("depIsNoOmc", "") ;
     		request.setAttribute("dep", "") ;
     		request.setAttribute("dep1", "") ;
     	}
-    	if (view!=null && (view.equals("1") || view.equals("4"))) {
+    	if (view!=null && (view.equals("1") || view.equals("5"))) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
@@ -148,31 +156,32 @@
 		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		end as countDays
 	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
-    , (select list(mkb.code||' '||mkb.name) from diagnosis diag
-    	left join VocIdc10 mkb on mkb.id=idc10_id 
-    	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-    	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-    	where diag.medCase_id=hmc.id  
-    	and vpd.code='1' and vdrt.code='4'
-		) as diag
-	,count(soHosp.id)+count(soDep.id) as cntOper
+    , list(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else '' end) as diag
+	, count(soHosp.id)+count(soDep.id) as cntOper
 	, list(to_char(soDep.operationDate,'dd.mm.yyyy')|| '-'||voDep.code|| ' '||voDep.name) ||' ' ||list(to_char(soHosp.operationDate,'dd.mm.yyyy')|| '-'||voHosp.code|| ' '||voHosp.name)
-	, d.name as depname
+	, d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname  
     from MedCase as hmc
+   	left join diagnosis diag on diag.medcase_id=hmc.id
+   	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
+   	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+   	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join statisticstub ss on hmc.statisticstub_id=ss.id
-    left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id 
+    left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id
+    left join MedCase as pdmc on pdmc.dtype='DepartmentMedCase' and dmc.prevMedCase_id=pdmc.id
+    left join mislpu as pd on pd.id=pdmc.department_id  
     left join MedCase as admc on admc.dtype='DepartmentMedCase' and hmc.id=admc.parent_id 
     left join vocservicestream as vss on vss.id=hmc.servicestream_id
     left join VocPreAdmissionTime vpat on vpat.id=hmc.preAdmissionTime_id 
     left join mislpu as d on d.id=dmc.department_id 
+    
     left join patient pat on pat.id=hmc.patient_id
     left join VocHospType vht on vht.id=hmc.hospType_id
     left join address2 adr on adr.addressId = pat.address_addressId
     left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
     left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
-    left join VocOperation voHosp on soHosp.operation_id=voHosp.id
+    left join MedService voHosp on soHosp.medService_id=voHosp.id
     left join SurgicalOperation soDep on soDep.medCase_id=admc.id
-    left join VocOperation voDep on soDep.operation_id=voDep.id
+    left join MedService voDep on soDep.medService_id=voDep.id
     left join Omc_Oksm ok on pat.nationality_id=ok.id
     where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
@@ -180,14 +189,14 @@
     	
     	and dmc.dateFinish is not null
     	and hmc.result_id=${param.result}
-    	${dep}
+    	${depIsNoOmc}
     	
     ${addPat} 
     ${addEmergency}
     
     group by hmc.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday
     ,vpat.name,hmc.dateFinish,hmc.dateStart,hmc.emergency,vht.code,ss.code
-    ,d.name
+    ,d.name,d.isNoOmc,pd.name
     ${hav} ${addOperation}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list"
@@ -210,7 +219,7 @@
     </msh:sectionContent>
     </msh:section>
     <%} 
-    	if (view==null || view.equals("2") || view.equals("4")) { 
+    	if (view==null || view.equals("2") || view.equals("5")) { 
     %>
     <msh:section title="Свод по отделениям">
     <msh:sectionContent>
@@ -253,8 +262,8 @@
     ${addPat} 
     
     
-    group by 
-    d.name
+    group by d.name
+    order by d.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_swod"
@@ -271,7 +280,70 @@
     </msh:sectionContent>
     </msh:section>
     <%} 
-    	if (view==null || view.equals("3") || view.equals("4")) { 
+    	if (view==null || view.equals("3") || view.equals("5")) { 
+    %>
+    <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_list_swod" nativeSql="
+    
+    select  
+    case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end as depname
+    ,count(*)
+    ,count(case when hmc.emergency='1' then 1 else null end) as cntEmer
+    ,count(case when hmc.emergency='1' then null else 1 end) as cntPlan
+	,count(case
+		when (select count(*) from SurgicalOperation so left join medcase m on m.id=so.medcase_id where m.id=hmc.id or m.parent_id=hmc.id)>0 then 1 else null
+		end) as cntoper
+    
+    , cast(round(sum(case 
+		when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		end)/cast(count(hmc.id) as numeric),1) as numeric) as spCountDays
+	
+    from MedCase as hmc
+    left join statisticstub ss on hmc.statisticstub_id=ss.id
+    left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id
+    left join MedCase as pdmc on pdmc.dtype='DepartmentMedCase' and pdmc.id=dmc.prevMedCase_id 
+    left join vocservicestream as vss on vss.id=hmc.servicestream_id
+    left join VocPreAdmissionTime vpat on vpat.id=hmc.preAdmissionTime_id 
+    left join mislpu as d on d.id=dmc.department_id 
+    left join mislpu as pd on pd.id=pdmc.department_id 
+    left join patient pat on pat.id=hmc.patient_id
+    left join VocHospType vht on vht.id=hmc.hospType_id
+    left join address2 adr on adr.addressId = pat.address_addressId
+    left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
+    left join Omc_Oksm ok on pat.nationality_id=ok.id
+    where hmc.DTYPE='HospitalMedCase' 
+    and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	
+    	and dmc.dateFinish is not null
+    	and hmc.result_id=${param.result}
+    	${depIsNoOmc}
+    	
+    ${addPat} 
+    
+    
+    group by case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
+    order by case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
+    
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <msh:table name="journal_list_swod"
+         action="stac_resultPatient_list.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Отделение" property="1"/>
+            <msh:tableColumn columnName="Кол-во" property="2"/>
+            <msh:tableColumn columnName="Кол-во экстренных" property="3"/>
+            <msh:tableColumn columnName="Кол-во плановых" property="4"/>
+            <msh:tableColumn columnName="Кол-во оперированных" property="5"/>
+            <msh:tableColumn columnName="Ср. койко дней" property="6"/>
+            
+        </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%} 
+    	if (view==null || view.equals("4") || view.equals("5")) { 
     %>
     <msh:section title="Общий свод">
     <msh:sectionContent>
@@ -366,7 +438,7 @@
 			+":"+$('department').value
 			+":"+$('result').value
 			;
-			alert(args) ;
+			//alert(args) ;
 		$('param').value = args ;
     }
     function find() {

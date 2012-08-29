@@ -40,7 +40,8 @@
                         <tr>
                             <th colspan='8'>
                                 <msh:toolbar>
-                                    <a href='javascript:printProtocols()'>Печать протоколов</a>
+                                    <a href='javascript:printProtocols("protocols")'>Печать протоколов</a>
+                                    <a href='javascript:printProtocols("protocols1")'>Печать протоколов (шаблон 2)</a>
                                     <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить протокол</a>
                                 </msh:toolbar>
                             </th>
@@ -60,11 +61,11 @@
 
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
-            function printProtocols() {
+            function printProtocols(aFile) {
             	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
             	if(ids) {
             		//alert(ids) ;
-            		window.location = 'print-protocols.do?multy=1&m=printProtocols&s=HospitalPrintService&'+ids ;
+            		window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService&'+ids ;
             		
             	} else {
             		alert("Нет выделенных протоколов");

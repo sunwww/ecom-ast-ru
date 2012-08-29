@@ -50,7 +50,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	--%>
         <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
         <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MilitiaMessages/View" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" 
     	name="Милиция" params="id"  
     	action='/entityParentList-stac_criminalMessages' title='Сообщения в милицию'
     	styleId="stac_criminalMessages" />
@@ -59,7 +59,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="vac_vacination"
     	/>
     
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/InfectiousMessages/View" name="Инфекция" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/InfectiousMessages/View" name="Инфекция" 
     	params="id"  action='/entityParentList-stac_infectiousMessages' 
     	title='Регистрация инфекционных заболеваний'
     	styleId="stac_infectiousMessage"
@@ -68,7 +68,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		action='/entityParentList-pres_prescriptList' title='Показать листы назначений'
 		styleId="pres_prescriptList"
 		/>
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
     	params="id"  action='/entityParentList-stac_surOperation'  key='Alt+7' title='Операции'
     	styleId="stac_surOperation"
     	/>
@@ -176,6 +176,17 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete"
 		styleId="deleteDischarge"
 	/>
+</msh:sideMenu>
+<msh:sideMenu title="Перейти">
+	    <msh:sideLink 
+		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDepartmentAdmission" 
+		        action="/stac_journalByDepartmentAdmission" name="Журнал по направленным в отделение" />
+	    <msh:sideLink
+		         roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartment"
+		         action="/stac_journalCurrentByUserDepartment" name="Журнал по состоящим в отделение пациентам" />
+ 	    <msh:sideLink 
+		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" 
+		        action="/stac_journalByCurator" name="Журнал по лечащему врачу" />  
 </msh:sideMenu>
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />

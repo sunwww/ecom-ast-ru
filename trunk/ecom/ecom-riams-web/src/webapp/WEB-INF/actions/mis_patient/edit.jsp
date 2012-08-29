@@ -586,6 +586,23 @@
           </td></tr>
         </table>
       </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Document/External/View">
+      <msh:section createRoles="/Policy/Mis/MedCase/Document/External/Create"
+      createUrl="externalDocument-preView.do?id=${param.id}" title="Внешние документы">
+      <ecom:webQuery name="extDocument" nativeSql="
+      	select d.id,vedt.name as vedtname,to_char(d.createDate,'dd.mm.yyyy')||coalesce(' '||cast(d.createTime as varchar(5)),''),d.referenceTo from Document d
+      	left join VocExternalDocumentType vedt on vedt.id=d.type_id
+      	where d.dtype='ExternalDocument' and d.patient_id='${param.id}'
+      "/>
+      	<msh:table name="extDocument"
+      	viewUrl="entityParentView-doc_externalDocument.do?short=Short" 
+      	action="entityParentView-doc_externalDocument.do" idField="1">
+      		<msh:tableColumn property="2" columnName="Тип документа" />
+      		<msh:tableColumn property="3" columnName="Дата и время создания"/>
+      		<msh:tableColumn property="4" columnName="Ссылка"/>
+      	</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
       <!-- Открытые СПО -->
       <table>
       <tr valign="top"><td style="padding-right: 8px">
@@ -631,23 +648,27 @@
 		        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmissionShort.do?id=${param.id}" 
 	        createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" listUrl="stac_sslList.do?id=${param.id}" 
 	        title="Открытые СЛС." guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
-	          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
-	          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
-				, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
-				, st.code&#xA;       &#xA;  from MedCase&#xA;  
-				left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  
-				left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
-				left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  
-				left outer join Patient op on ow.person_id           = op.id&#xA;  
-				left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; 
-				where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;
-				   and (MedCase.dateFinish is null or MedCase.dischargeTime is null) and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
+		          <ecom:webQuery name="openedSLSs" nativeSql="select 
+		          sls.id as slsid, sls.dateStart as slsdatestart, ss.code as sscode,vdh.name as vdhname
+		          ,case when sls.emergency='1' then 'Экстренно' else 'Планово' end emerg
+		          ,ml.name as mlname
+					from MedCase sls
+					left join MisLpu ml on ml.id=sls.department_id
+					left join StatisticStub ss on sls.statisticStub_id = ss.id 
+					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
+					where patient_id=${param.id} 
+						and sls.DTYPE='HospitalMedCase'  
+					and (sls.dateFinish is null 
+					or sls.dischargeTime is null)
+					and (sls.dateStart=CURRENT_DATE
+					 or sls.deniedHospitalizating_id is null)
+					"  />
 	          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
-	            <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
-	            <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
-	            <msh:tableColumn columnName="Дата начала" identificator="false" property="2" guid="710b82e4-ebc3-4b1e-88bf-09acf713f389" />
-	            <msh:tableColumn columnName="Кто начал" identificator="false" property="3" guid="cd760e39-ae11-4348-ac02-c4b3c0500e02" />
-	            <msh:tableColumn columnName="Владелец" identificator="false" property="4" guid="77330937-9afa-4a11-b7f1-8f29303162df" />
+		            <msh:tableColumn columnName="Дата пост." property="2"/>
+		            <msh:tableColumn columnName="Стат.карта" property="3"/>
+		            <msh:tableColumn columnName="Тип" property="5"/>
+		            <msh:tableColumn columnName="Направлен в отделение" property="6"/>
+		            <msh:tableColumn columnName="Отказ от госпитализации" property="4"/>
 	          </msh:table>
 	        </msh:section>
 	
@@ -656,21 +677,30 @@
 		        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmission.do?id=${param.id}" 
 		        createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" listUrl="stac_sslList.do?id=${param.id}" 
 		        title="Открытые СЛС." guid="e3ff39ac-f290-4ef1-9de8-df91bbfc9f3b">
-		          <ecom:webQuery name="openedSLSs" nativeSql="select MedCase.id, MedCase.dateStart
-		          , Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker
-					, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker
-					, st.code&#xA;       &#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  
-					left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  
-					left outer join Patient op on ow.person_id           = op.id&#xA;  
-					left outer join StatisticStub st on MedCase.statisticStub_id = st.id&#xA; 
-					where patient_id=${param.id} &#xA;   and MedCase.DTYPE='HospitalMedCase'&#xA;   
-					and (MedCase.dateFinish is null or MedCase.dischargeTime is null) and MedCase.deniedHospitalizating_id is null" guid="80cb45f8-d3a8-403f-aae0-34be75cc16c7" />
-		          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
-		            <msh:tableColumn columnName="№" identificator="false" property="sn" guid="038b9fa0-0e0e-42c9-8c01-b743f5c2e64c" />
-		            <msh:tableColumn columnName="Стат.карта" property="5" guid="ac7d5562-6e6a-41a5-9d3a-95a8b467e204" />
-		            <msh:tableColumn columnName="Дата начала" identificator="false" property="2" guid="710b82e4-ebc3-4b1e-88bf-09acf713f389" />
-		            <msh:tableColumn columnName="Кто начал" identificator="false" property="3" guid="cd760e39-ae11-4348-ac02-c4b3c0500e02" />
-		            <msh:tableColumn columnName="Владелец" identificator="false" property="4" guid="77330937-9afa-4a11-b7f1-8f29303162df" />
+		          <ecom:webQuery name="openedSLSs" nativeSql="select 
+		          sls.id as slsid, sls.dateStart as slsdatestart, ss.code as sscode,vdh.name as vdhname
+		          ,case when sls.emergency='1' then 'Экстренно' else 'Планово' end emerg
+		          ,ml.name as mlname
+					from MedCase sls
+					left join MisLpu ml on ml.id=sls.department_id
+					left join StatisticStub ss on sls.statisticStub_id = ss.id 
+					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
+					where patient_id=${param.id} 
+						and sls.DTYPE='HospitalMedCase'  
+					and (sls.dateFinish is null 
+					or sls.dischargeTime is null)
+					and (sls.dateStart=CURRENT_DATE
+					 or sls.deniedHospitalizating_id is null)
+					"  />
+		          <msh:table idField="1" name="openedSLSs"
+		          viewUrl="entityShortView-stac_ssl.do"
+		           action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ">
+		            <msh:tableColumn columnName="Дата пост." property="2"/>
+		            <msh:tableColumn columnName="Стат.карта" property="3"/>
+		            <msh:tableColumn columnName="Тип" property="5"/>
+		            <msh:tableColumn columnName="Направлен в отделение" property="6"/>
+		            <msh:tableColumn columnName="Отказ от госпитализации" property="4"/>
+		            
 		          </msh:table>
 		        </msh:section>
 	      </msh:ifNotInRole>
@@ -741,7 +771,7 @@
 		typeSettlement="typeSettlementNonresident" settlement="settlementNonresident"
 		typeStreet="typeStreetNonresident" street="streetNonresident" zipcode="nonresidentZipcode"/>
     <tags:mis_double name='Patient' title='Существующие пациенты в базе:'/>
-    <tags:mis_findPatientByFond name='Patient' />
+    <tags:mis_findPatientByFond name='Patient' patientField="id"/>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="mis_patientForm" insideJavascript="false" guid="998aa692-c1d3-4d79-bc37-cfa204fa846c">

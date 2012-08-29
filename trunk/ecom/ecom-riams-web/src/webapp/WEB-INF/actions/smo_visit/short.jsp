@@ -85,6 +85,57 @@
 		
       </msh:panel>
     </msh:form>
+    <msh:ifFormTypeIsView guid="ifFormTypeIsView1212" formName="smo_visitForm">
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View" guid="984f4783-f982-4aea-9652-0f5567c932d6">
+        <msh:section guid="sectionChilds" title="Диагнозы">
+          <ecom:parentEntityListAll guid="parentEntityListChilds" formName="smo_diagnosisForm" attribute="childs" />
+          <msh:table guid="tableChilds" name="childs" action="entityParentView-smo_diagnosis.do" idField="id">
+            <msh:tableColumn columnName="Дата установления" property="establishDate" guid="c975f4df-68b1-42b9-8ba7-44e4b82b0144" />
+            <msh:tableColumn columnName="Наименование" property="name" guid="a744754f-5212-4807-910f-e4b252aec108" />
+            <msh:tableColumn columnName="Приоритет" property="priorityDiagnosisText" guid="bf4cb2b2-eb35-4e8f-b8cb-4ccccb06d5ac" />
+            <msh:tableColumn columnName="Код МКБ" property="idc10Text" guid="680ae408-52a8-4743-bb60-a129db69a544" />
+          </msh:table>
+        </msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="141a017a-569a-4fa2-9a0e-37093a8f69da">
+        <msh:section title="Заключение" guid="1fbe1294-8ea0-4b66-a0f3-6c99bcea13c1">
+          <ecom:parentEntityListAll formName="smo_visitProtocolForm" attribute="protocols" guid="307a660c-7369-4ec7-a67c-888f8c6aabcf" />
+          <msh:table hideTitle="false" disableKeySupport="false" idField="id" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false" guid="d0e60067-9aec-4ee0-b20a-4f4b5aea9b37">
+            <msh:tableColumn columnName="Дата" property="dateRegistration" guid="c16dd9e1-4534-44db-8b0a-972e2c67dd87" />
+            <msh:tableColumn columnName="Запись" identificator="false" property="record" guid="bd9f7fe4-b1cb-4320-aa85-03952b4abd26" cssClass="preCell" />
+            <msh:tableColumn columnName="Специалист" property="specialistInfo" guid="96c6570b-360d-46a5-9fc5-2f9c63ad1912" />
+          </msh:table>
+        </msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
+      	<msh:section title="Услуги" createUrl="entityParentPrepareCreate-smo_medService.do?id=${param.id}" createRoles="/Policy/Mis/MedCase/MedService/Create">
+      		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name,mc.medServiceAmount
+      		from MedCase mc 
+      		left join MedService ms on mc.medService_id=ms.id
+      		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
+      		"/>
+      		<msh:table name="services" action="entityParentView-smo_medService.do" 
+      	 	 viewUrl="entityShortView-smo_medService.do" idField="1" >
+      			<msh:tableColumn columnName="Название услуги" property="2"/>
+      			<msh:tableColumn columnName="Кол-во" property="3"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Document/Internal/View">
+      	<msh:section title="Документы">
+      		<ecom:webQuery name="docum" nativeSql="select d.id as did,d.history
+      		, case when d.dtype='DirectionDocument' then 'Направление' 
+      		when d.dtype='DischargeDocument' then 'Выписка'
+      		else '-' end,d.diagnosis
+      		from Document d where d.medCase_id='${param.id}'
+      		"/>
+      		<msh:table name="docum" action="entitySubclassView-doc_document.do" 
+      	 	 viewUrl="entitySubclassShortView-doc_document.do" idField="1" hideTitle="true">
+      			<msh:tableColumn property="3"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+	</msh:ifFormTypeIsView>    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="smo_visitForm" />

@@ -77,6 +77,7 @@
             <msh:tableColumn columnName="Серия номер полиса" property="policy"/>
             <msh:tableColumn columnName="Диагноз. Код МКБ" property="mkb"/>
             <msh:tableColumn columnName="Поток обслуживания" property="serviceStream"/>
+            <msh:tableColumn columnName="Услуги" property="usernameCreate"/>
         </msh:table>
     </msh:sectionContent>
 

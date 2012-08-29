@@ -79,9 +79,14 @@
     	<tr>
     		<td width="15%" valign="top" style="padding-right: 1em">
 			      <msh:section title="Список подразделений" guid="c061fcb6-70a4-4739-b110-0a6edad9e250">
-			        <ecom:parentEntityListAll formName="mis_lpuForm" attribute="subdivisions" guid="637be19d-ec64-498a-876a-7afcbc882af0" />
-			        <msh:table hideTitle="true" name="subdivisions" action="entityParentView-mis_lpu.do" idField="id" guid="a8d00e09-8ef8-420d-856a-1e3b25ab6cdf">
-			          <msh:tableColumn columnName="" property="name" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
+			        <ecom:webQuery name="subdivisions" nativeSql="select ml.id,ml.name as mlname
+			         ,vlf.name as vlfname 
+			        from mislpu ml
+			        left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
+			        where ml.parent_id=${param.id} order by ml.name"/>
+			        <msh:table hideTitle="true" name="subdivisions" action="entityParentView-mis_lpu.do" idField="1" guid="a8d00e09-8ef8-420d-856a-1e3b25ab6cdf">
+			          <msh:tableColumn columnName="" property="2" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
+			          <msh:tableColumn columnName="" property="3" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			        </msh:table>
 			      </msh:section>
     		</td>

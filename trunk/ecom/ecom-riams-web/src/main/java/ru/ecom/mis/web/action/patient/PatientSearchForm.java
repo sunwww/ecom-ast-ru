@@ -71,4 +71,70 @@ public class PatientSearchForm extends BaseValidatorForm {
 
 	/** String */
 	private String theCheckedDischarge;
+	
+	/** Искать в выписанных за последний месяц */
+	public String getCheckedDischargeMonth() {
+		return theCheckedDischargeMonth;
+	}
+
+	public void setCheckedDischargeMonth(String aCheckedDischargeMonth) {
+		theCheckedDischargeMonth = aCheckedDischargeMonth;
+	}
+
+	/** Искать в выписанных за последний месяц */
+	private String theCheckedDischargeMonth;
+
+	/**
+	 * Новое свойство
+	 */
+	public Boolean getIsSearchDischargeMonth() {
+		return theIsSearchDischargeMonth;
+	}
+	/**
+	 * Новое свойство
+	 */
+	public void setIsSearchDischargeMonth(Boolean a_Property) {
+		theIsSearchDischargeMonth = a_Property;
+	}
+
+	/**
+	 * Новое свойство
+	 */
+	private Boolean theIsSearchDischargeMonth;
+
+	/**
+	 * Новое свойство
+	 */
+	public Boolean getIsSearchDenied() {
+		return theIsSearchDenied;
+	}
+	/**
+	 * Новое свойство
+	 */
+	public void setIsSearchDenied(Boolean a_Property) {
+		theIsSearchDenied = a_Property;
+	}
+
+	/**
+	 * Новое свойство
+	 */
+	private Boolean theIsSearchDenied;
+
+	/**
+	 * Новое свойство
+	 */
+	public String getCheckedDenied() {
+		return theCheckedDenied;
+	}
+	/**
+	 * Новое свойство
+	 */
+	public void setCheckedDenied(String a_Property) {
+		theCheckedDenied = a_Property;
+	}
+
+	/**
+	 * Новое свойство
+	 */
+	private String theCheckedDenied;
 }

@@ -105,6 +105,13 @@
           <msh:textField property="dateFrom" label="Дата начала" guid="71bb6108-4449-460b-aaca-0c7419683133" />
           <msh:textField property="dateTo" label="Дата окончания" guid="31e70e41-3526-4a9e-b746-263d6e81e657" />
         </msh:row>
+        <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
+        	<msh:row>
+        		<msh:textField property="info" labelColSpan="2" fieldColSpan="2" horizontalFill="true"
+        			label="Количество дней нетрудоспособности" viewOnlyField="true"/>
+        		
+        	</msh:row>
+        </msh:ifFormTypeIsNotView>        
         <msh:row>
           <msh:autoComplete vocName="vocDisabilityRegime" property="regime" label="Режим" guid="a0252f86-792b-4992-a278-5cb0d1a1bc27" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -202,10 +209,57 @@
   		  		setJob() ;
   		  	}) ;
   	
+  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_DOWN, 
+  		  	function() {
+	  			setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_UP, 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateFrom'), "change", 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateFrom'), "blur", 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_DOWN, 
+  		  	function() {
+	  			setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_UP, 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateTo'), "change", 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	eventutil.addEventListener($('dateTo'), "blur", 
+  		  	function() {
+  				setPeriod() ;
+  		  	}) ;
+  	function setPeriod() {
+  		try {
+  			if ($('dateFrom').value.length==10 &&  $('dateTo').value.length==10) {
+	  			var dateTo = new Date($('dateTo').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+	  			var dateFrom = new Date($('dateFrom').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+	  			var one_day=1000*60*60*24 ;
+	  			$('infoReadOnly').value=1+((dateTo.getTime()-dateFrom.getTime())/one_day) ;
+  			}
+  		} catch(e) {
+  			//alert('222') ;
+  		}
+  	}
   	function setJob() {
   		$('otherNumberReadOnly').value=$('job').value.substring(0,29).toUpperCase() ;	
   	}
+  	
   	setJob() ;
+  	setPeriod() ;
+  	
   	</script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>

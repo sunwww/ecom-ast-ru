@@ -50,12 +50,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        styleId="stac_journalCaseRareByHospital"
 	        action="/stac_journalCaseRareByHospital" name="Редкие случаи"
 	        />
-	        
-	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByRepeatCase"
-	        styleId="stac_journalRepeatCaseByHospital"
-	        action="/stac_journalRepeatCaseByHospital_list" name="Повторные случаи госпитализации"
-	        />
-	        
+	        	        
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/DeathCase"
 	        styleId="stac_deathCase_list"
 	        action="/stac_deathCase_list" name="Журнал по смертности"
