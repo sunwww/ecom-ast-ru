@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import java.sql.Time;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -12,7 +14,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
 @EntityFormPersistance(clazz = Document.class)
@@ -71,6 +75,14 @@ public class DocumentForm extends IdEntityForm{
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+
+	/** СМО */
+	@Comment("СМО")
+	@Persist
+	public Long getMedCase() {return theMedCase;}
+	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	/** СМО */
+	private Long theMedCase;
 	/** Пользователь, последний редактировавший запись */
 	private String theEditUsername;
 	/** Дата редактирования */
@@ -88,5 +100,12 @@ public class DocumentForm extends IdEntityForm{
     private String theSeriaDoc ;
     /** Номер документа */
     private String theNumberDoc ;
+	/** Время создания */
+	@Comment("Время создания")
+	@DoTimeString @TimeString @Persist
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
 
+	/** Время создания */
+	private String theCreateTime;
 }
