@@ -13,6 +13,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties={"parent"})
 	,@AIndex(properties={"name"})
+	,@AIndex(properties={"lpu"})
 })
 @Table(schema="SQLUser")
 public class WorkPlace extends BaseEntity{
@@ -30,14 +31,17 @@ public class WorkPlace extends BaseEntity{
 	/** Родитель */
 	@Comment("Родитель")
 	@OneToOne
-	public WorkPlace getParent() {
-		return theParent;
-	}
+	public WorkPlace getParent() {return theParent;}
+	public void setParent(WorkPlace aParent) {theParent = aParent;}
 
-	public void setParent(WorkPlace aParent) {
-		theParent = aParent;
-	}
 
+	/** Комментарий */
+	@Comment("Комментарий")
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+
+	/** Комментарий */
+	private String theComment;
 	/** Родитель */
 	private WorkPlace theParent;
 	/** Лечебное учреждение */
