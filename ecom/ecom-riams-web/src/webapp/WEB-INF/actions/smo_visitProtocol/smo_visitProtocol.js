@@ -5,6 +5,13 @@ function viewProtocol(aForm,aCtx) {
 	var id=aCtx.request.getParameter("id") ;
 	var list =id.split("!") ;
 	return aCtx.createForwardRedirect(
-		"/entityParentView-smo_visitProtocol.do?id="+list[2]) ;
+			"/entityParentView-smo_visitProtocol.do?id="+list[2]) ;
+	
+}
+function viewShortProtocol(aForm,aCtx) {
+	var id=aCtx.request.getParameter("id") ;
+	var list =id.split("!") ;
+	return aCtx.createForwardRedirect(
+		"/entityShortView-smo_visitProtocol.do?id="+list[2]) ;
 	
 }

@@ -6,6 +6,7 @@
 
     <form-beans>
        <form-bean name="secuserForm" type="ru.ecom.jaas.ejb.form.SecUserForm" />
+       <form-bean name="secgroupForm" type="ru.ecom.jaas.ejb.form.SecGroupForm" />
        <form-bean name="secroleForm" type="ru.ecom.jaas.ejb.form.SecRoleForm" />
        <form-bean name="secpolicyForm" type="ru.ecom.jaas.ejb.form.SecPolicyForm" />
        <form-bean name="sec_softConfigForm" type="ru.ecom.jaas.ejb.form.SoftConfigForm" />
@@ -124,6 +125,18 @@
         <action path="/servicePolicy-importEdit" type='ru.ecom.jaas.web.action.policy.ImportPolicyEditAction'
             scope='request' validate="false" name="policyExportForm">
             <forward name="success" path="/WEB-INF/actions/secpolicy/editImport.jsp"/>
+        </action>
+        <action path="/externalDocument-preView" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/doc_externalDocument/import.jsp"/>
+        </action>
+        <action path="/externalDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
+            >
+            <forward name="success" path="/WEB-INF/actions/doc_externalDocument/import.jsp"/>
+        </action>
+        <action path="/externalDocument-viewImage" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
+            scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/doc_externalDocument/viewImage.jsp"/>
         </action>
         <action path="/servicePolicy-import" type='ru.ecom.jaas.web.action.policy.ImportPolicyAction'
             scope='request' validate="false" name="policyExportForm">

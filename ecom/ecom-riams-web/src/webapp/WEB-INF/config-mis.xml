@@ -5,14 +5,18 @@
 <struts-config>
 
 	<form-beans>
-		<!-- Рабочий календарь -->
         <form-bean name="smo_visitProtocolForm" type="ru.ecom.mis.ejb.form.medcase.VisitProtocolForm" />
+	    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
+	    <form-bean name="smo_direction_medserviceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCase20ForDirect" />
+
 		<form-bean name="doc_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm"/>
 		<form-bean name="doc_directionForm" type="ru.ecom.mis.ejb.form.licence.DirectionDocumentForm"/>
 		<form-bean name="doc_dischargeForm" type="ru.ecom.mis.ejb.form.licence.DischargeDocumentForm"/>
+		<form-bean name="doc_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm"/>
 	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
 	    <form-bean name="cal_patternBySpecForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm" />
 	    
+		<!-- Рабочий календарь -->
 	    <form-bean name="cal_workCalendarForm" type="$$map$$cal_workCalendarForm" />
 	    <form-bean name="cal_workCalendarDayForm" type="$$map$$cal_workCalendarDayForm" />
 
@@ -90,10 +94,6 @@
 			type="ru.ecom.mis.ejb.form.lpu.LpuAreaAddressTextForm" />
 		<form-bean name="mis_lpuFond" 
 			type="$$map$$mis_lpuFondForm" />
-		<form-bean name="mis_bedFundForm" 
-			type="ru.ecom.mis.ejb.form.lpu.BedFundForm" />
-		<form-bean name="mis_operatingRoomForm" 
-			type="ru.ecom.mis.ejb.form.lpu.OperatingRoomForm" />
 			
 		<!-- Пациент -->
 		
@@ -167,7 +167,7 @@
 		<form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
 		<form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
 		<form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
-		<form-bean name="mis_workPlaceForm" type="$$map$$mis_workPlaceForm" />
+		
 
 		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
 		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
@@ -175,6 +175,16 @@
 		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
 		<form-bean name="mis_recipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.RecipeForm" />
 		<form-bean name="mis_privilegeRecipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeRecipeForm" />
+		
+		<!-- Описание здания больницы -->
+		<form-bean name="mis_workPlaceForm" type="ru.ecom.mis.ejb.form.lpu.WorkPlaceForm" />
+		<form-bean name="mis_buildingPlaceForm" type="ru.ecom.mis.ejb.form.lpu.BuildingPlaceForm" />
+		<form-bean name="mis_floorBuildingForm" type="ru.ecom.mis.ejb.form.lpu.FloorBuildingForm" />
+		<form-bean name="mis_hospitalRoomForm" type="ru.ecom.mis.ejb.form.lpu.HospitalRoomForm" />
+		<form-bean name="mis_consultingRoomForm" type="ru.ecom.mis.ejb.form.lpu.ConsultingRoomForm" />
+		<form-bean name="mis_bedFundForm" type="ru.ecom.mis.ejb.form.lpu.BedFundForm" />
+		<form-bean name="mis_operatingRoomForm"	type="ru.ecom.mis.ejb.form.lpu.OperatingRoomForm" />
+		
 
 		<!-- Прикрепление по ведомству -->
 		
@@ -449,18 +459,7 @@
 		    	path='/WEB-INF/actions/stac_infectiousMessages/listError.jsp'
 		    />
 		</action>
-		<action path='/journal_militiaMessage'
-		    type='ru.ecom.web.actions.base.ForwardAction'
-		    name='stac_admissionJournalForm' validate='false' scope='request'
-		    input='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
-		    >
-		    <forward name="success" redirect="false"
-		    	path='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
-		    />
-		    <forward name="successerror" redirect="false"
-		    	path='/WEB-INF/actions/stac_criminalMessages/listError.jsp'
-		    />
-		</action>
+
 		<action path='/journal_vaccination'
 		    type='ru.ecom.web.actions.base.ForwardAction'
 		    name='stac_admissionJournalForm' validate='false' scope='request'
@@ -487,7 +486,7 @@
 		</action>
 		<action path='/journal_surOperation'
 		    type='ru.ecom.web.actions.base.ForwardAction'
-		    name='stac_admissionJournalForm' validate='false' scope='request'
+		    name='stac_admissionJournalForm' validate='false' scope='session'
 		    input='/WEB-INF/actions/stac_surOperation/listByPeriod.jsp'
 		    >
 		    <forward name="success" redirect="false"

@@ -173,7 +173,7 @@
     checkFieldUpdate('typeMKB','${typeMKB}',4) ;
     
     
-    function checkFieldUpdate(aField,aValue,aDefaulValue) {
+    function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	var max = chk.length ;
        	aValue=+aValue ;

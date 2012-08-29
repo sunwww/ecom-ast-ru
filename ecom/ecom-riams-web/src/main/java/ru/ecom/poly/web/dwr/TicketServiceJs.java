@@ -1,13 +1,17 @@
 package ru.ecom.poly.web.dwr;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.jsp.JspException;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
@@ -46,6 +50,29 @@ public class TicketServiceJs {
 	public String findProvReason(HttpServletRequest aRequest) throws NamingException {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		return service.findProvReason();
+	}
+	public String checkHospitalByMedcard(String aDateStart, Long aMedcard, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list=service.executeNativeSql("select person_id,id from medcard where id="+aMedcard) ;
+		return list.isEmpty()?null:checkHospital(aDateStart, ConvertSql.parseLong(list.iterator().next().get1()), aServiceStream, aRequest) ;
+	}
+	public String checkHospital(String aDateStart, Long aPatient, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		
+		String sql = "select id,name from vocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE' "; 
+		Collection<WebQueryResult> list=service.executeNativeSql(sql,1) ;
+		if (!list.isEmpty()) {
+		sql = "select to_char(dateStart,'dd.mm.yyyy') as date1,to_char(dateFinish,'dd.mm.yyyy') as date2 from medcase where patient_id='"+aPatient+"' and dtype='HospitalMedCase' and dateStart<to_date('"+aDateStart+"','dd.mm.yyyy') and (dateFinish is null or dateFinish>to_date('"+aDateStart+"','dd.mm.yyyy')) and deniedHospitalizating_id is null order by datestart desc" ;
+		list.clear() ;
+		list=service.executeNativeSql(sql,1) ;
+			if (!list.isEmpty()) {
+				WebQueryResult wqr = list.iterator().next() ;
+				return new StringBuilder().append(wqr.get1()).append("-")
+						.append(wqr.get2()!=null?wqr.get2():"по наст. время").toString() ;
+			}
+		}
+		return null ;
 		
 	}
 	public String getMedServiceBySpec(Long aSpec, String aDate, HttpServletRequest aRequest) throws ParseException, NamingException {

@@ -276,7 +276,9 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), coalesce(") ;
 		sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')')") ;
 		sql.append(",wct.prepatientInfo)") ;
-		sql.append(" as fio from WorkCalendarTime wct left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
+		sql.append(" as fio from WorkCalendarTime wct ")
+			.append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
+			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
 		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!=''))") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
@@ -332,8 +334,21 @@ public class WorkCalendarServiceJs {
 		sql.append(" ,coalesce(");
 		//sql.append("pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(p.birthday,'dd.mm.yyyy')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(" p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') ||coalesce(' ('||p.patientSync||')','')") ;
-		sql.append(",wct.prepatientInfo) as fio") ;
-		sql.append(" from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join Patient p on p.id=wct.prePatient_id left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' and wct.medCase_id is null ") ;
+		sql.append(",wct.prepatientInfo) as fio")
+			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ;
+		sql.append(" from WorkCalendarTime wct ")
+			.append(" left join medcase vis on vis.id=wct.medcase_id ")
+			.append(" left join SecUser su on su.login=wct.createPreRecord ")
+			.append(" left join SecUser su1 on su1.login=vis.username ")
+			.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id ")
+			.append(" left join WorkCalendar wc on wc.id=wcd.workCalendar_id ")
+			.append(" left join WorkFunction wf on wf.id=wc.workFunction_id ")
+			.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id ")
+			.append(" left join Worker w on w.id=wf.worker_id ")
+			.append(" left join patient wp on wp.id=w.person_id ")
+			.append("left join Patient p on p.id=wct.prePatient_id ")
+			.append("left join medpolicy mp on mp.patient_id=p.id ")
+			.append("where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' and wct.medCase_id is null ") ;
 		preInfo.append(aLastname).append(" ") ;
 		if (aFirstname!=null && !aFirstname.equals("")) {
 			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%' ") ;
@@ -373,14 +388,14 @@ public class WorkCalendarServiceJs {
 		}
 		System.out.println(preInfo) ;
 		sql.append("or wct.prePatientInfo like '").append(preInfo).append("') ") ;
-		sql.append(" group by wct.id,wct.prePatient_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo") ;
+		sql.append(" group by wct.id,wct.prePatient_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,su.isremoteuser,su1.isremoteuser") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),20);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<form name='frmDirect' id='frmDirect' action='javascript:void(0) ;'><ul id='listDirects'>") ;
 		for (WebQueryResult wqr:list) {
 			
-			res.append("<li class='liTimePre'>") ;
+			res.append("<li class='liTimePre ").append(wqr.get10()!=null?wqr.get10():"").append("'>") ;
 			res.append("<a href=\"javascript:patientCame('")
 				.append(wqr.get1()).append("', '")
 				.append(wqr.get9()).append("', '")
@@ -408,8 +423,21 @@ public class WorkCalendarServiceJs {
 		sql.append(" ,");
 		//sql.append("pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(p.birthday,'dd.mm.yyyy')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(" p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') ||coalesce(' ('||p.patientSync||')','')") ;
-		sql.append(" as fio") ;
-		sql.append(" from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join MedCase m on m.id=wct.medCase_id left join Patient p on p.id=m.patient_id left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
+		sql.append(" as fio") 
+		.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ;
+		sql.append(" from WorkCalendarTime wct ")
+			.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id")
+			.append(" left join WorkCalendar wc on wc.id=wcd.workCalendar_id ")
+			.append(" left join WorkFunction wf on wf.id=wc.workFunction_id ")
+			.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id ")
+			.append(" left join Worker w on w.id=wf.worker_id ")
+			.append(" left join patient wp on wp.id=w.person_id ")
+			.append(" left join MedCase m on m.id=wct.medCase_id ")
+			.append(" left join SecUser su on su.login=wct.createPreRecord ")
+			.append(" left join SecUser su1 on su1.login=m.username ")
+			.append(" left join Patient p on p.id=m.patient_id ")
+			.append(" left join medpolicy mp on mp.patient_id=p.id ")
+			.append(" where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
 		if (aFirstname!=null && !aFirstname.equals("")) {
 			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%' ") ;
 		}
@@ -429,14 +457,14 @@ public class WorkCalendarServiceJs {
 			sql.append(" and p.rayon_id='").append(aRayon).append("' ") ;
 		}
 		sql.append(") and m.dateStart is null ") ;
-		sql.append(" group by wct.id,wct.medCase_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday") ;
+		sql.append(" group by wct.id,wct.medCase_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,su.isremoteuser,su1.isremoteuser") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
 		list.clear() ;
 		list = service.executeNativeSql(sql.toString(),20);
 		//res.append("<li><b>Список направленных</b></li>") ;
 		for (WebQueryResult wqr:list) {
 			
-			res.append("<li class='liTimeDirect'><b>") ;
+			res.append("<li class='liTimeDirect ").append(wqr.get9()!=null?wqr.get9():"").append("'><b>") ;
 			res.append(wqr.get2()) ;
 			res.append(" ").append(wqr.get3()) ;
 			res.append("</b> ").append(wqr.get4()) ;
@@ -823,9 +851,12 @@ public class WorkCalendarServiceJs {
 		sql.append(",wct.prepatientInfo) as fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
-		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id)") ;
+		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
+			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; ;
 		sql.append(" from WorkCalendarTime wct") ; 
-		sql.append(" left join MedCase vis on vis.id=wct.medCase_id");
+		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
+			.append(" left join SecUser su on su.login=wct.createPreRecord ")
+			.append(" left join SecUser su1 on su1.login=vis.username ");
 		sql.append(" left join patient pat on pat.id=vis.patient_id");
 		sql.append(" left join patient prepat on prepat.id=wct.prepatient_id");
 		sql.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("'");
@@ -851,11 +882,11 @@ public class WorkCalendarServiceJs {
 			int pre = Integer.valueOf(""+wqr.get3());
 			if (pre==1) {
 				if (wqr.get7()!=null) {
-					res.append("<li id='liTimeDirect' ><strike>") 
+					res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>") 
 					.append(wqr.get2()) .append(" ") ;
 					res.append(wqr.get5()).append("</strike>") ;
 				} else {
-					res.append("<li id='liTimeDirect' >") 
+					res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") 
 					.append(wqr.get2()) .append(" ") ;
 					res.append(wqr.get5()) ;
 				}
@@ -864,7 +895,7 @@ public class WorkCalendarServiceJs {
 				if (wqr.get4()!=null) {
 					String prelastname = ""+wqr.get8() ;
 					String lastname = ""+wqr.get9() ;
-					res.append("<li id='liTimePre' >") ;
+					res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
 					String add = "" ;
 					if (prelastname!=null && lastname!=null) {
 						if (!prelastname.startsWith(lastname)) {
@@ -885,7 +916,7 @@ public class WorkCalendarServiceJs {
 					}
 				} else {
 					res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-					res.append("<li id='liTimePre' >") .append(" <a href=\"javascript:patientCame('")
+					res.append("<li id='liTimePre' class='").append(wqr.get10()!=null?wqr.get10():"").append("'>") .append(" <a href=\"javascript:patientCame('")
 					.append(wqr.get1()).append("','").append(wqr.get5())
 					.append("','").append(wqr.get6()).append("')\">")
 					.append(wqr.get2()).append("</a>")

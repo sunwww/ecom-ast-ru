@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в милицию" />
@@ -15,19 +15,47 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
-      <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">Результаты поиска за дату с ${param.id}.<msh:link action="journal_militiaMessage.do">Выбрать другую дату</msh:link></msh:sectionTitle>
+      <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">Список сообщений<msh:link action="journal_militiaMessage.do">Выбрать другую дату</msh:link></msh:sectionTitle>
       <msh:sectionContent guid="ab8e5a72-aadd-4c65-8691-2205506e63dc">
-        <ecom:webQuery name="listInf" nativeSql="select pm.id&#xA; ,pat.lastname || ' ' || pat.firstname || ' ' || pat.middlename&#xA; ,pat.birthday&#xA; ,pm.number, pm.phoneDate, pm.phoneTime,pm.phone,pm.recieverOrganization from PhoneMessage pm left join MedCase ms on pm.medCase_id=ms.id left join Patient pat on ms.patient_id = pat.id  where pm.phoneMessageType_id=2 and pm.phoneDate='${param.id}' " guid="909fd277-28b6-4ce3-841c-7d76ee74c9e0" />
-        <msh:table name="listInf" action="entityView-stac_criminalMessages.do" idField="1" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-          <msh:tableColumn identificator="false" property="2" guid="f78053fd-d2c4-4c8b-86ae-94b6612d36ea" columnName="Пациент" />
-          <msh:tableColumn columnName="Год рождения" identificator="false" property="3" guid="18f2ca97-04f2-45a6-b2a7-ffe69fe13dfc" />
-          <msh:tableColumn columnName="Номер сообщения" property="4" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
-          <msh:tableColumn columnName="Дата регистрации" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-          <msh:tableColumn columnName="Время регистрации" property="6" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-          <msh:tableColumn columnName="Телефон" property="7" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-          <msh:tableColumn columnName="Принявшая сообщение организация" property="8" guid="6b562107-5017-4559-9b94-ab525b579202" />
-        </msh:table>
-      </msh:sectionContent>
+        <ecom:webQuery name="journal_militia" nativeSql="
+    select pm.id, pm.phoneDate
+    ,vpht.name||coalesce(' '||vpmst.name,'')
+    ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
+    ,pm.place as pmplace
+    ,coalesce(vpme.name,pm.recieverFio) as reciever
+    ,vpmo.name as vphoname,wp.lastname as wplastname
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
+    ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+    left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+    left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+    left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+    left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+    left join WorkFunction wf on wf.id=pm.workFunction_id
+    left join Worker w on w.id=wf.worker_id
+    left join Patient wp on wp.id=w.person_id
+    left join medcase m on m.id=pm.medCase_id
+    left join Patient p on p.id=m.patient_id
+       
+        where pm.dtype='CriminalPhoneMessage' ${paramsPeriod} 
+        ${addParam}
+        ${emergency} ${department} ${pigeonHole}
+        ${messageType}
+        " 
+        />
+    <msh:table name="journal_militia"
+    viewUrl="entityShortView-stac_criminalMessages.do" 
+     action="entityParentView-stac_criminalMessages.do" idField="1" >
+      <msh:tableColumn columnName="Дата" property="2" />
+      <msh:tableColumn property="9" columnName="Пациент"/>
+      <msh:tableColumn columnName="Тип" property="3" />
+      <msh:tableColumn columnName="Когда" property="4" />
+      <msh:tableColumn columnName="Место" property="5" />
+      <msh:tableColumn columnName="Фамилия принявшего" property="6" />
+      <msh:tableColumn columnName="Фамилия передавшего" property="8" />
+      <msh:tableColumn columnName="Исход" property="7" />
+    </msh:table>      </msh:sectionContent>
     </msh:section>
   </tiles:put>
 </tiles:insert>

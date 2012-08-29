@@ -36,11 +36,20 @@ public class TemplateProtocolJs {
     public String listProtocolsByUsername(String aSmoId,String aFunctionTemp, String aFunctionProt,String aVersion,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("select t.id as tid,t.title as ttile") ;
-		sql.append(" from TemplateProtocol t") ;
+		sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
+		sql.append(" from TemplateProtocol tp");
+		sql.append(" left join SecUser su on tp.username=su.login");
+		sql.append(" left join templateprotocol_secgroup tg on tp.id=tg.templateprotocol_id");
+		sql.append(" left join SecGroup_secUser gu on gu.secgroup_id=tg.secgroups_id");
+		sql.append(" left join SecUser gsu on gsu.id=gu.secUsers_id");
+		sql.append(" where su.login='").append(login).append("' or gsu.login='").append(login).append("'");
+		sql.append(" group by tp.id,tp.title,su.login");
+		sql.append(" order by tp.title") ;
+		//sql.append("select t.id as tid,t.title as ttile") ;
+		//sql.append(" from TemplateProtocol t") ;
  
-		sql.append(" where t.username='").append(login).append("'") ;
-		sql.append(" order by t.title") ;
+		//sql.append(" where t.username='").append(login).append("'") ;
+		//sql.append(" order by t.title") ;
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder() ;
@@ -48,8 +57,9 @@ public class TemplateProtocolJs {
 		res.append("<table>");
 		
 		res.append("<tr><td colspan='2'>") ;
-		res.append("<h2>Список своих шаблонов (выбор осуществляется двойным нажатием мыши)</h2>") ;
+		res.append("<h2>Список своих шаблонов. Выбор осуществляется двойным нажатием мыши</h2>") ;
 		res.append("</td></tr><tr><td>") ;
+		res.append("<h2>шаблоны</h2>") ;
 		res.append("<ul>");
 		for (WebQueryResult wqr:list) {
 			res.append("<li class='liTemp' onclick=\"").append(aFunctionTemp).append("('")
@@ -60,19 +70,24 @@ public class TemplateProtocolJs {
 		}
 		res.append("</ul></td>") ;
 		if (aVersion!=null && aVersion.equals("Visit")) {
-			res.append("<td valign='top' style='padding-left:20px'><ul>");
+			res.append("<td valign='top' style='padding-left:20px'>");
+			res.append("<h2>заключения по пациенту</h2>") ;
+			res.append("<ul>");
 			sql = new StringBuilder() ;
-			sql.append("select d.id,  to_char(m.dateStart,'DD.MM.YYYY')||' '||vwf.name")  
+			sql.append("select d.id,  case when m.dtype='Visit' then 'Поликл.' when m.dtype='DepartmentMedCase' then 'СЛО' when m.dtype='HospitalMedCase' then 'СЛС' when m.dtype='ServiceMedCase' then 'Услуга' when m.dtype='HospitalMedCase' then 'Приемное отделение' else '' end||' '||to_char(m.dateStart,'DD.MM.YYYY')||' '||coalesce(vwf.name,vwf1.name)")  
 				.append(" from  Diary as d")   
 				.append(" left join MedCase as m on m.id=d.medCase_id")         
 				.append(" left join MedCase m1 on m1.patient_id=m.patient_id")
+				.append(" left join WorkFunction wf1 on wf1.id=m.ownerFunction_id")        
 				.append(" left join WorkFunction wf on wf.id=m.workFunctionExecute_id")        
+				.append(" left join Worker w1 on w1.id=wf1.worker_id")
 				.append(" left join Worker w on w.id=wf.worker_id")
+				.append(" left join VocWorkFunction vwf1 on vwf1.id=wf1.workFunction_id")         
 				.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")         
 				.append(" left join Patient p on p.id=w.person_id ")
 				.append(" where  d.dtype='Protocol'")
-				.append(" and m.dtype='Visit'") 
-				.append(" and m1.dtype='Visit'")  
+				//.append(" and m.dtype='Visit'") 
+				//.append(" and m1.dtype='Visit'")  
 				.append(" and d.username='").append(login).append("'  and m1.id='")
 				.append(aSmoId)
 				.append("'  order by m.dateStart desc") ;

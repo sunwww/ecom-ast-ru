@@ -27,6 +27,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideMenu></msh:sideMenu>
         <msh:sideMenu title="Безопасность">
         	<msh:sideLink styleId="users" action="/entityList-secuser.do" roles="/Policy/Jaas/SecUser/View" name="Пользователи"/>
+        	<msh:sideLink styleId="groups" action="/entityList-secgroup.do" roles="/Policy/Jaas/SecGroup/View" name="Группы"/>
         	<msh:sideLink styleId="roles" action="/entityList-secrole.do" roles="/Policy/Jaas/SecRole/View" name="Роли"/>
         	<msh:sideLink styleId="policies" action="/entityParentList-secpolicy.do?id=1" roles="/Policy/Jaas/SecPolicy/View" name="Политики"/>
         	<msh:sideLink action="/serviceExport.do" roles="/Policy/Jaas/Activation" name="Активация" title="Активация"/>

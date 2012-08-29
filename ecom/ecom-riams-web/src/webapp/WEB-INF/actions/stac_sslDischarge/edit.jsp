@@ -23,8 +23,19 @@
             #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
                 color: red ;
             }
-
+            
+            .epicrisis {
+				left:0px;  width:99%; 
+				top:0px;  height:45em;
+			}
+			#epicriPanel {
+			width:100%;
+			}
+			.dischargeEpicrisis {
+			width:100%;
+			}
         </style>
+
     </tiles:put>
       <tiles:put name="side" type="string">
     	  	<tags:stac_hospitalMenu currentAction="stac_sslDischarge"/>  
@@ -41,6 +52,7 @@
       <msh:hidden property="emergency"/>
       <msh:hidden property="ambulanceTreatment"/>
       <msh:hidden property="aidsExamination"/>
+      <msh:hidden property="ownerFunction"/>
       <msh:hidden property="bedType"/>
       <msh:hidden property="department"/>
       <msh:hidden property="hospType"/>
@@ -69,7 +81,7 @@
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
               
-      <msh:panel guid="ddf23842-kjhg-4da9-a2e6-1dd53c341551">
+      <msh:panel colsWidth="5%,10%,5%,80%">
         <msh:separator label="Приемное отделение" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
         <msh:row guid="25f2a536-4fb6-4413-89db-a478145e097e">
           <msh:textField property="statCardNumber" label="Номер стат.карты" guid="e5f3d524-cca8-4a5a-a408-196ab6b79627" horizontalFill="true" viewOnlyField="true" />
@@ -79,8 +91,8 @@
           <msh:textField property="entranceTime" label="время" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff" viewOnlyField="true" />
         </msh:row>
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
-          <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" viewOnlyField="true" />
           <msh:checkBox property="relativeMessage" label="Сообщение родственникам" guid="21e6d68e-e0a2-4854-85e7-9344d25e3d46" viewOnlyField="true" />
+          <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
         <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslDischargeForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
         <msh:separator label="Беременность" colSpan="9"/>
@@ -89,21 +101,46 @@
         </msh:row>
 
         </mis:ifPatientIsWoman>
+        </msh:panel>
+        <msh:panel styleId="epicriPanel" colsWidth="1%,1%,1%,1%">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="580a3-19bf-4793-af89-f7a56837">
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
-	        <msh:separator colSpan="8" label="Выписной эпикриз" guid="597ac93d-a5d0-4b08-a6b1-75497a" />
-	        <msh:row guid="544d70a3-19bf-4793-af89-fcv837" >
-	        
-	        <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
-	        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-	                      <td colspan="2">
-	                        <input type="button" value="Шаблон" onClick="showTextTemplateProtocol()"/><br/>
-	                        <input type="button" value="Доп. сведения" onClick="showTextEpicrisis()"/>
-	                    </td>
-	             </msh:ifFormTypeIsNotView>
+	        <msh:row>
+	        <msh:separator colSpan="8" label="Выписной эпикриз" />
 	        </msh:row>
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+	        <msh:row>
+              <td colspan="4" align="center">
+	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
+	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
+	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
+	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
+               </td>
+	        </msh:row>
+	        </msh:ifFormTypeIsNotView>
+	        <msh:row>
+	        <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
+	        </msh:row>
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+	        <msh:row>
+              <td colspan="4" align="center">
+	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
+	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
+	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
+	                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+               </td>
+	        </msh:row>
+	        </msh:ifFormTypeIsNotView>
         </msh:ifNotInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+        	<msh:hidden property="dischargeEpicrisis"/>
         </msh:ifInRole>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/View">
+        	<msh:hidden property="dischargeEpicrisis"/>
+        </msh:ifNotInRole>
+        </msh:panel>
+        <msh:panel colsWidth="5%,10%,5%,80%">
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"
         		fieldColSpan="3"
@@ -189,7 +226,7 @@
     </msh:form>
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
     	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-    	<tags:templateProtocol property="dischargeEpicrisis" name="Text"/>
+    	<tags:templateProtocol property="dischargeEpicrisis" name="Text" version="Visit" idSmo="stac_sslDischargeForm.id" voc="protocolVisitByPatient" />
     	<tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
     	</msh:ifFormTypeIsNotView>
     </msh:ifNotInRole>
@@ -210,6 +247,28 @@
         	<script type="text/javascript">
         		$('dischargeEpicrisis').select() ;
         		$('dischargeEpicrisis').focus() ;
+        		var isChangeSizeEpicrisis = 1 ;
+        		function changeSizeEpicrisis() {
+        			if (isChangeSizeEpicrisis==1) {
+        				Element.addClassName($('dischargeEpicrisis'), "epicrisis") ;
+        				if ($('changeSizeEpicrisisButton')) {
+        					$('changeSizeEpicrisisButton').value='Уменьшить'
+        					$('changeSizeEpicrisisButton1').value='Уменьшить'
+        				} ;
+        				isChangeSizeEpicrisis=0 ;
+        			} else {
+        				Element.removeClassName($('dischargeEpicrisis'), "epicrisis") ;
+        				if ($('changeSizeEpicrisisButton')) {
+        					$('changeSizeEpicrisisButton').value='Увеличить' ;
+        					$('changeSizeEpicrisisButton1').value='Увеличить' ;
+        				}
+        				isChangeSizeEpicrisis=1;
+        			}
+        		}
+        		eventutil.addEventListener($('dischargeEpicrisis'), "dblclick", 
+        	  		  	function() {
+        					changeSizeEpicrisis() ;
+        	  		  	}) ;
         	</script>
         </msh:ifNotInRole>
         
@@ -239,6 +298,15 @@
   			if (ind!=-1) {
   				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
   			}
+  		}
+  		function savePreRecord() {
+  			HospitalMedCaseService.preRecordDischarge(
+  					$('id').value,$('dischargeEpicrisis').value, {
+	                    callback: function(aResult) {
+	                        alert("Сохранено") ;
+	                    }
+  					}
+  			) ;
   		}
   	</script>
   	</msh:ifFormTypeIsNotView>

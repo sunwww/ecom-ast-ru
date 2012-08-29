@@ -37,9 +37,18 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal" 
     name="Журнал направленных" action="/visit_journal_direction.do" styleId="reportDirect"/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Visit/ReportVisits" 
+    name="Журнал обращений" action="/journal_visits_list.do" styleId="reportVisits"/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Visit/ReportNationality" 
+    name="Журнал СМО с разбивкой по гражданству" action="/journal_nationality_smo_list.do" styleId="reportNationality"/>
 	<msh:sideLink name="Открытые СПО" action="/smo_openSPO_list.do"
 		styleId="journalOpenSPO" roles="/Policy/Mis/MedCase/Visit/OpenSpo"/>
 	<msh:sideLink name="Активные направления" action="/smo_activeDirect_list.do"
 		styleId="journalActiveDirect" roles="/Policy/Mis/MedCase/Visit/JournalActiveDirect"/>
+	<msh:sideLink name="Журнал диагнозов по посещениям" action="/journal_visit_diagnosis.do"
+		styleId="reportDiagnosis" roles="/Policy/Mis/MedCase/Visit/ReportDiagnosis"/>
+	<msh:sideLink name="Журнал посещений к другим специалистам"
+	 action="/poly_directOtherSpecialist.do"
+		styleId="reportDirectOtherSpec" roles="/Policy/Mis/MedCase/Visit/DirectOtherSpecialist"/>
 </msh:sideMenu>
 

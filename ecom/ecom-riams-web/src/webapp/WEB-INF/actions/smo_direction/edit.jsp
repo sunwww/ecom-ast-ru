@@ -95,6 +95,26 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
+    <msh:ifFormTypeIsView formName="smo_directionForm">
+      <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
+      	<msh:section title="Услуги" 
+      	createUrl="entityParentPrepareCreate-smo_direction_medservice.do?id=${param.id}" 
+      	createRoles="/Policy/Mis/MedCase/MedService/Create">
+      		<ecom:webQuery name="services" 
+      		nativeSql="select mc.id,ms.name,mc.medServiceAmount
+      		from MedCase mc 
+      		left join MedService ms on mc.medService_id=ms.id
+      		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
+      		"/>
+      		<msh:table name="services" action="entityParentView-smo_direction_medservice.do"
+      		deleteUrl="entityParentDeleteGoParentView-smo_direction_medservice.do" 
+      	 	 viewUrl="entityParentView-smo_direction_medservice.do?short=Short" idField="1" >
+      			<msh:tableColumn columnName="Название услуги" property="2"/>
+      			<msh:tableColumn columnName="Кол-во" property="3"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+    </msh:ifFormTypeIsView>
     
     <msh:ifFormTypeIsNotView formName="smo_directionForm">
     	<tags:smo_direction_time name="Time" workFuncId="workFunctionPlan" calenDayId="datePlan" calenTimeId="timePlan" />
@@ -116,6 +136,8 @@
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
     	name="Направление &larr;"   action="/javascript:goNewDirection('.do')"  
     	 title='Направление'  />
+         <msh:sideLink roles="/Policy/Mis/MedCase/Direction/MedService/Create" key="ALT+8" name="Услугу" params="id" 
+         	action="/entityParentPrepareCreate-smo_direction_medservice" title="Добавить услугу" guid="df23d" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />

@@ -20,10 +20,20 @@
 				    <msh:row>
 					    <td colspan="1" class='label'>
 					    <input type="hidden" name="onlyYearH" id="onlyYearH">
-					    <input type='checkbox' name='onlyYear' id='onlyYear' onClick='javascript:document.location.href="stac_findSlsByStatCard.do?number="+$("number").value+"&onlyYear="+this.checked'>
+					    <input type='checkbox' name='onlyYear' id='onlyYear' onClick='javascript:document.location.href="stac_findSlsByStatCard.do?number="+$("number").value+"&exactMatch="+$("exactMatch").checked+"&onlyYear="+$("onlyYear").checked'>
 					    </td>
 					    <td colspan=3 class='onlyYear'>
 						    <label id='onlyYearLabel' for="onlyYear"> Отображать стат.карты за текущий год</label>
+					    
+					    </td>
+				    </msh:row>
+				    <msh:row>
+					    <td colspan="1" class='label'>
+					    <input type="hidden" name="exactMatchH" id="exactMatchH">
+					    <input type='checkbox' name='exactMatch' id='exactMatch' onClick='javascript:document.location.href="stac_findSlsByStatCard.do?number="+$("number").value+"&exactMatch="+$("exactMatch").checked+"&onlyYear="+$("onlyYear").checked'>
+					    </td>
+					    <td colspan=3 class='onlyYear'>
+						    <label id='exactMatchLabel' for="exactMatch"> Полное совпадение номера</label>
 					    
 					    </td>
 				    </msh:row>
@@ -54,7 +64,7 @@
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
             			where ss.dtype='StatisticStubExist' 
-            			and ss.code like '%${param.number}%' ${onlyYearS}
+            			and ${exactMatchS1}${param.number}${exactMatchS2} ${onlyYearS}
             			
             			"
             	/>
@@ -100,7 +110,15 @@
     	} else {
     		$('onlyYear').checked='' ;
     		$('onlyYearH').value='0' ;
-    	}    //]]
+    	}
+  		if ((+'${exactMatch}')==1) {
+    		$('exactMatch').checked='checked' ;
+    		$('exactMatchH').value='1' ;
+    	} else {
+    		$('exactMatch').checked='' ;
+    		$('exactMatchH').value='0' ;
+    	}
+  		//]]
   	</script>
   </tiles:put>
 

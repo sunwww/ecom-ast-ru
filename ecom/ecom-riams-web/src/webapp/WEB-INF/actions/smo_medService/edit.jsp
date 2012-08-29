@@ -10,7 +10,7 @@
     <!-- 
     	  - Сервис мед.услуг
     	  -->
-    	  <tags:templateProtocol  />
+    	  <tags:templateProtocol version="Visit" idSmo="smo_medServiceForm.parent" voc="protocolVisitByPatient" />
     <msh:form action="/entityParentSaveGoSubclassView-smo_medService.do" defaultField="dateExecute" guid="58611d9a-bd7a-465f-8d35-a1d6d03d0257">
       <msh:hidden property="id" guid="0144d27c-76ff-41a2-9bab-52844196a1cc" />
       <msh:hidden property="saveType" guid="63c88f1b-4cc9-493e-90ad-984cfafeb17d" />

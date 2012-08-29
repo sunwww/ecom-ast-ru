@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 <tiles:put name='body' type='string'>
-    <tags:templateProtocol version="Ticket" idSmo="poly_protocolForm.ticket"  />
+    <tags:templateProtocol version="Ticket" voc="protocolTicketByPatient" idSmo="poly_protocolForm.ticket"  />
     <msh:form action="entityParentSaveGoView-poly_protocol.do" defaultField="dateRegistration">
       <msh:panel>
         <msh:hidden property="id"/>

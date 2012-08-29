@@ -184,10 +184,14 @@
     	
     	) as sum2
     	${addGroupId}
+    	,count(
+    		case when vhr.code='11' then hmc.id else null end
+    	) as deathCnt
     	,vas.name as vasname
     	
     from MedCase as m 
-    left join MedCase as hmc on hmc.id=m.parent_id 
+    left join MedCase as hmc on hmc.id=m.parent_id
+    left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocservicestream as vss on vss.id=bf.servicestream_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
@@ -226,10 +230,15 @@
     	
     	) as sum2
     	${addGroupId}
+    	,count(
+    		case when vhr.code='11' then hmc.id else null end
+    	) as deathCnt
     	,vas.name as vasname
+    	    	
     	
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
+    left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocservicestream as vss on vss.id=bf.servicestream_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
@@ -278,8 +287,12 @@
     	
     	) as sum2
     	${addGroupId}
+    	    	,count(
+    		case when vhr.code='11' then hmc.id else null end
+    	) as deathCnt
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
+    left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocservicestream as vss on vss.id=bf.servicestream_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
@@ -317,8 +330,12 @@
     	
     	) as sum2
     	${addGroupId}
+    	    	,count(
+    		case when vhr.code='11' then hmc.id else null end
+    	) as deathCnt
     from MedCase as m 
     left join MedCase as hmc on hmc.id=m.parent_id 
+    left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocservicestream as vss on vss.id=bf.servicestream_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
@@ -340,9 +357,11 @@ if (typeView.equals("2")) {
 	<msh:section>
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" 
+        viewUrl="stac_groupByBedFundData.do?s=Short" 
+        idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Статус пациента" property="9" cssClass="statusPatient"/>
+            <msh:tableColumn columnName="Статус пациента" property="10" cssClass="statusPatient"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Поток обслужив." property="6"/>
             <msh:tableColumn columnName="Профиль коек" property="3"/>
@@ -350,6 +369,7 @@ if (typeView.equals("2")) {
             <msh:tableColumn columnName="Кол-во" property="5"/>
             <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
             <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
+            <msh:tableColumn columnName="Кол-во умерших пациентов" property="9"/>
         </msh:table>
         
     
@@ -365,15 +385,19 @@ if (typeView.equals("2")) {
     </msh:section>
     <%} else { %>
     <msh:section title="Свод по отделению и профилю коек ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
-		<msh:table name="journal_ticket_swod" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+		<msh:table name="journal_ticket_swod" action="stac_groupByBedFundData.do" 
+		viewUrl="stac_groupByBedFundData.do?s=Short" 
+		idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Статус пациента" property="8" cssClass="statusPatient"/>
+            <msh:tableColumn columnName="Статус пациента" property="9" cssClass="statusPatient"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Профиль коек" property="3"/>
             <msh:tableColumn columnName="Тип коек" property="4"/>
             <msh:tableColumn columnName="Кол-во" property="5"/>
             <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
             <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
+            <msh:tableColumn columnName="Кол-во умерших пациентов" property="8"/>
+            
         </msh:table>    
     </msh:section>
     <% }
@@ -401,9 +425,11 @@ if (typeView.equals("2")) {
     	<msh:section>
         <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
         <msh:sectionContent>
-            <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+            <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" 
+            viewUrl="stac_groupByBedFundData.do?s=Short" 
+            idField="1" noDataMessage="Не найдено">
                 <msh:tableColumn columnName="#" property="sn"/>
-                <msh:tableColumn columnName="Статус пациента" property="10" cssClass="statusPatient"/>
+                <msh:tableColumn columnName="Статус пациента" property="11" cssClass="statusPatient"/>
                 <msh:tableColumn columnName="Отделение" property="2"/>
                 <msh:tableColumn columnName="Поток обслужив." property="6"/>
                 <msh:tableColumn columnName="Профиль коек" property="3"/>
@@ -412,6 +438,8 @@ if (typeView.equals("2")) {
                 <msh:tableColumn columnName="Кол-во" property="5"/>
                 <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
                 <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
+                <msh:tableColumn columnName="Кол-во умерших пациентов" property="10"/>
+                
             </msh:table>
             
         
@@ -427,9 +455,11 @@ if (typeView.equals("2")) {
         </msh:section>
         <%} else { %>
         <msh:section title="Свод по отделению и профилю коек ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
-    		<msh:table name="journal_ticket_swod" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+    		<msh:table name="journal_ticket_swod"
+    		viewUrl="stac_groupByBedFundData.do?s=Short" 
+    		action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
                 <msh:tableColumn columnName="#" property="sn"/>
-                <msh:tableColumn columnName="Статус пациента" property="9" cssClass="statusPatient"/>
+                <msh:tableColumn columnName="Статус пациента" property="10" cssClass="statusPatient"/>
                 <msh:tableColumn columnName="Отделение" property="2"/>
                 <msh:tableColumn columnName="Профиль коек" property="3"/>
                 <msh:tableColumn columnName="Тип коек" property="4"/>
@@ -437,6 +467,8 @@ if (typeView.equals("2")) {
                 <msh:tableColumn columnName="Кол-во" property="5"/>
                 <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
                 <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
+                <msh:tableColumn columnName="Кол-во умерших пациентов" property="9"/>
+                
             </msh:table>    
         </msh:section>
         <% }    	
@@ -463,13 +495,13 @@ if (typeView.equals("2")) {
     checkFieldUpdate('typeStatus','${typeStatus}',2) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
     
-    function checkFieldUpdate(aField,aValue,aDefaulValue) {
+    function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
        	aValue=+aValue ;
        	var max=chk.length ;
        	if (aValue==0 || (aValue)>(max)) {
-       		chk[+aDefaulValue-1].checked='checked' ;
+       		chk[+aDefaultValue-1].checked='checked' ;
        	} else {
        		chk[+aValue-1].checked='checked' ;
        	}

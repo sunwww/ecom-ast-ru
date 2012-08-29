@@ -5,7 +5,22 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="style" type="string">
+        <style type="text/css">            
+            .protocols {
+				left:0px;  width:60em; 
+				top:0px;  height:55em;
+				overflow: auto;
+			}
+			.operationText {
+			width:100%;
+			}
+			.histologicalStudy {
+			width:100%;
+			}
+        </style>
 
+    </tiles:put>
   <tiles:put name="body" type="string">
     <!-- 
     	  - Хирургическая операция
@@ -23,6 +38,7 @@
           <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="2" fieldColSpan="2"/>
         </msh:row>
         <msh:separator label="Сведения до операции" colSpan="" guid="a7a51c30-4065-4ab85b4ade6f66" />
+        <%--
         <msh:row guid="03b71d93-07b4-4070-a1da-3f8752c80442">
           <msh:textArea rows="6" hideLabel="false" property="preoperativeEpicrisis" viewOnlyField="false" label="Предоперационный эпикриз" guid="531235ed-942f-48b0-8c00-d3d30f7da592" fieldColSpan="3" />
           <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="eb0595fe-a9ab-4033-8bd7-ec5ce3fd35e2">
@@ -30,7 +46,7 @@
               <input type="button" value="Шаблон" onClick="showPreoperativeEpicrisisTempTemplateProtocol()" />
             </td>
           </msh:ifFormTypeIsNotView>
-        </msh:row>
+        </msh:row> --%>
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:autoComplete property="idc10Before" label="МКБ до операции" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
         </msh:row>
@@ -61,6 +77,19 @@
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="abortion" vocName="vocAbortion" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
+        </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        	<msh:hidden property="surgeonFunctions"/>
+        	<msh:hidden property="complications"/>
+        	<msh:hidden property="profile"/>
+        	<msh:hidden property="operatingNurse"/>
+        	<msh:hidden property="method"/>
+        	<msh:hidden property="operationText"/>
+        	<msh:hidden property="aspect"/>
+        	<msh:hidden property="technology"/>
+        </msh:ifInRole>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
@@ -68,9 +97,12 @@
         </msh:row>
         <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
           <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
+        </msh:row>
+        <msh:row>
           <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
-            <td colspan="1">
+            <td colspan="4" align="center">
               <input type="button" value="Шаблон" onClick="showOperationTextTempTemplateProtocol()" />
+              <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
             </td>
           </msh:ifFormTypeIsNotView>
         </msh:row>
@@ -89,16 +121,24 @@
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">          
         
         <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
-          <ecom:oneToManyOneAutocomplete label="Ассистенты" property="surgeonFunctions" vocName="workFunction" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
+          <ecom:oneToManyOneAutocomplete label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
         </msh:row>
         <msh:row guid="12721-2e6b-425a-a14e-1c0298959">
-          <msh:autoComplete property="operatingNurse" label="Операционная медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunction" />
+          <msh:autoComplete property="operatingNurse" label="Опер. медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse" />
         </msh:row>
         </msh:ifNotInRole>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-        	<msh:hidden property="surgeonFunctions"/>
-        	<msh:hidden property="complications"/>
-        </msh:ifInRole>
+
+        <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
+        	<msh:row>
+        		<msh:separator label="Анестезия" colSpan="4"/>
+        	</msh:row>
+	        <msh:row>
+	          <msh:autoComplete property="anesthesia" label="Метод" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3" />
+	        </msh:row>
+	        <msh:row >
+	          <msh:autoComplete property="anaesthetist" label="Анестезист" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
+	        </msh:row>
+        </msh:ifFormTypeIsCreate>
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
         <msh:separator label="Использование специальной аппаратуры" colSpan="" guid="78d9-74f0-401c-ab10-01bdf544acd8" />
 	        <msh:row guid="c065ec29-09d7-49de-adbb-516655c251c1">
@@ -114,10 +154,13 @@
           <ecom:oneToManyOneAutocomplete vocName="vocComplication" colSpan="3" label="Осложнения" property="complications" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />
         </msh:row>
         <msh:row guid="1aaf301e-9bae-462b-9e03-e9c5f3aa5162">
-          <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false" label="Гистологическое исследование" guid="535c0b96-277f-4f60-bd03-19421447bcd0" fieldColSpan="3" horizontalFill="true" rows="6" />
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="367dc712-da06-4520-a295-57680ba1a56a">
-            <td colspan="1">
+          <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false" label="Гистол. исследование" guid="535c0b96-277f-4f60-bd03-19421447bcd0" fieldColSpan="3" horizontalFill="true" rows="6" />
+        </msh:row>
+        <msh:row>
+          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
+            <td colspan="4" align="center">
               <input type="button" value="Шаблон" onClick="showHistologicalStudyTempTemplateProtocol()" />
+              <input type="button" id="changeSizeHistButton" value="Увеличить" onclick="changeSizeHist()">
             </td>
           </msh:ifFormTypeIsNotView>
         </msh:row>
@@ -141,9 +184,13 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
-      <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp" />
-      <tags:templateProtocol property="operationText" name="OperationTextTemp" />
-      <tags:templateProtocol property="preoperativeEpicrisis" name="PreoperativeEpicrisisTemp" />
+      <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp" 
+      idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
+      />
+      <tags:templateProtocol property="operationText" name="OperationTextTemp" 
+      idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
+      />
+      <%--<tags:templateProtocol property="preoperativeEpicrisis" name="PreoperativeEpicrisisTemp" /> --%>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_surOperationForm" guid="e71c21cc-2a77-4d16-9ee0-ba293d19a42b">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View" guid="9a06820c-3f3b-4744-880d-06aa1745888d">
@@ -180,10 +227,45 @@
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
+  
   <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     <script type="text/javascript">// <![CDATA[//
+                                               
+	var isChangeSizeEpicrisis=1 ;
+	var isChangeSizeHist=1 ;
+	function changeSizeEpicrisis() {
+		if (isChangeSizeEpicrisis==1) {
+			Element.addClassName($('operationText'), "protocols") ;
+			if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Уменьшить' ;
+			isChangeSizeEpicrisis=0 ;
+		} else {
+			Element.removeClassName($('operationText'), "protocols") ;
+			if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Увеличить' ;
+			isChangeSizeEpicrisis=1;
+		}
+	}
+	eventutil.addEventListener($('operationText'), "dblclick", 
+  		  	function() {
+				changeSizeEpicrisis() ;
+  		  	}) ;
+	
+	function changeSizeHist() {
+		if (isChangeSizeHist==1) {
+			Element.addClassName($('histologicalStudy'), "protocols") ;
+			if ($('changeSizeHistButton')) $('changeSizeHistButton').value='Уменьшить' ;
+			isChangeSizeHist=0 ;
+		} else {
+			Element.removeClassName($('histologicalStudy'), "protocols") ;
+			if ($('changeSizeHistButton')) $('changeSizeHistButton').value='Увеличить' ;
+			isChangeSizeHist=1;
+		}
+	}
+	eventutil.addEventListener($('histologicalStudy'), "dblclick", 
+  		  	function() {
+				changeSizeHist() ;
+  		  	}) ;
     	
     	var oldaction = document.forms[0].action ;
     	document.forms[0].action = 'javascript:isExistSurOperation()';
@@ -275,6 +357,7 @@
   	 departmentAutocomplete.addOnChangeCallback(function() {
   		changeParentMedService() ;
   		});
+  	changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>

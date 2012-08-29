@@ -23,6 +23,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
     	String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", aRequest) ;
 		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", aRequest) ;
 		String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","3", aRequest) ;
+		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", aRequest) ;
 		//String emer= request.getParameter("emergancyIs") ;
 		if (form!=null && form.getDateBegin()!=null && !form.getDateBegin().equals("")) {
 			if (typeEmergency!=null && typeEmergency.equals("1")) {

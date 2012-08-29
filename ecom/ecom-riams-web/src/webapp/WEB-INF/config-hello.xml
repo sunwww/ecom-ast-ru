@@ -16,7 +16,6 @@
     
     <!-- Настоящие -->
     
-    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
     <form-bean name="work_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.PersonalWorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionByGroupForm" type="$$map$$work_personalWorkFunctionByGroupForm" />

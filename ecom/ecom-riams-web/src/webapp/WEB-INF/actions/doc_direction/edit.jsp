@@ -55,8 +55,8 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="doc_directionForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
       <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_direction" name="Изменить" roles="/Policy/Mis/Disability/Case/Document/Record/Edit" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-doc_direction" name="Удалить" roles="/Policy/Mis/Disability/Case/Document/Record/Delete" guid="1a3265b4-cebb-4536-a471-c79003ccf548" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_direction" name="Изменить" roles="/Policy/Mis/MedCase/Document/Internal/Direction/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_direction" name="Удалить" roles="/Policy/Mis/MedCase/Document/Internal/Direction/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

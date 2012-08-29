@@ -15,6 +15,7 @@
          #rwDel {
          	border-top: 1px solid gray;
          }
+         ${style}
         </style>
     </tiles:put>
     
@@ -48,7 +49,13 @@
         <msh:row>
 	       <td colspan="1"></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDate" value="4">  переведенные
+	        	<input type="radio" name="typeDate" value="4">  взятые на учет по первичным причинам
+	        </td>
+        </msh:row>
+        <msh:row>
+	       <td colspan="1"></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDate" value="5">  переведенные
 	        </td>
             <msh:autoComplete property="reasonTransfer" vocName="vocPsychTransferReason"
              horizontalFill="true" fieldColSpan="3" label="причина"/>
@@ -56,7 +63,7 @@
         <msh:row>
 	       <td colspan="1"></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDate" value="5">  снятые с учета
+	        	<input type="radio" name="typeDate" value="6">  снятые с учета
 	        </td>
 	        <msh:autoComplete property="reasonEnd" vocName="vocPsychStrikeOffReason"
 	         horizontalFill="true" fieldColSpan="3" label="причина"/>
@@ -113,10 +120,10 @@
         	<msh:autoComplete property="ambulatoryCare" vocName="vocPsychAmbulatoryCare" label="Вид наблюдения" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
         <msh:row styleId="rwDel">
-        	<msh:autoComplete parentAutocomplete="ambulatoryCare" property="group" vocName="vocPsychDispensaryGroup" label="Группа (АДН+АПЛ)" fieldColSpan="5" horizontalFill="true" />
+        	<msh:autoComplete parentAutocomplete="ambulatoryCare" property="group" vocName="vocPsychDispensaryGroup" label="Группа (АДН)" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="compTreatment" vocName="vocPsychCompulsoryTreatment" fieldColSpan="5" horizontalFill="true" label="Принуд.лечен"/>
+        	<msh:autoComplete property="compTreatment" vocName="vocPsychCompulsoryTreatment" fieldColSpan="5" horizontalFill="true" label="Принуд.лечен (АПЛ)"/>
         </msh:row>
       <msh:row>
         <td class="label" title="Список  (typeCare)" colspan="1"><label for="typeCareName" id="typeCareLabel">Список:</label></td>
@@ -162,7 +169,7 @@
     
     <script type='text/javascript'>
 
-     checkFieldUpdate('typeDate','${typeDate}',5) ;
+     checkFieldUpdate('typeDate','${typeDate}',1) ;
      //checkFieldUpdate('typeFirst','${typeFirst}',3) ;
      checkFieldUpdate('typeInv','${typeInv}',5) ;
      checkFieldUpdate('typeAge','${typeAge}',2) ;
@@ -200,7 +207,25 @@
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	frm.action='print-psych_listByArea.do' ;
+    	var dopCnt = 1 ;
+    	var file = "psych_listByArea" ;
+    	var typeDate = +getCheckedRadio(frm,"typeDate") ;
+    	if (getCheckedRadio(frm,"typeInv")>1) {
+    		file = "psych_listByArea_inv" ;
+    	} else if (getCheckedRadio(frm,"typeSuicide")>1) {
+    		file = "psych_listByArea_sui" ;
+    	} else if (+$("group").value>0) {
+    		file = "psych_listByArea_adn" ;
+    	} else if (+$("compTreatment").value>0) {
+    		file = "psych_listByArea_apl" ;
+    	} else if (+getCheckedRadio(frm,"typeDate")==1) {
+    		file = "psych_listByArea_current" ;
+    	} else if (typeDate==2 || typeDate==4 || typeDate==5) {
+    		file = "psych_listByArea_end" ;
+    	} else if (typeDate==3) {
+    		file = "psych_listByArea_begin" ;
+    	}
+    	frm.action='print-'+file+'.do' ;
     }
     
     </script>
@@ -219,7 +244,12 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="
    select distinct pcc.id as pccid
-   ,pcc.cardNumber as pcccardNumber
+,(
+cast(to_char(CURRENT_DATE,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++case when (cast(to_char(CURRENT_DATE, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(CURRENT_DATE,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and ((cast(to_char(CURRENT_DATE, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+)
+||' '||coalesce(vs1.name,'-')
+as age
    ,coalesce(p.lastname,'-')||' '||coalesce(p.firstname,'-')|| ' '||coalesce(p.middlename,'-') as lfm
    ,area.startDate as areastartdate,area.finishDate as areafinishdate,p.birthday as pbirthday 
    , case when p.address_addressId is not null 
@@ -237,17 +267,25 @@
 	  end as address
    ,$$getDiagnosis^ZPsychUtil(p.id,isnull(area.finishDate,CURRENT_DATE))
    ,vpor.name as vporname,vptr.name as vptrname,vpsor.name as vpsorname
+   ${invAddField} ${suicideAddField} ${compTreatAddField} ${groupAddField}
    from PsychiatricCareCard pcc 
+   left join VocPsychDeathReason vpdr on vpdr.id=pcc.deathReason_id
    left join Patient p on p.id=pcc.patient_id 
+   left join VocSex vs1 on vs1.id=p.sex_id
    left join LpuAreaPsychCareCard area on pcc.id=area.careCard_id 
    left join CompulsoryTreatment ct on pcc.id=ct.careCard_id
+   left join VocLawCourt vlc on vlc.id=ct.lawCourt_id
+   left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
    left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=area.id
    ${groupDopJoin}
    left join Suicide sui on sui.careCard_id=pcc.id
+   left join VocPsychSuicideNature vpsn on vpsn.id=sui.nature_id
    left join VocPsychObservationReason vpor on vpor.id=area.observationReason_id
    left join VocPsychTransferReason vptr on vptr.id=area.transferReason_id
    left join VocPsychStrikeOffReason vpsor on vpsor.id=area.stikeOffReason_id
    left join Invalidity inv on inv.patient_id=p.id
+   left join VocInvalidity vi on vi.id=inv.group_id
+    left join VocLawCourt invvlc on invvlc.id=inv.lawCourt_id
 	left join Address2 a on a.addressId=p.address_addressId
 	left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
 	left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
@@ -261,16 +299,29 @@
    order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table viewUrl="entityShortView-psych_careCard.do" editUrl="entityParentEdit-psych_careCard.do" deleteUrl="entityParentDeleteGoParentView-psych_careCard.do" name="journal_ticket" action="entityView-psych_careCard.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
-			<msh:tableColumn columnName="№карты" property="2"/>
 			<msh:tableColumn columnName="ФИО пациента" property="3"/>
 			<msh:tableColumn columnName="Год рождения" property="6"/>
+			<msh:tableColumn columnName="Возраст и пол" property="2"/>
 			<msh:tableColumn columnName="Дата взятия" property="4"/>
-			<msh:tableColumn columnName="Причина взятия" property="9"/>
-			<msh:tableColumn columnName="Дата снятия (перевода)" property="5"/>
-			<msh:tableColumn columnName="Причина перевода" property="10"/>
-			<msh:tableColumn columnName="Причина снятия" property="11"/>
+			<msh:tableColumn columnName="Причина взятия" property="9" />
+			<msh:tableColumn columnName="Дата снятия (перевода)" property="5" cssClass="noConsisting"/>
+			<msh:tableColumn columnName="Причина перевода" property="10" cssClass="noConsisting"/>
+			<msh:tableColumn columnName="Причина снятия" property="11" cssClass="noConsisting"/>
 			<msh:tableColumn columnName="Адрес" property="7"/>
 			<msh:tableColumn columnName="Диагноз" property="8"/>
+			<msh:tableColumn columnName="Группа инвалидности" property="14" cssClass="invAddField"/>
+			<msh:tableColumn columnName="Инв. недеесп. дата суда и суд " property="12" cssClass="invAddField"/>
+			<msh:tableColumn columnName="Дата устан. - дата след. пересмотра (без переосвид.)" property="13" cssClass="invAddField"/>
+			<msh:tableColumn columnName="Дата суицида" property="15" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Суицид завершен?" property="16" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Характер суицида" property="17" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Дата решения суда" property="18" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Суд" property="19" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Статья угол. кодекса" property="20" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Кол-во дней" property="21" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Дата взятия (АДН)" property="22" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Дата снятия (АДН)" property="23" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Кол-во дней (АДН)" property="24" cssClass="groupAddField"/>
         </msh:table>
     <%-- 
    ,(select list(mkb.code) from Diagnosis dd left join vocidc10 mkb on mkb.id=dd.idc10_id where dd.patient_id=pcc.patient_id and dd.establishDate between area.startDate and area.finishDate)

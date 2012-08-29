@@ -20,12 +20,14 @@
 	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
 	,pat.birthday,sc.code from Diagnosis diag
 	left join medCase slo on slo.id=diag.medCase_id 
+	left join BedFund bf on bf.id=slo.bedFund_id
 	left join MedCase as sls on sls.id = slo.parent_id 
 	left join StatisticStub as sc on sc.medCase_id=sls.id 
-	left outer join Patient pat on slo.patient_id = pat.id 
+	left join Patient pat on slo.patient_id = pat.id 
 	left join VocIdc10 mkb on mkb.id=diag.idc10_id
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+	left join VocServiceStream vss on vss.id=slo.serviceStream_id
 	where ${fldDate} between to_date('${dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
 			${servStream} ${dep} ${mkbCode} and diag.priority_id='${priority}'

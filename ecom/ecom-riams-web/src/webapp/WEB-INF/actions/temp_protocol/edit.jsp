@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-  <tags:templateProtocol  property="text" name="Temp"/>
+  <tags:templateProtocol  property="text" name="Temp" voc="protocolTicketByPatient"/>
     <msh:form action="entitySaveGoView-temp_protocol" defaultField="title" guid="34dc6e2d-dfa9-41a2-b8e1-3a0bdbb24d36">
       <msh:hidden property="id" guid="b13af088-2be6-4450-8c05-aaa9971111bf" />
       <msh:hidden property="saveType" guid="4f251d39-a1c1-46cc-b8a8-6c641aadad7d" />
@@ -43,6 +43,9 @@
           <ecom:oneToManyOneAutocomplete label="Категории шаблона" vocName="vocTemplateCategory" property="categories" colSpan="4" guid="5a17c3bb-c5f2-4053-98e2-4cbbfd7fccce" />
         </msh:row>
         </msh:ifFormTypeIsNotView>
+        <msh:row guid="b9051979-4115-40c0-8d63-4fce097d9a72">
+          <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
+        </msh:row>
         <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="b3fd6145-7072-4065-accc-73fc37fb20ac" />
           <msh:textField property="date" label="Дата создания" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />

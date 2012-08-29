@@ -15,7 +15,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select p.id,t.date,$$CheckPatientOMC^ZMedPolicy(m.person_id,t.date),p.lastname||' '||p.firstname||' '||p.middlename,count(*),m.number from Ticket t left join medcard as m on m.id=t.medcard_id left join patient p on p.id=m.person_id where t.date  between '${param.dateBegin}'  and '${param.dateEnd}' ${add} and $$CheckPatientOMC^ZMedPolicy(m.person_id,t.date) is not null group by m.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <ecom:webQuery name="journal_ticket" nativeSql="select p.id,t.date,$$CheckPatientOMC^ZMedPolicy(m.person_id,t.date),p.lastname||' '||p.firstname||' '||p.middlename,count(*),m.number from Ticket t left join medcard as m on m.id=t.medcard_id left join patient p on p.id=m.person_id where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy') ${add} and $$CheckPatientOMC^ZMedPolicy(m.person_id,t.date) is not null group by m.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациента" property="4"/>

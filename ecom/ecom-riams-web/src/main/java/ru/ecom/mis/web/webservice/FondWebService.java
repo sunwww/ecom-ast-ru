@@ -189,8 +189,8 @@ public class FondWebService {
         	sb.append("<th>").append("Номер").append("</th>") ;
         	sb.append("<th>").append("Дата выдачи").append("</th>") ;
         	sb.append("<th>").append("Дата начала").append("</th>") ;
-        	sb.append("<th>").append("Дата посл. продления").append("</th>") ;
-        	sb.append("<th>").append("Дата окон. действия (досрочно)").append("</th>") ;
+        	sb.append("<th>").append("Дата оконч. посл. продления").append("</th>") ;
+        	sb.append("<th>").append("Дата оконч. действия (досрочно)").append("</th>") ;
         	sb.append("</tr>") ;
         	for (Element el:list_cur) {
         		//System.out.println(result);

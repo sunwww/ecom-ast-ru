@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="style" type="string">
     <style type="text/css">tr.deniedHospitalizating td {
@@ -20,7 +20,15 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <ecom:webQuery name="datelist" nativeSql="select m.id,m.dateStart,m.dateFinish,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,dep.name,m.emergency,m.noActuality  from MedCase m &#xA;left outer join MisLpu dep on m.department_id = dep.id&#xA;left outer join Patient pat on m.patient_id = pat.id  &#xA;left outer join StatisticStub stat on m.statisticstub_id=stat.id &#xA;left outer join MisLpu lpu on m.department_id = lpu.id &#xA;where m.DTYPE='HospitalMedCase' and m.${param.dateSearch}='${param.id}'" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+    <ecom:webQuery name="datelist" nativeSql="
+    select m.id,m.dateStart,m.dateFinish,m.username,stat.code
+    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
+    ,pat.birthday,dep.name,m.emergency,m.noActuality  from MedCase m 
+    left join MisLpu dep on m.department_id = dep.id
+    left join Patient pat on m.patient_id = pat.id  
+    left join StatisticStub stat on m.statisticstub_id=stat.id 
+    left join MisLpu lpu on m.department_id = lpu.id 
+    where m.DTYPE='HospitalMedCase' ${paramPeriod} ${addParam} ${emergency} ${department} ${pigeonHole}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Год рождения" property="7" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
@@ -49,9 +57,6 @@
     </msh:tableNotEmpty>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_sslAdmission" name="Новый ССЛ" title="Добавить случай стационарного лечения" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" />
-    </msh:sideMenu>
     <msh:sideMenu title="Перейти" guid="b43f7427-60be-4539-8b79-38a6882a8512">
       <msh:sideLink key="ALT+2" params="id" action="/entityView-mis_patient" name="⇧ Пациент" guid="f07e71b2-bfbe-4137-8bba-b347b8056561" />
     </msh:sideMenu>

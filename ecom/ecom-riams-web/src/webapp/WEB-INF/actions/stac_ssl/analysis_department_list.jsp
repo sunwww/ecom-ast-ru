@@ -23,6 +23,7 @@
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" value="printDeathList" name="m">
     <input type="hidden" value="HospitalReportService" name="s">
+    <input type="hidden" value="" name="param">
       <msh:row>
         <msh:separator label="Дополнительные параметры для реестра (в своде не учитываются)" colSpan="7"/>
        </msh:row>
@@ -174,10 +175,10 @@ from MedCase hmc
     left join address2 adr on adr.addressId = pat.address_addressId
     left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
     left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
-    left join VocOperation voHosp on soHosp.operation_id=voHosp.id
+    left join MedService voHosp on soHosp.medService_id=voHosp.id
     left join SurgicalOperation soDep on soDep.medCase_id=admc.id
     left join mislpu as soD on soD.id=soDep.department_id 
-    left join VocOperation voDep on soDep.operation_id=voDep.id
+    left join MedService voDep on soDep.medService_id=voDep.id
     left join Omc_Oksm ok on pat.nationality_id=ok.id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
@@ -259,10 +260,10 @@ from MedCase hmc
     left join address2 adr on adr.addressId = pat.address_addressId
     left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
     left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
-    left join VocOperation voHosp on soHosp.operation_id=voHosp.id
+    left join MedService voHosp on soHosp.medService_id=voHosp.id
     left join SurgicalOperation soDep on soDep.medCase_id=admc.id
     left join mislpu as soD on soD.id=soDep.department_id 
-    left join VocOperation voDep on soDep.operation_id=voDep.id
+    left join MedService voDep on soDep.medService_id=voDep.id
     left join Omc_Oksm ok on pat.nationality_id=ok.id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
@@ -573,19 +574,19 @@ order by dep.name
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
             <msh:tableColumn columnName="Число выбывших больных" property="3"/>
             <msh:tableColumn columnName="всего" property="4"/>
-            <msh:tableColumn columnName="плановых " property="5"/>
             <msh:tableColumn columnName="экстренных" property="6"/>
+            <msh:tableColumn columnName="плановых " property="5"/>
             <msh:tableColumn columnName="всего" property="7"/>
-            <msh:tableColumn columnName="плановых " property="8"/>
             <msh:tableColumn columnName="экстренных" property="9"/>
-            <msh:tableColumn columnName="плановых " property="10"/>
+            <msh:tableColumn columnName="плановых " property="8"/>
             <msh:tableColumn columnName="экстренных" property="11"/>
+            <msh:tableColumn columnName="плановых " property="10"/>
             <msh:tableColumn columnName="по пациентам" property="12"/>
             <msh:tableColumn columnName="по операциям" property="13"/>
-            <msh:tableColumn columnName="план. до" property="14"/>
-            <msh:tableColumn columnName="план. после" property="15"/>
             <msh:tableColumn columnName="экст. до" property="16"/>
             <msh:tableColumn columnName="экст. после" property="17"/>
+            <msh:tableColumn columnName="план. до" property="14"/>
+            <msh:tableColumn columnName="план. после" property="15"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -799,20 +800,23 @@ so.department_id ||':'||so.surgeon_id as depid,dep.name as depname
 ,(select count(distinct hmc1.id) from MedCase hmc1
 left join MedCase dmc1 on dmc1.parent_id=hmc1.id
 where hmc1.DTYPE='HospitalMedCase' 
-    and hmc1.dateFinish between to_date('01.01.2012','dd.mm.yyyy')  
-    	and to_date('31.03.2012','dd.mm.yyyy') 
+    and hmc1.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
     	and so.surgeon_id=dmc1.ownerFunction_id
     	and so.department_id=dmc1.department_id
 ) as cntOwnerPat
 ,count(distinct hmc.id) as cntOperPat
-,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmOperPat
+,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmOperPatHosp
+,count(distinct case when vha.code='EMERGENCY' then hmc.id else null end) as cntEmOperPatOper
 ,count(distinct so.id) as cntOper
-,count(distinct case when hmc.emergency='1' then so.id else null end) as cntEmOper
-,sum(vo.complexity)+count(so.id) as cntComp
+,count(distinct case when hmc.emergency='1' then so.id else null end) as cntEmOperHosp
+,count(distinct case when vha.code='EMERGENCY' then so.id else null end) as cntEmOperOper
+,sum(case when vo.complexity is null then 0 else vo.complexity end)+count(so.id) as cntComp
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
-left join VocOperation vo on vo.id=so.operation_id
+left join VocHospitalAspect vha on vha.id=so.aspect_id
+left join MedService vo on vo.id=so.medService_id
 left join Patient pat on pat.id=hmc.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Omc_Oksm ok on pat.nationality_id=ok.id
@@ -842,10 +846,12 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="ФИО врача" property="4"/>
             <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" property="5"/>            
             <msh:tableColumn columnName="Кол-во опер. пациентов" property="6"/>            
-            <msh:tableColumn columnName="из них экстр." property="7"/>            
-            <msh:tableColumn columnName="Кол-во операций" property="8"/>            
-            <msh:tableColumn columnName="из них экстр." property="9"/>            
-            <msh:tableColumn columnName="Сводный коэффициент" property="10"/>            
+            <msh:tableColumn columnName="из них экстр. госпит." property="7"/>            
+            <msh:tableColumn columnName="из них экстр. опер." property="8"/>            
+            <msh:tableColumn columnName="Кол-во операций" property="9"/>            
+            <msh:tableColumn columnName="из них экстр. госп." property="10"/>            
+            <msh:tableColumn columnName="из них экстр. опер." property="11"/>            
+            <msh:tableColumn columnName="Сводный коэффициент" property="12"/>            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -871,14 +877,17 @@ where hmc1.DTYPE='HospitalMedCase'
     	
 ) as cntOwnerPat
 ,count(distinct hmc.id) as cntOperPat
-,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmOperPat
+,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmOperPatHosp
+,count(distinct case when vha.code='EMERGENCY' then hmc.id else null end) as cntEmOperPatOper
 ,count(distinct so.id) as cntOper
-,count(distinct case when hmc.emergency='1' then so.id else null end) as cntEmOper
-,sum(vo.complexity)+count(so.id) as cntComp
+,count(distinct case when hmc.emergency='1' then so.id else null end) as cntEmOperHosp
+,count(distinct case when vha.code='EMERGENCY' then so.id else null end) as cntEmOperOper
+,sum(case when vo.complexity is null then 0 else vo.complexity end)+count(so.id) as cntComp
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
-left join VocOperation vo on vo.id=so.operation_id
+left join VocHospitalAspect vha on vha.id=so.aspect_id
+left join MedService vo on vo.id=so.medService_id
 left join Patient pat on pat.id=hmc.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Omc_Oksm ok on pat.nationality_id=ok.id
@@ -905,15 +914,16 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
         <msh:table name="journal_list_surgeon"
          action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="2"/>
-            <msh:tableColumn columnName="Должность" property="3"/>
-            <msh:tableColumn columnName="ФИО врача" property="4"/>
-            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" property="5"/>            
-            <msh:tableColumn columnName="Кол-во опер. пациентов" property="6"/>            
-            <msh:tableColumn columnName="из них экстр." property="7"/>            
+            <msh:tableColumn columnName="Должность" property="2"/>
+            <msh:tableColumn columnName="ФИО врача" property="3"/>
+            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" property="4"/>            
+            <msh:tableColumn columnName="Кол-во опер. пациентов" property="5"/>            
+            <msh:tableColumn columnName="из них экстр. госпит." property="6"/>            
+            <msh:tableColumn columnName="из них экстр. опер." property="7"/>            
             <msh:tableColumn columnName="Кол-во операций" property="8"/>            
-            <msh:tableColumn columnName="из них экстр." property="9"/>            
-            <msh:tableColumn columnName="Сводный коэффициент" property="10"/>            
+            <msh:tableColumn columnName="из них экстр. госп." property="9"/>            
+            <msh:tableColumn columnName="из них экстр. опер." property="10"/>            
+            <msh:tableColumn columnName="Сводный коэффициент" property="11"/>            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -929,7 +939,7 @@ vo.id,vo.code,vo.name,count(distinct so.id)
 from SurgicalOperation so
 left join MedCase dmc on so.medCase_id = dmc.id
 left join MedCase hmc on dmc.parent_id=hmc.id
-left join VocOperation vo on vo.id=so.operation_id
+left join MedService vo on vo.id=so.medService_id
 left join Patient pat on pat.id=hmc.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Omc_Oksm ok on pat.nationality_id=ok.id
@@ -947,13 +957,13 @@ where hmc.DTYPE='HospitalMedCase'
     	and dmc.dateFinish is not null
     	${dep}
     	and so.surgeon_id is not null
-    	and vo.complexity<1
+    	and (vo.complexity is null or vo.complexity<1)
 group by vo.id,vo.code,vo.name
 order by vo.id,vo.code,vo.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_oper"
-         action="entityView-voc_operation.do.do" idField="1" noDataMessage="Не найдено">
+         action="entityView-mis_medService.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Код" property="2"/>
             <msh:tableColumn columnName="Операция" property="3"/>
@@ -1082,7 +1092,8 @@ order by dep.name
 			//+":"+$('result').value
 			;
 			//alert(args) ;
-		$('param').value = args ;
+		//$('param').value = args ;
+		//alert(args) ;
     }
     function find() {
     	var frm = document.forms[0] ;

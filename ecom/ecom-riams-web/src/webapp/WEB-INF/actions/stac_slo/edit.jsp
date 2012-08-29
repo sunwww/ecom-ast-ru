@@ -3,6 +3,8 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="style" type="string">
         <style type="text/css">
@@ -81,12 +83,31 @@
     	title='Медицинские осмотры'/>
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
+      	<tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Согласие на установку имплантанта" action="/print-consentImplant.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentOperation" name="Согласие на медицинское (операционное) вмешательство" action="/print-consentOperation.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTransfusion" name="Согласие на переливание крови" action="/print-consentTransfusion.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTreatment" name="Согласие с обшим планом лечения и обследования" action="/print-consentTreatment.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionIntervention" name="Отказ от медицинского лечения" action="/print-rejectionIntervention.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionIntervention1" name="Отказ от стац. лечения" action="/print-rejectionIntervention1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionOperation1" name="Отказ от операции" action="/print-rejectionOperation1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/DirectVK" name="Направление на ВК" action="/print-directVK.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       </msh:sideMenu>
       </msh:ifNotInRole>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
-        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
+        <msh:sideLink params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
+	    <msh:sideLink 
+		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDepartmentAdmission" 
+		        action="/stac_journalByDepartmentAdmission" name="Журнал по направленным в отделение" />
+	    <msh:sideLink
+		         roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartment"
+		         action="/stac_journalCurrentByUserDepartment" name="Журнал по состоящим в отделение пациентам" />
+ 	    <msh:sideLink 
+		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" 
+		        action="/stac_journalByCurator" name="Журнал по лечащему врачу" />  
+
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -127,7 +148,7 @@
 	        </msh:row>
         </msh:ifNotInRole>
         <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
-          <msh:autoComplete  viewOnlyField="true"  vocName="lpu" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+          <msh:autoComplete  viewOnlyField="true"  vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
         <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
           <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c" />
@@ -144,6 +165,11 @@
           <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />
         </msh:row>
         </msh:ifNotInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        <msh:hidden property="roomNumber"/>
+        <msh:hidden property="roomType"/>
+        <msh:hidden property="bedNumber"/>
+        </msh:ifInRole>
         <msh:row>
         	<msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
         	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
@@ -178,7 +204,7 @@
           <msh:textField property="transferTime" label="Время" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
         </msh:row>
         <msh:row guid="72adfc11-ef9b-47c0-8eb4-a23ee9e84ed8">
-          <msh:autoComplete vocName="vocLpuOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="f793944a-6afe-4c26-82f3-50532049a8bc" />
+          <msh:autoComplete vocName="vocLpuHospOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="f793944a-6afe-4c26-82f3-50532049a8bc" />
         </msh:row>
         <msh:row guid="f2a5-68fb-4ccc-9982-7b4447">
           <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда переведен" fieldColSpan="6" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" />
@@ -285,12 +311,12 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
           <ecom:webQuery name="allSurgOper" nativeSql="select so.id
-          ,so.operationDate as sooperationDate,so.operationTime as soperationTime
-          ,coalesce(ms.code,vo.code,'')||' '||coalesce(ms.name,vo.name) as voname
+          ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime
+          ,ms.code||' '||ms.name as voname
           , d.name as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+          ,substring(so.operationText,1,100)||' ...' as operationText
           from SurgicalOperation as so 
-          left join VocOperation vo on vo.id=so.operation_id 
           left join MedService ms on ms.id=so.medService_id
           left join medcase parent on parent.id=so.medcase_id 
           left join MisLpu d on d.id=so.department_id 
@@ -303,14 +329,17 @@
           order by so.operationDate
           "/>
     <msh:tableNotEmpty name="allSurgOper">
-	    <msh:section title="Хирургические операции ">
-	    	<msh:table name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
+	    <msh:section title="Хирургические операции " createUrl="entityParentPrepareCreate-stac_surOperation.do?id=${param.id}"
+	    createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
+	    	<msh:table viewUrl="entityShortView-stac_surOperation.do"
+	    	editUrl="entityParentEdit-stac_surOperation.do"  
+	    	name="allSurgOper" action="entityParentView-stac_surOperation.do" idField="1">
 	    		<msh:tableColumn columnName="#" property="sn"/>
-	    		<msh:tableColumn columnName="Отделение" property="5"/>
-	    		<msh:tableColumn columnName="Дата" property="2"/>
-	    		<msh:tableColumn columnName="Время" property="3"/>
-	    		<msh:tableColumn columnName="Операция" property="4"/>
-	    		<msh:tableColumn columnName="Хирург" property="6"/>
+	    		<msh:tableColumn columnName="Дата и время" property="2"/>
+	    		<msh:tableColumn columnName="Операция" property="3"/>
+	    		<msh:tableColumn columnName="Хирург" property="5"/>
+	    		<msh:tableColumn cssClass="preCell" property="6" columnName="Протокол операции"/>
+	    		<msh:tableColumn columnName="Отделение" property="4"/>
 	    	</msh:table>
 	    </msh:section>
     </msh:tableNotEmpty>      

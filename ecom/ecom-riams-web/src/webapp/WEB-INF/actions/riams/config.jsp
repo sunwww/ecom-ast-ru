@@ -96,6 +96,9 @@
 						<li><msh:link action="entityParentList-secpolicy.do?id=1" roles="/Policy/Jaas/SecPolicy/View">
 	                            Политики
 	                        </msh:link></li>
+						<li><msh:link action="entityList-secgroup.do" roles="/Policy/Jaas/SecGroup/View">
+	                            Группы
+	                        </msh:link></li>
 	                        <!-- 
 						<li><msh:link action="serviceImportPoliciesListEdit.do" roles="/Policy/Jaas/SecPolicy/Edit">
 	                            Импорт списка политик безопасности

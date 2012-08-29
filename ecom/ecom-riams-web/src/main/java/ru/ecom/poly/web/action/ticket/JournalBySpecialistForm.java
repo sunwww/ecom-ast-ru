@@ -80,6 +80,18 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
 	public void setOrderWorkFunction(Long aOrderWorkFunction) {theOrderWorkFunction = aOrderWorkFunction;}
 
+	/** Пациент */
+	@Comment("Пациент")
+	public Long getPatient() {
+		return thePatient;
+	}
+
+	public void setPatient(Long aPatient) {
+		thePatient = aPatient;
+	}
+
+	/** Пациент */
+	private Long thePatient;
 	/** Направитель */
 	private Long theOrderWorkFunction;
 	/** Внешний направитель */
@@ -116,5 +128,20 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Направитель */
 	private Long theOrderFunction;
+	/** Дефекты */
+	@Comment("Дефекты")
+	public Long getDefect() {return theDefect;}
+	public void setDefect(Long aDefect) {theDefect = aDefect;}
+
+	/** Дефекты */
+	private Long theDefect;
+	
+	/** Социальный статус */
+	@Comment("Социальный статус")
+	public Long getSocialStatus() {return theSocialStatus;}
+	public void setSocialStatus(Long aSocialStatus) {theSocialStatus = aSocialStatus;}
+
+	/** Социальный статус */
+	private Long theSocialStatus;
 	
 }

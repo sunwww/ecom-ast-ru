@@ -30,6 +30,7 @@
     <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/ViewAll">
     	<msh:autoComplete size="120" property="${name}WorkFunction" label="Рабочая функция" vocName="workFunctionByDirect" horizontalFill="true"/>
     </msh:ifInRole>
+    <div id="idManyCalendar"></div>
     
         <div style="float: left; margin-left: 1em; margin-bottom: 1em;" id="workCalendarMain${name}"></div>
         <div id="workCalendarComment${name}" style="margin-right: 1em; margin-bottom: 1em;"></div>
@@ -74,8 +75,7 @@
       the${name}Date=d+"."+m+"."+y ;
        WorkCalendarService.getInfoDay(
 	     		 the${name}Date
-	     		 ,{
-	                   callback: function(aString) {
+	     		 ,{callback: function(aString) {
 	                      var info ;
 	                      $('workCalendarComment${name}').innerHTML ="<i>Загрузка данных...</i>"
 	                      $('${name}ButtonOk').disabled=true ;
@@ -157,14 +157,23 @@
             if  (zam) {
             	//getWorkCalendar() ;
             } else {
-	    		WorkCalendarService.getWorkFunction(
-		     		{
+            	var isManyWorkCalendar = 0 ;
+            	if (isManyWorkCalendar) {
+            		
+            	} else {
+            		$('${name}WorkFunction').value=-1 ;
+            		getWorkCalendar() ;
+            		/*
+    	    		WorkCalendarService.getWorkFunction(
+   			     		{
 		                   callback: function(aString) { 
-		                   		$('${name}WorkFunction').value=aString ; 
+		                   		$('${name}WorkFunction').value=aString ;
+		                   		
 		                   		getWorkCalendar() ;
 		                   }
-		                }
-	         ) ;
+   			            }
+		         	) ;*/
+            	}
              }
 	         if  (zam) {
 	         	${name}WorkFunctionAutocomplete.addOnChangeCallback(function() {
@@ -213,7 +222,7 @@ function getWorkCalendar() {
  				                	       the${name}WorkCalendarDialog.show() ;
 										    
 									}
-					                }
+					            }
 				         ) ;
 				         
 }

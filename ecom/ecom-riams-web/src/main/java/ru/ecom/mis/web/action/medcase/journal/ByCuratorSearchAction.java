@@ -25,8 +25,10 @@ public class ByCuratorSearchAction extends ListAction{
             if (aForm!=null) {
             	DepartmentJournalForm form =(DepartmentJournalForm) aForm ;
             	curator = form.getDepartment() ;
+            	
             	if (curator==null || curator==0) {
-            		form.addMessage(new FormMessage("Укажите врача для поиска")) ;
+            		curator=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
+            		if (curator==null || curator==0) form.addMessage(new FormMessage("Выберите врача для поиска")) ;
             	}
             	
             } else{

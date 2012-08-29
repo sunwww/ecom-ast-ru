@@ -14,9 +14,10 @@ import ru.ecom.web.util.Injection;
 public class SurgicalOperationByDateListAction extends ListAction {
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-		String idString = aRequest.getParameter("id") ;
-        aRequest.setAttribute("list", service.getSurgicalOperationByDate(idString));
+		//IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
+		//String idString = aRequest.getParameter("id") ;
+        //aRequest.setAttribute("list", service.getSurgicalOperationByDate(idString));
+		
 		return aMapping.findForward("success");
 	}
 }

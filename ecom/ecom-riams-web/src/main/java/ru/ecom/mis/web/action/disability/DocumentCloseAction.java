@@ -70,10 +70,10 @@ public class DocumentCloseAction extends BaseAction {
 		}
         if (typeDocument!=null && typeDocument.equals("1")) {
         	aRequest.setAttribute("typeDocumentInfo", "открытым документам");
-        	aRequest.setAttribute("status", "(dd.isclose is null or cast(dd.isclose as int) =0) and ") ;        	
+        	aRequest.setAttribute("status", "(dd.isclose is null or dd.isclose='0') and ") ;        	
         } else if (typeDocument!=null && typeDocument.equals("2")) {
         	aRequest.setAttribute("typeDocumentInfo", "закрытым документам");
-        	aRequest.setAttribute("status", "cast(dd.isclose as int) =1 and ") ;
+        	aRequest.setAttribute("status", "dd.isclose='1' and ") ;
         } else {
         	aRequest.setAttribute("typeDocumentInfo", "всем документам");
         	aRequest.setAttribute("status", "") ;        	

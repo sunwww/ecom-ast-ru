@@ -20,7 +20,7 @@
 </style>
 
 <div id='${name}PolicyDialog' class='dialog'>
-    <h2>Дата</h2>
+    <h2>Переход (создание) политики безопасности</h2>
     <div class='rootPane'>
     
 <form action="javascript:">

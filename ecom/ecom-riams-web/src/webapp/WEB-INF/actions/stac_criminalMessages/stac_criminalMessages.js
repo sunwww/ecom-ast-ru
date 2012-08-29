@@ -1,4 +1,44 @@
 function listByDate(aForm,aCtx){
 //"select id, number, phoneDate, phoneTime,phone,recieverOrganization from PhoneMessage &#xA;where phoneMessageType_id=1 and phoneDate=${param.id}" ;
+	var request = aCtx.request ;
+	var id=request.getParameter("id").split(":") ;
+	request.setAttribute("paramsPeriod"," and "+id[3]+"=to_date('"+id[4]+"','dd.mm.yyyy')") ;
+	return listRecord(aCtx,id) ;
+	//return aCtx.createForward("/WEB-INF/actions/stac_criminalMessages/listByDate.jsp") ;
+}
+function listByHospital(aForm,aCtx) {
+	aCtx.request.setAttribute("addParam"," and m.deniedHospitalizating_id is null") ;
+	return listSwod(aCtx) ;
+}
+function listByDenied(aForm,aCtx) {
+	aCtx.request.setAttribute("addParam"," and m.deniedHospitalizating_id is not null") ;
+	return listSwod(aCtx) ;
+}
+function listByObr(aForm,aCtx) {
+	return listSwod(aCtx) ;
+}
+function listSwod(aCtx) {
+	var request = aCtx.request ;
+	var id=request.getParameter("id").split(":") ;
+	request.setAttribute("paramsPeriod"," and "+id[3]+" between to_date('"+id[4]+"','dd.mm.yyyy') and to_date('"+id[5]+"','dd.mm.yyyy')") ;
+	request.setAttribute("department", (+id[6]==0)?" and deniedand ml.id is null":" and ml.id='"+id[6]+"'") ;
+	request.setAttribute("messageType", (+id[7]==0)?" and pm.phoneMessageType_id is null":" and pm.phoneMessageType_id='"+id[7]+"'") ;
+	return listRecord(aCtx,id) ;
+}
+function listRecord(aCtx,aId) {
+	var dep = +aId[2] ;
+	var pHole = +aId[1] ;
+	var emer = +aId[0] ;
+	if (emer==1) {
+		request.setAttribute("emergency"," and m.emergency='1'") ;
+	} else if (emer==2) {
+		request.setAttribute("emergency"," and (m.emergency is null or m.emergency='0')") ;
+	}
+	if (dep>0) {
+		request.setAttribute("department", " and ml.id='"+dep+"'") ;
+	}	
+	if (+pHole>0) {
+		request.setAttribute("pigeonHole"," and (m.department_id is not null and ml.pigeonHole_id='"+pHole+"' or m.department_id is null and ml1.pigeonHole_id='"+pHole+"')") ;
+	}
 	return aCtx.createForward("/WEB-INF/actions/stac_criminalMessages/listByDate.jsp") ;
 }

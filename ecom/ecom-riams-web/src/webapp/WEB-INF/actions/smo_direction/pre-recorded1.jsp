@@ -21,6 +21,13 @@
   		cursor: pointer;
   		
   	}
+  	.preDirectRemoteUsername {
+  		color:#fff ;
+  		
+  	}
+  	.directRemoteUsername {
+  		color:#fff ;
+  	}
   	.freeDay{
   		background-color: #DDD;
   		/*font-size: medium;*/

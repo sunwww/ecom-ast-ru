@@ -24,6 +24,7 @@ public class Report039Action  extends BaseAction {
 		//IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		IReportsService repService  = Injection.find(aRequest).getService(IReportsService.class) ;
 		String groupBy =ActionUtil.updateParameter("Form039Action","typeGroup","1", aRequest) ;
+		String typeView =ActionUtil.updateParameter("Form039Action","typeView","2", aRequest) ;
 		aRequest.setAttribute("beginDate", form.getBeginDate()) ;
 		aRequest.setAttribute("finishDate", form.getFinishDate()) ;
 		//aRequest.setAttribute("specialist", form.getSpecialist()) ;

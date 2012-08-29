@@ -60,7 +60,7 @@ left join surgicaloperation so on (so.medcase_id=hosp.id or so.medcase_id=md.id)
 left join workfunction sowf on sowf.id=so.surgeon_id
 left join worker sow on sow.id=sowf.worker_id
 left join patient sowfpat on sowfpat.id=sow.person_id
-left join vocoperation vo on vo.id=so.operation_id
+left join medService vo on vo.id=so.medService_id
 left join medcase lmd on lmd.parent_id=hosp.id and lmd.dateFinish is not null 
 left join workfunction lwf on lwf.id=lmd.ownerfunction_id
 left join worker lw on lw.id=lwf.worker_id

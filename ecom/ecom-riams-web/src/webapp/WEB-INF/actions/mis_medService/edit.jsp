@@ -51,6 +51,9 @@
           <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+        	<msh:textField property="complexity" label="Уровень сложности"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="startDate" label="Дата начала"/>
         	<msh:textField property="finishDate" label="Дата окончания"/>
         </msh:row>

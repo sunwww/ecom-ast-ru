@@ -37,17 +37,8 @@
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td>
-           <td>
+           <td colspan="4">
             <input type="submit" onclick="find()" value="Найти" />
-          </td>
-           <td>
             <input type="submit" onclick="print()" value="Печать" />
           </td>
       </msh:row>
@@ -70,8 +61,8 @@
 	left join medcard as m on m.id=t.medcard_id 
 	left join patient p on p.id=m.person_id 
 	left join vocservicestream vss on vss.id=t.vocPaymentType_id
-	where t.date  between '${param.dateBegin}'  
-	and '${param.dateEnd}' ${add} 
+	where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  
+	and to_date('${param.dateEnd}','dd.mm.yyyy') ${add} 
 	and $$CheckPatientOMC^ZMedPolicy(m.person_id,t.date) is not null group by m.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -88,20 +79,12 @@
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
     
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
-    <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
-     var period = document.forms[0].period ;
+     //var period = document.forms[0].period ;
     
     
-    if ((+'${period}')==1) {
-    	period[0].checked='checked' ;
-    } else {
-    	period[1].checked='checked' ;
-    }   
+    
     if ((+'${typePatient}')==1) {
     	typePatient[0].checked='checked' ;
     } else if ((+'${typePatient}')==2) {
@@ -118,7 +101,7 @@
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	frm.action='poly_problemTickets_print.do' ;
-    }
+    }/*
     function getPeriod() {
     	//var period = document.forms[0].period ;
     	for (i=0;i<period.length;i++) {
@@ -182,6 +165,7 @@
 				 eventName: "focus",
 				 onUpdate : catcalc
  			});
+			 */
     </script>
   </tiles:put>
 </tiles:insert>

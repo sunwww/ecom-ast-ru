@@ -5,7 +5,7 @@
 <%@ attribute name="property" description="свойство, куда записывать данные" %>
 <%@ attribute name="version" description="версия ПО Ticket,Visit" %>
 <%@ attribute name="idSmo" description="индентификатор случая" %>
-
+<%@ attribute name='voc' description='protocolTicketByPatient,protocolVisitByPatient' %>
 <style type="text/css">
     #textProtocol {
         visibility: hidden ;
@@ -40,7 +40,7 @@
 		        <msh:row styleId="tdPrev2">
 		        	<msh:autoComplete label="Информация о пред.протоколах" 
 		        		property="${name}PrevProtocol"                 
-		        		vocName="protocolTicketByPatient"   
+		        		vocName="${voc}"   
 		        		fieldColSpan="5" horizontalFill="true" parentId="${idSmo}"/>
 		        </msh:row>
 		        <msh:row>
@@ -119,13 +119,7 @@
              eventutil.addEnterSupport('${name}tempProtocolName', 'buttonTempProtOk') ;
              eventutil.addEnterSupport('${name}PrevProtocolName', 'buttonTempProtOk') ;
              
-             if ('${version}'=='Ticket') {
-            	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolTicketByPatient') ;
-             } else if ('${version}'=='Visit') {
-            	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolVisitByPatient') ;
-             } else {
-            	 ${name}showRow("tdPrev2",false) ;
-             }
+             
              ${name}PrevProtocolAutocomplete.addOnChangeCallback(function() {
             	 get${name}TextDiaryById($('${name}PrevProtocol').value,0) ;
              }) ;
@@ -147,6 +141,13 @@
     	 TemplateProtocolService.listProtocolsByUsername( ${name}PrevProtocolAutocomplete.getParentId(), 'get${name}TextProtocolById','get${name}TextDiaryById','${version}',{
              callback: function(aString) {
                  $('${name}divListProtocols').innerHTML = aString ;
+                 /*if ('${version}'=='Ticket') {
+                	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolTicketByPatient') ;
+                 } else if ('${version}'=='Visit') {
+                	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolVisitByPatient') ;
+                 } else {
+                	 ${name}showRow("tdPrev2",false) ;
+                 }*/
               }
           } ) ;
      }

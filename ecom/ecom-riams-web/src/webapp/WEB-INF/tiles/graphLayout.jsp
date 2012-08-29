@@ -95,9 +95,6 @@ try {
             <msh:sideLink params="" styleId="mainMenuReg" action="/exp_reg.do" name="Реестры"
                           roles="/Policy/MainMenu/ExpDocument" title="Реестры"/>
                           
-            <msh:sideLink params="" styleId="mainMenuReport" action="../../birt/start.do" name="Отчеты"
-                          title="Список отчетов" roles="/Policy/MainMenu/Report"/>
-
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
                           

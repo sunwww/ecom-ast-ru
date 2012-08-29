@@ -37,6 +37,10 @@
 
             <li><a href='ecom_releases.do'>Новости</a></li>
             <li class="separator">|</li>
+            <msh:ifInRole roles="/Policy/Jaas/SecUser/ReplaceWorkFunction">
+            <li><a href='js-secuser-listWF.do'>Смена раб.функции</a></li>
+            <li class="separator">|</li>
+            </msh:ifInRole>
             <li><a href='http://www.ecom-ast.ru/riams'>Помощь</a></li>
             <li class="separator">|</li>
             <li><ecom:loginName /></li>
@@ -66,7 +70,7 @@
                           roles="/Policy/MainMenu/AdmissionJournal" title="Журнал обращений" />
 
             <msh:sideLink params="" styleId="mainMenuJournals"
-            			name="Журналы" roles="/Policy/MainMenu/Journals" title="Журналы" 
+            			name="Отчеты" roles="/Policy/MainMenu/Journals" title="Отчеты" 
             			action="/riams_journals.do"/>
             <msh:sideLink params="" styleId="mainMenuDiet" 
             			  action="/entityParentList-diet_diet.do?id=0" name="Диетпитание"
@@ -78,8 +82,6 @@
             <msh:sideLink params="" styleId="mainMenuReg" action="/exp_reg.do" name="Реестры"
                           roles="/Policy/MainMenu/ExpDocument" title="Реестры"/>
                           
-            <msh:sideLink params="" styleId="mainMenuReport" action="../../birt/start.do" name="Отчеты"
-                          title="Список отчетов" roles="/Policy/MainMenu/Report"/>
             <msh:sideLink params="" styleId="mainMenuContract" action="/contract_reports.do" name="Договоры"
                           title="Договоры" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
 

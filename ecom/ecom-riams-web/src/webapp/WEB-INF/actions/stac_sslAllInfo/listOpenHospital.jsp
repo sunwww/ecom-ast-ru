@@ -13,12 +13,15 @@
     <tags:stac_journal currentAction="stac_journalOpenByHospital" />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="stac_journalOpenHospitalByDate.do" idField="dateInfo" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+  
+    <msh:table name="list" action="stac_journalOpenHospitalByDate.do" 
+    viewUrl="stac_journalOpenHospitalByDate.do?s=Short"
+    idField="dateInfo" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" guid="ee7181c8-98a7-48b3-8009-3be23b7b86b5" />
-      <msh:tableColumn columnName="Дата поступления" property="date" guid="c1058c40-21b8-4e52-b0ff-09fb280d33a7" />
+      <msh:tableColumn columnName="Дата поступления" property="dateInfo" guid="c1058c40-21b8-4e52-b0ff-09fb280d33a7" />
       <msh:tableColumn columnName="Кол-во СЛС" property="cnt" guid="8938a621-314c-4246-9c88-5381272a71f1" />
       <msh:tableColumn columnName="Кол-во СЛО" property="cnt1" guid="43ff91bb-5ed5-4b20-926a-0819cc48fbb5" />
-<%--       <msh:tableColumn columnName="Кол-во отказов" property="cnt2" guid="4018aa4e-5851-4b25-85cf-7de2196773c2" />  --%>
+       <msh:tableColumn columnName="Кол-во к.дней (на текущий момент)" property="cntDays" />  
     </msh:table>
   </tiles:put>
 </tiles:insert>
