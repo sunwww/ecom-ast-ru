@@ -21,11 +21,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class JournalPatternCalendar extends BaseEntity {
-//	/** Рабочая функция */
-//	@Comment("Рабочая функция")
-//	@OneToOne
-//	public WorkFunction getWorkFunction() {return theWorkFunction;}
-//	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
 
 	/** Шаблон календаря */
 	@Comment("Шаблон календаря")

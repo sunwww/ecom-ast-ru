@@ -34,11 +34,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	
 	public static void main(String[] args) {
 		//service.setManager() ;
-		theService.getFiles() ;
+		KdlDiaryServiceBean service = new KdlDiaryServiceBean() ;
+		service.getFiles() ;
 	}
 	public void getFiles() {
-		theDirName = theService.getKdlDir();
-		theArcDirName = theService.getKdlArcDir();
+		theDirName = getKdlDir();
+		theArcDirName = getKdlArcDir();
+		
 		parseDir(theDirName, theArcDirName, true);
 	}
 
@@ -46,8 +48,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		File dir = new File(dirName);
 		theWorkDirName = dir.getName();
 		theWorkArcDir = new File(theArcDirName, theWorkDirName);
-		theService.setPermissions(dir);
-		theService.parseDir(dir, theWorkArcDir, aRootDir);
+		setPermissions(dir);
+		parseDir(dir, theWorkArcDir, aRootDir);
 		}
 	public void parseDir(File aDir, File aArcDir, Boolean aRootDir){
 		printVariable("Dir", aDir.getAbsolutePath()) ;
@@ -56,7 +58,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		if (!aRootDir){
 			if (!aArcDir.exists()) {
 				aArcDir.mkdir();
-				theService.setPermissions(aArcDir);
+				setPermissions(aArcDir);
 			}
 		}
 
@@ -72,15 +74,16 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		    	} else {
 		    			theWorkDirName = file.getName();
 		    			theWorkArcDir = new File(theArcDirName, theWorkDirName);
-		    			theService.parseDir(file, theWorkArcDir, false);
+		    			parseDir(file, theWorkArcDir, false);
 		    		}
 			    }
 		}
 	    if (!aRootDir)	aDir.delete();
 	}
-	public ExternalMedservice parseFile(String uri)
+	public void parseFile(String uri)
 	{
-        theExternalMedservice = new ExternalMedservice();
+        //theManager.getTransaction().begin() ;
+		ExternalMedservice externalMedservice = new ExternalMedservice();
         theComment = new StringBuilder();
     	theDocumentParameterGroups = new TreeMap<String, String>();
     	theVocDocumentParameters = new HashMap<Object, Object>();
@@ -88,46 +91,47 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	    
     	try
 	    { 
-
 	    	File in = new File(uri);
 	        theFileUri = uri;
 	        Document doc = new SAXBuilder().build(in);
 	        Element root = doc.getRootElement();
 	        Element header = root.getChild("Header");
-	        parseHeader(header);
+	        parseHeader(header,externalMedservice);
 	        Element order = root.getChild("Order");
-	        parseOrder(order);
+	        parseOrder(order,externalMedservice);
 	        Element patient = order.getChild("Patient") ;
-	        parsePatient(patient);
+	        parsePatient(patient,externalMedservice);
 			Element pages = order.getChild("Pages");
 			parsePages(pages);
 			Element tests = order.getChild("Tests");
-			parseTests(tests);
-			prepareComment();
-			return theExternalMedservice;
+			parseTests(tests,externalMedservice);
+			prepareComment(externalMedservice);
+
+			//return theExternalMedservice;
 	    }
 	    catch (Exception e)
 	    {
+	    	//theManager.getTransaction().rollback() ;
 	      System.err.println(e);
-	      return null;
+	      //return null;
 	    }		
 	    
 	}
-	private void parseHeader(Element aHeader) {
+	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
 		Date fileDate = toDate(aHeader.getChildText("FileDate"));
 		Time fileTime = toTime(aHeader.getChildText("FileTime"));
 		String laboratoryName = aHeader.getChildText("LaboratoryName");
 		String clinicName = aHeader.getChildText("ClinicName");
 		
-		theExternalMedservice.setCreateDate(fileDate);
-		theExternalMedservice.setCreateTime(fileTime);
-		theExternalMedservice.setWhomIssued(laboratoryName);
-		theExternalMedservice.setOrderLpu(clinicName);
-		
-		persist(theExternalMedservice);
+		aExternalMedservice.setCreateDate(fileDate);
+		aExternalMedservice.setCreateTime(fileTime);
+		aExternalMedservice.setWhomIssued(laboratoryName);
+		aExternalMedservice.setOrderLpu(clinicName);
+		theManager.persist(aExternalMedservice) ;
+		//persist(theExternalMedservice);
 		
 	}
-	public void parseOrder(Element order)
+	public void parseOrder(Element order,ExternalMedservice aExternalMedservice)
 	{
 		String orderId = order.getAttributeValue("OrderID");
 		Date orderDate = toDate(order.getChildText("OrderDate"));
@@ -135,13 +139,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		String doctor = order.getChildText("Doctor");
 		//String readyDateTime = order.getChildText("ReadyDateTime");
 		
-		theExternalMedservice.setNumberDoc(orderId);
-		theExternalMedservice.setOrderDate(orderDate);
-		theExternalMedservice.setOrderTime(orderTime);
-		theExternalMedservice.setOrderer(doctor);
+		aExternalMedservice.setNumberDoc(orderId);
+		aExternalMedservice.setOrderDate(orderDate);
+		aExternalMedservice.setOrderTime(orderTime);
+		aExternalMedservice.setOrderer(doctor);
 					
 	}
-	public void parsePatient(Element patient)
+	public void parsePatient(Element patient,ExternalMedservice aExternalMedservice)
 	{
 		//String patientId = patient.getAttributeValue("PatientID");
         String lastname = patient.getChildText("LastName").toUpperCase();
@@ -162,13 +166,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         patientId = (Patient) theManager.createQuery(sb.toString()).getSingleResult();	        
         } catch(Exception e){}
         
-        theExternalMedservice.setPatient(patientId);
-        theExternalMedservice.setPatientLastname(lastname);
-        theExternalMedservice.setPatientFirstname(firstname);
-        theExternalMedservice.setPatientMiddlename(middlename);
-        theExternalMedservice.setPatientBirthday(birthday);
-        theExternalMedservice.setReferenceTo(theFileUri);
-        persist(theExternalMedservice);
+        aExternalMedservice.setPatient(patientId);
+        aExternalMedservice.setPatientLastname(lastname);
+        aExternalMedservice.setPatientFirstname(firstname);
+        aExternalMedservice.setPatientMiddlename(middlename);
+        aExternalMedservice.setPatientBirthday(birthday);
+        aExternalMedservice.setReferenceTo(theFileUri);
+        persist(aExternalMedservice);
         
 	}
 	@SuppressWarnings("unchecked")
@@ -191,15 +195,16 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		printVariable("sectionName",sectionName);
 		printVariable("theSectionId",theDocumentParameterGroups.get(sectionId));*/
 	}
+	
 	@SuppressWarnings("unchecked")
-	private void parseTests(Element tests) {
+	private void parseTests(Element tests,ExternalMedservice aExternalMedservice) {
 		for (Element test: (List<Element>) tests.getChildren("Test")) 
 		{
-			parseTest(test);
+			parseTest(test,aExternalMedservice);
 		}	
 		
 	}
-	private void parseTest(Element test) {
+	private void parseTest(Element test, ExternalMedservice aExternalMedservice) {
 		
 		//String testId = test.getAttributeValue("TestID");
 		String value = test.getChildText("Value").toUpperCase();
@@ -250,7 +255,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		}
 			
 		DocumentParameter documentParameter = new DocumentParameter();
-		documentParameter.setDocument(theExternalMedservice);
+		documentParameter.setDocument(aExternalMedservice);
 		documentParameter.setValue(value);
 		documentParameter.setValueDate(valueDate);
 		documentParameter.setValueTime(valueTime);
@@ -263,31 +268,31 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		}
 		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
 	}
-	public void prepareComment(){
-		prepareCommentHead();
-		prepareTestsComment();
+	public void prepareComment(ExternalMedservice aExternalMedservice){
+		prepareCommentHead(aExternalMedservice);
+		prepareTestsComment(aExternalMedservice);
 		//print(theComment.toString());
 	}
-	public void prepareCommentHead(){	
-		commentAdd("Лаборатория",theExternalMedservice.getWhomIssued());
+	public void prepareCommentHead(ExternalMedservice aExternalMedservice){	
+		commentAdd("Лаборатория",aExternalMedservice.getWhomIssued());
 		commentNewLine();
-		commentAdd("Фамилия",theExternalMedservice.getPatientLastname());
-		commentAdd("Имя",theExternalMedservice.getPatientFirstname());
-		commentAdd("Отчество",theExternalMedservice.getPatientMiddlename());
-		commentAdd("Дата рождения",toString(theExternalMedservice.getPatientBirthday()));		
+		commentAdd("Фамилия",aExternalMedservice.getPatientLastname());
+		commentAdd("Имя",aExternalMedservice.getPatientFirstname());
+		commentAdd("Отчество",aExternalMedservice.getPatientMiddlename());
+		commentAdd("Дата рождения",toString(aExternalMedservice.getPatientBirthday()));		
 		commentNewLine();
-		commentAdd("ЛПУ",theExternalMedservice.getOrderLpu());
-		commentAdd("Врач",theExternalMedservice.getOrderer());
+		commentAdd("ЛПУ",aExternalMedservice.getOrderLpu());
+		commentAdd("Врач",aExternalMedservice.getOrderer());
 		commentNewLine();		
-		commentAdd("Номер направления",theExternalMedservice.getNumberDoc());
-		commentAdd("Дата направления",toString(theExternalMedservice.getOrderDate()));
-		commentAdd("Время направления",toString(theExternalMedservice.getOrderTime()));		
+		commentAdd("Номер направления",aExternalMedservice.getNumberDoc());
+		commentAdd("Дата направления",toString(aExternalMedservice.getOrderDate()));
+		commentAdd("Время направления",toString(aExternalMedservice.getOrderTime()));		
 		commentNewLine();	
-		commentAdd("Дата получения результата",toString(theExternalMedservice.getCreateDate()));
-		commentAdd("Время получения результата",toString(theExternalMedservice.getCreateTime()));
+		commentAdd("Дата получения результата",toString(aExternalMedservice.getCreateDate()));
+		commentAdd("Время получения результата",toString(aExternalMedservice.getCreateTime()));
 		commentNewLine();
 	}
-	public void prepareTestsComment(){
+	public void prepareTestsComment(ExternalMedservice aExternalMedservice){
 		Set<Entry<String, TreeMap<String, Object>>> parametersTree = theDocumentParametersTree.entrySet();
 		Entry<String, TreeMap<String, Object>> tm;
 		Entry<String, Object> pm;
@@ -310,7 +315,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				pm = pi.next();
 				DocumentParameter documentParameter = (DocumentParameter) pm.getValue();
 				VocDocumentParameter vocDocumentParameter = (VocDocumentParameter) documentParameter.getParameter();
-				//printVariable("testId",parameter.GetTestId);
+				//printVariable("testId",documentParameter.GetTestId);
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
 					norm=vocDocumentParameter.getNormMinimum()+"-"+vocDocumentParameter.getNormMaximum();
@@ -330,8 +335,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				//printVariable("sectionID",vocDocumentParameterGroup.getCode());
 			}
 		}
-		theExternalMedservice.setComment(theComment.toString());
-		persist(theExternalMedservice);
+		aExternalMedservice.setComment(theComment.toString());
+		persist(aExternalMedservice);
 	} 
 	public static Time toTime(String aString){
 		try {
@@ -397,11 +402,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public static void println(String aString){
 		System.out.println(aString);
 	}		
-	public void persist(Object object){
-			if ((object!=null)&&(theManager!=null)) theManager.persist(object);
+	private void persist(Object object){
+
+			if ((object!=null)&&(theManager!=null)) {
+				theManager.persist(object);
+			}
 			
-		}
-	
+	}
 	@SuppressWarnings("rawtypes")
 	public static String getIdColumn(Class aClass){
 		String ret = "id";
@@ -426,7 +433,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		return workDir ;
 	}
 	public void setPermissions(File aFile){
-		theService.run("chmod -R 777 "+aFile.getAbsolutePath());
+		run("chmod -R 777 "+aFile.getAbsolutePath());
 	}
 	public String run(String Command){
 		try{
@@ -439,14 +446,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		return(e.getMessage());
 		}
 	} 
-    @PersistenceContext EntityManager theManager ;
-    static KdlDiaryServiceBean theService = new KdlDiaryServiceBean();
+	
+	@PersistenceContext EntityManager theManager ;
+    //static KdlDiaryServiceBean theService = new KdlDiaryServiceBean();
     String theDirName;
     String theArcDirName;
     String theWorkDirName;
     File theWorkArcDir;
     String theFileUri;
-    ExternalMedservice theExternalMedservice;
+    //ExternalMedservice theExternalMedservice;
     StringBuilder theComment;
 	TreeMap<String, String> theDocumentParameterGroups;
 	TreeMap<String, TreeMap<String, Object>> theDocumentParametersTree ;
