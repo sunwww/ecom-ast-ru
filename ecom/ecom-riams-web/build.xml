@@ -11,12 +11,19 @@
 		<include name="ecom/gwt/clazz/ecom-gwt-clazz.jar" />
 		<include name="gwt/gwt-servlet.jar" />
         <include name="ecs/ecs-1.4.2.jar"/>
-        <include name="axis.jar"/>
+		<include name="image/jai_imageio.jar"/>
+		<include name="image/imgscalr-lib-3.2.jar"/>
+		<include name="image/jai_codec.jar"/>
+		<include name="axis/axis.jar"/>
+		
 	</fileset>
 
 	<target name='prepare.web'>
 		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
 			<fileset refid='riams.ejb.jar' />
+			<fileset file='${lib.dir}/image/jai_codec.jar' />
+			<fileset file='${lib.dir}/image/imgscalr-lib-3.2.jar' />
+			<fileset file='${lib.dir}/image/jai_imageio.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
 			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />

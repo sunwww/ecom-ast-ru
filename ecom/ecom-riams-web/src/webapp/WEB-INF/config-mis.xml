@@ -224,11 +224,11 @@
         <form-bean name="voc_drugLNForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugLicensedNameForm" />
         
         <!-- Документы -->
-        <form-bean name="licence_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm" />
+        <!-- 
 		<form-bean name="licence_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterForm" />
 		<form-bean name="licence_documentParameterGroupForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterGroupForm" />
-		<form-bean name="licence_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm" />
-		<form-bean name="licence_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
+		 -->
+		<form-bean name="doc_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
 	
 	</form-beans>
 

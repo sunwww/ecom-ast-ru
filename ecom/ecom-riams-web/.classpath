@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/javax.wsdl_1.6.2.v201012040545.jar"/>
 	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/org.apache.commons.logging_1.0.4.v201101211617.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/axis"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/imageio"/>
 	<classpathentry kind="output" path="target/webapp/WEB-INF/classes"/>
 </classpath>
