@@ -1,6 +1,7 @@
 package ru.ecom.diary.ejb.service.protocol;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.sql.Date;
 import java.sql.Time;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -68,9 +70,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		    for (File file:files) {
 		    	if(file.isDirectory()==false){
 		    		printVariable("\nfile",file.getAbsolutePath()) ;
-			    	parseFile(file.getAbsolutePath());
-			    	File newFile = new File(aArcDir, file.getName());
-			    	file.renameTo(newFile);
+			    	try {
+			    		parseFile(file.getAbsolutePath());
+			    		File newFile = new File(aArcDir, file.getName());
+				    	file.renameTo(newFile);
+			    	} catch (Exception e) {
+			    		//TODO ошибочная запись
+			    		
+			    	}
+			    	
 		    	} else {
 		    			theWorkDirName = file.getName();
 		    			theWorkArcDir = new File(theArcDirName, theWorkDirName);
@@ -80,7 +88,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		}
 	    if (!aRootDir)	aDir.delete();
 	}
-	public void parseFile(String uri)
+	public void parseFile(String uri) throws JDOMException, IOException 
 	{
         //theManager.getTransaction().begin() ;
 		ExternalMedservice externalMedservice = new ExternalMedservice();
@@ -89,8 +97,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
     	theVocDocumentParameters = new HashMap<Object, Object>();
     	theDocumentParametersTree = new TreeMap<String, TreeMap<String, Object>>(); 
 	    
-    	try
-	    { 
+    	
 	    	File in = new File(uri);
 	        theFileUri = uri;
 	        Document doc = new SAXBuilder().build(in);
@@ -106,15 +113,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			Element tests = order.getChild("Tests");
 			parseTests(tests,externalMedservice);
 			prepareComment(externalMedservice);
-
 			//return theExternalMedservice;
-	    }
-	    catch (Exception e)
-	    {
-	    	//theManager.getTransaction().rollback() ;
-	      System.err.println(e);
-	      //return null;
-	    }		
+	    
 	    
 	}
 	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
@@ -127,8 +127,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		aExternalMedservice.setCreateTime(fileTime);
 		aExternalMedservice.setWhomIssued(laboratoryName);
 		aExternalMedservice.setOrderLpu(clinicName);
-		theManager.persist(aExternalMedservice) ;
-		//persist(theExternalMedservice);
+		//theManager.persist(aExternalMedservice) ;
+		persist(aExternalMedservice);
 		
 	}
 	public void parseOrder(Element order,ExternalMedservice aExternalMedservice)
@@ -162,9 +162,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         sb.append(" AND middlename='").append(middlename).append("'");
         sb.append(" AND birthday='").append(birthday).append("'");
         Patient patientId = null;
+        
         try{
-        patientId = (Patient) theManager.createQuery(sb.toString()).getSingleResult();	        
-        } catch(Exception e){}
+        	if (birthday!=null) {
+        		patientId = (Patient) theManager.createQuery(sb.toString()).getSingleResult();
+        	}
+        } catch(Exception e){
+        	
+        }
         
         aExternalMedservice.setPatient(patientId);
         aExternalMedservice.setPatientLastname(lastname);
