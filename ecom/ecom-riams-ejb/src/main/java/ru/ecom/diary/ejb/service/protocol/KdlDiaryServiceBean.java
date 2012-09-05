@@ -1,7 +1,6 @@
 package ru.ecom.diary.ejb.service.protocol;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.sql.Date;
 import java.sql.Time;
@@ -16,10 +15,10 @@ import javax.ejb.Stateless;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -35,14 +34,13 @@ import ru.nuzmsh.util.format.DateFormat;
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	
 	public static void main(String[] args) {
-		//service.setManager() ;
 		KdlDiaryServiceBean service = new KdlDiaryServiceBean() ;
 		service.getFiles() ;
 	}
 	public void getFiles() {
 		theDirName = getKdlDir();
 		theArcDirName = getKdlArcDir();
-		
+		theErrorDirName = getKdlErrorDir();
 		parseDir(theDirName, theArcDirName, true);
 	}
 
@@ -50,19 +48,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		File dir = new File(dirName);
 		theWorkDirName = dir.getName();
 		theWorkArcDir = new File(theArcDirName, theWorkDirName);
+		theWorkErrorDir = new File(theErrorDirName, theWorkDirName);
 		setPermissions(dir);
-		parseDir(dir, theWorkArcDir, aRootDir);
+		parseDir(dir, aRootDir);
 		}
-	public void parseDir(File aDir, File aArcDir, Boolean aRootDir){
-		printVariable("Dir", aDir.getAbsolutePath()) ;
-		printVariable("ArcDir", aArcDir.getAbsolutePath()) ;
-		printVariable("RootDir", aRootDir? "true": "false");
-		if (!aRootDir){
-			if (!aArcDir.exists()) {
-				aArcDir.mkdir();
-				setPermissions(aArcDir);
-			}
-		}
+	public void parseDir(File aDir, Boolean aRootDir){
+		
+		File targetDir = null;
 
 		File[] files=aDir.listFiles();
 		if (files == null) {
@@ -72,32 +64,33 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		    		printVariable("\nfile",file.getAbsolutePath()) ;
 			    	try {
 			    		parseFile(file.getAbsolutePath());
-			    		File newFile = new File(aArcDir, file.getName());
-				    	file.renameTo(newFile);
+			    		targetDir = theWorkArcDir;
 			    	} catch (Exception e) {
-			    		//TODO ошибочная запись
+			    		targetDir = theWorkErrorDir;
 			    		
 			    	}
-			    	
+		    	moveFileTo(file, targetDir);
 		    	} else {
 		    			theWorkDirName = file.getName();
 		    			theWorkArcDir = new File(theArcDirName, theWorkDirName);
-		    			parseDir(file, theWorkArcDir, false);
+		    			theWorkErrorDir = new File(theErrorDirName, theWorkDirName);
+		    			parseDir(file, false);
 		    		}
 			    }
 		}
 	    if (!aRootDir)	aDir.delete();
 	}
-	public void parseFile(String uri) throws JDOMException, IOException 
+	public void parseFile(String uri) throws Exception 
 	{
-        //theManager.getTransaction().begin() ;
 		ExternalMedservice externalMedservice = new ExternalMedservice();
+		EntityTransaction tx = null;
         theComment = new StringBuilder();
     	theDocumentParameterGroups = new TreeMap<String, String>();
     	theVocDocumentParameters = new HashMap<Object, Object>();
     	theDocumentParametersTree = new TreeMap<String, TreeMap<String, Object>>(); 
-	    
-    	
+    	try{
+    		startTransaction(tx);
+    		
 	    	File in = new File(uri);
 	        theFileUri = uri;
 	        Document doc = new SAXBuilder().build(in);
@@ -113,7 +106,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			Element tests = order.getChild("Tests");
 			parseTests(tests,externalMedservice);
 			prepareComment(externalMedservice);
-			//return theExternalMedservice;
+			
+			commitTransaction(tx);
+    	}
+    	catch(Exception e){
+    	    rollbackTransaction(tx);
+    	    printVariable("FileException", e.getMessage());
+    	    throw e;
+    	}
 	    
 	    
 	}
@@ -127,7 +127,6 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		aExternalMedservice.setCreateTime(fileTime);
 		aExternalMedservice.setWhomIssued(laboratoryName);
 		aExternalMedservice.setOrderLpu(clinicName);
-		//theManager.persist(aExternalMedservice) ;
 		persist(aExternalMedservice);
 		
 	}
@@ -157,10 +156,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         
         StringBuilder sb = new StringBuilder();
         sb.append("FROM Patient");
-        sb.append(" WHERE lastname='").append(lastname).append("'");
-        sb.append(" AND firstname='").append(firstname).append("'");
-        sb.append(" AND middlename='").append(middlename).append("'");
-        sb.append(" AND birthday='").append(birthday).append("'");
+        sb.append(" WHERE");
+        appendQueryProperty(sb, "lastname", lastname, false, true);
+        appendQueryProperty(sb, "firstname", firstname, false, false);
+        appendQueryProperty(sb, "middlename", middlename, false, false);
+        appendQueryProperty(sb, "birthday", birthday, true, false);
+        String patientSql = sb.toString();
+        printVariable("patientSql", patientSql);
         Patient patientId = null;
         
         try{
@@ -196,9 +198,6 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		String sectionName = section.getChildText("SectionName");
 		
 		theDocumentParameterGroups.put(sectionId, sectionName);
-/*		printVariable("sectionId",sectionId);
-		printVariable("sectionName",sectionName);
-		printVariable("theSectionId",theDocumentParameterGroups.get(sectionId));*/
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -274,7 +273,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
 	}
 	public void prepareComment(ExternalMedservice aExternalMedservice){
-		prepareCommentHead(aExternalMedservice);
+		//prepareCommentHead(aExternalMedservice);
 		prepareTestsComment(aExternalMedservice);
 		//print(theComment.toString());
 	}
@@ -320,7 +319,6 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				pm = pi.next();
 				DocumentParameter documentParameter = (DocumentParameter) pm.getValue();
 				VocDocumentParameter vocDocumentParameter = (VocDocumentParameter) documentParameter.getParameter();
-				//printVariable("testId",documentParameter.GetTestId);
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
 					norm=vocDocumentParameter.getNormMinimum()+"-"+vocDocumentParameter.getNormMaximum();
@@ -328,16 +326,12 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				else  if (vocDocumentParameter.getNorm()!=null){
 					norm=vocDocumentParameter.getNorm();
 				}
+				if (norm.length()>255) norm = norm.substring(0, 254)+"...";
 				commentAdd(vocDocumentParameter.getName());
 				commentAdd(": "+documentParameter.getValue());
 				commentAdd(" "+vocDocumentParameter.getDimension());
 				if (norm!="") commentAdd(" ("+norm+") ");
 				commentNewLine();
-				//commentAdd("valueDate",toString(documentParameter.getValueDate()));
-				//commentAdd("valueTime",toString(documentParameter.getValueTime()));
-				//commentAdd("sectionItem",toString(documentParameter.getOrderNumber()));
-				//commentAdd("testShortName",vocDocumentParameter.getCode());
-				//printVariable("sectionID",vocDocumentParameterGroup.getCode());
 			}
 		}
 		aExternalMedservice.setComment(theComment.toString());
@@ -408,11 +402,30 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		System.out.println(aString);
 	}		
 	private void persist(Object object){
-
 			if ((object!=null)&&(theManager!=null)) {
 				theManager.persist(object);
 			}
-			
+	}
+	private EntityTransaction startTransaction(EntityTransaction tx){
+		if (theManager!=null) {
+			tx = theManager.getTransaction();
+			if (tx!=null) tx.begin();
+		}
+		return tx;
+	}
+	private void commitTransaction(EntityTransaction tx){
+			if (tx!=null) tx.commit();
+	}
+	private void rollbackTransaction(EntityTransaction tx){
+			if (tx != null && tx.isActive()) tx.rollback();
+	}
+	private void moveFileTo(File aSourceFile, File aTargetDir){
+		if (!aTargetDir.exists()) {
+			aTargetDir.mkdirs();
+			setPermissions(aTargetDir);
+		}
+		File newFile = new File(aTargetDir, aSourceFile.getName());
+    	aSourceFile.renameTo(newFile);
 	}
 	@SuppressWarnings("rawtypes")
 	public static String getIdColumn(Class aClass){
@@ -437,8 +450,22 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		String workDir =config.get("kdl.arcdir", "/opt/kdl/testArc");
 		return workDir ;
 	}
+	public String getKdlErrorDir() {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String workDir =config.get("kdl.errordir", "/opt/kdl/testError");
+		return workDir ;
+	}
 	public void setPermissions(File aFile){
 		run("chmod -R 777 "+aFile.getAbsolutePath());
+	}
+	private void appendQueryProperty(StringBuilder aStringBuilder, String aProperty, Object aValue, Boolean aExceptNull, Boolean aFirst){
+		if (aStringBuilder!=null){
+			if (aValue==null && aExceptNull) return;
+			if (!aFirst) aStringBuilder.append(" AND");
+			aStringBuilder.append(" \"").append(aProperty).append("\"");
+			if (aValue==null) aStringBuilder.append(" IS NULL");
+			else  aStringBuilder.append(" = '").append(aValue).append("'");
+		}
 	}
 	public String run(String Command){
 		try{
@@ -456,8 +483,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
     //static KdlDiaryServiceBean theService = new KdlDiaryServiceBean();
     String theDirName;
     String theArcDirName;
+    String theErrorDirName;
     String theWorkDirName;
     File theWorkArcDir;
+    File theWorkErrorDir;
     String theFileUri;
     //ExternalMedservice theExternalMedservice;
     StringBuilder theComment;
