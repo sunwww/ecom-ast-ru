@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -15,7 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+
 import javax.persistence.PersistenceContext;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -27,6 +26,7 @@ import ru.ecom.mis.ejb.domain.licence.ExternalMedservice;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 @Stateless
@@ -41,6 +41,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		theDirName = getKdlDir();
 		theArcDirName = getKdlArcDir();
 		theErrorDirName = getKdlErrorDir();
+        theDocumentParameterObj = new TreeMap<String, VocDocumentParameter>();
+    	theDocumentParameterGroupsObj = new TreeMap<String, VocDocumentParameterGroup>();
 		parseDir(theDirName, theArcDirName, true);
 	}
 
@@ -53,7 +55,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		parseDir(dir, aRootDir);
 		}
 	public void parseDir(File aDir, Boolean aRootDir){
-		
+
 		File targetDir = null;
 
 		File[] files=aDir.listFiles();
@@ -83,14 +85,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public void parseFile(String uri) throws Exception 
 	{
 		ExternalMedservice externalMedservice = new ExternalMedservice();
-		EntityTransaction tx = null;
+		//if (theManager!=null) theManager.joinTransaction();
+		//EntityTransaction tx = null;
         theComment = new StringBuilder();
-    	theDocumentParameterGroups = new TreeMap<String, String>();
-    	theVocDocumentParameters = new HashMap<Object, Object>();
+        theDocumentParameterGroups = new TreeMap<String, String>();
+    	//theVocDocumentParameters = new HashMap<Object, Object>();
     	theDocumentParametersTree = new TreeMap<String, TreeMap<String, Object>>(); 
     	try{
-    		startTransaction(tx);
-    		
+    		//startTransaction(tx);
+    		print("Start parse");
 	    	File in = new File(uri);
 	        theFileUri = uri;
 	        Document doc = new SAXBuilder().build(in);
@@ -106,16 +109,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			Element tests = order.getChild("Tests");
 			parseTests(tests,externalMedservice);
 			prepareComment(externalMedservice);
-			
-			commitTransaction(tx);
     	}
     	catch(Exception e){
-    	    rollbackTransaction(tx);
+    		e.printStackTrace() ;
     	    printVariable("FileException", e.getMessage());
     	    throw e;
     	}
-	    
-	    
+	printVariable("EndParse", toString(externalMedservice.getId()));    
 	}
 	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
 		Date fileDate = toDate(aHeader.getChildText("FileDate"));
@@ -147,31 +147,26 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public void parsePatient(Element patient,ExternalMedservice aExternalMedservice)
 	{
 		//String patientId = patient.getAttributeValue("PatientID");
-        String lastname = patient.getChildText("LastName").toUpperCase();
-        String[] firstMiddleName = patient.getChildText("FirstMiddleName").toUpperCase().split(" ") ;
-        String firstname = firstMiddleName[0];
-        String middlename = firstMiddleName[1];
+        String lastname = upperCase(patient.getChildText("LastName"));
+        String fmn = upperCase(patient.getChildText("FirstMiddleName")) ;
+        String[] firstMiddleName = fmn==null?null:fmn.split(" ") ;
+        String firstname = (firstMiddleName==null||firstMiddleName.length<1)?"":firstMiddleName[0];
+        String middlename = (firstMiddleName==null||firstMiddleName.length<2)?"":firstMiddleName[1];
         Date birthday = toDate(patient.getChildText("DOB"));
         //Long sex = ConvertSql.parseLong(patient.getChildText("Sex")=="M"?1:2);
         
-        StringBuilder sb = new StringBuilder();
-        sb.append("FROM Patient");
-        sb.append(" WHERE");
-        appendQueryProperty(sb, "lastname", lastname, false, true);
-        appendQueryProperty(sb, "firstname", firstname, false, false);
-        appendQueryProperty(sb, "middlename", middlename, false, false);
-        appendQueryProperty(sb, "birthday", birthday, true, false);
-        String patientSql = sb.toString();
-        printVariable("patientSql", patientSql);
-        Patient patientId = null;
-        
-        try{
-        	if (birthday!=null) {
-        		patientId = (Patient) theManager.createQuery(sb.toString()).getSingleResult();
-        	}
-        } catch(Exception e){
-        	
+        String patientSql = "FROM Patient WHERE lastname=:lastname and firstname=:firstname and middlename=:middlename and birthday=:birthday" ;
+        List<Patient> list = null ;
+        if (StringUtil.isNullOrEmpty(middlename)) middlename = "Х" ;
+        if (birthday!=null) {
+        	list = theManager.createQuery(patientSql)
+        		.setParameter("lastname", lastname)
+        		.setParameter("firstname", firstname)
+        		.setParameter("middlename", middlename)
+        		.setParameter("birthday", birthday)
+        		.setMaxResults(2).getResultList();
         }
+        Patient patientId = list.size()==1?list.get(0):null;
         
         aExternalMedservice.setPatient(patientId);
         aExternalMedservice.setPatientLastname(lastname);
@@ -179,7 +174,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         aExternalMedservice.setPatientMiddlename(middlename);
         aExternalMedservice.setPatientBirthday(birthday);
         aExternalMedservice.setReferenceTo(theFileUri);
-        persist(aExternalMedservice);
+        //persist(aExternalMedservice);
         
 	}
 	@SuppressWarnings("unchecked")
@@ -196,12 +191,29 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		Element section = page.getChild("Section");
 		String sectionId = section.getAttributeValue("SectionID");
 		String sectionName = section.getChildText("SectionName");
-		
+		VocDocumentParameterGroup group = theDocumentParameterGroupsObj.get(sectionId) ;
+		if (group == null) {
+			
+			List<VocDocumentParameterGroup> list1 = theManager.createQuery("FROM VocDocumentParameterGroup WHERE code='"+sectionId+"'").getResultList() ;
+			if (list1.size()>0) {
+				group =list1.get(list1.size()-1) ;
+			} else {
+				if (group == null) {
+					group = new VocDocumentParameterGroup() ;
+					group.setCode(sectionId);
+					group.setName(sectionName) ;
+					persist(group) ;
+					
+				}
+			}
+		}
 		theDocumentParameterGroups.put(sectionId, sectionName);
+		theDocumentParameterGroupsObj.put(sectionId, group);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void parseTests(Element tests,ExternalMedservice aExternalMedservice) {
+		if (aExternalMedservice.getId()==Long.valueOf(0)) persist(aExternalMedservice) ;
 		for (Element test: (List<Element>) tests.getChildren("Test")) 
 		{
 			parseTest(test,aExternalMedservice);
@@ -211,53 +223,42 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	private void parseTest(Element test, ExternalMedservice aExternalMedservice) {
 		
 		//String testId = test.getAttributeValue("TestID");
-		String value = test.getChildText("Value").toUpperCase();
-		String normalValueMin = test.getChildText("NormalValueMin");
-		String normalValueMax = test.getChildText("NormalValueMax");
-		String normalValue = test.getChildText("NormalValue");
+		String value = upperCase(test.getChildText("Value"));
+		String normalValueMin = substring(test.getChildText("NormalValueMin"),255);
+		String normalValueMax = substring(test.getChildText("NormalValueMax"),255);
+		String normalValue = substring(test.getChildText("NormalValue"),255);
 		Date valueDate = toDate(test.getChildText("ValueDate"));
 		Time valueTime = toTime(test.getChildText("ValueTime"));
-		String testName = test.getChildText("TestName").toUpperCase();
-		String dimension = test.getChildText("Dimension").toUpperCase();
-		String testShortName = test.getChildText("TestShortName").toUpperCase();
+		String testName = substring(upperCase(test.getChildText("TestName")),255);
+		String dimension = substring(upperCase(test.getChildText("Dimension")),255);
+		String testShortName = substring(upperCase(test.getChildText("TestShortName")),255);
 		
 		Element testPosition = test.getChild("TestPosition");
 		String sectionID = testPosition.getChildText("SectionID");
 		int sectionItem = toInt(testPosition.getChildText("SectionItem"));
 		
-		VocDocumentParameterGroup vocDocumentParameterGroup = null ;
-		try {
-		vocDocumentParameterGroup = (VocDocumentParameterGroup) theManager.createQuery("FROM VocDocumentParameterGroup WHERE code=:code").setParameter("code", sectionID).getSingleResult();
-		} 
-		catch (Exception e) {}
-		if (vocDocumentParameterGroup == null) {
-			vocDocumentParameterGroup = (VocDocumentParameterGroup) new VocDocumentParameterGroup() ;
-			vocDocumentParameterGroup.setCode(sectionID);
-			vocDocumentParameterGroup.setName((String) theDocumentParameterGroups.get(sectionID).toUpperCase());
-			persist(vocDocumentParameterGroup);
-		}		
+		VocDocumentParameterGroup vocDocumentParameterGroup = theDocumentParameterGroupsObj.get(sectionID);
 		
-		VocDocumentParameter vocDocumentParameter = null ;
-		try {
-		vocDocumentParameter = (VocDocumentParameter) theManager.createQuery("FROM VocDocumentParameter WHERE code=:code").setParameter("code", testShortName).getSingleResult();
-		} 
-		catch (Exception e) {}
+		VocDocumentParameter vocDocumentParameter = theDocumentParameterObj.get(testShortName) ;
 		if (vocDocumentParameter==null) {
-			
-			vocDocumentParameter = (VocDocumentParameter) new VocDocumentParameter();
-			
-			vocDocumentParameter.setCode(testShortName);
-			vocDocumentParameter.setName(testName);
-			vocDocumentParameter.setNormMinimum(normalValueMin);
-			vocDocumentParameter.setNormMaximum(normalValueMax);
-			vocDocumentParameter.setNorm(normalValue);
-			vocDocumentParameter.setDimension(dimension);
-			vocDocumentParameter.setParameterGroup(vocDocumentParameterGroup);
-			persist(vocDocumentParameter);
-			
-			theVocDocumentParameters.put(vocDocumentParameter, vocDocumentParameter);
+			List<VocDocumentParameter> list = theManager.createQuery("FROM VocDocumentParameter WHERE code='"+testShortName+"'").getResultList();
+			if (list.size()>0) {
+				vocDocumentParameter = list.get(0) ;
+				
+			} else {
+				vocDocumentParameter = new VocDocumentParameter();
+				vocDocumentParameter.setCode(testShortName);
+				vocDocumentParameter.setName(testName);
+				vocDocumentParameter.setNormMinimum(normalValueMin);
+				vocDocumentParameter.setNormMaximum(normalValueMax);
+				vocDocumentParameter.setNorm(normalValue);
+				vocDocumentParameter.setDimension(dimension);
+				vocDocumentParameter.setParameterGroup(vocDocumentParameterGroup);
+				theManager.persist(vocDocumentParameter) ;
+			}
+			theDocumentParameterObj.put(testShortName, vocDocumentParameter) ;
 		}
-			
+		
 		DocumentParameter documentParameter = new DocumentParameter();
 		documentParameter.setDocument(aExternalMedservice);
 		documentParameter.setValue(value);
@@ -265,17 +266,18 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		documentParameter.setValueTime(valueTime);
 		documentParameter.setOrderNumber(sectionItem);
 		documentParameter.setParameter(vocDocumentParameter);
+		
 		persist(documentParameter);
 		
 		if (theDocumentParametersTree.get(sectionID)==null){
 			theDocumentParametersTree.put(sectionID, new TreeMap<String, Object>());
 		}
+		
 		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
 	}
 	public void prepareComment(ExternalMedservice aExternalMedservice){
 		//prepareCommentHead(aExternalMedservice);
 		prepareTestsComment(aExternalMedservice);
-		//print(theComment.toString());
 	}
 	public void prepareCommentHead(ExternalMedservice aExternalMedservice){	
 		commentAdd("Лаборатория",aExternalMedservice.getWhomIssued());
@@ -321,12 +323,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				VocDocumentParameter vocDocumentParameter = (VocDocumentParameter) documentParameter.getParameter();
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
-					norm=vocDocumentParameter.getNormMinimum()+"-"+vocDocumentParameter.getNormMaximum();
+					norm=new StringBuilder().append(vocDocumentParameter.getNormMinimum()).append("-").append(vocDocumentParameter.getNormMaximum()).toString();
+					norm = substring(norm, 255);
 				}
 				else  if (vocDocumentParameter.getNorm()!=null){
 					norm=vocDocumentParameter.getNorm();
 				}
-				if (norm.length()>255) norm = norm.substring(0, 254)+"...";
+				
 				commentAdd(vocDocumentParameter.getName());
 				commentAdd(": "+documentParameter.getValue());
 				commentAdd(" "+vocDocumentParameter.getDimension());
@@ -354,6 +357,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public static String toString(int aInt){
 		return String.valueOf(aInt);
 	}
+	public static String substring(String aString, int aLength){
+		if (aString!=null && aString.length()>aLength) return new StringBuilder().append(aString.trim().substring(0, aLength-4)).append("...").toString() ;
+		return aString==null?"":aString;
+	}
+	public static String upperCase(String aString){
+		if (aString!=null) return aString.trim().toUpperCase() ;
+		return "";
+	}
 	public static String toString(long aLong){
 		return Long.toString(aLong);
 	}
@@ -378,7 +389,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		theComment.append(arg0).append(": ").append(arg1).append(" ");
 	}
 	public void printVariable(String variable, String value) {
-		printVariable(variable, value, "");
+		//printVariable(variable, value, "");
 	}
 	public static void printVariable(String variable, String value, String type )
 	{
@@ -402,22 +413,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		System.out.println(aString);
 	}		
 	private void persist(Object object){
-			if ((object!=null)&&(theManager!=null)) {
-				theManager.persist(object);
-			}
-	}
-	private EntityTransaction startTransaction(EntityTransaction tx){
-		if (theManager!=null) {
-			tx = theManager.getTransaction();
-			if (tx!=null) tx.begin();
+		if ((object!=null)&&(theManager!=null)) {
+			theManager.persist(object);
+			
 		}
-		return tx;
-	}
-	private void commitTransaction(EntityTransaction tx){
-			if (tx!=null) tx.commit();
-	}
-	private void rollbackTransaction(EntityTransaction tx){
-			if (tx != null && tx.isActive()) tx.rollback();
 	}
 	private void moveFileTo(File aSourceFile, File aTargetDir){
 		if (!aTargetDir.exists()) {
@@ -480,7 +479,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	} 
 	
 	@PersistenceContext EntityManager theManager ;
-    //static KdlDiaryServiceBean theService = new KdlDiaryServiceBean();
+
     String theDirName;
     String theArcDirName;
     String theErrorDirName;
@@ -488,9 +487,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
     File theWorkArcDir;
     File theWorkErrorDir;
     String theFileUri;
-    //ExternalMedservice theExternalMedservice;
     StringBuilder theComment;
-	TreeMap<String, String> theDocumentParameterGroups;
+    TreeMap<String, String> theDocumentParameterGroups;
+    TreeMap<String, VocDocumentParameter> theDocumentParameterObj ;
+	TreeMap<String, VocDocumentParameterGroup> theDocumentParameterGroupsObj;
 	TreeMap<String, TreeMap<String, Object>> theDocumentParametersTree ;
-	HashMap<Object, Object> theVocDocumentParameters;
+	//HashMap<Object, Object> theVocDocumentParameters;
 }
