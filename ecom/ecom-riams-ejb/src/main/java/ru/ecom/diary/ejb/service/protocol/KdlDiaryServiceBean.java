@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import javax.persistence.PersistenceContext;
 import org.jdom.Document;
@@ -85,14 +86,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public void parseFile(String uri) throws Exception 
 	{
 		ExternalMedservice externalMedservice = new ExternalMedservice();
-		//if (theManager!=null) theManager.joinTransaction();
-		//EntityTransaction tx = null;
+		//theManager.joinTransaction();
+		//EntityTransaction tx = theManager.getTransaction();
         theComment = new StringBuilder();
         theDocumentParameterGroups = new TreeMap<String, String>();
     	//theVocDocumentParameters = new HashMap<Object, Object>();
     	theDocumentParametersTree = new TreeMap<String, TreeMap<String, Object>>(); 
     	try{
-    		//startTransaction(tx);
+    		//theManager.getTransaction().begin() ;
     		print("Start parse");
 	    	File in = new File(uri);
 	        theFileUri = uri;
@@ -109,12 +110,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			Element tests = order.getChild("Tests");
 			parseTests(tests,externalMedservice);
 			prepareComment(externalMedservice);
+			theManager.getTransaction().commit() ;
     	}
     	catch(Exception e){
     		e.printStackTrace() ;
     	    printVariable("FileException", e.getMessage());
+    	    //theManager.getTransaction().rollback() ;
     	    throw e;
     	}
+    	
 	printVariable("EndParse", toString(externalMedservice.getId()));    
 	}
 	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
@@ -166,7 +170,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         		.setParameter("birthday", birthday)
         		.setMaxResults(2).getResultList();
         }
-        Patient patientId = list.size()==1?list.get(0):null;
+        Patient patientId = (list!=null && list.size()==1)?list.get(0):null;
         
         aExternalMedservice.setPatient(patientId);
         aExternalMedservice.setPatientLastname(lastname);
