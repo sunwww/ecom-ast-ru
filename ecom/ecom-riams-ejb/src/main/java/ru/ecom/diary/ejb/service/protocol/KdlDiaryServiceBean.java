@@ -32,7 +32,10 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IKdlDiaryService.class)
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
-	
+	public String getDir(String aKey, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		return config.get(aKey, aDefaultValue) ;
+	}
 	public void parseFile(String aUri) throws Exception 
 	{
 		ExternalMedservice externalMedservice;
