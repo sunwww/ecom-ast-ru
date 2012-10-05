@@ -25,9 +25,9 @@ public class PrintServiceBean implements IPrintService {
 	public String print(String aKey
 			, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
-		return print("user", aKey, aServiceName, aMethodName, aParams);		
+		return print("user",false, aKey, aServiceName, aMethodName, aParams);		
 	}
-	public String print(String aLogin, String aKey
+	public String print(String aLogin,boolean aIsTxtFirst, String aKey
 			, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
 		try {
@@ -37,10 +37,9 @@ public class PrintServiceBean implements IPrintService {
 			// печать
             EjbEcomConfig config = EjbEcomConfig.getInstance() ;
             //Long maxLengthLine = ConvertSql.parseLong(config.get("text.line.length.max", "77")) ;
-            RtfPrintServiceHelper service = new RtfPrintServiceHelper();
+            RtfPrintServiceHelper service = new RtfPrintServiceHelper(aIsTxtFirst);
             String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
             boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1")?true:false;
-            
             
             service.setWorkDir(config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf"));
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
