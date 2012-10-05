@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.lpu.CopyingEquipment;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
@@ -172,4 +173,34 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Операционная сестра */
 	private Boolean theIsInstrumentNurse;
+	
+	/** Комментарий */
+	@Comment("Комментарий")
+	public String getComment() {
+		return theComment;
+	}
+
+	public void setComment(String aComment) {
+		theComment = aComment;
+	}
+
+	/** Комментарий */
+	private String theComment;
+	/** Не показывать удаленным пользователям */
+	@Comment("Не показывать удаленным пользователям")
+	public Boolean getIsNoViewRemoteUser() {return theIsNoViewRemoteUser;}
+	public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {theIsNoViewRemoteUser = aNoViewRemoteUser;}
+
+	/** Не показывать удаленным пользователям */
+	private Boolean theIsNoViewRemoteUser;
+	
+	/** Принтер по умолчанию */
+	@Comment("Принтер по умолчанию")
+	@OneToOne
+	public CopyingEquipment getCopyingEquipmentDefault() {return theCopyingEquipmentDefault;}
+	public void setCopyingEquipmentDefault(CopyingEquipment aCopyingEquipmentDefault) {theCopyingEquipmentDefault = aCopyingEquipmentDefault;}
+
+	/** Принтер по умолчанию */
+	private CopyingEquipment theCopyingEquipmentDefault;
+
 }

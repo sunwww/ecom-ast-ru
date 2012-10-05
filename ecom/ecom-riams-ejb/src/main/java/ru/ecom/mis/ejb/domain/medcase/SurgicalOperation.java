@@ -24,8 +24,8 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationAspect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationMethod;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationTechnology;
@@ -275,11 +275,11 @@ public class SurgicalOperation extends BaseEntity {
 	/** Показания для операции */
 	@Comment("Показания для операции")
 	@OneToOne
-	public VocOperationAspect getAspect() {return theAspect;}
-	public void setAspect(VocOperationAspect aAspect) {theAspect = aAspect;}
+	public VocHospitalAspect getAspect() {return theAspect;}
+	public void setAspect(VocHospitalAspect aAspect) {theAspect = aAspect;}
 
 	/** Показания для операции */
-	private VocOperationAspect theAspect;
+	private VocHospitalAspect theAspect;
 
 	/** Экстренность */
 	private Boolean theEmergency;

@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.domain.lpu;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -412,5 +411,22 @@ public class MisLpu extends BaseEntity {
 
 	/** Приемное отделение */
 	private VocPigeonHole thePigeonHole;
+	
+	/** Не показывать удаленным пользователям */
+	@Comment("Не показывать удаленным пользователям")
+	public Boolean getIsNoViewRemoteUser() {return theIsNoViewRemoteUser;}
+	public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {theIsNoViewRemoteUser = aNoViewRemoteUser;}
+
+	/** Не показывать удаленным пользователям */
+	private Boolean theIsNoViewRemoteUser;
+	
+	/** Принтер по умолчанию */
+	@Comment("Принтер по умолчанию")
+	@OneToOne
+	public CopyingEquipment getCopyingEquipmentDefault() {return theCopyingEquipmentDefault;}
+	public void setCopyingEquipmentDefault(CopyingEquipment aCopyingEquipmentDefault) {theCopyingEquipmentDefault = aCopyingEquipmentDefault;}
+
+	/** Принтер по умолчанию */
+	private CopyingEquipment theCopyingEquipmentDefault;
 
 }
