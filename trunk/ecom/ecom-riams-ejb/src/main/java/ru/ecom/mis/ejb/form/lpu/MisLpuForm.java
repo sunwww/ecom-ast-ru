@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.lpu;
 
-
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -396,6 +395,22 @@ public class MisLpuForm extends IdNameEntityForm {
 	public Integer getRegistrationInterval() {return theRegistrationInterval;}
 	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
 
+	/** Не показывать удаленным пользователям */
+	@Comment("Не показывать удаленным пользователям")
+	@Persist
+	public Boolean getIsNoViewRemoteUser() {return theIsNoViewRemoteUser;}
+	public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {theIsNoViewRemoteUser = aNoViewRemoteUser;}
+
+	/** Принтер по умолчанию */
+	@Comment("Принтер по умолчанию")
+	@Persist
+	public Long getCopyingEquipmentDefault() {return theCopyingEquipmentDefault;}
+	public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {theCopyingEquipmentDefault = aCopyingEquipmentDefault;}
+
+	/** Принтер по умолчанию */
+	private Long theCopyingEquipmentDefault;
+	/** Не показывать удаленным пользователям */
+	private Boolean theIsNoViewRemoteUser;
 	/** Интервал разрешенной регистрации */
 	private Integer theRegistrationInterval;
 }
