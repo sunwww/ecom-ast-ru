@@ -59,7 +59,7 @@ function printDeathList(aCtx,aParams) {
 	    +" 	end as countDays"
 	    +" ,to_char(hmc.dateStart,'dd.mm.yyyy') as hmcdatestart,to_char(hmc.dateFinish,'dd.mm.yyyy') as hmcdatefinish"
 	    +" , list(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else '' end) as diag"
-	    //+" ,count(soHosp.id)+count(soDep.id) as cntOper"
+	    +" ,count(soHosp.id)+count(soDep.id) as cntOper"
 	    +" , list(to_char(soDep.operationDate,'dd.mm.yyyy')|| '-'||voDep.code|| ' '||voDep.name) ||' ' ||list(to_char(soHosp.operationDate,'dd.mm.yyyy')|| '-'||voHosp.code|| ' '||voHosp.name)"
 	    //+" , d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname"
 	    +" from MedCase as hmc"

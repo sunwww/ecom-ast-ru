@@ -1,4 +1,24 @@
 <vocconfig>
+<voc id="copyingEquipmentByLpu" type="NativeVocService">
+	<NativeVocService
+		from="CopyingEquipment ce"
+		parent="ce.lpu_id = :parent"
+		nameId="ce.id"
+		queryAppend="" join="" order=""
+		names="ce.name"
+		queried="upper(ce.name) like upper(:query)"
+	/>
+</voc>
+<voc id="copyingEquipmentByWorker" type="NativeVocService">
+	<NativeVocService
+		from="CopyingEquipment ce"
+		parent="w.id = :parent"
+		nameId="ce.id"
+		queryAppend="" join=" left join mislpu lpu on lpu.id=ce.lpu_id left join worker w on w.lpu_id=lpu.id" order=""
+		names="ce.name"
+		queried="upper(ce.name) like upper(:query)"
+	/>
+</voc>
 <voc id="priceMedServiceByContractAccout" type="NativeVocService">
 		<NativeVocService
 			from="PricePosition PP"

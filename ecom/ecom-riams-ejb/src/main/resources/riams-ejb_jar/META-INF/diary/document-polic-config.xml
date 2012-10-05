@@ -21,4 +21,17 @@
     	<print filename='directionDocument'/>
     	
 	</parameter>
+	    <parameter id='3' type='BaseMedicalExamination' name='Направление в другое ЛПУ' 
+    	action='entityParentPrepareCreate-doc_direction'>
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Обоснование направления' fieldColSpan='3' required='true'>
+    			<keyword>Необходим дополнительный осмотр...</keyword>
+    		</field>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='baseMedicalExamination'/>
+    	
+	</parameter>
+
 </parameterconfig>

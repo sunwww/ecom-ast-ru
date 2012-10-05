@@ -191,7 +191,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		aDateFinish = new StringBuilder().append("to_date('").append(aDateFinish).append("','dd.mm.yyyy')").toString();
     	}
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select to_char(operationDate,'DD.MM.YYYY') as operDate1,cast(operationTime as varchar(5)) as timeFrom,cast(operationTimeTo as varchar(5)) as timeTo,vo.name as voname from SurgicalOperation so left join VocOperation vo on vo.id=so.operation_id where so.patient_id='")
+    	sql.append("select to_char(operationDate,'DD.MM.YYYY') as operDate1,cast(operationTime as varchar(5)) as timeFrom,cast(operationTimeTo as varchar(5)) as timeTo,vo.name as voname from SurgicalOperation so left join MedService vo on vo.id=so.operation_id where so.patient_id='")
     		.append(aPatient)
     		.append("' and so.operationDate between to_date('").append(aDateStart).append("','dd.mm.yyyy') and ").append(aDateFinish).append(" order by so.operationDate") ;
     	List<Object[]> opers = theManager.createNativeQuery(sql.toString()).getResultList() ;

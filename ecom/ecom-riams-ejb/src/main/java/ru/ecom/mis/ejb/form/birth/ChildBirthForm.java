@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import javax.persistence.Column;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.ChildBirth;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -260,6 +263,14 @@ public class ChildBirthForm extends IdEntityForm {
 	public Long getMedCase() {return theMedCase;}
 	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
 
+	/** Гистология плаценты */
+	@Comment("Гистология плаценты")
+	@Persist
+	public String getHistology() {return theHistology;}
+	public void setHistology(String aHistology) {theHistology = aHistology;}
+
+	/** Гистология плаценты */
+	private String theHistology;
 	/** СМО */
 	private Long theMedCase;
 	/** Время начала потуг */

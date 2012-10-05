@@ -3,8 +3,6 @@ package ru.ecom.mis.ejb.form.worker;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.jaas.ejb.form.SecUserForm;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -122,4 +120,34 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** Операционная сестра */
 	private Boolean theIsInstrumentNurse;
+	/** Комментарий */
+	@Comment("Комментарий")
+	@Persist
+	public String getComment() {
+		return theComment;
+	}
+
+	public void setComment(String aComment) {
+		theComment = aComment;
+	}
+
+	/** Комментарий */
+	private String theComment;
+	/** Не показывать удаленным пользователям */
+	@Comment("Не показывать удаленным пользователям")
+	@Persist
+	public Boolean getIsNoViewRemoteUser() {return theIsNoViewRemoteUser;}
+	public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {theIsNoViewRemoteUser = aNoViewRemoteUser;}
+
+	/** Принтер по умолчанию */
+	@Comment("Принтер по умолчанию")
+	@Persist
+	public Long getCopyingEquipmentDefault() {return theCopyingEquipmentDefault;}
+	public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {theCopyingEquipmentDefault = aCopyingEquipmentDefault;}
+
+	/** Принтер по умолчанию */
+	private Long theCopyingEquipmentDefault;
+	/** Не показывать удаленным пользователям */
+	private Boolean theIsNoViewRemoteUser;
 }
+
