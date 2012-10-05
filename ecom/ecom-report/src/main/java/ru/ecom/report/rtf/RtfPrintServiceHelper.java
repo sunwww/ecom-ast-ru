@@ -40,12 +40,14 @@ public class RtfPrintServiceHelper {
         //theReplaceHelper.setRtfMode(true);
         setRemovedTempFile(true) ;
 	}
-    public RtfPrintServiceHelper(Long aMaxLineLength) {
+
+    public RtfPrintServiceHelper(boolean aIsTxtFirst) {
     	
+    	if (aIsTxtFirst) theDrivers.add(new TxtPrintFileDriver()) ;
     	theDrivers.add(new OdtPrintFileDriver(".odt")) ;
     	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
     	theDrivers.add(new RtfPrintFileDriver()) ;
-    	theDrivers.add(new TxtPrintFileDriver()) ;
+    	if (!aIsTxtFirst) theDrivers.add(new TxtPrintFileDriver()) ;
         //theReplaceHelper.setRtfMode(true);
         setRemovedTempFile(true) ;
     }
