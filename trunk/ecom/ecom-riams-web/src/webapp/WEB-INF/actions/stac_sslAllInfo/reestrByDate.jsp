@@ -289,6 +289,7 @@
     ml.name as mlname
     ,count(distinct m.id)
   	,count(distinct case when m.emergency='1' then m.id else null end) as memergency
+  	,count(distinct case when (m.emergency='0' or m.emergency is null) then m.id else null end) as mplan
     ,count(distinct case when (ok.voc_code is not null and ok.voc_code!='643') then m.id else null end) as inostr  
     ,count(distinct case when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then m.id else null end) as inog
     
@@ -311,8 +312,9 @@
       <msh:tableColumn columnName="Отделение" property="1" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во" property="2" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Кол-во экстренных" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во иностранцев" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во иногородних" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      <msh:tableColumn columnName="Кол-во плановых" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Кол-во иностранцев" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Кол-во иногородних" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

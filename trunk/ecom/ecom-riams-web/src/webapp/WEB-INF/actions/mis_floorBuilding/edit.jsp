@@ -40,8 +40,8 @@
 		    		where wp.parent_id='${param.id}' and wp.dtype='ConsultingRoom'
 		    		group by wp.id,wp.name"/>
 		    		<msh:table idField="1" name="consultingRoom" action="entityParentView-mis_consultingRoom.do">
-		    			<msh:tableColumn property="2"/>
-		    			<msh:tableColumn property="3"/>
+		    			<msh:tableColumn property="2" columnName="Кабинет"/>
+		    			<msh:tableColumn property="3" columnName="Рабочие функции"/>
 		    		</msh:table>
 		    	</msh:section>
       		</td>
@@ -50,13 +50,15 @@
     		<td width="70%" valign="top">
 		    	<msh:section title="Палаты" createRoles="/Policy/Mis/WorkPlace/HospitalRoom/Create" 
 		    		createUrl="entityParentPrepareCreate-mis_hospitalRoom.do?id=${param.id}" >
-		    		<ecom:webQuery  name="hospitalRoom" nativeSql="select wp.id,wp.name as wpname,ml.name as mlname 
+		    		<ecom:webQuery  name="hospitalRoom" nativeSql="select wp.id
+		    		,wp.name as wpname,ml.name as mlname, wp.bedCapacity as wpbedCapacity
 		    		from WorkPlace wp 
 		    		left join MisLpu ml on ml.id=wp.lpu_id
 		    		where wp.parent_id='${param.id}' and wp.dtype='HospitalRoom'"/>
-		    		<msh:table idField="1" name="hospitalRoom"  hideTitle="true" action="entityParentView-mis_hospitalRoom.do">
-		    			<msh:tableColumn property="2"/>
-		    			<msh:tableColumn property="3"/>
+		    		<msh:table idField="1" name="hospitalRoom"  action="entityParentView-mis_hospitalRoom.do">
+		    			<msh:tableColumn property="3" columnName="Отделение"/>
+		    			<msh:tableColumn property="2" columnName="Палата"/>
+		    			<msh:tableColumn property="4" columnName="Кол-во коек"/>
 		    		</msh:table>
 		    	</msh:section>
 		    </td>

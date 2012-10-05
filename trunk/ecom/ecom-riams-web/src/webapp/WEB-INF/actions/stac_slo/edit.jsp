@@ -58,9 +58,10 @@
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
-        <msh:sideLink action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
-        <msh:sideLink action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
 	  <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений СЛО" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
@@ -86,7 +87,7 @@
       	<tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Согласие на установку имплантанта" action="/print-consentImplant.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	<%--<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Согласие на установку имплантанта" action="/print-consentImplant.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentOperation" name="Согласие на медицинское (операционное) вмешательство" action="/print-consentOperation.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTransfusion" name="Согласие на переливание крови" action="/print-consentTransfusion.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTreatment" name="Согласие с обшим планом лечения и обследования" action="/print-consentTreatment.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
@@ -94,6 +95,7 @@
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionIntervention1" name="Отказ от стац. лечения" action="/print-rejectionIntervention1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionOperation1" name="Отказ от операции" action="/print-rejectionOperation1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/DirectVK" name="Направление на ВК" action="/print-directVK.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
+      	 --%>
       </msh:sideMenu>
       </msh:ifNotInRole>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
@@ -254,6 +256,7 @@
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
       left join Patient pw on pw.id=w.person_id
+      
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
             	where d.DTYPE='Protocol' and d.medCase_id='${param.id}' 
             	order by  d.dateRegistration desc,  d.timeRegistration desc"/>
@@ -412,6 +415,9 @@
         }
         function viewOtherHospitalMedCase(d) {
       	  getDefinition("js-stac_ssl-infoShortByPatient.do?id="+$('patient').value, null);
+        }
+        function viewOtherExtMedserviceByPatient(d) {
+      	  getDefinition("js-doc_externalMedservice-list.do?short=Short&id=${param.id}", null);
         }
 
       	function goDischarge() {

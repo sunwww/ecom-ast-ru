@@ -71,6 +71,12 @@
           <msh:textField property="phone" label="Контактный телефон" horizontalFill="true" guid="278a27cf-a55d-4c35-accb-2b5a070ef202" />
           <msh:textField property="email" label="Эл. почта" horizontalFill="true" size="10" guid="bcc76cb8-ae50-4785-b150-d3e621fb8b61" />
         </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isNoViewRemoteUser"/>
+        	<msh:ifFormTypeAreViewOrEdit formName="mis_lpuForm">
+        		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipmentByLpu" horizontalFill="true" parentId="mis_lpuForm.id" label="Принтер"/>
+        	</msh:ifFormTypeAreViewOrEdit>
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" guid="fe0172d0-16e6-490d-9bf2-ab6ac96e7402" />
       </msh:panel>
     </msh:form>
@@ -226,6 +232,7 @@
         <msh:sideLink params="id" action="/entityParentList-mis_bedFund" title="Коечный фонд" name="Коечный фонд" guid="0745-deed-4b36-94a7-187a3d0" roles="/Policy/Mis/BedFund/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_mortalityReportDate" name="Сведения о смертности" title="Показать сведения о смертности" guid="2db116bf-5d40-4eea-913e-6787399ecc73" roles="/Policy/Mis/Report/Mortality/View" />
         <msh:sideLink params="id" action="/entityParentList-voc_cardIndex" name="Сведения о картотеках" roles="/Policy/Voc/VocCardIndex/View" />
+        <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" params="id" action="/entityParentList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         <msh:sideLink roles="/Policy/Mis/Report/Birth/View" params="id" action="/entityParentList-mis_birthReportDate" name="Сведения по рождаемости" title="Показать сведения по рождаемости" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/js-mis_worker-pattern" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />
       </msh:sideMenu>

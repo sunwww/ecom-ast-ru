@@ -26,9 +26,9 @@
       <msh:ifInRole roles="/Policy/Mis/WorkPlace/FloorBuilding/View">
     	<msh:section title="Этажи здания" createRoles="/Policy/Mis/WorkPlace/FloorBuilding/Create" 
     		createUrl="entityParentPrepareCreate-mis_floorBuilding.do?id=${param.id}" >
-    		<ecom:webQuery name="floorBuilding" nativeSql="select wp.id,wp.name from WorkPlace wp where wp.parent_id='${param.id}' and wp.dtype='FloorBuilding'"/>
+    		<ecom:webQuery name="floorBuilding" nativeSql="select wp.id,wp.name from WorkPlace wp where wp.parent_id='${param.id}' and wp.dtype='FloorBuilding' order by wp.name"/>
     		<msh:table idField="1" name="floorBuilding" hideTitle="true" action="entityParentView-mis_floorBuilding.do">
-    			<msh:tableColumn property="1" columnName="Этаж"/>
+    			<msh:tableColumn property="2" columnName="Этаж"/>
     		</msh:table>
     	</msh:section>
       </msh:ifInRole>
