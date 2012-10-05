@@ -6,6 +6,7 @@ import java.sql.Time;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature;
@@ -239,6 +241,14 @@ public class ChildBirth extends BaseEntity{
 	public List<NewBorn> getNewBorns() {return theNewBorns;}
 	public void setNewBorns(List<NewBorn> aNewBorns) {theNewBorns = aNewBorns;}
 
+	/** Гистология плаценты */
+	@Comment("Гистология плаценты")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
+	public String getHistology() {return theHistology;}
+	public void setHistology(String aHistology) {theHistology = aHistology;}
+
+	/** Гистология плаценты */
+	private String theHistology;
 	/** Время начала потуг */
 	private Time theTravailStartTime;
 	/** Дата начала потуг */
