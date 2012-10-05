@@ -13,7 +13,7 @@ import java.io.File;
 public class TestRtfPrintService {
     public static void main(String[] args) throws RtfPrintException {
 
-        RtfPrintServiceHelper service = new RtfPrintServiceHelper(Long.valueOf(67));
+        RtfPrintServiceHelper service = new RtfPrintServiceHelper();
         System.out.println(new File("src/test/resources/066.rtf").getAbsolutePath());
         service.setTemplateDir("src/test/resources");
         service.setWorkDir("src/test/resources");
