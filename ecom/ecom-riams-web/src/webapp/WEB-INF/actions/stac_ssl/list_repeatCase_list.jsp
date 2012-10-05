@@ -51,6 +51,12 @@
 	        	<input type="radio" name="typeView" value="5">  по обращениям к специалистам
 	        </td>
         </msh:row>
+	    <msh:row>
+	        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="6">  по результат госпитализация
+	        </td>
+        </msh:row>
         <msh:row>
 	        <td class="label" title="Поиск по показаниям (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">

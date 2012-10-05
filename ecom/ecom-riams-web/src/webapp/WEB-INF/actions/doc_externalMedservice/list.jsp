@@ -4,15 +4,15 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Lpu" beginForm="licence_externalMedserviceForm" title="Список "/>
+		<ecom:titleTrail mainMenu="Lpu" beginForm="doc_externalMedserviceForm" title="Список "/>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="ROLE/Create" params="" action="/entityPrepareCreate-licence_externalMedservice" title="" name="" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/MedCase/Document/External/Medservice/Create" params="" action="/entityPrepareCreate-licence_externalMedservice" title="" name="" />
 		</msh:sideMenu>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-		<msh:table name="list" action="entityView-licence_externalMedservice.do" idField="id">
+		<msh:table name="list" action="entityView-doc_externalMedservice.do" idField="id">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="ИД" property="id" />
 		</msh:table>

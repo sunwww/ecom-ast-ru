@@ -16,10 +16,16 @@
 </style>
 
 <div id='${name}EpicrisisDialog' class='dialog'>
-    <h2>Выбор шаблона протокола</h2>
+    <h2>Выбор параметров</h2>
     <div class='rootPane'>
 		<form>
 		    <msh:panel>
+		    	<msh:ifInRole roles="/Policy/Mis/MedCase/Document/External/Medservice/View">
+		            <msh:row>
+			        	<msh:checkBox property="${name}ExtLabs" label="Внешние лабораторные исследования"/>
+			        </msh:row>
+		    	</msh:ifInRole>
+			        
 		    	<msh:ifInRole roles="/Policy/Mis/MisLpu/IsNuzMsch">
 		            <msh:row>
 			        	<msh:checkBox property="${name}Labs" label="Лабораторные исследования (DTM)"/>
@@ -40,9 +46,6 @@
 		        <msh:row>
 		            <msh:checkBox property="${name}Operations" label="Операции"/>
 		        </msh:row>
-<%--		        <msh:row>
-		            <msh:textArea isNotGoEnter="true"  property="${name}textTemplProtocol" label='Текст шаблона:' size="50" fieldColSpan="1" hideLabel="true"/>
-		        </msh:row>--%>
 		    </msh:panel>
 		        <msh:row>
 		            <td colspan="6">
@@ -86,9 +89,9 @@
 
      // Сохранение данных
      function save${name}Epicrisis() {
-		getLabsInfo() ;
+		get${name}LabsInfo() ;
      }
-     function getLabsInfo() {
+     function get${name}LabsInfo() {
 		if ($('${name}Labs')&& ($('${name}Labs').checked)||$('${name}Fisio')&& ($('${name}Fisio').checked)
 			||$('${name}Func')&& ($('${name}Func').checked) ||$('${name}Cons')&& ($('${name}Cons').checked)||$('${name}Luch')&& ($('${name}Luch').checked)) {
 			HospitalMedCaseService.getLabInvestigations($('${patient}').value,$('${dateStart}').value
@@ -99,30 +102,45 @@
 					callback: function(aString) {
 						$('${property}').value += "\n" ;
 						$('${property}').value += aString ;
-						getOperationsInfo() ;
+						get${name}OperationsInfo() ;
 					}
 			} ) ;
 		} else {
-			getOperationsInfo() ;
+			get${name}OperationsInfo() ;
      	}
      }
-     function getOperationsInfo() {
+     function get${name}OperationsInfo() {
      	if ($('${name}Operations').checked) {
 			HospitalMedCaseService.getOperations($('${patient}').value,$('${dateStart}').value
 				,$('${dateFinish}').value, {
 					callback: function(aString) {
 						$('${property}').value += "\n" ;
 						$('${property}').value += aString ;
-						the${name}EpicrisisDialog.hide() ;
-						$('${property}').focus() ;
-						
+						get${name}ExpMedserviceInfo() ;
 					}
 			} ) ;
 		} else {
-			the${name}EpicrisisDialog.hide() ;
-			$('${property}').focus() ;
+			get${name}ExpMedserviceInfo() ;
 		}
      }
+
+     function get${name}ExpMedserviceInfo() {
+      	if ($('${name}ExtLabs').checked) {
+ 			HospitalMedCaseService.getExpMedservices($('${patient}').value,$('${dateStart}').value
+ 				,$('${dateFinish}').value, {
+ 					callback: function(aString) {
+ 						$('${property}').value += "\n" ;
+ 						$('${property}').value += aString ;
+ 						the${name}EpicrisisDialog.hide() ;
+ 						$('${property}').focus() ;
+ 						
+ 					}
+ 			} ) ;
+ 		} else {
+ 			the${name}EpicrisisDialog.hide() ;
+ 			$('${property}').focus() ;
+ 		}
+      }
 
      // инициализация диалогового окна выбора шаблона протокола
      function init${name}Epicrisis() {

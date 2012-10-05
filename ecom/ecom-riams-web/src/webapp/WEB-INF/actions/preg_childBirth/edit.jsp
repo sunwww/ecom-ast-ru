@@ -2,10 +2,28 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="style" type="string">
+        <style type="text/css">            
+            .protocols {
+				left:0px;  width:99%; 
+				top:0px;  height:55em;
+			}
+			#epicriPanel {
+			width:100%;
+			}
+			.record {
+			width:100%;
+			}
+        </style>
 
+    </tiles:put>
   <tiles:put name="side" type="string">
+	<msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+    	<tags:templateProtocol idSmo="preg_childBirthForm.medCase" version="Visit" name="tmp" property="histology" voc="protocolVisitByPatient"/>
+    </msh:ifFormTypeIsNotView>  
     <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="0908a638-fd02-4b94-978b-18ab86829e08">
       <msh:sideMenu title="Роды" guid="bc6ceef3-4709-47d9-ba37-d68540cffc61">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
@@ -95,7 +113,17 @@
         <msh:row>
           <msh:checkBox property="placentaHistologyOrder" label="Направление плаценты на гистологию" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="3"/>
         </msh:row>
-
+        <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+           <msh:row>
+               <td colspan="3" align="right">
+                   <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+                   <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+               </td>
+           </msh:row>
+        </msh:ifFormTypeIsNotView>
+        <msh:row>
+        	<msh:textArea property="histology" fieldColSpan="3" rows="5" horizontalFill="true" label="Гистология плацента" />
+        </msh:row>
         <msh:row guid="ec1d91f5-4ec4-42e2-bdcb-b3eba2032d22">
           <msh:textField property="hemorrhageVolume" label="Объем кровопотери (мл)" guid="e613e17e-0fad-4dcb-bca5-0261d03cd28c" />
         </msh:row>
@@ -149,6 +177,28 @@
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+    	<script type="text/javascript">
+    	var isChangeSizeEpicrisis=1 ;
+		function changeSizeEpicrisis() {
+			if (isChangeSizeEpicrisis==1) {
+				Element.addClassName($('histology'), "protocols") ;
+				if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Уменьшить' ;
+				isChangeSizeEpicrisis=0 ;
+			} else {
+				Element.removeClassName($('histology'), "protocols") ;
+				if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Увеличить' ;
+				isChangeSizeEpicrisis=1;
+			}
+		}
+		eventutil.addEventListener($('histology'), "dblclick", 
+	  		  	function() {
+					changeSizeEpicrisis() ;
+	  		  	}) ;
+    	</script>
+    	</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 

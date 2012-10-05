@@ -1,5 +1,6 @@
 package ru.ecom.web.print;
 
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.TreeMap;
 
@@ -12,8 +13,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.ejb.print.IPrintService;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 
@@ -28,7 +32,18 @@ public class PrintAction extends BaseAction {
         boolean isMultyId = !(aRequest.getParameter("multy")==null?true:aRequest.getParameter("multy").equals("")) ;
         //System.out.println("multy="+isMultyId) ;
         //aRequest.getParameterValues("id").length ;
-        String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+        String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        StringBuilder sql = new StringBuilder() ;
+        sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'") ;
+        IWebQueryService service1 = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString(),1);
+		String print = "no" ;
+		boolean isTxtFile = false ;
+        if (list.size()>0) {
+        	WebQueryResult wqr = list.iterator().next() ;
+        	if (wqr.get1()!=null) 	print = ""+wqr.get1() ;
+        	if (wqr.get3()!=null) isTxtFile = true ;
+        }
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
             if (key.equals("id") && isMultyId) {
@@ -40,7 +55,8 @@ public class PrintAction extends BaseAction {
 //            System.out.println("key = " + key);
 //            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
-        String filename = service.print(login,reportKey
+        String filename = service.print(new StringBuilder().append(print).append("-").append(login).toString()
+        		,isTxtFile,reportKey
         		, aRequest.getParameter("s")
         		, aRequest.getParameter("m"), map) ;
         String next = aRequest.getParameter("next") ;

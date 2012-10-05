@@ -58,6 +58,13 @@
         </msh:row>
         </msh:panel>--%>
         </msh:ifFormTypeIsCreate>
+        <msh:row>
+        	<msh:checkBox property="isNoViewRemoteUser"/>
+        	<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipmentByWorker" horizontalFill="true" parentAutocomplete="work_personalWorkFunctionForm.worker" label="Принтер"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>

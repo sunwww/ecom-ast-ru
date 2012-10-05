@@ -163,6 +163,7 @@ soDep.id as soDepid,dep.name as depname
 		,hmc.dateFinish-soDep.operationDate as durationAfter
 		,soDep.operationDate
 		,soD.name as soDname
+		,vhaDep.name as vhaDepname
 from MedCase hmc
     left join statisticstub ss on hmc.statisticstub_id=ss.id
     left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id 
@@ -180,6 +181,9 @@ from MedCase hmc
     left join mislpu as soD on soD.id=soDep.department_id 
     left join MedService voDep on soDep.medService_id=voDep.id
     left join Omc_Oksm ok on pat.nationality_id=ok.id
+    left join VocHospitalAspect vhaHosp on vhaHosp.id=soHosp.aspect_id
+    left join VocHospitalAspect vhaDep on vhaDep.id=soDep.aspect_id
+    
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -210,6 +214,7 @@ order by dep.name
             <msh:tableColumn columnName="Операции" property="3"/>
             <msh:tableColumn columnName="До операции" property="14"/>
             <msh:tableColumn columnName="После операции" property="15"/>
+            <msh:tableColumn columnName="Показания" property="17"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -312,6 +317,7 @@ dmc.department_id,dep.name
 ,(select count(distinct hmc1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where 
  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
@@ -319,9 +325,10 @@ dmc.department_id,dep.name
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntOperPat
 
-,(select count(distinct case when hmc1.emergency='1' then hmc1.id else null end)  from medcase hmc1 
+,(select count(distinct case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where 
   hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
@@ -329,15 +336,18 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntEmerPat
 
-,(select count(distinct case when (hmc1.emergency='0' or hmc1.emergency is null) then hmc1.id else null end)  from medcase hmc1 
+,(select count(distinct case when (vha1.code='PLAN') then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where 
   hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
   hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntPlanPat
+
+
 
 ,(select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
@@ -348,17 +358,19 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntOper
 
-,(select count( case when hmc1.emergency='1' then hmc1.id else null end)  from medcase hmc1 
+,(select count( case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntEmerOper
-,(select count( case when (hmc1.emergency='0' or hmc1.emergency is null) then hmc1.id else null end)  from medcase hmc1 
+,(select count( case when vha1.code='PLAN' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
@@ -373,9 +385,10 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 )>0 then
-cast(round(100*(select count( case when hmc1.emergency='1' then hmc1.id else null end)  from medcase hmc1 
+cast(round(100*(select count( case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
@@ -396,9 +409,10 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-)>0 then cast(round(100*(select count( case when (hmc1.emergency='0' or hmc1.emergency is null) then hmc1.id else null end)  from medcase hmc1 
+)>0 then cast(round(100*(select count( case when vha1.code='PLAN' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
@@ -434,110 +448,122 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 )>0 then
 cast(round((select sum(so1.operationDate-hmc1.dateStart)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 ) as numeric),1) as numeric)  else 0 end as srDayPlanTo
 
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 )>0 then
 cast(round((select sum(hmc1.dateFinish-so1.operationDate) from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='0' or hmc1.emergency is null)
+and (vha1.code='PLAN')
 ) as numeric),1) as numeric) else 0 end as srDayPlanAfter
 
 
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 )>0 then
 cast(round((select sum(so1.operationDate-hmc1.dateStart)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 ) as numeric),1) as numeric)  else 0 end as srDayEmerTo
 
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 )>0 then
 cast(round((select sum(hmc1.dateFinish-so1.operationDate) from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
-and (hmc1.emergency='1')
+and (vha1.code='EMERGENCY')
 ) as numeric),1) as numeric) else 0 end as srDayEmerAfter
 
 from MedCase hmc
@@ -574,13 +600,13 @@ order by dep.name
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
             <msh:tableColumn columnName="Число выбывших больных" property="3"/>
             <msh:tableColumn columnName="всего" property="4"/>
-            <msh:tableColumn columnName="экстренных" property="6"/>
-            <msh:tableColumn columnName="плановых " property="5"/>
+            <msh:tableColumn columnName="экстренных" property="5"/>
+            <msh:tableColumn columnName="плановых " property="6"/>
             <msh:tableColumn columnName="всего" property="7"/>
-            <msh:tableColumn columnName="экстренных" property="9"/>
-            <msh:tableColumn columnName="плановых " property="8"/>
-            <msh:tableColumn columnName="экстренных" property="11"/>
-            <msh:tableColumn columnName="плановых " property="10"/>
+            <msh:tableColumn columnName="экстренных" property="8"/>
+            <msh:tableColumn columnName="плановых " property="9"/>
+            <msh:tableColumn columnName="экстренных" property="10"/>
+            <msh:tableColumn columnName="плановых " property="11"/>
             <msh:tableColumn columnName="по пациентам" property="12"/>
             <msh:tableColumn columnName="по операциям" property="13"/>
             <msh:tableColumn columnName="экст. до" property="16"/>

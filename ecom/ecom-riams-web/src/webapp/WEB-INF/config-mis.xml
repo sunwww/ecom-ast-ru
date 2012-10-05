@@ -92,8 +92,8 @@
 			type="ru.ecom.mis.ejb.form.lpu.LpuAreaForm" />
 		<form-bean name="mis_lpuAreaAddressTextForm"
 			type="ru.ecom.mis.ejb.form.lpu.LpuAreaAddressTextForm" />
-		<form-bean name="mis_lpuFond" 
-			type="$$map$$mis_lpuFondForm" />
+		<form-bean name="mis_copyingEquipmentForm" 
+			type="ru.ecom.mis.ejb.form.lpu.CopyingEquipmentForm" />
 			
 		<!-- Пациент -->
 		
