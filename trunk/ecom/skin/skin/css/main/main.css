@@ -56,6 +56,10 @@ body {
     background-color: white ;
 }
 
+a#viewShort {
+
+	background: url("/skin/images/main/view1.png") no-repeat left;
+}
 
 * {
     padding: 0 ;
@@ -319,6 +323,14 @@ ul li a#selected {
     color: blue;
     /*border: 1px solid #ddd ;*/
 }
+#side ul li a#viewShort{
+    display: block; ;
+    width: 95% ;
+    padding: 1px 1px 0 10px ;
+    padding-left: 20px ;
+    /*border: 1px solid #fff ;*/
+}
+
 
 #side ul li a.selected, #side ul li a:hover.selected {
     color: black ;
