@@ -347,6 +347,16 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntPlanPat
 
+,(select (count(distinct case when vha1.code='PLAN' then hmc1.id else null end) +count(distinct case when vha1.code='EMERGENCY' then hmc1.id else null end)-count(distinct hmc1.id)) from medcase hmc1 
+ left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
+ left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ where 
+  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy') and 
+  hmc1.dateFinish is not null 
+and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+) as cntEmerAndPlanPat
 
 
 ,(select count(distinct so1.id)  from medcase hmc1 
@@ -600,19 +610,21 @@ order by dep.name
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
             <msh:tableColumn columnName="Число выбывших больных" property="3"/>
             <msh:tableColumn columnName="всего" property="4"/>
-            <msh:tableColumn columnName="экстренных" property="5"/>
-            <msh:tableColumn columnName="плановых " property="6"/>
-            <msh:tableColumn columnName="всего" property="7"/>
-            <msh:tableColumn columnName="экстренных" property="8"/>
-            <msh:tableColumn columnName="плановых " property="9"/>
-            <msh:tableColumn columnName="экстренных" property="10"/>
-            <msh:tableColumn columnName="плановых " property="11"/>
-            <msh:tableColumn columnName="по пациентам" property="12"/>
-            <msh:tableColumn columnName="по операциям" property="13"/>
-            <msh:tableColumn columnName="экст. до" property="16"/>
-            <msh:tableColumn columnName="экст. после" property="17"/>
-            <msh:tableColumn columnName="план. до" property="14"/>
-            <msh:tableColumn columnName="план. после" property="15"/>
+            <msh:tableColumn columnName="экст." property="5"/>
+            <msh:tableColumn columnName="план. " property="6"/>
+            <msh:tableColumn columnName="экстр. + план. " property="7"/>
+            
+            <msh:tableColumn columnName="всего" property="8"/>
+            <msh:tableColumn columnName="экст." property="9"/>
+            <msh:tableColumn columnName="план. " property="10"/>
+            <msh:tableColumn columnName="экст." property="11"/>
+            <msh:tableColumn columnName="план. " property="12"/>
+            <msh:tableColumn columnName="по пациентам" property="13"/>
+            <msh:tableColumn columnName="по операциям" property="14"/>
+            <msh:tableColumn columnName="экст. до" property="17"/>
+            <msh:tableColumn columnName="экст. после" property="18"/>
+            <msh:tableColumn columnName="план. до" property="15"/>
+            <msh:tableColumn columnName="план. после" property="16"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
