@@ -20,10 +20,16 @@
         	<msh:textField property="finishDate" label="Дата окончания"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete size="100" property="criminalCodeArticle" label="Статья уг.кодекса" vocName="vocCriminalCodeArticle" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete size="100" property="ambulatoryCare" label="Вид наблюдения" vocName="vocPsychAmbulatoryCare" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete size="100" parentAutocomplete="ambulatoryCare" property="dispensaryGroup" label="Группа" vocName="vocPsychDispensaryGroup" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete size="100" property="strikeOffReason" label="Причина снятия" vocName="vocPsychStrikeOffReasonAdn" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>

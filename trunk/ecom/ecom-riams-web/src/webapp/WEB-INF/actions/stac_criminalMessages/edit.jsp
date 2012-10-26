@@ -69,6 +69,9 @@
         <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
           <msh:textArea property="comment" label="Пояснение обстоятельств" rows="7" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
+        <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
+          <msh:textArea property="diagnosis" label="Диагноз" rows="7" fieldColSpan="5" horizontalFill="true" />
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="outcome" fieldColSpan="5" label="Исход" horizontalFill="true" vocName="vocPhoneMessageOutcome"/>
         </msh:row>

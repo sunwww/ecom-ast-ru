@@ -71,11 +71,8 @@
           <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
         <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
-          <msh:textField label="№палаты" property="roomNumber" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" />
-          <msh:autoComplete property="roomType" vocName="vocRoomType" label="Тип палаты" horizontalFill="true"/>
-         </msh:row>
-         <msh:row>
-          <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />
+          <msh:autoComplete property="roomNumber" vocName="hospitalRoomByLpu" label="№палаты" parentId="stac_sloForm.department"/>
+          <msh:autoComplete property="bedNumber" vocName="hospitalBedByRoom" label="№ койки" parentAutocomplete="roomNumber"/>
         </msh:row>
         <msh:row>
         	<msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />

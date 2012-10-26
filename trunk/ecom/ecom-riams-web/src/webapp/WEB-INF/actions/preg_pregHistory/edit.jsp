@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="preg_pregHistoryForm" guid="e20545-4285-a21c-3bb9b4569efc">
@@ -27,7 +27,8 @@
       <msh:hidden property="medCase" guid="9d908e88-e051-4d0a-8da6-3f5f4b226493" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
-        <msh:autoComplete property="pregnancy" label="Беременность" horizontalFill="true" vocName="pregnancyByWoman" guid="ad40d1b0-84f7-4d41-bbbe-5ae0d458844a" viewAction="entityParentView-preg_pregnancy.do" size="150" />
+        <msh:autoComplete property="pregnancy" label="Беременность" horizontalFill="true" vocName="pregnancyByWoman" 
+        viewAction="entityParentView-preg_pregnancy.do" size="150" />
         <msh:ifFormTypeIsCreate formName="preg_pregHistoryForm" guid="90a9cef4-6832-459d-b670-ddb45e9359a2">
           <td>
             <a href="javascript:createNewPregnancy()" title="Завести новую беременность по пациентке">Новая беременность</a>
@@ -49,7 +50,8 @@
 	    <ecom:webQuery name="childBirthForOtherHistory" nativeSql="select id,birthFinishDate from ChildBirth where medCase_id in(select id from medcase where parent_id in (select medCase_id from pregnancyhistory where pregnancy_id =(select pregnancy_id from pregnancyhistory where id=${param.id}) and id!=${param.id}) and DTYPE='DepartmentMedCase')"/>
 	    <msh:tableNotEmpty name="childBirthForOtherHistory">
 		    <msh:section title="Описание роды по данной беременности в других историях родов">
-		          <msh:table name="childBirthForThisHistory" action="entityParentView-preg_childBirth.do" idField="1" guid="4f5506e1-b49f-4725-a6e3-43f4fc5ec8a4">
+		          <msh:table name="childBirthForThisHistory" 
+		          action="entityParentView-preg_childBirth.do" idField="1">
 		            <msh:tableColumn property="2" columnName="Дата окончания родов" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
 		          </msh:table>
 		    </msh:section>

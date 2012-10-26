@@ -51,19 +51,25 @@
     
     <msh:section>
     <ecom:webQuery  name="journal_swod" nativeSql="select dd.issuedate,count(*) 
-    ,count(case when dup.id is  null then 1 else null end) as aANew 
-, count(case when vddcr.code='2' then 1 else null end) cntcr2
-, count(case when vddcr.code='2' and dup.id is  null then 1 else null end) cntcr2new
-, count(case when vddp.code='1' then 1 else null end) as cntpr
-, count(case when vddp.code='1' and dup.id is  null then 1 else null end) as cntprnew
-, count(case when vdr.code='11' then 1 else null end) cntr11
-, count(case when vdr.code='11' and dup.id is  null then 1 else null end) as cntr11new
-, count(case when vdr.code='4' then 1 else null end) cntr4
-, count(case when vdr.code='4' and dup.id is  null then 1 else null end) as cntr4new
-, count(case when vdr.code='2' then 1 else null end) cntr2
-, count(case when vdr.code='2' and dup.id is  null then 1 else null end) as cntr2new
-
+    ,count(distinct case when dup.id is  null then dd.id else null end) as aANew 
+, count(distinct case when vddcr.code='2' then dd.id else null end) cntcr2
+, count(distinct case when vddcr.code='2' and dup.id is  null then dd.id else null end) cntcr2new
+, count(distinct case when vddp.code='1' then dd.id else null end) as cntpr
+, count(distinct case when vddp.code='1' and dup.id is  null then dd.id else null end) as cntprnew
+, count(distinct case when vdr.code='11' then dd.id else null end) cntr11
+, count(distinct case when vdr.code='11' and dup.id is  null then dd.id else null end) as cntr11new
+, count(distinct case when vdr.code='4' then dd.id else null end) cntr4
+, count(distinct case when vdr.code='4' and dup.id is  null then dd.id else null end) as cntr4new
+, count(distinct case when vdr.code='2' then dd.id else null end) cntr2
+, count(distinct case when vdr.code='2' and dup.id is  null then dd.id else null end) as cntr2new
+, count(distinct case when vdr.code='1' then dc.id else null end) cntr1
+, count(distinct case when vdr.code='1' and dup.id is  null then dc.id else null end) as cntr1new
+, count(distinct case when dd.isClose='1' and vdr.code='1' and dup.id is  null then dc.id else null end) as cntr1newc
+, sum(case when dd.isClose='1' and vdr.code='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as cntr1newcdays
+, count(distinct case when dd.isClose='1' and dup.id is  null then dc.id else null end) as aANewClose
+, sum(case when dd.isClose='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as aANewCloseDays
 from DisabilityDocument dd 
+left join DisabilityCase dc on dc.id=dd.disabilityCase_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
@@ -79,17 +85,20 @@ group by dd.issueDate order by dd.issueDate "/>
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
-                <th colspan=2>Всего</th>
+                <th colspan=4>Всего</th>
                 <th colspan=2>Кол-во амб.</th>
                 <th colspan=2>Кол-во первичных</th>
                 <th colspan=2>Кол-во травм</th>
                 <th colspan=2>Кол-во произ.травм</th>
                 <th colspan=2>Кол-во проф. заб.</th>
+                <th colspan=4>Кол-во заб.</th>
               </tr>
             </msh:tableNotEmpty>
       <msh:tableColumn columnName="Дата выдачи" property="1"/>
       <msh:tableColumn columnName="общ. кол-во" property="2"/>
       <msh:tableColumn columnName="из них новых" property="3"/>
+       <msh:tableColumn columnName="из них новых закрытых" property="18"/>
+      <msh:tableColumn columnName="кол-во дней по новым закрытым ДНТ" property="19"/>
       <msh:tableColumn columnName="общ. кол-во" property="4"/>
       <msh:tableColumn columnName="из них новых" property="5"/>
       <msh:tableColumn columnName="общ. кол-во" property="6"/>
@@ -100,24 +109,34 @@ group by dd.issueDate order by dd.issueDate "/>
       <msh:tableColumn columnName="из них новых" property="11"/>
       <msh:tableColumn columnName="общ. кол-во" property="12"/>
       <msh:tableColumn columnName="из них новых" property="13"/>
+      <msh:tableColumn columnName="общ. кол-во" property="14"/>
+      <msh:tableColumn columnName="из них новых" property="15"/>
+      <msh:tableColumn columnName="из них новых закрытых" property="16"/>
+      <msh:tableColumn columnName="кол-во дней по новым закрытым ДНТ" property="17"/>
     </msh:table>
     </msh:sectionContent>
 
     <ecom:webQuery  name="journal_itog" nativeSql="select 
     count(*) as aA
-    ,count(case when dup.id is  null then 1 else null end) as aANew 
-, count(case when vddcr.code='2' then 1 else null end) cntcr2
-, count(case when vddcr.code='2' and dup.id is  null then 1 else null end) cntcr2new
-, count(case when vddp.code='1' then 1 else null end) as cntpr
-, count(case when vddp.code='1' and dup.id is  null then 1 else null end) as cntprnew
-, count(case when vdr.code='11' then 1 else null end) cntr11
-, count(case when vdr.code='11' and dup.id is  null then 1 else null end) as cntr11new
-, count(case when vdr.code='4' then 1 else null end) cntr4
-, count(case when vdr.code='4' and dup.id is  null then 1 else null end) as cntr4new
-, count(case when vdr.code='2' then 1 else null end) cntr2
-, count(case when vdr.code='2' and dup.id is  null then 1 else null end) as cntr2new
-
+   ,count(distinct case when dup.id is  null then dd.id else null end) as aANew 
+, count(distinct case when vddcr.code='2' then dd.id else null end) cntcr2
+, count(distinct case when vddcr.code='2' and dup.id is  null then dd.id else null end) cntcr2new
+, count(distinct case when vddp.code='1' then dd.id else null end) as cntpr
+, count(distinct case when vddp.code='1' and dup.id is  null then dd.id else null end) as cntprnew
+, count(distinct case when vdr.code='11' then dd.id else null end) cntr11
+, count(distinct case when vdr.code='11' and dup.id is  null then dd.id else null end) as cntr11new
+, count(distinct case when vdr.code='4' then dd.id else null end) cntr4
+, count(distinct case when vdr.code='4' and dup.id is  null then dd.id else null end) as cntr4new
+, count(distinct case when vdr.code='2' then dd.id else null end) cntr2
+, count(distinct case when vdr.code='2' and dup.id is  null then dd.id else null end) as cntr2new
+, count(distinct case when vdr.code='1' then dc.id else null end) cntr1
+, count(distinct case when vdr.code='1' and dup.id is  null then dd.id else null end) as cntr1new
+, count(distinct case when dd.isClose='1' and vdr.code='1' and dup.id is  null then dc.id else null end) as cntr1newc
+, sum(case when dd.isClose='1' and vdr.code='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as cntr1newcdays
+, count(distinct case when dd.isClose='1' and dup.id is  null then dc.id else null end) as aANewClose
+, sum(case when dd.isClose='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as aANewCloseDays
 from DisabilityDocument dd 
+left join DisabilityCase dc on dc.id=dd.disabilityCase_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
@@ -132,16 +151,19 @@ and dd.anotherlpu_id is null
     <msh:table name="journal_itog" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
-                <th colspan=2>Всего</th>
+                <th colspan=4>Всего</th>
                 <th colspan=2>Кол-во амб.</th>
                 <th colspan=2>Кол-во первичных</th>
                 <th colspan=2>Кол-во травм</th>
                 <th colspan=2>Кол-во произ.травм</th>
                 <th colspan=2>Кол-во проф. заб.</th>
+                <th colspan=4>Кол-во заб.</th>
               </tr>
             </msh:tableNotEmpty>
       <msh:tableColumn columnName="общ. кол-во" property="1"/>
       <msh:tableColumn columnName="из них новых" property="2"/>
+       <msh:tableColumn columnName="из них новых закрытых СНТ" property="17"/>
+      <msh:tableColumn columnName="кол-во дней по новым закрытым СНТ" property="18"/>
       <msh:tableColumn columnName="общ. кол-во" property="3"/>
       <msh:tableColumn columnName="из них новых" property="4"/>
       <msh:tableColumn columnName="общ. кол-во" property="5"/>
@@ -152,6 +174,10 @@ and dd.anotherlpu_id is null
       <msh:tableColumn columnName="из них новых" property="10"/>
       <msh:tableColumn columnName="общ. кол-во" property="11"/>
       <msh:tableColumn columnName="из них новых" property="12"/>
+      <msh:tableColumn columnName="общ. кол-во" property="13"/>
+      <msh:tableColumn columnName="из них новых" property="14"/>
+      <msh:tableColumn columnName="из них новых закрытых СНТ" property="15"/>
+      <msh:tableColumn columnName="кол-во дней по новым закрытым СНТ" property="16"/>
     </msh:table>
     </msh:sectionContent>
 

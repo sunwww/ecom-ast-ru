@@ -79,13 +79,19 @@
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
         <msh:row>
+        	<msh:autoComplete vocName="vocCriminalPhoneMessageType" property="phoneMessageType" label="Тип" fieldColSpan="5" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocPhoneMessageSubType" property="phoneMessageSubType" parentAutocomplete="phoneMessageType" label="Описание" fieldColSpan="5" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
-<%--            <input type="submit" onclick="print()" value="Печать" />
-            <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
+            <input type="submit" onclick="print()" value="Печать реестра" />
+<%--        <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
             <input type="submit" onclick="printNew1()" value="Печать (сопроводительного листа) 1" />
             <input type="submit" onclick="printNew2()" value="Печать (сопроводительного листа) 2" />
              --%>
@@ -118,15 +124,11 @@
     }
     function print() {
     	var frm = document.forms[0] ;
-    	frm.m.value="printHospitalByPeriod" ;
+    	frm.m.value="printCriminalMessage" ;
+    	frm.s.value="HospitalPrintReport" ;
     	frm.target='_blank' ;
-    	frm.action='print-stac_hospitalByPeriod.do' ;
-    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
-    		+getCheckedRadio(frm,"typeHour")+":"
-    		+getCheckedRadio(frm,"typeDate")+":"
-    		+$('dateBegin').value+":"
-    		+$('pigeonHole').value+":"
-    		+$('department').value;
+    	frm.action='print-stac_criminalMessage.do' ;
+    	
     }
     </script>
 
@@ -151,6 +153,15 @@
     	}
     	request.setAttribute("pigeonHole", pigeonHole) ;
     	request.setAttribute("pigeonHole1", pigeonHole1) ;
+    	
+    	String phoneMessageType = request.getParameter("phoneMessageType") ;
+    	if (phoneMessageType!=null && !phoneMessageType.equals("") && !phoneMessageType.equals("0")) {
+    		request.setAttribute("phoneMessageType", " and pm.phoneMessageType_id='"+phoneMessageType+"'") ;
+    	}
+    	String phoneMessageSubType = request.getParameter("phoneMessageSubType") ;
+    	if (phoneMessageSubType!=null && !phoneMessageSubType.equals("") && !phoneMessageSubType.equals("0")) {
+    		request.setAttribute("phoneMessageSubType", " and pm.phoneMessageSubType_id='"+phoneMessageSubType+"'") ;
+    	}
     	
     	String department="" ;
     	String dep = request.getParameter("department") ;
@@ -185,6 +196,7 @@
     ,vpmo.name as vphoname,wp.lastname as wplastname
     ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
     ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
+    ,pm.diagnosis as pmdiagnosis
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -196,11 +208,16 @@
     left join Patient wp on wp.id=w.person_id
     left join medcase m on m.id=pm.medCase_id
     left join Patient p on p.id=m.patient_id
+	left join MisLpu as ml on ml.id=m.department_id 
+	left join SecUser su on su.login=m.username
+	left join WorkFunction wf1 on wf1.secUser_id=su.id
+	left join Worker w1 on w1.id=wf1.worker_id
+	left join MisLpu ml1 on ml1.id=w1.lpu_id     
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
@@ -213,6 +230,7 @@ ${emerIs} ${pigeonHole} ${department}
       <msh:tableColumn columnName="Место" property="5" />
       <msh:tableColumn columnName="Фамилия принявшего" property="6" />
       <msh:tableColumn columnName="Фамилия передавшего" property="8" />
+      <msh:tableColumn columnName="Диагноз" property="9" />
       <msh:tableColumn columnName="Исход" property="7" />
     </msh:table>
     </msh:sectionContent>

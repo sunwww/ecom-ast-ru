@@ -35,6 +35,7 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="dateReplace" label="Дата замены"/>
+        	<msh:textField property="registrationReplaceDate" label="Дата регист. замены"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="lawCourtReplace" vocName="vocLawCourt" fieldColSpan="3" horizontalFill="true"/>

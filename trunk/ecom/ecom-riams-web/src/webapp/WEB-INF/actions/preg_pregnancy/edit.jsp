@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="preg_pregnancyForm" guid="e20545-4285-a21c-3bb9b4569efc">
@@ -58,18 +58,65 @@
             </msh:table>
           </msh:sectionContent>
         </msh:section>
-        <msh:section title="Описание родов">
-        	<ecom:webQuery name="childBirthForPregnancy" nativeSql="select id,birthFinishDate from ChildBirth where medCase_id in(select id from medcase where parent_id in (select medCase_id from pregnancyhistory where pregnancy_id =${param.id}) and DTYPE='DepartmentMedCase')"/>
-            <msh:table name="childBirthForPregnancy" action="entityParentView-preg_childBirth.do" idField="1" guid="4f5506e1-b49f-4725-a6e3-43f4fc5ec8a4">
-              <msh:tableColumn property="2" columnName="Дата окончания родов" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+        <msh:section>
+        	<ecom:webQuery name="pregnanExchangeCard" nativeSql="select 
+        	pec.id,pec.firstVisitDate,ml.name,pec.pregnancyFeatures
+        	,pec.notes 
+        	from PregnanExchangeCard pec
+        	left join mislpu ml on ml.id=pec.consultation_id
+        	where pregnancy_id='${param.id}'
+        	"/>
+        	<msh:table idField="1" 
+        	viewUrl="entityParentView-preg_pregnanCard.do?short=Short" name="pregnanExchangeCard" action="entityParentView-preg_pregnanCard.do">
+        		<msh:tableColumn property="2" columnName="Дата 1 посещ. консул."/>
+        		<msh:tableColumn property="3" columnName="Консультация"/>
+        		<msh:tableColumn property="4" columnName="Особенности течения беременности"/>
+        		<msh:tableColumn property="5" columnName="Особые замечания"/>
+        	</msh:table>
+        </msh:section>
+        <msh:section title="Описание родов" createRoles="/Policy/Mis/Pregnancy/ChildBirth/Create" createUrl="entityParentPrepareCreate-preg_childBirthForPregnancy.do?id=${param.id}">
+        	<ecom:webQuery name="childBirthForPregnancy" nativeSql="
+        	select cb.id
+        	,to_char(cb.birthFinishDate,'dd.mm.yyyy')||' '||cast(cb.birthFinishTime as varchar(5)) as datetimebirthday
+        	,vof.name as ofname, list(case 
+        	when vdrt.code='1' and vpd.code='1' and (mkb.code='O82.1' or mkb.code='O82.0') then 'кесарево' 
+        	when vdrt.code='1' and vpd.code='1' and (mkb.code = 'O80.0' or mkb.code='O80.1') then 'естествен.'
+        	else '' end)
+        	,case when cb.placentaHistologyOrder='1' then 'Направлена плацента на гистологию.'||coalesce(cb.histology,'') else '' end
+        	from ChildBirth cb
+        	left join MedCase slo on slo.id=cb.medCase_id
+        	left join MedCase sls on sls.id=slo.parent_id
+         	left join Pregnancy preg on preg.id=sls.pregnancy_id 
+        	left join Diagnosis d on d.medCase_id=slo.id
+        	left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id
+        	left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
+        	left join VocIdc10 mkb on mkb.id=d.idc10_id
+        	left join Omc_Frm vof on vof.id=sls.orderType_id
+          	where preg.id =${param.id}
+          	group by cb.id,cb.birthFinishDate,cb.birthFinishTime,
+          	vof.name,cb.placentaHistologyOrder,cb.histology
+          	"/>
+            <msh:table name="childBirthForPregnancy" 
+            viewUrl="entityParentView-preg_childBirth.do?short=Short&" 
+            action="entityParentView-preg_childBirth.do" idField="1">
+              <msh:tableColumn property="2" columnName="Окончания родов" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+              <msh:tableColumn property="3" columnName="Кем доставлен" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+              <msh:tableColumn property="4" columnName="Роды" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+              <msh:tableColumn property="5" columnName="Гистология плаценты" cssClass="preCell" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
              
             </msh:table>
         </msh:section>
-        <msh:section>
+        <msh:section title="Сертификаты">
         <msh:ifInRole roles="/Policy/Mis/Certificate/View">
-        <ecom:parentEntityListAll attribute="certificates" formName="stac_certificateForm"/>
-        <msh:table name="certificates" action="entitySubclassView-stac_certificate" >
-        	<msh:tableColumn property="information" columnName="Описание"/>
+        <ecom:webQuery name="certificates" 
+        nativeSql="select c.id,c.series,c.number,to_char(c.dateIssue,'dd.mm.yyyy') as dateIssue
+        ,case when c.dtype='BirthCertificate' then 'Свидетельство о рождении' 
+        		when c.dtype='ConfinementCertificate' then 'Родовый сертификат'
+        		when c.dtype='DeathCertificate' then 'Свидетельство о смерти' else '-' end as dtype from Certificate c where c.pregnancy_id=${param.id}"/>
+        <msh:table name="certificates" action="entitySubclassView-stac_certificate" idField="1" >
+        	<msh:tableColumn property="2" columnName="Серия"/>
+        	<msh:tableColumn property="3" columnName="Номер"/>
+        	<msh:tableColumn property="4" columnName="Дата выдачи"/>
         </msh:table>
         </msh:ifInRole>
         </msh:section>

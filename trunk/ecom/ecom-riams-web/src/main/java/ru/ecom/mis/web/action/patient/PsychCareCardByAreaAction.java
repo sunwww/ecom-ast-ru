@@ -224,7 +224,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				str1 = new StringBuilder().append(" группа " ).append(form.getGroupInv()).toString() ;
 			}
 			if (typeInv.equals("4")) {				
-				str.append(" and inv.dateFrom between ").append(dateBegin).append(" and ").append(dateEnd) ;
+				str.append(" and inv.initial='1' and inv.dateFrom between ").append(dateBegin).append(" and ").append(dateEnd) ;
 				str1=str1+"первичные" ;
 			} 
 			if (typeInv.equals("5")) {

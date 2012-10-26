@@ -28,11 +28,9 @@
 			
 			as orderInfo
 			,em.comment from Document em 
-			left join patient p on p.lastname=em.patientLastname  
+			left join patient p on p.id=em.patient_id  
 			left join medcase m on m.patient_id=p.id
-			where m.id='${param.id}' and p.firstname=em.patientFirstname 
-				and p.middlename=em.patientMiddlename
-				and em.dtype='ExternalMedservice'
+			where m.id='${param.id}' and em.dtype='ExternalMedservice'
 				
 				" />
 			<msh:table name="list" action="entityView-doc_externalMedservice.do" idField="1">

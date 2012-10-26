@@ -68,7 +68,12 @@
 	        <msh:autoComplete property="reasonEnd" vocName="vocPsychStrikeOffReason"
 	         horizontalFill="true" fieldColSpan="3" label="причина"/>
         </msh:row>
-
+        <msh:row>
+	        <td colspan="1"></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDate" value="6">  все (взятые + состоящие + снятые)
+	        </td>
+        </msh:row>
         <msh:row  styleId="rwDel">
         <td class="label" title="Пациенты" colspan="1"><label for="typeInvName" id="typeFirstLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">

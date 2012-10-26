@@ -14,14 +14,56 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" guid="2ccd6a7e-21cc-45b9-8e22-6f0b911309b1">
-      <msh:table name="list" action="entityParentView-stac_criminalMessages.do" idField="id" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-        <msh:tableColumn columnName="Номер сообщения" property="number" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
-        <msh:tableColumn columnName="Дата регистрации" property="phoneDate" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-        <msh:tableColumn columnName="Время регистрации" property="phoneTime" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-        <msh:tableColumn columnName="Телефон" property="phone" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-        <msh:tableColumn columnName="Принявшая сообщение организация" property="recieverOrganization" guid="6b562107-5017-4559-9b94-ab525b579202" />
-      </msh:table>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" guid="2ccd6a7e-21cc-45b9-8e22-6f0b911309b1">
+    <msh:section>
+    <msh:sectionTitle>Список сообщений по случаю</msh:sectionTitle>
+    <msh:sectionContent>
+    
+    <ecom:webQuery name="journal_militia" nativeSql="
+    select pm.id, pm.phoneDate
+    ,vpht.name||coalesce(' '||vpmst.name,'')
+    ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
+    ,pm.place as pmplace
+    ,coalesce(vpme.name,pm.recieverFio) as reciever
+    ,vpmo.name as vphoname,wp.lastname as wplastname
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
+    ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
+    ,pm.diagnosis as pmdiagnosis
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+    left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+    left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+    left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+    left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+    left join WorkFunction wf on wf.id=pm.workFunction_id
+    left join Worker w on w.id=wf.worker_id
+    left join Patient wp on wp.id=w.person_id
+    left join medcase m on m.id=pm.medCase_id
+    left join Patient p on p.id=m.patient_id
+	left join MisLpu as ml on ml.id=m.department_id 
+	left join SecUser su on su.login=m.username
+	left join WorkFunction wf1 on wf1.secUser_id=su.id
+	left join Worker w1 on w1.id=wf1.worker_id
+	left join MisLpu ml1 on ml1.id=w1.lpu_id     
+    where pm.dtype='CriminalPhoneMessage'
+    and pm.medCase_id=${param.id}
+    order by pm.phoneDate
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="journal_militia"
+    viewUrl="entityShortView-stac_criminalMessages.do" 
+     action="entityParentView-stac_criminalMessages.do" idField="1" >
+      <msh:tableColumn columnName="Дата" property="2" />
+      <msh:tableColumn property="9" columnName="Пациент"/>
+      <msh:tableColumn columnName="Тип" property="3" />
+      <msh:tableColumn columnName="Когда" property="4" />
+      <msh:tableColumn columnName="Место" property="5" />
+      <msh:tableColumn columnName="Фамилия принявшего" property="6" />
+      <msh:tableColumn columnName="Фамилия передавшего" property="8" />
+      <msh:tableColumn columnName="Диагноз" property="9" />
+      <msh:tableColumn columnName="Исход" property="7" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
     </msh:ifInRole>
   </tiles:put>
   <tiles:put name="side" type="string">

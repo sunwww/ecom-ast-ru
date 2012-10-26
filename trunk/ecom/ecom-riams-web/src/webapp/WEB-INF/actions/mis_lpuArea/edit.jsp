@@ -11,6 +11,16 @@
       <msh:hidden property="saveType" guid="23740389-cb85-4e5c-b736-0343bbc49d15" />
       <msh:hidden property="lpu" guid="18c8ab60-7a63-4ab2-a829-a2105879ec4f" />
       <msh:panel guid="070b9d1e-c50f-4423-9d72-274f6b1dc045">
+        <msh:ifInRole roles="/Policy/Mis/MisLpu/EditParent" guid="96b64dbe-1907-48e8-b2e2-e39a570c185a">
+         <msh:ifFormTypeIsNotView formName="mis_lpuAreaForm" guid="78609968-ca83-4a72-86a9-1ae6cb7fdaaa">
+            <msh:ifFormTypeAreViewOrEdit formName="mis_lpuAreaForm" guid="12393d17-3068-40c2-8dc7-9b9ee4252715">
+              <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
+                <msh:autoComplete property="lpu" vocName="lpu" label="Родительское ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="3" guid="67d2a4af-71bc-4a19-8844-4a59b97fabda" horizontalFill="true" />
+              </msh:row>
+            </msh:ifFormTypeAreViewOrEdit>
+          </msh:ifFormTypeIsNotView>
+        </msh:ifInRole>
+        
         <msh:row guid="numberRow123">
           <msh:textField property="number" label="Номер участка" guid="9f8be45a-773a-4ca4-a12c-8f50d63e3ffc" />
         </msh:row>

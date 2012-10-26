@@ -8,21 +8,17 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="entityParentSaveGoParentView-mis_hospitalRoom.do" defaultField="lpuName">
+    <msh:form action="entityParentSaveGoParentView-mis_hospitalBed.do" defaultField="lpuName">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="parent"/>
       <msh:panel>
         <msh:row>
-	        <msh:autoComplete property="lpu" fieldColSpan="3" vocName="lpu" horizontalFill="true"/>
+	        <msh:autoComplete property="roomType" fieldColSpan="3" vocName="vocRoomType" horizontalFill="true" label="Тип коек"/>
         </msh:row>
-        <msh:row>
-	        <msh:autoComplete property="roomType" vocName="vocRoomType" horizontalFill="true" label="Уровень палат"/>
-          <msh:textField property="name" label="№палаты"  />
-        </msh:row>
-        <msh:row>
-          <msh:autoComplete vocName="vocCountBedInHospitalRoom" property="countBed" label="Количество коек"/>
-         	<msh:autoComplete property="sex" vocName="vocSex" label="Пациенты"/>
+        <msh:row >
+          <msh:textField property="name" label="№койки"  />
+          <msh:textField property="isPlan" label="плановая"  />
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isNoActuality" label="Запись не действует" fieldColSpan="3"/>
@@ -37,11 +33,11 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Палата">
-      <msh:ifFormTypeIsView formName="mis_hospitalRoomForm">
-        <msh:sideLink key="ALT+2" roles="/Policy/Mis/WorkPlace/HospitalRoom/Edit" params="id" action="/entityEdit-mis_hospitalRoom" name="Изменить" />
+      <msh:ifFormTypeIsView formName="mis_hospitalBedForm">
+        <msh:sideLink key="ALT+2" roles="/Policy/Mis/WorkPlace/HospitalRoom/HospitalBed/Edit" params="id" action="/entityEdit-mis_hospitalBed" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_hospitalRoomForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
-        <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/WorkPlace/HospitalRoom/Delete" action="/entityParentDeleteGoParentView-mis_hospitalRoom" name="Удалить" confirm="Удалить палату?" />
+      <msh:ifFormTypeAreViewOrEdit formName="mis_hospitalBedForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+        <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/WorkPlace/HospitalRoom/HospitalBed/Delete" action="/entityParentDeleteGoParentView-mis_hospitalBed" name="Удалить" confirm="Удалить палату?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
@@ -49,7 +45,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_hospitalRoomForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_hospitalBedForm" />
   </tiles:put>
 
 </tiles:insert>

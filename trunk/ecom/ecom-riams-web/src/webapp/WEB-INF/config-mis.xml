@@ -181,6 +181,7 @@
 		<form-bean name="mis_buildingPlaceForm" type="ru.ecom.mis.ejb.form.lpu.BuildingPlaceForm" />
 		<form-bean name="mis_floorBuildingForm" type="ru.ecom.mis.ejb.form.lpu.FloorBuildingForm" />
 		<form-bean name="mis_hospitalRoomForm" type="ru.ecom.mis.ejb.form.lpu.HospitalRoomForm" />
+		<form-bean name="mis_hospitalBedForm" type="ru.ecom.mis.ejb.form.lpu.HospitalBedForm" />
 		<form-bean name="mis_consultingRoomForm" type="ru.ecom.mis.ejb.form.lpu.ConsultingRoomForm" />
 		<form-bean name="mis_bedFundForm" type="ru.ecom.mis.ejb.form.lpu.BedFundForm" />
 		<form-bean name="mis_operatingRoomForm"	type="ru.ecom.mis.ejb.form.lpu.OperatingRoomForm" />
@@ -491,6 +492,24 @@
 		    >
 		    <forward name="success" redirect="false"
 		    	path='/WEB-INF/actions/stac_surOperation/listByPeriod.jsp'
+		    />
+		</action>
+		<action path='/journal_doc_externalMedService'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='session'
+		    input='/WEB-INF/actions/doc_externalMedservice/listByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/doc_externalMedservice/listByPeriod.jsp'
+		    />
+		</action>
+		<action path='/journal_roddom_histology'
+		    type='ru.ecom.web.actions.base.ForwardAction'
+		    name='stac_admissionJournalForm' validate='false' scope='session'
+		    input='/WEB-INF/actions/preg_childBirth/listHistologyByPeriod.jsp'
+		    >
+		    <forward name="success" redirect="false"
+		    	path='/WEB-INF/actions/preg_childBirth/listHistologyByPeriod.jsp'
 		    />
 		</action>
 		<action path='/journal_surOperationByDate'

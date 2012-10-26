@@ -31,11 +31,19 @@ public class WorkCalendarServiceJs {
 	public static boolean remoteUser(IWebQueryService service,HttpServletRequest aRequest) {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		boolean ret = false ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select case when isRemoteUser='1' then 1 else null end as remote,id from secUser where login='"+username+"'",1) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select case when su.isRemoteUser='1' then 1 else null end as remote,w.lpu_id from secUser su left join WorkFunction wf on wf.secUser_id=su.id left join Worker w on w.id=wf.worker_id where su.login='"+username+"'",1) ;
 		WebQueryResult wqr = list.iterator()!=null?list.iterator().next():null ;
-		if (wqr!=null && wqr.get1()!=null) return true ;
+		if (wqr!=null && wqr.get1()!=null) {
+			theIsRemoteUser=true ;
+			theLpuRemoteUser=ConvertSql.parseLong(wqr.get2()) ;
+			return true ;
+		}
+		theLpuRemoteUser=null ;
+		theIsRemoteUser=ret ;
 		return ret;
 	}
+	private static boolean theIsRemoteUser ;
+	private static Long theLpuRemoteUser ;
 	public String checkPolicyByPatient(Long aPatientId,String aDatePlan, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		System.out.println(aPatientId) ;
 		System.out.println(aDatePlan) ;
@@ -234,7 +242,7 @@ public class WorkCalendarServiceJs {
 		res.append("<ul>") ;
 		for (WebQueryResult wqr:list) {
 			res.append("<li ondblclick=\"this.childNodes[1].checked='checked';addNewTimeBySpecialist('")
-				.append(aWorkCalendarDay).append("','")
+				.append(aWorkCalendarDay).append("',0,'")
 				.append(wqr.get1()).append("','")
 				.append(aWorkFunction).append("','")
 				.append(wqr.get2()).append("','")
@@ -245,7 +253,7 @@ public class WorkCalendarServiceJs {
 			res.append(" value='").append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("'>") ;
 			res.append(wqr.get2()).append("-").append(wqr.get3()) ;
 			res.append("<input type='button' onclick=\"addNewTimeBySpecialist('")
-				.append(aWorkCalendarDay).append("','")
+				.append(aWorkCalendarDay).append("',0,'")
 				.append(wqr.get1()).append("','")
 				.append(aWorkFunction).append("','")
 				.append(wqr.get2()).append("','")
@@ -335,6 +343,7 @@ public class WorkCalendarServiceJs {
 	public String getDirectByPatient(String aLastname, String aFirstname, String aMiddlename
 			, String aBirthday, String aPolicySeries, String aPolicyNumber
 			,Long aRayon, String aRayonName, HttpServletRequest aRequest) throws NamingException {
+		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"").append(aMiddlename!=null?aMiddlename:"").length()<4 && new StringBuilder().append(aPolicySeries!=null?aPolicySeries:"").append(aPolicyNumber!=null?aPolicyNumber:"").length()<4) return "введите данные для поиска" ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder preInfo = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -398,6 +407,7 @@ public class WorkCalendarServiceJs {
 		sql.append("or wct.prePatientInfo like '").append(preInfo).append("') ") ;
 		sql.append(" group by wct.id,wct.prePatient_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,su.isremoteuser,su1.isremoteuser") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+		//if (preInfo.indexOf("% % % % % %")==-1) return "" ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),20);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<form name='frmDirect' id='frmDirect' action='javascript:void(0) ;'><ul id='listDirects'>") ;
@@ -497,6 +507,7 @@ public class WorkCalendarServiceJs {
 	public String getPatients(String aLastname, String aFirstname, String aMiddlename
 			, String aBirthday, String aPolicySeries, String aPolicyNumber
 			,Long aRayon, HttpServletRequest aRequest) throws NamingException {
+		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"").append(aMiddlename!=null?aMiddlename:"").length()<4 && new StringBuilder().append(aPolicySeries!=null?aPolicySeries:"").append(aPolicyNumber!=null?aPolicyNumber:"").length()<4) return "введите данные для поиска" ;
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		sql.append("select p.id,p.patientSync,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') from patient p left join medpolicy mp on mp.patient_id=p.id where p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
@@ -652,6 +663,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id");
 		sql.append(" left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id");
 		sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id");
+		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 
 		sql.append(" left join MisLpu m1 on m1.id=wf.lpu_id") ; 
 		sql.append(" left join MisLpu m2 on m2.id=w.lpu_id") ; 
@@ -661,7 +673,10 @@ public class WorkCalendarServiceJs {
 		sql.append(" where wf.workFunction_id='").append(aVocWorkFunction).append("'");
 		sql.append(" and wcd.calendarDate>=CURRENT_DATE");
 		sql.append(" and wct.medCase_id is null");
-		if (remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
+		if (remoteUser) {
+			sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
+			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
+		}
 		sql.append(" group by case when wf.dtype='PersonalWorkFunction' then m2.id else m1.id end,case when wf.dtype='PersonalWorkFunction' then m2.name else m1.name end");
 		Collection<WebQueryResult> listLpu = service.executeNativeSql(sql.toString(),50);
 		
@@ -679,13 +694,17 @@ public class WorkCalendarServiceJs {
 			sql.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id");
 			sql.append(" left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id");
 			sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id");
+			sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 			sql.append(" left join MisLpu m1 on m1.id=wf.lpu_id") ; 
 			sql.append(" left join MisLpu m2 on m2.id=w.lpu_id") ; 
 			
 			sql.append(" where wf.workFunction_id='").append(aVocWorkFunction).append("'");
 			sql.append(" and wcd.calendarDate>=CURRENT_DATE");
 			sql.append(" and wct.medCase_id is null") ;
-			if (remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
+			if (remoteUser) {
+				sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
+				sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
+			}
 			if (!remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' )") ;
 			sql.append(" group by wc.id,wp.lastname,wp.firstname,wp.middlename,wf.groupName,wf.comment");
 			sql.append(" order by wf.groupName,wp.lastname,wp.firstname,wp.middlename") ;
@@ -710,6 +729,8 @@ public class WorkCalendarServiceJs {
 	}
 
 	public String getDatesBySpecialist(Long aWorkCalendar, String aMonth, String aYear,Long aVocWorkFunction, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		boolean isRemoteUser = remoteUser(service, aRequest) ; 
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select  wcd.id as wcdid, to_char(wcd.calendardate,'dd.mm.yyyy') as wcdcalendardate");
 		sql.append(" ,to_char(wcd.calendardate,'dd') as CDday");
@@ -719,12 +740,13 @@ public class WorkCalendarServiceJs {
 		sql.append(" from workCalendar wc"); 
 		sql.append(" left join workcalendarday wcd on wcd.workcalendar_id=wc.id");
 		sql.append(" left join workcalendartime wct on wct.workcalendarday_id=wcd.id");
+		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" where wc.id='").append(aWorkCalendar).append("'"); 
 		sql.append(" and to_char(wcd.calendardate,'mm.yyyy')='")
 			.append(aMonth).append(".").append(aYear).append("'");
+		if (isRemoteUser) sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 		sql.append(" group by wcd.id,wcd.calendardate");
 		sql.append(" order by wcd.calendardate") ;
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>") ;
@@ -892,9 +914,11 @@ public class WorkCalendarServiceJs {
 		}
 		return res ;
 	}
-	
+	//TODO доделать
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Boolean isRemoteUser = remoteUser(service, aRequest) ;
 		sql.append(" select wct.id,cast(wct.timeFrom as varchar(5)) as wcttimeFrom")
 			.append(" ,case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
 			.append(" ,wct.medCase_id");
@@ -904,17 +928,30 @@ public class WorkCalendarServiceJs {
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
-			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; ;
-		sql.append(" from WorkCalendarTime wct") ; 
+			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; 
+		if (isRemoteUser) {
+			sql.append(", case when sw.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
+			sql.append(", case when w.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
+		}
+		sql.append(" from WorkCalendarTime wct") ;
+		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
-			.append(" left join SecUser su on su.login=wct.createPreRecord ")
+			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
 			.append(" left join SecUser su1 on su1.login=vis.username ");
+		if (isRemoteUser) {
+			sql.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id") ;
+			sql.append(" left join WorkCalendar wc on wc.id=wcd.workCalendar_id") ;
+			sql.append(" left join WorkFunction wf on wf.id=wc.workFunction_id") ;
+			sql.append(" left join Worker w on w.id=wf.worker_id") ;
+			sql.append(" left join WorkFunction swf on swf.secUser_id=su.id") ;
+			sql.append(" left join Worker sw on sw.id=swf.worker_id") ;
+		}
 		sql.append(" left join patient pat on pat.id=vis.patient_id");
 		sql.append(" left join patient prepat on prepat.id=wct.prepatient_id");
 		sql.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("'");
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
@@ -930,64 +967,87 @@ public class WorkCalendarServiceJs {
 		for (WebQueryResult wqr:list) {
 			i++ ;
 			if (i==1) res.append("<li class='liList'><ul class='ulTime'>") ;
-			
+			boolean info=true ;
 			int pre = Integer.valueOf(""+wqr.get3());
 			if (pre==1) {
-				if (wqr.get7()!=null) {
-					res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>") 
+				if (isRemoteUser && wqr.get13()!=null && !(""+wqr.get13()).equals("")) info=false ;
+			} else {
+				if (isRemoteUser && wqr.get12()!=null && !(""+wqr.get12()).equals("")) info=false ;
+			}
+			if (pre==1) {
+				
+				if (!info) {
+					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()) .append(" ") ;
-					res.append(wqr.get5()).append("</strike>") ;
+					res.append("ЗАНЯТО").append("") ;
 				} else {
-					res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") 
-					.append(wqr.get2()) .append(" ") ;
-					res.append(wqr.get5()) ;
+					if (wqr.get7()!=null) {
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' >1<strike>") 
+						.append(wqr.get2()) .append(" ") ;
+						res.append(wqr.get5()).append("</strike>") ;
+					} else {
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>2") 
+						.append(wqr.get2()) .append(" ") ;
+						res.append(wqr.get5()) ;
+					}
 				}
 			} else if (pre==2) {
-				
-				if (wqr.get4()!=null) {
-					String prelastname = ""+wqr.get8() ;
-					String lastname = ""+wqr.get9() ;
-					res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
-					String add = "" ;
-					if (prelastname!=null && lastname!=null) {
-						if (!prelastname.startsWith(lastname)) {
-							add = " <i> вместо "+prelastname+"</i> " ;
-						}
-					}
-					if (wqr.get7()!=null) {
-						res.append(" <strike><u>")
-						.append(wqr.get2()).append("")
-						.append(" ") ;
-						res.append(wqr.get5()).append(add).append("</strike></u>")  ;
-					} else {
-						res.append(" <u>");
-						res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-						res.append(wqr.get2()).append("")
-						.append(" ") ;
-						res.append(wqr.get5()).append(add).append("</u>")  ;
-					}
+				if (!info) {
+					res.append("<li id='liTimeBusyForRemoteUser' >") 
+					.append(wqr.get2()) .append(" ") ;
+					res.append("ЗАНЯТО").append("") ;
 				} else {
-					res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-					res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") .append(" <a href=\"javascript:patientCame('")
-					.append(wqr.get1()).append("','").append(wqr.get5())
-					.append("','").append(wqr.get6()).append("')\">")
-					.append(wqr.get2()).append("</a>")
-					.append(" ") ;
-					res.append(wqr.get5()).append(" <a href=\"javascript:deleteTime('").append(wqr.get1()).append("')\">У</a>")  ;
-					
+					if (wqr.get4()!=null) {
+						String prelastname = ""+wqr.get8() ;
+						String lastname = ""+wqr.get9() ;
+						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
+						String add = "" ;
+						if (prelastname!=null && lastname!=null) {
+							if (!prelastname.startsWith(lastname)) {
+								add = " <i> вместо "+prelastname+"</i> " ;
+							}
+						}
+						if (wqr.get7()!=null) {
+							res.append(" <strike><u>")
+							.append(wqr.get2()).append("")
+							.append(" ") ;
+							res.append(wqr.get5()).append(add).append("</strike></u>")  ;
+						} else {
+							res.append(" <u>");
+							res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
+							res.append(wqr.get2()).append("")
+							.append(" ") ;
+							res.append(wqr.get5()).append(add).append("</u>")  ;
+						}
+					} else {
+						res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
+						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") .append(" <a href=\"javascript:patientCame('")
+						.append(wqr.get1()).append("','").append(wqr.get5())
+						.append("','").append(wqr.get6()).append("')\">")
+						.append(wqr.get2()).append("</a>")
+						.append(" ") ;
+						res.append(wqr.get5()).append(" <a href=\"javascript:deleteTime('").append(wqr.get1()).append("')\">У</a>")  ;
+						
+					}
 				}
 			} else {
-				res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
-				
-				res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
-				if (first) res.append(" checked='true'");
-				res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
-				if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
-					res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
+				if (!info) {
+					res.append("<li id='liTimeBusyForRemoteUser' >") 
+					.append(wqr.get2()) .append(" ") ;
+					res.append("ЗАНЯТО").append("") ;
+				} else {
+					res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
+					
+					res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
+					if (first) res.append(" checked='true'");
+					res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
+					if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
+						res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
+					}
+					res.append(wqr.get2()) ;
 				}
-				res.append(wqr.get2()) ;
 			}
-			if (wqr.get10()!=null) {
+			if (wqr.get10()!=null && info) {
 				res.append("<a onclick='getDefinition(\"entityShortView-mis_patient.do?id=")
 					.append(wqr.get10()).append("\", event); return false ;' ondblclick='javascript:goToPage(\"entityView-mis_patient.do\",\"")
 					.append(wqr.get10()).append("\")'><img src=\"/skin/images/main/view1.png\" alt=\"Просмотр записи\" title=\"Просмотр записи\" height=\"16\" width=\"16\"></a>") ;
@@ -1027,6 +1087,7 @@ public class WorkCalendarServiceJs {
 		return service.preRecordByPatient(username, aTime,aPatInfo,aPatientId) ;
 		//return "Сохранено" ;
 	}
+	//TODO доделать
 	public String deletePreRecord(Long aTime, HttpServletRequest aRequest) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -1049,7 +1110,10 @@ public class WorkCalendarServiceJs {
 		return service.getTimesBySpecAndDate(aDate, aSpecialist, aCountVisits, aBeginTime, aEndTime) ;
 		//return "" ;
 	}
-	public String addNewTimeBySpecialist(String aDate, Long aSpecialist, String aBeginTime,String aEndTime, HttpServletRequest aRequest) throws ParseException, NamingException {
+	public String addNewTimeBySpecialist(String aDate
+			, Long aReserve
+			, Long aSpecialist
+			, String aBeginTime,String aEndTime, HttpServletRequest aRequest) throws ParseException, NamingException {
 		java.sql.Time timeFrom = DateFormat.parseSqlTime(aBeginTime) ;
 		java.sql.Time timeTo = DateFormat.parseSqlTime(aEndTime) ;
 		Calendar cal1 = java.util.Calendar.getInstance() ;
@@ -1066,15 +1130,16 @@ public class WorkCalendarServiceJs {
 		cal1.add(java.util.Calendar.MINUTE, interval) ;
 		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm") ;
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		return service.addCreateNewTimeBySpecAndDate(aDate, aSpecialist, format.format(cal1.getTime())) ;
+		return service.addCreateNewTimeBySpecAndDate(aDate, aSpecialist, format.format(cal1.getTime()),aReserve) ;
 		
 	}
 	// Создать новые времена по специалисту за определенное число
 	public String getCreateNewTimesBySpecAndDate(String aDate
+			,Long aReserve
 			, Long aSpecialist, String aTimes
 			, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		service.getCreateNewTimesBySpecAndDate(aDate, aSpecialist, aTimes) ;
+		service.getCreateNewTimesBySpecAndDate(aDate, aSpecialist, aTimes,aReserve) ;
 		return "Созданы" ;
 	}
 	public String generateBySpecialist(Long aWorkFunction, HttpServletRequest aRequest) throws NamingException {

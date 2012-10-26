@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="style" type="string">
         <style type="text/css">            
             .protocols {
@@ -21,13 +21,13 @@
 
     </tiles:put>
   <tiles:put name="side" type="string">
-	<msh:ifFormTypeIsNotView formName="preg_childBirthForm">
-    	<tags:templateProtocol idSmo="preg_childBirthForm.medCase" version="Visit" name="tmp" property="histology" voc="protocolVisitByPatient"/>
+	<msh:ifFormTypeIsNotView formName="preg_childBirthForPregnancyForm">
+    	<tags:templateProtocol idSmo="preg_childBirthForPregnancyForm.medCase" version="Visit" name="tmp" property="histology" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>  
-    <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="0908a638-fd02-4b94-978b-18ab86829e08">
+    <msh:ifFormTypeIsView formName="preg_childBirthForPregnancyForm" guid="0908a638-fd02-4b94-978b-18ab86829e08">
       <msh:sideMenu title="Роды" guid="bc6ceef3-4709-47d9-ba37-d68540cffc61">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirthForPregnancy" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirthForPregnancy" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
         <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_newBorn" name="Данные о новорожденном" title="Показать данные о новорожденном" roles="/Policy/Mis/NewBorn/View" guid="49eb7931-f37b-46fd-8102-ac1b8af96472" />
@@ -38,11 +38,17 @@
     <!-- 
     	  - Течение родов
     	  -->
-    <msh:form action="/entityParentSaveGoView-preg_childBirth.do" defaultField="pangsStartDate" guid="93666922-7bed-42a7-be5e-b2d52e41d39b">
+    <msh:form action="/entityParentSaveGoParentView-preg_childBirthForPregnancy.do" defaultField="slsName" guid="93666922-7bed-42a7-be5e-b2d52e41d39b">
       <msh:hidden property="id" guid="2821496c-bc8e-4cbe-ba14-ac9a7f019ead" />
-      <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
+      <msh:hidden property="pregnancy" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
       <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
+      	<msh:row>
+      		<msh:autoComplete property="sls" fieldColSpan="3" horizontalFill="true" label="Госпитализация" vocName="slsByPregnancy" parentId="preg_childBirthForPregnancyForm.pregnancy"/>
+      	</msh:row>
+      	<msh:row>
+      		<msh:autoComplete property="medCase" fieldColSpan="3" horizontalFill="true" label="Отделение" vocName="sloBySls" parentAutocomplete="sls"/>
+      	</msh:row>
         <msh:row guid="4bbea36b-255f-441f-8617-35cb54eaf9d0">
           <td width="1px" />
           <td width="1px" />
@@ -170,7 +176,7 @@
         <msh:submitCancelButtonsRow colSpan="3" guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
       </msh:panel>
     </msh:form>
-    <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+    <msh:ifFormTypeIsView formName="preg_childBirthForPregnancyForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
       <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
         <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" />
         <msh:tableNotEmpty name="newBorns" guid="bd28e321-5e07-4e52-95dc-9851c96a0007">
@@ -185,10 +191,10 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForPregnancyForm"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+  <msh:ifFormTypeIsNotView formName="preg_childBirthForPregnancyForm">
     	<script type="text/javascript">
     	var isChangeSizeEpicrisis=1 ;
 		function changeSizeEpicrisis() {

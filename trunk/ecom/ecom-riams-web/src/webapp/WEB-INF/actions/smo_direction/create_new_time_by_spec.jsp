@@ -39,6 +39,10 @@
         	 property="specialist" label="Специалист" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete fieldColSpan="5" vocName="vocServiceReserveType"
+        	 property="reserveType" label="Резерв" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete fieldColSpan="5" vocName="workFunctionByDirect"
         	 property="moveSpecialist" label="Замена на спец-та" horizontalFill="true"/>
         </msh:row>
@@ -126,7 +130,7 @@
     }
     function generate() {
     	WorkCalendarService.getCreateNewTimesBySpecAndDate($('date').value
-    			, $('specialist').value, $('times').value
+    			,$('reserveType').value, $('specialist').value, $('times').value
     			, {
     	  	 callback: function(aResult) {
     				 	alert(aResult) ;
@@ -179,6 +183,7 @@
     	$('btnShowClearDayBySpec').style.display='none';
     	$('specialistName').className = 'autocomplete horizontalFill required' ;
     	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('reserveTypeName').className = 'autocomplete horizontalFill required' ;
     	$('date').className = 'required' ;
     	$('moveDate').className = '' ;
     	$('timeTo').className = 'required' ;
@@ -193,6 +198,7 @@
     	$('btnShowClearDayBySpec').style.display='none';
     	$('specialistName').className = 'autocomplete horizontalFill required' ;
     	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('reserveTypeName').className = 'autocomplete horizontalFill' ;
     	$('date').className = 'required' ;
     	$('moveDate').className = 'required' ;
     	$('timeTo').className = '' ;
@@ -207,6 +213,7 @@
     	$('btnMoveDays').style.display='';
     	$('specialistName').className = 'autocomplete horizontalFill required' ;
     	$('moveSpecialistName').className = 'autocomplete horizontalFill required' ;
+    	$('reserveTypeName').className = 'autocomplete horizontalFill' ;
     	$('date').className = 'required' ;
     	$('moveDate').className = 'required' ;
     	$('timeTo').className = '' ;
@@ -221,6 +228,7 @@
     	$('btnMoveDays').style.display='none';
     	$('specialistName').className = 'autocomplete horizontalFill required' ;
     	$('moveSpecialistName').className = 'autocomplete horizontalFill' ;
+    	$('reserveTypeName').className = 'autocomplete horizontalFill' ;
     	$('date').className = 'required' ;
     	$('moveDate').className = 'required' ;
     	$('timeTo').className = '' ;

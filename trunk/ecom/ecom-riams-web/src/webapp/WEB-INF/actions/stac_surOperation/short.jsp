@@ -118,6 +118,9 @@
         	<msh:label property="editDate" label="Дата редак."/>
           	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата печати"/>
+        </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>

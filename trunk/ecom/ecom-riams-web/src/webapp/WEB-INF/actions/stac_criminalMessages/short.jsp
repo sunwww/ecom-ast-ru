@@ -70,6 +70,9 @@
           <msh:textArea property="comment" label="Пояснение обстоятельств" rows="7" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
+          <msh:textArea property="diagnosis" label="Диагноз" rows="7" fieldColSpan="5" horizontalFill="true" />
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="outcome" fieldColSpan="5" label="Исход" horizontalFill="true" vocName="vocPhoneMessageOutcome"/>
         </msh:row>
         <msh:row>
