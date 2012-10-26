@@ -214,20 +214,20 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	sql.append("select ").append(theNameId).append(", ").append(theSelect).append(" from ").append(theFrom)
 		.append(" ").append(theJoin);
 		boolean appendIs = false ;
-    	if (!StringUtil.isNullOrEmpty(theQueryAppend)) {
-    		sql.append(" where ").append(theQueryAppend) ;
-    		appendIs=true ;
-    	}
-		
-    	if (!StringUtil.isNullOrEmpty(aId)) {
-    		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
-    		sql.append(theNameId).append("<=:id ");
-    		appendIs=true ;
-    	}
-    	
     	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
     		sql.append(getParent(theParentField,aAdditional.getParentId(),theSplitParentCount)) ;
+    		appendIs=true ;
+    	}
+    	if (!StringUtil.isNullOrEmpty(theQueryAppend)) {
+       		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
+       		sql.append(theQueryAppend);
+    		appendIs=true ;
+    	}	
+    	
+    	if (!StringUtil.isNullOrEmpty(aId)) {
+    		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
+    		sql.append(theNameId).append("<=:id ");
     		appendIs=true ;
     	}
     	sql.append(" order by ").append(theNameId) .append(" desc");
@@ -298,22 +298,22 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	sql.append("select ").append(theNameId).append(", ").append(theSelect).append(" from ").append(theFrom)
 		.append(" ").append(theJoin);
     	boolean appendIs = false ;
+    	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+    		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
+    		String param=getParent(theParentField, aAdditional.getParentId(),theSplitParentCount) ;
+    		sql.append(param) ;
+    		appendIs = true ;
+    	}
     	if (!StringUtil.isNullOrEmpty(theQueryAppend)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
     		sql.append(theQueryAppend);
     		appendIs = true ;
     		
     	}
+    	//todo else
     	if (!StringUtil.isNullOrEmpty(aId)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
     		sql.append(theNameId).append(">=:id ");
-    		appendIs = true ;
-    	}
-    	//todo else
-    	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
-    		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
-    		String param=getParent(theParentField, aAdditional.getParentId(),theSplitParentCount) ;
-    		sql.append(param) ;
     		appendIs = true ;
     	}
     	sql.append(" order by ").append(theNameId) ;
