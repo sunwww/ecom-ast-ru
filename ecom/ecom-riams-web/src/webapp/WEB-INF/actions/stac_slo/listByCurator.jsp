@@ -21,6 +21,8 @@
     <msh:sectionTitle>Журнал по лечащему врачу:  ${curatorInfo}. Печать дневников:
     &nbsp;<a href='stac_print_protocol.do?curator=${curator}&stNoPrint=selected'>включая осмотры других специалистом...</a>
     &nbsp; <a href='stac_print_protocol.do?owner=${curator}&stNoPrint=selected'>только своих дневников</a>
+    &nbsp; <a href='stac_print_surOperation.do?owner=${curator}&stNoPrint=selected'>хир. операций</a>
+    &nbsp; <a href='stac_print_discharge.do?owner=${curator}&stNoPrint=selected'>выписок</a>
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="

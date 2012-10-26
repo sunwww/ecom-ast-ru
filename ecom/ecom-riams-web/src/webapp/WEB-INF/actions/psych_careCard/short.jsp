@@ -191,15 +191,20 @@
      		,to_char(po.startDate,'dd.mm.yyyy') as stratDate
      		,to_char(po.finishDate,'dd.mm.yyyy') as finishDate
      		,vpdg.name as vpdgname,vpac.name as vpacname
+     		,vcca.name as vccaname,vpsora.name as vpsoraname
             	from PsychiaticObservation po  
             	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
-            	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
+            	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id
+            	left join vocCriminalCodeArticle vcca on vcca.id=po.criminalCodeArticle_id
+            	left join VocPsychStrikeOffReasonAdn vpsora on vpsora.id=po.strikeOffReason_id
             	where po.careCard_id=${param.id} and po.lpuAreaPsychCareCard_id is null
            "/>
            <msh:table name="dinObservation" idField="1" action="entityParentView-psych_careobservation.do">
               <msh:tableColumn property="4" columnName="Наблюдение"/>
               <msh:tableColumn property="2" columnName="Дата взятия"/>
+              <msh:tableColumn property="6" columnName="Статья уг. кодекса"/>
               <msh:tableColumn property="3" columnName="Дата снятия (перевода)"/>
+              <msh:tableColumn property="7" columnName="Причина снятия"/>
             </msh:table>
      	</msh:section>
      </td>

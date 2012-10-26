@@ -45,6 +45,10 @@
 	                   <li><msh:link action="stac_journalRepeatCaseByHospital_list" roles="/Policy/Mis/Journal/RepeatCase">
 	                   		Повторные случаи мед. обслуживания
 	                   		</msh:link></li>
+	                   <li>
+	                   		<msh:link action="journal_doc_externalMedService.do" roles="/Policy/Mis/MedCase/Document/External/Medservice/View,/Policy/Mis/MedCase/Stac/Journal/ExternalMedservice">
+	                   		Внеш. лаборатория</msh:link>
+	                   </li>
 					</ul>
 					</div>
 				</td>
@@ -65,6 +69,14 @@
 	                        </msh:link></li>
 						<li><msh:link action="journal_visit_diagnosis.do" roles="/Policy/Mis/MedCase/Visit/ReportDiagnosis">
 	                            Журнал диагнозов по визитам
+	                        </msh:link></li>
+					</ul>
+					</div>
+				<div class='menu'>
+					<h2>Роддом</h2>
+					<ul>
+						<li><msh:link action="journal_roddom_histology.do" roles="/Policy/Mis/Pregnancy/Report/HistologyPlacenta">
+	                            Журнал гистологий плацент
 	                        </msh:link></li>
 					</ul>
 					</div>
@@ -106,6 +118,9 @@
 	                        </msh:link></li>
 						<li><msh:link action="stac_journalByCurator.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator">
 	                            По состоящим в отделениях пациентам с разбивкой по леч.врачу (оформленных)
+	                        </msh:link></li>
+						<li><msh:link action="stac_planning_hospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Journal/PlanningHospitalizations">
+	                            Планирование госпитализаций
 	                        </msh:link></li>
 					</ul>
 					</div>

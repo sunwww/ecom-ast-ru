@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.action.worker;
 
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -66,6 +67,18 @@ public class TimeBySpecialistForm extends BaseValidatorForm {
 		theMoveSpecialist = aMoveSpecialist;
 	}
 
+	/** Резерв */
+	@Comment("Резерв")
+	public Long getReserveType() {
+		return theReserveType;
+	}
+
+	public void setReserveType(Long aReserveType) {
+		theReserveType = aReserveType;
+	}
+
+	/** Резерв */
+	private Long theReserveType;
 	/** Перенести специалиста */
 	private Long theMoveSpecialist;
 	/** Перенести на дату */

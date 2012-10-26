@@ -65,7 +65,7 @@
             	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
             	if(ids) {
             		//alert(ids) ;
-            		window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService&'+ids ;
+            		window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
             		
             	} else {
             		alert("Нет выделенных протоколов");

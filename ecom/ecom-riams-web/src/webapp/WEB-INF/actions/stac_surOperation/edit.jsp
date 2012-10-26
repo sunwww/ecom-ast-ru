@@ -174,11 +174,16 @@
         </msh:ifNotInRole>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
-          <msh:label property="createUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
-          	<msh:label property="editUsername" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="printDate" label="Дата печати"/>
+        	<msh:hidden property="printTime"/>
+        	<msh:label property="printUsername" label="пользователь"/>
         </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>

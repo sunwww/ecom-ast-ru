@@ -135,6 +135,14 @@
 	background-color: #ff3333;
 	font-weight: bold;
 	} 
+ ul.listTimes li ul.ulTime li#liTimeBusyForRemoteUser{
+	margin-left:  0;
+	padding-left:0;
+	list-style: none;
+	/*font-size: medium;*/
+	background-color: red;
+	font-weight: bold;
+	} 
 	ul#listDirects li.liTimeDirect {
 	background-color: #ff3333;
 	border-top: 1px solid;
@@ -220,6 +228,51 @@ ul.listTimes li.first {
     	  <td valign="top">
     	  
     	  <table>
+    	<msh:row>
+    		<td colspan="4">
+    			<div id="rowLegenda">
+    			<h1>ЛЕГЕНДА</h1>
+    			<ul class="listTimes">
+	    			<li  class="liList">
+		    			<ul class="days">
+		    				<li><b><u>ДНИ</u></b><br/></li>
+		    				<li>День, в котором <b>есть времена</b> для записи</li>
+		    				<li class="visitDay">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+		    				<li> выбранный день</li>
+		    				<li class="selectedVisitDay">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></li>
+		    				<li>День, в котором <b>нет времен</b> для записи</li>
+		    				<li class="busyDay">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </li>
+		    				<li> выбранный день </li>
+		    				<li class="selectedBusyDay">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></li>
+		    				<li> Нерабочий день </li>
+		    				<li class="freeDay">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+		    			</ul>
+	    			</li>
+    			</ul>
+    			<ul class="listTimes"> 
+	    			<li class="liList">
+		    			<ul class="ulTime">
+		    				<li><b><u>ВРЕМЕНА</u></b><br/></li>
+		    				<li><b>Пред. запись (удал. пол-ль)</b></li>
+		    				<li id="liTimePre" class="preDirectRemoteUsername">00:00</li>
+		    				<li><b><br/>Пред. запись</b></li>
+		    				<li id="liTimePre">00:00</li>
+		    				<li> сделано направление</li>
+		    				<li id="liTimePre"><u>00:00</u></li>
+		    				<li> осущ. прием</li>
+		    				<li id="liTimePre"><strike><u>00:00</u></strike></li>
+		    				<li><br/>Направление без пред.записи</li>
+		    				<li id="liTimeDirect">00:00</li>
+		    				<li> осущ. прием</li>
+		    				<li id="liTimeDirect"><strike>00:00 </strike></li>
+		    				<li><br>Свободное время</li>
+		    				<li id="liTime">00:00</li>
+		    			</ul>
+	    			</li>
+    			</ul> 
+    			</div>
+    		</td>
+    	</msh:row>
     	<msh:row styleId="step3title">
     		<msh:separator label="Параметры направления" colSpan="4"/>
     	</msh:row>
@@ -232,6 +285,7 @@ ul.listTimes li.first {
     		
     	</msh:row> --%>
     <form id="frmStep1" name="frmStep1" action="javascript:findPatient()" >
+
     	<msh:row>
     		<msh:separator label="Поиск пациента" colSpan="6" />
     	</msh:row>	
@@ -272,7 +326,7 @@ ul.listTimes li.first {
     		<td colspan="4">
     			<div id="rowDirectPatient"><i>Ждите идет поиск...</i></div>
     		</td>
-    	</msh:row>
+    	</msh:row>    	
     	</table>
     	</td>
     	  </tr>
@@ -327,17 +381,17 @@ ul.listTimes li.first {
 		showRow("findDirecttitle",false) ;
 		showRow("findDirect",false) ;
 		goStep2() ;
-  		eventutil.addEventListener($('lastname'), eventutil.EVENT_KEY_UP, 
+  		eventutil.addEventListener($('lastname'), eventutil.EVENT_BLUR, 
 	  		  	function() {
 	  		findPatient(true) ; 
   		  	}
   		) ;
-  		eventutil.addEventListener($('firstname'), eventutil.EVENT_KEY_UP, 
+  		eventutil.addEventListener($('firstname'), eventutil.EVENT_BLUR, 
 	  		  	function() {
 	  		findPatient(true) ; 
   		  	}
   		) ;
-  		eventutil.addEventListener($('middlename'), eventutil.EVENT_KEY_UP, 
+  		eventutil.addEventListener($('middlename'), eventutil.EVENT_BLUR, 
 	  		  	function() {
 	  		findPatient(true) ; 
 	  		
@@ -614,6 +668,7 @@ ul.listTimes li.first {
   	    	aText=replaceAll(aText,"Т","N" ) ;
   	    	aText=replaceAll(aText, "Ь","M" ) ;
   	    	aText=replaceAll(aText, "Ю","." ) ;
+  	    	aText=replaceAll(aText, "Б","," ) ;
   	    	return aText ;
   		}
   		function replaceAll(aText,aSymbRep,aSymbIs) {

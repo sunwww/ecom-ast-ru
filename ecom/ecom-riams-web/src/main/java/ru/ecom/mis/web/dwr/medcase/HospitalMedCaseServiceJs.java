@@ -133,8 +133,8 @@ public class HospitalMedCaseServiceJs {
     	} else {
     		period.append("CURRENT_DATE") ;
     	}
-		StringBuilder sql = new StringBuilder().append("select em.id")
-			.append(",'Фамилия '||em.PatientLastname||'Имя '||PatientFirstname||'Отчество '")
+		StringBuilder sql = new StringBuilder().append("select em.NumberDoc")
+/*			.append(",'Фамилия '||em.PatientLastname||'Имя '||PatientFirstname||'Отчество '")
 			.append("||em.PatientMiddlename")
 		.append(" ||'Дата рождения'||em.PatientBirthday	as fio,")	
 		.append(" 'ЛПУ: '||em.OrderLpu")
@@ -145,22 +145,22 @@ public class HospitalMedCaseServiceJs {
 		.append(" ||'\nДата получения результата: '||to_char(em.CreateDate,'dd.mm.yyyy')")
 		.append(" ||'\nВремя получения результата: '||cast(em.CreateTime as varchar(5))")
 		
-		.append("	as orderInfo")
+		.append("	as orderInfo")*/
 		.append(" ,'\nНомер направления: '||em.NumberDoc")
 		.append(" ||'\nДата направления: '||to_char(em.OrderDate,'dd.mm.yyyy')")
-		.append(" ||'\nДата получения результата: '||to_char(em.CreateDate,'dd.mm.yyyy')")
-		.append(" ||'\n'||em.comment from Document em") 
-		.append(" left join patient p on p.lastname=em.patientLastname")  
+		.append(" ||'\nДата получения результата: '||to_char(em.CreateDate,'dd.mm.yyyy') as infoDirect")
+		.append(" ,replace(list('\n'||em.comment),'\n, \n','\n\n') as comment from Document em") 
+		.append(" left join patient p on p.id=em.patient_id")  
 		.append(" left join medcase m on m.patient_id=p.id")
 		.append(" where p.id='").append(aPatient).append("'")
 		.append(" and em.dtype='ExternalMedservice'")
 		.append(" and (em.orderDate ").append(period)
 		.append(" or em.createDate ").append(period)
-		.append(") order by em.orderDate,em.createDate");
+		.append(") group by em.numberdoc,em.orderDate,em.createDate order by em.orderDate,em.createDate");
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString()) ;
 		StringBuilder result = new StringBuilder() ;
 		for (WebQueryResult wqr :list1) {
-			result.append(wqr.get4()) ;
+			result.append(wqr.get2()).append(wqr.get3()) ;
 		}
 		return result.toString() ;
     }
@@ -168,5 +168,15 @@ public class HospitalMedCaseServiceJs {
 			,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs, HttpServletRequest aRequest) throws NamingException, ParseException {
     	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
     	return service.getnvestigationsTextDTM(aPatient, aDateStart, aDateFinish,aLabsIs,aFisioIs,aFuncIs,aConsIs, aLuchIs);
+    }
+    public String getPlannigHospitalization(String aDateFrom, String aDateTo
+    		,Long aDepartment, Long aBedType, Long aCountBed) {
+    	
+    	return "" ;
+    }
+    public String setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient, HttpServletRequest aRequest) throws NamingException {
+    	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+    	service.setPatientByExternalMedservice(aNumberDoc, aOrderDate, aPatient) ;
+    	return "обновлено" ;
     }
 }

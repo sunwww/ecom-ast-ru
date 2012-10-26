@@ -534,6 +534,7 @@ ul.listTimes li.first {
   	    	aText=replaceAll(aText,"Т","N" ) ;
   	    	aText=replaceAll(aText, "Ь","M" ) ;
   	    	aText=replaceAll(aText, "Ю","." ) ;
+  	    	aText=replaceAll(aText, "Б","," ) ;
   	    	return aText ;
   		}
   		function replaceAll(aText,aSymbRep,aSymbIs) {

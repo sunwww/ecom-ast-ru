@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="preg_pregnanCardForm" guid="e20545-4285-a21c-3bb9b4569efc">
@@ -17,7 +17,8 @@
     <!-- 
     	  - Беременность
     	  -->
-    <msh:form action="/entityParentSaveGoView-preg_pregnanCard.do" defaultField="transferDate" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form  
+    action="/entityParentSaveGoParentView-preg_pregnanCard.do" defaultField="consultationName">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="pregnancy" guid="9d908e88-e051-4d0a-8da6-3f5f4b226493" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />

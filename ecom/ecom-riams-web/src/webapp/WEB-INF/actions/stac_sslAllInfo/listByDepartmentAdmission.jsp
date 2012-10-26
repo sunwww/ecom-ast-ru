@@ -42,21 +42,23 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_admission1" nativeSql="
-select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,vas.name as vasname  ,list(diag.name) as diagname
+select m.id,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as datestart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,vas.name as vasname  ,list(diag.name) as diagname
+,vss.name as vssname
     from MedCase  m 
     left outer join Patient pat on m.patient_id = pat.id  
     left outer join StatisticStub stat on m.statisticstub_id=stat.id 
     left join VocAdditionStatus vas on vas.id=pat.additionStatus_id
     left join MedCase d on d.parent_id=m.id and d.dtype='DepartmentMedCase'
     left join Diagnosis diag on diag.medCase_id=m.id
+    left join VocServiceStream vss on vss.id=m.serviceStream_id
 	where m.DTYPE='HospitalMedCase' and m.department_id='${department}'
 	and d.id is null and (m.noActuality is null or m.noActuality='0') 
 	and (m.ambulanceTreatment is null or m.ambulanceTreatment='0')
 	 and m.dateFinish is null
 	${onlyMonthH}
 	 and m.deniedHospitalizating_id is null
-	group by m.id,m.dateStart,m.username,stat.code,pat.lastname,pat.firstname,pat.middlename,pat.birthday
-,vas.name 
+	group by m.id,m.dateStart,m.entranceTime,m.username,stat.code,pat.lastname,pat.firstname,pat.middlename,pat.birthday
+,vas.name ,vss.name
 	 
 	order by pat.lastname,pat.firstname,pat.middlename
      "/>
@@ -69,6 +71,7 @@ select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|
       <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Диагноз" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Кем открыт" property="3" guid="37-b552-4154-a82a-ee484a1714ad" />
+      <msh:tableColumn property="9" columnName="Поток обслуживания"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -81,13 +84,15 @@ select m.id,m.dateStart,m.username,stat.code,pat.lastname ||' ' ||pat.firstname|
     <msh:sectionContent>
     <ecom:webQuery name="journal_admission" nativeSql="
 select sls.id,sls.dateStart,sls.username,stat.code,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,lput.name as lputname   
-,d.transferDate as dtransferDate,vas.name  
+,to_char(d.transferDate,'dd.mm.yyyy') || ' ' || cast(d.transferTime as varchar(5)) as dtransferDate,vas.name as vasname
+  ,vss.name as vssname
 from MedCase d
 left join MedCase n on n.prevMedCase_id=d.id
 left join MedCase sls on sls.id=d.parent_id
 left join Patient pat on pat.id=sls.patient_id
 left join StatisticStub stat on stat.id=sls.statisticStub_id
 left join mislpu lput on lput.id=d.department_id
+left join VocServiceStream vss on vss.id=d.serviceStream_id
     left join VocAdditionStatus vas on vas.id=pat.additionStatus_id
 where d.DTYPE='DepartmentMedCase' 
  and d.transferDepartment_id='${department}' 
@@ -97,6 +102,7 @@ where d.DTYPE='DepartmentMedCase'
     <msh:table viewUrl="entityShortView-stac_ssl.do" name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
     	<msh:tableColumn columnName="#" property="sn"/>
       <msh:tableColumn columnName="Перевод из отделения" property="7" guid="fc26523a-eb9c-4ca9ac5b" />
+      <msh:tableColumn property="10" columnName="Поток обслуживания"/>
       <msh:tableColumn columnName="Дата перевода" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7" />
       <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Статус пациента" property="9" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />

@@ -275,8 +275,8 @@
     		}
     	}) ;
     }
-    function addNewTimeBySpecialist(aWorkCalendarDay,aDate,aWorkFunction,aTime1,aTime2,aWorkFunctionInfo) {
-    	WorkCalendarService.addNewTimeBySpecialist(aDate,aWorkFunction,aTime1,aTime2,{
+    function addNewTimeBySpecialist(aWorkCalendarDay,aReserve,aDate,aWorkFunction,aTime1,aTime2,aWorkFunctionInfo) {
+    	WorkCalendarService.addNewTimeBySpecialist(aDate,aReserve,aWorkFunction,aTime1,aTime2,{
     		callback:function(aResult) {
     			$('divTimeByDayAndWorkFunction').innerHTML = aResult ;
     			//getTimeByDayAndWorkFunction(aWorkFunction,aWorkCalendarDay) ;

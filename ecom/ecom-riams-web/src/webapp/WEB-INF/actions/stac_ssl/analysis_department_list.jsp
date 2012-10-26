@@ -106,8 +106,8 @@
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 		<td colspan="3">
             <input type="submit" onclick="find()" value="Найти" />
-            <input type="submit" onclick="print()" value="Печать" />
-            <input type="submit" onclick="printReestr()" value="Печать реестра" />
+<!--            <input type="submit" onclick="print()" value="Печать" />
+             <input type="submit" onclick="printReestr()" value="Печать реестра" /> -->
           </td>
          </msh:row>
         

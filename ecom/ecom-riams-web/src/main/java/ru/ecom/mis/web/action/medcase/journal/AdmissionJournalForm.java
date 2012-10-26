@@ -182,4 +182,54 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Фильтр */
 	private String theFilterAdd;
+	/** Тип коек */
+	@Comment("Тип коек")
+	public Long getRoomType() {
+		return theRoomType;
+	}
+
+	public void setRoomType(Long aRoomType) {
+		theRoomType = aRoomType;
+	}
+
+	/** Тип коек */
+	private Long theRoomType;
+	
+	/** Кол-во коек в палате */
+	@Comment("Кол-во коек в палате")
+	public Long getCountBed() {
+		return theCountBed;
+	}
+
+	public void setCountBed(Long aCountBed) {
+		theCountBed = aCountBed;
+	}
+
+	/** Кол-во коек в палате */
+	private Long theCountBed;
+	/** Тип сообщения в милицию */
+	@Comment("Тип сообщения в милицию")
+	public Long getPhoneMessageType() {
+		return thePhoneMessageType;
+	}
+
+	public void setPhoneMessageType(Long aPhoneMessageType) {
+		thePhoneMessageType = aPhoneMessageType;
+	}
+	
+	/** Подтип сообщений в милицию */
+	@Comment("Подтип сообщений в милицию")
+	public Long getPhoneMessageSubType() {
+		return thePhoneMessageSubType;
+	}
+
+	public void setPhoneMessageSubType(Long aPhoneMessageSubType) {
+		thePhoneMessageSubType = aPhoneMessageSubType;
+	}
+
+	/** Подтип сообщений в милицию */
+	private Long thePhoneMessageSubType;
+
+	/** Тип сообщения в милицию */
+	private Long thePhoneMessageType;
 }

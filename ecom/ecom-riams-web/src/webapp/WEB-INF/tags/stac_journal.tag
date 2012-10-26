@@ -29,6 +29,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital" key="ALT+2" 
 	        styleId="stac_journalByHospital" 
 	        action="/stac_journalByHospital" name="По стационару" />
+	        	        
+	        <msh:sideLink name="Планирование госпитализацией" 
+	        styleId="stac_planning_hospitalizations"
+	        action="/stac_planning_hospitalizations.do"
+	        roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View" />
+	        
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/InformationBesk"  
 	        styleId="stac_journalByInformationBesk" 
 	        action="/stac_journalByInformationBesk" name="Стол справок" />
@@ -73,6 +79,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		        styleId="stac_journalCurrentByUserDepartment" 
 		         roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartment" key="ALT+5" 
 		         action="/stac_journalCurrentByUserDepartment" name="По состоящим в отделение пациентам" />
+	        <msh:sideLink
+		        styleId="stac_journalDichargeByUserDepartment" 
+		         roles="/Policy/Mis/MedCase/Stac/Journal/DischargeByUserDepartment" 
+		         action="/stac_journalDischargeByUserDepartment" name="По выписанным пациентам" />
 <!--	        <msh:sideLink 
 		        styleId="stac_departmentJournal" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDoctorOnDuty" key="ALT+5" 
@@ -109,6 +119,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	<msh:sideLink styleId="stac_journalByMoveToAnotherLpu"
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByMoveToAnotherLpu" 
 	    		action="/stac_groupByMoveToAnotherLpuList" name="По выписанным в другие ЛПУ"
+	    	/>
+	    	<msh:sideLink styleId="journal_doc_externalMedService"
+	    		roles="/Policy/Mis/MedCase/Document/External/Medservice/View,/Policy/Mis/MedCase/Stac/Journal/ExternalMedservice" 
+	    		action="/journal_doc_externalMedService" name="Внеш. лаборатория"
 	    	/>
 	    </msh:sideMenu>
     </msh:sideMenu>
