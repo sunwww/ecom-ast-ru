@@ -68,6 +68,8 @@ function onCreate(aForm, aEntity, aCtx) {
 			preg.setChildbirthAmount(aForm.childbirthAmount) ;
 			preg.setPatient(aEntity.patient) ;
 			aCtx.manager.persist(preg) ;
+			//aEntity.setPregnancy(preg) ;
+
 			
 		}
 		aEntity.setPregnancy(preg) ;

@@ -28,6 +28,19 @@ public class PsychiatricObservationByCareCardForm extends PsychiatricObservation
 	 public void setDispensaryGroup(Long aDispensaryGroup) {
 	  theDispensaryGroup = aDispensaryGroup;
 	 }
+		@Comment("Статья уголовного кодекса")
+		@Persist @Required
+		public Long getCriminalCodeArticle() {
+			return theCriminalCodeArticle;
+		}
+
+		public void setCriminalCodeArticle(Long aCriminalCodeArticle) {
+			theCriminalCodeArticle = aCriminalCodeArticle;
+		}
+
+		/** Статья уголовного кодекса */
+		private Long theCriminalCodeArticle;
+		
 	 /**
 	  * Диспансерная группа
 	  */

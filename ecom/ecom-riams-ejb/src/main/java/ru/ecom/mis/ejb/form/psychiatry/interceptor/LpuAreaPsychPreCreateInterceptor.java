@@ -29,7 +29,7 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 			Long cnt = ConvertSql.parseLong(objs[0]) ;
 			Long cntConsisting = ConvertSql.parseLong(objs[1]) ;
 			if (cnt==null || cnt.equals(Long.valueOf(0))) {
-				sql = "select to_char(pcc.startDate,'dd.mm.yyyy') as dateStart,pcc.observationReason_id as vporid from PsychiatricCareCard pcc  where pcc.id='"+aParentId+"'" ;
+				sql = "select coalesce(to_char(pcc.startDate,'dd.mm.yyyy'),to_char(pcc.firstPsychiatricVisitDate)) as dateStart,pcc.observationReason_id as vporid from PsychiatricCareCard pcc  where pcc.id='"+aParentId+"'" ;
 				List<Object[]> list1 = aContext.getEntityManager().createNativeQuery(sql)
 						.setMaxResults(1).getResultList() ;
 				if (list1.size()>0) {
@@ -38,7 +38,7 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 						form.setStartDate(""+objs1[0]) ;
 						form.setObservationReason(ConvertSql.parseLong(objs1[1])) ;
 					} else {
-						throw new IllegalArgumentException("Перед созданием движения по участкам необходимо указать дату взятия на учет и причину наблюдения") ;
+						throw new IllegalArgumentException("Перед созданием движения по участкам необходимо указать дату взятия на учет, либо дату первого обращения и причину наблюдения") ;
 					}
 				}
 			} else {

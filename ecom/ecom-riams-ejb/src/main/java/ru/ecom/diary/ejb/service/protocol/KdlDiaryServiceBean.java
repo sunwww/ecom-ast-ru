@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.TreeMap;
 import javax.ejb.Remote;
@@ -112,6 +114,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		if (aPatient != null) {
 	        String lastname = upperCase(aPatient.getChildText("LastName"));
 	        String fmn = upperCase(aPatient.getChildText("FirstMiddleName")) ;
+	        String syncPat = upperCase(aPatient.getChildText("InsuranceNumber")) ;
 	        String[] firstMiddleName = fmn==null? null: fmn.split(" ") ;
 	        String firstname = (firstMiddleName==null||firstMiddleName.length<1)?"":firstMiddleName[0];
 	        String middlename = (firstMiddleName==null||firstMiddleName.length<2)?"":firstMiddleName[1];
@@ -133,7 +136,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	        		.setMaxResults(2).getResultList();
 			}
 	        Patient patientId = (list!=null && list.size()==1)?list.get(0):null;
-	        
+	        aExternalMedservice.setPatientSync(syncPat) ;
 	        aExternalMedservice.setPatient(patientId);
 	        aExternalMedservice.setPatientLastname(lastname);
 	        aExternalMedservice.setPatientFirstname(firstname);

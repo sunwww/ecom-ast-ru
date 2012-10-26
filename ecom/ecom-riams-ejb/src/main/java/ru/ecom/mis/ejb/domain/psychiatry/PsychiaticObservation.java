@@ -9,8 +9,10 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocCriminalCodeArticle;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychAmbulatoryCare;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychDispensaryGroup;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychStrikeOffReasonAdn;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
   * Психиатрическое наблюдение
@@ -125,4 +127,32 @@ private LpuAreaPsychCareCard theLpuAreaPsychCareCard;
 	
 	/** Дата окончания наблюдения */
 	private Date theFinishDate;
+	
+	/** Статья уголовного кодекса */
+	@Comment("Статья уголовного кодекса")
+	@OneToOne
+	public VocCriminalCodeArticle getCriminalCodeArticle() {
+		return theCriminalCodeArticle;
+	}
+
+	public void setCriminalCodeArticle(VocCriminalCodeArticle aCriminalCodeArticle) {
+		theCriminalCodeArticle = aCriminalCodeArticle;
+	}
+
+	/** Статья уголовного кодекса */
+	private VocCriminalCodeArticle theCriminalCodeArticle;
+	
+	/** Причина снятия */
+	@Comment("Причина снятия")
+	@OneToOne
+	public VocPsychStrikeOffReasonAdn getStrikeOffReason() {
+		return theStrikeOffReason;
+	}
+
+	public void setStrikeOffReason(VocPsychStrikeOffReasonAdn aStrikeOffReason) {
+		theStrikeOffReason = aStrikeOffReason;
+	}
+
+	/** Причина снятия */
+	private VocPsychStrikeOffReasonAdn theStrikeOffReason;
 }

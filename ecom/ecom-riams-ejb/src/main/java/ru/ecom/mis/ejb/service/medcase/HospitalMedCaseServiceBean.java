@@ -412,6 +412,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	hospital.setRwDate(DateFormat.parseSqlDate(aRwDate)) ;
     	theManager.persist(hospital) ;
     }
+    public void setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient) {
+    	theManager.createNativeQuery("update Document set patient_id='"+aPatient+"' where NumberDoc='"+aNumberDoc+"' and OrderDate=to_date('"+aOrderDate+"','dd.mm.yyyy')").executeUpdate() ;
+    }
 
     /**
      * Есть ли открытый случай лечения в отделении

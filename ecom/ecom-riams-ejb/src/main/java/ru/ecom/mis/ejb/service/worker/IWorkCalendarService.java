@@ -23,7 +23,7 @@ public interface IWorkCalendarService {
 			, String aBeginTime, String aEndTime) throws ParseException;
 	// Создать новые времена по специалисту за определенное число
 	 public void getCreateNewTimesBySpecAndDate(String aDate
-			, Long aSpecialist, String aTimes) throws ParseException;
+			, Long aSpecialist, String aTimes,Long aReserveType) throws ParseException;
 	 void generateCalendarByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate) ;
 	 public void deleteCalendarDaysByWorkFunction(WorkCalendar aCalendar,  Date aDateFrom, Date aDateTo);
 	 public void addBusyPatternByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate, Long aPattern);
@@ -32,5 +32,5 @@ public interface IWorkCalendarService {
 	 public String preRecordByPatient(String aUsername,Long aTime
 				,String aPatientInfo,Long aPatientId);
 	 public String addCreateNewTimeBySpecAndDate(String aDate
-				, Long aSpecialist, String aTime) throws ParseException ;
+				, Long aSpecialist, String aTime,Long aReserveType) throws ParseException ;
 }

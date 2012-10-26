@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 
+import java.sql.Date;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
@@ -585,4 +587,5 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Направитель */
 	private Long theOrderLpu;
+
 }

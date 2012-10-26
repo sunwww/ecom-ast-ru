@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDayPattern;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarReservePattern;
@@ -61,4 +62,17 @@ public class WorkCalendarTimePattern extends BaseEntity{
 	 * Тип занятости
 	 */
 	private VocWorkBusy theWorkBusy;
+	/** Резерв времени */
+	@Comment("Резерв времени")
+	@OneToOne
+	public VocServiceReserveType getReserveType() {
+		return theReserveType;
+	}
+
+	public void setReserveType(VocServiceReserveType aReserveType) {
+		theReserveType = aReserveType;
+	}
+
+	/** Резерв времени */
+	private VocServiceReserveType theReserveType;
 }

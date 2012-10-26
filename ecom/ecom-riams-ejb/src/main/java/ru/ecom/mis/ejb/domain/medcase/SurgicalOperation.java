@@ -474,5 +474,29 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Аборта */
 	private VocAbortion theAbortion;
+	
+	/** Дата печати */
+	@Comment("Дата печати")
+	public Date getPrintDate() {return thePrintDate;}
+	public void setPrintDate(Date aPrintDate) {thePrintDate = aPrintDate;}
+
+	/** Дата печати */
+	private Date thePrintDate;
+	
+	/** Время печати */
+	@Comment("Время печати")
+	public Time getPrintTime() {return thePrintTime;}
+	public void setPrintTime(Time aPrintTime) {thePrintTime = aPrintTime;}
+
+	/** Время печати */
+	private Time thePrintTime;
+	
+	/** Пользователь, посл. распечат. документ */
+	@Comment("Пользователь, посл. распечат. документ")
+	public String getPrintUsername() {return thePrintUsername;}
+	public void setPrintUsername(String aPrintUsername) {thePrintUsername = aPrintUsername;}
+
+	/** Пользователь, посл. распечат. документ */
+	private String thePrintUsername;
 
 }

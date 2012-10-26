@@ -26,13 +26,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Коечный фонд")
 @Entity
-//@AIndexes({
-//	    @AIndex(unique = true, properties= {"lpu,serviceStream,bedType"})})
 @AIndexes(
 	{
 		@AIndex(unique= false, properties = {"lpu","serviceStream","bedType","bedSubType","reductionType","dateStart"})
 		,@AIndex(unique= false, properties = {"bedType"})
-			,@AIndex(unique= false, properties = {"lpu"})
+		,@AIndex(unique= false, properties = {"lpu"})
+		,@AIndex(unique= false, properties = {"serviceStream"})
+			,@AIndex(unique= false, properties = {"bedSubType"})
 		}
 )
 @Table(schema="SQLUser")

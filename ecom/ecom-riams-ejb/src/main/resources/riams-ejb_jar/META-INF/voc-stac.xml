@@ -1,5 +1,55 @@
 <vocconfig>
-	
+	<voc id="slsByPregnancy" type="NativeVocService">
+		<NativeVocService
+		    	from=" MedCase as sls "
+		    	parent='preg.id=:parent'
+		    	nameId="sls.id"
+		    	join=" left join Pregnancy preg on preg.patient_id=sls.patient_id
+		    		left join StatisticStub ss on ss.medCase_id=sls.id
+		    	"
+		    	queryAppend="sls.dtype='HospitalMedCase'"
+		    	order=""
+		    	queried=" ss.code like upper(:query) "
+		    	names = "'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
+		/>
+	</voc>
+	<voc id="sloBySls" type="NativeVocService">
+		<NativeVocService
+		    	from=" MedCase as slo "
+		    	parent='slo.parent_id=:parent'
+		    	nameId="slo.id"
+		    	join=" left join MisLpu ml on ml.id=slo.department_id
+		    	"
+		    	queryAppend="slo.dtype='DepartmentMedCase'"
+		    	order=""
+		    	queried=" ml.name like upper(:query) "
+		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy'),'')"
+		/>
+	</voc>
+	<voc id="hospitalRoomByLpu" type="NativeVocService">
+		<NativeVocService
+		    	from=" WorkPlace as wp "
+		    	parent='wp.lpu_id=:parent'
+		    	nameId="wp.id"
+		    	join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
+		    	queryAppend=" wp.dtype='HospitalRoom'"
+		    	order=""
+		    	queried=" wp.name like upper(:query) "
+		    	names = "'№'||wp.name||' ('||wp1.name||')'"
+		/>
+	</voc>
+	<voc id="hospitalBedByRoom" type="NativeVocService">
+		<NativeVocService
+		    	from=" WorkPlace as wp "
+		    	parent='wp.parent_id=:parent'
+		    	nameId="wp.id"
+		    	join=""
+		    	queryAppend=" wp.dtype='HospitalBed'"
+		    	order=""
+		    	queried=" wp.name like upper(:query) "
+		    	names = "wp.name"
+		/>
+	</voc>
 	    <voc id='allPolicyByPatient' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" MedPolicy as mp "

@@ -175,6 +175,7 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 	
 	/** Фамилия принявшего сообщение */
 	@Comment("Фамилия принявшего сообщение")
+	@Persist
 	public Long getRecieverEmploye() {return theRecieverEmploye;}
 	public void setRecieverEmploye(Long aRecieverEmploye) {theRecieverEmploye = aRecieverEmploye;}
 
@@ -199,6 +200,7 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/** Подтип сообщения*/
 	@Comment("Подтип сообщения")
+	@Persist
 	public Long getPhoneMessageSubType() {return thePhoneMessageSubType;}
 	/** Подтип сообщения*/
 	public void setPhoneMessageSubType(Long a_Property) {
@@ -208,4 +210,12 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/** Подтип сообщения*/
 	private Long thePhoneMessageSubType;
+	/** Диагноз */
+	@Comment("Диагноз")
+	@Persist
+	public String getDiagnosis() {return theDiagnosis;}
+	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
+
+	/** Диагноз */
+	private String theDiagnosis;
 }

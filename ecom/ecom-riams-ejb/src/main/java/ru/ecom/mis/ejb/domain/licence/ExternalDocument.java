@@ -199,4 +199,12 @@ public class ExternalDocument extends Document {
 	private VocExternalDocumentType theType;
 	/** Ссылка на файл */
 	private String theReferenceTo;
+	
+	/** Код синхронизации */
+	@Comment("Код синхронизации")
+	public String getPatientSync() {return thePatientSync;}
+	public void setPatientSync(String aPatientSync) {thePatientSync = aPatientSync;}
+
+	/** Код синхронизации */
+	private String thePatientSync;
 }
