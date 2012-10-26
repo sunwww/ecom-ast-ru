@@ -39,7 +39,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Стационарный случай медицинского обслуживания")
 @Entity
 @AIndexes({
-//    @AIndex(properties="parent", table="MedCase")
 	@AIndex(properties="statisticStub", table="MedCase")
     ,@AIndex(properties="result", table="MedCase")
 }) 

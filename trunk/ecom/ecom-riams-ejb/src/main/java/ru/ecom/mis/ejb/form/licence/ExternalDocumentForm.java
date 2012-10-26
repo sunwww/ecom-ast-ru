@@ -199,5 +199,13 @@ public class ExternalDocumentForm extends DocumentForm {
 	 * Направившее ЛПУ (подразделение)
 	 */
 	private String theOrderLpu;
+	/** Код синхронизации */
+	@Comment("Код синхронизации")
+	@Persist
+	public String getPatientSync() {return thePatientSync;}
+	public void setPatientSync(String aPatientSync) {thePatientSync = aPatientSync;}
+
+	/** Код синхронизации */
+	private String thePatientSync;
 }
 

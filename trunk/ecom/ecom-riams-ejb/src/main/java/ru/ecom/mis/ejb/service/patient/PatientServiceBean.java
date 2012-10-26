@@ -624,83 +624,120 @@ public class PatientServiceBean implements IPatientService {
 	 */
 	public List<PatientForm> findPatient(Long aLpuId, Long aLpuAreaId,
 			String aLastname) {
+		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
+		System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
+		System.out.print(isEnableLimitAreas) ;
+		System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
 		
-		if (CAN_DEBUG) {
-			LOG.debug("findPatient() aLpuId = " + aLpuId + ", aLpuAreaId = "
-					+ aLpuAreaId + ", aLastname = " + aLastname);
-		}
-		QueryClauseBuilder builder = new QueryClauseBuilder();
-		builder.add("lpu_id", aLpuId);
-		builder.add("lpuArea_id", aLpuAreaId);
-		if (!StringUtil.isNullOrEmpty(aLastname)) {
-			StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
-			if (st.hasMoreTokens())
-				builder.addLike("lastname", st.nextToken() + "%");
-			if (st.hasMoreTokens())
-				builder.addLike("firstname", st.nextToken() + "%");
-			if (st.hasMoreTokens())
-				builder.addLike("middlename", st.nextToken() + "%");
-		}
-		Query query = builder.build(theManager, "from Patient where",
-				" order by lastname,firstname");
-
 		List<PatientForm> ret = new LinkedList<PatientForm>();
-		appendToList(query, ret);
-
-		// Поиск по специальному прикреплению
-		builder = new QueryClauseBuilder();
-		builder.add("LpuAttachedByDepartment.lpu_id", aLpuId);
-		// builder.add("LpuAttachedByDepartment.area_id", aLpuAreaId);
-		if (!StringUtil.isNullOrEmpty(aLastname)) {
-			StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
-			if (st.hasMoreTokens())
-				builder.addLike("lastname", st.nextToken() + "%");
-			if (st.hasMoreTokens())
-				builder.addLike("firstname", st.nextToken() + "%");
-			if (st.hasMoreTokens())
-				builder.addLike("middlename", st.nextToken() + "%");
-		}
-
-		if (aLpuId != null && aLpuId != 0 && ret.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			sb
-					.append("SELECT patient.id, lastname, firstname, middlename 					");
-			sb.append("       , MisLpu.name   					");
-			sb.append("  FROM Patient, LpuAttachedByDepartment, MisLpu ");
-			sb.append(" WHERE 													");
-			sb
-					.append("       MisLpu.id      = LpuAttachedByDepartment.lpu_id	");
-			// sb.append(" AND LpuArea.id = LpuAttachedByDepartment.area_id ") ;
-			sb
-					.append("   AND Patient.id = LpuAttachedByDepartment.patient_id 	");
-			// sb.append(" AND LpuAttachedByDepartment.lpu_id = :lpu ") ;
-			// sb.append(" ORDER BY lastname, firstname ") ;
-
-			Query query2 = builder.buildNative(theManager, sb.toString(),
-					"ORDER BY lastname, firstname");
-
-			// , "select p.lastname, p.firstname, from Patient p,
-			// LpuAttachedByDepartment lpuat" +
-			// " where p.lpu=lpuat.lpu"
-			// , " order by p.lastname,p.firstname");
-			// appendToList(query2, ret);
-			// Query query2 = theManager.createNativeQuery(sb.toString());
-			// query2.setParameter("lpu", aLpuId);
-			// List l = query2.getResultList();
-			appendNativeToList(query2, ret);
-
-		}
-		
-		// поиск по полису
-		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-			appendNativeToList(findByMedCardNumber(aLastname), ret);
-		}
-		// Поиск по коду синхронизации
-		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-			appendNativeToList(findByPatientSync(aLastname), ret);
-		}
-		if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-			appendNativeToList(findByPolicy(aLpuId, aLpuAreaId, aLastname), ret);
+		if (isEnableLimitAreas) {
+			String username = theSessionContext.getCallerPrincipal().toString() ;
+			QueryClauseBuilder builder = new QueryClauseBuilder();
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday from patient p ") ;
+			sql.append(" left join psychiatricCareCard pcc on pcc.patient_id=p.id") ;
+			sql.append(" left join lpuareapsychcarecard lpcc on lpcc.careCard_id=pcc.id") ;
+			sql.append(" left join lpuarea la on la.id = lpcc.lpuarea_id") ;
+			sql.append(" left join mislpu ml on ml.id=la.lpu_id") ;
+			sql.append(" left join worker w on w.lpu_id=ml.id") ;
+			sql.append(" left join workfunction wf on wf.worker_id=w.id") ;
+			sql.append(" left join secuser su on su.id=wf.secuser_id") ;
+			
+			sql.append(" where") ;
+			if (!StringUtil.isNullOrEmpty(aLastname)) {
+				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
+				if (st.hasMoreTokens())
+					builder.addLike("p.lastname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("p.firstname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("p.middlename", st.nextToken() + "%");
+				builder.add("su.login", username) ;
+				
+				builder.addIsNull("lpcc.transferDate", "") ;
+				builder.addIsNull("lpcc.finishDate", "") ;
+				
+				Query query = builder.buildNative(theManager, sql.toString()," order by p.lastname,p.firstname");
+				appendNativeToList(query, ret);
+			}
+		} else {
+			if (CAN_DEBUG) {
+				LOG.debug("findPatient() aLpuId = " + aLpuId + ", aLpuAreaId = "
+						+ aLpuAreaId + ", aLastname = " + aLastname);
+			}
+			QueryClauseBuilder builder = new QueryClauseBuilder();
+			builder.add("lpu_id", aLpuId);
+			builder.add("lpuArea_id", aLpuAreaId);
+			if (!StringUtil.isNullOrEmpty(aLastname)) {
+				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
+				if (st.hasMoreTokens())
+					builder.addLike("lastname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("firstname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("middlename", st.nextToken() + "%");
+			}
+			Query query = builder.build(theManager, "from Patient where",
+					" order by lastname,firstname");
+	
+			///List<PatientForm> ret = new LinkedList<PatientForm>();
+			appendToList(query, ret);
+	
+			// Поиск по специальному прикреплению
+			builder = new QueryClauseBuilder();
+			builder.add("LpuAttachedByDepartment.lpu_id", aLpuId);
+			// builder.add("LpuAttachedByDepartment.area_id", aLpuAreaId);
+			if (!StringUtil.isNullOrEmpty(aLastname)) {
+				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
+				if (st.hasMoreTokens())
+					builder.addLike("lastname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("firstname", st.nextToken() + "%");
+				if (st.hasMoreTokens())
+					builder.addLike("middlename", st.nextToken() + "%");
+			}
+	
+			if (aLpuId != null && aLpuId != 0 && ret.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				sb
+						.append("SELECT patient.id, lastname, firstname, middlename 					");
+				sb.append("       , MisLpu.name   					");
+				sb.append("  FROM Patient, LpuAttachedByDepartment, MisLpu ");
+				sb.append(" WHERE 													");
+				sb
+						.append("       MisLpu.id      = LpuAttachedByDepartment.lpu_id	");
+				// sb.append(" AND LpuArea.id = LpuAttachedByDepartment.area_id ") ;
+				sb
+						.append("   AND Patient.id = LpuAttachedByDepartment.patient_id 	");
+				// sb.append(" AND LpuAttachedByDepartment.lpu_id = :lpu ") ;
+				// sb.append(" ORDER BY lastname, firstname ") ;
+	
+				Query query2 = builder.buildNative(theManager, sb.toString(),
+						"ORDER BY lastname, firstname");
+	
+				// , "select p.lastname, p.firstname, from Patient p,
+				// LpuAttachedByDepartment lpuat" +
+				// " where p.lpu=lpuat.lpu"
+				// , " order by p.lastname,p.firstname");
+				// appendToList(query2, ret);
+				// Query query2 = theManager.createNativeQuery(sb.toString());
+				// query2.setParameter("lpu", aLpuId);
+				// List l = query2.getResultList();
+				appendNativeToList(query2, ret);
+	
+			}
+			
+			// поиск по полису
+			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
+				appendNativeToList(findByMedCardNumber(aLastname), ret);
+			}
+			// Поиск по коду синхронизации
+			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
+				appendNativeToList(findByPatientSync(aLastname), ret);
+			}
+			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
+				appendNativeToList(findByPolicy(aLpuId, aLpuAreaId, aLastname), ret);
+			}
 		}
 		return ret;
 		// new query

@@ -9,9 +9,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart;
 import ru.ecom.mis.ejb.domain.lpu.BedFund;
+import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
+import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -19,6 +23,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Случай лечения в отделении")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="bedNumber", table="MedCase")
+    ,@AIndex(properties="department", table="MedCase")
+}) 
 public class DepartmentMedCase extends HospitalMedCase {
 	
 	/** Дата перевода */
@@ -51,13 +59,15 @@ public class DepartmentMedCase extends HospitalMedCase {
 
 	/** № палаты */
 	@Comment("№ палаты")
-	public String getRoomNumber() {return theRoomNumber;	}
-	public void setRoomNumber(String aRoomNumber) {theRoomNumber = aRoomNumber;}
+	@OneToOne
+	public HospitalRoom getRoomNumber() {return theRoomNumber;	}
+	public void setRoomNumber(HospitalRoom aRoomNumber) {theRoomNumber = aRoomNumber;}
 	
 	/** № койки */
 	@Comment("№ койки")
-	public String getBedNumber() {return theBedNumber;}
-	public void setBedNumber(String aBedNumber) {theBedNumber = aBedNumber;}
+	@OneToOne
+	public HospitalBed getBedNumber() {return theBedNumber;}
+	public void setBedNumber(HospitalBed aBedNumber) {theBedNumber = aBedNumber;}
 	
 	/** Тип палаты */
 	@Comment("Тип палаты")
@@ -68,7 +78,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	/** Тип палаты */
 	private VocRoomType theRoomType;
 	/** № койки */
-	private String theBedNumber;
+	private HospitalBed theBedNumber;
 
 
 	@Transient
@@ -102,7 +112,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 			;
 	}
 	/** № палаты */
-	private String theRoomNumber;
+	private HospitalRoom theRoomNumber;
 	/** Коечный фонд */
 	private BedFund theBedFund;
 	/** Предыдущий случай лечения в отделении */

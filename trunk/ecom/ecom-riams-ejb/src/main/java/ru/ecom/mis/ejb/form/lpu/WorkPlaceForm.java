@@ -46,6 +46,14 @@ public class WorkPlaceForm extends IdEntityForm {
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;}
 
+	/** Не актуален */
+	@Comment("Неактуален")
+	@Persist
+	public Boolean getIsNoActuality() {return theIsNoActuality;}
+	public void setIsNoActuality(Boolean aIsNoActuality) {theIsNoActuality = aIsNoActuality;}
+
+	/** Неактуален */
+	private Boolean theIsNoActuality;
 	/** Комментарий */
 	private String theComment;
 	/** Родитель */

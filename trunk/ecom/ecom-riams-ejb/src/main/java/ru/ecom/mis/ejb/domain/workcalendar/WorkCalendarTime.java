@@ -17,6 +17,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -200,4 +201,17 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Пользователь, создавший пред.запись */
 	private String theCreatePreRecord;
 	
+	/** Резерв времени */
+	@Comment("Резерв времени")
+	@OneToOne
+	public VocServiceReserveType getReserveType() {
+		return theReserveType;
+	}
+
+	public void setReserveType(VocServiceReserveType aReserveType) {
+		theReserveType = aReserveType;
+	}
+
+	/** Резерв времени */
+	private VocServiceReserveType theReserveType;
 }

@@ -5,12 +5,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -19,6 +19,7 @@ import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature;
+import ru.ecom.mis.ejb.domain.birth.voc.VocHistologyResult;
 import ru.ecom.mis.ejb.domain.birth.voc.VocMembranesBreakPlace;
 import ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaIntegrity;
 import ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation;
@@ -37,6 +38,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { 
 		@AIndex(properties = { "medCase" }) 
+		,@AIndex(properties = { "pregnancy" }) 
 	}
 )
 public class ChildBirth extends BaseEntity{
@@ -243,12 +245,12 @@ public class ChildBirth extends BaseEntity{
 
 	/** Гистология плаценты */
 	@Comment("Гистология плаценты")
-	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getHistology() {return theHistology;}
-	public void setHistology(String aHistology) {theHistology = aHistology;}
+	@OneToOne
+	public VocHistologyResult getHistology() {return theHistology;}
+	public void setHistology(VocHistologyResult aHistology) {theHistology = aHistology;}
 
 	/** Гистология плаценты */
-	private String theHistology;
+	private VocHistologyResult theHistology;
 	/** Время начала потуг */
 	private Time theTravailStartTime;
 	/** Дата начала потуг */
@@ -325,4 +327,58 @@ public class ChildBirth extends BaseEntity{
 	private String thePostNatalDisease;
 	/** Болезнь, не зависящая от родов */
 	private String theNotPostNatalDisease;
+	/** Беременность */
+	@Comment("Беременность")
+	@OneToOne
+	public Pregnancy getPregnancy() {return thePregnancy;}
+	public void setPregnancy(Pregnancy aPregnancy) {thePregnancy = aPregnancy;}
+
+	/** Беременность */
+	private Pregnancy thePregnancy;
+	
+	@Transient
+	public MedCase getSls(){
+		return theMedCase!=null?theMedCase.getParent():null ;
+	}
+		
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private Time theEditTime;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Дата создания */
+	private Date theCreateDate;
+
 }

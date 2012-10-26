@@ -34,6 +34,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeExample;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -435,7 +436,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			
 	 // Создать новые времена по специалисту за определенное число
 	 public void getCreateNewTimesBySpecAndDate(String aDate
-			 , Long aSpecialist, String aTimes) throws ParseException {
+			 , Long aSpecialist, String aTimes, Long aReserveType) throws ParseException {
 		 
 		 if (aTimes!=null) {
 			 aTimes=aTimes.replace(" ", "") ;
@@ -450,7 +451,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					 WorkCalendarDay day = createCalendarDay(wc,date) ;
 					 for (String time:times) {
 						 java.sql.Time t = DateFormat.parseSqlTime(time) ;
-						 createCalendarTime(t, day) ;
+						 createCalendarTime(t,aReserveType, day) ;
 					 }
 				 }
 			 }
@@ -459,7 +460,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	 }
 	// Создать новые времена по специалисту за определенное число
 	 public String addCreateNewTimeBySpecAndDate(String aDate
-			, Long aSpecialist, String aTime) throws ParseException {
+			, Long aSpecialist, String aTime,Long aReserveType) throws ParseException {
 		 
 		 if (aTime!=null) {
 			 aTime=aTime.replace(" ", "") ;
@@ -472,7 +473,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					 WorkCalendar wc = list.get(0) ;
 					 WorkCalendarDay day = createCalendarDay(wc,date) ;
 					 java.sql.Time t = DateFormat.parseSqlTime(aTime) ;
-					 Long tid = createCalendarTime(t, day) ;
+					 Long tid = createCalendarTime(t,aReserveType, day) ;
 					 return tid!=null?new StringBuilder().append(tid)
 							 .append("#").append(aTime).toString():"" ;
 				 }
@@ -811,7 +812,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					
 					//WorkCalendarTime time = new WorkCalendarTime() ;
 					WorkCalendarTimeExample ex = (WorkCalendarTimeExample) timePattern ;
-					createCalendarTime(ex.getCalendarTime(), day);
+					createCalendarTime(ex.getCalendarTime(),ex.getReserveType(), day);
 					//times.add(time) ;
 				}
 			}
@@ -882,7 +883,18 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	 * Добавляем новый WorkCalendarTime по времени (aTime) и дню (aWorkCalendarDay)
 	 *  Проверяем, не занято ли такое время
 	 */
-	private Long createCalendarTime(java.sql.Time aTime, WorkCalendarDay aWorkCalendarDay) {
+	private Long createCalendarTime(java.sql.Time aTime
+			, Long aReserveType
+			, WorkCalendarDay aWorkCalendarDay) {
+		VocServiceReserveType reserveType=null ;
+		if (aReserveType!=null) theManager.find(VocServiceReserveType.class, aReserveType) ;
+		return createCalendarTime(aTime
+				, reserveType
+				, aWorkCalendarDay) ;
+	}
+	private Long createCalendarTime(java.sql.Time aTime
+			, VocServiceReserveType aReserveType
+			, WorkCalendarDay aWorkCalendarDay) {
 		LOG.info(new StringBuilder().append("----------++createCalendarTime").toString()) ;
 		// проверяем на занятость
 		if (aTime== null) return null ;
@@ -899,6 +911,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			t.setWorkCalendarDay(aWorkCalendarDay) ;
 			//Time sqlTime = new java.sql.Time(aTime.getTime()) ;
 			t.setTimeFrom(aTime) ;
+			t.setAdditional(true) ;
+			t.setReserveType(aReserveType) ;
 			theManager.persist(t) ;
 			return t.getId() ;
 		}	

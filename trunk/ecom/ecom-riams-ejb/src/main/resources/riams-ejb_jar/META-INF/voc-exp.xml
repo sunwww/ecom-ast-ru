@@ -195,6 +195,7 @@
                 names   = 'code,name'
                 queried = 'code,name'
                 queryConvertType="FIRST_LAT_UPPER"
+                queryAppend="(noActuality is null or noActuality=false)"
                 />
     </voc>
     <voc id='vocDiagnosis' type='EntityVocService'>

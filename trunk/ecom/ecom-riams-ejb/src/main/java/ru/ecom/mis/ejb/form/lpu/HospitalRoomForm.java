@@ -46,8 +46,29 @@ public class HospitalRoomForm extends WorkPlaceForm {
 	/** Лечебное учреждение */
 	private Long theLpu;
 
+	/** Пол */
+	@Comment("Пол")
+	@Persist
+	public Long getSex() {return theSex;}
+	public void setSex(Long aSex) {theSex = aSex;}
+
+	/** Пол */
+	private Long theSex;
 	/** Тип коек */
 	private Long theRoomType;
 	/** Количество коек */
 	private Long theBedCapacity;
+	/** Кол-во коек в палате */
+	@Comment("Кол-во коек в палате")
+	@Persist
+	public Long getCountBed() {
+		return theCountBed;
+	}
+
+	public void setCountBed(Long aCountBed) {
+		theCountBed = aCountBed;
+	}
+
+	/** Кол-во коек в палате */
+	private Long theCountBed;
 }

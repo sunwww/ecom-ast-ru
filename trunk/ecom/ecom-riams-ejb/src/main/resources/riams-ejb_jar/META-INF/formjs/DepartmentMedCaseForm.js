@@ -101,6 +101,11 @@ function onPreSave(aForm,aEntity, aContext) {
 			}
 		}
 	}
+	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
+	if (isDoc && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
+		throw "При госпитализации в отделение необходимо указывать палату и койку" ;
+	}
+
 }
 
 //При сохранении

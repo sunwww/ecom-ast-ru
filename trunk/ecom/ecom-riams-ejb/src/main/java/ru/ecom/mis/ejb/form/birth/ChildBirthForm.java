@@ -1,10 +1,7 @@
 package ru.ecom.mis.ejb.form.birth;
 
-import javax.persistence.Column;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.ChildBirth;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -266,11 +263,11 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Гистология плаценты */
 	@Comment("Гистология плаценты")
 	@Persist
-	public String getHistology() {return theHistology;}
-	public void setHistology(String aHistology) {theHistology = aHistology;}
+	public Long getHistology() {return theHistology;}
+	public void setHistology(Long aHistology) {theHistology = aHistology;}
 
 	/** Гистология плаценты */
-	private String theHistology;
+	private Long theHistology;
 	/** СМО */
 	private Long theMedCase;
 	/** Время начала потуг */
@@ -345,4 +342,66 @@ public class ChildBirthForm extends IdEntityForm {
 	private String theTreatmentFeatures;
 	/** Направление плаценты на гистологию */
 	private Boolean thePlacentaHistologyOrder;
+	/** Беременность */
+	@Comment("Беременность")
+	@Persist
+	public Long getPregnancy() {return thePregnancy;}
+	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+
+	/** Беременность */
+	private Long thePregnancy;
+	/** Госпитализация */
+	@Comment("Госпитализация")
+	@Persist
+	public Long getSls() {return theSls;}
+	public void setSls(Long aSls) {theSls = aSls;}
+
+	/** Госпитализация */
+	private Long theSls;
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	@DateString @DoDateString @Persist
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@DateString @DoDateString @Persist
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	@TimeString @DoTimeString @Persist
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	@TimeString @DoTimeString @Persist
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private String theEditTime;
+	/** Время создания */
+	private String theCreateTime;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Дата создания */
+	private String theCreateDate;
 }

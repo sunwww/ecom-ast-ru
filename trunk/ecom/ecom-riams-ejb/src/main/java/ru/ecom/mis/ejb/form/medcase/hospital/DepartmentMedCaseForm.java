@@ -197,8 +197,8 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	/** № палаты */
 	@Comment("№ палаты")
 	@Persist
-	public String getRoomNumber() {return theRoomNumber;	}
-	public void setRoomNumber(String aRoomNumber) {theRoomNumber = aRoomNumber;}
+	public Long getRoomNumber() {return theRoomNumber;	}
+	public void setRoomNumber(Long aRoomNumber) {theRoomNumber = aRoomNumber;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
@@ -219,8 +219,8 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	/** № койки */
 	@Comment("№ койки")
 	@Persist
-	public String getBedNumber() {return theBedNumber;}
-	public void setBedNumber(String aBedNumber) {theBedNumber = aBedNumber;}
+	public Long getBedNumber() {return theBedNumber;}
+	public void setBedNumber(Long aBedNumber) {theBedNumber = aBedNumber;}
 
 	/** Информация о номере стат.карты СЛС */
 	@Comment("Информация о номере стат.карты СЛС")
@@ -246,13 +246,13 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	/** Информация о номере стат.карты СЛС */
 	private String theStatCardBySLS;
 	/** № койки */
-	private String theBedNumber;
+	private Long theBedNumber;
 	/** Поток обслуживания*/
 	private Long theServiceStream;
 	/** ЛПУ и дата начала (необходима для вычисления профиля коек из фонда) */
 	private String thelpuAndDate;
 	/** № палаты */
-	private String theRoomNumber;
+	private Long theRoomNumber;
 	/** Коечный фонд */
 	private Long theBedFund;
 	/** Предыдущий случай лечения в отделении */

@@ -369,7 +369,7 @@ function printReestrByDay(aCtx,aParams) {
 		+" left join MisLpu ml1 on ml1.id=w.lpu_id "
 	    +" where m.DTYPE='HospitalMedCase' "+period+""
 	    +" and m.deniedHospitalizating_id is not null"
-	    +"  "+emer+pigeonHoleId1+departmentId+" order by m."+dateI+",ml.name,pat.lastname,pat.firstname,pat.middlename";
+	    +"  "+emer+pigeonHoleId1+departmentId+" order by pat.lastname,pat.firstname,pat.middlename";
 		
 		var deniedlist = new java.util.ArrayList() ;
 		var j=1 ;
@@ -425,6 +425,7 @@ function printAddressSheetByHospital(aCtx, aParams) {
 	var pat = medcase.patient ;
 	var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
 	var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
+	
 	if (pat!=null) {
 		sn++ ;
 		var obj = saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2) ;
@@ -515,8 +516,11 @@ function printAddressSheetArrival(aCtx, aParams) {
 			var compilationDate = medcase.dateStart!=null?FORMAT_2.format(medcase.dateStart):"" ;
 			var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
 			if (isPat && pat!=null) {
-				sn++ ;
-				ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
+				var age = (new java.util.Date().getTime() - pat.birthday.getTime())/(3600000*24*365) ;
+				if (age>1) {
+					sn++ ;
+					ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
+				}
 			}
 			if (isKin && kinsman!=null) {
 				sn++ ;
@@ -627,6 +631,14 @@ function printSurOperation(aCtx,aParams) {
 	map.put("so",surOperation) ;
 	map.put("medCase",medCase) ;
 	map.put("pat",medCase.patient) ;
+	var current = new java.util.Date() ;
+	var curDate = new java.sql.Date(current.getTime()) ;
+	var curTime = new java.sql.Time(current.getTime()) ;
+	var username = aCtx.sessionContext.callerPrincipal.name ;
+	
+	surOperation.setPrintDate(curDate) ;
+	surOperation.setPrintTime(curTime) ;
+	surOperation.setPrintUsername(username) ;
 	var list=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename) as anes,list(' '||vam.name||' (кол-во '||a.duration||')') as methodan from Anesthesia a"
 		+" left join WorkFunction awf on awf.id=a.anesthesist_id"
 		+" left join Worker aw on aw.id=awf.worker_id"
@@ -660,6 +672,8 @@ function printSurOperation(aCtx,aParams) {
 			) ;
 	return map ;
 }
+
+
 
 function printPregHistoryByMC(aCtx, aParams) {
 	//var pregHistory = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.PregnancyHistory
@@ -732,11 +746,12 @@ function recordPolicy(policies) {
 		}
 	}
 	if (!rec.equals("")) {
+		map.put("policyInfo",rec);
 		map.put("policyIs","");
 	} else {
+		map.put("policyInfo","");
 		map.put("policyIs","Полиса НЕТ");
 	}
-	map.put("policyInfo",rec);
 }
 
 function recordPatient(medCase,aCtx) {
@@ -770,22 +785,7 @@ function recordPatient(medCase,aCtx) {
 	map.put("pat.wPost",medCase.patient.workPost) ;
 	//Документ, удостоверяющий личность
 	map.put("pat.identityCard",patient.passportType);
-	
-	/*
-	 final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-        StringBuilder sb = new StringBuilder();
-        if (thePassportType!=null) sb.append(thePassportType.getName()).append(" ") ;
-        addNotEmpty(sb, thePassportSeries) ;
-        sb.append(" ") ;
-        addNotEmpty(sb, thePassportNumber) ;
-        if(thePassportDateIssue!=null) {
-            sb.append(", выдан ") ;
-        }
-        addNotEmpty(sb, thePassportDateIssue!=null ? FORMAT.format(thePassportDateIssue) : "") ;
-        sb.append(" ") ;
-        addNotEmpty(sb, thePassportWhomIssued) 
-	 */
-	
+
 	var cardInfo = patient.passportType!=null?patient.passportType.name:"" ;
 	cardInfo=cardInfo+" "+(patient.passportSeries!=null?patient.passportSeries:"") ;
 	cardInfo=cardInfo+" "+(patient.passportNumber!=null&&patient.passportNumber!=""?"№"+patient.passportNumber:"") ;
@@ -840,16 +840,8 @@ function recordPatient(medCase,aCtx) {
 	//опьянение
 	if(medCase.intoxication!=null){
 		map.put("intoxication",medCase.intoxication.name) ;
-	/*
-	if(medCase.intoxication.code.equals("1"))	{map.put("intoxication","<text:span text:style-name=\"T23\">Алкогольного-1</text:span> Наркотического-2")  ;}
-	else {
-	if(medCase.intoxication.code.equals("2")) map.put("intoxication","Алкогольного-1 <text:span text:style-name=\"T23\">Наркотического-2</text:span>")  ;
-	else map.put("intoxication","Алкогольного-1 Наркотического-2")  ;
-	
-	}
-	*/
 	}else map.put("intoxication","Алкогольного-1 Наркотического-2")  ;
-	//госпиитализирован впервые повтороно
+	//госпитализирован впервые повтороно
 	if(medCase.hospitalization!=null){
 	if(medCase.hospitalization.code=="1") {map.put("hosp","впервые") ;}
 	else {map.put("hosp","повторно") ;}
@@ -862,14 +854,9 @@ function recordPatient(medCase,aCtx) {
 	} else {
 		map.put("pediculInfo","") ;
 	}
-	
-	//Вид оплаты
-	//recordServiseStream("stream",medCase) ;
-	
-	//Вид травмы
-	//recordTrauma("Trauma",medCase) ;
-
 }
+
+
 
 function recordAttendant(medCase,aCtx) {
 	if (medCase.hotelServices!=null && medCase.hotelServices) {
@@ -958,6 +945,7 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		recordDisability(aCtx,slsId,"dis") ;
 
 }
+
 function recordZavOtd(aCtx,aLastOtdId,aField) {
 	if (+aLastOtdId>0) {
 		var sql = "select p.lastname||' '||p.firstname||' '||p.middlename,wf.id,p.lastname " 
@@ -979,6 +967,7 @@ function recordZavOtd(aCtx,aLastOtdId,aField) {
 		map.put(aField+".lastname",null);
 	}
 }
+
 function printConsentBySlo(aCtx,aParams) {
 	var sloId=new java.lang.Long(aParams.get("id")) ;
 	
@@ -1269,8 +1258,7 @@ function printBilling(aCtx, aParams)
 {
 	var id = aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
-		, new java.lang.Long(id)) ;
-
+			, new java.lang.Long(id)) ;
 	//Свединия по пациенту	
 	recordPatient(medCase,aCtx) ;
 	//Диагнозы
@@ -1286,7 +1274,6 @@ function printBilling(aCtx, aParams)
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
-	
 	return map ;
 }
 
@@ -1294,73 +1281,7 @@ function getCode(aKey, aValue)
 {
 	if(aValue!=null) map.put("aKey",aValue.code) ;
 }
-function printProtocols(aCtx, aParams) {
-	var ids1 = aParams.get("id") ;
-	var ids = ids1.split(",") ;
-	//infoSmo(aCtx,ids[0]) ;
-	infoPrint(aCtx,ids[0]) ;
-	var ret = new java.lang.StringBuilder () ;
-	//ret.append(ids) ;
-	//var list = new 
-	//throw ids ;
-	
-	
-	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
-    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
-	//var startDate =  FORMAT_2.parse(obj[0])) ;
-	//var finishDate = FORMAT_1.format( FORMAT_2.parse(obj[1])) ;
-	var current = new java.util.Date() ;
-	var curDate = new java.sql.Date(current.getTime()) ;
-	
-	var curTime = new java.sql.Time(current.getTime()) ;
-	for (var i=0; i < ids.length; i++) {
-		var id1=ids[i] ;
-		var indlast = id1.lastIndexOf("!") ;
-		var id = id1.substring(indlast+1) ;
-		//throw indlast+"--"+id1 +"----"+id;
-		
-		
-		var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
-		, new java.lang.Long(id)) ;
-		protocol.setPrintDate(curDate) ;
-		protocol.setPrintTime(curTime) ;
-		
-		var mapS= new Packages.ru.ecom.mis.ejb.form.medcase.VisitProtocolForm()  ;
-		mapS.timeRegistration=FORMAT_3.format(protocol.timeRegistration);
-		mapS.dateRegistration=FORMAT_2.format(protocol.dateRegistration);
-		mapS.specialistInfo=protocol.specialistInfo ;
-		mapS.setTicket(null) ;
-		mapS.setTypeInfo("") ;
-		var protType=protocol.type ;
-		if (protType!=null) {
-			mapS.typeInfo=protType.name ;
-			//var protType = protType.isPrintAdministrator ;
-			mapS.setTicket(protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
-		}
-		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
-		/*var n = '\n'  ;
-		var items = protocol.record.split(n) ;
-		//mapS.setId(service.id) ;
-		//mapS.setDateExecute(""+service.dateExecute) ;
-		var rec = new java.lang.StringBuilder() ;
-		for (var j = 0; j < items.length; j++) {
-			rec.append(items[j]) ;
-			if (j < items.length-1) rec.append("<text:line-break/>") ;
-			//rec.append("                                                      ");
-		}
-		*/
-		mapS.setRecord(recordMultiValue(protocol.record));
-		
-		//mapS.typeInfo = protocol.medCase.info
-		ret.add(mapS) ;
-		
-	}
-	map.put("protocols",ret) ;
-	
-	return map ;
-}
+
 function printMedServies(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
@@ -1438,7 +1359,7 @@ function printProtocol (aCtx,aParams){
 	
 	return map ;
 }
-	// получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
+// получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 function getAge(aKey,aBirthday,aDate,aManager,aType) {
 	if (aType==null) aType=3 ;
 	if (aDate!=null && aBirthday!=null) {
@@ -1447,6 +1368,7 @@ function getAge(aKey,aBirthday,aDate,aManager,aType) {
 		map.put(aKey,"");
 	}
 }
+
 function toBeOrNotToBe(aKey,aValue) {
 	map.put(aKey,(aValue!=null && aValue==true)? "Да": "Нет") ;
 }
@@ -1468,6 +1390,7 @@ function getAddress(aKey, aAddress,aPat) {
 	map.put(aKey+".info",aPat.getAddressRegistration()) ;
 	map.put(aKey+".real",aPat.getAddressReal()) ;
 }
+
 function getDiagnos(aKey,aDiag) {
 	if (aDiag!=null) {
 		map.put(aKey+".text",aDiag.name) ;

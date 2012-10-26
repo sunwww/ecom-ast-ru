@@ -180,7 +180,7 @@ function printArea(aCtx, aParams) {
 			str1 = " группа " +invGr.name ;
 		}
 		if (typeInv==4) {				
-			str=str+" and inv.dateFrom between "
+			str=str+" and inv.initial='1' and inv.dateFrom between "
 				+dateBegin+" and "+dateEnd ;
 			str1=str1+" первичные" ;
 		} 

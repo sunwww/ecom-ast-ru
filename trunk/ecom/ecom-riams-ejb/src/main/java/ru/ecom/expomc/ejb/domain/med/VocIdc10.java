@@ -98,5 +98,13 @@ public class VocIdc10 extends VocIdCodeName {
 
 	/** Экстренность */
 	private Boolean theEmergency;
+	
+	/** Неактуаленный */
+	@Comment("Неактуаленный")
+	public Boolean getNoActuality() {return theNoActuality;}
+	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+
+	/** Неактуаленный */
+	private Boolean theNoActuality;
 
 }

@@ -206,6 +206,18 @@ private Date theRegistrationDate;
 	private VocLawCourt theLawCourtReplace;
 	/** Дата замены */
 	private Date theDateReplace;
+	/** Дата регистрации замены */
+	@Comment("Дата регистрации замены")
+	public Date getRegistrationReplaceDate() {
+		return theRegistrationReplaceDate;
+	}
+
+	public void setRegistrationReplaceDate(Date aRegistrationReplaceDate) {
+		theRegistrationReplaceDate = aRegistrationReplaceDate;
+	}
+
+	/** Дата регистрации замены */
+	private Date theRegistrationReplaceDate;
 
 
 }

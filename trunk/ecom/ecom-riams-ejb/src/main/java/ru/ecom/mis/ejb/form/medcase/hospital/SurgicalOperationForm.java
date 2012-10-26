@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import java.sql.Time;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -416,4 +418,31 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Аборта */
 	private Long theAbortion;
+	
+	/** Дата печати */
+	@Comment("Дата печати")
+	@Persist @DateString @DoDateString
+	public String getPrintDate() {return thePrintDate;}
+	public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
+
+	/** Дата печати */
+	private String thePrintDate;
+	
+	/** Время печати */
+	@Comment("Время печати")
+	@Persist @TimeString @DoTimeString
+	public String getPrintTime() {return thePrintTime;}
+	public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+
+	/** Время печати */
+	private String thePrintTime;
+	
+	/** Пользователь, посл. распечат. документ */
+	@Comment("Пользователь, посл. распечат. документ")
+	@Persist
+	public String getPrintUsername() {return thePrintUsername;}
+	public void setPrintUsername(String aPrintUsername) {thePrintUsername = aPrintUsername;}
+
+	/** Пользователь, посл. распечат. документ */
+	private String thePrintUsername;
 }

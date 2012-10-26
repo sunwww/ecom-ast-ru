@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.CompulsoryTreatment;
@@ -245,5 +244,18 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 	private Long theLawCourtReplace;
 	/** Дата замены */
 	private String theDateReplace;
+	/** Дата регистрации замены */
+	@Comment("Дата регистрации замены")
+	@Persist @DateString @DoDateString
+	public String getRegistrationReplaceDate() {
+		return theRegistrationReplaceDate;
+	}
+
+	public void setRegistrationReplaceDate(String aRegistrationReplaceDate) {
+		theRegistrationReplaceDate = aRegistrationReplaceDate;
+	}
+
+	/** Дата регистрации замены */
+	private String theRegistrationReplaceDate;
 	
 }

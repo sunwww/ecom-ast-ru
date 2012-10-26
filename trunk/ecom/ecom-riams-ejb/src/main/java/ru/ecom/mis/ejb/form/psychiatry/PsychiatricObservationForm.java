@@ -133,5 +133,21 @@ public class PsychiatricObservationForm extends IdEntityForm {
 
 	/** Участок */
 	private Long theLpuAreaPsychCareCard;
+	
+	/** Статья уголовного кодекса */
+
+	/** Причина снятия */
+	@Comment("Причина снятия")
+	@Persist
+	public Long getStrikeOffReason() {
+		return theStrikeOffReason;
+	}
+
+	public void setStrikeOffReason(Long aStrikeOffReason) {
+		theStrikeOffReason = aStrikeOffReason;
+	}
+
+	/** Причина снятия */
+	private Long theStrikeOffReason;
 
 }

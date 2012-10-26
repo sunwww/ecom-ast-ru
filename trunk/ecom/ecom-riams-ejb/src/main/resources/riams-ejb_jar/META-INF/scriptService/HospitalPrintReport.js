@@ -1,5 +1,167 @@
 var map = new java.util.HashMap() ;
 
+function printCriminalMessage(aCtx,aParams) {
+	var dateBegin = aParams.get("dateBegin");
+	var dateEnd=aParams.get("dateEnd") ;
+   
+    if (dateBegin==null && dateBegin.equals("")) throw "Неопределен период" ;
+    if (dateEnd==null ||dateEnd.equals("")) dateEnd=dateBegin;
+	var view = aParams.get("typeView1") ;
+	var pigeonHole1Sql="", pigeonHoleSql="" ;
+	var pHole = +aParams.get("pigeonHole") ;
+    if (+pHole>0) {
+    	pigeonHole1Sql= " and (ml.pigeonHole_id='"+pHole+"' or ml1.pigeonHole_id='"+pHole+"')" ;
+    	pigeonHoleSql= " and ml.pigeonHole_id='"+pHole+"'" ;
+    }
+   	var phoneMessageTypeSql="",phoneMessageType = +aParams.get("phoneMessageType") ;
+    if (phoneMessageType>0) {
+    	phoneMessageTypeSql=" and pm.phoneMessageType_id='"+phoneMessageType+"'" ;
+    }
+    var phoneMessageSubTypeSql="", phoneMessageSubType = +aParams.get("phoneMessageSubType") ;
+    if (phoneMessageSubType>0) {
+    	phoneMessageSubTypeSql=" and pm.phoneMessageSubType_id='"+phoneMessageSubType+"'" ;
+    }
+    var departmentSql="", dep=+aParams.get("department") ;
+	if (dep>0) {
+		departmentSql= " and ml.id='"+dep+"'" ;
+	}
+	var typeDate1 = +aParams.get("typeDate1") ;
+	var paramDate="",paramDateInfo="" ;
+	if (typeDate1==1) {
+		paramDate="m.dateStart" ;
+		paramDateInfo="Дата поступления" ;
+	} else if (typeDate1==3) {
+		paramDate="pm.whenDateEventOccurred" ;
+		paramDateInfo= "Дата, когда произошло событие" ;
+	} else {
+		paramDate="pm.phoneDate" ;
+		paramDateInfo="Дата регистрации сообщения" ;
+	}
+	var sql="select pm.id, to_char(pm.phoneDate,'dd.mm.yyyy') as pmphoneDate "
+	    +" ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat"
+		+", case when p.address_addressId is not null "
+		+"          then coalesce(a.fullname,a.name) || "
+		+"               case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end" 
+		+		" ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end" 
+		+		"||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end"
+		+"       when p.territoryRegistrationNonresident_id is not null"
+		+"          then okt.name||' '||p.RegionRegistrationNonresident||' '||oq.name||' '||p.SettlementNonresident"
+		+"               ||' '||ost.name||' '||p.StreetNonresident||"
+		//+"               coalesce(' д.'||p.HouseNonresident,'') ||coalesce(' корп.'|| p.BuildingHousesNonresident,'') ||coalesce(' кв. '|| p.ApartmentNonresident,'')"
+		+"               case when p.HouseNonresident is not null and p.HouseNonresident!='' then ' д.'||p.HouseNonresident else '' end" 
+		+" ||case when p.BuildingHousesNonresident is not null and p.BuildingHousesNonresident!='' then ' корп.'|| p.BuildingHousesNonresident else '' end" 
+		+"||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end"
+		+"   else '' "
+		+"  end as address"
+	    +" ,coalesce(vpme.name,pm.recieverFio) as reciever"
+	    +" ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent"
+	    +" ,pm.place as pmplace,vpmo.name as vphoname"
+    +" ,vpht.name||coalesce(' '||vpmst.name,'') as typeMessage"
+    +" ,wp.lastname as wplastname"
+    +" ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization"
+    +" ,pm.diagnosis as pmdiagnosis"
+    +" from PhoneMessage pm" 
+    +" left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id"
+    +" left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id"
+    +" left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id"
+    +" left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id"
+    +" left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id"
+    +" left join WorkFunction wf on wf.id=pm.workFunction_id"
+    +" left join Worker w on w.id=wf.worker_id"
+    +" left join Patient wp on wp.id=w.person_id"
+    +" left join medcase m on m.id=pm.medCase_id"
+    +" left join Patient p on p.id=m.patient_id"
+    +" left join MisLpu as ml on ml.id=m.department_id" 
+    +" left join SecUser su on su.login=m.username"
+    +" left join WorkFunction wf1 on wf1.secUser_id=su.id"
+    +" left join Worker w1 on w1.id=wf1.worker_id"
+    +" left join MisLpu ml1 on ml1.id=w1.lpu_id"  
+	+" left join Address2 a on a.addressId=p.address_addressId"
+	+" left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id"
+	+" left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id"
+	+" left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id"
+    +" where pm.dtype='CriminalPhoneMessage'"
+    +" and "+paramDate+" between to_date('"+dateBegin+"','dd.mm.yyyy')  and to_date('"+dateEnd+"','dd.mm.yyyy')"  
+    +" and ( m.noActuality is null or m.noActuality='0')"
+    +" "+pigeonHoleSql+" "+departmentSql+" "+phoneMessageTypeSql+" "+phoneMessageSubTypeSql
+    +" order by "+paramDate ;
+    var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+    var ret = new java.util.ArrayList() ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(i+1)) ;
+		for (var j=2;j<=obj.length;j++) {
+			eval("par.set"+(j)+"(obj[j-1]);") ;
+		}
+		ret.add(par) ;
+	}
+	map.put("list",ret) ;
+	return map ;
+}
+function printHistology(aCtx,aParams) {
+	var dateBegin = aParams.get("dateBegin");
+	var dateEnd=aParams.get("dateEnd") ;
+	var typePhatology=+aParams.get("typePhatology") ; ;
+	var departmentSql="" ;
+	var department = +aParams.get("department") ;
+	var pathologySql="" ;
+	if (department>0) {
+		departmentSql=" and slo.department_id='"+department+"'"
+	}
+	if (typePhatology==1) {
+		pathologySql=" and vhr.isWithPathology='1'" ;
+	} else if (typePhatology==2) {
+		pathologySql=" and (vhr.isWithPathology is null or vhr.isWithPathology='0')" ;
+	}
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+	var sql ="select "
+    +" cb.id as id,pat.lastname ||' '||pat.firstname ||' '|| pat.middlename as patmiddlename"
+    +"     ,to_char(pat.birthday,'dd.mm.yyyy') as patbirthday"
+    +"          	,to_char(cb.birthFinishDate,'dd.mm.yyyy')||' '||cast(cb.birthFinishTime as varchar(5)) as datetimebirthday"
+    +"         	,preg.orderNumber as pregorderNumber,cons.name as consname"
+    +"         	,pec.notes as pecnotes,vms.name as vmsname,pec.pregnancyFeatures as pregpregnancyFeatures"
+    +"         	,vof.name as ofname, list(case "
+    +"         	when vdrt.code='4' and vpd.code='1' and (mkb.code='O82.1' or mkb.code='O82.0') then 'кесарево'" 
+    +"         	when vdrt.code='4' and vpd.code='1' and (mkb.code = 'O80.0' or mkb.code='O80.1') then 'естествен.'"
+    +"         	else '' end)"
+    +"         	,case when cb.placentaHistologyOrder='1' then 'Направлена плацента на гистологию.'||coalesce(vhr.name,'') else '' end as histology"
+    +"         	from ChildBirth cb "
+    +"         	left join MedCase slo on slo.id=cb.medCase_id"
+    +"         	left join MedCase sls on sls.id=slo.parent_id"
+    +"          	left join Pregnancy preg on preg.id=sls.pregnancy_id" 
+    +"          	left join Patient pat on pat.id=preg.patient_id"
+    +"          	left join VocMarriageStatus vms on vms.id=pat.marriageStatus_id"
+    +"         	left join Diagnosis d on d.medCase_id=slo.id"
+    +"         	left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id"
+    +"         	left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id"
+    +"         	left join VocIdc10 mkb on mkb.id=d.idc10_id"
+    +"         	left join Omc_Frm vof on vof.id=sls.orderType_id"
+    +"         	left join PregnanExchangeCard pec on pec.pregnancy_id=preg.id"
+    +"         	left join MisLpu cons on cons.id=pec.consultation_id"
+    +"         	left join VocHistologyResult vhr on vhr.id=cb.histology_id"
+    +"     where" 
+    +"     cb.birthFinishDate  between to_date('"+dateBegin+"','dd.mm.yyyy')" 
+    +"     and to_date('"+dateEnd+"','dd.mm.yyyy') "+departmentSql+" "+pathologySql
+    +"           	group by cb.id,cb.birthFinishDate,cb.birthFinishTime,"
+    +"           	vof.name,cb.placentaHistologyOrder,vhr.isWithPathology,pat.lastname,pat.firstname,pat.middlename"
+    +"     		,pat.birthday,preg.orderNumber ,cons.name "
+    +"         	,pec.notes,vms.name,pec.pregnancyFeatures"
+    +"     order by cb.birthFinishDate";
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+(i+1)) ;
+		for (var j=2;j<=obj.length;j++) {
+			eval("par.set"+(j)+"(obj[j-1]);") ;
+		}
+		ret.add(par) ;
+	}
+	map.put("list",ret) ;
+	return map ;
+}
 function executeSql(aName,aManager,aSql) {
 	var listReestr = aManager.createNativeQuery(aSql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -355,14 +517,14 @@ function formatDate(aDate) {
 	  if ( dd < 10 ) dd = '0' + dd;
 	  var mm = aDate.getMonth()+1
 	  if ( mm < 10 ) mm = '0' + mm;
-	  var yy = aDate.getFullYear() % 100;
-	  if ( yy < 10 ) yy = '0' + yy;
+	  var yy = aDate.getFullYear();
+	  //if ( yy < 10 ) yy = '0' + yy;
 	  return dd+'.'+mm+'.'+yy;
 }
 function getDate(aDateS,aDay) {
 	
 	var d = (""+aDateS).split(".") ;
-	var dd=new Date(d[2],d[1]-1,d[0]+aDay) ;
+	var dd=new Date(d[2],d[1]-1,+d[0]+aDay) ;
 	return formatDate(dd) ;
 }
 function printReport007(aCtx,aParams) {
@@ -383,25 +545,28 @@ function printReport007(aCtx,aParams) {
 		+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
 		+"  where "
 		+"  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"'"
-		+"   and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
-		+"  slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
-		+" and (slo.datefinish is null or slo.datefinish >= to_date('"+date1+"','dd.mm.yyyy') or"
-		+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
-		+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
-		+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+" and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
+		+"			slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		+"			and (slo.datefinish is null or slo.datefinish > to_date('"+date1+"','dd.mm.yyyy') or "
+		+"			slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time) or"
+		+"			slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+"			and (slo.transferdate is null or slo.transferdate > to_date('"+date1+"','dd.mm.yyyy') or"
+		+"			slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time) or"
+		+"			slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
 		+" group by bf.bedsubtype_id,vbst.name" ;
+	
 	var sql = "select vss.name as vssname"
 		+" ,count(distinct case when (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime"
 		+" or to_date('"+date1+"','dd.mm.yyyy')>slo.datestart)"
-		+"  and (to_date('"+date1+"','dd.mm.yyyy')>slo.datestart or"
-		+" slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		//+"  and (to_date('"+date1+"','dd.mm.yyyy')>slo.datestart or"
+		//+" slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
 		+" and (slo.datefinish is null "
 		+" or slo.datefinish > to_date('"+date1+"','dd.mm.yyyy')" 
-		+" or slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>cast('09:00' as time))"
+		+" or slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time))"
 		+" and (slo.transferdate is null "
 		+" or slo.transferdate > to_date('"+date1+"','dd.mm.yyyy')" 
 		+" or"
-		+" slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>cast('09:00' as time))"
+		+" slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))"
 		+"  then slo.id else null end)"
 		+" as cnt5CurrentFrom"
 		+" ,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)"
@@ -456,20 +621,26 @@ function printReport007(aCtx,aParams) {
 		+" 		("
 		+" 			slo.transferdate is null"
 		+" 			or slo.transferdate > to_date('"+date2+"','dd.mm.yyyy')"
-		+" 			or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and slo.transfertime>cast('09:00' as time)"
+		+" 			or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
 		+" 		) and ("
 		+" 			slo.datefinish is null or"
 		+" 			slo.datefinish > to_date('"+date2+"','dd.mm.yyyy')"
-		+" 			or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and slo.dischargetime>cast('09:00' as time)"
+		+" 			or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
 		+" 		)"
 		+" 	 then slo.id else null end"
 		+" )"
 		+"  as cnt18CurrentTo"
-		+" ,count(distinct case when sls.hotelServices='1' then slo.id else null end)"
-		+" -count(distinct case when sls.hotelServices='1' and (slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
-		+" or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)"
-		+" -count(distinct case when sls.hotelServices='1' and (slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
-		+" or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)"
+		+" ,count(distinct case when sls.hotelServices='1' "
+		+" 		and ("
+		+" 			slo.transferdate is null"
+		+" 			or slo.transferdate > to_date('"+date2+"','dd.mm.yyyy')"
+		+" 			or slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)"
+		+" 		) and ("
+		+" 			slo.datefinish is null or"
+		+" 			slo.datefinish > to_date('"+date2+"','dd.mm.yyyy')"
+		+" 			or slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)"
+		+" 		)"
+		+" then slo.id else null end)"
 		+"  as cnt19CurrentMother"
 		+" ,count(distinct slo.id) as cntAll"
 		+"  from medcase slo"
@@ -484,17 +655,27 @@ function printReport007(aCtx,aParams) {
 		+"  LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId" 
 		+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
 		+"  where "
-		+"  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"'"
-		+"   and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
-		+"  slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
-		+" and (slo.datefinish is null or slo.datefinish >= to_date('"+date1+"','dd.mm.yyyy') or"
-		+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
-		+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
-		+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+"  slo.dtype='DepartmentMedCase'"
+		+" and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
+		+"			slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		+"			and (slo.datefinish is null or slo.datefinish > to_date('"+date1+"','dd.mm.yyyy') or "
+		+"			slo.datefinish = to_date('"+date1+"','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time) or"
+		+"			slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		+"			and (slo.transferdate is null or slo.transferdate > to_date('"+date1+"','dd.mm.yyyy') or"
+		+"			slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time) or"
+		+"			slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
+		+"  and slo.department_id='"+department+"'"
+		
+		//+"   and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
+		//+"  slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)"
+		//+" and (slo.datefinish is null or slo.datefinish >= to_date('"+date1+"','dd.mm.yyyy') or"
+		//+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
+		//+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
+		//+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
 		+" and bf.bedsubtype_id=";
 	var sqlGr = " group by vbst.name,bf.serviceStream_id,vss.name" ;
 	var list1 = aCtx.manager.createNativeQuery(sql1).getResultList() ;
-	
+	//throw sql1 ;
 	if (list1.size()>0) {
 		var retBST = new java.util.ArrayList() ;
 		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
@@ -508,13 +689,18 @@ function printReport007(aCtx,aParams) {
 			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var parSum = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var list = aCtx.manager.createNativeQuery(sql+"'"+objBST[0]+"' "+sqlGr).getResultList() ;
+			//throw sql+"'"+objBST[0]+"' "+sqlGr ;
 			for (var ii=0; ii < list.size(); ii++) {
 				var obj = list.get(ii) ;
 				var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 				//par.set1(""+(j++)) ;
 				for (var jj=0;jj<obj.length;jj++) {
 					eval("par.set"+(jj+1)+"('"+obj[jj]+"')");
-					eval("parSum.set"+(jj+1)+"(+parSum.get"+(jj+1)+"()+'"+obj[jj]+"')");
+					if (jj>0) {
+						eval("var sum1=parSum.get"+(jj+1)+"() ;") ;
+						sum1 = java.lang.Integer.valueOf(sum1!=null?sum1:"0").intValue()+java.lang.Integer.valueOf(obj[jj]).intValue() ;
+						eval("parSum.set"+(jj+1)+"('"+sum1+"')");
+					}
 				}
 				ret.add(par) ;
 			}
@@ -539,6 +725,7 @@ function printReport007(aCtx,aParams) {
 		//+" and slo.prevMedCase_id is not null"
 		+" and (vht.code is null or vht.code!='ALLTIMEHOSP')"
 		+" order by pat.lastname,pat.firstname,pat.middlename" ;
+	//throw asql1 ;
 	//Поступивших из круглосуточного стационара
 	var asql2 = "select ss.code as sscode"
 		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevMedCase_id is not null then '('||pdep.name||')' else '' end as fio"
@@ -632,8 +819,8 @@ function printReport007(aCtx,aParams) {
 		for (var j=1;j<=6;j++) {
 			var str = "if (list"+j+".size()>=(i+1)) {par.set"+j+"(list"+j+".get(i)[1]) ;} else {par.set"+j+"('') ;}" ;
 			eval(str) ;
-			retReestr.add(par) ;
 		}
+		retReestr.add(par) ;
 	}
 	map.put("listPat",retReestr) ;
 	return map ;
