@@ -152,8 +152,11 @@ public class SideLinkTag extends AbstractGuidSupportTag {
         	
             StringTokenizer st = new StringTokenizer(getParams(), ", ");
             String action = getAction().substring(1) ;
-            StringBuffer sb = new StringBuffer(action) ;
-            if (action.indexOf("javascript")==-1) { 
+            StringBuffer sb = new StringBuffer() ;
+            boolean isJavascript= false ;
+            String actionJavascript = "" ;
+            if (action.indexOf("javascript")==-1) {
+            	sb.append(action) ;
             	if(action.indexOf(".do")>=0) {
 	                if(action.indexOf('?')>=0) {
 	                    sb.append("&amp;") ;
@@ -163,6 +166,10 @@ public class SideLinkTag extends AbstractGuidSupportTag {
 	            } else {
 	                sb.append(".do?") ;
 	            }
+            } else {
+            	isJavascript = true ;
+            	sb.append("javascript:void(0)") ;
+            	actionJavascript = action.substring(11) ;
             }
 //        StringBuffer sb = new StringBuffer(getAction().substring(1) + ".do?");
             boolean canPrint = true;
@@ -212,14 +219,28 @@ public class SideLinkTag extends AbstractGuidSupportTag {
                     a.setClass("selected");
                 }
 
-                StringBuilder onClickSb = new StringBuilder("return ");
-                if(!StringUtil.isNullOrEmpty(theConfirm)) {
-                    onClickSb.append(" confirm(\"")
-                            .append(theConfirm).append("\") && ") ;
+                StringBuilder onClickSb = new StringBuilder();
+                if (isJavascript) {
+                	if(!StringUtil.isNullOrEmpty(theConfirm)) {
+                        onClickSb.append("if (confirm(\"")
+                                .append(theConfirm).append("\")) { ") ;
+                        onClickSb.append(actionJavascript) ;
+                        onClickSb.append("}") ;
+                    } else {
+                    	onClickSb.append(actionJavascript) ;
+                    }
+                	
+                } else {
+                	onClickSb.append("return ") ;
+                    if(!StringUtil.isNullOrEmpty(theConfirm)) {
+                        onClickSb.append(" confirm(\"")
+                                .append(theConfirm).append("\") && ") ;
+                    }
+                	onClickSb.append(" msh.util.FormData.getInstance().isChangedForLink() ;") ;
                 }
-                onClickSb.append(" msh.util.FormData.getInstance().isChangedForLink() ;") ;
+                
                 a.setOnClick(onClickSb.toString());
-
+                
                 Xli li = new Xli(a);
                 
                 if(theKey!=null) {
