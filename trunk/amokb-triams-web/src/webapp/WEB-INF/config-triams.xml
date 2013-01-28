@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+	<form-beans>
+	
+	</form-beans>
+
+	<global-forwards></global-forwards>
+
+	<action-mappings>
+
+		<action path='/start'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step0.jsp" />
+		</action>
+		<action path='/step_pre_record_info'
+			type='ru.ecom.web.poly.visit.InfoAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_info.jsp" />
+		</action>
+		<action path='/step_pre_record_0'
+			type='ru.ecom.web.poly.visit.InfoAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_0.jsp" />
+		</action>
+		<action path='/step_pre_record_1'
+			type='ru.ecom.web.poly.visit.ListDepartmentAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_1.jsp" />
+		</action>
+		<action path='/step_pre_record_2'
+			type='ru.ecom.web.poly.visit.ListVocWorkFunctionAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_2.jsp" />
+		</action>
+		<action path='/step_pre_record_3'
+			type='ru.ecom.web.poly.visit.ListWorkFunctionAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_3.jsp" />
+		</action>
+		<action path='/step_pre_record_4'
+			type='ru.ecom.web.poly.visit.ListDaysAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_4.jsp" />
+		</action>
+		<action path='/step_pre_record_5'
+			type='ru.ecom.web.poly.visit.ListTimesAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_5.jsp" />
+		</action>
+		<action path='/step_pre_record_6'
+			type='ru.ecom.web.poly.visit.PreRecordAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_pre_record_6.jsp" />
+		</action>
+        <action path="/mis_login" name="ecom_loginForm" scope="request" validate="false" type="ru.ecom.web.poly.login.LoginAction">
+            <forward name="success" path="/WEB-INF/actions/mis_login/login.jsp" redirect="false"/>
+        </action>
+
+        <action path="/mis_loginSave" name="ecom_loginForm" scope="request" validate="true"
+                type="ru.ecom.web.poly.login.LoginSaveAction"
+                input='/WEB-INF/actions/mis_login/login.jsp'>
+            <forward name="success" path="/start.do" redirect="true"/>
+        </action>
+
+        <action path="/mis_loginExit" name="" scope="request" validate="false" type="ru.ecom.web.poly.login.LoginExitAction">
+            <forward name="success" path="/mis_login.do" redirect="true"/>
+        </action>
+
+        <action path="/mis_relogin" name="" scope="request" validate="false" type="ru.ecom.web.poly.login.ReLoginAction">
+        </action>
+
+	</action-mappings>
+
+
+</struts-config>
+
