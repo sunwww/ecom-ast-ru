@@ -458,8 +458,10 @@ Object.extend(Element, {
 
   addClassName: function(element, className) {
     element = $(element);
+    if (element) { 
     Element.removeClassName(element, className);
     element.className += ' ' + className;
+    }
   },
 
   removeClassName: function(element, className) {
