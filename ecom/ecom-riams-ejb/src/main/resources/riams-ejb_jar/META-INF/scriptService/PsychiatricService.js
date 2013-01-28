@@ -70,7 +70,7 @@ function printArea(aCtx, aParams) {
 	else if (typeCare==2) {
 		careDate = " and  fldDateStart <="
 				+dateEnd					
-				+" and (fldDateFinish is null or fldDateFinish >= "
+				+" and (fldDateFinish is null or fldDateFinish > "
 				+dateEnd
 				+" )" ;
 		careInfo=" (состоящие)"; 
@@ -112,8 +112,8 @@ function printArea(aCtx, aParams) {
 	var dateSql="",dateInfo="" ;
 	if (typeDate==1) {
 		dateSql=dateSql+" and  area.startDate<="+dateEnd					
-				+" and (area.finishDate is null or area.finishDate >= "
-				+dateEnd+" ) and (area.transferDate is null or area.transferDate >= "
+				+" and (area.finishDate is null or area.finishDate > "
+				+dateEnd+" ) and (area.transferDate is null or area.transferDate > "
 				+dateEnd+" )" ;
 		dateInfo= " (состоящие)" ;
 	} else if (typeDate==2) {
@@ -160,6 +160,31 @@ function printArea(aCtx, aParams) {
 		} else {
 			dateInfo="(снятые)" ;
 		}
+	} else if (typeDate==7) {
+		dateSql=dateSql+" and (" ;
+		dateSql=dateSql+" ( (area.finishDate between ";
+		dateSql=dateSql+dateBegin+" and "+dateEnd;
+		dateSql=dateSql+" or area.transferDate between ";
+		dateSql=dateSql+dateBegin+" and "+dateEnd+") and area.transferReason_id is null )";
+		dateSql=dateSql+" or ";
+		dateSql=dateSql+" ( (area.finishDate between ";
+		dateSql=dateSql+dateBegin+" and "+dateEnd;
+		dateSql=dateSql+" or area.transferDate between ";
+		dateSql=dateSql+dateBegin+" and "+dateEnd+") and area.stikeOffReason_id is null )";
+		dateSql=dateSql+" or ";
+		dateSql=dateSql+" ( area.startDate between ";
+		dateSql=dateSql+dateBegin+" and ";
+		dateSql=dateSql+dateEnd+")" ;
+		dateSql=dateSql+" or ";
+		dateSql=dateSql+" (  area.startDate<=";
+		dateSql=dateSql+dateEnd;
+		dateSql=dateSql+" and (area.finishDate is null or area.finishDate >= ";
+		dateSql=dateSql+dateEnd;
+		dateSql=dateSql+" ) and (area.transferDate is null or area.transferDate >= ";
+		dateSql=dateSql+dateEnd;
+		dateSql=dateSql+" ))";
+		dateSql=dateSql+")" ;
+		dateInfo="(взятые, состоящие, снятые, перевед.)" ;
 	}
 	
 	// ИНВАЛИДНОСТЬ
@@ -173,6 +198,7 @@ function printArea(aCtx, aParams) {
 	} else {
 		invAddField=addField("invalidity",1);
 		var str1="",str="" ;
+		str=str+" and inv.dateFrom<="+dateEnd ;
 		if (groupInv>0) {
 			str=str+" and inv.group_id="+groupInv ;
 			var invGr = 
@@ -188,7 +214,16 @@ function printArea(aCtx, aParams) {
 			str=str+" and inv.incapable='1' " ;
 			str1 = str1+"недееспособные" ;
 		}
-		invSql = " and (inv.withoutExam='1' or inv.nextRevisionDate>=coalesce(area.finishDate,area.transferDate,"+dateBegin+")) "+str+" " ;
+		if (typeInv==6) {
+			str=str+" and inv.childhoodInvalid='1' " ;
+			str1 = str1+"с детства" ;
+		}
+		
+		if (typeInv==4) {
+			invSql = " "+str+" " ;
+		} else {
+			invSql = " and (inv.withoutExam='1' or inv.nextRevisionDate>coalesce(area.finishDate,area.transferDate,"+dateEnd+") or inv.dateTo>coalesce(area.finishDate,area.transferDate,"+dateEnd+")) "+str+" " ;
+		}
 		invInfo=" инвалиды "+str1 ;
 	}
 	// ПРИНУДИТЕЛЬНОЕ ЛЕЧЕНИЕ (ПРИНУДКА)
@@ -196,6 +231,14 @@ function printArea(aCtx, aParams) {
 	if (compTreatment>0&& careDate!=null) {
 		//compTreatSql=" and (ct.decisionDate <=coalesce(area.finishDate,"+dateEnd+")  and (ct.dateReplace is null or ct.dateReplace>="+dateBegin+" and ct.dateReplace >= coalesce(area.finishDate,"+dateEnd+"))) and ct.kind_id='"+compTreatment+"'" ;
 		compTreatSql=careDate.replace(new RegExp("fldDateStart",'g'), "ct.decisionDate").replace(new RegExp("fldDateFinish",'g'), "ct.dateReplace")+" and ct.kind_id='"+compTreatment+"'" ;
+		
+		if (typeCare==3) {
+			// взятые
+			compTreatSql=compTreatSql+" and (select to_char(min(ct.decisionDate),'dd.mm.yyyy') from CompulsoryTreatment ct1 where pcc.id=ct1.careCard_id and ct1.orderNumber=ct.orderNumber)>="+dateBegin ;
+		} else if (typeCare==4) {
+			//снятые
+			compTreatSql=compTreatSql+" and  (ct.courtDecisionReplace_id=2 or ct.courtDecisionReplace_id=4) ";
+		}
 		var compTreatmentO = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychCompulsoryTreatment, new java.lang.Long(compTreatment)) ;
 		//compTreatInfo= "прин. лечение: "+compTreatmentO.name +careInfo;
 		compTreatInfo= " "+compTreatmentO.name +careInfo;
@@ -213,15 +256,14 @@ function printArea(aCtx, aParams) {
 			var grO = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychDispensaryGroup, new java.lang.Long(group)) ;
 			groupInfo = groupInfo +" группа: "+grO.name +careInfo;
 			groupDopJoin =" left join PsychiaticObservation po1 on po1.careCard_id=pcc.id"; 
+			groupDopJoin = groupDopJoin + " left join VocCriminalCodeArticle vccaAdn on vccaAdn.id=po1.criminalCodeArticle_id";
 			groupDopSql=" and po1.lpuAreaPsychCareCard_id is null" ;
 			groupSql=groupSql+" and po1.dispensaryGroup_id = "+group;
 			groupSql=groupSql+careDate.replace(new RegExp("fldDateStart",'g'), "po1.startDate").replace(new RegExp("fldDateFinish",'g'), "po1.finishDate") ;
 			groupAddField=addField("group",1) ;
 			} else if(typeDate==3) {
 			}
-		
 	}
-	
 	var sql = "" ;
 	sql = sql + " select distinct pcc.id as pccid" ;
 	sql = sql + " , (to_char(CURRENT_DATE,'yyyy')-to_char(p.birthday,'yyyy') ";
@@ -286,7 +328,7 @@ function printArea(aCtx, aParams) {
 		var wq = Packages.ru.ecom.ejb.services.query.WebQueryResult() ;
 		var obj = list.get(i) ;
 		wq.setSn(i+1) ;
-		for (var j=1;j<=21;j++) {
+		for (var j=1;j<obj.length;j++) {
 			eval("wq.set"+j+"(obj["+(j)+"])") ;
 		}
 		ret.add(wq) ;
@@ -308,17 +350,17 @@ function addField(aType,aInt) {
 		}
 	} else if (aType=="group") {
 		if (aInt==0) {
-			return ",'g1' as g1,'g2' as g2,'g3' as g3" ;
+			return ",'g1' as g1,'g2' as g2,'g3' as g3, 'g4' as g4" ;
 			//return ",' ' as g1,' ' as g2,' ' as g3" ;
 		} else {
-			return " ,to_char(po1.startDate,'dd.mm.yyyy') as pop1startDate,to_char(po1.finishDate,'dd.mm.yyyy') as po1finishDate, coalesce(po1.finishDate,current_date)-po1.startDate as po1cntDays";
+			return " ,to_char(po1.startDate,'dd.mm.yyyy') as pop1startDate,to_char(po1.finishDate,'dd.mm.yyyy') as po1finishDate, coalesce(po1.finishDate,current_date)-po1.startDate as po1cntDays,vccaAdn.code as vccaAdnname";
 		}
 	} else if (aType=="compulsory") {
 		if (aInt==0) {
 			return ",'c1' as c1,'c2' as c2,'c3' as c3,'c4' as c4" ;
 			//return ",' ' as c1,' ' as c2,' ' as c3,' ' as c4" ;
 		} else {
-			return ",to_char(ct.decisionDate,'dd.mm.yyyy') as ctdecisionDate, vlc.name as ctvlcname, vcca.name as ctvccaname,coalesce(ct.dateReplace,current_date)- ct.decisionDate as ctcntdays";
+			return ",to_char(ct.decisionDate,'dd.mm.yyyy')||'/'||(select to_char(min(ct1.decisionDate),'dd.mm.yyyy') from CompulsoryTreatment ct1 where pcc.id=ct1.careCard_id and ct1.orderNumber=ct.orderNumber) as ctdecisionDate, vlc.name as ctvlcname, vcca.code as ctvccaname,coalesce(ct.dateReplace,current_date)- ct.decisionDate as ctcntdays";
 		}
 	} else if (aType=="invalidity") {
 		if (aInt==0) {

@@ -40,6 +40,39 @@ function onCreate(aForm, aEntity, aContext) {
 		wf.setSecUser(aEntity) ;
 		aContext.manager.persist(wf) ;
 	}
+	var date = new java.util.Date() ;
+	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
+	var username=aContext.getSessionContext().getCallerPrincipal().toString() ;
+	aEntity.setCreateUsername(username) ;
+	if (+aForm.userCopy>0) {
+		var userCopy = aContext.manager.find(Packages.ru.ecom.jaas.ejb.domain.SecUser
+				,aForm.userCopy) ;
+		var roles = userCopy.getRoles() ;
+		var newroles = new java.util.ArrayList() ;
+		
+		for (var i=0;i<roles.size();i++) {
+			var role =roles.get(i) ; 
+			newroles.add(role)
+			var jour = new Packages.ru.ecom.ejb.services.live.domain.journal.ChangeJournal() ;
+			jour.setClassName("SecUser_SecRole") ;
+			jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+			jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+			jour.setLoginName(username) ;
+			jour.setComment(" copy user:"+aForm.userCopy+" userid="+aEntity.id+" roleid="+role.id) ;
+			jour.setSerializationAfter("user:"+aEntity.id) ;
+			jour.setSerializationBefore("role:"+role.id) ;
+			aContext.manager.persist(jour) ;
+		}
+		aEntity.setRoles(newroles) ;
+	}
+}
+function onSave(aForm, aEntity, aCtx) {
+	var date = new java.util.Date() ;
+	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+
 }
 function errorThrow(aList) {
 	if (aList==null || aList.size()>0) {
