@@ -1,7 +1,11 @@
 package ru.ecom.ejb.services.login;
 
 import java.io.FileInputStream;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -13,11 +17,14 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 import org.jboss.mx.util.MBeanServerLocator;
 
+import ru.ecom.ejb.services.live.domain.CustomMessage;
 import ru.ecom.ejb.services.util.JBossConfigUtil;
 
 /**
@@ -59,6 +66,39 @@ public class LoginServiceBean implements ILoginService {
         return ret ;
     }
 
+    public Long createSystemMessage(String aTitle, String aText, String aRecipient) {
+    	CustomMessage mes = new CustomMessage() ;
+    	mes.setMessageTitle(aTitle) ;
+    	mes.setMessageText(aText) ;
+    	mes.setUsername("system_message") ;
+    	long date = new java.util.Date().getTime() ;
+    	mes.setDateReceipt(new Date(date)) ;
+    	mes.setTimeReceipt(new Time(date)) ;
+    	mes.setDispatchDate(new Date(date)) ;
+    	mes.setDispatchTime(new Time(date)) ;
+    	mes.setRecipient(aRecipient) ;
+    	mes.setIsSystem(true) ;
+    	theManager.persist(mes) ;
+    	return mes.getId() ;
+    }
+    public void dispatchMessage(Long aIdMessage) {
+    	CustomMessage mes = theManager.find(CustomMessage.class, aIdMessage) ;
+    	long date = new java.util.Date().getTime() ;
+    	mes.setDateReceipt(new Date(date)) ;
+    	mes.setTimeReceipt(new Time(date)) ;
+    	theManager.persist(mes) ;
+    }
+    public void checkMessage(Long aIdMessage) {
+    	java.util.Date date = new java.util.Date() ;
+    	SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+    	SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
+    	theManager.createNativeQuery("update CustomMessage set readDate=to_date('"+formatD.format(date)+"','dd.mm.yyyy'),readTime=cast('"+formatT.format(date)+"' as time) where id="+aIdMessage).executeUpdate() ;
+    }
+	public void hideMessage(Long aIdMessage) {
+    	theManager.createNativeQuery("update CustomMessage set isHidden='1' where id="+aIdMessage).executeUpdate() ;
+	}
     @Resource SessionContext theContext ;
+    private @PersistenceContext EntityManager theManager;
+
 }
 
