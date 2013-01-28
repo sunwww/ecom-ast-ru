@@ -60,7 +60,7 @@ public class TicketServiceBean implements ITicketService {
     		.append(" where wf.id='").append(aSpec)
     		.append("' and ((ms.startDate is null or to_date('").append(dat)
     		.append("','yyyy-mm-dd') >=ms.startDate) and (ms.finishDate is null or ms.finishDate>=to_date('")
-    		.append(dat).append("','yyyy-mm-dd'))) and ms.vocMedService_id is not null") ;
+    		.append(dat).append("','yyyy-mm-dd'))) and ms.vocMedService_id is not null and ms.isPoliclinic='1'") ;
     	System.out.println(sqlMain) ;
     	List<Object[]> list = theManager.createNativeQuery(sqlMain.toString())
 //    		.setParameter("date", )

@@ -23,8 +23,8 @@ public interface ISecUserService {
     public void exportRolesProperties(String aFilename) throws IOException ;
     public void exportRolesProperties() throws IOException ;
 
-    public Collection<SecRoleForm> listUserRoles(long aUserId) ;
+    public Collection<SecRoleForm> listUserRoles(long aUserId, boolean aIsSystemView) ;
     public void removeRoles(long aUserId, long[] aRoles) ;
     public void addRoles(long aUserId, long[] aRoles) ;
-    public Collection<SecRoleForm> listRolesToAdd(long aUserId) ;
+    public Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) ;
 }

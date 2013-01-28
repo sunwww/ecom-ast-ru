@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -175,6 +176,15 @@ public class Visit extends ShortMedCase{
 
 	/** Следующая дата приема */
 	private Date theNextVisitDate;
+	
+	/** Тип мед. обслуживания */
+	@Comment("Тип мед. обслуживания")
+	@OneToOne
+	public VocWorkMedservice getWorkMedservice() {return theWorkMedservice;}
+	public void setWorkMedservice(VocWorkMedservice aWorkMedservice) {theWorkMedservice = aWorkMedservice;}
+
+	/** Тип мед. обслуживания */
+	private VocWorkMedservice theWorkMedservice;
 
 
 }

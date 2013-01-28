@@ -19,6 +19,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Mkb;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
@@ -335,6 +336,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Код МКБ клинического диагноза */
 	@Comment("Код МКБ клинического диагноза")
+	@Mkb
 	public Long getClinicalMkb() {return theClinicalMkb;}
 	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
 	
@@ -345,6 +347,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	
 	/** Патанатомический диагноз по МКБ-10 */
 	@Comment("Патанатомический диагноз по МКБ-10")
+	@Mkb
 	public Long getPathanatomicalMkb() {return thePathanatomicalMkb;}
 	public void setPathanatomicalMkb(Long aPathanatomicalMkb) {thePathanatomicalMkb = aPathanatomicalMkb;}
 
@@ -355,6 +358,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
+	@Mkb
 	public Long getConcludingMkb() {return theConcludingMkb;}
 	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
 	
@@ -399,6 +403,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Диагноз клин. сопутствующий МКБ */
 	@Comment("Диагноз клин. сопутствующий МКБ")
+	@Mkb
 	public Long getConcomitantMkb() {return theConcomitantMkb;}
 	public void setConcomitantMkb(Long aConcomitantMkb) {theConcomitantMkb = aConcomitantMkb;}
 

@@ -60,12 +60,5 @@ public class CriminalPhoneMessage extends PhoneMessage {
 
 	/** Время, когда произошло событие */
 	private Time theWhenTimeEventOccurred;
-	
-	/** Диагноз */
-	@Comment("Диагноз")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
 
-	/** Диагноз */
-	private String theDiagnosis;
 }

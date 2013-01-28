@@ -62,14 +62,14 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	/** Дата поступления */
 	@Comment("Дата поступления")
 	@DateString @DoDateString
-	@Persist @MaxDateCurrent
+	@Persist @MaxDateCurrent @Required
 	public String getDateStart() {return theDateStart;	}
 	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
 
 	/** Время поступления */
 	@Comment("Время поступления")
 	@TimeString @DoTimeString
-	@Persist
+	@Persist @Required
 	public String getEntranceTime() {return theEntranceTime;}
 	public void setEntranceTime(String aEntranceTime) {theEntranceTime = aEntranceTime;}
 
@@ -87,7 +87,7 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 
 	/** Отделение */
 	@Comment("Отделение")
-	@Persist @ViewOnly
+	@Persist @Required
 	public Long getDepartment() {return theDepartment;	}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;	}
 

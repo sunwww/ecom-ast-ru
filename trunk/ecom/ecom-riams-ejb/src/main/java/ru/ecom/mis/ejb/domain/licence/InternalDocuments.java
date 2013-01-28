@@ -11,6 +11,9 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentBiologAnalysis;
+import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentMaterialBiologAnalysis;
+import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentObjectBiologAnalysis;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.poly.ejb.domain.Ticket;
@@ -72,6 +75,45 @@ public class InternalDocuments extends Document {
 	public Ticket getTicket() {return theTicket;}
 	public void setTicket(Ticket aTicket) {theTicket = aTicket;}
 
+	/** Цель биологического исследования */
+	@Comment("Цель биологического исследования")
+	@OneToOne
+	public VocDocumentObjectBiologAnalysis getObjectBiologAnalysis() {
+		return theObjectBiologAnalysis;
+	}
+
+	public void setObjectBiologAnalysis(VocDocumentObjectBiologAnalysis aObjectAnalysis) {
+		theObjectBiologAnalysis = aObjectAnalysis;
+	}
+
+	/** Исследование */
+	@Comment("Исследование")
+	@OneToOne
+	public VocDocumentBiologAnalysis getBiologAnalysis() {
+		return theBiologAnalysis;
+	}
+
+	public void setBiologAnalysis(VocDocumentBiologAnalysis aBiologAnalysis) {
+		theBiologAnalysis = aBiologAnalysis;
+	}
+
+	/** Материал для микробилогического исследования */
+	@Comment("Материал для микробилогического исследования")
+	@OneToOne
+	public VocDocumentMaterialBiologAnalysis getMaterialBiologAnalysis() {
+		return theMaterialBiologAnalysis;
+	}
+
+	public void setMaterialBiologAnalysis(VocDocumentMaterialBiologAnalysis aMaterialBiologAnalysis) {
+		theMaterialBiologAnalysis = aMaterialBiologAnalysis;
+	}
+
+	/** Материал для микробилогического исследования */
+	private VocDocumentMaterialBiologAnalysis theMaterialBiologAnalysis;
+	/** Исследование */
+	private VocDocumentBiologAnalysis theBiologAnalysis;
+	/** Цель биологического исследования */
+	private VocDocumentObjectBiologAnalysis theObjectBiologAnalysis;
 	/** Талон */
 	private Ticket theTicket;
 }

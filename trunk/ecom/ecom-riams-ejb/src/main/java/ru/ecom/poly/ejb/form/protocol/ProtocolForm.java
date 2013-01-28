@@ -19,6 +19,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
@@ -51,7 +52,7 @@ public class ProtocolForm extends IdEntityForm {
     /** Дата регистрации талона */
     @Persist @Required
     @Comment("Дата регистрации талона")
-    @DateString @DoDateString
+    @DateString @DoDateString @MaxDateCurrent
     public String getDateRegistration() {    return theDateRegistration ;}
     public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
 
@@ -69,7 +70,7 @@ public class ProtocolForm extends IdEntityForm {
 
     /** Дата */
     @Persist @DateString @DoDateString
-    @Comment("Дата")
+    @Comment("Дата") 
     public String getDate() {    return theDate ;}
     public void setDate(String aDate ) {  theDate = aDate ; }
 

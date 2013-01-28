@@ -38,6 +38,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique = false, properties= {"disabilityCase"})
 	,@AIndex(unique = false, properties= {"issueDate"})
+	,@AIndex(unique = false, properties= {"mainWorkDocumentNumber"})
+	,@AIndex(unique = false, properties= {"idc10Final"})
 	,@AIndex(unique = false, properties= {"patient"})
 	,@AIndex(unique = false , properties = {"duplicate"})
 	,@AIndex(unique = false, properties = {"prevDocument"})

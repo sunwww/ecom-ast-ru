@@ -123,6 +123,13 @@ public class MedService extends BaseEntity{
 	public List<WorkFunctionService> getWorkFunctionServices() {return theWorkFunctionServices;}
 	public void setWorkFunctionServices(List<WorkFunctionService> aWorkFunctionServices) {	theWorkFunctionServices = aWorkFunctionServices;}
 
+	/** Доп. код услуги */
+	@Comment("Доп. код услуги")
+	public String getAdditionCode() {return theAdditionCode;}
+	public void setAdditionCode(String aAdditionCode) {theAdditionCode = aAdditionCode;}
+
+	/** Доп. код услуги */
+	private String theAdditionCode;
 	/** Рабочие функции */
 	private List<WorkFunctionService> theWorkFunctionServices;
 	/** Тип услуги */

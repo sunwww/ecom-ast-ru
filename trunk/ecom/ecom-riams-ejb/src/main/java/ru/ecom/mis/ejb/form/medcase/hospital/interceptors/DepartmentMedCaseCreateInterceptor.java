@@ -97,6 +97,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     private void prepareForCreationNextSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCaseParent, EntityManager aManager) {
     	aForm.setPatient(aMedCaseParent.getPatient().getId());
     	StringBuilder sql = new StringBuilder() ;
+    	
     	sql.append("select max(ms1.dateFinish) as maxdatefinish")
     		.append(",ms.id, to_char(ms.transferDate,'dd.mm.yyyy') as mstransferdate,cast(ms.transferTime as varchar(5)) as mstransfertime,ms.transferDepartment_id as mstransferdepartment,ms.lpu_id as mslpu,ms.serviceStream_id as msservicestream")
     		.append(" from MedCase as ms ")
@@ -118,16 +119,14 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (obj[0]!=null) {
     			throw new IllegalStateException("Уже есть лечение в отделении с выпиской.") ;
     		}
-    		if (obj[2]!=null) {
-    			aForm.setDateStart((String)obj[2]);
-                aForm.setEntranceTime((String)obj[3]);
-                aForm.setPrevMedCase(ConvertSql.parseLong(obj[1]));
-                aForm.setDepartment(ConvertSql.parseLong(obj[4]));
-                aForm.setServiceStream(ConvertSql.parseLong(obj[6])) ;
-                aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCaseParent.getHospType())) ;
-    		} else {
-    			throw new IllegalStateException("Нет лечения в отделении с переводом") ;
-    		}
+    		if (obj[2]!=null) aForm.setDateStart((String)obj[2]);
+            if (obj[3]!=null) aForm.setEntranceTime((String)obj[3]);
+            aForm.setPrevMedCase(ConvertSql.parseLong(obj[1]));
+            if (obj[4]!=null) aForm.setDepartment(ConvertSql.parseLong(obj[4]));
+            aForm.setServiceStream(ConvertSql.parseLong(obj[6])) ;
+            if ((obj[2]!=null)&&(obj[4]!=null)&&(obj[3]!=null)) aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCaseParent.getHospType())) ;
+    		//	throw new IllegalStateException("Нет лечения в отделении с переводом") ;
+    		//}
     	} else {
     		throw new IllegalStateException("Нет случая лечения в отделении оформленного для перевода") ;
     	}

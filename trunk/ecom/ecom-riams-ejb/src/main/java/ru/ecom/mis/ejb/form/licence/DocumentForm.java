@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.licence;
 
-import java.sql.Time;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -25,7 +23,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		,shortView="entityShortSubclassView-doc_document.do")
 @Parent(property = "medCase", parentForm = MedCaseForm.class)
 @Subclasses(value = { DischargeDocumentForm.class
-		,DirectionDocumentForm.class })
+		,DirectionDocumentForm.class ,BaseMedicalExaminationForm.class
+		,DirectionToMicrobiologAnalysisForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document")
 public class DocumentForm extends IdEntityForm{
 

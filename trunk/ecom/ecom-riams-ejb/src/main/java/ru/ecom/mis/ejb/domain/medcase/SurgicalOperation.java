@@ -469,6 +469,7 @@ public class SurgicalOperation extends BaseEntity {
 	
 	/** Аборта */
 	@Comment("Аборта")
+	@OneToOne
 	public VocAbortion getAbortion() {return theAbortion;}
 	public void setAbortion(VocAbortion aAbortion) {theAbortion = aAbortion;}
 

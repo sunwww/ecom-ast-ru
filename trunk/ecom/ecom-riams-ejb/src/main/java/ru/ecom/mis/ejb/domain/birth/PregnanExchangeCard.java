@@ -165,6 +165,20 @@ public class PregnanExchangeCard extends BaseEntity {
 	public PregnancyHistory getPregnancyHistory() {return thePregnancyHistory;}
 	public void setPregnancyHistory(PregnancyHistory aPregnancyHistory) {thePregnancyHistory = aPregnancyHistory;}
 
+	/** Не помнит, когда были последние месячные */
+	@Comment("Не помнит, когда были последние месячные")
+	public Boolean getDontRememberLastMensis() {return theDontRememberLastMensis;}
+	public void setDontRememberLastMensis(Boolean aDontRememberLastMensis) {theDontRememberLastMensis = aDontRememberLastMensis;}
+	
+	/** Не посещала жк */
+	@Comment("Не посещала жк")
+	public Boolean getDontVisitCons() {return theDontVisitCons;}
+	public void setDontVisitCons(Boolean aDontVisitCons) {theDontVisitCons = aDontVisitCons;}
+
+	/** Не посещала жк */
+	private Boolean theDontVisitCons;
+	/** Не помнит, когда были последние месячные */
+	private Boolean theDontRememberLastMensis;
 	/** История родов */
 	private PregnancyHistory thePregnancyHistory;
 	/** Случай медицинского обслуживания */

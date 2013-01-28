@@ -20,6 +20,20 @@ public class VocMedService extends VocBaseEntity{
 	public String getLongName() {return theLongName;}
 	public void setLongName(String aLongName) {theLongName = aLongName;}
 
+	/** Комментарий */
+	@Comment("Комментарий")
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+
+	/** Тип услуги */
+	@Comment("Тип услуги")
+	public String getServiceType() {return theServiceType;}
+	public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
+
+	/** Тип услуги */
+	private String theServiceType;
+	/** Комментарий */
+	private String theComment;
 	/** Полное название */
 	private String theLongName;
 }

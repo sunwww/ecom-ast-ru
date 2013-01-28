@@ -5,7 +5,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
@@ -55,12 +54,6 @@ public class MedPolicyOmc extends MedPolicy {
             sb.append(getCompany().getName()) ;
             sb.append(", код - ") ;
             sb.append(getCompany().getOmcCode());
-        }
-        if(getOrg()!=null) {
-            sb.append(", ") ;
-            sb.append(getOrg().getName()) ;
-            sb.append(" ") ;
-            sb.append(getOrg().getFondNumber()) ;
         }
         return sb.toString() ;
     }

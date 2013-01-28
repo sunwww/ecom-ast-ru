@@ -39,8 +39,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */
 	@Comment("Дата операции")
-	@Persist @Required
-	@DateString @DoDateString @MaxDateCurrent
+	@Persist @Required @MaxDateCurrent
+	@DateString @DoDateString
 	public String getOperationDate() {return theOperationDate;}
 	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;	}
 

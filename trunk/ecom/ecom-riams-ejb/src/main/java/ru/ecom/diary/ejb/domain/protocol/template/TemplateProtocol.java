@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,6 +16,7 @@ import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
@@ -32,6 +34,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
     @AIndex(properties="username")
     }) 
+@EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
     /** Заголовок */
     public String getTitle() { return theTitle ; }

@@ -29,6 +29,7 @@ import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
@@ -386,4 +387,13 @@ public class Ticket extends BaseEntity {
 
 	/** Характер заболевания */
 	private VocIllnesPrimary theIllnesPrimary;
+	
+	/** Тип мед. обслуживания */
+	@Comment("Тип мед. обслуживания")
+	@OneToOne
+	public VocWorkMedservice getWorkMedservice() {return theWorkMedservice;}
+	public void setWorkMedservice(VocWorkMedservice aWorkMedservice) {theWorkMedservice = aWorkMedservice;}
+
+	/** Тип мед. обслуживания */
+	private VocWorkMedservice theWorkMedservice;
 }

@@ -1,9 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.CriminalPhoneMessage;
-
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -218,4 +216,30 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/** Диагноз */
 	private String theDiagnosis;
+
+	/** Район */
+	@Comment("Район")
+	@Persist
+	public Long getRayon() {return theRayon;}
+	public void setRayon(Long aRayon) {theRayon = aRayon;}
+
+	/** Код МКБ */
+	@Comment("Код МКБ")
+	@Persist
+	public Long getIdc10() {return theIdc10;}
+	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+
+	/** Тяжесть состояния */
+	@Comment("Тяжесть состояния")
+	@Persist
+	public Long getState() {return theState;}
+	public void setState(Long aState) {theState = aState;}
+
+	/** Тяжесть состояния */
+	private Long theState;
+
+	/** Код МКБ */
+	private Long theIdc10;
+	/** Район */
+	private Long theRayon;
 }

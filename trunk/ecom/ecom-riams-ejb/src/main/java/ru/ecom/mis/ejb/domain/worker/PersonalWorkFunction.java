@@ -63,7 +63,7 @@ public class PersonalWorkFunction extends WorkFunction {
             add(res, pat.getLastname(),"");
             add(res, pat.getFirstname()," ");
             add(res, pat.getMiddlename()," ");
-            add(res, pat.getSnils()," ");
+            //add(res, pat.getSnils()," ");
 		}
 		//theWorker.getDoctorInfo() : "" ;
 		return theWorker!=null ? theWorker.getDoctorInfo() : "" ;

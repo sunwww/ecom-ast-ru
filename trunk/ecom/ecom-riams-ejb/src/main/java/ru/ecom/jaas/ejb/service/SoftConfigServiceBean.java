@@ -1,5 +1,16 @@
 package ru.ecom.jaas.ejb.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,12 +22,81 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import ru.ecom.diary.ejb.service.protocol.KdlDiaryServiceBean;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.jaas.ejb.domain.SoftConfig;
 
 @Stateless
 @Remote(ISoftConfigService.class )
 public class SoftConfigServiceBean implements ISoftConfigService {
+	public String getDir(String aKey, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		return config.get(aKey, aDefaultValue) ;
+	}
+	public void saveContextHelp(String aUrl,String aContext) {
+		PrintWriter out = null ;
+		try {
+			File file = getFile(aUrl, true) ;
+			out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "utf8"));
+            out.println(aContext) ;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} finally {
+			if (out!=null) out.close() ;
+			
+		}
 
+	}
+	private File getFile(String aUrl,boolean aIsCreateDir) {
+		aUrl=aUrl.replace("/WEB-INF/actions", "/riams") ;
+		aUrl=aUrl.replace(".jsp", ".htm") ;
+		String dirName = getDir("help_riams", "/opt/tomcat/webapps/help") ;
+		dirName= dirName+aUrl ;
+		String[] u = dirName.split("/") ;
+		String f =u[u.length-1] ;
+		dirName=dirName.replace("/"+f, "") ;
+		System.out.println("load dirName="+dirName+" file="+f) ;
+		if (aIsCreateDir) {
+			File dir = new File(dirName) ;
+			if (dir.exists()) {
+				System.out.println("exists dir") ;
+			} else {
+				System.out.println("create dir="+dir.mkdirs()) ;
+			}
+		}
+		File file = new File(dirName,f) ;
+		return file ;
+	}
+	public String getContextHelp(String aUrl) {
+		StringBuilder sb =new StringBuilder() ;
+		LineNumberReader in = null ;
+			try {
+				File file = getFile(aUrl, false) ;
+				if (file.exists()) {
+					in = new LineNumberReader(new InputStreamReader(new FileInputStream(file), "utf8"));
+					String line ;
+					while ( (line=in.readLine())!=null) {
+						sb.append(line) ;
+					}
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (in!=null) in.close() ;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		return sb.toString() ;
+		
+	}
 	public void addConfigDefaults() {
 		Map<String,String> defaultConfig = create() ;
 		//findOrCreateSoftConfig("csp_base_url", defaultConfig) ;

@@ -29,7 +29,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties="medCase",table="Diary"),
 	@AIndex(properties={"medCase","printDate"},table="Diary"),
-	@AIndex(properties="ticket",table="Diary")
+	@AIndex(properties="ticket",table="Diary"),
+	@AIndex(properties="dateRegistration",table="Diary")
     }) 
 @Table(schema="SQLUser")
 public class Protocol extends Diary {
