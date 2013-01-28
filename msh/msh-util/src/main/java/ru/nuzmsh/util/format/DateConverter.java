@@ -5,8 +5,10 @@ import org.apache.commons.logging.Log;
 
 import ru.nuzmsh.util.StringUtil;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -43,6 +45,20 @@ public class DateConverter {
 
     public static Date createDateTime(String aDate, String aTime) throws ParseException {
         return createDateTime(DateFormat.parseDate(aDate), aTime) ;
+    }
+    public static Date createDateTime(java.sql.Date aDate,java.sql.Time aTime) throws ParseException {
+    	SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy");
+    	SimpleDateFormat GLOBALE_TIME_FORMAT_2 = new SimpleDateFormat("HH.mm");
+    	SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH.mm");
+    	StringBuilder sb = new StringBuilder() ;
+    	sb.append(GLOBALE_DATE_FORMAT_2.format(aDate)).append(" ").append(GLOBALE_TIME_FORMAT_2.format(aTime)) ;
+    	try {
+            LOG.debug("sb = " + sb);
+            return dateTimeFormat.parse(sb.toString());
+        } catch (ParseException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    	
     }
 
     public static Date createDateTime(Date aDate, String aTime) {
