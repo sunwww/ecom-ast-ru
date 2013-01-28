@@ -57,7 +57,6 @@ body {
 }
 
 a#viewShort {
-
 	background: url("/skin/images/main/view1.png") no-repeat left;
 }
 
@@ -655,8 +654,14 @@ a.errorMessageClose {
 	right: 0.2em ;
 	color: white ;
 }
+a.userMessageClose {
+	position: absolute ;
+	top: 0.2em ;
+	right: 0.2em ;
+	color: blue ;
+}
 
-div.errorMessage, div.formInfoMessage {
+div.errorMessage, div.formInfoMessage,div.userMessage {
     background-color: #ce4542 ;
     color: white ;
     font-weight: bold;
@@ -672,6 +677,11 @@ div.errorMessage, div.formInfoMessage {
 div.formInfoMessage {
 	    color: black ;
 	background-color: rgb(255,209,99) ;
+	padding:0.3em 1em;
+}
+div.userMessage {
+	color: red ;
+	background-color: #e5e5e5 ;
 	padding:0.3em 1em;
 }
 
