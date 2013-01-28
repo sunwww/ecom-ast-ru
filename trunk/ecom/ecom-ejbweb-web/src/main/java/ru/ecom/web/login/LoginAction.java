@@ -29,6 +29,7 @@ public class LoginAction extends BaseAction {
                 form.setUsername(loginInfo.getUsername());
             }
         }
+        
         return aMapping.findForward("success") ;
     }
 
