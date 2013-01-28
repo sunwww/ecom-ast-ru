@@ -8,8 +8,19 @@
 <head>
     <title>МедОС</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-
     <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
+    <%
+    int idimg = (int)(17*Math.random()) ;
+    request.setAttribute("idimg", ""+idimg) ;
+    %>
+	<style type="text/css">
+		body {
+			background: url("/customer/images/new_year${idimg}.jpg") no-repeat 90px bottom ;
+		}
+		#header {
+			border-bottom: none ;
+		}
+	</style>
 
 </head>
 
@@ -17,7 +28,7 @@
 <div id='header'>
     <h1>МедОС</h1>
     <a href="#1">
-        <img src='/skin/images/main/logo-75x50.jpg' width='75' height="50"
+        <img src='/customer/images/main/logo-75x50.jpg' width='75' height="50"
              alt='На главную' title='Переход на основную страницу'/>
     </a>
 </div>
