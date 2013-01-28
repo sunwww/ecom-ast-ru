@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>АКТИВЫ</display-name>
+    <description>АКТИВЫ</description>
+
+    <filter>
+        <filter-name>caching</filter-name>
+        <filter-class>ru.nuzmsh.web.filter.caching.CacheFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>caching</filter-name>
+        <url-pattern>*.js</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>caching</filter-name>
+        <url-pattern>/null/dwr/*</url-pattern>
+    </filter-mapping>
+
+	<!-- Настройка форм -->
+    <servlet>
+        <servlet-name>formCustomize</servlet-name>
+        <servlet-class>ru.nuzmsh.web.struts.forms.customize.FormCustomizeServletConfig</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>formCustomize</servlet-name>
+        <url-pattern>/formCustomizeServletConfig</url-pattern>
+    </servlet-mapping>
+    
+    
+    
+    <!-- Struts servlet -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>
+            	/WEB-INF/config-ecom.xml
+            	,/WEB-INF/config-triams.xml
+            	
+            </param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <!-- Struts mapping -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <!-- Voc -->
+    <servlet>
+        <servlet-name>simpleVocAutocomplete</servlet-name>
+        <servlet-class>ru.ecom.web.servlet.SimpleVocAutocompleteServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <!-- Voc mapping -->
+    <servlet-mapping>
+        <servlet-name>simpleVocAutocomplete</servlet-name>
+        <url-pattern>/simpleVocAutocomplete/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- dwr servlet -->
+    <servlet>
+        <servlet-name>dwr-invoker</servlet-name>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+        <init-param>
+        	<param-name>config-ecom</param-name>
+          	<param-value>WEB-INF/dwr-ecom.xml</param-value>
+        </init-param>        <init-param>
+        	<param-name>config-asset</param-name>
+          	<param-value>WEB-INF/dwr-asset.xml</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>overridePath</param-name>
+            <param-value>./dwr</param-value>
+        </init-param>
+
+
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>scriptCompressed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+    <!-- dwr mapping -->
+    <servlet-mapping>
+        <servlet-name>dwr-invoker</servlet-name>
+        <url-pattern>/dwr/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Очищение хэшей -->
+    <servlet>
+        <servlet-name>destroyServlet</servlet-name>
+        <servlet-class>ru.ecom.web.servlet.DestroyServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+	<!-- GWT -->
+    <servlet>
+        <servlet-name>IdeModeService</servlet-name>
+        <servlet-class>ru.ecom.gwtservice.idemode.IdeModeServiceImpl</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <!-- GWT IdeModeService mapping -->
+    <servlet-mapping>
+        <servlet-name>IdeModeService</servlet-name>
+        <url-pattern>/ru.ecom.gwt.idemode.Main/ideModeService</url-pattern>
+    </servlet-mapping>
+
+	<!-- GWT ClassCommandService -->
+    <servlet>
+        <servlet-name>ClassCommandService</servlet-name>
+        <servlet-class>ru.ecom.clazz.ClassCommandServiceImpl</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <!-- GWT ClassCommandService mapping -->
+    <servlet-mapping>
+        <servlet-name>ClassCommandService</servlet-name>
+        <url-pattern>/ru.ecom.gwt.clazz.Main/classCommandService</url-pattern>
+    </servlet-mapping>
+	
+	<!-- VocEntityServlet -->
+    <servlet>
+        <servlet-name>VocEntityServlet</servlet-name>
+        <servlet-class>ru.ecom.web.vocentity.VocEntityServlet</servlet-class>
+        <load-on-startup>6</load-on-startup>
+    </servlet>
+
+    <!-- VocEntity mapping -->
+    <servlet-mapping>
+        <servlet-name>VocEntityServlet</servlet-name>
+        <url-pattern>/vocEntity/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- UTF-8 encoding -->
+    <filter>
+        <filter-name>Set Character Encoding</filter-name>
+        <filter-class>ru.nuzmsh.web.filter.SetCharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <!-- UTF-8 mapping to struts servlet-->
+    <filter-mapping>
+        <filter-name>Set Character Encoding</filter-name>
+        <servlet-name>action</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Set Character Encoding</filter-name>
+        <servlet-name>VocEntityServlet</servlet-name>
+    </filter-mapping>
+
+    <!-- LOGIN -->
+    <filter>
+        <filter-name>Login</filter-name>
+        <filter-class>ru.ecom.web.poly.login.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Login</filter-name>
+        <servlet-name>action</servlet-name>
+    </filter-mapping>
+
+    <!-- MAP -->
+    <filter>
+        <filter-name>Map</filter-name>
+        <filter-class>ru.ecom.web.map.MapFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Map</filter-name>
+        <servlet-name>action</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Map</filter-name>
+        <servlet-name>IdeModeService</servlet-name>
+    </filter-mapping>
+    
+    <!-- ОБЯЗАТЕЛЬНО: org.jboss.security.ClientLoginModule required multi-threaded="true"; -->
+    <!--                                                            ^^^^^^^^^^^^^^^^^^^^^  -->
+    <filter-mapping>
+        <filter-name>Login</filter-name>
+        <servlet-name>dwr-invoker</servlet-name>
+    </filter-mapping>
+
+  
+	<!-- Слушатель сессии -->
+	<listener>
+	    <listener-class>ru.ecom.web.servlet.ClearSessionListener</listener-class>
+    </listener>
+
+
+    
+    
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+
+</web-app>

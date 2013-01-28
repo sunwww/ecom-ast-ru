@@ -1,0 +1,278 @@
+@charset "utf-8";
+*{
+	margin: 0px ;
+	padding: 0px ;
+}
+body {
+	background:url("../img/new_year2.jpg") no-repeat scroll 0 0 transparent ;
+	-moz-background-size: 100%,100% ;
+	-webkit-background-size: 100%,100% ;
+	-o-background-size: 100%,100% ;
+	background-size: 100%,100% ;
+}
+#side {
+	left:5px;
+	position:absolute;
+	width:11em;
+}
+#side .button {
+   width: 90px ;
+   height: 43px;
+}
+#side .button:before {
+	margin: 0 0.2em 0 -1em;
+    padding: 0 .2em;
+}
+#side p.label {
+	color: black;
+	font: bold 0.8em/2em Arial, Helvetica;
+}
+
+#side p.info {
+    font: 0.6em/0.7em Arial, Helvetica;
+} 
+#footer #copyright {
+	bottom:-2em;
+	color:gray;
+	position:absolute;
+	right:1em;
+}
+#content {
+	margin-left:12em;
+	min-height:20em;
+	padding-top:0.4em;
+	position:relative;
+	float: left;
+	margin-left: 200px;
+}
+#header  {
+	border-bottom:1px solid #DDDDDD;
+	height:5em;
+	min-height:5em;
+	position:relative;
+	width:100%;
+	background:url("../img/my2013.png") no-repeat scroll bottom right transparent ;
+}
+#header h1 {
+color:#666666;
+font-size:100%;
+left:110px;
+margin:0;
+position:absolute;
+top:0;
+}
+#header img {
+left:0;
+position:absolute;
+top:0;
+}
+img {
+border:medium none;
+}
+#titleHead h1 {
+	font-size:2em ;
+	margin-left: 220px;
+	margin-top: 15px; 
+	color: #AA0000 ;
+}
+.spanNavigMonth,input {
+	font-size:2em ;
+}
+.spanNavigMonth {
+	margin-left: 40px;
+}
+tr.listFunctions {
+	/*
+ margin:30px;
+ padding:20px ;
+ font: 1.5em Arial,helvetica,clean,sans-serif;
+*/
+	width:80% ;
+    background-color: #3C5A98;
+    color: yellow;     
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .5)), to(rgba(255, 255, 255, 0)));
+    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -ms-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -o-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    border: 1px solid #777;
+   
+    margin: 0.5em;
+    font: bold 1.5em/2.2em Arial, Helvetica;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+    -moz-border-radius: .2em;
+    -webkit-border-radius: .2em;
+    border-radius: .2em;
+    -moz-box-shadow: 0 0 1px 1px rgba(255, 255 ,255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    -webkit-box-shadow: 0 0 1px 1px rgba(255, 255, 255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    padding-top: 10px; 
+    padding-bottom: 10px;
+    display: inline-block;
+    width: 300px ;
+        
+}
+tr.listFunctions td {    
+	padding-right: 15px; padding-left: 15px; border: none ;
+}
+
+td.label {
+	text-align: right ;
+	font: 1.5em Arial,helvetica,clean,sans-serif;
+}
+td.selected {
+	color:blue ;
+}
+td.kbButton{
+	height:69px;
+	margin:0;
+	overflow:hidden;
+	padding:0 1px 1px 0;
+	position:relative;
+	width:60px;
+	z-index:2;
+	font: 3em Arial,helvetica,clean,sans-serif;
+	font-weight: bold;
+	vertical-align: middle ;
+	text-align: center;
+	background:url("../img/button.png") no-repeat scroll 0 0 transparent ;
+	-moz-background-size: 100%,100% ;
+	-webkit-background-size: 100%,100% ;
+	-o-background-size: 100%,100% ;
+	background-size: 100%,100% ;
+	
+	border: 0px ;
+
+}
+
+	
+.button {       
+    display: inline-block;
+    white-space: nowrap;
+    background-color: #DDD;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#CCC));
+    background-image: -webkit-linear-gradient(top, #EEE, #CCC);
+    background-image: -moz-linear-gradient(top, #EEE, #CCC);
+    background-image: -ms-linear-gradient(top, #EEE, #CCC);
+    background-image: -o-linear-gradient(top, #EEE, #CCC);
+    background-image: linear-gradient(top, #EEE, #CCC);
+    border: 1px solid #777;
+    padding: 0 1.5em;
+    margin: 0.5em;
+    font: bold 1.5em/2.2em Arial, Helvetica;
+    text-decoration: none;
+    color: #333;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
+    -moz-border-radius: .2em;
+    -webkit-border-radius: .2em;
+    border-radius: .2em;
+    -moz-box-shadow: 0 0 1px 1px rgba(255, 255 ,255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    -webkit-box-shadow: 0 0 1px 1px rgba(255, 255, 255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .8) inset, 0 1px 0 rgba(0, 0, 0, .3);
+    width: 120px ;
+    
+}
+
+p.info {
+    font: 1em/1em Arial, Helvetica;
+}
+p.label {
+	color: yellow;
+}
+.button:hover {
+    background-color: #EEE;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#DDD));
+    background-image: -webkit-linear-gradient(top, #FAFAFA, #DDD);
+    background-image: -moz-linear-gradient(top, #FAFAFA, #DDD);
+    background-image: -ms-linear-gradient(top, #FAFAFA, #DDD);
+    background-image: -o-linear-gradient(top, #FAFAFA, #DDD);
+    background-image: linear-gradient(top, #FAFAFA, #DDD);
+}
+ 
+.button:active,tr.listFunctions:active {
+    -moz-box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
+    -webkit-box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
+    box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
+    position: relative;
+    top: 1px;
+}
+
+.button:before {
+    background: #CCC;
+    background: rgba(0, 0, 0, .1);
+    float: left;       
+    width: 1em;
+    text-align: center;
+    font-size: 1.5em;
+    margin: 0 1em 0 -1em;
+    padding: 0 .2em;
+    -moz-box-shadow: 1px 0 0 rgba(0, 0 ,0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    -webkit-box-shadow: 1px 0 0 rgba(0, 0, 0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    box-shadow: 1px 0 0 rgba(0, 0, 0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    -moz-border-radius: .15em 0 0 .15em;
+    -webkit-border-radius: .15em 0 0 .15em;
+    border-radius: .15em 0 0 .15em;
+    pointer-events: none;
+}
+tr.listFunctions:before{
+    background: #CCC;
+    background: rgba(0, 0, 0, .1);
+    float: left;       
+    width: 1em;
+    text-align: center;
+    font-size: 1.5em;
+    margin: 0 2px 0 2px;
+    padding: 0 .2em;
+    padding-top: 10px; padding-bottom: 10px;
+    -moz-box-shadow: 1px 0 0 rgba(0, 0 ,0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    -webkit-box-shadow: 1px 0 0 rgba(0, 0, 0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    box-shadow: 1px 0 0 rgba(0, 0, 0, .5), 2px 0 0 rgba(255, 255, 255, .5);
+    -moz-border-radius: .15em 0 0 .15em;
+    -webkit-border-radius: .15em 0 0 .15em;
+    border-radius: .15em 0 0 .15em;
+    pointer-events: none;
+}
+ 
+ 
+/* Шестнадцатеричные коды для иконок: */
+.add:before {content: "\271A";}
+.edit:before {content: "\270E";}
+.delete:before {content: "\2718";}
+.save:before {content: "\2714";}
+.email:before {content: "\2709";}
+.like:before {content: "\2764";}
+.next:before {content: "\279C";}
+.star:before {content: "\2605";}
+.spark:before {content: "\2737";}
+.play:before {content: "\25B6";}
+.check:before {content: "\2714";}
+ 
+/* Код для кнопок социальных сетей: */
+.tw, .fb, .tw:hover, .fb:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .5)), to(rgba(255, 255, 255, 0)));
+    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -ms-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: -o-linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+    background-image: linear-gradient(top, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+}
+
+.fb, .fb:focus,tr.listFunctions:focus {
+    background-color: #3C5A98;
+    color: #FFF;     
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+
+.fb:hover,tr.listFunctions:hover {
+    background-color: #879BC3;
+}
+
+.fb:before,tr.listFunctions:before {
+    content: "\279C";
+    background: #4467AC;
+    background: rgba(0, 0, 0, .1);
+    color: #FFF;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
