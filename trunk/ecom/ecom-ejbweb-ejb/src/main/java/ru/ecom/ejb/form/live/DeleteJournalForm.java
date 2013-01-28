@@ -1,7 +1,5 @@
 package ru.ecom.ejb.form.live;
 
-import ru.ecom.ejb.domain.hello.Hello;
-import ru.ecom.ejb.form.hello.HelloForm;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.live.domain.journal.DeleteJournal;

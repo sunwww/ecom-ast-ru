@@ -35,16 +35,16 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 
 
 	
-	public List<VocValue> loadParameterType()  {
+	public List<VocValue> loadParameterType(VocContext aContext)  {
 		List<VocValue> list = new LinkedList<VocValue>()  ;
 		try {
-			loadFile(theFileDiaryParameter ,list);
+			loadFile(theFileDiaryParameter ,list,aContext);
 		}catch (Exception e) {
 		}
 
 		return list ;
 	}
-	private void loadFile( String aResourceString,List<VocValue> aList) throws IOException  {
+	private void loadFile( String aResourceString,List<VocValue> aList,VocContext aContext) throws IOException  {
         LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
         InputStream in = null;
         try {
@@ -55,7 +55,8 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
                 for (Object o : parConfigElement.getChildren()) {
                     Element parElement = (Element) o;
                     if("parameter".equals(parElement.getName())) {
-                        aList.add(put(parElement));
+                    	VocValue vocValue = put(parElement,aContext) ;
+                    	if (vocValue!=null) aList.add(vocValue);
                     //} else if("vocFile".equals(vocElement.getName())) {
                         //loadFile(aHash, vocElement.getTextTrim());
                     } else {
@@ -71,12 +72,14 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
         LOG.info("Done.") ;
 
     }
-	 private VocValue put(Element aElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	 private VocValue put(Element aElement,VocContext aContext) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 		String key = aElement.getAttributeValue("id");
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута id");
 	    }
 	    String name = aElement.getAttributeValue("name");
+	    String roles = aElement.getAttributeValue("roles");
+	    if (StringUtil.isNullOrEmpty(roles)||aContext.getSessionContext().isCallerInRole(roles)) { 
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
@@ -90,6 +93,9 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 		VocValue voc = new VocValue(key, name.toString()) ;
 	    
 	    return voc ;
+	    } else {
+	    	return null ;
+	    }
 	 }
 	private InputStream getInputStream(String aResourceString) throws FileNotFoundException {
 		//return theEcomConfig.getInputStream(aResourceString, "diary.dir.prefix",true);
@@ -188,7 +194,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	        //		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
 			//LinkedList<VocValue> ret = new LinkedList<VocValue>() ;
 			
-			List<VocValue> list = loadParameterType() ;
+			List<VocValue> list = loadParameterType(aContext) ;
 
 			return list;
 	    }    
