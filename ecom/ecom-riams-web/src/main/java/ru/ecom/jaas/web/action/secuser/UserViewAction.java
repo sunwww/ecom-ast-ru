@@ -4,6 +4,8 @@ import ru.ecom.web.actions.entity.EditAction;
 import ru.ecom.web.util.Injection;
 import ru.ecom.jaas.ejb.form.SecUserForm;
 import ru.ecom.jaas.ejb.service.ISecUserService;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
+
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionForm;
@@ -20,7 +22,8 @@ public class UserViewAction extends EditAction {
         ISecUserService service = (ISecUserService) Injection.find(httpServletRequest).getService("SecUserService") ;
         SecUserForm form = (SecUserForm) actionForm ;
         form.setTypeViewOnly();
-        httpServletRequest.setAttribute("roles", service.listUserRoles(getLongId(httpServletRequest, "Идентификатор пользователя")));
+        boolean isAddSystem = RolesHelper.checkRoles("/Policy/Jaas/SecRole/EditSystem", httpServletRequest);
+        httpServletRequest.setAttribute("roles", service.listUserRoles(getLongId(httpServletRequest, "Идентификатор пользователя"),isAddSystem));
         return actionMapping.findForward("success") ;
     }
 }

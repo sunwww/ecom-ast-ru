@@ -42,7 +42,7 @@
     		request.setAttribute("filterAdd"," and mc.ownerFunction_id='"+curator+"'") ;
     		request.setAttribute("title","по лечащему врачу") ;
     	} else if (owner!=null&&!owner.equals("")) {
-    		request.setAttribute("filterAdd"," and mc.ownerFunction_id='"+curator+"'") ;
+    		request.setAttribute("filterAdd"," and mc.ownerFunction_id='"+owner+"'") ;
     		request.setAttribute("title","свои осмотры") ;
     	} else if (department!=null&&!department.equals("")) {
     		request.setAttribute("filterAdd"," and (mc.department_id='"+department+"' and (ml.isNoOmc='0' or ml.isNoOmc is null) or pslo.department_id='"+department+"' and ml.isNoOmc='1')") ;

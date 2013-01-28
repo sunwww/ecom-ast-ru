@@ -32,11 +32,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.web.action.policy.ExportPolicyForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
+import ru.ecom.mis.web.action.kdl.KdlAction;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
@@ -68,6 +70,7 @@ public class ExternalDocumentImportAction extends BaseAction{
     		String path1 = aRequest.getParameter("url_image_tmp_comp") ;
     		
     		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
+    		IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class);
     		
         	IIORegistry registry = IIORegistry.getDefaultInstance() ;
         	registry.registerServiceProvider(new TIFFImageWriterSpi()) ;
@@ -151,7 +154,7 @@ public class ExternalDocumentImportAction extends BaseAction{
 	            	if (isRecord) {
 	            		tmp.renameTo(new File(dirmain+diradd+".jpg"));
 	            	} else {
-	            		save(image,mcomp,dirmain+diradd+".jpg") ;
+	            		save(image,mcomp,dirmain+diradd+".jpg",null,serviceKdl) ;
 	            	}
 	            	//image = ImageIO.read(new File(dirmain+diradd+".jpg"));
 	            	String newName = dirmain+diradd+"-comp.jpg" ;
@@ -159,7 +162,7 @@ public class ExternalDocumentImportAction extends BaseAction{
 	            		float comp = service.getImageCompress()*mcomp ;
 	            		System.out.println("compress...") ;
 	            		//image = Scalr.resize(image, image.getWidth()/2,image.getHeight()/2) ;
-		            	save(image,comp,newName) ;
+		            	save(image,comp,newName,dirmain+diradd+".jpg",serviceKdl) ;
 	            	} else {
 	            		System.out.println(newName) ;
 	            		System.out.println(path1) ;
@@ -194,81 +197,55 @@ public class ExternalDocumentImportAction extends BaseAction{
     	
     	return aMapping.findForward("success") ;
     }
-	public void save(BufferedImage aImage, Float aCompress, String aFileName) throws IOException  {
-		if (aCompress.equals(1f)) {
-			ImageIO.write(aImage, "jpg", new File(aFileName)) ;
-		} else {
-			FileImageOutputStream output = null ;
-			try {
-			Iterator<ImageWriter> iter =ImageIO.getImageWritersByFormatName("jpg") ;
-			if (iter.hasNext()) {
-				
-				
-				ImageWriter writer = iter.next() ;
-				ImageWriteParam iwp = writer.getDefaultWriteParam();
-				iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT) ;
-				iwp.setCompressionQuality(aCompress) ;
-				printlist(iwp.getCompressionTypes()) ;
-				//iwp.setCompressionType("BI_RGB") ;
-				
-				File outFile = new File(aFileName) ;
-				output = new FileImageOutputStream(outFile) ;
-				writer.setOutput(output) ;
-				IIOImage iioimage = new IIOImage(aImage,null,null) ;
-				writer.write(null,iioimage,iwp) ;
+	public void save(BufferedImage aImage, Float aCompress, String aFileName,String aFileMainName,IKdlDiaryService aService) throws IOException  {
+		
+		if (aFileMainName!=null) {
+			String cmd=aService.getDir("image.resize", "convert_ORIGFILE_NEWFILE") ;
+			cmd = cmd.replaceAll("_", " ");
+			cmd = cmd.replace("ORIGFILE", aFileMainName) ;
+			cmd = cmd.replace("NEWFILE", aFileName) ;
+			System.out.println("cmd="+cmd) ;
+			String run=aService.run(cmd) ;
+			if (run!=null &&run.equals("0")) {
+			} else {
+				System.out.println("    ---->> ERROR-->"+run) ;
+				save(aImage, aCompress, aFileName,null,aService) ;
 				
 			}
-			}catch (IOException e) {
-				// TODO: handle exception
-			}finally {
-	            //image.();
-	        	if (output!=null) output.close() ;
-	        }
+		} else {
+			if (aCompress.equals(1f)) {
+				ImageIO.write(aImage, "jpg", new File(aFileName)) ;
+			} else {
+				FileImageOutputStream output = null ;
+				try {
+				Iterator<ImageWriter> iter =ImageIO.getImageWritersByFormatName("jpg") ;
+				if (iter.hasNext()) {
+					
+					
+					ImageWriter writer = iter.next() ;
+					ImageWriteParam iwp = writer.getDefaultWriteParam();
+					iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT) ;
+					iwp.setCompressionQuality(aCompress) ;
+					printlist(iwp.getCompressionTypes()) ;
+					//iwp.setCompressionType("BI_RGB") ;
+					
+					File outFile = new File(aFileName) ;
+					output = new FileImageOutputStream(outFile) ;
+					writer.setOutput(output) ;
+					IIOImage iioimage = new IIOImage(aImage,null,null) ;
+					writer.write(null,iioimage,iwp) ;
+					
+				}
+				}catch (IOException e) {
+					// TODO: handle exception
+				}finally {
+		            //image.();
+		        	if (output!=null) output.close() ;
+		        }
+			}
 		}
 	}
 	
-    public void save1(BufferedImage bufferedImage,String aPath) {
-    	System.out.println(new  SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS").format(new Date())+" Started");
-    		GraphicsEnvironment ge = GraphicsEnvironment
-    		        .getLocalGraphicsEnvironment();
-    		GraphicsDevice[] gs = ge.getScreenDevices();
-    		Rectangle[] rectangles = new Rectangle[gs.length];
-    		for (int j = 0; j < gs.length; j++) {
-    		    GraphicsDevice gd = gs[j];
-    		    GraphicsConfiguration[] gc = gd.getConfigurations();
-    		    for (int i = 0; i < gc.length; i++) {
-    		        rectangles[j] = gc[i].getBounds();
-    		    }
-    		}
-    		 
-    		try {
-    		    for (int j=0; j<rectangles.length; j++) {
-    		         //= new Robot()
-    		            //    .createScreenCapture(rectangles[j]);
-    		        ImageIO.write(bufferedImage, "jpg", new File("test"+j+".jpg"));
-    		        ImageIO.write(bufferedImage, "jpg", new File("test"+j+".jpg"));
-    		        List<BufferedImage> list = new ArrayList<BufferedImage>();
-    		        list.add(bufferedImage);
-    		        IIOImage iioi = new IIOImage(bufferedImage.getRaster(), list, null);
-    		        JPEGImageWriteParam jpegiwp = new JPEGImageWriteParam(Locale.ENGLISH);
-    		        jpegiwp.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-    		        jpegiwp.setCompressionQuality(1.0f);
-    		        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpg");
-    		        while (iter.hasNext()) {
-    		            JPEGImageWriter jpegiw = (JPEGImageWriter)iter.next();
-    		            FileOutputStream fos = new FileOutputStream(new File(aPath+"testiioi"+j+".jpg"));
-    		            jpegiw.setOutput(ImageIO.createImageOutputStream(fos));
-    		            jpegiw.write((IIOMetadata)null, iioi, jpegiwp);
-    		            fos.flush();
-    		            fos.close();
-    		        }
-    		    }
-
-    		} catch (IOException e) {
-    		    e.printStackTrace();
-    		}
-    		System.out.println(new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS").format(new Date())+" Stopped");
-    }	
 	
 	private void printlist(String[] aList) {
 		for(String l:aList) {

@@ -28,9 +28,22 @@
             </msh:ifInRole>
           </msh:ifFormTypeIsNotView>
         </msh:row>
+        <msh:row>
+            <msh:ifInRole roles="/Policy/Jaas/SecUser/EditSystem" >
+              <msh:checkBox property="isSystems" label="Системный" />
+            </msh:ifInRole>
+            <msh:ifNotInRole roles="/Policy/Jaas/SecUser/EditSystem">
+              <msh:hidden property="isSystems" />
+            </msh:ifNotInRole>
+        </msh:row>
         <msh:row guid="50ea4530-3971-47e2-9595-485542f9bde5">
           <msh:textField property="fullname" label="Полное имя" size="50" horizontalFill="true" fieldColSpan="3" guid="fe5da194-9672-4c06-a8f2-be0d6a622b35" />
         </msh:row>
+        <msh:ifFormTypeIsCreate formName="secuserForm">
+        <msh:row>
+        	<msh:autoComplete property="userCopy" vocName="secUser" label="Копировать роли у пользователя" fieldColSpan="2" labelColSpan="2" horizontalFill="true"/>
+        </msh:row>
+        </msh:ifFormTypeIsCreate>
         <msh:row guid="71f70458-5150-4cdc-bf8d-a75ba0c26818">
           <msh:textField property="password" label="Пароль" size="20" passwordEnabled="true" fieldColSpan="1" guid="9c145321-5a15-4d06-be73-881ddde7cf84" />
           <msh:checkBox property="isRemoteUser" label="Удаленный пол-ль"/>
@@ -38,11 +51,28 @@
         <msh:row guid="feafa852-b426-470a-baa1-46187ba71a45">
           <msh:textArea property="comment" label="Комментарий" horizontalFill="true" fieldColSpan="3" guid="d4fda195-9f04-4511-b5dc-a37a1691b735" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow colSpan="4" guid="2e91f84b-e4f8-441d-8f8a-f8bacb7e0f17" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="secuserForm" guid="4640a7ef-b9d6-469c-b18b-07c7481c890d">
-      <msh:ifInRole roles="/Policy/Jaas/SecPolicy/View" guid="b6fa1420-72fd-4dee-bdeb-12c58a5e51d7">
+      <msh:ifInRole roles="/Policy/Jaas/SecRole/View" guid="b6fa1420-72fd-4dee-bdeb-12c58a5e51d7">
         <msh:section guid="b7c4f673-bfe8-4998-a756-97c1f8bff291">
           <msh:sectionTitle guid="e94873ec-c4d8-482d-bc05-687b8bd0611a">Роли пользователя</msh:sectionTitle>
           <msh:sectionContent guid="118c77ac-cb73-4f0e-bb5d-bbfdb42e1119">

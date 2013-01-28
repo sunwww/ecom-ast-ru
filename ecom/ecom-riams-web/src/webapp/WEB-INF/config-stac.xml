@@ -6,6 +6,7 @@
 
 	<form-beans>
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
+        <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
         <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslAdmissionShortForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />
@@ -89,6 +90,34 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report007.jsp" />
+        </action>
+        <action path='/stac_report_direct_in_hospital' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report_direct.jsp" />
+        </action>
+        <action path='/stac_report_13' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report13.jsp" />
+        </action>
+        <action path='/stac_report_14' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report14.jsp" />
+        </action>
+        <action path='/stac_report_cases_not_filled' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/report_cases_not_filled.jsp" />
         </action>
         <action path='/stac_diagnosis_by_slo_list' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
                 name='stac_admissionJournalForm'

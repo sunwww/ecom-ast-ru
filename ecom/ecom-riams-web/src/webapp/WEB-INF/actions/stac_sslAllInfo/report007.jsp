@@ -22,12 +22,10 @@
   <% 
   boolean sh = true ;
   //String shS =  ;
-  StringBuilder shS1=new StringBuilder().append(" ").append(request.getParameter("short")) ;
-  
-  if (shS1.toString().replaceAll("null", "").length()>1) {
+  if (request.getParameter("short")!=null) {
 	  sh=false ;
   }
-  ActionUtil.updateParameter("Report007","typeView","3", request) ;
+  ActionUtil.updateParameter("Report007","typeView","4", request) ;
   if (sh) {
 	 
   %>
@@ -105,12 +103,12 @@
     	frm.m.value="printReport007" ;
     	frm.target='_blank' ;
     	frm.action='print-stac_report007.do' ;
-    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
-    		+getCheckedRadio(frm,"typeHour")+":"
-    		+getCheckedRadio(frm,"typeDate")+":"
-    		+$('dateBegin').value+":"
-    		+$('pigeonHole').value+":"
-    		+$('department').value;
+   // 	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
+   // 		+getCheckedRadio(frm,"typeHour")+":"
+   // 		+getCheckedRadio(frm,"typeDate")+":"
+   // 		+$('dateBegin').value+":"
+  //  		+$('pigeonHole').value+":"
+   // 		+$('department').value;
     }
     function printJournal() {
     	var frm = document.forms[0] ;
@@ -310,7 +308,7 @@ if (date!=null && !date.equals("")) {
 	<%		
 		} else {
 		    	
-		    if ( dep!=null && !dep.equals("") && !dep.equals("0")) {	    	
+		    if ( dep!=null && !dep.equals("") && !dep.equals("0")) { 	
 		    	
 		    if (view.equals("1")) {
 	    	%>
@@ -320,7 +318,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:sectionContent>
 	    <ecom:webQuery name="journal_priem" nativeSql="select 
 	    '&department=${param.department}&dateBegin=${dateBegin}&bedFund='||slo.bedfund_id as vbstid,
-	    vbst.name as vbstname,vss.name as vssname
+	    vbt.name||' '||vbst.name as vbstname,vss.name as vssname
 	,count(distinct case when 
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
@@ -419,6 +417,7 @@ if (date!=null && !date.equals("")) {
 	 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 	left join bedfund bf on bf.id=slo.bedfund_id
 	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
+	left join vocbedtype vbt on vbt.id=bf.bedtype_id
 	left join vocservicestream vss on vss.id=bf.servicestream_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
@@ -434,7 +433,7 @@ if (date!=null && !date.equals("")) {
 	slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time) or
 	slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)
 	${department}
-	group by slo.bedfund_id,bf.bedsubtype_id,vbst.name,bf.serviceStream_id,vss.name
+	group by slo.bedfund_id,bf.bedsubtype_id,vbst.name,vbt.name,bf.serviceStream_id,vss.name
 	      " />
 	    <msh:table name="journal_priem" 
 	    viewUrl="stac_report_007.do?short=Short" 
@@ -786,7 +785,9 @@ if (date!=null && !date.equals("")) {
 	    </msh:section>    
 	    </td></tr></table>
 	    
-	    <%}}
+	    <%}} else {
+	    	view="4" ;
+	    }
 	    	
 	    	if (view.equals("4")) {
 	    		%>

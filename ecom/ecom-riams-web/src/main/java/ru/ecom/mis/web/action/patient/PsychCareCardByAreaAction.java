@@ -81,7 +81,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		else if (typeCare.equals("2")) {
 			careDate = " and  fldDateStart <="
 					+dateEnd					
-					+" and (fldDateFinish is null or fldDateFinish >= "
+					+" and (fldDateFinish is null or fldDateFinish > "
 					+dateEnd
 					+" )" ;
 			careInfo=" (состоящие)"; 
@@ -131,9 +131,9 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			if(isDt) {
 				aRequest.setAttribute("dateT"," and  area.startDate<="
 						+dateEnd					
-						+" and (area.finishDate is null or area.finishDate >= "
+						+" and (area.finishDate is null or area.finishDate > "
 						+dateEnd
-						+" ) and (area.transferDate is null or area.transferDate >= "
+						+" ) and (area.transferDate is null or area.transferDate > "
 						+dateEnd
 						+" )") ;
 			} 
@@ -189,16 +189,43 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		} else if (typeDate.equals("6")) {
 			StringBuilder dateT = new StringBuilder() ;
 			dateT.append(" and (area.finishDate between ")
-					.append(dateBegin).append(" and ").append(dateEnd)
-					.append(" or area.transferDate between ")
-					.append(dateBegin).append(" and ").append(dateEnd).append(") and area.transferReason_id is null ");
-
+			.append(dateBegin).append(" and ").append(dateEnd)
+			.append(" or area.transferDate between ")
+			.append(dateBegin).append(" and ").append(dateEnd).append(") and area.transferReason_id is null ");
+			
 			if (form.getReasonEnd()!=null && form.getReasonEnd()>Long.valueOf(0)) {
 				dateT.append(" and area.stikeOffReason_id='")
-					.append(form.getReasonEnd()).append("'") ;
+				.append(form.getReasonEnd()).append("'") ;
 			}
 			aRequest.setAttribute("dateT",dateT.toString()) ;
 			aRequest.setAttribute("dateInfo", "Поиск по снятым") ;
+		} else if (typeDate.equals("7")) {
+			StringBuilder dateT = new StringBuilder() ;
+			dateT.append(" and (") ;
+			dateT.append(" ( (area.finishDate between ")
+				.append(dateBegin).append(" and ").append(dateEnd)
+				.append(" or area.transferDate between ")
+				.append(dateBegin).append(" and ").append(dateEnd).append(") and area.transferReason_id is null )");
+			dateT.append(" or ");
+			dateT.append(" ( (area.finishDate between ")
+				.append(dateBegin).append(" and ").append(dateEnd)
+				.append(" or area.transferDate between ")
+				.append(dateBegin).append(" and ").append(dateEnd).append(") and area.stikeOffReason_id is null )");
+			dateT.append(" or ");
+			dateT.append(" ( area.startDate between ")
+				.append(dateBegin).append(" and ")
+				.append(dateEnd).append(")") ;
+			dateT.append(" or ");
+			dateT.append(" (  area.startDate<=")
+				.append(dateEnd)
+				.append(" and (area.finishDate is null or area.finishDate >= ")
+				.append(dateEnd)
+				.append(" ) and (area.transferDate is null or area.transferDate >= ")
+				.append(dateEnd)
+				.append(" ))");
+			dateT.append(")") ;
+			aRequest.setAttribute("dateT",dateT.toString()) ;
+			aRequest.setAttribute("dateInfo", "Поиск по всем (взятым, состоящим, снятым, перевед.)") ;
 		}
 		aRequest.setAttribute("invAddField", addField("invalidity",0)) ;
 		if (typeInv.equals("1")) {
@@ -223,6 +250,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				str.append(" and inv.group_id=").append(form.getGroupInv()) ;
 				str1 = new StringBuilder().append(" группа " ).append(form.getGroupInv()).toString() ;
 			}
+			str.append(" and inv.dateFrom<=").append(dateEnd) ;
 			if (typeInv.equals("4")) {				
 				str.append(" and inv.initial='1' and inv.dateFrom between ").append(dateBegin).append(" and ").append(dateEnd) ;
 				str1=str1+"первичные" ;
@@ -231,10 +259,21 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				str.append(" and inv.incapable='1' ") ;
 				str1 = str1+"недееспособные" ;
 			}
-			aRequest.setAttribute("typeI",
+			if (typeInv.equals("6")) {
+				str.append(" and inv.childhoodInvalid='1' ") ;
+				str1 = str1+"с детства" ;
+			}
 					//" and  inv.dateFrom<area.startDate "
 					//+
-					" and (inv.withoutExam='1' or inv.nextRevisionDate>=coalesce(area.finishDate,area.transferDate,"+dateBegin+")) "+str+" ") ;
+			//Первичные
+			if (typeInv.equals("4")) {
+				aRequest.setAttribute("typeI",
+				" "+str+" ") ;
+			} else {
+				aRequest.setAttribute("typeI",
+				" and (inv.withoutExam='1' or inv.nextRevisionDate>coalesce(area.finishDate,area.transferDate,"+dateEnd+") or inv.dateTo>coalesce(area.finishDate,area.transferDate,"+dateEnd+")) "+str+" ") ;
+				
+			}
 			aRequest.setAttribute("typeInvInfo", " инвалиды "+str1) ;
 			aRequest.setAttribute("invAddField", addField("invalidity",1)) ;
 		}
@@ -242,6 +281,16 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				form.getCompTreatment()>(Long.valueOf(0)) && careDate!=null) {
 			StringBuilder compTreat = new StringBuilder() ;
 			compTreat.append(careDate.replaceAll("fldDateStart", "ct.decisionDate").replaceAll("fldDateFinish", "ct.dateReplace")).append(" and ct.kind_id='").append(form.getCompTreatment()).append("'") ;
+			if (typeCare.equals("3")) {
+				//взятые
+				compTreat.append(" and (select to_char(min(ct.decisionDate),'dd.mm.yyyy') from CompulsoryTreatment ct1 where pcc.id=ct1.careCard_id and ct1.orderNumber=ct.orderNumber)>=").append(dateBegin) ;
+				careInfo=" (взятые)";
+			} else if (typeCare.equals("4")) {
+				//снятые
+				compTreat.append(" and  (ct.courtDecisionReplace_id=2 or ct.courtDecisionReplace_id=4) ");
+				careInfo=" (снятые)" ;
+			}
+			
 			aRequest.setAttribute("compTreatName", "принудительное лечение: "+form.getCompTreatment()+careInfo) ;
 			aRequest.setAttribute("compTreat", compTreat.toString()) ;
 			aRequest.setAttribute("compTreatAddField", addField("compulsory",1)) ;
@@ -265,7 +314,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			if (form.getGroup()!=null &&!form.getGroup().equals(Long.valueOf(0))&&careDate!=null) {
 				gr.append(careDate.replaceAll("fldDateStart", "po1.startDate").replaceAll("fldDateFinish", "po1.finishDate")+" and po1.dispensaryGroup_id = ").append(form.getGroup());
 
-				aRequest.setAttribute("groupDopJoin"," left join PsychiaticObservation po1 on po1.careCard_id=pcc.id"); 
+				aRequest.setAttribute("groupDopJoin"," left join PsychiaticObservation po1 on po1.careCard_id=pcc.id  left join VocCriminalCodeArticle vccaAdn on vccaAdn.id=po1.criminalCodeArticle_id "); 
 				aRequest.setAttribute("groupDopSql"," and po1.lpuAreaPsychCareCard_id is null") ;
 				aRequest.setAttribute("groupAddField", addField("group",1)) ;
 				} else  {
@@ -292,17 +341,17 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			}
 		} else if (aType.equals("group")) {
 			if (aInt==0) {
-				return ",'g1' as g1,'g2' as g2,'g3' as g3" ;
+				return ",'g1' as g1,'g2' as g2,'g3' as g3,'g4' as g4" ;
 				//return ",' ' as g1,' ' as g2,' ' as g3" ;
 			} else {
-				return " ,to_char(po1.startDate,'dd.mm.yyyy') as po1startdate,to_char(po1.finishDate,'dd.mm.yyyy') as po1finishDate , coalesce(po1.finishDate,current_date)-po1.startDate as po1cntDays";
+				return " ,to_char(po1.startDate,'dd.mm.yyyy') as po1startdate,to_char(po1.finishDate,'dd.mm.yyyy') as po1finishDate , coalesce(po1.finishDate,current_date)-po1.startDate as po1cntDaysб,vccaAdn.name as vccaAdnname";
 			}
 		} else if (aType.equals("compulsory")) {
 			if (aInt==0) {
 				return ",'c1' as c1,'c2' as c2,'c3' as c3,'c4' as c4" ;
 				//return ",' ' as c1,' ' as c2,' ' as c3,' ' as c4" ;
 			} else {
-				return ",to_char(ct.decisionDate,'dd.mm.yyyy') asctdecisionDate, vlc.name as vlcname, vcca.name as vccaname,coalesce(ct.dateReplace,current_date)- ct.decisionDate as ctcntdays";
+				return ",to_char(ct.decisionDate,'dd.mm.yyyy')||'/'||(select to_char(min(ct1.decisionDate),'dd.mm.yyyy') from CompulsoryTreatment ct1 where pcc.id=ct1.careCard_id and ct1.orderNumber=ct.orderNumber) asctdecisionDate, vlc.name as vlcname, vcca.name as vccaname,coalesce(ct.dateReplace,current_date)- ct.decisionDate as ctcntdays";
 			}
 		} else if (aType.equals("invalidity")) {
 			if (aInt==0) {

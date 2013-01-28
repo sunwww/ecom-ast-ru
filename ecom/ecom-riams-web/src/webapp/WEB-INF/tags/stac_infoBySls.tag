@@ -29,20 +29,47 @@
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View">
       	<msh:section createRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" createUrl="entityParentPrepareCreate-stac_criminalMessages.do?id=${param.id}" title="Сообщения в милицию">
       		<ecom:webQuery name="milMessages" nativeSql="
-      		select cpm.id,vpmt.name as vpmtname,cpm.whenEventOccurred
-      		,cpm.place,vpmo.name as vpmoname
-      		 from PhoneMessage cpm
-      		left join VocPhoneMessageType vpmt on cpm.phoneMessageType_id=vpmt.id
-      		left join VocPhoneMessageOutcome vpmo on vpmo.id=cpm.outcome_id
-      		where cpm.medCase_id='${param.id}' and cpm.dtype='CriminalPhoneMessage'
+      		    select pm.id, pm.phoneDate
+    ,vpht.name||coalesce(' '||vpmst.name,'')
+    ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
+    ,pm.place as pmplace
+    ,coalesce(vpme.name,pm.recieverFio) as reciever
+    ,vpmo.name as vphoname,wp.lastname as wplastname
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
+    ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
+    ,pm.diagnosis as pmdiagnosis
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+    left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+    left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+    left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+    left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+    left join WorkFunction wf on wf.id=pm.workFunction_id
+    left join Worker w on w.id=wf.worker_id
+    left join Patient wp on wp.id=w.person_id
+    left join medcase m on m.id=pm.medCase_id
+    left join Patient p on p.id=m.patient_id
+	left join MisLpu as ml on ml.id=m.department_id 
+	left join SecUser su on su.login=m.username
+	left join WorkFunction wf1 on wf1.secUser_id=su.id
+	left join Worker w1 on w1.id=wf1.worker_id
+	left join MisLpu ml1 on ml1.id=w1.lpu_id     
+    where pm.dtype='CriminalPhoneMessage'
+    and pm.medCase_id=${param.id}
+    order by pm.phoneDate
       		"/>
       		<msh:table name="milMessages" 
       		viewUrl="entityShortView-stac_criminalMessages.do"
       		action="entityParentView-stac_criminalMessages.do" idField="1">
-      			<msh:tableColumn property="2" columnName="Тип"/>
-      			<msh:tableColumn property="3" columnName="Когда"/>
-      			<msh:tableColumn property="4" columnName="Место"/>
-      			<msh:tableColumn property="5" columnName="Исход"/>
+      			<msh:tableColumn columnName="Дата" property="2" />
+      <msh:tableColumn property="9" columnName="Пациент"/>
+      <msh:tableColumn columnName="Тип" property="3" />
+      <msh:tableColumn columnName="Когда" property="4" />
+      <msh:tableColumn columnName="Место" property="5" />
+      <msh:tableColumn columnName="Фамилия принявшего" property="6" />
+      <msh:tableColumn columnName="Фамилия передавшего" property="8" />
+      <msh:tableColumn columnName="Диагноз" property="11" />
+      <msh:tableColumn columnName="Исход" property="7" />
       		</msh:table>
       	</msh:section>
       </msh:ifInRole>

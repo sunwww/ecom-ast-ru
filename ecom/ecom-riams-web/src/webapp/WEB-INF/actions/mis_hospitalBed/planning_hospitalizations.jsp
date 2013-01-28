@@ -49,7 +49,8 @@
     String department = request.getParameter("department") ;
     boolean isgoing = false ;
 	if (department!=null && !department.equals("") && !department.equals("0")) {
-		request.setAttribute("department", " and wp.lpu_id='"+department+"'") ;
+		request.setAttribute("department", " and wp.lpu_id='"+department+"'") ; 
+		request.setAttribute("department1", " slo.department_id='"+department+"' and") ;
 		isgoing=true ;
 	}
     if (date!=null && !date.equals("") && isgoing) {
@@ -69,7 +70,7 @@
     <ecom:webQuery name="journal_pat" nativeSql="
     select wp.id as wpid,wp.name as wpnamw,vcbihr.name as vcbihr
 ,list(case 
-when slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+when ${department1} slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 or coalesce(slo.datefinish,slo.transferdate,current_date)  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 
 then p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
@@ -95,7 +96,7 @@ left join patient pp on pp.id=wchb.patient_id
 where wp.dtype='HospitalRoom' ${department}
 ${roomType} ${countBed}
 group by wp.id,wp.name,vcbihr.name
-order by cast(wp.name as int)
+order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end
  " />
     <msh:table name="journal_pat" 
      action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -104,6 +105,33 @@ order by cast(wp.name as int)
       <msh:tableColumn columnName="Список пациентов, которые лежат" property="4" />
       <msh:tableColumn columnName="Список пациентов, которые планируются" property="5" />
     </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <msh:section>
+    <msh:sectionTitle>Список пациентов</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_pat" nativeSql="
+    select 1,list(
+ p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
+||' '|| to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy')
+,'')||'<br/>'
+) as realPat
+ from  medcase slo
+left join patient p on p.id=slo.patient_id
+
+where  ${department1} slo.dateStart<=to_date('${dateEnd}','dd.mm.yyyy')
+and 
+(coalesce(slo.datefinish,slo.transferdate) is null
+or coalesce(slo.datefinish,slo.transferdate)>= to_date('${dateBegin}','dd.mm.yyyy')
+)
+
+
+and slo.roomNumber_id is null
+ " />
+    <msh:table name="journal_pat" 
+     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+      <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
+     </msh:table>
     </msh:sectionContent>
     </msh:section>
     <%} %>

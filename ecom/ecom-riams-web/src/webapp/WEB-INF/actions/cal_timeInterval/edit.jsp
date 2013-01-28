@@ -21,6 +21,11 @@
 					<msh:textField property="visitTime" label="Среднее время на визит"/>
 					<td>мин.</td>
 				</msh:row>
+				<msh:row>
+					<td colspan="2">указывается либо среднее время, либо кол-во </td>
+					<msh:textField property="countVisits" label="Кол-во визитов"/>
+
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

@@ -49,6 +49,14 @@
 	                   		<msh:link action="journal_doc_externalMedService.do" roles="/Policy/Mis/MedCase/Document/External/Medservice/View,/Policy/Mis/MedCase/Stac/Journal/ExternalMedservice">
 	                   		Внеш. лаборатория</msh:link>
 	                   </li>
+	                   <li>
+	                   		<msh:link action="http://192.168.10.25:57772/csp/riams/omceconreportlist.csp?CacheUserName=guest&CachePassword=guest&tmp=" roles="/Policy/Mis/Journal/AnalysisWorkDepartment">
+	                   		Отчеты по экономической документации</msh:link>
+	                   </li>
+	                   <li>
+	                   		<msh:link action="mis_report_16vn.do" roles="/Policy/Mis/Journal/Report16vn">
+	                   		Отчет 16ВН</msh:link>
+	                   </li>
 					</ul>
 					</div>
 				</td>
@@ -92,6 +100,15 @@
 						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
 	                            007/у-02 форма
 	                        </msh:link></li>
+						<li><msh:link action="stac_report_13.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report13">
+	                            13 форма
+	                        </msh:link></li>
+						<li><msh:link action="stac_report_14.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
+	                            14 форма
+	                        </msh:link></li>
+						<li><msh:link action="stac_report_direct_in_hospital.do" roles="/Policy/Mis/Journal/DirectByHospital">
+	                            Отчет по направленным
+	                        </msh:link></li>
 						<li><msh:link action="journal_surOperation.do" roles="/Policy/Mis/Journal/SurgicalOperation">
 	                            Журнал хирургических операций
 	                        </msh:link></li>
@@ -105,7 +122,7 @@
 	                            Журнал по лечащему врачу
 	                        </msh:link></li>
 						<li><msh:link action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
-	                            Журнал диагнозов по СЛО
+	                            Журнал диагнозов по отделениям (СЛО)
 	                        </msh:link></li>
 						<li><msh:link action="stac_journalOpenByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/OpenningCaseByHospital">
 	                            Журнал открытых СЛС (госпитализаций)

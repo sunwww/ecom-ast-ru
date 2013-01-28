@@ -48,7 +48,12 @@
           <msh:autoComplete viewAction="entityParentView-smo_spo.do" property="parent" label="СПО" guid="1daf90d8-052b-4776-809c-aedeeac116be" fieldColSpan="3" horizontalFill="true" vocName="vocOpenedSpoByPatient" parentId="smo_visitForm.patient" />
         </msh:row>
         <msh:row guid="8171a822-87ac-4a70-9c65-dd2234890dad">
-          <msh:autoComplete size="20" showId="false" vocName="vocServiceStream" property="serviceStream" label="Поток" guid="d23cec11-2213-41d7-8877-73235062a656" horizontalFill="true" />
+        	<msh:ifInRole roles="/Policy/Mis/MedCase/Visit/DontEditServiceStream">
+          <msh:autoComplete size="20" showId="false" vocName="vocServiceStream" property="serviceStream" label="Поток" guid="d23cec11-2213-41d7-8877-73235062a656" horizontalFill="true"  viewAction="true"/>
+          </msh:ifInRole>
+          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/DontEditServiceStream">
+          <msh:autoComplete size="20" showId="false" vocName="vocServiceStream" property="serviceStream" label="Поток" guid="d23cec11-2213-41d7-8877-73235062a656" horizontalFill="true"/>
+          </msh:ifNotInRole>
           <msh:autoComplete size="20" showId="false" vocName="vocWorkPlaceType" property="workPlaceType" label="Место" guid="7f2d4e25-c863-439c-99eb-4f82a6159067" horizontalFill="true" />
         </msh:row>
         <msh:row>
@@ -163,12 +168,31 @@
       		<ecom:webQuery name="docum" nativeSql="select d.id as did,d.history
       		, case when d.dtype='DirectionDocument' then 'Направление' 
       		when d.dtype='DischargeDocument' then 'Выписка'
+      		when d.dtype='BaseMedicalExamination' then 'Паспорт здоровья'
+      		when d.dtype='DirectionToMicrobiologAnalysis' then 'Направление на микробиологическое исследование'
       		else '-' end,d.diagnosis
       		from Document d where d.medCase_id='${param.id}'
       		"/>
       		<msh:table name="docum" action="entitySubclassView-doc_document.do" 
       	 	 viewUrl="entitySubclassShortView-doc_document.do" idField="1" hideTitle="true">
       			<msh:tableColumn property="3"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
+      	<msh:section title="Предварительная госпитализация">
+      		<ecom:webQuery name="WorkCalendarHospitalBed" nativeSql="select d.id as di
+      		,d.dateFrom
+      		,dep.name
+      		,d.diagnosis
+      		from WorkCalendarHospitalBed d
+      		left join MisLpu dep on dep.id=d.department_id 
+      		where d.visit_id='${param.id}'
+      		"/>
+      		<msh:table name="WorkCalendarHospitalBed" action="entityView-smo_planHospitalByVisit.do" 
+      	 	 viewUrl="entityShortView-smo_planHospitalByVisit.do" idField="1" hideTitle="true">
+      			<msh:tableColumn property="2" columnName="Пред. дата госпитализации"/>
+      			<msh:tableColumn property="3" columnName="Отделение"/>
       		</msh:table>
       	</msh:section>
       </msh:ifInRole>
@@ -218,6 +242,7 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_diagnosis" name="Диагноз" title="Добавить диагноз" guid="a54c4c9e-7248-467f-8095-de4edfec868d" roles="/Policy/Mis/MedCase/Diagnosis/Create" key="ALT+5" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-vac_vaccination" name="Вакцинацию" title="Добавить вакцинацию" guid="f417958a-1816-4fe0-8592-dfe35ac19dc8" roles="/Policy/Mis/Vaccination/Create" key="ALT+6" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id" 
          	action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23d" />
 <%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
@@ -228,10 +253,15 @@
     	         
     	 
       </msh:sideMenu>
+      <msh:sideMenu title="Администрирование">
+	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
+      	
+      </msh:sideMenu>
       <msh:sideMenu title="Показать" guid="1e56f157-fd4c-4c13-9275-cfe7868b4ceb">
         <msh:sideLink params="id" action="/entityParentList-vac_vaccination" name="Вакцинации" title="Показать все вакцинации" roles="/Policy/Mis/Vaccination/View" guid="0b4406ba-1860-4063-a26a-ea11f6f9fb23" />
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений" guid="7hb0b69ae-3b9c-47d9-ab3c-5fbe6fa9f" />
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" params="id" action="/entityParentList-smo_medService" title="Показать все услуги" guid="df23-45a26d-5hfd" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewExtMedDocumentByPatient('.do')" name='Внеш. мед. документы' title="Просмотр внеш. мед. документов по пациенту" params="" roles="/Policy/Mis/MedCase/Document/External" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
@@ -249,9 +279,9 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  
-  <msh:ifFormTypeIsNotView formName="smo_visitForm">
   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+  <msh:ifFormTypeIsNotView formName="smo_visitForm">
+  
   	<script type="text/javascript">
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
@@ -359,6 +389,9 @@
   }
   function viewOtherHospitalMedCase(d) {
 	  getDefinition("js-stac_ssl-infoShortByPatient.do?id="+$('patient').value, null);
+  }
+  function viewExtMedDocumentByPatient(d) {
+	  getDefinition("js-doc_externalDocument-infoMedShortByPatient.do?short=Short&id="+$('patient').value, null);
   }
   </script>
 

@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал СЛО (открытых) по лечащему врачу </msh:title>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал СЛО (открытых) по лечащему врачу &nbsp; <a href='stac_report_cases_not_filled.do'>Не заполнялись данные по пациентам более 2х дней</a> </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -23,6 +23,7 @@
     &nbsp; <a href='stac_print_protocol.do?owner=${curator}&stNoPrint=selected'>только своих дневников</a>
     &nbsp; <a href='stac_print_surOperation.do?owner=${curator}&stNoPrint=selected'>хир. операций</a>
     &nbsp; <a href='stac_print_discharge.do?owner=${curator}&stNoPrint=selected'>выписок</a>
+    
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
@@ -78,11 +79,7 @@
     ,count(distinct case when so.id is not null then sls.id else null end) as cntOper    
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
-    left join bedfund as bf on bf.id=m.bedfund_id 
-    left join StatisticStub as sc on sc.medCase_id=sls.id 
-    left outer join Patient pat on m.patient_id = pat.id 
     left join SurgicalOperation so on so.medCase_id in (m.id,sls.id)
-    left join medservice ms on ms.id=so.medService_id
     left join WorkFunction owf on owf.id=m.ownerFunction_id
     left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
     left join Worker ow on ow.id=owf.worker_id

@@ -50,7 +50,7 @@
                 	<msh:separator label="Подтверждения в страховой компании" colSpan="4"/>
                 </msh:row>
                 <msh:row>
-                	<msh:textField property="confirmationDate" label="Дата"/>
+                	<msh:textField viewOnlyField="true" property="confirmationDate" label="Дата"/>
                 	<msh:autoComplete property="confirmationType" label="Тип" vocName="vocPolicyConfirmationType" horizontalFill="true"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
@@ -89,6 +89,11 @@
             <msh:ifFormTypeAreViewOrEdit formName="mis_medPolicyOmcForm">
                 <msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Delete" key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_medPolicyOmc" name="Удалить"
                               confirm="Удалить полис?"/>
+                <msh:sideLink
+	    			roles="/Policy/Mis/MedCase/Stac/Journal/ReceivedWithoutPolicy" key="ALT+9"
+	    			action="/stac_receivedWithoutPolicy_list" name="По госпитализациям без прикрепленных полисов"
+	    			styleId="stac_receivedWithoutPolicy"
+	    		/>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>

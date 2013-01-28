@@ -196,7 +196,7 @@
         	else '' end)
         	,case when cb.placentaHistologyOrder='1' then 'Направлена плацента на гистологию.'||coalesce(vhr.name,'') else '' end as histology
         	,preg.orderNumber as pregorderNumber,cons.name as consname
-        	,pec.notes as pecnotes,vms.name as vmsname,pec.pregnancyFeatures as pregpregnancyFeatures
+        	,pec.previousPregnancies as pecnotes,vms.name as vmsname,pec.pregnancyFeatures as pregpregnancyFeatures
         	from ChildBirth cb 
         	left join MedCase slo on slo.id=cb.medCase_id
         	left join MedCase sls on sls.id=slo.parent_id
@@ -226,7 +226,7 @@
               <msh:tableColumn property="4" columnName="Окончания родов" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
               <msh:tableColumn property="8" columnName="Какая беременность по счету"/>
               <msh:tableColumn property="9" columnName="Жен. консультация"/>
-              <msh:tableColumn property="10" columnName="Особенности данной беременности"/>
+              <msh:tableColumn property="10" columnName="Особенности течения прежних беременностей, родов, послеродового периода (акушерский анамнез)"/>
               <msh:tableColumn property="11" columnName="Семейное положение"/>
               <msh:tableColumn property="12" columnName="Течение настоящей беременности"/>
               <msh:tableColumn property="5" columnName="Кем доставлен" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />

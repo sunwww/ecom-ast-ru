@@ -11,6 +11,7 @@
  <head>
    <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+   <meta content="text/javascript; charset=utf-8" />
 	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
 	
 <msh:ifInIdeMode>
@@ -21,13 +22,14 @@
 <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
 <!-- Дополнительное определение стиля -->
 <tiles:insert attribute="style" ignore='true'/>
+
 <!-- Дополнительное определение стиля END -->
 
 
  </head>
 
     <body>
-    <div id='header'>
+    <div id='header' style="background: url('/skin/images/my2013.png') no-repeat left top ;">
         <h1>МедОС</h1>
         <a href="<%=request.getContextPath()%>">
             <img src='/customer/images/main/logo-75x50.jpg' width='75' height="50"
@@ -36,12 +38,25 @@
         <ul id='user'>
 
             <li><a href='ecom_releases.do'>Новости</a></li>
+            <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">
             <li class="separator">|</li>
-            <msh:ifInRole roles="/Policy/Jaas/SecUser/ReplaceWorkFunction">
-            <li><a href='js-secuser-listWF.do'>Смена раб.функции</a></li>
-            <li class="separator">|</li>
+            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getSystemMessages.do?id=-1&short=Short")'>Сообщения</a></li>
             </msh:ifInRole>
-            <li><a href='http://www.ecom-ast.ru/riams'>Помощь</a></li>
+             <msh:ifInRole roles="/Policy/Jaas/SecUser/ReplaceWorkFunction">
+            <li class="separator">|</li>
+            <li><a href='js-secuser-listWF.do'>Смена раб.функции</a></li>
+           
+            </msh:ifInRole>
+             <li class="separator">|</li>
+             <li>
+             <% request.setAttribute("servletPath", request.getServletPath()); %>
+             <msh:ifNotInRole roles="/Policy/Mis/Help/Edit">
+             <a href='javascript:void(0)' onclick='getDefinition("mis_help.do?code="+escape("${servletPath}")+"&nextUrl="+escape(window.location))'>Помощь</a>
+             </msh:ifNotInRole>
+             <msh:ifInRole roles="/Policy/Mis/Help/Edit">
+             <a href='javascript:void(0)' onclick='window.open("mis_help.do?code="+escape("${servletPath}")+"&nextUrl="+escape(window.location))'>Помощь</a>
+             </msh:ifInRole>
+             </li>
             <li class="separator">|</li>
             <li><ecom:loginName /></li>
             <li class="separator">|</li>
@@ -72,15 +87,14 @@
             <msh:sideLink params="" styleId="mainMenuJournals"
             			name="Отчеты" roles="/Policy/MainMenu/Journals" title="Отчеты" 
             			action="/riams_journals.do"/>
-            <msh:sideLink params="" styleId="mainMenuDiet" 
+<%--            <msh:sideLink params="" styleId="mainMenuDiet" 
             			  action="/entityParentList-diet_diet.do?id=0" name="Диетпитание"
                           roles="/Policy/MainMenu/Diet" title="Диетпитание"/>
-
+ --%>
             <msh:sideLink params="" styleId="mainMenuTemplate" action="/entityList-diary_template.do" name="Шаблоны"
                           title="Шаблоны" roles="/Policy/MainMenu/Template"/>
 
-            <msh:sideLink params="" styleId="mainMenuReg" action="/exp_reg.do" name="Реестры"
-                          roles="/Policy/MainMenu/ExpDocument" title="Реестры"/>
+
                           
             <msh:sideLink params="" styleId="mainMenuContract" action="/contract_reports.do" name="Договоры"
                           title="Договоры" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
@@ -119,6 +133,7 @@
         <tiles:insert attribute="title" ignore="true"/>
         <msh:errorMessage/>
         <msh:infoMessage/>
+        <msh:userMessage/>
         <tiles:insert attribute="body"/>
     </div>
     <div id="hotkey">

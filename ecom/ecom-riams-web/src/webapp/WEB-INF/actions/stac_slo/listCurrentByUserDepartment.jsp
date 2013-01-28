@@ -91,30 +91,21 @@
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <msh:section>
     <msh:sectionTitle>Свод состоящих пациентов в отделение  ${departmentInfo} на текущее момент
-     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-    <a href='stac_journalCurrentByUserDepartment.do'>Выбрать другое отделение</a>
-    </msh:ifInRole>
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select ml.id,ml.name, count(distinct sls.id) as cntSls
+    select m.department_id,ml.name, count(distinct sls.id) as cntSls
     ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
     ,count(distinct case when so.id is not null or so1.id is not null then sls.id else null end) as cntOper
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
-    left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id
     left join SurgicalOperation so on so.medCase_id=m.id
     left join SurgicalOperation so1 on so1.medCase_id =sls.id
-    left join medservice ms on ms.id=so.medService_id
-    left join WorkFunction wf on wf.id=m.ownerFunction_id
-    left join Worker w on w.id=wf.worker_id
-    left join Patient wp on wp.id=w.person_id
-    left outer join Patient pat on m.patient_id = pat.id
     left join MisLpu ml on ml.id=m.department_id
     where m.DTYPE='DepartmentMedCase'
     and m.transferDate is null and m.dateFinish is null
-    group by ml.id,ml.name
+    group by m.department_id,ml.name
     order by ml.name
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />    

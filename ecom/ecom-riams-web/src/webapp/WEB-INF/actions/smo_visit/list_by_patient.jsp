@@ -20,7 +20,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  	<ecom:webQuery name="listByPatient" nativeSql="select mc.id
+  	<ecom:webQuery name="listByPatient" nativeSql="select mc.id||'&id1='||mc.dateStart||'!'||mc.timeExecute||'!'||mc.id||'!'||coalesce(prot.id,0) as idf
 ,mc.dateStart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
 vpd.name as vpdname ,mkb.code,ds.name as dsname,prot.record as protrecord, vr.name as vrname, vvr.name as vvrname
@@ -35,7 +35,8 @@ left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
-where mc.patient_id='${param.id}' and mc.DTYPE='Visit' and mc.dateStart is not null and (mc.noActuality is null or cast(mc.noActuality as integer)=0)"/>
+where mc.patient_id='${param.id}' and mc.DTYPE='Visit' and mc.dateStart is not null and (mc.noActuality is null or mc.noActuality='0')"/>
+	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/PrintAllInfoByPatient">
     <msh:table name="listByPatient" viewUrl="entityShortView-smo_visit.do" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />
@@ -46,8 +47,44 @@ where mc.patient_id='${param.id}' and mc.DTYPE='Visit' and mc.dateStart is not n
       <msh:tableColumn columnName="Заключение" property="7" cssClass="preCell"/>
       <msh:tableColumn columnName="Цель визита" property="8"/>
       <msh:tableColumn columnName="Результат" property="9"/>
-      
     </msh:table>
+    </msh:ifNotInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintAllInfoByPatient">
+    <msh:table  selection="multiply" 
+    name="listByPatient" viewUrl="entityShortView-smo_visit.do" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                    <msh:tableNotEmpty>
+                        <tr>
+                            <th colspan='11'>
+                                <msh:toolbar>
+                                    <a href='javascript:printProtocols("poly_protocols")'>Печать протоколов</a>
+                                </msh:toolbar>
+                            </th>
+                        </tr>
+                    </msh:tableNotEmpty>      
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Дата приема" property="2" />
+      <msh:tableColumn columnName="Специалист" property="3"/>
+      <msh:tableColumn columnName="Приоритет диаг." property="4"/>
+      <msh:tableColumn columnName="Код МКБ" property="5"/>
+      <msh:tableColumn columnName="Диагноз" property="6"/>
+      <msh:tableColumn columnName="Заключение" property="7" cssClass="preCell"/>
+      <msh:tableColumn columnName="Цель визита" property="8"/>
+      <msh:tableColumn columnName="Результат" property="9"/>
+    </msh:table>
+    <script type="text/javascript">
+    function printProtocols(aFile) {
+    	var ids = theTableArrow.getInsertedIdsAsParams("id","listByPatient") ;
+    	if(ids) {
+    		//alert(ids) ;
+    		window.location = 'print-'+aFile+'.do?multy=1&m=printVisits&s=VisitPrintService&'+ids ;
+    		
+    	} else {
+    		alert("Нет выделенных протоколов");
+    	}
+    	
+    }
+    </script>
+    </msh:ifInRole>
   </tiles:put>
 </tiles:insert>
 

@@ -106,8 +106,8 @@
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 		<td colspan="3">
             <input type="submit" onclick="find()" value="Найти" />
-<!--            <input type="submit" onclick="print()" value="Печать" />
-             <input type="submit" onclick="printReestr()" value="Печать реестра" /> -->
+<!--            <input type="submit" onclick="print()" value="Печать" />-->
+             <input type="submit" onclick="printReestr()" value="Реестр пациентов в excel" /> 
           </td>
          </msh:row>
         
@@ -599,7 +599,7 @@ order by dep.name
                 <th colspan="1" />
                 <th colspan="1" />
                 <th colspan="1" />
-                <th colspan="3" class="rightBold">Количество оперированных больных</th>
+                <th colspan="4" class="rightBold">Количество оперированных больных</th>
                 <th colspan="3" class="rightBold">Количество операций</th>
                 <th colspan="2" class="rightBold">Процент</th>
                 <th colspan="2" class="rightBold">Хирург. активность (%)</th>
@@ -717,7 +717,9 @@ dmc.department_id as depid,dep.name as depname
 	where hmc1.DTYPE='HospitalMedCase' 
     and hmc1.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	and hmc1.department_id=dmc.department_id) as cntAdmisPat
+    	and hmc1.department_id=dmc.department_id
+    	and hmc1.deniedHospitalizating_id is null
+    	) as cntAdmisPat
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -729,7 +731,7 @@ left join VocHospType vht on vht.id=hmc.hospType_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	
+    	and hmc.deniedHospitalizating_id is null
     	and dmc.dateFinish is not null
     	${dep}
     	
@@ -742,6 +744,7 @@ order by dep.name
          action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
              <msh:tableNotEmpty>
               <tr>
+                <th colspan="1" />
                 <th colspan="1" />
                 <th colspan="1" />
                 <th colspan="1" />
@@ -973,7 +976,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_oper" nativeSql="
     select
-vo.id,vo.code,vo.name,count(distinct so.id)
+vo.id,vo.code,vo.name,count(distinct so.id),list(dep.name) as dep
 from SurgicalOperation so
 left join MedCase dmc on so.medCase_id = dmc.id
 left join MedCase hmc on dmc.parent_id=hmc.id
@@ -982,7 +985,7 @@ left join Patient pat on pat.id=hmc.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Omc_Oksm ok on pat.nationality_id=ok.id
 left join VocRayon vr on vr.id=pat.rayon_id
-left join MisLpu dep on dep.id=dmc.department_id
+left join MisLpu dep on dep.id=so.department_id
 left join VocHospType vht on vht.id=hmc.hospType_id
 left join WorkFunction swf on swf.id=so.surgeon_id
 left join Worker sw on sw.id=swf.worker_id
@@ -1006,6 +1009,7 @@ order by vo.id,vo.code,vo.name
             <msh:tableColumn columnName="Код" property="2"/>
             <msh:tableColumn columnName="Операция" property="3"/>
             <msh:tableColumn columnName="Кол-во операций" property="4"/>            
+            <msh:tableColumn columnName="Отделения" property="5"/>            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -1056,7 +1060,7 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 	where hmc1.DTYPE='HospitalMedCase' 
     and hmc1.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	and hmc1.department_id=dmc.department_id) as cntAdmisPat
+    	and hmc1.department_id=dmc.department_id and hmc1.deniedHospitalizating_id is null) as cntAdmisPat
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id

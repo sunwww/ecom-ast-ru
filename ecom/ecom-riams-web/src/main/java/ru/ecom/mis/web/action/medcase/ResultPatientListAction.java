@@ -16,6 +16,7 @@ public class ResultPatientListAction extends BaseAction {
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		String typeView =ActionUtil.updateParameter("ResultPatientList","typeView","2", aRequest) ;
 		String typePat =ActionUtil.updateParameter("ResultPatientList","typePatient","3", aRequest) ;
+		String typeDischargePatientIs =ActionUtil.updateParameter("ResultPatientList","typeDischargePatientIs","3", aRequest) ;
 		String typePatIs =ActionUtil.updateParameter("ResultPatientList","typePatientIs","1", aRequest) ;
 		String typeEmergency =ActionUtil.updateParameter("ResultPatientList","typeEmergency","3", aRequest) ;
 		String typeOperation =ActionUtil.updateParameter("ResultPatientList","typeOperation","3", aRequest) ;

@@ -123,11 +123,7 @@ select ml.id,ml.name,count(distinct m.id) as cntAll
 ,count(distinct case when d.id is null then m.id else null end) as cntNoOf 
  from MedCase  m 
  left join MisLpu ml on ml.id=m.department_id
-    left outer join Patient pat on m.patient_id = pat.id  
-    left outer join StatisticStub stat on m.statisticstub_id=stat.id 
-    left join VocAdditionStatus vas on vas.id=pat.additionStatus_id
     left join MedCase d on d.parent_id=m.id and d.dtype='DepartmentMedCase'
-    left join Diagnosis diag on diag.medCase_id=m.id
 	where m.DTYPE='HospitalMedCase'
 	and (m.noActuality is null or m.noActuality='0') 
 	and (m.ambulanceTreatment is null or m.ambulanceTreatment='0') and m.dateFinish is null
@@ -157,10 +153,6 @@ from MedCase d
 left join MedCase n on n.prevMedCase_id=d.id
 left join MedCase sls on sls.id=d.parent_id
 left join Mislpu ml on ml.id=d.transferDepartment_id
-left join Patient pat on pat.id=sls.patient_id
-left join StatisticStub stat on stat.id=sls.statisticStub_id
-left join mislpu lput on lput.id=d.department_id
-    left join VocAdditionStatus vas on vas.id=pat.additionStatus_id
 where d.DTYPE='DepartmentMedCase' 
  and n.dateStart is null  ${onlyMonthD} and sls.dateFinish is null
  and sls.deniedHospitalizating_id is null

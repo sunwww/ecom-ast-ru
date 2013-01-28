@@ -9,11 +9,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал внешних исследований"/>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Журнал внешних исследований"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:style_currentMenu currentAction="preg_histology" />
-    	<tags:mis_journal />
+
   </tiles:put>
   <tiles:put name="body" type="string">
   <%

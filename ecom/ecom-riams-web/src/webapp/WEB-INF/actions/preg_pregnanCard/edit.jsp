@@ -44,6 +44,7 @@
         </msh:row>
         <msh:row guid="d0d1a483-4218-47b5-86c1-22a5798099df">
           <msh:textField property="lastMensis" label="Последняя менструация" guid="a984fd7d-f795-49fb-b76e-3a27e42b57e5" labelColSpan="2" />
+          <msh:checkBox property="dontRememberLastMensis" label="не помнит"/>
         </msh:row>
         <msh:row guid="c058c225-6b48-435d-82f6-2d304aeecf2c">
           <msh:textField property="shortPregnancyAmount" label="Кол-во коротких беременностей" guid="ff1a2b10-36aa-4591-91a7-0c715fcb7d2a" labelColSpan="2" />
@@ -51,6 +52,7 @@
         </msh:row>
         <msh:row guid="1911f4e7-ac58-48f3-8c16-c23d5ea63512">
           <msh:textField property="firstVisitDate" label="Первое посещение консультации при данной беременности" guid="6992d50a-6444-4b68-80ee-c2a54d23b18e" labelColSpan="3" />
+          <msh:checkBox property="dontVisitCons" label="не посещала"/>
         </msh:row>
         <msh:row guid="f8008ada-30f8-4618-98ae-a8d5b2e4da2c">
           <msh:textField property="visitsAmount" label="Всего посетила раз" labelColSpan="3" guid="c4d36cb7-f54e-4c06-8182-31980747f2fe" />

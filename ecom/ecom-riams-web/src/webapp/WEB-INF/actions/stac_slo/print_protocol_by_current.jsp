@@ -74,7 +74,9 @@
             	left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
     			left join Worker w on w.id=wf.worker_id
     			left join Patient wp on wp.id=w.person_id
-            	where mc.dtype='DepartmentMedCase' and mc.dateFinish is null and mc.transferDate is null
+            	where sls.dtype='HospitalMedCase' 
+            	and (sls.dateFinish is null or sls.dateFinish>(CURRENT_DATE-2)) 
+            	
             	${filterAdd}
             	and d.id is not null 
             	${dop}

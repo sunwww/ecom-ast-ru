@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
@@ -19,6 +20,12 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	public String changeServiceStreamBySmo(Long aSmo, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
+		return "Поток обслуживания изменен" ;
+	}
+	
 	public String getSessionData(HttpServletRequest aRequest) {
 		StringBuilder res = new StringBuilder() ;
 		res.append(getSession(aRequest, "TicketService.Ticket.date")).append("@") ;

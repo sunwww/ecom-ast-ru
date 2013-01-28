@@ -64,12 +64,21 @@
         	<msh:textField property="whenTimeEventOccurred" label="время:" fieldColSpan="1" />
         </msh:row>
         <msh:row>
+        	<msh:autoComplete vocName="vocRayon" property="rayon" label="Район" fieldColSpan="5" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="place" label="Место" fieldColSpan="5" horizontalFill="true"/>
         </msh:row>
         <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
           <msh:textArea property="comment" label="Пояснение обстоятельств" rows="7" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
+        <msh:row>
+        	<msh:autoComplete vocName="vocPhoneMessageState" property="state" label="Тяжесть состояния" fieldColSpan="5" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="idc10" fieldColSpan="5" label="МКБ диагноза" horizontalFill="true" vocName="vocIdc10"/>
+        </msh:row>
+        <msh:row>
           <msh:textArea property="diagnosis" label="Диагноз" rows="7" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
         <msh:row>
@@ -94,6 +103,27 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+    <msh:ifFormTypeIsNotView formName="stac_criminalMessagesForm" guid="518fe547-aed9-be2229f04ba3">
+      <script type="text/javascript">
+
+       
+  		try {
+	    if (idc10Autocomplete) idc10Autocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('idc10','diagnosis');
+	    });} catch(e) {}
+
+  		function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
+  		</script>
+  		</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 

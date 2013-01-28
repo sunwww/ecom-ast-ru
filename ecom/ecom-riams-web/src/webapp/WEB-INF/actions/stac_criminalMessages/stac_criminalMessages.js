@@ -3,6 +3,8 @@ function listByDate(aForm,aCtx){
 	var request = aCtx.request ;
 	var id=request.getParameter("id").split(":") ;
 	request.setAttribute("paramsPeriod"," and "+id[3]+"=to_date('"+id[4]+"','dd.mm.yyyy')") ;
+	request.setAttribute("messageType", (+id[5]==0)?"":" and pm.phoneMessageType_id='"+id[5]+"'") ;
+	request.setAttribute("messageSubType", (+id[6]==0)?"":" and pm.phoneMessageSubType_id='"+id[6]+"'") ;
 	return listRecord(aCtx,id) ;
 	//return aCtx.createForward("/WEB-INF/actions/stac_criminalMessages/listByDate.jsp") ;
 }
@@ -21,8 +23,9 @@ function listSwod(aCtx) {
 	var request = aCtx.request ;
 	var id=request.getParameter("id").split(":") ;
 	request.setAttribute("paramsPeriod"," and "+id[3]+" between to_date('"+id[4]+"','dd.mm.yyyy') and to_date('"+id[5]+"','dd.mm.yyyy')") ;
-	request.setAttribute("department", (+id[6]==0)?" and deniedand ml.id is null":" and ml.id='"+id[6]+"'") ;
-	request.setAttribute("messageType", (+id[7]==0)?" and pm.phoneMessageType_id is null":" and pm.phoneMessageType_id='"+id[7]+"'") ;
+	request.setAttribute("department", (+id[6]>0)?" and m.department_id='"+id[6]+"'":" and m.department_id is null ") ;
+	request.setAttribute("messageType", (+id[7]>0)?" and pm.phoneMessageType_id='"+id[7]+"'":"  and pm.phoneMessageType_id is null") ;
+	request.setAttribute("messageSubType", (+id[8]>0)?" and pm.phoneMessageSubType_id='"+id[8]+"'":"") ;
 	return listRecord(aCtx,id) ;
 }
 function listRecord(aCtx,aId) {

@@ -230,7 +230,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
       <msh:tableColumn columnName="Место" property="5" />
       <msh:tableColumn columnName="Фамилия принявшего" property="6" />
       <msh:tableColumn columnName="Фамилия передавшего" property="8" />
-      <msh:tableColumn columnName="Диагноз" property="9" />
+      <msh:tableColumn columnName="Диагноз" property="11" />
       <msh:tableColumn columnName="Исход" property="7" />
     </msh:table>
     </msh:sectionContent>
@@ -242,7 +242,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <msh:sectionTitle>Свод по дням с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:'||to_char(${paramDate},'dd.mm.yyyy') as id,to_char(${paramDate},'dd.mm.yyyy') as dateSearch, count(pm.id) as cntMessages
+    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:'||to_char(${paramDate},'dd.mm.yyyy')||':${param.phoneMessageType}:${param.phoneMessageSubType}' as id,to_char(${paramDate},'dd.mm.yyyy') as dateSearch, count(pm.id) as cntMessages
     , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as cntHosp
     , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as cntDenied
     ,count(distinct m.id) as cntHosp
@@ -252,7 +252,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     group by ${paramDate}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -275,7 +275,7 @@ ${emerIs} ${pigeonHole} ${department}
     <msh:sectionTitle>Свод по госпитализациям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${dateStart}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
+    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     ,count(distinct m.id) as cntHosp
     from PhoneMessage pm 
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
@@ -286,7 +286,7 @@ ${emerIs} ${pigeonHole} ${department}
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -307,7 +307,7 @@ ${emerIs} ${pigeonHole} ${department}
     <msh:sectionTitle>Свод по отказам с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${dateStart}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0) as id
+    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id
     ,ml.name as mlname,vpmt.name as vpmtname
     ,count(pm.id) as cntPm
     ,count(distinct m.id) as cntHosp
@@ -320,7 +320,7 @@ ${emerIs} ${pigeonHole} ${department}
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -341,7 +341,7 @@ ${emerIs} ${pigeonHole} ${department}
     <msh:sectionTitle>Свод по обращениям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${dateStart}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
+    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as cntHosp
     , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as cntDenied
     ,count(distinct m.id) as cntHosp
@@ -353,7 +353,7 @@ ${emerIs} ${pigeonHole} ${department}
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
