@@ -34,7 +34,7 @@ public class JavaScriptSrcTag extends SimpleTagSupport {
 
         JspWriter out = getJspContext().getOut() ;
         out.print("<script type='text/javascript' src='") ;
-        String rewrited = theSrc.replace(".js", CacheUniqueUtil.getUniqueId()+".js") ;
+        String rewrited = theSrc.replace(".js", CacheUniqueUtil.getUniqueId()+".js?"+CacheUniqueUtil.getUniqueId().replace("-", "")) ;
         out.print(rewrited) ;
         //out.print(theSrc) ;
         //out.print("?tmp=") ;
