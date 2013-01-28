@@ -143,7 +143,7 @@
     	String department="" ;
     	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		department= " and ml.id='"+dep+"'" ;
+    		department= " and ml.id="+dep+"" ;
     	}
     	request.setAttribute("department", department) ;
     	%>

@@ -32,7 +32,7 @@
 		  end as cnt1
     ,	  case 
 			when (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)=0 then 1 
-			when cast(bf.addCaseDuration as integer)=1 then ((coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)+1) 
+			when bf.addCaseDuration='1' then ((coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)+1) 
 			else (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)
 		  end as cnt2
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag

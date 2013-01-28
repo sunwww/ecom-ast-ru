@@ -48,6 +48,10 @@
       		</td>
       	</msh:row>
       	</msh:ifFormTypeAreViewOrEdit>
+        <msh:separator label="Переведен из отделения" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
+        <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
+          <msh:autoComplete viewAction="entityParentView-stac_slo.do" shortViewAction="entityShortView-stac_slo.do" parentId="stac_sloForm.parent" viewOnlyField="true"  vocName="sloBySls" property="prevMedCase" label="СЛО" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+        </msh:row>
         <msh:separator label="Поступление в отделение" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/NotEditAdmissionTime">
 	        <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">

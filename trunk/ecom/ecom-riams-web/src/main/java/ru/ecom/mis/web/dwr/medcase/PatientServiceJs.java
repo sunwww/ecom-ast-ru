@@ -17,6 +17,23 @@ import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class PatientServiceJs {
+	public String getFactorByProfession(Long aProfession,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql
+		.append(" select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp ")
+		.append(" where ")
+		.append(" vdp.id='").append(aProfession).append("'") ;
+		System.out.println(sql) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next() ;
+			if (wqr.get2()!=null) {
+				return ""+wqr.get2() ;
+			}
+		}
+		return "" ;
+	}
 	public String getCodefByRegIcForeign(Long aArea, Long aCompany,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

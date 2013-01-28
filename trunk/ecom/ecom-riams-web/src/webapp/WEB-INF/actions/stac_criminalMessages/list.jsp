@@ -59,7 +59,7 @@
       <msh:tableColumn columnName="Место" property="5" />
       <msh:tableColumn columnName="Фамилия принявшего" property="6" />
       <msh:tableColumn columnName="Фамилия передавшего" property="8" />
-      <msh:tableColumn columnName="Диагноз" property="9" />
+      <msh:tableColumn columnName="Диагноз" property="11" />
       <msh:tableColumn columnName="Исход" property="7" />
     </msh:table>
     </msh:sectionContent>

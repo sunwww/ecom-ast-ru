@@ -98,6 +98,10 @@
       	 --%>
       </msh:sideMenu>
       </msh:ifNotInRole>
+      <msh:sideMenu title="Администрирование">
+      	<msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()"/>
+    	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
+      </msh:sideMenu>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
         <msh:sideLink params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
 	    <msh:sideLink 
@@ -117,7 +121,7 @@
     <!-- 
     	  - Случай стационарного лечения в отделении
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="serviceStreamName" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="dateStart" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="prevMedCase" guid="710eb92b-fc3f-4390-b32df6837280" />
       <msh:hidden property="parent" guid="710eb92b-fc3f-4b44-9390-b32df6837280" />
@@ -127,6 +131,10 @@
       <msh:hidden property="lpu" guid="756525c0-3c91-41da-b2ba-27ebdbdc001b" />
       <msh:hidden property="dateFinish"/>
       <msh:hidden property="dischargeTime"/>
+      <msh:hidden property="transferDate"/>
+      <msh:hidden property="transferTime"/>
+      <msh:hidden property="transferDepartment"/>
+      <msh:hidden property="targetHospType"/>
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="5%,5%,5%">
       <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
       	<msh:row >
@@ -136,21 +144,18 @@
       		</td>
       	</msh:row>
       	</msh:ifFormTypeAreViewOrEdit>
-        <msh:separator label="Поступление в отделение" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/NotEditAdmissionTime">
-	        <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">
-	          <msh:textField property="dateStart" label="Дата поступления" viewOnlyField="true" />
-	          <msh:textField property="entranceTime" label="время" viewOnlyField="true" />
-	        </msh:row>
-        </msh:ifInRole>
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/NotEditAdmissionTime">
-	        <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">
-	          <msh:textField  property="dateStart" label="Дата поступления" viewOnlyField="false" />
-	          <msh:textField property="entranceTime" label="время" viewOnlyField="false" />
-	        </msh:row>
-        </msh:ifNotInRole>
+        <msh:separator label="Переведен из отделения" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
         <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
-          <msh:autoComplete  viewOnlyField="true"  vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+          <msh:autoComplete viewAction="entityParentView-stac_slo.do" shortViewAction="entityShortView-stac_slo.do" parentId="stac_sloForm.parent" viewOnlyField="true"  vocName="sloBySls" property="prevMedCase" label="СЛО" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+        </msh:row>
+        <msh:separator label="Поступление в отделение" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
+	        <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">
+	          <msh:textField property="dateStart" label="Дата поступления" />
+	          <msh:textField property="entranceTime" label="время" />
+	        </msh:row>
+
+        <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
+          <msh:autoComplete parentId="stac_sloForm.lpu" vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
         <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
           <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c" />
@@ -202,18 +207,18 @@
         <msh:row>
     	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>      
+        <msh:ifFormTypeIsView formName="stac_sloForm">
         <msh:separator label="Перевод в другое отделение" colSpan="" guid="dd7185d0-e499-4307-9e58-6ef41d83c2b0" />
         <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
-          <msh:textField property="transferDate" label="Дата" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
-          <msh:textField property="transferTime" label="Время" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
+          <msh:textField viewOnlyField="true"  property="transferDate" label="Дата" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
+          <msh:textField viewOnlyField="true" property="transferTime" label="Время" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
         </msh:row>
         <msh:row guid="72adfc11-ef9b-47c0-8eb4-a23ee9e84ed8">
-          <msh:autoComplete vocName="vocLpuHospOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="f793944a-6afe-4c26-82f3-50532049a8bc" />
+          <msh:autoComplete viewOnlyField="true" vocName="vocLpuHospOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="f793944a-6afe-4c26-82f3-50532049a8bc" />
         </msh:row>
         <msh:row guid="f2a5-68fb-4ccc-9982-7b4447">
-          <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда переведен" fieldColSpan="6" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" />
+          <msh:autoComplete viewOnlyField="true" vocName="vocHospType" property="targetHospType" label="Куда переведен" fieldColSpan="6" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" />
         </msh:row>
-        <msh:ifFormTypeIsView formName="stac_sloForm">
         <msh:separator label="Выписка (производится по СЛС)" colSpan="" guid="a5bd9711-b033-4104-b794-0ca3ebc8b827" />
         <msh:row guid="21b4ac48-1773-410d-b85f-537680420aa4">
           <msh:textField property="dateFinish" label="Дата" viewOnlyField="true" guid="bb7b87a8-c542-47ef-93b6-91106abf9f19" />
@@ -326,13 +331,16 @@
           from SurgicalOperation as so 
           left join MedService ms on ms.id=so.medService_id
           left join medcase parent on parent.id=so.medcase_id 
+          
+      		left join MedCase aslo on aslo.id=so.medCase_id
+      		left join MedCase slo on slo.parent_id=aslo.parent_id
           left join MisLpu d on d.id=so.department_id 
           left join WorkFunction wf on wf.id=so.surgeon_id
           left join Worker w on w.id=wf.worker_id
           left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
           left join Patient wp on wp.id=w.person_id
           where  
-           so.medCase_id=${param.id}
+           slo.id=${param.id}
           order by so.operationDate
           "/>
     <msh:tableNotEmpty name="allSurgOper">
@@ -431,9 +439,26 @@
       		window.location = 'entityParentPrepareCreate-stac_slo.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
       	</script>
-  
+<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+	<msh:ifFormTypeIsView formName="stac_sloForm">
+		<script type="text/javascript">
+		function unionSloWithNextSlo() {
+			HospitalMedCaseService.unionSloWithNextSlo('${param.id}',{
+		
+	  			callback: function(aResult) {
+	  				alert(aResult) ;
+	  				window.location.reload() ;
+	  			}
+	  		}) ;
+		}
+		</script>
+	</msh:ifFormTypeIsView>  
     <msh:ifFormTypeIsNotView formName="stac_sloForm" guid="518fe547-aed9-be2229f04ba3">
       <script type="text/javascript">//var theBedFund = $('bedFund').value;
+      if (+$('prevMedCase').value==0) {
+    	  $('serviceStreamName').select() ;
+    	  $('serviceStreamName').focus() ;
+      }
       var lpuDate ;
        
   		try {
@@ -459,34 +484,106 @@
       	function goDischarge() {
       		window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
-      	$('lpuAndDate').value = $('department').value +"#"+(0+$('serviceStream').value)+"#" +$('dateStart').value;
-      	lpuDate = $('department').value +"#"+$('dateStart').value  ;
+      	$('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
+      	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.setParentId(lpuDate) ;
       	//bedFundAutocomplete.setVocId(theBedFund);
       	//alert(departmentAutocomplete) ;
-      	transferDepartmentAutocomplete.setParentId($('lpu').value) ;
-      	try {
-      		departmentAutocomplete.setParentId($('lpu').value) ;
-	      	departmentAutocomplete.addOnChangeCallback(function() {
-	      	 	updateLpuAndDate() ;
-	      	 });
-      	} catch (e) {
-      	}
+      	//transferDepartmentAutocomplete.setParentId($('lpu').value) ;
+      	
       	if (bedFundAutocomplete) bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.addOnChangeCallback(function() {
       	 	updateLpuAndDate() ;
+      	 	updateBedFund() ;
       	 });
       	updateLpuAndDate() ;
       	 function updateLpuAndDate() {
-      		 var serviceStream=+$('serviceStream').value ;
-      	 	$('lpuAndDate').value = $('department').value +"#"+serviceStream+"#" +$('dateStart').value;
+      		 //var serviceStream=+$('serviceStream').value ;
+           	$('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
+          	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	 	//alert("lpuAndDate"+$('lpuAndDate').value) ;
-      	 	lpuDate = $('department').value +"#"+$('dateStart').value ;
+      	 	lpuDate = (+$('department').value) +"#"+$('dateStart').value ;
       	 	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
-      	 	var id = $('bedFund').value ;
-      	 	bedFundAutocomplete.setVocId(id);
-      	 }</script>
+      	 	serviceStreamAutocomplete.setParentId(lpuDate) ;
+      	 	//var id = $('bedFund').value ;
+      	 	//bedFundAutocomplete.setVocId(id);
+      	 }
+      	 function updateBedFund() {
+      		HospitalMedCaseService.getDefaultBedFundBySlo($('parent').value
+      				, $('department').value, $('serviceStream').value
+      				, $('dateStart').value,{
+      			callback: function(aResult) {
+      				var res = aResult.split('#') ;
+
+      				if (+res[0]!=0) {
+      					$('bedFund').value = res[0] ; 
+      					$('bedFundName').value = res[1] ; 
+      				} else {
+      		      	 	$('bedFund').value='0';
+      		      	 	$('bedFundName').value='';
+      				}
+      			}
+      		}) ;
+
+      	 }
+      	 </script>
+      	 	
+      	 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
+      	 	<script type="text/javascript">
+      	 	try {
+          		//departmentAutocomplete.setParentId($('lpu').value) ;
+    	      	departmentAutocomplete.addOnChangeCallback(function() {
+    	      		try {
+    	      			roomNumberAutocomplete.setParentId($('department').value) ;
+    	      			$('roomNumber').value='0' ;
+    	      			$('roomNumberName').value='' ;
+    	      		} catch(e) {}
+    	      		
+    	      		updateLpuAndDate() ;
+    	      	 	ownerFunctionAutocomplete.setParentId($('department').value) ;
+    	      		updateBedFund() ;
+    	      	 });
+          	} catch (e) {
+          	}
+      	 	</script>
+      	 </msh:ifNotInRole>
+      	 <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
+      	 	<script type="text/javascript">
+      	 	try {
+          		//departmentAutocomplete.setParentId($('lpu').value) ;
+    	      	departmentAutocomplete.addOnChangeCallback(function() {
+    	      		updateLpuAndDate() ;
+    	      		roomNumberAutocomplete.setParentId($('department').value) ;
+    	      		$('roomNumber').value='0' ;
+    	      		$('roomNumberName').value='' ;
+    	      	 	ownerFunctionAutocomplete.setParentId($('department').value) ;
+    	      		HospitalMedCaseService.getDefaultInfoBySlo($('parent').value
+    	      				, $('department').value, $('serviceStream').value
+    	      				, $('dateStart').value,{
+    	      			callback: function(aResult) {
+    	      				var res = aResult.split('#') ;
+    	      				if (+res[0]!=0) {
+    	      					$('ownerFunction').value = res[0] ; 
+    	      					$('ownerFunctionName').value = res[1] ; 
+    	      				} else {
+    	      		      	 	$('ownerFunction').value='0';
+    	      		      	 	$('ownerFunctionName').value='';
+    	      				}
+    	      				if (+res[2]!=0) {
+    	      					$('bedFund').value = res[2] ; 
+    	      					$('bedFundName').value = res[3] ; 
+    	      				} else {
+    	      		      	 	$('bedFund').value='0';
+    	      		      	 	$('bedFundName').value='';
+    	      				}
+    	      			}
+    	      		})
+    	      	 });
+          	} catch (e) {
+          	}
+      	 	</script>
+      	 </msh:ifInRole>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>

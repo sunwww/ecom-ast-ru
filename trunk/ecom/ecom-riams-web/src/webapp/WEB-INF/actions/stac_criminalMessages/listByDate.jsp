@@ -41,12 +41,13 @@
         where pm.dtype='CriminalPhoneMessage' ${paramsPeriod} 
         ${addParam}
         ${emergency} ${department} ${pigeonHole}
-        ${messageType}
+        ${messageType} ${messageSubType}
         " 
         />
     <msh:table name="journal_militia"
     viewUrl="entityShortView-stac_criminalMessages.do" 
      action="entityParentView-stac_criminalMessages.do" idField="1" >
+     <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата" property="2" />
       <msh:tableColumn property="9" columnName="Пациент"/>
       <msh:tableColumn columnName="Тип" property="3" />

@@ -45,7 +45,8 @@
           <msh:autoComplete vocName="vocServiceType" property="serviceType" label="Тип услуги" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
         </msh:row>
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
-          <msh:textField property="code" label="Код"  guid="b87e9cee-b50d-1911d5e87e40" horizontalFill="true" />
+          <msh:textField property="code" label="Код"  horizontalFill="true" />
+          <msh:textField property="additionCode" label="Код доп."   horizontalFill="true" />
         </msh:row>
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
           <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
@@ -113,6 +114,7 @@
           	 (select list(' '||vwf.name||coalesce('-'||lpu.name,'')) from WorkFunctionService wfs left join MisLpu lpu on lpu.id=wfs.lpu_id left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id)
           	 ,ms.code 
           	 from MedService ms left join VocMedService vms on vms.id=ms.vocMedService_id where ms.parent_id='${param.id}'
+          	 order by ms.code
           " guid="childMedService" />
 		  	<msh:tableNotEmpty name="childMedService">
 		  	<msh:toolbar >

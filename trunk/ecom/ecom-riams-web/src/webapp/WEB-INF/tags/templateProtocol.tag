@@ -15,6 +15,7 @@
     li.liTemp {
     	cursor: pointer;
     	list-style:none outside none;
+    	border-top: 1px solid ; 
     }
     li.liTemp:HOVER {
     	cursor: pointer;
@@ -46,12 +47,17 @@
 		        <msh:row>
 		            <msh:textArea isNotGoEnter="true"  property="${name}textTemplProtocol" label='Текст шаблона:' size="50" fieldColSpan="5" hideLabel="true"/>
 		        </msh:row>
+		        <msh:row>
+		            <msh:checkBox property="${name}IsClose" label="Закрывать окно после выбора заключения" fieldColSpan="3"/>
+		        </msh:row>
 
 		    </msh:panel>
 		        <msh:row>
-		            <td colspan="6">
-		                <input type="button" name="buttonTempProtOk" id='buttonTempProtOk' value='OK' onclick='save${name}TemplateProtocol()'/>
-		                <input type="button" value='Отменить' onclick='cancel${name}TemplateProtocol()'/>
+		            <td colspan="3">
+		                <input type="button" name="buttonTempProtOk" id='buttonTempProtOk' value='Добавить в протокол' onclick='save${name}TemplateProtocol()'/>
+		                <input type="button" name="buttonPreViewProtOk" id='buttonPreViewProtOk' value='Просмотр протокола' onclick='preView${name}TemplateProtocol()'/>
+		                <input type="button" value='Закрыть' onclick='cancel${name}TemplateProtocol()'/>
+		                
 		            </td>
 		        </msh:row>
 		</td>
@@ -99,9 +105,23 @@
      			prop = "${property}" ;
      		}
    			$(prop).value += $('${name}textTemplProtocol').value ;
-	         the${name}TempProtDialog.hide() ;
-	         $(prop).focus() ;
+   			if ($("${name}IsClose").checked) {
+		         the${name}TempProtDialog.hide() ;
+		         $(prop).focus() ;
+   			} else {
+   				alert('Добавлено в заключение') ;
+   			}
 	         //$(prop).select() ;
+     }
+     // Предварительный просмотр
+     function preView${name}TemplateProtocol() {
+			var prop ;
+     		if ("${property}"=="") {
+     			prop = "record" ;
+     		} else {
+     			prop = "${property}" ;
+     		}
+   			$('${name}textTemplProtocol').value = $(prop).value;
      }
 
      // инициализация диалогового окна выбора шаблона протокола
@@ -123,6 +143,7 @@
              ${name}PrevProtocolAutocomplete.addOnChangeCallback(function() {
             	 get${name}TextDiaryById($('${name}PrevProtocol').value,0) ;
              }) ;
+             $("${name}IsClose").checked=true ;
              load${name}ListProtocolsByUsername() ;
              setFocusOnField('${name}tempProtCategoryName') ;
      }
@@ -153,6 +174,36 @@
      }
      function get${name}TextProtocolById(aId,aOk) {
          TemplateProtocolService.getText(aId, {
+             callback: function(aString) {
+                 $('${name}textTemplProtocol').value = aString ;
+                 if (+aOk==1) {
+                	 save${name}TemplateProtocol() ;
+                	 $('${name}tempProtocol').value='' ;
+                	 $('${name}tempProtocolName').value='' ;
+                 }
+            	 $('${name}PrevProtocol').value='' ;
+            	 $('${name}PrevProtocolName').value='' ;
+              }
+          } ) ;
+    	 
+     }
+     function get${name}TextDiaryByIdDischarge(aId,aOk) {
+         TemplateProtocolService.getTextDischarge(aId, {
+             callback: function(aString) {
+                 $('${name}textTemplProtocol').value = aString ;
+                 if (+aOk==1) {
+                	 save${name}TemplateProtocol() ;
+                	 $('${name}tempProtocol').value='' ;
+                	 $('${name}tempProtocolName').value='' ;
+                 }
+            	 $('${name}PrevProtocol').value='' ;
+            	 $('${name}PrevProtocolName').value='' ;
+              }
+          } ) ;
+    	 
+     }
+     function get${name}TextDiaryByIdExternal(aId,aOk) {
+         TemplateProtocolService.getTextExternal(aId, {
              callback: function(aString) {
                  $('${name}textTemplProtocol').value = aString ;
                  if (+aOk==1) {

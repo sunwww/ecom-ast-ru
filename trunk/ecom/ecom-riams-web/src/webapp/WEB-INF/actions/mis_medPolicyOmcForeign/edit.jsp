@@ -81,6 +81,11 @@
       <hr />
       <msh:ifFormTypeAreViewOrEdit formName="mis_medPolicyOmcForeignForm" guid="d5749c79-5a21-44da-b2de-7775f32b23ff">
         <msh:sideLink roles="/Policy/Mis/MedPolicy/OmcForeign/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_medPolicyOmcForeign" name="Удалить" confirm="Удалить полис?" guid="5b21852d-2e5a-47d9-99ad-f2e5a8b623a3" />
+                <msh:sideLink
+	    			roles="/Policy/Mis/MedCase/Stac/Journal/ReceivedWithoutPolicy" key="ALT+9"
+	    			action="/stac_receivedWithoutPolicy_list" name="По госпитализациям без прикрепленных полисов"
+	    			styleId="stac_receivedWithoutPolicy"
+	    		/>
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
   </tiles:put>

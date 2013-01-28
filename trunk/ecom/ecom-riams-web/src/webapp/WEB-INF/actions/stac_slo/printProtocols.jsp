@@ -23,18 +23,29 @@
     	String stNoPrint = request.getParameter("stNoPrint") ;
     	String stPrint = request.getParameter("stPrint") ;
     	if (stNoPrint!=null &&!stNoPrint.equals("")) {
-    		request.setAttribute("dop"," and printDate is null");
+    		request.setAttribute("dop"," and d.printDate is null");
     	} else if (stPrint!=null &&!stPrint.equals("")) {
-    		request.setAttribute("dop"," and printDate is not null");
+    		request.setAttribute("dop"," and d.printDate is not null");
     	}
     %>
         <msh:section>
             <msh:sectionTitle>Протоколы по случаю медицинского обслуживания</msh:sectionTitle>
             <msh:sectionContent>
-            	<ecom:webQuery name="protocols"  hql="select dateRegistration||'!'||timeRegistration||'!'||id, dateRegistration, timeRegistration, record, printDate from Diary 
-            	where medCase_id='${param.id}' 
-            	${dop}
-            	order by dateRegistration,timeRegistration"/>
+            	<ecom:webQuery name="protocols" nativeSql="
+            	select d.dateRegistration||'!'||d.timeRegistration||'!'||d.id as id
+            	, d.dateRegistration, d.timeRegistration, d.record, d.printDate 
+            	, vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
+            	from MedCase slo
+      left join MedCase aslo on aslo.parent_id=slo.parent_id
+      left join Diary as d on aslo.id=d.medCase_id
+      left join WorkFunction wf on wf.id=d.specialist_id
+      left join Worker w on w.id=wf.worker_id
+      left join Patient pw on pw.id=w.person_id
+      
+      left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+            	where slo.id='${param.id}' and d.DTYPE='Protocol'
+				${dop}
+				order by d.dateRegistration,d.timeRegistration"/>
                 <msh:table selection="multiply" name="protocols" action="js-smo_visitProtocol-viewProtocol.do" idField="1" noDataMessage="Нет протоколов">
                     <msh:tableNotEmpty>
                         <tr>
@@ -50,6 +61,7 @@
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата" property="2"/>
                     <msh:tableColumn columnName="Время" property="3"/>
+                    <msh:tableColumn columnName="Специалист" property="6"/>
                     <msh:tableColumn columnName="Протокол" property="4" cssClass="preCell"/>
                     <msh:tableColumn columnName="Дата печати" property="5"/>
                 </msh:table>

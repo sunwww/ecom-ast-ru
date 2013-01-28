@@ -26,16 +26,16 @@
     	  - Хирургическая операция
     	  -->
 
-    <msh:form action="/entitySaveGoView-stac_planHospital.do" defaultField="" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
-      <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e" colsWidth="15px,250px,15px">
+    <msh:form action="/entitySaveGoView-stac_planHospital.do" defaultField="patientName" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
+      <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e">
         <msh:hidden property="id" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
         <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
-        <msh:row>
-        	<msh:textField property="fio" label="ФИО" fieldColSpan="3" horizontalFill="true"/>
+        <msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d">
+          	<msh:autoComplete showId="false" vocName="patient" property="patient" viewOnlyField="false"  label="Персона" guid="e4a238b3-0a19-4405-adcf-8b7ef8fad03f" horizontalFill="true" viewAction="entityView-mis_patient.do" fieldColSpan="2"/>
+			<td align="right" width="1px"><div id="personButton"></div></td>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="sex" label="Пол" vocName="vocSex"/>
-        	<msh:textField property="phone" label="Телефон"/>
+        	<msh:textField property="phone" label="Телефон" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Параметры госпитализации" colSpan="4"/>
@@ -70,18 +70,35 @@
         	<msh:separator label="Фактическая госпитализация" colSpan="4"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="patient" fieldColSpan="3" label="Пациент" vocName="patient" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="medCase" parentAutocomplete="patient" fieldColSpan="3" label="Госпитализация" vocName="medCase" horizontalFill="true"
+        	<msh:autoComplete property="medCase" parentAutocomplete="patient" fieldColSpan="3" label="Госпитализация" vocName="slsByPatient" horizontalFill="true"
         	/>
         </msh:row>
         <msh:row>
-        	
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
+
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
+      
     </msh:form>
+    <tags:mis_patient_new divForButton="personButton" name='Person' title='Создание новой персоны' autoComplitePatient="person"/>
 
 </tiles:put>
   <tiles:put name="title" type="string">
@@ -94,12 +111,16 @@
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_planHospital" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
-      	<msh:sideLink key="CTRL+2" params="id" action="/print-planHospital.do?m=printPlanHospital&s=HospitalPrintService" name="Предварительной госпитализации"/>
+      	<msh:sideLink key="CTRL+2" params="id" action="/print-planHospital.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
   
   <tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsNotView formName="stac_planHospitalForm">
+  	<script type="text/javascript">
+  		initPersonPatientDialog()</script>
+  		</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 

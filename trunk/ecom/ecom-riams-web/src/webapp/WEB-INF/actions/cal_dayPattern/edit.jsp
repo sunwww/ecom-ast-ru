@@ -22,7 +22,7 @@
 		<msh:ifFormTypeIsView formName="cal_dayPatternForm">
 			<msh:section title="Шаблоны интервалов времен">
 			<ecom:webQuery name="timePatterns" nativeSql="
-			select wctp.id,vwb.name as vwbname, wctp.timeFrom,wctp.timeTo,wctp.visitTime
+			select wctp.id,vwb.name as vwbname, wctp.timeFrom,wctp.timeTo,wctp.visitTime,wctp.countVisits
 			from WorkCalendarTimePattern wctp
 			left join VocWorkBusy vwb on vwb.id=wctp.workBusy_id
 			where wctp.dayPattern_id = ${param.id} and wctp.dtype='WorkCalendarTimeInterval'
@@ -33,6 +33,7 @@
 					<msh:tableColumn columnName="Интервал с" property="3"/>
 					<msh:tableColumn columnName="по" property="4"/>
 					<msh:tableColumn columnName="Время визита" property="5"/>
+					<msh:tableColumn columnName="Кол-во визитов" property="6"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Шаблоны сгенерированные времена">

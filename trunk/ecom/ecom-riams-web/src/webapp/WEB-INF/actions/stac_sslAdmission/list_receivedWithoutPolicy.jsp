@@ -70,6 +70,18 @@
       <msh:row>
         <msh:separator label="Основные параметры" colSpan="7"/>
       </msh:row>
+      <msh:row>
+        <td class="label" title="Поиск по пациентов (typeDischargePatientIs)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Пациенты:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeDischargePatientIs" value="1">  выписанные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"   colspan="1">
+        	<input type="radio" name="typeDischargePatientIs" value="2" > состоящие
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"   colspan="1">
+        	<input type="radio" name="typeDischargePatientIs" value="3" > все
+        </td>
+        </msh:row>
 
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -114,6 +126,7 @@
     if (date!=null && !date.equals(""))  {
     	String dateEnd = (String)request.getParameter("dateEnd") ;
     	String view = (String)request.getAttribute("typeView") ;
+    	String typeDischargePatientIs = (String)request.getAttribute("typeDischargePatientIs") ;
     	String typePatientIs = (String)request.getAttribute("typePatientIs") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
@@ -123,6 +136,11 @@
     	if (typePatientIs!=null && typePatientIs.equals("1")) {
     		request.setAttribute("isPat", " or hmc.dateFinish is null") ;
     	}
+    	if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("1")) {
+    		request.setAttribute("isDischarge", " and hmc.dateFinish is not null") ;
+    	} else if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("2")) {
+    		request.setAttribute("isDischarge", " and hmc.dateFinish is null") ;
+    	} 
     	if (view!=null && (view.equals("1") || view.equals("7"))) {
     	%>
     
@@ -173,7 +191,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
  and (vss.code = 'OBLIGATORYINSURANCE') 
 
 and hmc.deniedHospitalizating_id is null
-${addPat} ${addEmergency} 
+${addPat} ${addEmergency} ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
@@ -251,7 +269,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
 and hmc.deniedHospitalizating_id is null
 and mp.dtype='MedPolicyOmcForeign' and mp.insuranceCompanyCode_id is null
 and mp.company_id is null
-${addPat} ${addEmergency} 
+${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
@@ -329,7 +347,7 @@ left join PatientFond pf on pf.commonNumber=polI.commonNumber
 
 and hmc.deniedHospitalizating_id is null and polI.confirmationDate is null
 and polI.dtype='MedPolicyOmc'
-${addPat} ${addEmergency} 
+${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
@@ -414,7 +432,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
  and (vss.code = 'OTHER') 
 
 and hmc.deniedHospitalizating_id is null
-${addPat} ${addEmergency} 
+${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
@@ -502,7 +520,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
 
 and hmc.deniedHospitalizating_id is null
 and pol.medCase_id is null
-${addPat} 
+${addPat}  ${isDischarge}
 group by dep.name, vss.name
 
 order by dep.name,vss.name
@@ -582,7 +600,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
 
 and hmc.deniedHospitalizating_id is null
 and pol.medCase_id is null
-${addPat} 
+${addPat}  ${isDischarge}
 group by  vss.name
 
 order by vss.name
@@ -617,6 +635,7 @@ order by vss.name
     checkFieldUpdate('typePatientIs','${typePatientIs}',2) ;
     //checkFieldUpdate('typeOperation','${typeOperation}',3) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
+    checkFieldUpdate('typeDischargePatientIs','${typeDischargePatientIs}',3) ;
     
   
    function checkFieldUpdate(aField,aValue,aMax) {

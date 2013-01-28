@@ -71,7 +71,7 @@
         <msh:row>
 	        <td colspan="1"></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDate" value="6">  все (взятые + состоящие + снятые)
+	        	<input type="radio" name="typeDate" value="7">  все (взятые + состоящие + снятые)
 	        </td>
         </msh:row>
         <msh:row  styleId="rwDel">
@@ -82,18 +82,20 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="3">
         	<input type="radio" name="typeInv" value="2">  недееспособные
         </td>
-        </msh:row>
-        <msh:row>
-        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeInv" value="3">  инвалиды
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        </td>        </msh:row>
+        <msh:row>
+        <td></td>
+
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
 	        	<input type="radio" name="typeInv" value="4">  перв. инвалиды
 	        </td>
-	        
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
 	        	<input type="radio" name="typeInv" value="5">  инвалиды (недеесп.)
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeInv" value="6">  инвалиды с детства
 	        </td>
 	        
         </msh:row>
@@ -327,6 +329,7 @@ as age
 			<msh:tableColumn columnName="Дата взятия (АДН)" property="22" cssClass="groupAddField"/>
 			<msh:tableColumn columnName="Дата снятия (АДН)" property="23" cssClass="groupAddField"/>
 			<msh:tableColumn columnName="Кол-во дней (АДН)" property="24" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Статья (АДН)" property="25" cssClass="groupAddField"/>
         </msh:table>
     <%-- 
    ,(select list(mkb.code) from Diagnosis dd left join vocidc10 mkb on mkb.id=dd.idc10_id where dd.patient_id=pcc.patient_id and dd.establishDate between area.startDate and area.finishDate)
@@ -344,14 +347,14 @@ as age
     	document.forms[0].typeInv[2].checked='checked' ;
     });
     if (reasonEndAutocomplete) reasonEndAutocomplete.addOnChangeCallback(function() {
-    	document.forms[0].typeDate[4].checked='checked' ;
+    	document.forms[0].typeDate[5].checked='checked' ;
     });
     if (reasonBeginAutocomplete) reasonBeginAutocomplete.addOnChangeCallback(function() {
     	document.forms[0].typeDate[2].checked='checked' ;
     	//document.forms[0].typeFirst[2].checked='checked' ;
     });
     if (reasonTransferAutocomplete) reasonTransferAutocomplete.addOnChangeCallback(function() {
-    	document.forms[0].typeDate[3].checked='checked' ;
+    	document.forms[0].typeDate[4].checked='checked' ;
     });
     if (natureSuicideAutocomplete) natureSuicideAutocomplete.addOnChangeCallback(function() {
     	document.forms[0].typeSuicide[2].checked='checked' ;

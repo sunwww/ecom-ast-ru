@@ -177,6 +177,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete"
 		styleId="deleteDischarge"
 	/>
+    	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
+    	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
+
 </msh:sideMenu>
 <msh:sideMenu title="Перейти">
 	    <msh:sideLink 
@@ -230,6 +233,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   		}
   	</script>
   </msh:ifInRole>
+
   
 <script type="text/javascript">
 function gotoPregHistory(aMedCase,aUrl) {

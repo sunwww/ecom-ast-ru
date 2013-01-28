@@ -21,7 +21,14 @@
     <tags:menuJaas currentAction="users"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <ecom:webQuery name="listSort" hql="select id,login,fullname,comment,disable from SecUser &#xA;${param.list==&quot;all&quot;? &quot; &quot; :param.list==&quot;disable&quot; ?&quot;where cast(disable as integer)=1&quot;:&quot;where disable is null or cast(disable as integer)=0&quot;}&#xA;order by login" guid="4961a776-a9d5-499f-9b4f-8aeb3620d24e" />
+  	<msh:ifInRole roles="/Policy/Jaas/SecUser/EditSystem">
+  		<ecom:webQuery name="listSort" hql="select id,login,fullname,comment,disable 
+  		from SecUser &#xA;${param.list==&quot;all&quot;? &quot; &quot; :param.list==&quot;disable&quot; ?&quot;where disable='1'&quot;:&quot;where disable is null or disable='0'&quot;}&#xA;order by login" />
+  	</msh:ifInRole>
+  	<msh:ifNotInRole roles="/Policy/Jaas/SecUser/EditSystem">
+  		<ecom:webQuery name="listSort" hql="select id,login,fullname,comment,disable 
+  		from SecUser &#xA;${param.list==&quot;all&quot;? &quot; where (isSystems is null or isSystems='0')&quot; :param.list==&quot;disable&quot; ?&quot;where disable='1' and (isSystems is null or isSystems='0')&quot;:&quot;where (disable is null or disable='0') and (isSystems is null or isSystems='0')&quot;}&#xA; order by login" />
+  	</msh:ifNotInRole>
     <msh:table name="listSort" action="userView.do" idField="1" guid="cf6b8963-1a46-4142-8503-cc36fce098f7">
       <msh:tableColumn columnName="#" property="sn" guid="597cacc1-1445c8-98b0-5ff0d70752b9" />
       <msh:tableColumn columnName="Пользователь" property="2" guid="597cacc1-1408-45c8-98b0-5ff0d70752b9" />

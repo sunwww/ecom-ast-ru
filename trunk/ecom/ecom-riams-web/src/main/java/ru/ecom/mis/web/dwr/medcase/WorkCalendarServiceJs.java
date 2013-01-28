@@ -922,13 +922,18 @@ public class WorkCalendarServiceJs {
 		sql.append(" select wct.id,cast(wct.timeFrom as varchar(5)) as wcttimeFrom")
 			.append(" ,case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
 			.append(" ,wct.medCase_id");
-		sql.append(" ,coalesce(pat.lastname||coalesce(' ('||pat.patientSync||')','')") ;
-		sql.append(", prepat.lastname ||coalesce(' ('||prepat.patientSync||')','')") ;
+		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
+		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
 		sql.append(",wct.prepatientInfo) as fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
 			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; 
+		if (isRemoteUser) {
+			sql.append(", case when vsrt.isRemoteRayon='1' then 'ЗАНЯТО' when vsrt.isViewOnlyMineDoctor='1' then 'ЗАНЯТО'  when vsrt.isViewOnlyDoctor='1' then 'ЗАНЯТО' else null end as reserve") ;
+		} else {
+			sql.append(", case when wcd.calendarDate!=current_date then case when vsrt.isRemoteRayon='1' then 'РЕЗЕРВ УДАЛ.РАЙОН' when vsrt.isViewOnlyMineDoctor='1' then 'РЕЗЕРВ ВРАЧА'  when vsrt.isViewOnlyDoctor='1' then 'РЕЗЕРВ ВРАЧАМ' else null end else null end as reserve") ;
+		}
 		if (isRemoteUser) {
 			sql.append(", case when sw.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
 			sql.append(", case when w.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
@@ -938,8 +943,8 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
 			.append(" left join SecUser su1 on su1.login=vis.username ");
+		sql.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id") ;
 		if (isRemoteUser) {
-			sql.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id") ;
 			sql.append(" left join WorkCalendar wc on wc.id=wcd.workCalendar_id") ;
 			sql.append(" left join WorkFunction wf on wf.id=wc.workFunction_id") ;
 			sql.append(" left join Worker w on w.id=wf.worker_id") ;
@@ -949,6 +954,9 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join patient pat on pat.id=vis.patient_id");
 		sql.append(" left join patient prepat on prepat.id=wct.prepatient_id");
 		sql.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("'");
+		if (isRemoteUser) {
+			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
+		}
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 		
@@ -964,16 +972,19 @@ public class WorkCalendarServiceJs {
 		//System.out.println("row="+row) ;
 		int i=0 ;
 		boolean first =false;
+		
 		for (WebQueryResult wqr:list) {
 			i++ ;
 			if (i==1) res.append("<li class='liList'><ul class='ulTime'>") ;
 			boolean info=true ;
+			boolean reserve = false ;
 			int pre = Integer.valueOf(""+wqr.get3());
 			if (pre==1) {
-				if (isRemoteUser && wqr.get13()!=null && !(""+wqr.get13()).equals("")) info=false ;
+				if (isRemoteUser && wqr.get14()!=null && !(""+wqr.get14()).equals("")) info=false ;
 			} else {
-				if (isRemoteUser && wqr.get12()!=null && !(""+wqr.get12()).equals("")) info=false ;
+				if (isRemoteUser && wqr.get13()!=null && !(""+wqr.get13()).equals("")) info=false ;
 			}
+			if (wqr.get12()!=null && !(""+wqr.get12()).equals("")) reserve = true ;
 			if (pre==1) {
 				
 				if (!info) {
@@ -982,11 +993,11 @@ public class WorkCalendarServiceJs {
 					res.append("ЗАНЯТО").append("") ;
 				} else {
 					if (wqr.get7()!=null) {
-						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' >1<strike>") 
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>") 
 						.append(wqr.get2()) .append(" ") ;
 						res.append(wqr.get5()).append("</strike>") ;
 					} else {
-						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>2") 
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") 
 						.append(wqr.get2()) .append(" ") ;
 						res.append(wqr.get5()) ;
 					}
@@ -1036,15 +1047,22 @@ public class WorkCalendarServiceJs {
 					.append(wqr.get2()) .append(" ") ;
 					res.append("ЗАНЯТО").append("") ;
 				} else {
-					res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
-					
-					res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
-					if (first) res.append(" checked='true'");
-					res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
-					if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
-						res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
+					if (reserve) {
+						res.append("<li id='liReserve'>") ;
+						res.append(wqr.get2()).append(" ") ;
+						res.append(wqr.get12()) ;
+					} else {
+						
+						res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
+						
+						res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
+						if (first) res.append(" checked='true'");
+						res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
+						if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
+							res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
+						}
+						res.append(wqr.get2()) ;
 					}
-					res.append(wqr.get2()) ;
 				}
 			}
 			if (wqr.get10()!=null && info) {

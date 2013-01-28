@@ -37,9 +37,14 @@
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="mis_copyingEquipmentForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_copyingEquipment" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-mis_copyingEquipment" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_copyingEquipment" name="Изменить" title="Изменить" 
+				roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-mis_copyingEquipment" name="Удалить" 
+				title="Удалить" roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Delete"/>
 			</msh:sideMenu>
+		<msh:sideMenu title="Добавить">
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Template/Create" params="id" action="/entityParentPrepareCreate-mis_templateByCopyingEquipment" title="Добавить шаблон файла" name="Шаблон файла" />
+		</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
 </tiles:insert>

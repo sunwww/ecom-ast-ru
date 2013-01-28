@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
@@ -99,7 +99,14 @@
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>
       </msh:sideMenu>
+      <msh:sideMenu title="Администрирование">
+	   	<tags:mis_changeServiceStream name="CSS" service="TicketService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
+      	
+      </msh:sideMenu>
     </msh:ifFormTypeIsView>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+ <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
   </tiles:put>
 </tiles:insert>
 

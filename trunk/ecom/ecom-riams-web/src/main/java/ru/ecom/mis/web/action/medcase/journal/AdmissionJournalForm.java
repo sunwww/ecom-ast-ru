@@ -1,7 +1,5 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import javax.persistence.UniqueConstraint;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -232,4 +230,12 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Тип сообщения в милицию */
 	private Long thePhoneMessageType;
+	
+	/** ЛПУ направителя */
+	@Comment("ЛПУ направителя")
+	public Long getLpuDirect() {return theLpuDirect;}
+	public void setLpuDirect(Long aLpuDirect) {theLpuDirect = aLpuDirect;}
+
+	/** ЛПУ направителя */
+	private Long theLpuDirect;
 }

@@ -75,6 +75,7 @@
                           Адреса заполнить
                      </msh:link>
 					</li>
+					<li><msh:link action="entityPrepareCreate-mis_customMessage.do" roles="/Policy/Mis/CustomMessage/Create">Создать информационное сообщение</msh:link></li>
                         
 				</ul>
 				</div>

@@ -11,7 +11,8 @@
 <%@ attribute name="date" required="true" description="Дата" %>
 <%@ attribute name="number" required="true" description="Номер" %>
 
-<msh:sideLink roles="${roles}" name="${title}" action=" javascript:show${name}RW('.do') " 
+<msh:ifInRole roles="${roles}">
+<msh:sideLink name="${title}" action=" javascript:show${name}RW('.do') " 
 	key="${key}" />
 
 <style type="text/css">
@@ -107,3 +108,4 @@
      	theIs${name}RwDialogInitialized = true ;
      }
 </script>
+</msh:ifInRole>

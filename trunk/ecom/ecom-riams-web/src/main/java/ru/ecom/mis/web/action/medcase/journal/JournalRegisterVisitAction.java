@@ -19,14 +19,16 @@ public class JournalRegisterVisitAction  extends BaseAction {
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		JournalBySpecialistForm form = (JournalBySpecialistForm)aRequest.getSession().getAttribute("poly_journalBySpecForm");
 		String args =form.getBeginDate()+":"+form.getFinishDate()
-		+":"+form.getSpecialist()+":"+form.getRayon()+":"+form.getPrimaryInYear() +":" +form.getNumberInJournal() +":";
+		+":"+form.getSpecialist()+":"+form.getRayon()
+		+":"+form.getPrimaryInYear() +":" +form.getNumberInJournal() +":"
+		;
 		aRequest.setAttribute("beginDate", form.getBeginDate()) ;
 		aRequest.setAttribute("finishDate", form.getFinishDate()) ;
 		aRequest.setAttribute("specialist", form.getSpecialist()) ;
 		aRequest.setAttribute("rayon", form.getRayon()) ;
 		aRequest.setAttribute("primaryInYear", form.getPrimaryInYear()) ;
 		
-		
+		System.out.println("args="+args) ;
 		if (form.getOrderBySpecialist()!=null &&
 				form.getOrderBySpecialist().equals(Boolean.TRUE)) {
 			args=args+"workFunction_id" ;
@@ -35,7 +37,7 @@ public class JournalRegisterVisitAction  extends BaseAction {
 			aRequest.setAttribute("order", "Сортировка по времени приема") ;
 			args=args+"dateStart,timeExecute" ;
 		}
-		args=args+":"+form.getWorkFunction() ;
+		args=args+":"+form.getWorkFunction()+":"+form.getLpu()+":"+form.getServiceStream() ;
 		aRequest.setAttribute("func", form.getWorkFunction()) ;
 		if (form!=null) {
 			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 

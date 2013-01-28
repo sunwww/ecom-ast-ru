@@ -29,12 +29,37 @@
                 <msh:row>
                     <msh:textField property="name" label="Название" fieldColSpan="3" horizontalFill="true" size='50'/>
                 </msh:row>
+		        <msh:row>
+		            <msh:ifInRole roles="/Policy/Jaas/SecRole/EditSystem" >
+		              <msh:checkBox property="isSystems" label="Системный" />
+		            </msh:ifInRole>
+		            <msh:ifNotInRole roles="/Policy/Jaas/SecRole/EditSystem">
+		              <msh:hidden property="isSystems" />
+		            </msh:ifNotInRole>
+		        </msh:row>
                 <msh:row>
                     <msh:textArea property="comment" label="Комментарий" fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
         <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
           <ecom:oneToManyOneAutocomplete viewAction="entityView-secrole.do" vocName="role" colSpan="3" label="Дочерние роли" property="children" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
                         <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>

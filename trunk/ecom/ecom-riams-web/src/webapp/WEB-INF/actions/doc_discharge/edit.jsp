@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="/entityParentSaveGoView-doc_discharge.do" defaultField="dateFrom" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+    <msh:form action="/entityParentSaveGoView-doc_discharge.do" defaultField="diagnosis" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="medCase" />

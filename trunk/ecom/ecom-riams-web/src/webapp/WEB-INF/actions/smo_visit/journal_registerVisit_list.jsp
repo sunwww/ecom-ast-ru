@@ -32,6 +32,10 @@
         	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="lpu" vocName="lpu"
+        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
         		horizontalFill="true" fieldColSpan="3"/>
         	`
@@ -41,6 +45,11 @@
         		horizontalFill="true" fieldColSpan="3"/>
         	`
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
+        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        </msh:row>
+        
         <msh:row>
         	<msh:autoComplete labelColSpan="3" property="primaryInYear" vocName="vocHospitalization" size="25"/>
         </msh:row>
@@ -96,7 +105,7 @@
   			}  else {
   				args=args+"dateStart,timeExecute" ;
   			}
-  			args=args+":"+$('workFunction').value ;
+  			args=args+":"+$('workFunction').value+":"+$('lpu').value+":"+$('serviceStream').value ;
   			$('id').value =args ; 
   		}
   	</script>

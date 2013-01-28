@@ -3,22 +3,44 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%
+	String print = request.getParameter("print") ;
+	if (print!=null && print.equals("1")) {
+		request.setAttribute("layout", "printLayout") ;
+	} else {
+		request.setAttribute("layout", "mainLayout") ;
+	}
+%>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/${layout}.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="StacJournal" title="Список CЛО по диагнозам за период. <a href='stac_diagnosis_by_slo_list.do'>Выбрать другие параметры</a>" guid="81085da2-7de9-45ce-9f89-b40c462727b6" />
+    <msh:title mainMenu="StacJournal" title="Список диагнозов по отделениям (СЛО) за период. <a href='stac_diagnosis_by_slo_list.do'>Выбрать другие параметры</a> <a href='javascript:void(0)' onclick='window.open(window.location+&quot;&print=1&quot;)'>Печать</a>" guid="81085da2-7de9-45ce-9f89-b40c462727b6" />
     
   </tiles:put>
   <tiles:put name="side" type="string" >
 
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:sectionTitle guid="88380872-1a21-47b8-8287-dd2e68aeeeb9">${param.departmentInfo}</msh:sectionTitle>
+    <msh:sectionTitle guid="88380872-1a21-47b8-8287-dd2e68aeeeb9">${param.departmentInfo}
+    
+    </msh:sectionTitle>
 	<ecom:webQuery name="datelist" nativeSql="
 	select slo.id,slo.dateStart,slo.dateFinish,slo.transferDate
 	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-	,pat.birthday,sc.code from Diagnosis diag
+	,pat.birthday,sc.code,mkb.code as mkbcode,vh.name as vhname 
+	,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
+	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
+	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
+	, (cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+) as age,
+	  case 
+			when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+			else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+	 end as cntDays
+	from Diagnosis diag
 	left join medCase slo on slo.id=diag.medCase_id 
 	left join BedFund bf on bf.id=slo.bedFund_id
 	left join MedCase as sls on sls.id = slo.parent_id 
@@ -28,6 +50,8 @@
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 	left join VocServiceStream vss on vss.id=slo.serviceStream_id
+	left join VocHospitalization vh on vh.id=sls.hospitalization_id
+	left join Address2 a on a.addressid=pat.address_addressId
 	where ${fldDate} between to_date('${dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
 			${servStream} ${dep} ${mkbCode} and diag.priority_id='${priority}'
@@ -36,14 +60,33 @@
 	order by pat.lastname,pat.firstname,pat.middlename
 	" 
 	/>
+	<msh:ifInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
+    <msh:table name="datelist" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Адрес" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Дата рождения" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Возраст" property="11" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Кол-во к.дней" property="12" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Госпитализация" property="9" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Диагноз" property="8" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+    </msh:table>
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
     <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Госпитализация" property="9" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="МКБ" property="8" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Дата перевода" property="4" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
       <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
     </msh:table>
+    </msh:ifNotInRole>
   </tiles:put>
 </tiles:insert>
