@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.service.medcase;
 
 import java.sql.Date;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.EJB;
@@ -15,7 +14,6 @@ import javax.persistence.PersistenceContext;
 
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.jaas.ejb.domain.SecUser;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -24,7 +22,7 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPolyclinicMedCaseService.class)
 public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
-
+	
 	public String getInfoDay(String aDate) {
 		
 		return "null";

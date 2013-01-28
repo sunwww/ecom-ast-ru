@@ -5,6 +5,8 @@ import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
  * Причина нетрудоспособности
@@ -14,6 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Причина нетрудоспособности")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "codeF" }) })
 public class VocDisabilityReason extends VocBaseEntity{
 	/** Федеральный код */
 	@Comment("Федеральный код")

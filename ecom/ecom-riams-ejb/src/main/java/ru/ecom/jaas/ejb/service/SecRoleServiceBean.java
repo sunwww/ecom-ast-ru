@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.ejb.Remote;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
@@ -14,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 
 import ru.ecom.ejb.services.entityform.PersistList;
+import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
@@ -34,43 +37,74 @@ public class SecRoleServiceBean implements ISecRoleService {
     	return role!=null? role.getName() : "" ;
     }
 
-	public List<SecUserForm>listUsersByRole(long aRoleId) {
+	public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) {
 		SecRole role = theManager.find(SecRole.class, aRoleId) ;
+		String add="" ;
+		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
         List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser_SecRole as susr"
         	+" inner join SecUser as su on su.id=secuser_id"
-        	+" where susr.roles_id=:idRole and cast(su.disabled as integer)!=1 order by su.login").setParameter("idRole", aRoleId).getResultList() ;
+        	+" where susr.roles_id=:idRole and (su.disabled is null or su.disabled='0')"+add+" order by su.login").setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;
 	}
 	
-	public List<SecUserForm> listUsersToAdd(long aRoleId) {
-		List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser as su where cast(su.disabled as integer)!=1 and (select count(*) from SecUser_SecRole as susr where susr.roles_id=:idRole and susr.secUser_id=su.id)=0  order by su.login")
+	public List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView) {
+		String add="" ;
+		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
+		List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser as su where (su.disabled is null or su.disabled='0')"+add+" and (select count(*) from SecUser_SecRole as susr where susr.roles_id=:idRole and susr.secUser_id=su.id)=0  order by su.login")
 			.setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;		
 	}
 	
 	public void removeUsersFromRole(long aRoleId, long[] aUsersId) {
 		String ids =convertArrayToString(aUsersId);
+		java.util.Date date = new java.util.Date() ;
+		String username = theContext.getCallerPrincipal().getName() ;
 		LOG.info("ids="+ids) ;
 		int result = theManager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
 			.setParameter("idRole", aRoleId)
 			//.setParameter("idUsers", ids)
 			.executeUpdate() ;
+		for (long user:aUsersId) {
+	        ChangeJournal jour = new ChangeJournal() ;
+			jour.setClassName("SecUser_SecRole") ;
+			
+			jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+			jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+			jour.setLoginName(username) ;
+			jour.setComment(" remove role userid="+user+" roleid="+aRoleId) ;
+			jour.setSerializationAfter("user:"+user) ;
+			jour.setSerializationBefore("role:"+aRoleId) ;
+			theManager.persist(jour) ;
+		}
 		LOG.info("result for delete="+result) ;
 	}
 	public void addUsersToRole(long aRoleId, long[] aUsersId) {
 		//LOG.info("ids="+convertArrayToString(aUsersId)) ;
+		java.util.Date date = new java.util.Date() ;
+		String username = theContext.getCallerPrincipal().getName() ;
 		for (long user:aUsersId) {
 			Object check = theManager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
 			.setParameter("idRole", aRoleId)
 			.setParameter("idUser", user)
 			.getSingleResult() ;
 			Long ch = PersistList.parseLong(check) ;
+			
 			if (ch.intValue()==0) {
 				int result = theManager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
 					.setParameter("idRole", aRoleId)
 					.setParameter("idUser", user)
 					.executeUpdate() ;
 				LOG.info("result for insert:"+result) ;
+				ChangeJournal jour = new ChangeJournal() ;
+				jour.setClassName("SecUser_SecRole") ;
+				
+				jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+				jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+				jour.setLoginName(username) ;
+				jour.setComment(" add role userid="+user+" roleid="+aRoleId) ;
+				jour.setSerializationAfter("user:"+user) ;
+				jour.setSerializationBefore("role:"+aRoleId) ;
+				theManager.persist(jour) ;
 			}
 		}
 		
@@ -162,4 +196,5 @@ public class SecRoleServiceBean implements ISecRoleService {
 
     @PersistenceContext
     private EntityManager theManager ;
+    @Resource SessionContext theContext ;
 }

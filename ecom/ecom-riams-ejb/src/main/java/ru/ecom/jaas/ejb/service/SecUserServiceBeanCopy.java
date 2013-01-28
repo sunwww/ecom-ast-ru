@@ -30,7 +30,7 @@ import ru.ecom.jaas.ejb.form.SecRoleForm;
 
 //@Stateless
 //@Remote(ISecUserService.class )
-public class SecUserServiceBeanCopy  implements ISecUserService {
+public class SecUserServiceBeanCopy   {
 
 	    public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
 	        MBeanServer SERVER = MBeanServerLocator.locateJBoss();

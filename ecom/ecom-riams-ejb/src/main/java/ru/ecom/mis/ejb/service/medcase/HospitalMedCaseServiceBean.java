@@ -61,6 +61,125 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
+    public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) {
+    	List<Object[]> list = theManager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' where sls.id="+aSmo+" group by sls.id,sls.dtype").getResultList() ;
+    	if (!list.isEmpty()) {
+    		Object[] obj =list.get(0) ;
+    		if (obj[0]!=null) {
+    			String dtype=new StringBuilder().append(obj[0]).toString() ;
+	    		if (dtype.equals("HospitalMedCase")) {
+	    			List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo" 
+	    				+" left join BedFund bf on bf.id=slo.bedFund_id"
+	    				+" left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
+	    				+" where slo.parent_id='"+aSmo+"' and slo.dtype='DepartmentMedCase'"
+	    				+" and bfNew.bedSubType_id = bf.bedSubType_id"
+	    				+" and bfNew.bedType_id = bf.bedType_id"
+	    				+" and bfNew.serviceStream_id = '"+aServiceStream+"' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
+	    				.getResultList() ;
+	    			Long cntSlo=ConvertSql.parseLong(obj[1]) ;
+	    			if (cntSlo.intValue()==listBedFund.size()) {
+	    				for (Object[] slo:listBedFund) {
+	    					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"',bedFund_id='"+slo[1]+"' where id='"+slo[0]+"'").executeUpdate() ;
+	    				}
+	    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;
+	    			} else {
+	    				throw new IllegalArgumentException("По данному потоку обслуживания не во всех отделениях, в которых производилось лечение, заведен коечный фонд"); 
+	    			}
+	    		} else if (dtype.equals("DepartmentMedCase")) {
+	    			List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo" 
+		    				+" left join BedFund bf on bf.id=slo.bedFund_id"
+		    				+" left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
+		    				+" where slo.id='"+aSmo+"' and slo.dtype='DepartmentMedCase'"
+		    				+" and bfNew.bedSubType_id = bf.bedSubType_id"
+		    				+" and bfNew.bedType_id = bf.bedType_id"
+		    				+" and bfNew.serviceStream_id = '"+aServiceStream+"' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
+		    				.getResultList() ;
+	    			Object[] slo=listBedFund.get(0) ;
+	    			if (listBedFund.size()==1) {
+	    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"',bedFund_id='"+slo[1]+"' where id='"+aSmo+"'").executeUpdate() ;
+	    			} else {
+	    				throw new IllegalArgumentException("По данному потоку обслуживания в отделение не заведен коечный фонд"); 
+	    			}
+	    		} else if (dtype.equals("Visit")) {
+    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;	    			
+	    		} else if (dtype.equals("PolyclinicMedCase")) {
+    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where parent_id='"+aSmo+"' and dtype='Visit'").executeUpdate() ;	    			
+	    		}
+    		} else {
+    			
+    		}
+    	}
+    }
+    public void unionSloWithNextSlo(Long aSlo) {
+    	List<Object[]> list = theManager.createNativeQuery("select  "
+			+"case when sloNext1.department_id is not null and" 
+			+" sloNext1.department_id=slo.department_id then '1' else null end equalsDep"
+			+" ,sloNext.id as sloNext,sloNext1.id as sloNext1,sloNext2.id as sloNext2"
+			+" ,sloNext.dateFinish as sloNextDateFinish,sloNext.dischargeTime as sloNextDischargeTime"
+			+" ,sloNext.transferDate as sloNextTransferDate,sloNext.transferTime as sloNextTransferTime"
+			+" ,sloNext1.dateFinish as sloNext1DateFinish,sloNext1.dischargeTime as sloNext1DischargeTime"
+			+" ,sloNext1.transferDate as sloNext1TransferDate,sloNext1.transferTime as sloNext1TransferTime"
+
+			+" from medcase slo"
+			+" left join MedCase sloNext on sloNext.prevMedCase_id=slo.id"
+			+" left join MedCase sloNext1 on sloNext1.prevMedCase_id=sloNext.id"
+			+" left join MedCase sloNext2 on sloNext2.prevMedCase_id=sloNext1.id"
+			+" where slo.id='"+aSlo+"'")
+			.getResultList() ;
+    	if (!list.isEmpty()) {
+    		Object[] obj = list.get(0) ;
+    		if (obj[1]!=null) {
+	    		if (obj[0]!=null) {
+	    			// Отд next1=current (объединять 2 отделения)
+	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[2]+"') "
+	    	    			+" ,transferDate=(select transferDate from medcase where id='"+obj[2]+"')"
+	    	    			+" ,transferTime=(select transferTime from medcase where id='"+obj[2]+"')"
+	    	    			+" ,dischargeTime=(select dischargeTime from medcase where id='"+obj[2]+"')"
+	    	    			+" ,transferDepartment_id=(select transferDepartment_id from medcase where id='"+obj[2]+"')"
+	    	    			+" ,targetHospType_id=(select targetHospType_id from medcase where id='"+obj[2]+"')"
+	    	    			+" where id='"+aSlo+"'").executeUpdate() ;
+	    	    	if (obj[3]!=null) {
+	    	    		theManager.createNativeQuery("update MedCase set prevMedCase_id='"+aSlo+"' where id='"+obj[3]+"'").executeUpdate() ;
+	    	    	}
+	    	    	theManager.createNativeQuery("delete from medcase m where m.id='"+obj[2]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
+	    		} else {
+	    			//
+	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	     	    	theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[1]+"') "
+	    	    			+" ,transferDate=(select transferDate from medcase where id='"+obj[1]+"')"
+	    	    			+" ,transferTime=(select transferTime from medcase where id='"+obj[1]+"')"
+	    	    			+" ,dischargeTime=(select dischargeTime from medcase where id='"+obj[1]+"')"
+	    	    			+" ,transferDepartment_id=(select transferDepartment_id from medcase where id='"+obj[1]+"')"
+	    	    			+" ,targetHospType_id=(select targetHospType_id from medcase where id='"+obj[1]+"')"
+	    	    			+" where id='"+aSlo+"'").executeUpdate() ;
+	    	    	if (obj[2]!=null) {
+	    	    		theManager.createNativeQuery("update MedCase set prevMedCase_id='"+aSlo+"' where id='"+obj[2]+"'").executeUpdate() ;
+	    	    	}
+	    	    	theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
+	    		}
+    		} else {
+    			throw new IllegalArgumentException("Нет след. СЛО"); 
+    		}
+    	}
+    }
+    public void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) {
+    	theManager.createNativeQuery("update diary d set medcase_id='"+aMedCaseId+"' where d.medCase_id in (select m.id from medcase m where m.parent_id='"+aMedCaseId+"')").executeUpdate() ;
+    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aMedCaseId+"' where d.medCase_id in (select m.id from medcase m where m.parent_id='"+aMedCaseId+"')").executeUpdate() ;
+    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aMedCaseId+"' where d.medCase_id in (select m.id from medcase m where m.parent_id='"+aMedCaseId+"')").executeUpdate() ;
+    	theManager.createNativeQuery("delete from medcase m where m.parent_id='"+aMedCaseId+"' and m.dtype='DepartmentMedCase'").executeUpdate() ;
+    	theManager.createNativeQuery("update medcase set deniedHospitalizating_id='"+aDeniedHospitalizating+"',ambulanceTreatment='1' where id='"+aMedCaseId+"'").executeUpdate() ;
+    	HospitalMedCase medCase = theManager.find(HospitalMedCase.class, aMedCaseId) ;
+    	StatisticStubStac.removeStatCardNumber(theManager, theContext,medCase);
+    }
     public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
     	HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
     	sls.setDischargeEpicrisis(aDischargeEpicrisis) ;

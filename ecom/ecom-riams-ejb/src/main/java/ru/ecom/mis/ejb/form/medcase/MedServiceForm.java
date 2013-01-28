@@ -122,6 +122,13 @@ public class MedServiceForm extends IdEntityForm  {
 
 
 
+	@Comment("Доп. код услуги")
+	@Persist
+	public String getAdditionCode() {return theAdditionCode;}
+	public void setAdditionCode(String aAdditionCode) {theAdditionCode = aAdditionCode;}
+
+	/** Доп. код услуги */
+	private String theAdditionCode;
 	/** Тип услуги (инфо) */
 	private String theServiceTypeInfo;
 	/** Тип услуги */

@@ -17,6 +17,9 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) ;
+	public void unionSloWithNextSlo(Long aSlo) ;
+	public void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) ;
 	public void setPatientByExternalMedservice(String aDocNumber, String aOrderDate, String aPatient) ;
 	public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) ;
 	public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException;

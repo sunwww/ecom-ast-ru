@@ -174,6 +174,22 @@ public class PregnanExchangeCardForm extends IdEntityForm{
 	public Long getPregnancyHistory() {return thePregnancyHistory;}
 	public void setPregnancyHistory(Long aPregnancyHistory) {thePregnancyHistory = aPregnancyHistory;}
 
+	/** Не помнит, когда были последние месячные */
+	@Comment("Не помнит, когда были последние месячные")
+	@Persist
+	public Boolean getDontRememberLastMensis() {return theDontRememberLastMensis;}
+	public void setDontRememberLastMensis(Boolean aDontRememberLastMensis) {theDontRememberLastMensis = aDontRememberLastMensis;}
+	
+	/** Не посещала жк */
+	@Comment("Не посещала жк")
+	@Persist
+	public Boolean getDontVisitCons() {return theDontVisitCons;}
+	public void setDontVisitCons(Boolean aDontVisitCons) {theDontVisitCons = aDontVisitCons;}
+
+	/** Не посещала жк */
+	private Boolean theDontVisitCons;
+	/** Не помнит, когда были последние месячные */
+	private Boolean theDontRememberLastMensis;
 	/** История родов */
 	private Long thePregnancyHistory;
 	/** Случай медицинского обслуживания */

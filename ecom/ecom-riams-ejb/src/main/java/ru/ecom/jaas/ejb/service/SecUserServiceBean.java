@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.ejb.Remote;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -25,6 +27,7 @@ import javax.persistence.PersistenceContext;
 import org.jboss.mx.util.MBeanServerLocator;
 
 import ru.ecom.ejb.services.entityform.PersistList;
+import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
@@ -176,32 +179,38 @@ public class SecUserServiceBean implements ISecUserService {
         return policy;
     }
 
-    public Collection<SecRoleForm> listRolesToAdd(long aUserId) {
+    public Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) {
         SecUser user = theManager.find(SecUser.class, aUserId) ;
         List<SecRole> userRoles = user.getRoles();
-        List<SecRole> allRoles = theManager.createQuery("from SecRole").getResultList();
-        for (SecRole role : userRoles) {
-            allRoles.remove(role) ;
+        String add="" ;
+        if (!aIsSystemView) {
+        	add="where (isSystems='0' or isSystems is null)" ;
         }
-        return convert(allRoles) ;
+        List<SecRole> allRoles = theManager.createQuery("from SecRole "+add).getResultList();
+        for (SecRole role : userRoles) {
+        	allRoles.remove(role) ;
+        }
+        return convert(allRoles, aIsSystemView) ;
     }
 
-    private static Collection<SecRoleForm> convert(Collection<SecRole> aFrom) {
+    private static Collection<SecRoleForm> convert(Collection<SecRole> aForm, boolean aIsSystemView) {
         LinkedList<SecRoleForm> ret = new LinkedList<SecRoleForm>();
-        for (SecRole role : aFrom) {
-            SecRoleForm form = new SecRoleForm();
-            form.setId(role.getId());
-            form.setName(role.getName());
-            form.setComment(role.getComment());
-            ret.add(form) ;
+        for (SecRole role : aForm) {
+        	if (aIsSystemView || ((!aIsSystemView) && (role.getIsSystems()==null || (role.getIsSystems()!=null&&!role.getIsSystems())))) {
+	            SecRoleForm form = new SecRoleForm();
+	            form.setId(role.getId());
+	            form.setName(role.getName());
+	            form.setComment(role.getComment());
+	            ret.add(form) ;
+        	}
         }
         return ret ;
     }
 
-    public Collection<SecRoleForm> listUserRoles(long aUserId) {
+    public Collection<SecRoleForm> listUserRoles(long aUserId, boolean aIsSystemView) {
         SecUser user = theManager.find(SecUser.class, aUserId) ;
         List<SecRole> roles = user.getRoles();
-        return convert(roles) ;
+        return convert(roles,  aIsSystemView) ;
     }
 
     public void addRoles(long aUserId, long[] aRoles) {
@@ -218,11 +227,23 @@ public class SecUserServiceBean implements ISecUserService {
 			.setParameter("idUser", aUserId)
 			.getSingleResult() ;
 			Long ch = PersistList.parseLong(check) ;
+			java.util.Date date = new java.util.Date() ;
+			String username = theContext.getCallerPrincipal().getName() ;
 			if (ch.intValue()==0) {
 				theManager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
 					.setParameter("idRole", role)
 					.setParameter("idUser", aUserId)
 					.executeUpdate() ;
+				ChangeJournal jour = new ChangeJournal() ;
+				jour.setClassName("SecUser_SecRole") ;
+				
+				jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+				jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+				jour.setLoginName(username) ;
+				jour.setComment(" add user userid="+aUserId+" roleid="+role) ;
+				jour.setSerializationAfter("user:"+aUserId) ;
+				jour.setSerializationBefore("role:"+role) ;
+				theManager.persist(jour) ;
 				//LOG.info("result for insert:"+result) ;
 			}
 		}
@@ -231,12 +252,25 @@ public class SecUserServiceBean implements ISecUserService {
     public void removeRoles(long aUserId, long[] aRoles) {
         SecUser user = theManager.find(SecUser.class, aUserId) ;
         List<SecRole> roles = user.getRoles();
+        java.util.Date date = new java.util.Date() ;
+		String username = theContext.getCallerPrincipal().getName() ;
         for (long roleId : aRoles) {
             roles.remove(theManager.find(SecRole.class, roleId)) ;
+            ChangeJournal jour = new ChangeJournal() ;
+			jour.setClassName("SecUser_SecRole") ;
+			
+			jour.setChangeDate(new java.sql.Date(date.getTime())) ;
+			jour.setChangeTime(new java.sql.Time(date.getTime())) ;
+			jour.setLoginName(username) ;
+			jour.setComment(" remove user userid="+aUserId+" roleid="+roleId) ;
+			jour.setSerializationAfter("user:"+aUserId) ;
+			jour.setSerializationBefore("role:"+roleId) ;
+			theManager.persist(jour) ;
         }
         theManager.persist(user);
     }
 
     @PersistenceContext private EntityManager theManager ;
+    @Resource SessionContext theContext ;
 
 }

@@ -11,9 +11,12 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageEmploye;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType;
+import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -266,4 +269,36 @@ public class PhoneMessage extends BaseEntity {
 	private Date theCreateDate;
 	/** Пользователь, создавший запись */
 	private String theCreateUsername;
+	
+	/** Район */
+	@Comment("Район")
+	@OneToOne
+	public VocRayon getRayon() {return theRayon;}
+	public void setRayon(VocRayon aRayon) {theRayon = aRayon;}
+
+	/** Код МКБ */
+	@Comment("Код МКБ")
+	@OneToOne
+	public VocIdc10 getIdc10() {return theIdc10;}
+	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
+
+	/** Диагноз текст */
+	@Comment("Диагноз текст")
+	public String getDiagnosis() {return theDiagnosis;}
+	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+
+	/** Тяжесть состояния */
+	@Comment("Тяжесть состояния")
+	@OneToOne
+	public VocPhoneMessageState getState() {return theState;}
+	public void setState(VocPhoneMessageState aState) {theState = aState;}
+
+	/** Тяжесть состояния */
+	private VocPhoneMessageState theState;
+	/** Диагноз текст */
+	private String theDiagnosis;
+	/** Код МКБ */
+	private VocIdc10 theIdc10;
+	/** Район */
+	private VocRayon theRayon;
 }

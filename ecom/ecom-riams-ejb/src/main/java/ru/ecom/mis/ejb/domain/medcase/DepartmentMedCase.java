@@ -25,7 +25,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="bedNumber", table="MedCase")
-    ,@AIndex(properties="department", table="MedCase")
+	,@AIndex(properties="department", table="MedCase")
+	,@AIndex(properties="dateFinish", table="MedCase")
+	,@AIndex(properties="transferDate", table="MedCase")
+    ,@AIndex(properties="prevMedCase", table="MedCase")
 }) 
 public class DepartmentMedCase extends HospitalMedCase {
 	

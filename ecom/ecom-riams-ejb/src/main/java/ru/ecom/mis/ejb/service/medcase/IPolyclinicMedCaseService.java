@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.sql.Date;
 import java.text.ParseException;
 
 public interface IPolyclinicMedCaseService {

@@ -15,6 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
@@ -127,7 +128,7 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
     
     /** Дата следующего визита */
 	@Comment("Дата следующего визита")
-	@DateString @DoDateString @Persist
+	@DateString @DoDateString @Persist @MaxDateCurrent
 	public String getNextVisitDate() {
 		return theNextVisitDate;
 	}

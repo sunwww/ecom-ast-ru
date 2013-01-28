@@ -429,7 +429,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	public String run(String Command){
 		try{
 		Runtime.getRuntime().exec(Command);
-		return("0");
+		return ("0");
 		}
 		catch (Exception e){
 		System.out.println("Error running command: " + Command +

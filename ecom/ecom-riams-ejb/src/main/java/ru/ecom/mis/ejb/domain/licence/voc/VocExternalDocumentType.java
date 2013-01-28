@@ -10,5 +10,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Тип внешнего документа")
 @Table(schema="SQLUser")
 public class VocExternalDocumentType extends VocBaseEntity{
+	/** Медицинские документы */
+	@Comment("Медицинские документы")
+	public Boolean getIsMedical() {return theIsMedical;}
+	public void setIsMedical(Boolean aIsMedical) {theIsMedical = aIsMedical;}
 
+	/** Медицинские документы */
+	private Boolean theIsMedical;
 }

@@ -16,9 +16,9 @@ public interface ISecRoleService {
     public CheckNode loadPolicies() ;
     public void saveRolePolicies(long aRoleId, long[] aAdded, long[] aRemoved) ;
     //Получить список пользователей у которых, есть данная роль
-    public List<SecUserForm>listUsersByRole(long aRoleId) ;
+    public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) ;
     //Получить список пользователей, которым можно добавить роль
-    public List<SecUserForm> listUsersToAdd(long aRoleId) ;
+    public List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView) ;
     //Добавить список пользователей к роли
     public void addUsersToRole(long aRoleId, long[] aUsersId);
     //Удалить список пользователей из роли

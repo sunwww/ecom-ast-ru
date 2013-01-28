@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -17,11 +18,16 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties={"hospitalBed"}) })
+@AIndexes(value = { 
+		@AIndex(properties={"hospitalBed"}) 
+		, @AIndex(properties={"visit"}) 
+		, @AIndex(properties={"medCase"}) 
+		})
 public class WorkCalendarHospitalBed extends BaseEntity {
 	/** Отделение */
 	@Comment("Отделение")
@@ -143,5 +149,66 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 	private Patient thePatient;
 	/** Отделение */
 	private MisLpu theDepartment;
+	
+	/** СМО */
+	@Comment("СМО")
+	@OneToOne
+	public MedCase getVisit() {
+		return theVisit;
+	}
 
+	public void setVisit(MedCase aVisit) {
+		theVisit = aVisit;
+	}
+
+	/** СМО */
+	private MedCase theVisit;
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private Time theEditTime;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Дата создания */
+	private Date theCreateDate;
+	
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	@OneToOne
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Рабочая функция */
+	private WorkFunction theWorkFunction;
 }
