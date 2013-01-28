@@ -10,6 +10,7 @@
 		<class>ru.ecom.ejb.services.live.domain.journal.ViewJournal</class>
 		<class>ru.ecom.ejb.services.live.domain.journal.DeleteJournal</class>
 		<class>ru.ecom.ejb.services.live.domain.journal.ChangeJournal</class>
+		<class>ru.ecom.ejb.services.live.domain.CustomMessage</class>
 
 		<!-- Hello -->
 		<class>ru.ecom.ejb.domain.hello.Hello</class>

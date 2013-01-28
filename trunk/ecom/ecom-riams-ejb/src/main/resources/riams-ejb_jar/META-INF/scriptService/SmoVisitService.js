@@ -230,11 +230,16 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 	var rayon = obj[3] ;
 	var primary = obj[4] ;
 	var sn = +obj[5] ;
-	var order = obj[6]!=null?obj[6]:"dateStart,timeExecute" ;
+	var order = (obj[6]!=null&&obj[6]!="")?obj[6]:"dateStart,timeExecute" ;
 	var func = obj[7] ;
+	var lpu = obj[8] ;
+	var serviceStream = obj[9] ;
 	if (+sn<1) sn=1 ;
 	
 	var sql = "where t.dtype='Visit' and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
+	if (lpu!=null && (+lpu>0)) {
+		sql = sql + " and w.lpu_id='"+lpu+"'"
+	}
 	if (func!=null && (+func>0)) {
 		sql = sql + " and wf.workFunction_id='"+func+"'"
 	}
@@ -242,6 +247,9 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		sql = sql + " and t.workFunctionExecute_id='"+spec+"'"
 	}
 		
+	if (serviceStream!=null && (+serviceStream>0)) {
+		sql = sql+" and t.serviceStream_id='"+serviceStream+"'" ;
+	}
 	if (primary!=null && (+primary>0)) {
 		sql = sql+" and t.hospitalization_id='"+primary+"'" ;
 	}

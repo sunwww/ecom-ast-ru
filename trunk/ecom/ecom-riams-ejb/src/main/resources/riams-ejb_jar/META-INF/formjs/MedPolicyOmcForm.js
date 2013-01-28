@@ -13,6 +13,7 @@ function onPreCreate(aForm, aCtx) {
 	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
 		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
 	}
+	aForm.setConfirmationDate("") ;
 	//throw "select top 1 CheckOMIPolicy('"
     //	+series+"','"+number+"','"+smo+"',0,'"+sgr+"','"+rayon+"') from MedPolicy" ;
 
@@ -26,6 +27,7 @@ function onPreSave(aForm, aEntity, aCtx) {
 	var add =" and id!="+aForm.id ;
 	checkPeriod(aForm) ;
 	checkNumSerSmo(aCtx,aForm,add) ;
+	aForm.setConfirmationDate("") ;
 }
 function onSave(aForm, aEntity, aCtx) {
 	if (aEntity.commonNumber!=null&&aEntity.commonNumber!='') {

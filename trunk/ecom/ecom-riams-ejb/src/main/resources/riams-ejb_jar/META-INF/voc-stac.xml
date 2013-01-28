@@ -13,6 +13,20 @@
 		    	names = "'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
 		/>
 	</voc>
+	<voc id="slsByPatient" type="NativeVocService">
+		<NativeVocService
+		    	from=" MedCase as sls "
+		    	parent='sls.patient_id=:parent'
+		    	nameId="sls.id"
+		    	join=" 
+		    		left join StatisticStub ss on ss.medCase_id=sls.id
+		    	"
+		    	queryAppend="sls.dtype='HospitalMedCase'"
+		    	order=""
+		    	queried=" ss.code like upper(:query) "
+		    	names = "'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
+		/>
+	</voc>
 	<voc id="sloBySls" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as slo "
@@ -23,7 +37,7 @@
 		    	queryAppend="slo.dtype='DepartmentMedCase'"
 		    	order=""
 		    	queried=" ml.name like upper(:query) "
-		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy'),'')"
+		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5))||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy')||' '||cast(slo.dischargeTime as varchar(5)),to_char(slo.transferDate,'dd.mm.yyyy')||' '||cast(slo.transferTime as varchar(5)),'')"
 		/>
 	</voc>
 	<voc id="hospitalRoomByLpu" type="NativeVocService">
@@ -139,7 +153,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 		    	queryAppend=""
 		    	order=""
 		    	queried=" (cast(bf.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
-		    	names = " vbt.name||' ('||vbst.name||' ' || case when cast(bf.noFood as integer)=1 then 'без питания' else 'с питанием' end ||')'"
+		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.noFood='1' then 'без питания' else 'с питанием' end ||')'"
 		    	parentSplitCount="3"
 		    />
 

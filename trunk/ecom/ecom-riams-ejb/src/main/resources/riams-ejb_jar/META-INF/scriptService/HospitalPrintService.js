@@ -458,6 +458,7 @@ function printAddressSheetArrival(aCtx, aParams) {
 	if (status==3) isKin=false ; 
 	var dateBegin = aParams.get("dateBegin") ;
 	var dateEnd = aParams.get("dateEnd") ;
+	var isRolePrintNewBorn = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Journal/AddressListPrintNewBorn") ;
 	map.put("dates",dateBegin) ;
 	map.put("datepo",dateEnd) ;
 	var specInfo = "" ;
@@ -517,7 +518,7 @@ function printAddressSheetArrival(aCtx, aParams) {
 			var dischargeDate = medcase.dateFinish!=null?FORMAT_2.format(medcase.dateFinish):"" ;
 			if (isPat && pat!=null) {
 				var age = (new java.util.Date().getTime() - pat.birthday.getTime())/(3600000*24*365) ;
-				if (age>1) {
+				if (age>1||isRolePrintNewBorn) {
 					sn++ ;
 					ret.add(saveInfoByPatient(pat,compilationDate,dischargeDate,sn,FORMAT_2)) ;
 				}

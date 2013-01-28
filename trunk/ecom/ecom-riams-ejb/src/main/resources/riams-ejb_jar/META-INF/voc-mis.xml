@@ -1182,7 +1182,7 @@ left join medcase smoP on smoP.owner_id=w.id "
                 names   = 'name'
                 queried = 'name'
                 queryConvertType="UPPER_CASE"
-                queryAppend=" (deprecated is null or deprecated=true) "
+                queryAppend=" (deprecated is null or deprecated=false) "
         />
     </voc> 
 

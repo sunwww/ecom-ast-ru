@@ -43,6 +43,8 @@ function onPreSave(aForm,aEntity, aContext) {
 	}
 	var bedFund = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.BedFund, aForm.bedFund) ;
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
+	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
+	
 	if (bedFund!=null && bedFund.bedSubType!=null) {
 		var bedSubType = bedFund.bedSubType.code ;
 		if (hosp.hospType!=null) {
@@ -54,45 +56,47 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 		
 	}
-	if (aForm.transferDate != null && aForm.transferDate!="") {
+	if (prev!=null) {
 		var dateTransfer ;
 		
 		try {
-			dateTransfer = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.transferDate,aForm.transferTime)
+			dateTransfer = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(prev.dateStart,prev.entranceTime) ;
 		} catch(e) {
 			throw "Неправильно введена дата перевода или время!" ;
 		}
 		//var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 		//var dateTsql = new java.sql.Date(dateTransfer.getTime()) ;
-		if (!(dateTransfer.getTime() > dateStart.getTime())) throw "Дата перевода должна быть больше, чем дата поступления";
+		if (!(dateTransfer.getTime() < dateStart.getTime())) throw "Дата перевода должна быть больше, чем дата поступления";
 		//if ((((dateTsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата перевода - сегодняшняя" ;
 		// необходимо проверить заполнено ли поле отделение перевода
-		if (aForm.transferDepartment==null || aForm.transferDepartment==0) {
-			throw "При оформлении перевода необходимо указывать отделение!"
-		} else {
-
-			if (aForm.transferDepartment.equals(aForm.department)) throw "Отделение перевода и поступления должны быть разными!";
+		if (+prev.department.id == (+aForm.department)) {
+			throw "Отделение, в которое переводится пациент, и отделение, из которого переводится, должны быть разными!";
 		}
 		// заполнены поля перевода
 		transferIs = true ;
 	} else {
-		// необходимо проверить остальные поля перевода
-		if (aForm.transferTime != null && aForm.transferTime!="") {
-			if (aForm.transferDepartment!=null && aForm.transferDepartment!=0) {
-				throw "Необходимо заполнить либо все поля перевода (дату, время и отделение), либо все поля выписки (дату и время)"
-			}
+		if (+hosp.department.id != (+aForm.department)) {
+			throw "Отделение, в которое направили в приемном отделении, должно совпадать с отделением поступления!";
 		}
 	}
-	if (aForm.dateFinish != null && aForm.dateFinish !="") {
-		if (transferIs) throw "Заполняются либо поля перевода, либо выписки!"
+	
+	if (aForm.dateFinish != null && aForm.dateFinish !="" ||aForm.transferDate != null && aForm.transferDate !="" ) {
+		//if (transferIs) throw "Заполняются либо поля перевода, либо выписки!"
 		var dateFinish ;
+		var dateFinishError ;
 		try {
-			dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime)
+			if (aForm.dateFinish != null && aForm.dateFinish !="" ) {
+				dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
+				dateFinishError = aForm.dateFinish+" "+aForm.dischargeTime ;
+			} else {
+				dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.transferDate,aForm.transferTime);
+				dateFinishError = aForm.transferDate+" "+aForm.transferTime ;
+			}
 		} catch(e) {
-			throw "Неправильно введена дата выписки или время!"
+			throw "Неправильно введена дата выписки (перевода) или время!"
 		}
-		if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
-	} else {
+		if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки (перевода) "+dateFinishError+" должна быть больше, чем дата поступления "+aForm.dateStart+" "+aForm.entranceTime;
+	} /*else {
 		if (aForm.dischargeTime!=null && aForm.dischargeTime!="") {
 			if (transferIs) {
 				throw "Заполняются либо поля перевода, либо выписки!"
@@ -101,6 +105,7 @@ function onPreSave(aForm,aEntity, aContext) {
 			}
 		}
 	}
+	*/
 	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
 	if (isDoc && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
 		throw "При госпитализации в отделение необходимо указывать палату и койку" ;
@@ -109,10 +114,13 @@ function onPreSave(aForm,aEntity, aContext) {
 }
 
 //При сохранении
+function onCreate(aForm, aEntity, aContext) {
+	onSave(aForm, aEntity, aContext) ;
+}
 function onSave(aForm, aEntity, aContext) {
 	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
 		.setParameter("prev",aForm.id).getResultList() ;
-	if (listDep.size()>0) {
+	/*if (listDep.size()>0) {
 		var medCase = listDep.get(0) ;
 		medCase.dateStart = aEntity.transferDate ;
 		medCase.entranceTime = aEntity.transferTime ;
@@ -120,6 +128,11 @@ function onSave(aForm, aEntity, aContext) {
 			medCase.department = aEntity.transferDepartment ;
 		}
 		aContext.manager.persist(medCase) ;
+	}*/
+	if (aEntity.prevMedCase!=null) {
+		aEntity.prevMedCase.transferDate = aEntity.dateStart ;
+		aEntity.prevMedCase.transferTime = aEntity.entranceTime ;
+		aEntity.prevMedCase.transferDepartment = aEntity.department ;
 	}
 }
 
@@ -148,23 +161,24 @@ function onPreDelete(aMedCaseId, aContext) {
 		] ;
 		//throw medCase.getId() + "  getStatisticStub()="+medCase.getStatisticStub() ;
 		var err_list = aContext.manager.createNativeQuery("select"
-		+" (select count(*) from Diagnosis as d where d.medCase_id=ms.id)"
-		+",(select count(*) from MedCase as ms1 where ms1.parent_id=ms.id)"
-		+",(select count(*) from SurgicalOperation as so where so.medCase_id=ms.id)"
-		+",(select count(*) from Transfusion as tr where tr.medCase_id=ms.id)"
-		+",(select count(*) from Vaccination as v where v.medCase_id=ms.id)"
-		+",(select count(*) from PhoneMessage as pm where ms.id=pm.id)"
-		+",(select count(*) from TemperatureCurve as tc where tc.medCase_id=ms.id)"
-		+",(select count(*) from PrescriptionList as pl where pl.medCase_id=ms.id)"
-		+",(select count(*) from PrescriptionBlank as pb where pb.medCase_id=ms.id)"
-		+",(select count(*) from Diary as d where d.medCase_id=ms.id)"
-		+",(select count(*) from MedCase_MedPolicy as pol where pol.medCase_id=ms.id)"
-		+",(select count(*) from BirthCase as bc where bc.medCase_id=ms.id)"
-		+",(select count(*) from DeathCase as dc where dc.medCase_id=ms.id)"
-		+",(select count(*) from ChildBirth as cb where cb.medCase_id=ms.id)"
-		+",(select count(*) from PregnancyHistory as ph where ph.medCase_id=ms.id)"
-		+",(select count(*) from PregnanExchangeCard as pec where pec.medCase_id=ms.id)"
-		+",(select count(*) from MedCase as ms2 where ms2.prevMedCase_id=ms.id)"
+		+" (select count(*) from Diagnosis as d where d.medCase_id=ms.id) as cnt1 "
+		+",(select count(*) from MedCase as ms1 where ms1.parent_id=ms.id) as cnt2 "
+		+",(select count(*) from SurgicalOperation as so where so.medCase_id=ms.id) as cnt3 "
+		+",(select count(*) from Transfusion as tr where tr.medCase_id=ms.id) as cnt4 "
+		+",(select count(*) from Vaccination as v where v.medCase_id=ms.id) as cnt5 "
+		+",(select count(*) from PhoneMessage as pm where ms.id=pm.id) as cnt6 "
+		+",(select count(*) from TemperatureCurve as tc where tc.medCase_id=ms.id) as cnt7 "
+		+",(select count(*) from PrescriptionList as pl where pl.medCase_id=ms.id) as cnt8 "
+		+",(select count(*) from PrescriptionBlank as pb where pb.medCase_id=ms.id) as cnt9 "
+		+",(select count(*) from Diary as d where d.medCase_id=ms.id) as cnt10 "
+		+",(select count(*) from MedCase_MedPolicy as pol where pol.medCase_id=ms.id) as cnt11 "
+		+",(select count(*) from BirthCase as bc where bc.medCase_id=ms.id) as cnt12 "
+		+",(select count(*) from DeathCase as dc where dc.medCase_id=ms.id) as cnt13 "
+		+",(select count(*) from ChildBirth as cb where cb.medCase_id=ms.id) as cnt14 "
+		+",(select count(*) from PregnancyHistory as ph where ph.medCase_id=ms.id) as cnt15 "
+		+",(select count(*) from PregnanExchangeCard as pec where pec.medCase_id=ms.id) as cnt16 "
+		+",(select count(*) from MedCase as ms2 where ms2.prevMedCase_id=ms.id) as cnt17 "
+		+",(select max(ms2.id) from MedCase as ms2 where ms2.id=ms.prevMedCase_id) as revmed "
 		+" from MedCase as ms where ms.DTYPE='DepartmentMedCase' and ms.id=:id")
 		.setParameter("id",aMedCaseId).getSingleResult() ;
 		var err_mes="",isErr=false ;
@@ -176,8 +190,23 @@ function onPreDelete(aMedCaseId, aContext) {
 			}
 		}
 		if(isErr) throw "Перед удалением необходимо удалить сведения: " + err_mes.substring(2) ;
+		var obj=err_list[err_list.length-1] ;
+		
+		if (obj!=null&&(+obj>0)) {
+			//throw ""+obj ;
+			var medCase = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase, new java.lang.Long(obj)) ;
+			medCase.setTransferDate(null) ;
+			medCase.setTransferTime(null) ;
+			medCase.setTransferDepartment(null) ;
+			medCase.setTargetHospType(null) ;
+			
+		}
 	}
 	
 }
 
-
+/**
+ * При удалении
+ */
+function onDelete(aEntityId, aContext) {
+}

@@ -103,7 +103,20 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 	}
 	
-	if (aForm.deniedHospitalizating>0) {} else {
+	if (aForm.deniedHospitalizating>0) {
+		if (aEntity!=null) {
+			var sql = "select count(*) from MedCase  m "
+				+" where m.parent_id='"+aForm.id
+				+"' and m.dtype='DepartmentMedCase'" ;
+				;
+			var list = aCtx.manager.createNativeQuery(sql)
+					.getSingleResult() ;
+			if (+list>0) {
+				
+				throw "Запрет на установку отказа от госпитализации. Уже оформлен случай лечения в отделении." ;
+			}
+		}
+	} else {
 		var sql = "select m.id, ss.code from MedCase  m "
 			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
 			+" where m.patient_id='"+aForm.patient

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameterconfig>
     <parameter id='1' type='DischargeDocument' name='Выписка из медицинской карты' 
-    	action='entityParentPrepareCreate-doc_discharge'>
+    	action='entityParentPrepareCreate-doc_discharge' roles='/Policy/Mis/MedCase/Document/Internal/Discharge'>
     	<fields>
     		<field type='row' open='1'/>
     		<field property='history' type='textArea' label='Краткий анамнез...' fieldColSpan='3' required='true'/>
@@ -10,7 +10,7 @@
     	<print filename='dischargeDocument'/>
 	</parameter>
     <parameter id='2' type='DirectionDocument' name='Направление в другое ЛПУ' 
-    	action='entityParentPrepareCreate-doc_direction'>
+    	action='entityParentPrepareCreate-doc_direction' roles='/Policy/Mis/MedCase/Document/Internal/Direction/Create'>
     	<fields>
     		<field type='row' open='1'/>
     		<field property='history' type='textArea' label='Обоснование направления' fieldColSpan='3' required='true'>
@@ -21,8 +21,8 @@
     	<print filename='directionDocument'/>
     	
 	</parameter>
-	    <parameter id='3' type='BaseMedicalExamination' name='Направление в другое ЛПУ' 
-    	action='entityParentPrepareCreate-doc_direction'>
+	    <parameter id='3' type='BaseMedicalExamination' name='Паспорт здоровья' 
+    	action='entityParentPrepareCreate-doc_baseMedicalExamination' roles='/Policy/Mis/MedCase/Document/Internal/BaseMedicalExamination/Create'>
     	<fields>
     		<field type='row' open='1'/>
     		<field property='history' type='textArea' label='Обоснование направления' fieldColSpan='3' required='true'>
@@ -31,6 +31,18 @@
     		<field type='row' open='0'/>
     	</fields>
     	<print filename='baseMedicalExamination'/>
+    	
+	</parameter>
+	    <parameter id='4' type='DirectionAtMicrobiologIssled' name='Направление на микробиологическое исследование' 
+    	action='entityParentPrepareCreate-doc_directionMicrobiolog' roles='/Policy/Mis/MedCase/Document/Internal/DirectionToMicrobiologAnalysis/Create'>
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Показания к направлению' fieldColSpan='3' required='true'>
+    			<keyword>Необходим дополнительный осмотр...</keyword>
+    		</field>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='directMicrobiologDocument'/>
     	
 	</parameter>
 

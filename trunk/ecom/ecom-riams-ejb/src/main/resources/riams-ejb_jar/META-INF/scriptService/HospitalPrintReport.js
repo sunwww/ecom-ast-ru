@@ -114,17 +114,17 @@ function printHistology(aCtx,aParams) {
 	} else if (typePhatology==2) {
 		pathologySql=" and (vhr.isWithPathology is null or vhr.isWithPathology='0')" ;
 	}
-    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=dateBegin ;
 	var sql ="select "
     +" cb.id as id,pat.lastname ||' '||pat.firstname ||' '|| pat.middlename as patmiddlename"
     +"     ,to_char(pat.birthday,'dd.mm.yyyy') as patbirthday"
     +"          	,to_char(cb.birthFinishDate,'dd.mm.yyyy')||' '||cast(cb.birthFinishTime as varchar(5)) as datetimebirthday"
     +"         	,preg.orderNumber as pregorderNumber,cons.name as consname"
-    +"         	,pec.notes as pecnotes,vms.name as vmsname,pec.pregnancyFeatures as pregpregnancyFeatures"
-    +"         	,vof.name as ofname, list(case "
+    +"         	,pec.previousPregnancies as pecnotes,vms.name as vmsname,pec.pregnancyFeatures as pregpregnancyFeatures"
+    +"         	,vof.name as ofname, list(distinct case "
     +"         	when vdrt.code='4' and vpd.code='1' and (mkb.code='O82.1' or mkb.code='O82.0') then 'кесарево'" 
     +"         	when vdrt.code='4' and vpd.code='1' and (mkb.code = 'O80.0' or mkb.code='O80.1') then 'естествен.'"
-    +"         	else '' end)"
+    +"         	when vdrt.code='4' and vpd.code='1' then mkb.code else null end) as childInfo"
     +"         	,case when cb.placentaHistologyOrder='1' then 'Направлена плацента на гистологию.'||coalesce(vhr.name,'') else '' end as histology"
     +"         	from ChildBirth cb "
     +"         	left join MedCase slo on slo.id=cb.medCase_id"
@@ -146,7 +146,7 @@ function printHistology(aCtx,aParams) {
     +"           	group by cb.id,cb.birthFinishDate,cb.birthFinishTime,"
     +"           	vof.name,cb.placentaHistologyOrder,vhr.isWithPathology,pat.lastname,pat.firstname,pat.middlename"
     +"     		,pat.birthday,preg.orderNumber ,cons.name "
-    +"         	,pec.notes,vms.name,pec.pregnancyFeatures"
+    +"         	,pec.previousPregnancies,vms.name,pec.pregnancyFeatures,vhr.name"
     +"     order by cb.birthFinishDate";
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -155,7 +155,7 @@ function printHistology(aCtx,aParams) {
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		par.set1(""+(i+1)) ;
 		for (var j=2;j<=obj.length;j++) {
-			eval("par.set"+(j)+"(obj[j-1]);") ;
+			eval("if (obj[j-1]!=null) {par.set"+(j)+"(obj[j-1]);} else {par.set"+(j)+"(\"\");}") ;
 		}
 		ret.add(par) ;
 	}
@@ -531,7 +531,7 @@ function printReport007(aCtx,aParams) {
 	var date1 = aParams.get("dateBegin");
 	var department = aParams.get("department") ;
 	var date2 = getDate(date1,1) ;
-	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,vbst.name as vbstname" 
+	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,bf.bedtype_id as bfbedtype,vbst.name as vbstname,vbt.name as vbtname,lpu.name" 
 		+"  from medcase slo"
 		+"  left join patient pat on pat.id=slo.patient_id"
 		+"  left join medcase sls on sls.id=slo.parent_id"
@@ -539,10 +539,11 @@ function printReport007(aCtx,aParams) {
 		+"  left join vochospitalizationresult vhr on vhr.id=sls.result_id"
 		+" left join bedfund bf on bf.id=slo.bedfund_id"
 		+" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id"
+		+" left join vocbedtype vbt on vbt.id=bf.bedtype_id"
 		+" left join vocservicestream vss on vss.id=bf.servicestream_id"
-		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
-		+"  LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId" 
-		+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
+		+" left join mislpu lpu on lpu.id=slo.department_id"
+		//+"  LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId" 
+		//+"  LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId"
 		+"  where "
 		+"  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"'"
 		+" and (to_date('"+date1+"','dd.mm.yyyy')>=slo.datestart or"
@@ -553,7 +554,7 @@ function printReport007(aCtx,aParams) {
 		+"			and (slo.transferdate is null or slo.transferdate > to_date('"+date1+"','dd.mm.yyyy') or"
 		+"			slo.transferdate = to_date('"+date1+"','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time) or"
 		+"			slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
-		+" group by bf.bedsubtype_id,vbst.name" ;
+		+" group by bf.bedsubtype_id,bf.bedtype_id,vbst.name,vbt.name,lpu.name" ;
 	
 	var sql = "select vss.name as vssname"
 		+" ,count(distinct case when (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime"
@@ -672,23 +673,34 @@ function printReport007(aCtx,aParams) {
 		//+" slo.datefinish = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)"
 		//+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
 		//+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)"
-		+" and bf.bedsubtype_id=";
+		+" and bf.bedType_id=";
+	var sql2 = " and bf.bedsubtype_id=" ;
 	var sqlGr = " group by vbst.name,bf.serviceStream_id,vss.name" ;
 	var list1 = aCtx.manager.createNativeQuery(sql1).getResultList() ;
 	//throw sql1 ;
+	var BSTnameAll = "" ;
+	var BTnameAll = "" ;
+	var lpu = "" ;
 	if (list1.size()>0) {
 		var retBST = new java.util.ArrayList() ;
 		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		
 		for (var i=0; i < list1.size(); i++) {
 			var ret = new java.util.ArrayList() ;
 			var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var objBST = list1.get(i) ;
-			var BSTname = ""+ objBST[1];
-			parBST.set1(BSTname) ;
+			var BSTname = ""+ objBST[2];
+			var BTname = ""+ objBST[3];
+			if (BSTnameAll!="") BSTnameAll = BSTnameAll +"," ;
+			if (BTnameAll!="") BTnameAll = BTnameAll +"," ;
+			BSTnameAll = BSTnameAll +BSTname ;
+			BTnameAll = BTnameAll +BTname ;
+			lpu = ""+objBST[4] ;
+			parBST.set1(BTname+" "+BSTname) ;
 			//j=1 ;
 			var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var parSum = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-			var list = aCtx.manager.createNativeQuery(sql+"'"+objBST[0]+"' "+sqlGr).getResultList() ;
+			var list = aCtx.manager.createNativeQuery(sql+"'"+objBST[1]+"' "+sql2+"'"+objBST[0]+"' "+sqlGr).getResultList() ;
 			//throw sql+"'"+objBST[0]+"' "+sqlGr ;
 			for (var ii=0; ii < list.size(); ii++) {
 				var obj = list.get(ii) ;
@@ -709,6 +721,9 @@ function printReport007(aCtx,aParams) {
 			retBST.add(parBST) ;
 		}
 	}
+	map.put("bedSubType",BSTnameAll) ;
+	map.put("bedType",BTnameAll) ;
+	map.put("lpu",lpu) ;
 	map.put("listSwod",retBST) ;
 	// Список поступивших
 	var asql1 = "select ss.code as sscode"
