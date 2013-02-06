@@ -41,10 +41,10 @@ public class FondWebService {
         //TODO
         String result = (String)soap.get_RZ_from_FIODR(aLastname, aFirstname, aMiddlename, aBirthday, theLpu);
         //String result = "<?xml version = \"1.0\" encoding=\"Windows-1252\" standalone=\"yes\"?><VFPData><xsd:schema id=\"VFPData\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xsd:element name=\"VFPData\" msdata:IsDataSet=\"true\"><xsd:complexType><xsd:choice maxOccurs=\"unbounded\"><xsd:element name=\"cur1\" minOccurs=\"0\" maxOccurs=\"unbounded\"><xsd:complexType><xsd:sequence><xsd:element name=\"rz\" minOccurs=\"0\"><xsd:simpleType><xsd:restriction base=\"xsd:string\"><xsd:maxLength value=\"16\"/></xsd:restriction></xsd:simpleType></xsd:element></xsd:sequence></xsd:complexType></xsd:element></xsd:choice><xsd:anyAttribute namespace=\"http://www.w3.org/XML/1998/namespace\" processContents=\"lax\"/></xsd:complexType></xsd:element></xsd:schema><cur1><rz>3051610889000087</rz></cur1></VFPData>" ;
-        System.out.println(result) ;
+        //System.out.println(result) ;
         InputStream in = new ByteArrayInputStream((result).getBytes());
         Document doc = new SAXBuilder().build(in);
-        System.out.println(result) ;
+        //System.out.println(result) ;
         Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
         Element rze = cur1.getChild("rz") ;
@@ -100,7 +100,7 @@ public class FondWebService {
             		}
             		sb.append(sk).append("#")
 	            		.append(serPol).append("#").append(numPol).append("#")
-	            		.append(dpp).append("#").append(datEnd).append("#") ;
+	            		.append(dpp).append("#").append(datEnd) ;
             	}
     			//sb.append("#").append(current).append("#")  ;
     				
@@ -184,7 +184,7 @@ public class FondWebService {
         	in.close() ;
         	result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
         	result = updateXml(result) ;
-        	System.out.println(result);
+        	//System.out.println(result);
         	in = new ByteArrayInputStream(result.getBytes());
         	doc = new SAXBuilder().build(in);
         	root = doc.getRootElement();
