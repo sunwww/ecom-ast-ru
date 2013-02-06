@@ -23,9 +23,11 @@ public class PatientServiceJs {
 		int cntPatList = list.size() ;
 		if (cntPatList>0) {
 			String obj = FondWebService.checkPatientByFioDr(aRequest, aLastname, aFirstname, aMiddlename, aBirthday) ;
-			System.out.println(obj) ;
+			
 			String[] pol=obj.split("#") ;
+			System.out.println("pol length="+pol.length) ;
 			if (pol.length>1) {
+				
 				if (!pol[1].equals("")) {
 					String pRegComp = pol[1] ;
 					String pSeries = pol[2] ;
@@ -33,19 +35,24 @@ public class PatientServiceJs {
 					String pDateEnd = pol[5] ;
 					sqlSearchPat = new StringBuilder() ;
 					sqlSearchPat.append("select p.id,p.LASTNAME from patient p left join medpolicy mp on mp.patient_id=p.id")
-					.append(" where p.lastname='").append(aLastname)
-					.append("' and p.firstname='").append(aFirstname).append("'")
-					.append(" and p.middlename='").append(aMiddlename)
-					.append("' and p.birthday=to_date('").append(aBirthday).append("','yyyy-mm-dd') and mp.series='").append(pSeries).append("' and mp.polnumber='").append(pNumber).append("'") ;
+						.append(" where p.lastname='").append(aLastname)
+						.append("' and p.firstname='").append(aFirstname).append("'")
+						.append(" and p.middlename='").append(aMiddlename)
+						.append("' and p.birthday=to_date('").append(aBirthday).append("','yyyy-mm-dd') and mp.series='").append(pSeries).append("' and mp.polnumber='").append(pNumber).append("'") ;
+					System.out.println("sqlSearchPat="+sqlSearchPat) ;
 					list = service.executeNativeSql(sqlSearchPat.toString()) ;
+					System.out.println(obj) ;
 					if (list.size()==1) return "1#"+obj ;
+					System.out.println(obj) ;
 					if (cntPatList>1) return "2#"+obj ;
+					System.out.println(obj) ;
 					if (cntPatList==1) return "3#"+obj ;
+					System.out.println(obj) ;
 				}
 			}
 			
 			return "0#"+obj ;
 		}
-		return "" ;
+		return "0" ;
 	}
 }
