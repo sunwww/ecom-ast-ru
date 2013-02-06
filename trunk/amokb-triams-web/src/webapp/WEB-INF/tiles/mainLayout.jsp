@@ -32,6 +32,8 @@ try {
 </script>
 <msh:javascriptSrc src='/skin/js/ac.js' />
 <msh:javascriptSrc src='/skin/js/engine.js' />
+<script type="text/javascript" src='js/Dialog.js' ></script>
+<script type="text/javascript" src='js/FadeEffect.js' ></script>
 <!-- Дополнительное определение стиля END -->
 <style type="text/css">
 	@import url("css/addition.css?tmp=<%=ru.nuzmsh.web.filter.caching.CacheUniqueUtil.getUniqueId()%>") all;

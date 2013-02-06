@@ -214,7 +214,18 @@
 	       				break ;
 	       			} 
 	       		}
-	       		if (isNext) window.location="step_record_1.do?"+info.substring(1)+"${addParam}" ;
+	       		if (isNext) {
+	       			var dr = $('birthday').value.split('.') ;
+	       			showwwaitingMessage();
+	       			PatientService.getPatient($('lastname').value
+	       					,$('firstname').value,$('middlename').value
+	       					,dr[2]+'-'+dr[1]+'-'+dr[0],{
+	       				callback:function(aResult) {
+	       					alert(aResult) ;
+	       				}
+	       			}) ;
+	       			//window.location="step_record_1.do?"+info.substring(1)+"${addParam}" ;
+	       		}
 	       	}
 	       	function goNext(aParam) {
 	       		var lastname='${param.lastname}' ;
@@ -508,5 +519,9 @@
 	       	}
 	       	new dateutil.DateField($('birthday')) ;
 	       	</script>
+	       	<tags:waiting name="w" title="Обработка данных по базе ФОМС"/>
+</tiles:put>
+<tiles:put type="string" name="javascript">
+    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 </tiles:put>
 </tiles:insert>

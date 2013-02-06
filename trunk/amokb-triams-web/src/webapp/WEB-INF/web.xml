@@ -76,7 +76,7 @@
           	<param-value>WEB-INF/dwr-ecom.xml</param-value>
         </init-param>        <init-param>
         	<param-name>config-asset</param-name>
-          	<param-value>WEB-INF/dwr-asset.xml</param-value>
+          	<param-value>WEB-INF/dwr-triams.xml</param-value>
         </init-param>
         
         <init-param>
@@ -84,6 +84,14 @@
             <param-value>./dwr</param-value>
         </init-param>
 
+            <init-param>
+                <param-name>crossDomainSessionSecurity</param-name>
+                <param-value>false</param-value>
+            </init-param>
+            <init-param>
+                <param-name>initApplicationScopeCreatorsAtStartup</param-name>
+                <param-value>true</param-value>
+            </init-param>
 
         <init-param>
             <param-name>debug</param-name>
@@ -170,7 +178,7 @@
     <!-- LOGIN -->
     <filter>
         <filter-name>Login</filter-name>
-        <filter-class>ru.ecom.web.poly.login.LoginFilter</filter-class>
+        <filter-class>ru.ecom.web.poly.actions.login.LoginFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>Login</filter-name>
