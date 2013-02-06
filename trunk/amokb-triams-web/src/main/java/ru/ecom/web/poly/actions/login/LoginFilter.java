@@ -79,10 +79,16 @@ public class LoginFilter  implements Filter {
                 sb.append(URLEncoder.encode(request.getParameter(param), "utf-8")) ;
                 sb.append("&") ;
             }
-
-            response.sendRedirect("mis_loginSave.do?username=terminal&password=terminal&next="
-            		//+ URLEncoder.encode(sb.toString(), "utf-8"));
-            		+ theStringSafeEncode.encode(sb.toString()));
+            if (url.matches("(.*)dwr(.*)")) {
+                response.sendRedirect("../../mis_loginSave.do?username=terminal&password=terminal&next="
+                		//+ URLEncoder.encode(sb.toString(), "utf-8"));
+                		+ theStringSafeEncode.encode(sb.toString()));
+            	
+            } else {
+                response.sendRedirect("mis_loginSave.do?username=terminal&password=terminal&next="
+                		//+ URLEncoder.encode(sb.toString(), "utf-8"));
+                		+ theStringSafeEncode.encode(sb.toString()));
+            }
         } else {
             aChain.doFilter(request, aResponse);
         }
