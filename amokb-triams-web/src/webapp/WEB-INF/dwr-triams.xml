@@ -7,9 +7,10 @@
     </init>
 
     <allow>
-		<!-- Вывод строки адреса -->
-        <create creator="new" javascript="AddressService" scope="application">
-            <param name="class" value="ru.ecom.address.web.dwr.AddressServiceJs"/>
+
+		<!-- Пациент -->
+        <create creator="new" javascript="PatientService" scope="application">
+            <param name="class" value="ru.ecom.web.poly.dwr.PatientServiceJs"/>
         </create>
 
 		<!-- Редактирование справочников -->

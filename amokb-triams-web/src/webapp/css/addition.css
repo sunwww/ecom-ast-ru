@@ -3,8 +3,41 @@
 	margin: 0px ;
 	padding: 0px ;
 }
+/*
+ *  Dialog
+ */
+.dialog {
+    position: absolute ;
+    left: 10em ;
+    top: 5em ;
+    border: 2px solid rgb(74,123,173) ;
+    background-color: #fff ;
+    display: none ;
+    z-index: 1 ;
+}
+
+.dialog h2 {
+    background-color: rgb(107,156,198) ;
+    color: white ;
+    padding: 4px ;
+    font-size: 110% ;
+}
+
+.dialog .rootPane {
+    padding: 1em ;
+}
+#fadeEffect {
+    position: absolute ;
+    left: 0px ;
+    top: 0px ;
+    bottom: 0 ;
+    right: 0 ;
+    /*-moz-opacity:0.87  ;*/
+    /*color: #ccc ;*/
+    background-image: url('/skin/images/main/fade_gray.gif') ;
+    z-index: 0 ;
+}
 body {
-	background:url("../img/new_year2.jpg") no-repeat scroll 0 0 transparent ;
 	-moz-background-size: 100%,100% ;
 	-webkit-background-size: 100%,100% ;
 	-o-background-size: 100%,100% ;
@@ -51,7 +84,6 @@ body {
 	min-height:5em;
 	position:relative;
 	width:100%;
-	background:url("../img/my2013.png") no-repeat scroll bottom right transparent ;
 }
 #header h1 {
 color:#666666;
@@ -132,7 +164,7 @@ td.kbButton{
 	padding:0 1px 1px 0;
 	position:relative;
 	width:60px;
-	z-index:2;
+	z-index:0;
 	font: 3em Arial,helvetica,clean,sans-serif;
 	font-weight: bold;
 	vertical-align: middle ;
