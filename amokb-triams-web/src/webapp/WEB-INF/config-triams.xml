@@ -73,7 +73,7 @@
 			type='ru.ecom.web.poly.actions.visit.record.InfoAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_info.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_info.jsp" />
 		</action>
 		<action path='/step_record_0'
 			type='ru.ecom.web.poly.actions.visit.record.InfoAction' validate='false'
@@ -82,40 +82,40 @@
 				path="/WEB-INF/actions/mis_record/step_record_0.jsp" />
 		</action>
 		<action path='/step_record_1'
-			type='ru.ecom.web.poly.actions.visit.record.ListDepartmentAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListDepartmentAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_1.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_1.jsp" />
 		</action>
 		<action path='/step_record_2'
-			type='ru.ecom.web.poly.actions.visit.record.ListVocWorkFunctionAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListVocWorkFunctionAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_2.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_2.jsp" />
 		</action>
 		<action path='/step_record_3'
-			type='ru.ecom.web.poly.actions.visit.record.ListWorkFunctionAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListWorkFunctionAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_3.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_3.jsp" />
 		</action>
 		<action path='/step_record_4'
-			type='ru.ecom.web.poly.actions.visit.record.ListDaysAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListDaysAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_4.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_4.jsp" />
 		</action>
 		<action path='/step_record_5'
-			type='ru.ecom.web.poly.actions.visit.record.ListTimesAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListTimesAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_5.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_5.jsp" />
 		</action>
 		<action path='/step_record_6'
-			type='ru.ecom.web.poly.actions.visit.record.PreRecordAction' validate='false'
+			type='ru.ecom.web.poly.actions.visit.record.RecordAction' validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/step_record_6.jsp" />
+				path="/WEB-INF/actions/mis_record/step_pre_record_6.jsp" />
 		</action>
 
 

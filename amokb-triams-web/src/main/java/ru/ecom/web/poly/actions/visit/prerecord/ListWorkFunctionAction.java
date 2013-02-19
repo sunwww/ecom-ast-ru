@@ -23,7 +23,7 @@ public class ListWorkFunctionAction   extends BaseAction {
 		String vocWorkFunction= aRequest.getParameter("vocWorkFunction") ;
 		String department= aRequest.getParameter("department") ;
 		String addParam=PreRecordAction.saveData(aRequest) ;
-		sql.append("select wc.id||'&workCalendar='||wc.id||'&year='||to_char(min(wcd.calendarDate),'yyyy')||'&month='||to_char(min(wcd.calendarDate),'mm')||'").append(addParam).append("' as wcid").append(" , coalesce(wp.lastname||' '||wp.firstname||' '||coalesce(wp.middlename,''),wf.groupName) || coalesce(' (<font color=red>'||upper(wf.comment)||')</font>','') as wfInfo") ;
+		sql.append("select wc.id||'&workCalendar='||wc.id||'&year='||to_char(min(wcd.calendarDate),'yyyy')||'&month='||to_char(min(wcd.calendarDate),'mm')||'").append(addParam).append("' as wcid").append(" , coalesce(wp.lastname||' '||wp.firstname||' '||coalesce(wp.middlename,''),wf.groupName) || case when wf.comment is not null and wf.comment!='' then ' (<font color=red>'||upper(wf.comment)||')</font>' else '' end ||' '||to_char(min(wcd.calendarDate),'dd.mm.yyyy') as wfInfo") ;
 		sql.append(" ,to_char(min(wcd.calendarDate),'dd.mm.yyyy') as CDdate") ;
 		sql.append(" ,to_char(min(wcd.calendarDate),'yyyy') as CDyear");
 		sql.append(" ,to_char(min(wcd.calendarDate),'mm') as CDmonth ");

@@ -8,7 +8,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 5. Выбор даты</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 5. Выбор даты</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -130,10 +130,10 @@
     <tiles:put name="javascript" type="string">
     	<script type="text/javascript">
     		function step5(aParam) {
-    			window.location = "step_pre_record_5.do?"+aParam ;
+    			window.location = "${path_rec}5.do?"+aParam ;
     		}
     		function step4(aParam) {
-    			window.location = "step_pre_record_4.do?"+aParam ;
+    			window.location = "${path_rec}4.do?"+aParam ;
     		}
     	</script>
     </tiles:put>

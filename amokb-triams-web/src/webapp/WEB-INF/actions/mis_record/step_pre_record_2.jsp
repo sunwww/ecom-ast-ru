@@ -8,7 +8,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 3. Выбор специальности врача</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 3. Выбор специальности врача</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -19,17 +19,16 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-	    <div id='div1' style="float: left; height: 300px">
-	    <msh:table name="listFunctions" action="step_pre_record_3.do" idField="1" hideTitle="true">
+	    
+	    <div>
+
+	    </div>
+	    	    <div id='div1' style="float: left; height: 300px">
+	    <msh:table name="listFunctions" action="${path_rec}3.do" idField="1" hideTitle="true">
 	    	<msh:tableColumn property="3" columnName="Наименование специальности"/>
 	    </msh:table>
 	    </div>
-	    <%--
-	    <div id='div2' style="float: left;">
-	    <div id='div3'>ВВЕРХ</div>
-	    <div id='div4'>ВНИЗ</div>  
-	    </div>
-	     --%> 
+
     </tiles:put>
 
 </tiles:insert>

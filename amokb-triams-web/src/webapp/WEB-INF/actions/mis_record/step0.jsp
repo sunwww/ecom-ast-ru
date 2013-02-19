@@ -37,7 +37,6 @@ div.button {
     		window.location = "step_pre_record_info.do" ;
     	}
     	function next_record_direct() {
-    		alert("В разработке!") ;
     		window.location = "step_record_info.do" ;
     	}
     	</script>

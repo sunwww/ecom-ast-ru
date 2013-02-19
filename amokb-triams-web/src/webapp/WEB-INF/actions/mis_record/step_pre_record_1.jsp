@@ -10,7 +10,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 2. Выбор подразделения</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 2. Выбор подразделения</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -22,7 +22,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-	    <msh:table name="dep listFunctions" action="step_pre_record_2.do" idField="1" hideTitle="true">
+	    <msh:table name="dep listFunctions" action="${path_rec}2.do" idField="1" hideTitle="true">
 	    	<msh:tableColumn property="2" columnName="Название отделения"/>
 	    </msh:table>
 	    

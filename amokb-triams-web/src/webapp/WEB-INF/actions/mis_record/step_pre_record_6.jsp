@@ -85,7 +85,7 @@ div.button {
   		<script type="text/javascript">
   		window.print() ;
   		function next_pre_new_rec() {
-  			window.location = "step_pre_record_1.do?tmp=${addParam1}" ;
+  			window.location = "${path_rec}1.do?tmp=${addParam1}" ;
   		}
   		function next_pre_new_pat() {
   			window.location = "start.do" ;

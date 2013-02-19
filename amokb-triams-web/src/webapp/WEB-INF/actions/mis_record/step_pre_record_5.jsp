@@ -8,7 +8,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 6. Выбор времени</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 6. Выбор времени</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -37,12 +37,17 @@ width:90px;
 	   <div style="display: inline; position: relative; float: left; margin-right: 40px;">${listTimes}</div>
 
 	    </form>
+	   <div style="display: inline; position: relative; float: left;">
+	       			<h2>ЛЕГЕНДА</h2>
+		    			<div class="button fb " style="width: 140px" id="liTime"><p class="label">свободно</p></div>
+		    			<div class="button fb" style="width: 140px" id="liTimeBusyForRemoteUser"><p class="label">занято</p></div>
+	   </div>
     </tiles:put>
     <tiles:put name="javascript" type="string">
    	<script type="text/javascript">
     	
     		function step6(aParam) {
-    			window.location = "step_pre_record_6.do?"+aParam ;
+    			window.location = "${path_rec}6.do?"+aParam ;
     		}
     	</script>
     </tiles:put>
