@@ -19,12 +19,15 @@
 <div id='${name}waitingMessageDialog' class='dialog'>
     <h2>${title}</h2>
     <div class='rootPane'>
+    	       <i>Идёт проверка введенных данных</i>
+    	<%--
         <msh:row>
             <td colspan="6">
                 <input type="button" id='${name}buttonwaitingMessageOk' value='OK' onclick='save${name}waitingMessage()'/>
                 <input type="button" value='Отменить' onclick='cancel${name}waitingMessage()'/>
             </td>
         </msh:row>
+         --%>
 </div>
 </div>
 

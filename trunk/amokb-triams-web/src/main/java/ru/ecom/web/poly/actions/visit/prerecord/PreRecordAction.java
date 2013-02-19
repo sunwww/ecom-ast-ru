@@ -48,7 +48,7 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.struts.BaseAction;
 
-public class PreRecordAction  extends BaseAction implements Printable {
+public class PreRecordAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	IWebQueryService serviceWeb = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
@@ -199,41 +199,57 @@ public class PreRecordAction  extends BaseAction implements Printable {
     public static String saveData(HttpServletRequest aRequest) {
 		String year=aRequest.getParameter("year") ; 
 		aRequest.setAttribute("year", year) ;
-		System.out.println("year="+ year) ;
+		//System.out.println("year="+ year) ;
 		String month=aRequest.getParameter("month") ; ;
 		aRequest.setAttribute("month", month) ;
-		System.out.println("month="+ month) ;
+		//System.out.println("month="+ month) ;
 		String vocWorkFunction= aRequest.getParameter("vocWorkFunction") ;
 		aRequest.setAttribute("vocWorkFunction", vocWorkFunction) ;
-		System.out.println("vocWorkFunction="+ vocWorkFunction) ;
+		//System.out.println("vocWorkFunction="+ vocWorkFunction) ;
 		String department= aRequest.getParameter("department") ;
 		aRequest.setAttribute("department", department) ;
-		System.out.println("department="+ department) ;
+		//System.out.println("department="+ department) ;
 		String workCalendar = aRequest.getParameter("workCalendar") ;
 		aRequest.setAttribute("workCalendar", workCalendar) ;
-		System.out.println("workCalendar="+ workCalendar) ;
+		//System.out.println("workCalendar="+ workCalendar) ;
 		String lastname = aRequest.getParameter("lastname") ;
 		aRequest.setAttribute("lastname", lastname) ;
-		System.out.println("lastname="+ lastname) ;
+		//System.out.println("lastname="+ lastname) ;
 		String firstname = aRequest.getParameter("firstname") ;
 		aRequest.setAttribute("firstname", firstname) ;
-		System.out.println("firstname="+ firstname) ;
+		//System.out.println("firstname="+ firstname) ;
 		String middlename = aRequest.getParameter("middlename") ;
 		aRequest.setAttribute("middlename", middlename) ;
-		System.out.println("middlename="+ middlename) ;
+		//System.out.println("middlename="+ middlename) ;
+		String birthday = aRequest.getParameter("birthday") ;
+		aRequest.setAttribute("birthday", birthday) ;
+		//System.out.println("birthday="+ birthday) ;
+		String patient = aRequest.getParameter("patient") ;
+		aRequest.setAttribute("patient", patient) ;
+		//System.out.println("patient="+ patient) ;
 		String workCalendarDay = aRequest.getParameter("workCalendarDay") ;
 		aRequest.setAttribute("workCalendarDay", workCalendarDay) ;    	
-		System.out.println("workCalendarDay="+ workCalendarDay) ;
+		//System.out.println("workCalendarDay="+ workCalendarDay) ;
 		String path = aRequest.getServletPath() ;
-		String p1 = "" ;String p2 = "" ;int path2=-1 ;
-		System.out.println(path) ;
+		String p1 = "" ;String p2 = "",p3="" ;int path2=-1 ;
+		//System.out.println(path) ;
 		String[] pt = path.split("record_") ;
 		if (pt.length>1) {
 			System.out.println(pt[1]) ;
+			p3 = pt[0] ;
 			p2 = pt[0]+"record_" ;
 			pt = pt[1].split(".do") ;
 			p1 = pt.length>0?pt[0]:"" ;
-			System.out.println(p1) ;
+			System.out.println("p1="+p1) ;
+			System.out.println("p3="+p3) ;
+			System.out.println("p2="+p2.substring(1)) ;
+			if (p3.endsWith("pre_")) {
+				System.out.println("Предварительная запись") ;
+				aRequest.setAttribute("infoRecord", "ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ.") ;
+			} else {
+				aRequest.setAttribute("infoRecord", "ОФОРМЛЕНИЕ ЗАПИСИ НА ПРИЁМ.") ;
+			}
+			aRequest.setAttribute("path_rec", p2.substring(1)) ;
 			if (p1.length()==1) path2 = Integer.valueOf(p1) ;
 		}
 		
@@ -247,9 +263,13 @@ public class PreRecordAction  extends BaseAction implements Printable {
 			addParam.append("&lastname=").append(lastname) ;
 			addParam.append("&firstname=").append(firstname) ;
 			addParam.append("&middlename=").append(middlename) ;
+			addParam.append("&birthday=").append(birthday!=null?birthday:"") ;
+			addParam.append("&patient=").append(patient!=null?patient:"") ;
 			addParam1.append("&lastname=").append(lastname) ;
 			addParam1.append("&firstname=").append(firstname) ;
 			addParam1.append("&middlename=").append(middlename) ;
+			addParam1.append("&birthday=").append(birthday!=null?birthday:"") ;
+			addParam1.append("&patient=").append(patient!=null?patient:"") ;
 			path3=0 ;
 			if (!StringUtil.isNullOrEmpty(department)) {
 				aRequest.setAttribute("step1", "check") ;
@@ -288,9 +308,4 @@ public class PreRecordAction  extends BaseAction implements Printable {
 		}
 		return addParam.toString() ;
     }
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-			throws PrinterException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

@@ -9,7 +9,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 1. Ввод данных пациента</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 1. Ввод данных пациента</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">

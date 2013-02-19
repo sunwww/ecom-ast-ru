@@ -9,7 +9,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">ОФОРМЛЕНИЕ ПРЕДВАРИТЕЛЬНОЙ ЗАПИСИ. Шаг 1. Ввод данных пациента</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 1. Ввод данных пациента</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -17,6 +17,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
+    <input type="hidden" name="patientid" id="patientid" value="${param.patientid}" />
 <div>
 	   <table>
 	   <tr>
@@ -221,11 +222,55 @@
 	       					,$('firstname').value,$('middlename').value
 	       					,dr[2]+'-'+dr[1]+'-'+dr[0],{
 	       				callback:function(aResult) {
-	       					alert(aResult) ;
+	       					var res = aResult.split("#") ;
+	       					var fn=res[0] ;
+	       					
+	       					if (fn==1) {
+	       						fn_data_patient(aResult) ;
+	       					} else if (fn==3) {
+	       						if (confirm('Ваш полис №'+res[5]+'?')) {
+	       							PatientService.savePolicy(aResult,$('lastname').value
+	       			       					,$('firstname').value,$('middlename').value
+	       			       					, $('birthday').value,
+	       									{
+	       								callback: function(aResult1) {
+	       									
+	       									if (aResult1!="") {fn_data_patient(aResult1) ;}
+	       								}
+	       									}) ;
+	       						} else {
+	       							fn_not_data_patient() ;
+	       						}
+	       					} else {
+	       						fn_not_data_patient() ;
+	       						
+	       					}
 	       				}
 	       			}) ;
 	       			//window.location="step_record_1.do?"+info.substring(1)+"${addParam}" ;
 	       		}
+	       	}
+	       	function fn_data_patient(aResult) {
+	       		var info="" ;
+	       		$('patientid').value =aResult.split('#')[1] ; 
+	       		var elements=["lastname","firstname","middlename","birthday","patientid"] ;
+	       		for (var j=0;j<elements.length;j++){
+		       		var fld = elements[j] ;
+		       		info = info+"&"+fld+"="+$(fld).value ;
+		       	}
+	       		window.location="step_record_1.do?"+info.substring(1)+"${addParam}" ;
+				
+	       	}
+	       	function fn_not_data_patient() {
+	       		if (confirm('Предварительно Вам надо оформить мед.карту в регистратуре, после чего Вы сможете записываться к Врачу. Вы хотите оформить предварительную запись к врачу?')){
+					var info="" ;
+	       			for (var j=0;j<elements.length-1;j++){
+			       		var fld = elements[j] ;
+			       		info = info+"&"+fld+"="+$(fld).value ;
+			       	}
+			       		window.location="step_pre_record_1.do?"+info.substring(1)+"${addParam}" ;
+						
+				} 
 	       	}
 	       	function goNext(aParam) {
 	       		var lastname='${param.lastname}' ;

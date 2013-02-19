@@ -41,7 +41,7 @@ div.button {
     <tiles:put name="javascript" type="string">
     	<script type="text/javascript">
     	function next_pre_record() {
-    		window.location = "step_pre_record_0.do" ;
+    		window.location = "${path_rec}0.do" ;
     	}
 
     	</script>
