@@ -68,7 +68,22 @@ public class TableColumnTag extends AbstractGuidSupportTag {
 
         return EVAL_PAGE ;
     }
+    
+    /** Получить итог по полю
+     * @jsp.attribute   description="Получить итог по полю"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     * */
+	public boolean getIsCalcAmount() {
+		return theIsCalcAmount;
+	}
 
+	public void setIsCalcAmount(boolean aIsCalcAmount) {
+		theIsCalcAmount = aIsCalcAmount;
+	}
+
+	/** String */
+	private boolean theIsCalcAmount;
     /** Название колонки */
     private String theColumnName ;
     /** Название свойства */
