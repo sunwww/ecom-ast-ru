@@ -16,7 +16,7 @@
 <body>
 <div id='header'>
     <h1>МедОС</h1>
-    <a href="#1">
+    <a href="/start.do">
         <img src='/skin/images/main/logo-75x50.jpg' width='75' height="50"
              alt='На главную' title='Переход на основную страницу'/>
     </a>
