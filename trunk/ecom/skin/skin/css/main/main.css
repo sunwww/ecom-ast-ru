@@ -1007,7 +1007,11 @@ table.tabview th.linkButtons {
 table.tabview th.linkButtons div.linkButtons {
 	margin-bottom: 0;
 }
-
+.sumTd {
+	text-align: center;
+	font-weight: bolder;
+	background-color:#F0F0F0;
+}
 /*
  * Upper Case
  */
