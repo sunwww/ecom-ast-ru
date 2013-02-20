@@ -95,6 +95,7 @@ public class PreRecordAction  extends BaseAction {
 		aRequest.setAttribute("dateInfo", wqr.get2()) ;
 		aRequest.setAttribute("timeInfo", wqr.get3()) ;
 		aRequest.setAttribute("cabInfo", wqr.get10()) ;
+		aRequest.setAttribute("documentInfo", "Вам необходимо подойти за <b>10-20</b> минут до приема в регистратуру со следующими документами:") ;
 		Date date = new Date() ;
 		Calendar calC = Calendar.getInstance() ;
 		Calendar cal1 = Calendar.getInstance() ;

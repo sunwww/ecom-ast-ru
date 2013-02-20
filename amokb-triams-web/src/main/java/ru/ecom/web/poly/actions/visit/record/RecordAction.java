@@ -73,7 +73,7 @@ public class RecordAction extends BaseAction  {
 		Calendar calC = Calendar.getInstance() ;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm") ;
 		aRequest.setAttribute("currentDate", format.format(calC.getTime())) ;
-		
+		aRequest.setAttribute("documentInfo", "Для приема врача Вам необходимо иметь при себе следующие документы :") ;
     	return aMapping.findForward("success") ;
     }
 }

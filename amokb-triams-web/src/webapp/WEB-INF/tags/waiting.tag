@@ -18,8 +18,8 @@
 
 <div id='${name}waitingMessageDialog' class='dialog'>
     <h2>${title}</h2>
-    <div class='rootPane'>
-    	       <i>Идёт проверка введенных данных</i>
+    <div class='rootPane' id='${name}waitingMessageInformation'>
+    	       <h1><i>Идёт проверка введенных данных</i></h1>
     	<%--
         <msh:row>
             <td colspan="6">
@@ -51,7 +51,13 @@
     function cancel${name}waitingMessage() {
         the${name}waitingMessageDialog.hide() ;
     }
-
+    function set${name}waitingMessage(aText,aButtonOkText,aButtonOkFunction,aButtonCancelText) {
+    	the${name}waitingMessageDialog.hide() ;
+    	$('${name}waitingMessageInformation').innerHTML = "<h1>"+aText+"</h1>" 
+    	+"<br/><input type='button' id='${name}buttonwaitingMessageOk' value='"+aButtonOkText+"' onclick='"+aButtonOkFunction+"'/>" 
+    	+"<br/><input type='button' value='"+aButtonCancelText+"' onclick='cancel${name}waitingMessage()'/>"
+    	the${name}waitingMessageDialog.show() ;
+    }
 
 
     function init${name}waitingMessage() {}

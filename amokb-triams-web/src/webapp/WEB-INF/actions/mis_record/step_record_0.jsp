@@ -262,15 +262,16 @@
 				
 	       	}
 	       	function fn_not_data_patient() {
-	       		if (confirm('Предварительно Вам надо оформить мед.карту в регистратуре, после чего Вы сможете записываться к Врачу. Вы хотите оформить предварительную запись к врачу?')){
-					var info="" ;
-	       			for (var j=0;j<elements.length-1;j++){
-			       		var fld = elements[j] ;
-			       		info = info+"&"+fld+"="+$(fld).value ;
-			       	}
-			       		window.location="step_pre_record_1.do?"+info.substring(1)+"${addParam}" ;
-						
-				} 
+	       		setwwaitingMessage('Предварительно Вам надо оформить мед.карту в регистратуре, после чего Вы сможете записываться к Врачу.<br/> Вы хотите оформить предварительную запись к врачу?'
+	       				,'Оформить предварительную запись','goNextPreRecord()','Вернуться к редактированию данных') ;
+	       	}
+	       	function goNextPreRecord() {
+				var info="" ;
+       			for (var j=0;j<elements.length-1;j++){
+		       		var fld = elements[j] ;
+		       		info = info+"&"+fld+"="+$(fld).value ;
+		       	}
+		       	window.location="step_pre_record_1.do?"+info.substring(1)+"${addParam}" ;
 	       	}
 	       	function goNext(aParam) {
 	       		var lastname='${param.lastname}' ;
