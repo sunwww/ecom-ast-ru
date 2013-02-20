@@ -17,7 +17,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-    <input type="hidden" name="patientid" id="patientid" value="${param.patientid}" />
+    <input type="hidden" name="patient" id="patient" value="${param.patient}" />
 <div>
 	   <table>
 	   <tr>
@@ -252,8 +252,8 @@
 	       	}
 	       	function fn_data_patient(aResult) {
 	       		var info="" ;
-	       		$('patientid').value =aResult.split('#')[1] ; 
-	       		var elements=["lastname","firstname","middlename","birthday","patientid"] ;
+	       		$('patient').value =aResult.split('#')[1] ; 
+	       		var elements=["lastname","firstname","middlename","birthday","patient"] ;
 	       		for (var j=0;j<elements.length;j++){
 		       		var fld = elements[j] ;
 		       		info = info+"&"+fld+"="+$(fld).value ;

@@ -36,7 +36,8 @@ public class RecordAction extends BaseAction  {
 		Long aDay = ConvertSql.parseLong(aRequest.getParameter("workCalendarDay")) ; 
 		Long aTime = ConvertSql.parseLong(aRequest.getParameter("workCalendarTime")) ; 
 		String aPatInfo = aRequest.getParameter("lastname")+" "+aRequest.getParameter("firstname")+" "+aRequest.getParameter("middlename") ;
-		Long aPatientId = null;
+		Long aPatientId = ConvertSql.parseLong(aRequest.getParameter("patient")) ; 
+;
 		service.recordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,Long.valueOf(0)) ;
 		String sql="" ;
 		sql=sql+"select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename " ;
