@@ -17,6 +17,7 @@
       <msh:panel>
         <msh:row>
         	<msh:textField property="fulfilmentDate" label="Дата совершения"/>
+        	<msh:textField property="registrationDate" label="Дата регистрации"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete size="100" property="nature" label="Характер суицида" vocName="vocPsychSuicideNature" horizontalFill="true"/>

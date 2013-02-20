@@ -215,6 +215,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_list.jsp"/>
         </action>
+        <action path='/smo_openSPO' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_journalBySpecForm'
+                scope='session' validate='true'
+                input='/WEB-INF/actions/smo_visit/journal_openSpo.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_openSpo_list.jsp"/>
+        </action>
         <action path='/visit_journal_direction' type='ru.ecom.mis.web.action.medcase.journal.DirectionPatientByPoliclinic'               
         		name='poly_journalBySpecForm'
                 validate='true'

@@ -23,7 +23,6 @@
       <msh:tableColumn columnName="Экстренность" property="emergency" guid="e98f6bbc96" />
       <msh:tableColumn columnName="Кем открыт" property="username" guid="35347247-b552-4154-a82a-ee484a1714ad" />
       <msh:tableColumn columnName="Дата закрытия" property="dateFinish" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Кем закрыт" property="finishWorkerText" guid="6b562107-5017-4559-9b94-ab525b579202" />
       <msh:tableColumn columnName="Стат.карта" property="statCardNumber" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Количество дней" property="daysCount" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
     </msh:table>

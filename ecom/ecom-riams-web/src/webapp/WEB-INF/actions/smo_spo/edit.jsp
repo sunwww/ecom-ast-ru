@@ -27,12 +27,12 @@
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
           <msh:autoComplete vocName="vocIdc10" property="idc10" label="МКБ-10" guid="b7d15793-841e-4779-b7ee-b44ac6eb7f08" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:autoComplete viewAction="entityView-mis_worker.do" vocName="vocWorker" property="startWorker" label="Кто начал" guid="7b8a49e5-653a-4490-bfcf-ff42801611f7" fieldColSpan="3" horizontalFill="true" />
+        <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="startFunction" label="Кто начал" guid="7b8a49e5-653a-4490-bfcf-ff42801611f7" fieldColSpan="3" horizontalFill="true" />
         <msh:row guid="b7488cc8-933c-406b-8589-8b852f78765e">
-          <msh:autoComplete viewAction="entityView-mis_Worker" vocName="vocWorker" property="finishWorker" label="Кто завершил" guid="d30a17e6-b833-47e6-9699-417dce4cd008" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="finishFunction" label="Кто завершил" guid="d30a17e6-b833-47e6-9699-417dce4cd008" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row guid="976b032e-82b6-45c9-88ca-935b07a6b482">
-          <msh:autoComplete viewAction="entityView-mis_worker.do" vocName="vocWorker" property="owner" label="Владелец" guid="1d81b4df-9cdc-40f1-b496-a10a3a5080e0" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="ownerFunction" label="Владелец" guid="1d81b4df-9cdc-40f1-b496-a10a3a5080e0" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
@@ -40,7 +40,20 @@
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_spoForm">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Direction">
       <msh:section guid="sectionChilds" title="Направленные">
-        <ecom:webQuery name="directions" nativeSql="select MedCase.id&#xA;&#x9;, WorkCalendarDay.calendarDate&#xA;&#x9;, WorkCalendarTime.timeFrom&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' ||  Patient.middlename&#xA;        , VocReason.name&#xA;  from MedCase&#xA;  left outer join WorkCalendarDay  on MedCase.datePlan_id    = WorkCalendarDay.id&#xA;  left outer join WorkCalendarTime on MedCase.timePlan_id    = WorkCalendarTime.id&#xA;  left outer join Worker           on MedCase.orderWorker_id = Worker.id&#xA;  left outer join Patient          on Worker.person_id       = Patient.id&#xA;  left outer join VocReason        on MedCase.visitReason_id = VocReason.id&#xA; where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='Visit'&#xA;   and MedCase.dateStart is null" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+        <ecom:webQuery name="directions" nativeSql="
+        select v.id , wcd.calendarDate , wct.timeFrom 
+, owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename 
+, vr.name 
+from MedCase v
+left join WorkCalendarDay wcd on v.datePlan_id = wcd.id 
+left join WorkCalendarTime wct on v.timePlan_id = wct.id 
+left join WorkFunction owf on owf.id=v.orderWorkFunction_id
+left join Worker ow on owf.id = ow.id 
+left join Patient owp on ow.person_id = owp.id 
+left join VocReason vr on v.visitReason_id = vr.id 
+where v.parent_id='${param.id}' 
+and v.DTYPE='Visit' 
+and v.dateStart is null"/>
         <msh:table guid="tableChilds" name="directions" action="entityParentView-smo_visit.do" idField="1">
           <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="709291f1-be97-4cd5-87c3-04a112a96639" />
           <msh:tableColumn columnName="Дата" property="2" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />

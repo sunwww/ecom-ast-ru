@@ -206,9 +206,9 @@ public class HospitalMedCaseServiceJs {
     		WebQueryResult wqr = list.iterator().next() ;
     		hospType=""+wqr.get2() ;
     	}
-    	if (hospType.equals("DAYTIMEHOSP")) {
+    	if (hospType!=null && hospType.equals("DAYTIMEHOSP")) {
     		bedSubType=" and vbst.code='2' ";
-    	} else if (hospType.equals("ALLTIMEHOSP")) {
+    	} else if (hospType==null||hospType.equals("ALLTIMEHOSP")) {
     		bedSubType=" and vbst.code='1' ";
     	}
     	sql = new StringBuilder() ;

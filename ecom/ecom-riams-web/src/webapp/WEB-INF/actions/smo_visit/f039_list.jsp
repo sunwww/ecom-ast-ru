@@ -1,3 +1,4 @@
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -16,6 +17,7 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
+
     <msh:form action="/poly_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="m" id="m" value="f039"/>
     <input type="hidden" name="s" id="s" value="TicketService"/>
@@ -177,26 +179,26 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn columnName="По поводу конс" property="22"/>
-            <msh:tableColumn columnName="По поводу забол" property="7"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn columnName="Профилак." property="10"/>
-            <msh:tableColumn columnName="На дому" property="11"/>
-            <msh:tableColumn columnName="На дому по забол." property="12"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn columnName="ОМС" property="18"/>
-            <msh:tableColumn columnName="бюджет" property="19"/>
-            <msh:tableColumn columnName="платные" property="20"/>
-            <msh:tableColumn columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -254,26 +256,26 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn columnName="По поводу конс" property="22"/>
-            <msh:tableColumn columnName="По поводу забол" property="7"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn columnName="Профилак." property="10"/>
-            <msh:tableColumn columnName="На дому" property="11"/>
-            <msh:tableColumn columnName="На дому по забол." property="12"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn columnName="ОМС" property="18"/>
-            <msh:tableColumn columnName="бюджет" property="19"/>
-            <msh:tableColumn columnName="платные" property="20"/>
-            <msh:tableColumn columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -332,26 +334,26 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn columnName="По поводу конс" property="22"/>
-            <msh:tableColumn columnName="По поводу забол" property="7"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn columnName="Профилак." property="10"/>
-            <msh:tableColumn columnName="На дому" property="11"/>
-            <msh:tableColumn columnName="На дому по забол." property="12"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn columnName="ОМС" property="18"/>
-            <msh:tableColumn columnName="бюджет" property="19"/>
-            <msh:tableColumn columnName="платные" property="20"/>
-            <msh:tableColumn columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -409,26 +411,26 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn columnName="По поводу конс" property="22"/>
-            <msh:tableColumn columnName="По поводу забол" property="7"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn columnName="Профилак." property="10"/>
-            <msh:tableColumn columnName="На дому" property="11"/>
-            <msh:tableColumn columnName="На дому по забол." property="12"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn columnName="ОМС" property="18"/>
-            <msh:tableColumn columnName="бюджет" property="19"/>
-            <msh:tableColumn columnName="платные" property="20"/>
-            <msh:tableColumn columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -438,10 +440,7 @@ ${queryTextEnd}
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_ticket" nativeSql="
-${queryTextBegin}
-
- ﻿select vs.name,socst.name,count(*) 
+<ecom:webQuery name="journal_ticket" nativeSql="${queryTextBegin},count(*) 
 ,count(case when 
 	(to_date(case when to_char(t.dateStart,'dd.mm')='29.02' then '28.02' else to_char(t.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(t.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) 
@@ -490,19 +489,19 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="0-14 лет" property="4"/>
-            <msh:tableColumn columnName="0-14 лет сел." property="5"/>
-            <msh:tableColumn columnName="15-17 лет" property="6"/>
-            <msh:tableColumn columnName="15-17 лет сел." property="22"/>
-            <msh:tableColumn columnName="взрослые" property="7"/>
-            <msh:tableColumn columnName="взрослые сел." property="8"/>
-            <msh:tableColumn columnName="по поводу заболевания" property="9"/>
-            <msh:tableColumn columnName="заб. 0-14" property="10"/>
-            <msh:tableColumn columnName="заб. 15-17" property="11"/>
-            <msh:tableColumn columnName="заб. взр." property="12"/>
-            <msh:tableColumn columnName="профил." property="13"/>
-            <msh:tableColumn columnName="посещ. на дому" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет сел." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет сел." property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослые" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослые сел." property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="по поводу заболевания" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="заб. 0-14" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="заб. 15-17" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="заб. взр." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="профил." property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="посещ. на дому" property="14"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -560,26 +559,26 @@ ${queryTextEnd}
         <msh:table
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
-            <msh:tableColumn columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn columnName="По поводу конс" property="22"/>
-            <msh:tableColumn columnName="По поводу забол" property="7"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn columnName="Профилак." property="10"/>
-            <msh:tableColumn columnName="На дому" property="11"/>
-            <msh:tableColumn columnName="На дому по забол." property="12"/>
-            <msh:tableColumn columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn columnName="ОМС" property="18"/>
-            <msh:tableColumn columnName="бюджет" property="19"/>
-            <msh:tableColumn columnName="платные" property="20"/>
-            <msh:tableColumn columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -632,12 +631,12 @@ ${queryTextEnd}
 	}
   	function getCheckedValue(radioGrp) {
   		var radioValue ;
-  		for(i=0; i < radioGrp.length; i++){
+  		for(i=0; i < radioGrp.length; i++) {
   		  if (radioGrp[i].checked == true){
   		    radioValue = radioGrp[i].value;
   		    break ;
   		  }
-  		} 
+  		}
   		return radioValue ;
   	}
   		

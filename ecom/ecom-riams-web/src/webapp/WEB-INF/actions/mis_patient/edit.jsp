@@ -608,7 +608,18 @@
       <tr valign="top"><td style="padding-right: 8px">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Spo/View" guid="8d094733-57f7-475f-a678-0e3e2b02ce43">
         <msh:section title="Открытые СПО" listUrl="entityParentList-smo_spo.do?id=${param.id}"  guid="91133845-c782-43ce-ba7a-84e75a65f024">
-          <ecom:webQuery name="openedSpos" guid="a7f8fcb3-2440-41ba-b79b-bd38f45e3077" nativeSql="select MedCase.id, MedCase.dateStart&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' || Patient.middlename as startWorker&#xA;&#x9;, op.lastname || ' ' ||  op.firstname || ' ' || op.middlename as ownerWorker&#xA;  from MedCase&#xA;  left outer join Worker     on MedCase.startWorker_id = Worker.id&#xA;  left outer join Patient    on Worker.person_id       = Patient.id&#xA;  left outer join Worker ow  on MedCase.owner_id       = ow.id &#xA;  left outer join Patient op on ow.person_id           = op.id&#xA; where patient_id=${param.id} &#xA;   and MedCase.DTYPE='PolyclinicMedCase'&#xA;   and dateFinish is null&#xA;" />
+          <ecom:webQuery name="openedSpos" nativeSql="select spo.id, spo.dateStart  
+, swp.lastname || ' ' ||  swp.firstname || ' ' || swp.middlename as startFunction
+, owp.lastname || ' ' ||  owp.firstname || ' ' || owp.middlename as ownerFunction 
+from MedCase spo
+left join WorkFunction swf on swf.id=spo.startFunction_id
+left join Worker sw on swf.worker_id = sw.id   
+left join Patient swp on sw.person_id = swp.id   
+left join WorkFunction owf on owf.id=spo.ownerFunction_id
+left join Worker ow  on ow.id = owf.worker_id    
+left join Patient owp on ow.person_id           = owp.id  
+where spo.patient_id='${param.id}'     
+and spo.DTYPE='PolyclinicMedCase'    and spo.dateFinish is null " />
           <msh:table idField="1" name="openedSpos" action="entityParentView-smo_spo.do" guid="2b5a4a9c-3bf0-4e1a-a1d0-2884bdb3e011" noDataMessage="Нет открытых СПО">
             <msh:tableColumn columnName="№" identificator="false" property="sn" guid="96a6e146-6273-4318-a397-f07c0af06825" />
             <msh:tableColumn columnName="Номер" property="1" guid="7d9ea677-7644-4167-af7e-320593fcb061" />
@@ -623,13 +634,25 @@
             <!-- Активные направления -->
       <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/View" guid="31447227-d69b-4477-92bf-57dfcbffb7e0">
         <msh:section createRoles="/Policy/Mis/MedCase/Direction/Create" createUrl="entityParentPrepareCreate-smo_direction.do?id=${param.id}" title="Активные направления" guid="2908c043-8780-4025-8b28-911f0ce35018">
-          <ecom:webQuery name="directions" nativeSql="select MedCase.id
-, WorkCalendarDay.calendarDate
-, WorkCalendarTime.timeFrom
-, Patient.lastname || ' ' ||  Patient.firstname || ' ' ||  Patient.middlename as workerOrder
-, VocReason.name as reasonName
-, pp.lastname || ' ' ||  pp.firstname || ' ' ||  pp.middlename || ' ' || VocWorkFunction.name as workerPlan
-  from MedCase&#xA;  left outer join WorkCalendarDay  on MedCase.datePlan_id         = WorkCalendarDay.id&#xA;  left outer join WorkCalendarTime on MedCase.timePlan_id         = WorkCalendarTime.id&#xA;  left outer join Worker           on MedCase.orderWorker_id      = Worker.id&#xA;  left outer join Patient          on Worker.person_id            = Patient.id&#xA;  left outer join VocReason        on MedCase.visitReason_id      = VocReason.id&#xA;  left outer join WorkFunction     on MedCase.workFunctionPlan_id = WorkFunction.id&#xA;  left outer join Worker pw        on WorkFunction.worker_id      = pw.id&#xA;  left outer join Patient pp       on pw.person_id                = pp.id&#xA;  left outer join VocWorkFunction  on WorkFunction.workFunction_id = VocWorkFunction.id&#xA; where MedCase.patient_id=${param.id}&#xA;   and MedCase.DTYPE='Visit'&#xA;   and MedCase.dateStart is null&#xA; and cast(MedCase.noActuality as integer)!=1 order by WorkCalendarDay.calendarDate, WorkCalendarTime.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+          <ecom:webQuery name="directions" nativeSql="
+select smo.id , wcd.calendarDate , wct.timeFrom 
+, owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename as workerOrder 
+, vr.name as reasonName 
+, pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename as workerPlan  
+from MedCase smo
+left join WorkCalendarDay wcd on smo.datePlan_id = wcd.id 
+left join WorkCalendarTime wct on smo.timePlan_id = wct.id 
+left join WorkFunction owf on owf.id=smo.orderWorkFunction_id
+left join Worker ow on owf.worker_id = ow.id 
+left join Patient owp on ow.person_id = owp.id 
+left join VocReason vr on smo.visitReason_id = vr.id 
+left join WorkFunction pwf on smo.workFunctionPlan_id = pwf.id 
+left join Worker pw on pwf.worker_id = pw.id 
+left join Patient ppw on pw.person_id = ppw.id 
+left join VocWorkFunction pvwf on pwf.workFunction_id = pvwf.id 
+where smo.patient_id='${param.id}' and smo.DTYPE='Visit' and smo.dateStart is null 
+and (smo.noActuality is null or smo.noActuality='0')
+order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
           <msh:table guid="tableChilds" name="directions" action="entityParentEdit-smo_visit.do" idField="1">
             <msh:tableColumn columnName="№" identificator="false" property="sn" guid="73dd6ce1-81ea-4f13-b141-5d3f604f305d" />
             <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="709291f1-be97-4cd5-87c3-04a112a96639" />
@@ -770,7 +793,7 @@
 		territory="territoryRegistrationNonresident" region="regionRegistrationNonresident"
 		typeSettlement="typeSettlementNonresident" settlement="settlementNonresident"
 		typeStreet="typeStreetNonresident" street="streetNonresident" zipcode="nonresidentZipcode"/>
-    <tags:mis_double name='Patient' title='Существующие пациенты в базе:'/>
+    <tags:mis_double name='Patient' title='Существующие пациенты в базе:' rolesBan="/Policy/Mis/Patient/BanDoubleCreate"/>
     <tags:mis_findPatientByFond name='Patient' patientField="id"/>
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -931,23 +954,7 @@
 		}
     </script>
   </msh:ifInRole>
-  <msh:ifFormTypeIsView formName="mis_patientForm">
-  <%--
-      <script type="text/javascript">
-    	PatientService.infoByPolicy($('id').value, {
-    		callback: function(aResult) {
-    			//alert(aResult) ;
-    			if (aResult.length>0) {
-    				$('medPolicyInformation').innerHTML = aResult ;
-    				$('medPolicyInformation').style.display = 'block' ;
-    			} else {
-    				$('medPolicyInformation').style.display = 'none' ;
-    			}
-    		}
-    	});
-  	</script>
-  	 --%>
-  </msh:ifFormTypeIsView>
+
   <msh:ifFormTypeIsNotView formName="mis_patientForm">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript">// <![CDATA[//
@@ -980,6 +987,7 @@
         	});
     	}
     	function isExistPatient() {
+    		
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
 				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
                    callback: function(aResult) {

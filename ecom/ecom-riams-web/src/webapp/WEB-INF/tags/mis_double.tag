@@ -5,6 +5,7 @@
 
 <%@ attribute name="name" required="true" description="Название" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
+<%@ attribute name="rolesBan" required="false" description="Роль ограничивающая, создание при обнаружении дубля"%>
 
 <style type="text/css">
     #${name}DoubleDialog {
@@ -27,8 +28,8 @@
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" value='Продолжить сохранение' onclick='javascript:next${name}Double()'/>
-                <input type="button" value='Вернуться к редактированию' onclick='javascript:cancel${name}Double()'/>
+                <input type="button" name='${name}DoubleSave' style="display: none;" id='${name}DoubleSave' value='Продолжить сохранение' onclick='javascript:next${name}Double()'/>
+                <input type="button" name='${name}DoubleCancel' id='${name}DoubleCancel' value='Вернуться к редактированию' onclick='javascript:cancel${name}Double()'/>
             </td>
         </msh:row>
 </form>
@@ -54,6 +55,12 @@
      function next${name}Double() {
         document.forms[0].action = oldaction ;
 		document.forms[0].submit() ;
+		$('submitButton').style.display='true' ;
+		$('${name}DoubleSave').readOnly='true' ;
+		$('${name}DoubleSave').style.display = 'none' ;
+		$('${name}DoubleCancel').style.display = 'none' ;
+		$('${name}DoubleText').innerHTML='<i>Идет сохранение</i>' ;
+		document.forms[0].action = 'alert("Идет обработка данных")' ;
      }
      // Отмена
      function cancel${name}Double() {
@@ -64,7 +71,28 @@
 
      // инициализация диалогового окна
      function init${name}DoubleDialog() {
-     	theIs${name}DoubleDialogInitialized = true ;
+    	 var rolesBan='${rolesBan}' ;
+    	 if (rolesBan=='') {
+    		 $('${name}DoubleSave').style.display = 'block' ;
+    		 theIs${name}DoubleDialogInitialized = true ;
+    	 } else {
+    		 if ($('saveType').value=='1') {
+    		 PatientService.checkPolicy(rolesBan,
+    				 {
+    			 		callback: function(aResult) {
+    			 			
+    			 			if (+aResult==0) {
+    			 	    		 $('${name}DoubleSave').style.display = 'block' ;
+    			 	    		 theIs${name}DoubleDialogInitialized = true ;
+    			 			} 
+    			 		}
+    				 }) ;
+    	 	} else {
+    	 		 $('${name}DoubleSave').style.display = 'block' ;
+ 	    		 theIs${name}DoubleDialogInitialized = true ;
+    	 	}
+    	 }
+    	 
      	
      }
 </script>

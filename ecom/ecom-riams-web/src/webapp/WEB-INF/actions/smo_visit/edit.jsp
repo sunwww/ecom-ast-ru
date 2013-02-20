@@ -19,10 +19,8 @@
       <msh:hidden property="isDiagnosisCreate"/>
       <msh:hidden property="isCloseSpo"/>
       <msh:hidden property="orderWorkFunction"/>
-      <msh:hidden property="orderWorker"/>
       <msh:hidden property="username"/>
       <msh:hidden property="createDate"/>
-      <msh:hidden property="startWorker"/>
       <msh:hidden property="infoByPolicy" />
       <msh:hidden property="isPreRecord" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />

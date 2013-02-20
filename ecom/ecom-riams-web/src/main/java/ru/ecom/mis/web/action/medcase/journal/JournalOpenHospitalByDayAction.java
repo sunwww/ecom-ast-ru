@@ -27,8 +27,8 @@ public class JournalOpenHospitalByDayAction extends BaseAction {
         	aRequest.setAttribute("dateSearch","dateStart") ;
         	aRequest.setAttribute("infoSearch"," Поиск по дате поступления") ;
         }*/
-    	String idString = aRequest.getParameter("id") ;
-    	System.out.println("userprincepal="+aRequest.getUserPrincipal()) ;
+    	//String idString = aRequest.getParameter("id") ;
+    	//System.out.println("userprincepal="+aRequest.getUserPrincipal()) ;
         //IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
     	 //aRequest.setAttribute("list", service.findOpenHospitalByDate(idString));
         return aMapping.findForward("success");

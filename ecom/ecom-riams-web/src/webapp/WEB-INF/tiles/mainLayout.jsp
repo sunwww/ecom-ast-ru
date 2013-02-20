@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -27,9 +30,35 @@
 
 
  </head>
-
+    <%
+    //Date curDate = new Date() ;
+    //SimpleDateFormat form = new SimpleDateFormat("MMdd") ;
+    //request.setAttribute("curdate_MMdd", ""+form.format(curDate)) ;
+    Calendar cal = Calendar.getInstance() ;
+    int month = cal.get(Calendar.MONTH) ;
+    int day = cal.get(Calendar.DAY_OF_MONTH) ;
+    String path_curdate = "" ;
+    switch (month) {
+    case 0: 
+    	if (day<10) {path_curdate="0101";break;}
+    	if (day==13) {path_curdate="0113";break;}
+    case 1:
+    	if (day==14) {path_curdate="0214";break;}
+    	if (day>20 && day<24) {path_curdate="0223";break;}
+    case 2:
+    	if (day>5 && day<9) {path_curdate="0308";break;}
+    case 11:
+    	if (day>20) {path_curdate="1231";break;}
+    default:
+    	path_curdate="default" ;
+    	
+    }
+    //request.setAttribute("curdate_MMdd", ""+path_curdate) ;
+    String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
+    request.setAttribute("style_addition_body", style) ;
+    %>
     <body>
-    <div id='header' style="background: url('/skin/images/my2013.png') no-repeat left top ;">
+    <div id='header' style="${style_addition_body}">
         <h1>МедОС</h1>
         <a href="<%=request.getContextPath()%>">
             <img src='/customer/images/main/logo-75x50.jpg' width='75' height="50"

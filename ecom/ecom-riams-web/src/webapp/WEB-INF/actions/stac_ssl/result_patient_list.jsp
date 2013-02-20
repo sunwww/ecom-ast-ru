@@ -270,11 +270,11 @@
          action="stac_resultPatient_list.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="1"/>
-            <msh:tableColumn columnName="Кол-во" property="2"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="3"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="4"/>
-            <msh:tableColumn columnName="Кол-во оперированных" property="5"/>
-            <msh:tableColumn columnName="Ср. койко дней" property="6"/>
+            <msh:tableColumn columnName="Кол-во" property="2" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во экстренных" property="3" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во плановых" property="4" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во оперированных" property="5" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Ср. койко дней" property="6" />
             
         </msh:table>
     </msh:sectionContent>

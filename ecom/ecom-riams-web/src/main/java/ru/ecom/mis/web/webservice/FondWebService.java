@@ -42,6 +42,8 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_SS(aSnils, theLpu);
+        //System.out.println("result rz:") ;
+        //System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -58,6 +60,8 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_POLIS(aSeries, aNumber, theLpu);
+        //System.out.println("result rz:") ;
+        //System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -75,7 +79,9 @@ public class FondWebService {
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_FIODR(aLastname, aFirstname
         		, aMiddlename, aBirthday, theLpu);
-        InputStream in = new ByteArrayInputStream(((String) result).getBytes());
+        //System.out.println("result rz:") ;
+        //System.out.println(result) ;
+        InputStream in = new ByteArrayInputStream((result).getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
@@ -90,6 +96,8 @@ public class FondWebService {
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_DOCS(aType, aSeries, aNumber, theLpu);
+        //System.out.println("result rz:") ;
+        //System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -104,6 +112,8 @@ public class FondWebService {
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
         	//System.out.println(result);
+            //System.out.println("result info:") ;
+            //System.out.println(result) ;
         	result =updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
     		
@@ -170,6 +180,10 @@ public class FondWebService {
             
         	in.close() ;
         	result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
+        	
+            //System.out.println("result policy:") ;
+            //System.out.println(result) ;
+        	
         	result = updateXml(result) ;
         	//System.out.println(result);
         	in = new ByteArrayInputStream(result.getBytes());
@@ -258,6 +272,8 @@ public class FondWebService {
         	
         	
         	result = (String)aSoap.get_DOCS_from_RZ(aRz, theLpu) ;
+            //System.out.println("result document:") ;
+            //System.out.println(result) ;
         	result = updateXml(result) ;
         	//System.out.println(result) ;
         	in = new ByteArrayInputStream(result.getBytes());
@@ -311,6 +327,9 @@ public class FondWebService {
             
 
         	result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
+            //System.out.println("result adress:") ;
+            //System.out.println(result) ;
+        	
         	result = updateXml(result) ;
         	//System.out.println(result) ;
         	in = new ByteArrayInputStream(result.getBytes());

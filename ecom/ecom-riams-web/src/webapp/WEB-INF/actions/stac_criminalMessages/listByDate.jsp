@@ -37,7 +37,8 @@
     left join Patient wp on wp.id=w.person_id
     left join medcase m on m.id=pm.medCase_id
     left join Patient p on p.id=m.patient_id
-       
+    left join mislpu ml on ml.id=m.department_id
+    left join mislpu ml1 on ml1.id=w.lpu_id
         where pm.dtype='CriminalPhoneMessage' ${paramsPeriod} 
         ${addParam}
         ${emergency} ${department} ${pigeonHole}

@@ -104,11 +104,11 @@
 	        	<input type="radio" name="typeView" value="5"  >  свод по отделениям
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="6"  >  общий свод по ЛПУ
+	        	<input type="radio" name="typeView" value="6">  все
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="7">  все
-	        </td>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" horizontalFill="true" label="Отделение" vocName="lpu" fieldColSpan="7"/>
         </msh:row>
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -128,6 +128,10 @@
     	String view = (String)request.getAttribute("typeView") ;
     	String typeDischargePatientIs = (String)request.getAttribute("typeDischargePatientIs") ;
     	String typePatientIs = (String)request.getAttribute("typePatientIs") ;
+    	String department = request.getParameter("department") ;
+    	if (department!=null && !department.equals("")) {
+    		request.setAttribute("departmentSql", " and hmc.department_id="+department) ;
+    	}
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
     	} else {
@@ -141,7 +145,7 @@
     	} else if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("2")) {
     		request.setAttribute("isDischarge", " and hmc.dateFinish is null") ;
     	} 
-    	if (view!=null && (view.equals("1") || view.equals("7"))) {
+    	if (view!=null && (view.equals("1") || view.equals("6"))) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -165,14 +169,14 @@
     (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
     )>0 then 'Есть' else '' end  as policy
     ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
-    ,sum(
+    ,
     	  case 
 			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
 			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end
     	
-    	) as sum2
+    	 as sum2
     ,hmc.dateFinish as hospdateFinish
 from Medcase hmc 
 left join StatisticStub ss on ss.id=hmc.statisticStub_id 
@@ -188,6 +192,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
  where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') 
       and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
       and hmc.DTYPE='HospitalMedCase'
+      ${departmentSql}
  and (vss.code = 'OBLIGATORYINSURANCE') 
 
 and hmc.deniedHospitalizating_id is null
@@ -195,7 +200,7 @@ ${addPat} ${addEmergency} ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
-    ,hmc.dateFinish
+    ,hmc.dateFinish,vht.code
 having count(pol.medCase_id)=0 ${addDuration}
 order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
@@ -211,7 +216,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
             <msh:tableColumn columnName="№ стат. карты" property="5"/>
             <msh:tableColumn columnName="Дата пост." property="4"/>
             <msh:tableColumn columnName="Дата выписки" property="12"/>
-            <msh:tableColumn columnName="К.дни" property="11"/>
+            <msh:tableColumn columnName="К.дни" property="11" isCalcAmount="true"/>
             <msh:tableColumn columnName="Тип" property="8"/>
             <msh:tableColumn columnName="ФИО пациента" property="7"/>
             <msh:tableColumn columnName="Наличие страх. документов" property="9"/>
@@ -221,7 +226,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
     </msh:section>
     
-    <%} if (view!=null && (view.equals("2") || view.equals("7"))) {
+    <%} if (view!=null && (view.equals("2") || view.equals("6"))) {
     	%>
     
     <msh:section title="Не заполнено поле страховая компания. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -240,14 +245,14 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
     when pvss.omccode='И0' then 'ИНОГ' else '' end as typePatient
     ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
-    ,sum(
+    ,
     	  case 
 			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
 			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end
     	
-    	) as sum2
+    	 as sum2
     ,hmc.dateFinish as hospdateFinish
 from Medcase hmc 
 left join StatisticStub ss on ss.id=hmc.statisticStub_id 
@@ -264,6 +269,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
  where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
       and hmc.DTYPE='HospitalMedCase'
+      ${departmentSql}
  and (vss.code = 'OBLIGATORYINSURANCE') 
 
 and hmc.deniedHospitalizating_id is null
@@ -273,7 +279,7 @@ ${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
-    ,hmc.dateFinish
+    ,hmc.dateFinish,vht.code
 having count(pol.medCase_id)>0 ${addDuration}
 order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
         "  />
@@ -287,7 +293,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
             <msh:tableColumn columnName="№ стат. карты" property="5"/>
             <msh:tableColumn columnName="Дата пост." property="4"/>
             <msh:tableColumn columnName="Дата выписки" property="11"/>
-            <msh:tableColumn columnName="К.дни" property="10"/>
+            <msh:tableColumn columnName="К.дни" property="10" isCalcAmount="true"/>
             <msh:tableColumn columnName="Тип" property="8"/>
             <msh:tableColumn columnName="ФИО пациента" property="7"/>
             
@@ -296,7 +302,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     
     </msh:section>
     
-    <%} if (view!=null && (view.equals("3") || view.equals("7"))) {
+    <%} if (view!=null && (view.equals("3") || view.equals("6"))) {
     	%>
     <msh:section>
     <msh:sectionTitle>Не была произведена проверка по базе фонда. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -318,14 +324,14 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     when pvss.omccode='И0' then 'ИНОГ' else '' end as typePatient
     
     ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
-    ,sum(
+    ,
     	  case 
 			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
 			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end
     	
-    	) as sum2
+    	as sum2
     ,hmc.dateFinish as hospdateFinish
 from Medcase hmc 
 left join StatisticStub ss on ss.id=hmc.statisticStub_id 
@@ -343,6 +349,7 @@ left join PatientFond pf on pf.commonNumber=polI.commonNumber
  where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') 
       and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
       and hmc.DTYPE='HospitalMedCase'
+      ${departmentSql}
  and (vss.code = 'OBLIGATORYINSURANCE') 
 
 and hmc.deniedHospitalizating_id is null and polI.confirmationDate is null
@@ -351,7 +358,7 @@ ${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
-    ,hmc.dateFinish
+    ,hmc.dateFinish,vht.code
 having count(pol.medCase_id)>0 ${addDuration}
 and count(case when (pf.lastname=polI.lastname and pf.firstname=polI.firstname and pf.middlename=polI.middlename
 and pf.birthday=polI.birthday) or
@@ -372,7 +379,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
             <msh:tableColumn columnName="№ стат. карты" property="5"/>
             <msh:tableColumn columnName="Дата пост." property="4"/>
             <msh:tableColumn columnName="Дата выписки" property="11"/>
-            <msh:tableColumn columnName="К.дни" property="10"/>
+            <msh:tableColumn columnName="К.дни" property="10" isCalcAmount="true"/>
             <msh:tableColumn columnName="Тип" property="8"/>
             <msh:tableColumn columnName="ФИО пациента" property="7"/>
             
@@ -382,7 +389,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
     </msh:section>
         <%	}
-    if (view!=null && (view.equals("4") || view.equals("7"))) {
+    if (view!=null && (view.equals("4") || view.equals("6"))) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -432,6 +439,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
  and (vss.code = 'OTHER') 
 
 and hmc.deniedHospitalizating_id is null
+${departmentSql}
 ${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
@@ -463,14 +471,14 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     </msh:section>
     
     <%} 
-    if (view==null || view.equals("5") || view.equals("7")) { 
+    if (view==null || view.equals("5") || view.equals("6")) { 
     %>
     <msh:section title="Свод">
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_swod" nativeSql="
     select 
-    
-    dep.name as depname
+    '&department='||dep.id as id
+    ,dep.name as depname
     , vss.name as vssname 
     , count(*) as cnt
     , count(case when hmc.emergency='1' then 1 else null end) as cntEmer
@@ -516,120 +524,42 @@ left join address2 adr on adr.addressId = pat.address_addressId
  where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
       and hmc.DTYPE='HospitalMedCase'
+      ${departmentSql}
  and (vss.code = 'OBLIGATORYINSURANCE') 
 
 and hmc.deniedHospitalizating_id is null
 and pol.medCase_id is null
 ${addPat}  ${isDischarge}
-group by dep.name, vss.name
+group by dep.id,dep.name, vss.name
 
 order by dep.name,vss.name
     
     "/>
     <msh:table name="journal_list_swod"
-         action="stac_receivedWithoutPolicy_list.do" idField="1" noDataMessage="Не найдено">
+         action="stac_receivedWithoutPolicy_list.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDuration=${typeDuration}&typePatient=${typePatient}&typePatientIs=${typePatientIs}&typeEmergency=${typeEmergency}&typeDischargePatientIs=${typeDischargePatientIs}&typeView=1" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="1"/>
-            <msh:tableColumn columnName="Поток обслуживания" property="2"/>
-            <msh:tableColumn columnName="Кол-во" property="3"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="4"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="5"/>
-            <msh:tableColumn columnName="Кол-во иностр. гражд." property="6"/>
-            <msh:tableColumn columnName="Кол-во иног. гражд." property="7"/>
-            <msh:tableColumn columnName="Налич. страх. докум." property="8"/>
-            <msh:tableColumn columnName="Более 3х к/ дней" property="9"/>
-            <msh:tableColumn columnName="Менее 3х к/ дней" property="10"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="3"/>
+            <msh:tableColumn columnName="Кол-во" property="4" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во экстренных" property="5" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во плановых" property="6" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во иностр. гражд." property="7" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во иног. гражд." property="8" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Налич. страх. докум." property="9" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Более 3х к/ дней" property="10" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Менее 3х к/ дней" property="11" isCalcAmount="true"/>
             
         </msh:table>
     </msh:sectionContent>
     </msh:section>
     <%} 
-    if (view==null || view.equals("6") || view.equals("7")) { 
-    %>
-    <msh:section title="Общий свод по потокам обслуживания">
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_list_swod_all" nativeSql="
-    select 
-    
- vss.name as vssname 
-    , count(*) as cnt
-    , count(case when hmc.emergency='1' then 1 else null end) as cntEmer
-    , count(case when hmc.emergency='1' then null else 1 end) as cntPlan
-	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then 1  
-     else null end) as typePatientInost
-	, count(case when (ok.voc_code is not null and ok.voc_code!='643') then null  
-     when pvss.omccode='И0' then 1 else null end) as typePatientInog
-    , count(case when (select count(*) from medpolicy mp where
-     mp.patient_id=pat.id and
-    mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=hmc.dateStart and
-    (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
-    )>0 then 1 else null end)  as policy
-    
-    ,count (case when (
-    	  case 
-			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
-			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
-			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
-		  end
-    	
-    	)>3 then 1 else null end) as sum3max
-    ,count (case when(
-    	  case 
-			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
-			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
-			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
-		  end
-    	
-    	)<=3 then 1 else null end) as sum3min
-   
-from Medcase hmc 
-left join StatisticStub ss on ss.id=hmc.statisticStub_id 
-left join MisLpu dep on dep.id=hmc.department_id 
-left join vocservicestream vss on vss.id=hmc.servicestream_id 
-left join patient pat on pat.id=hmc.patient_id 
-left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
-left join medcase_medpolicy pol on pol.medCase_id=hmc.id
-left join Omc_Oksm ok on pat.nationality_id=ok.id
-left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-left join VocHospType vht on vht.id=hmc.hospType_id
-left join address2 adr on adr.addressId = pat.address_addressId
- where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
-      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
-      and hmc.DTYPE='HospitalMedCase'
- and (vss.code = 'OBLIGATORYINSURANCE' or vss.code='PRIVATEINSURANCE') 
-
-and hmc.deniedHospitalizating_id is null
-and pol.medCase_id is null
-${addPat}  ${isDischarge}
-group by  vss.name
-
-order by vss.name
-    
-    "/>
-    <msh:table name="journal_list_swod_all"
-         action="stac_receivedWithoutPolicy_list.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="#" property="sn"/>
-
-            <msh:tableColumn columnName="Поток обслуживания" property="1"/>
-            <msh:tableColumn columnName="Кол-во" property="2"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="3"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="4"/>
-            <msh:tableColumn columnName="Кол-во иностр. гражд." property="5"/>
-            <msh:tableColumn columnName="Кол-во иног. гражд." property="6"/>
-            <msh:tableColumn columnName="Налич. страх. докум." property="7"/>
-            <msh:tableColumn columnName="Более 3х к/ дней" property="8"/>
-            <msh:tableColumn columnName="Менее 3х к/ дней" property="9"/>
-            
-        </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <% }} else {%>
+	} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
 
     <script type='text/javascript'>
     //checkFieldUpdate('typeDate','${typeDate}',2) ;
-    checkFieldUpdate('typeView','${typeView}',5) ;
+    checkFieldUpdate('typeView','${typeView}',6) ;
     checkFieldUpdate('typeDuration','${typeDuration}',3) ;
     checkFieldUpdate('typePatient','${typePatient}',3) ;
     checkFieldUpdate('typePatientIs','${typePatientIs}',2) ;
@@ -638,8 +568,9 @@ order by vss.name
     checkFieldUpdate('typeDischargePatientIs','${typeDischargePatientIs}',3) ;
     
   
-   function checkFieldUpdate(aField,aValue,aMax) {
+   function checkFieldUpdate(aField,aValue,aDefault) {
    	eval('var chk =  document.forms[0].'+aField) ;
+   	eval('var aMax =  chk.length') ;
    	if ((+aValue)>aMax) {
    		chk[+aMax-1].checked='checked' ;
    	} else {

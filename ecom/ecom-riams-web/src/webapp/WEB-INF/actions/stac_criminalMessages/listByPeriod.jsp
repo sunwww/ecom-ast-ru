@@ -248,6 +248,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     ,count(distinct m.id) as cntHosp
     from PhoneMessage pm 
     left join medcase m on m.id=pm.medCase_id
+    left join MisLpu as ml on ml.id=m.department_id 
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
