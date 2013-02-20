@@ -1,5 +1,6 @@
 package ru.nuzmsh.web.tags;
 
+import java.awt.font.NumericShaper;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
@@ -15,6 +16,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -177,7 +179,7 @@ public class TableTag extends AbstractGuidSupportTag {
         theColumns.add(
                 new Column(aTag.getProperty(), aTag.getColumnName()
                         , aTag.isIdentificator(), aTag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                        , aTag.getGuid())
+                        , aTag.getGuid(),aTag.getIsCalcAmount())
                 
         );
     }
@@ -301,7 +303,7 @@ public class TableTag extends AbstractGuidSupportTag {
     	aOut.print("<td width='14px' onclick=\"");
     	aOut.print(aGoFunctionName) ;
     	//aOut.print("('") ;
-//        aOut.print(URLEncoder.encode(aId, "utf-8")) ;
+    	//aOut.print(URLEncoder.encode(aId, "utf-8")) ;
     	//aOut.print(aId) ;
     	//aOut.print("')");
     	aOut.print("\"");
@@ -419,8 +421,16 @@ public class TableTag extends AbstractGuidSupportTag {
                     
                     String firstId = null;
                     String lastId = null;
+                    Object rowSum = null ;
+                    boolean isFirstRow = true ;
+                    boolean isSumColumn = false ;
                     for (Iterator colIter = col.iterator(); colIter.hasNext();) {
-                        Object row = colIter.next();
+                    	Object row = colIter.next();
+                    	if (isFirstRow) {
+                    		rowSum = row ;
+                    		//isFirstRow = false ;
+                    	}
+                        
                         //Tablable tablable = (Tablable) row ;
                         String currentId = decorator != null ? decorator.getId(row)
                                 : getIdByIdField(row) ;
@@ -473,11 +483,43 @@ public class TableTag extends AbstractGuidSupportTag {
                         
                         for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
                             Column column = (Column) iterator.next();
-                            column.printCell(out, row, goFunctionName, currentId);
+                            Object valueC = column.printCell(out, row, goFunctionName, currentId);
+                        	if (!isFirstRow) {
+                        		if (valueC!=null) {
+                        			rowSum = column.amountCell(out, rowSum, valueC) ;
+                        			isSumColumn = true ;
+                        		}
+                        	}
                         }
+                        //System.out.println("--->");
                         out.println("</tr>");
+                    	if (isFirstRow) {
+                    		//rowSum = row ;
+                    		isFirstRow = false ;
+                    	}
                     }
-                    out.println("</tr>");
+                    if (isSumColumn) {
+	                    out.println("<tr>");
+	                    if(theSelection!=null) {
+                            out.println("<td>&nbsp;</td>") ;
+                        }
+                        if (theViewUrl!=null) {
+                            out.println("<td>&nbsp;</td>") ;
+                        }
+                        if (theEditUrl!=null) {
+                            out.println("<td>&nbsp;</td>") ;
+                        }
+                        if (theDeleteUrl!=null) {
+                            out.println("<td>&nbsp;</td>") ;
+                        }
+
+	                    for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
+	                        Column column = (Column) iterator.next();
+	                        column.printSumCell(out, rowSum, "", "");
+	
+	                    }
+	                    out.println("</tr>");
+                    }
 
                     if (theNavigationAction != null) {
                         out.println("<tr><td colspan='" + theColumns.size()
@@ -596,13 +638,14 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
             theCssClass = aCssClass;
             theServleRequest = aRequest ;
             theGuid = aGuid ;
+            theIsCalcAmount = aIsCalcAmount ;
         }
 
         @SuppressWarnings("unused")
@@ -643,7 +686,63 @@ public class TableTag extends AbstractGuidSupportTag {
         	aOut.print(aValue);
         	aOut.println("</td>");
         }
-        private void printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
+        	String styleClass = "";
+        	Object value;
+        	Object valueSum = null ;
+        	try {
+        		// value = PropertyUtils.getProperty(aObject, theProperty);
+        		value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+//                System.out.println("value.getClass() = " + value.getClass());
+        		if (value instanceof Time) {
+        			value = DateFormat.formatToTime((Time) value);
+        			styleClass = "time";
+        		} else  if (value instanceof Date) {
+        			value = DateFormat.formatToDate((Date) value);
+        			styleClass = "date";
+        		} else if (value instanceof Number) {
+        			styleClass = "number";
+        		} else if (value instanceof Boolean) {
+        			Boolean booleanValue = (Boolean) value ;
+        			if(booleanValue!=null && booleanValue) {
+        				value = "Да" ;
+        				styleClass = "boolean";
+        			} else {
+        				value = "Нет" ;
+        				styleClass = "boolean booleanNoValue"; 
+        			}
+        		} else if(value instanceof String) {
+        			if(DemoModeUtil.isInDemoMode(theServleRequest)) {
+        				value = DemoModeUtil.secureValue(value);
+        			}
+        		}
+        		
+        	} catch (Exception e) {
+        		value = e + "";
+        	}
+        	if (theCssClass != null) {
+        		styleClass += " " + theCssClass;
+        	}
+        	aOut.print("<td onclick=\"");
+        	aOut.print(aGoFunctionName) ;
+        	//aOut.print("('") ;
+//            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
+        	//aOut.print(aId) ;
+        	//aOut.print("')");
+        	aOut.print("\"");
+        	aOut.print(" class='") ;
+        	aOut.print(styleClass);
+        	aOut.print(' ');
+        	aOut.print(theProperty);
+        	aOut.print("'>");
+        	aOut.print(value != null ? value : "&nbsp;");
+        	aOut.println("</td>");
+        	if (theIsCalcAmount) {
+        		valueSum = value ;
+        	}
+        	return valueSum ;
+        }
+        private void printSumCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
             String styleClass = "";
             Object value;
             try {
@@ -679,20 +778,46 @@ public class TableTag extends AbstractGuidSupportTag {
             if (theCssClass != null) {
                 styleClass += " " + theCssClass;
             }
-            aOut.print("<td onclick=\"");
-            aOut.print(aGoFunctionName) ;
-            //aOut.print("('") ;
-//            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-            //aOut.print(aId) ;
-            //aOut.print("')");
-            aOut.print("\"");
-            aOut.print(" class='") ;
+            aOut.print("<td ") ;
+            //aOut.print("onclick=\"");
+            //aOut.print(aGoFunctionName) ;
+            //aOut.print("\"");
+            aOut.print(" class='sumTd ") ;
             aOut.print(styleClass);
             aOut.print(' ');
             aOut.print(theProperty);
             aOut.print("'>");
-            aOut.print(value != null ? value : "&nbsp;");
+            if (theIsCalcAmount) {
+                aOut.print(value != null ? value : "&nbsp;");
+            } else {
+            	aOut.print("&nbsp;");
+            }
             aOut.println("</td>");
+        }
+        private Object amountCell(JspWriter aOut, Object aObject, Object aValue) throws IOException {
+            Object value;
+            try {
+            	Number val1 = (Number)(aValue!=null?aValue:0) ;
+                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+                Number val2 ;
+                if (value instanceof Number) {
+                	val2 = (Number)(value!=null?value:0) ;
+                } else if (value instanceof String) {
+                	val2 = Long.valueOf((String)value) ;
+                } else {
+                	val2 = Long.valueOf((String)value);
+                }
+                
+                String val3 = new StringBuilder().append(val1.longValue()+val2.longValue()).toString() ;
+            	
+                PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
+                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+                //System.out.println("val1="+val1+" val2="+val2+" val3="+val3+" valSum="+value) ;
+            } catch (Exception e) {
+				e.printStackTrace();
+			}
+            return aObject ;
+//              
         }
 
         private final String theProperty;
@@ -701,6 +826,7 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theCssClass;
         private final HttpServletRequest theServleRequest ;
         private final String theGuid ;
+        private final boolean theIsCalcAmount ;
     }
 
 
