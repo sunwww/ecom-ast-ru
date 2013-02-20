@@ -1,8 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
-
-import java.sql.Date;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
@@ -50,12 +47,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public Boolean getNoActuality() {return theNoActuality;}
 	public void setNoActuality(Boolean aNewProperty) {theNoActuality = aNewProperty;}
 
-	/** Исполнитель */
-	@Comment("Исполнитель")
-	@Persist
-	public Long getStartWorker() {return theStartWorker;}
-	public void setStartWorker(Long aNewProperty) {theStartWorker = aNewProperty;}
-	
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
 	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
@@ -162,22 +153,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public String getDaysCount() {	return theDaysCount;}
 	public void setDaysCount(String aDaysCount) {	theDaysCount = aDaysCount;}
 
-	/** Кто завершил */
-	@Comment("Кто завершил")
-	@Persist
-	public Long getFinishWorker() {	return theFinishWorker;	}
-	public void setFinishWorker(Long aFinishWorker) {theFinishWorker = aFinishWorker;}
-
-	/** Кто завершил (текст) */
-	@Comment("Кто заверщил (текст)")
-	public String getFinishWorkerText() {return theFinishWorkerText;}
-	public void setFinishWorkerText(String aFinishWorkerText) {theFinishWorkerText = aFinishWorkerText;}
-	
-
-	/** Исполнитель (текст) */
-	@Comment("Исполнитель (текст)")
-	public String getStartWorkerText() {return theStartWorkerText;	}
-	public void setStartWorkerText(String aStartWorkerText) {theStartWorkerText = aStartWorkerText;}
 	
 	/** Состояние опьянения */
 	@Comment("Состояние опьянения")
@@ -310,12 +285,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	@Persist
 	public Long getHospitalization() {return theHospitalization;}
 	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
-	
-	/** Информация о рабочей ф-ии леч врача */
-	@Comment("Информация о рабочей ф-ии леч врача")
-	@Persist
-	public String getOwnerFunctionInfo() {return theOwnerFunctionInfo;}
-	public void setOwnerFunctionInfo(String aOwnerFunctionInfo) {theOwnerFunctionInfo = aOwnerFunctionInfo;}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
@@ -476,8 +445,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theDischargeEpicrisis;
 	/** Рабочая функция лечащего врача */
 	private Long theOwnerFunction;
-	/** Информация о рабочей ф-ии леч врача */
-	private String theOwnerFunctionInfo;
 	/** Госпитализация (впервые, повторно) */
 	private Long theHospitalization;
 	/** Тип текущего стационара */
@@ -524,12 +491,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theTrauma;
 	/** Состояние опьянения */
 	private Long theIntoxication;
-	/** Исполнитель (текст) */
-	private String theStartWorkerText;
-	/** Кто завершил (текст) */
-	private String theFinishWorkerText;
-	/** Кто завершил */
-	private Long theFinishWorker;
 	/** Количество дней */
 	private String theDaysCount;
 	/** Дата окончания */
@@ -563,10 +524,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theExternalId;
 	/** Экстренность */
 	private Boolean theEmergency;
-
-	
-	/** Исполнитель	 */
-	private Long theStartWorker;
 	/** Недействительность */
 	private Boolean theNoActuality;
 	/** Дата начала */

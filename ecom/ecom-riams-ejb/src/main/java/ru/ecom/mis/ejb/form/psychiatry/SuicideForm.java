@@ -92,4 +92,18 @@ public class SuicideForm extends IdEntityForm {
 	  * Описание
 	  */
 	 private String theNotes;
+	 /** Дата регистрации */
+	@Comment("Дата регистрации")
+	@Persist @DateString @DoDateString @Required
+	public String getRegistrationDate() {
+		return theRegistrationDate;
+	}
+	
+	public void setRegistrationDate(String aRegistrationDate) {
+		theRegistrationDate = aRegistrationDate;
+	}
+	
+	/** Дата регистрации */
+	private String theRegistrationDate;
+
 }

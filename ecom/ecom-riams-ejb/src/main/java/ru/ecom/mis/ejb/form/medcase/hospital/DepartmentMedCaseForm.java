@@ -24,7 +24,6 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
-import ru.nuzmsh.forms.validator.validators.ViewOnly;
 
 @Comment("Лечение в отделении")
 //@Comment("Случай стационарного лечения в отделении")
@@ -73,11 +72,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	public String getEntranceTime() {return theEntranceTime;}
 	public void setEntranceTime(String aEntranceTime) {theEntranceTime = aEntranceTime;}
 
-	/** Лечащий врач (владелец) */
-	@Comment("Врач (владелец)")
-	@Persist
-	public Long getOwner() {return theOwner;}
-	public void setOwner(Long aOwner) {theOwner = aOwner;}
 
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
@@ -170,11 +164,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	public void setSourceHospType(Long aSourceHospType) {theSourceHospType = aSourceHospType;}
 
 	
-	/** Информация о рабочей ф-ии леч врача */
-	@Comment("Информация о рабочей ф-ии леч врача")
-	@Persist
-	public String getOwnerFunctionInfo() {return theOwnerFunctionInfo;}
-	public void setOwnerFunctionInfo(String aOwnerFunctionInfo) {theOwnerFunctionInfo = aOwnerFunctionInfo;}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
@@ -258,8 +247,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	/** Предыдущий случай лечения в отделении */
 	private Long thePrevMedCase;	/** Рабочая функция лечащего врача */
 	private Long theOwnerFunction;
-	/** Информация о рабочей ф-ии леч врача */
-	private String theOwnerFunctionInfo;
 	/** Откуда поступил */
 	private Long theSourceHospType;
 	/** Тип текущего стационара */
@@ -289,8 +276,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	private Long theDepartment;
 	/** Отделение перевода */
 	private Long theTransferDepartment;
-	/** Лечащий врач (владелец) */
-	private Long theOwner;
 	/** Время поступления */
 	private String theEntranceTime;
 	/** Дата поступления */

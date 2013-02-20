@@ -26,6 +26,8 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.live.domain.journal.DeleteJournal;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarAlgorithm;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
@@ -35,6 +37,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeExample;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -167,7 +170,9 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		//System.out.println("sql="+sql) ;
 		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (l.size()>0) {
+			
 			//System.out.println("patid="+aPatientId) ;
+			
 			sql = new StringBuilder() ;
 			if (aPatientId!=null && aPatientId>Long.valueOf(0)) {
 				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
@@ -180,6 +185,67 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			return new StringBuilder().append(obj[1]).append("#").append(obj[2])
 					.append("#").append(obj[3]).append("#")
 					.append(obj[4]).toString() ;
+			
+		} else {
+			StringBuilder err = new StringBuilder() ;
+			throw new IllegalArgumentException(
+					err.append("Ошибка при записи!!!")
+					
+					.toString()) ;
+		}
+		
+	}
+	public void recordByPatient(String aUsername, Long aFunction
+			, Long aSpecialist, Long aDay, Long aTime
+			,String aPatientInfo,Long aPatientId, Long aOrderLpu) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select wct.id,wc.id from workcalendartime wct")
+		.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+		.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+		.append(" left join workfunction wf on wc.workFunction_id=wf.id")
+		.append(" where wct.id='").append(aTime)
+		.append("' and wcd.id='").append(aDay)
+		.append("' and wc.id='").append(aSpecialist)
+		.append("' and wf.workFunction_id='").append(aFunction)
+		.append("' and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='') ") ;
+		
+		System.out.println("sql="+sql) ;
+		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (l.size()>0) {
+			sql = new StringBuilder() ;
+			 sql.append("select to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5)),case when wf.registrationInterval>0 then wf.registrationInterval when lpu1.registrationInterval>0 then lpu1.registrationInterval else lpu2.registrationInterval end from workCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join worker w on wf.worker_id=w.id left join MisLpu lpu2 on lpu2.id=w.lpu_id left join MisLpu lpu1 on lpu1.id=wf.lpu_id where wct.id='")
+				.append(aTime).append("' and wcd.id='").append(aDay)
+				.append("' and wf.id='").append(aFunction).append("'") ; 
+			//System.out.println("patid="+aPatientId) ;
+			l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (l.size()>0) {
+				throw new IllegalArgumentException(
+						("Ошибка при записи у Вас уже есть направление к этому врачу!!!")) ;
+			} 
+			sql = new StringBuilder() ;
+			if (aPatientId!=null && aPatientId>Long.valueOf(0)) {
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			} else {
+				String info = aPatientInfo.replace("#", " ").toUpperCase() ;
+				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+			}
+			Visit vis = new Visit() ;
+			WorkCalendarDay wcd = theManager.find(WorkCalendarDay.class, aDay) ;
+			vis.setDatePlan(wcd) ;
+			WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTime) ;
+			vis.setTimePlan(wct) ;
+			WorkFunction wf = theManager.find(WorkFunction.class, aSpecialist) ;
+			vis.setWorkFunctionPlan(wf) ;
+			List<VocServiceStream> lVss = theManager.createQuery("from VocServiceStream where code='OBLIGATORYINSURANCE' order by id").getResultList() ;
+			vis.setServiceStream(lVss.isEmpty()?null:lVss.get(0)) ;
+			Patient pat = theManager.find(Patient.class, aPatientId) ;
+			vis.setPatient(pat) ;
+			MisLpu ordLpu = theManager.find(MisLpu.class, aOrderLpu) ;
+			vis.setOrderLpu(ordLpu) ;
+			//theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			theManager.persist(vis) ;
+			wct.setMedCase(vis) ;
+			theManager.persist(wct) ;
 			
 		} else {
 			StringBuilder err = new StringBuilder() ;

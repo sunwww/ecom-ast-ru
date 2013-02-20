@@ -46,26 +46,15 @@ public class PolyclinicMedCaseForm extends MedCaseForm {
 	/** Кто завершил */
 	@Comment("Кто завершил")
 	@Persist
-	public Long getFinishWorker() {return theFinishWorker;}
-	public void setFinishWorker(Long aFinishWorker) {	theFinishWorker = aFinishWorker;	}
+	public Long getFinishFunction() {return theFinishFunction;}
+	public void setFinishFunction(Long aFinishWorker) {	theFinishFunction = aFinishWorker;	}
 
 	/** Владелец */
 	@Comment("Владелец")
 	@Persist
-	public Long getOwner() {return theOwner;}
-	public void setOwner(Long aOwner) {theOwner = aOwner;}
+	public Long getOwnerFunction() {return theOwnerFunction;}
+	public void setOwnerFunction(Long aOwner) {theOwnerFunction = aOwner;}
 
-	/** Кем открыт (текст) */
-	@Comment("Кем открыт (текст)")
-	@Persist
-	public String getFinishWorkerText() {return theFinishWorkerText;}
-	public void setFinishWorkerText(String aFinishWorkerText) {theFinishWorkerText = aFinishWorkerText;}
-
-	/** Владелец текст*/
-	@Comment("Владелец")
-	@Persist 	
-	public String getOwnerText() {return theOwnerText;}
-	public void setOwnerText(String aOwnerText) {theOwnerText = aOwnerText;}
 
 	/** Кол-во визитов */
 	@Comment("Кол-во визитов")
@@ -83,14 +72,10 @@ public class PolyclinicMedCaseForm extends MedCaseForm {
 	private String theDaysCount;
 	/** Кол-во визитов */
 	private Integer theVisitsCount;
-	/** Владелец текст */
-	private String theOwnerText;
-	/** Кем открыт (текст) */
-	private String theFinishWorkerText;
 	/** Владелец */
-	private Long theOwner;
+	private Long theOwnerFunction;
 	/** Кто завершил */
-	private Long theFinishWorker;
+	private Long theFinishFunction;
 	/** Код МКБ-10 */
 	private Long theIdc10;
 	/** Продолжительность */

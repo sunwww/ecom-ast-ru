@@ -24,7 +24,6 @@ function createOrSave(aForm, aVisit, aCtx) {
 	//aVisit.orderWorker = findLogginedWorker(aCtx) ;
 	var workFunc = findLogginedWorkFunction(aCtx) ;
 	aVisit.orderWorkFunction =  workFunc;
-	aVisit.orderWorker = workFunc!=null?workFunc.worker:null ;
 	
 }
 

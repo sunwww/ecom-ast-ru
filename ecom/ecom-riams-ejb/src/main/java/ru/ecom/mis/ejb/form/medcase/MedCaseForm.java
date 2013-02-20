@@ -69,8 +69,8 @@ public class MedCaseForm extends IdEntityForm {
 	/** Исполнитель */
 	@Comment("Исполнитель")
 	@Persist
-	public Long getStartWorker() {	return theStartWorker;}
-	public void setStartWorker(Long aNewProperty) {theStartWorker = aNewProperty;}
+	public Long getStartFunction() {	return theStartFunction;}
+	public void setStartFunction(Long aNewProperty) {theStartFunction = aNewProperty;}
 
 	/** ЛПУ - место исполнения */
 	@Comment("ЛПУ - место исполнения ")
@@ -82,14 +82,7 @@ public class MedCaseForm extends IdEntityForm {
 	@Comment("Опьянение")
 	@Persist
 	public Long getIntoxication() {	return theIntoxication;	}
-	public void setIntoxication(Long aIntoxication) {theIntoxication = aIntoxication;}
-	
-	/** Кем открыт */
-	@Comment("Кем открыт")
-	public String getStartWorkerText() {return theStartWorkerText;}
-	public void setStartWorkerText(String aStartWorkerText) {theStartWorkerText = aStartWorkerText;}
-	
-	
+	public void setIntoxication(Long aIntoxication) {theIntoxication = aIntoxication;}	
 	
 	/** Информация о пациенте */
 	@Comment("Информация о пациенте")
@@ -244,14 +237,12 @@ public class MedCaseForm extends IdEntityForm {
 	private String theInfo;
 	/** Информация о пациенте */
 	private String thePatientInfo;
-	/** Кем открыт */
-	private String theStartWorkerText;
 		/** Опьянение */
 	private Long theIntoxication;
 	/** ЛПУ - место исполнения */
 	private Long theLpu;
 	/** Исполнитель */
-	private Long theStartWorker;
+	private Long theStartFunction;
 	/** Недействительность */
 	private Boolean theNoActuality;
 	/** Родительский СМО */
@@ -284,13 +275,8 @@ public class MedCaseForm extends IdEntityForm {
 	/** Дефект */
 	@Comment("Дефект")
 	@Persist
-	public Long getMedCaseDefect() {
-		return theMedCaseDefect;
-	}
-
-	public void setMedCaseDefect(Long aMedCaseDefect) {
-		theMedCaseDefect = aMedCaseDefect;
-	}
+	public Long getMedCaseDefect() {return theMedCaseDefect;}
+	public void setMedCaseDefect(Long aMedCaseDefect) {theMedCaseDefect = aMedCaseDefect;}
 
 	/** Дефект */
 	private Long theMedCaseDefect;

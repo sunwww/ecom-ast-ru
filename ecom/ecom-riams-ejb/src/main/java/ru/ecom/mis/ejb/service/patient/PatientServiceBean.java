@@ -255,7 +255,7 @@ public class PatientServiceBean implements IPatientService {
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
 			if ( aIsPatient) {
-				if (aPatientId!=null &&aPatientId>Long.valueOf(0) ) {
+				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&aIsPolicy) {
 					StringBuilder sql = new StringBuilder() ;
 					
 					if (!fiodr[0].startsWith("?")) {
@@ -339,74 +339,95 @@ public class PatientServiceBean implements IPatientService {
 				String[] pol = p.split("#") ;
 				System.out.println(pol.length) ;
 				System.out.println(p) ;
-				StringBuilder sql = new StringBuilder() ;
-				sql.append("select count(*) from medpolicy ") ;
-				sql.append(" where patient_id='").append(aPatientId).append("'");
-				sql.append(" and series='").append(pol[1]).append("'") ;
-				sql.append(" and polNumber='").append(pol[2]).append("'") ;
-				Object cnt =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
-				Long cntL = ConvertSql.parseLong(cnt) ;
 				
-				String type = getTypePolicy(pol[1]) ;
-				if (cntL!=null &&cntL>Long.valueOf(0)) {
+				updateOrCreatePolicyByFond(aPatientId, pol[5], fiodr[0], fiodr[1], fiodr[2], fiodr[3], pol[0], pol[1], pol[2],pol[3],pol[4],curDate) ;
+			}
+		}
+		return true ;
+	}
+	public boolean updateOrCreatePolicyByFond(Long aPatientId, String aRz, String aLastname, String aFirstname
+			, String aMiddlename, String aBirthday, String aComp, String aSeries
+			, String aNumber, String aDateFrom, String aDateTo,String aCurrentDate) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select count(*) from medpolicy ") ;
+		sql.append(" where patient_id='").append(aPatientId).append("'");
+		sql.append(" and series='").append(aSeries).append("'") ;
+		sql.append(" and polNumber='").append(aNumber).append("'") ;
+		Object cnt =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		Long cntL = ConvertSql.parseLong(cnt) ;
+		
+		String type = getTypePolicy(aSeries) ;
+		if (cntL!=null &&cntL>Long.valueOf(0)) {
+			sql = new StringBuilder() ;
+			sql.append("update MedPolicy set lastname='").append(aLastname).append("'") ;
+			sql.append(", firstname='").append(aFirstname).append("'") ;
+			sql.append(", middlename='").append(aMiddlename).append("'") ;
+			sql.append(", birthday=to_date('").append(aBirthday).append("','dd.mm.yyyy')") ;
+			sql.append(", company_id=(select id from REG_IC where omcCode='").append(aComp).append("')") ;
+			sql.append(", actualDateFrom=to_date('").append(aDateFrom).append("','dd.mm.yyyy')") ;
+			if (aDateTo!=null && !aDateTo.equals("")) {
+				sql.append(", actualDateTo=to_date('").append(aDateTo).append("','dd.mm.yyyy')") ;
+			} else {
+				sql.append(", actualDateTo=null") ;
+			}
+			sql.append(", commonNumber='").append(aRz).append("'") ;
+			sql.append(", type_id=(select id from VocMedPolicyOmc where code='").append(type).append("')") ;
+			sql.append(", confirmationDate=to_date('").append(aCurrentDate).append("','dd.mm.yyyy')") ;
+			sql.append(" where patient_id='").append(aPatientId).append("'");
+			sql.append(" and series='").append(aSeries).append("'") ;
+			sql.append(" and polNumber='").append(aNumber).append("'") ;
+			
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			sql = new StringBuilder() ;
+			sql.append("update medpolicy set actualdateto=to_date('").append(aDateFrom).append("','dd.mm.yyyy')-1 where patient_id='").append(aPatientId)
+				.append("' and actualdateFrom<to_date('").append(aDateFrom)
+				.append("','dd.mm.yyyy') and actualdateTo>to_date('").append(aDateFrom)
+				.append("','dd.mm.yyyy')") ;
+			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+		} else {
+			sql = new StringBuilder() ;
+			sql.append("select count(*) from medpolicy ") ;
+			sql.append(" where series='").append(aSeries).append("'") ;
+			sql.append(" and polNumber='").append(aNumber).append("'") ;
+			Object cnt1 =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+			Long cntL1 = ConvertSql.parseLong(cnt1) ;
+			if (cntL1.equals(Long.valueOf(0))) {
+				sql = new StringBuilder() ;
+				sql = sql.append("select id,omcCode from REG_IC where omcCode='").append(aComp).append("' order by id desc") ;
+				List<Object[]> idS = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+				sql = new StringBuilder() ;
+				sql = sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
+				List<Object[]> idT = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+				if (idS.size()>0 && idT.size()>0) {
 					sql = new StringBuilder() ;
-					sql.append("update MedPolicy set lastname='").append(fiodr[0]).append("'") ;
-					sql.append(", firstname='").append(fiodr[1]).append("'") ;
-					sql.append(", middlename='").append(fiodr[2]).append("'") ;
-					sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
-					sql.append(", company_id=(select id from REG_IC where omcCode='").append(pol[0]).append("')") ;
-					sql.append(", actualDateFrom=to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
-					if (pol[4]!=null && !pol[4].equals("")) {
-						sql.append(", actualDateTo=to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
-					} else {
-						sql.append(", actualDateTo=null") ;
-					}
-					sql.append(", commonNumber='").append(pol[5]).append("'") ;
-					sql.append(", type_id=(select id from VocMedPolicyOmc where code='").append(type).append("')") ;
-					sql.append(", confirmationDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
-					sql.append(" where patient_id='").append(aPatientId).append("'");
-					sql.append(" and series='").append(pol[1]).append("'") ;
-					sql.append(" and polNumber='").append(pol[2]).append("'") ;
+					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id,lastname,firstname,middlename,birthday, confirmationDate) values ('MedPolicyOmc'") ;
+					sql.append(", '").append(idS.get(0)[0]).append("'") ;
+					sql.append(", to_date('").append(aDateFrom).append("','dd.mm.yyyy')") ;
 					
-					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-				} else {
-					sql = new StringBuilder() ;
-					sql.append("select count(*) from medpolicy ") ;
-					sql.append(" where series='").append(pol[1]).append("'") ;
-					sql.append(" and polNumber='").append(pol[2]).append("'") ;
-					Object cnt1 =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
-					Long cntL1 = ConvertSql.parseLong(cnt1) ;
-					if (cntL1.equals(Long.valueOf(0))) {
-						sql = new StringBuilder() ;
-						sql = sql.append("select id,omcCode from REG_IC where omcCode='").append(pol[0]).append("' order by id desc") ;
-						List<Object[]> idS = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-						sql = new StringBuilder() ;
-						sql = sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
-						List<Object[]> idT = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-						if (idS.size()>0 && idT.size()>0) {
-							sql = new StringBuilder() ;
-							sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id,lastname,firstname,middlename,birthday, confirmationDate) values ('MedPolicyOmc'") ;
-							sql.append(", '").append(idS.get(0)[0]).append("'") ;
-							sql.append(", to_date('").append(pol[3]).append("','dd.mm.yyyy')") ;
-							
-							if (pol[4]!=null && !pol[4].equals("")) {
-								sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
-							} else {
-								sql.append(", null") ;
-							}
-							//sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
-							sql.append(", '").append(pol[5]).append("'") ;
-							sql.append(", '").append(aPatientId).append("'");
-							sql.append(", '").append(pol[1]).append("'") ;
-							sql.append(", '").append(pol[2]).append("','").append(idT.get(0)[0]).append("','").append(fiodr[0]).append("'") ;
-						sql.append(",'").append(fiodr[1]).append("'") ;
-						sql.append(",'").append(fiodr[2]).append("'") ;
-						sql.append(", to_date('").append(fiodr[3]).append("','dd.mm.yyyy'),to_date('").append(curDate).append("','dd.mm.yyyy'))") ;
-							theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-						}
+					if (aDateTo!=null && !aDateTo.equals("")) {
+						sql.append(", to_date('").append(aDateTo).append("','dd.mm.yyyy')") ;
+					} else {
+						sql.append(", null") ;
 					}
+					//sql.append(", to_date('").append(pol[4]).append("','dd.mm.yyyy')") ;
+					sql.append(", '").append(aRz).append("'") ;
+					sql.append(", '").append(aPatientId).append("'");
+					sql.append(", '").append(aSeries).append("'") ;
+					sql.append(", '").append(aNumber).append("','").append(idT.get(0)[0]).append("','").append(aLastname).append("'") ;
+				sql.append(",'").append(aFirstname).append("'") ;
+				sql.append(",'").append(aMiddlename).append("'") ;
+				sql.append(", to_date('").append(aBirthday).append("','dd.mm.yyyy'),to_date('").append(aCurrentDate).append("','dd.mm.yyyy'))") ;
+				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+
+				sql = new StringBuilder() ;
+				sql.append("update medpolicy set actualdateto=to_date('").append(aDateFrom).append("','dd.mm.yyyy')-1 where patient_id='").append(aPatientId)
+					.append("' and actualdateFrom<to_date('").append(aDateFrom)
+					.append("','dd.mm.yyyy') and actualdateTo>to_date('").append(aDateFrom)
+					.append("','dd.mm.yyyy')") ;
+				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				}
-				
+			} else {
+				return false ;
 			}
 		}
 		return true ;

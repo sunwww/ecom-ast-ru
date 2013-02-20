@@ -1,10 +1,19 @@
 package ru.ecom.mis.ejb.service.medcase;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Resource;
 import javax.ejb.Remote;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.jboss.annotation.security.SecurityDomain;
+
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -13,6 +22,7 @@ import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 
 @Stateless
 @Remote(IReportsService.class)
+@SecurityDomain("other")
 public class ReportsServiceBean implements IReportsService {
 	public String getTitle(String aGroupBy) {
 		String title = "" ;
@@ -34,7 +44,21 @@ public class ReportsServiceBean implements IReportsService {
 	public String getFilter(Boolean aIsTicket, Long aSpecialist
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
-		
+		String username = theContext.getCallerPrincipal().toString() ;
+		boolean isViewAll = false ;
+		if (aIsTicket) {
+			isViewAll=theContext.isCallerInRole("/Policy/Poly/Ticket/IsDoctorEdit") ;
+		} else {
+			isViewAll=theContext.isCallerInRole("/Policy/Mis/MedCase/Visit/ViewAll") ;
+		}
+		if (!isViewAll) {
+			List<Object[]>listWQR = theManager.createNativeQuery("select w.id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
+			if (listWQR.isEmpty()) {
+				filter.append(" and w.id='0'") ;
+			} else {
+				filter.append(" and w.id='").append(listWQR.get(0)[0]).append("'") ;
+			}
+		}
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
 			if (aIsTicket) {
 				filter.append(" and t.workFunction_id="+aSpecialist) ;
@@ -305,6 +329,12 @@ public class ReportsServiceBean implements IReportsService {
 		}
 		return filter.toString() ;
 	}
+	public void setManager(EntityManager aManager) {
+		theManager=aManager ;
+	}
+	public void setContext(SessionContext aContext) {
+		theContext=aContext ;
+	}
 	@PersistenceContext EntityManager theManager ;
-
+	@Resource SessionContext theContext ;
 }
