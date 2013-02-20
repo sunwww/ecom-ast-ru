@@ -42,30 +42,37 @@ public class LoginFilter implements Filter {
     	}
         HttpServletRequest request = (HttpServletRequest) aRequest ;
         String url = request.getRequestURI() ;
+        
         boolean redirectToLogon ;
-        if(! url.endsWith("ecom_login.do") && !url.endsWith("ecom_loginSave.do")) {
-            HttpSession session = request.getSession() ;
-            if(session!=null) {
-                LoginInfo loginInfo = LoginInfo.find(session) ;
-                if(loginInfo!=null) {
-                	try {
-                    	loginInfo.checkRolesExists() ;
-                    	redirectToLogon = false ;
-                	} catch (Exception e) {
-                		redirectToLogon = true ;
-                		LOG.warn("Ошибка входа:"+e.getMessage()) ;
-                		new ErrorMessage(aRequest, e) ;
-                	}
-                } else {
-                    LOG.warn("Нет LoginInfo в сессии.") ;
-                    redirectToLogon = true ;
-                }
-            } else {
-                LOG.warn("Нет сесcии.") ;
-                redirectToLogon = true ;
-            }
+        //System.out.println("-->url"+url) ;
+        boolean isDwr = url.matches("(.*)/dwr/(.*)") ;
+        if (isDwr) {
+        	redirectToLogon=false ;
         } else {
-            redirectToLogon = false ;
+	        if(! url.endsWith("ecom_login.do") && !url.endsWith("ecom_loginSave.do")) {
+	            HttpSession session = request.getSession() ;
+	            if(session!=null) {
+	                LoginInfo loginInfo = LoginInfo.find(session) ;
+	                if(loginInfo!=null) {
+	                	try {
+	                    	loginInfo.checkRolesExists() ;
+	                    	redirectToLogon = false ;
+	                	} catch (Exception e) {
+	                		redirectToLogon = true ;
+	                		LOG.warn("Ошибка входа:"+e.getMessage()) ;
+	                		new ErrorMessage(aRequest, e) ;
+	                	}
+	                } else {
+	                    LOG.warn("Нет LoginInfo в сессии.") ;
+	                    redirectToLogon = true ;
+	                }
+	            } else {
+	                LOG.warn("Нет сесcии.") ;
+	                redirectToLogon = true ;
+	            }
+	        } else {
+	            redirectToLogon = false ;
+	        }
         }
         if(redirectToLogon) {
             HttpServletResponse response = (HttpServletResponse) aResponse ;
@@ -88,6 +95,7 @@ public class LoginFilter implements Filter {
         } else {
             aChain.doFilter(request, aResponse);
         }
+        
         // очистка 
         clearSecurityAssociation() ;
         // очистка сервисов

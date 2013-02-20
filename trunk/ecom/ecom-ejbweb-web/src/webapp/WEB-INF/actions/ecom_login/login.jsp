@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page import="ru.ecom.web.login.LoginErrorMessage" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -12,10 +15,30 @@
     <%
     int idimg = (int)(17*Math.random()) ;
     request.setAttribute("idimg", ""+idimg) ;
+    Calendar cal = Calendar.getInstance() ;
+    int month = cal.get(Calendar.MONTH) ;
+    int day = cal.get(Calendar.DAY_OF_MONTH) ;
+    String path_curdate = "" ;
+    switch (month) {
+    case 0: 
+    	if (day<10) {path_curdate="0101";break;}
+    	if (day==13) {path_curdate="0113";break;}
+    case 1:
+    	if (day==14) {path_curdate="0214";break;}
+    	if (day>20 && day<24) {path_curdate="0223";break;}
+    case 2:
+    	if (day>5 && day<9) {path_curdate="0308";break;}
+    case 11:
+    	if (day>20) {path_curdate="1231";break;}
+    default:
+    	path_curdate="default" ;
+    	
+    }
+    request.setAttribute("curdate_MMdd", ""+path_curdate) ;
     %>
 	<style type="text/css">
 		body {
-			background: url("/customer/images/new_year${idimg}.jpg") no-repeat 90px bottom ;
+			background: url("/customer/images/${curdate_MMdd}/${idimg}.jpg") no-repeat 90px bottom ;
 		}
 		#header {
 			border-bottom: none ;
