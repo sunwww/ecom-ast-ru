@@ -20,7 +20,7 @@
 
     <tiles:put name='body' type='string'>
 	    
-	    <div>
+	    <div id='navig'>
 
 	    </div>
 	    	    <div id='div1' style="float: left; height: 300px">
@@ -28,7 +28,51 @@
 	    	<msh:tableColumn property="3" columnName="Наименование специальности"/>
 	    </msh:table>
 	    </div>
-
+	    <script type="text/javascript">
+	    	//$('div1').style.display='none' ;
+	    	var cntElementsList = 15 ;
+	    	viewList(1) ;
+	    	
+	    	function viewList(aList) {
+	    		var tbodyDiv1 = $('div1').childNodes[1].childNodes[1].childNodes[1].childNodes ;
+	    		var cntList = tbodyDiv1.length ; 
+		    	var cntListAll = cntList/(cntElementsList*2) ;
+		    	if ((cntList%(cntElementsList*2))>0) {
+		    		cntListAll++ ;
+		    	}
+		    	var navigText="" ;
+		    	
+		    	for (var i=1;i<=cntListAll;i++) {
+		    		navigText=navigText+" <div class='button' style='width:30px' onclick='viewList("+i+")'>";
+		    		if (i==aList) {
+		    			navigText=navigText+"<b>["+i+"]</b>" ;
+		    		} else {
+		    			navigText=navigText+"["+i+"]" ;
+		    		}
+		    		navigText=navigText+"</div>" ;
+		    	}
+		    	$('navig').innerHTML=navigText  ;
+	    		
+	    		
+    			for (var i=0;i<cntList;i++) {
+    				if (i%2==0) {
+    					tbodyDiv1[i].style.display='none' ;
+    				}
+    			}
+    			
+		    	for (var i=(aList-1)*2*cntElementsList;i<aList*2*cntElementsList;i++) {
+		    		if (i<cntList) {
+		    			if (i%2==0) {
+		    				tbodyDiv1[i].style.display='inline-block' ;
+		    			}
+		    		} else {
+		    			break ;
+		    		}
+		    	}
+		    	
+	    		
+	    	}
+	    </script>
     </tiles:put>
 
 </tiles:insert>

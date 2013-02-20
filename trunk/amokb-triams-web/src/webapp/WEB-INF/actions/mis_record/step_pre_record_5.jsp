@@ -42,11 +42,13 @@ width:90px;
 		    			<div class="button fb " style="width: 140px" id="liTime"><p class="label">свободно</p></div>
 		    			<div class="button fb" style="width: 140px" id="liTimeBusyForRemoteUser"><p class="label">занято</p></div>
 	   </div>
+	   	<tags:waiting name="w" title="Обработка данных по базе ФОМС"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
    	<script type="text/javascript">
     	
     		function step6(aParam) {
+    			showwwaitingMessage();
     			window.location = "${path_rec}6.do?"+aParam ;
     		}
     	</script>

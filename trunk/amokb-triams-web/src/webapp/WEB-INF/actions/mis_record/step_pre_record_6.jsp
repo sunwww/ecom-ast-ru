@@ -62,14 +62,14 @@ div.button {
   	 <p>Пациент: <b>${patientInfo}</b></p>
   	 <p>Специалист: <b>${specialistInfo} &nbsp;${specialistFioInfo}</b></p>
   	 <p>Дата приема <b>${dateInfo}</b> время <b>${timeInfo}</b></p>
-  	 <p>Вам необходимо подойти за <b>10-20</b> минут до приема в регистратуру со следующими документами:</p>
+  	 <p>${documentInfo}</p>
     <ul>
     <li class="cntInfo"><b>направление</b> с результатами анализов и обследованиями (<b>при отсутствие направления приём оказан не будет</b>);</li>
     <li class="cntInfo">паспорт;</li>
     <li class="cntInfo">полис ОМС;</li>
     <li class="cntInfo">СНИЛС.</li>
     </ul>
-    <p></p>
+    <p>Ждем Вас на нашем сайте <b>amokb.ru</b></p>
   </div>
 	    <div class="button fb " onclick="next_pre_new_rec()">
 	    	<p class="label">Оформить запись к другому специалисту</p>
