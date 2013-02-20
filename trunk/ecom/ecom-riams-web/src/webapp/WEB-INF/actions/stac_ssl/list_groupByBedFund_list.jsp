@@ -366,10 +366,10 @@ if (typeView.equals("2")) {
             <msh:tableColumn columnName="Поток обслужив." property="6"/>
             <msh:tableColumn columnName="Профиль коек" property="3"/>
             <msh:tableColumn columnName="Тип коек" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="5"/>
-            <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
-            <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
-            <msh:tableColumn columnName="Кол-во умерших пациентов" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛС" property="8" />
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших пациентов" property="9"/>
         </msh:table>
         
     
@@ -393,10 +393,10 @@ if (typeView.equals("2")) {
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Профиль коек" property="3"/>
             <msh:tableColumn columnName="Тип коек" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="5"/>
-            <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
-            <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
-            <msh:tableColumn columnName="Кол-во умерших пациентов" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛС" property="7" />
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших пациентов" property="8"/>
             
         </msh:table>    
     </msh:section>
@@ -435,10 +435,10 @@ if (typeView.equals("2")) {
                 <msh:tableColumn columnName="Профиль коек" property="3"/>
                 <msh:tableColumn columnName="Тип коек" property="4"/>
                  <msh:tableColumn columnName="Число" property="9" />
-                <msh:tableColumn columnName="Кол-во" property="5"/>
-                <msh:tableColumn columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
-                <msh:tableColumn columnName="Сумма КД по СЛС" property="8" />
-                <msh:tableColumn columnName="Кол-во умерших пациентов" property="10"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="5"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛО" property="7" cssClass="NotViewInfoStac"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛС" property="8" />
+                <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших пациентов" property="10"/>
                 
             </msh:table>
             
@@ -464,10 +464,10 @@ if (typeView.equals("2")) {
                 <msh:tableColumn columnName="Профиль коек" property="3"/>
                 <msh:tableColumn columnName="Тип коек" property="4"/>
                 <msh:tableColumn columnName="Число" property="8" />
-                <msh:tableColumn columnName="Кол-во" property="5"/>
-                <msh:tableColumn columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
-                <msh:tableColumn columnName="Сумма КД по СЛС" property="7" />
-                <msh:tableColumn columnName="Кол-во умерших пациентов" property="9"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="5"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛО" property="6" cssClass="NotViewInfoStac"/>
+                <msh:tableColumn isCalcAmount="true" columnName="Сумма КД по СЛС" property="7" />
+                <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших пациентов" property="9"/>
                 
             </msh:table>    
         </msh:section>

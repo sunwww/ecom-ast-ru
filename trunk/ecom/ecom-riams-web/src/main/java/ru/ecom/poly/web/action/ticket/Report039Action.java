@@ -1,6 +1,8 @@
 package ru.ecom.poly.web.action.ticket;
 
 //import javax.persistence.EntityManager;
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,11 +11,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 //import ru.ecom.mis.ejb.service.medcase.IReportsService;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IReportsService;
 //import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class Report039Action  extends BaseAction {
 
@@ -21,6 +27,7 @@ public class Report039Action  extends BaseAction {
 		JournalBySpecialistForm form = (JournalBySpecialistForm)aRequest.getSession().getAttribute("poly_journalBySpecForm");
 		String fr = aRequest.getParameter("ticketIs") ;
 		boolean aTicketIs =  fr!=null &&fr.equals("1")?true:false;
+
 		//IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		IReportsService repService  = Injection.find(aRequest).getService(IReportsService.class) ;
 		String groupBy =ActionUtil.updateParameter("Form039Action","typeGroup","1", aRequest) ;

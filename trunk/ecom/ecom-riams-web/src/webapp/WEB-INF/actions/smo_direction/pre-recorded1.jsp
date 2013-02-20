@@ -277,7 +277,7 @@ ul.listTimes li.first {
     		<msh:separator label="Параметры направления" colSpan="4"/>
     	</msh:row>
     	<msh:row styleId="step3_1">
-    		<msh:autoComplete property="whomDirect" label="Кем направлен:" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
+    		<msh:autoComplete property="whomDirect" label="Кем направлен:" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
     	</msh:row>
     	<%--
     	<msh:row styleId="step3_2">

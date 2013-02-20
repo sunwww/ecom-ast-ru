@@ -43,10 +43,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        styleId="stac_journalOpenByHospital" 
 	        action="/stac_journalOpenByHospital" name="Открытым СЛС" />
 	        
-	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/ProblemOMCpolicy" key="CTRL+1" 
+<%--	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/ProblemOMCpolicy" key="CTRL+1" 
 	        styleId="stac_problemPolicy" 
 	        action="/stac_problemPolicy_list" name="Проблемы с полисами ОМС" />
-	        
+	         --%>
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByDeniedHospitalizating"
 	        styleId="stac_journalHospitalByDeniedHospitalizating"
 	        action="/stac_journalHospitalByDeniedHospitalizating" name="Отказы от госпитализации"

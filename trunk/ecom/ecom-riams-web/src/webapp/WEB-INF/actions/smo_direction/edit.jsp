@@ -140,6 +140,8 @@
          	action="/entityParentPrepareCreate-smo_direction_medservice" title="Добавить услугу" guid="df23d" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
+      	<msh:sideLink key="SHIFT+8" params="id" action="/print-pat.do?s=PatientPrintService&amp;m=printInfoByMedcase" name="Сведений о пациенте" title="Печать сведений о пациенте" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/PrintInfoPatient" />
+      	
       	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />
       	<msh:sideLink params="id" action="/print-vis_ticket2.do?s=VisitPrintService&amp;m=printTalon1" name="Талона (верх. часть)" title="Печать талона (верх.часть)"  roles="/Policy/Mis/MedCase/Direction/Print" />
       	<msh:sideLink params="id" action="/print-vis_ticket1.do?s=VisitPrintService&amp;m=printTalon1" name="Повторного талона" title="Печать повторного талона"  roles="/Policy/Mis/MedCase/Direction/Print1" />

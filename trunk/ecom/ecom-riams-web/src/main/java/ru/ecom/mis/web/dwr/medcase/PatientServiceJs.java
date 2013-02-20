@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -15,8 +16,15 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.validator.validators.SnilsStringValidator;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String checkPolicy(String aRoles,HttpServletRequest aRequest) throws JspException {
+		if (RolesHelper.checkRoles(aRoles, aRequest)) {
+			return "1" ;
+		}
+		return "0" ;
+	}
 	public String getFactorByProfession(Long aProfession,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

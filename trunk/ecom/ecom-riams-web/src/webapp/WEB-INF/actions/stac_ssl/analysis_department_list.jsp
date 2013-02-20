@@ -608,15 +608,15 @@ order by dep.name
             </msh:tableNotEmpty>            
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
-            <msh:tableColumn columnName="Число выбывших больных" property="3"/>
-            <msh:tableColumn columnName="всего" property="4"/>
-            <msh:tableColumn columnName="экст." property="5"/>
-            <msh:tableColumn columnName="план. " property="6"/>
-            <msh:tableColumn columnName="экстр. + план. " property="7"/>
+            <msh:tableColumn columnName="Число выбывших больных" isCalcAmount="true" property="3"/>
+            <msh:tableColumn columnName="всего" isCalcAmount="true" property="4"/>
+            <msh:tableColumn columnName="экст." isCalcAmount="true" property="5"/>
+            <msh:tableColumn columnName="план. " isCalcAmount="true" property="6"/>
+            <msh:tableColumn columnName="экстр. + план. " isCalcAmount="true" property="7"/>
             
-            <msh:tableColumn columnName="всего" property="8"/>
-            <msh:tableColumn columnName="экст." property="9"/>
-            <msh:tableColumn columnName="план. " property="10"/>
+            <msh:tableColumn columnName="всего" isCalcAmount="true" property="8"/>
+            <msh:tableColumn columnName="экст." isCalcAmount="true" property="9"/>
+            <msh:tableColumn columnName="план. " isCalcAmount="true" property="10"/>
             <msh:tableColumn columnName="экст." property="11"/>
             <msh:tableColumn columnName="план. " property="12"/>
             <msh:tableColumn columnName="по пациентам" property="13"/>
@@ -673,12 +673,12 @@ order by operdep.name, dischdep.name
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение (опер)" property="2"/>
             <msh:tableColumn columnName="Отделение выписки" property="3"/>
-            <msh:tableColumn columnName="Кол-во СЛС" property="4"/>
-            <msh:tableColumn columnName="Кол-во экстр. пациентов" property="5"/>
-            <msh:tableColumn columnName="Кол-во плановых пациентов" property="6"/>
-            <msh:tableColumn columnName="кол-во операций" property="7"/>
-            <msh:tableColumn columnName="Кол-во экстр. операций " property="8"/>
-            <msh:tableColumn columnName="Кол-во плановых операций" property="9"/>
+            <msh:tableColumn columnName="Кол-во СЛС"  isCalcAmount="true" property="4"/>
+            <msh:tableColumn columnName="Кол-во экстр. пациентов" isCalcAmount="true" property="5"/>
+            <msh:tableColumn columnName="Кол-во плановых пациентов" isCalcAmount="true" property="6"/>
+            <msh:tableColumn columnName="кол-во операций" isCalcAmount="true" property="7"/>
+            <msh:tableColumn columnName="Кол-во экстр. операций " isCalcAmount="true" property="8"/>
+            <msh:tableColumn columnName="Кол-во плановых операций" isCalcAmount="true" property="9"/>
             <msh:tableColumn columnName="К/дней до операции" property="10"/>
             <msh:tableColumn columnName="К/дней после операции" property="11"/>
         </msh:table>
@@ -757,24 +757,24 @@ order by dep.name
             </msh:tableNotEmpty>  
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
-            <msh:tableColumn columnName="Всего посту- пило" property="20"/>
-            <msh:tableColumn columnName="Всего выпи- сано" property="3"/>
-            <msh:tableColumn columnName="г. Астра- хань" property="4"/>
-            <msh:tableColumn columnName="г. Зна- менск" property="5"/>
-            <msh:tableColumn columnName="Всего" property="6"/>
-            <msh:tableColumn columnName="Ахту- бин- ский" property="7"/>
-            <msh:tableColumn columnName="Воло- дар- ский " property="8"/>
-            <msh:tableColumn columnName="Ено- таевский" property="9"/>
-            <msh:tableColumn columnName="Икря- нинский" property="10"/>
-            <msh:tableColumn columnName="Камы- зякский" property="11"/>
-            <msh:tableColumn columnName="Красно- ярский" property="12"/>
-            <msh:tableColumn columnName="Лиман- ский" property="13"/>
-            <msh:tableColumn columnName="Нари- манов- ский" property="14"/>
-            <msh:tableColumn columnName="Привол- жский" property="15"/>
-            <msh:tableColumn columnName="Хара- балин- ский" property="16"/>
-            <msh:tableColumn columnName="Черно- ярский" property="17"/>
-            <msh:tableColumn columnName="Ино- город- ние" property="18"/>
-            <msh:tableColumn columnName="Иност- ранцы" property="19"/>
+            <msh:tableColumn columnName="Всего посту- пило" isCalcAmount="true" property="20"/>
+            <msh:tableColumn columnName="Всего выпи- сано" isCalcAmount="true" property="3"/>
+            <msh:tableColumn columnName="г. Астра- хань" isCalcAmount="true" property="4"/>
+            <msh:tableColumn columnName="г. Зна- менск" isCalcAmount="true" property="5"/>
+            <msh:tableColumn columnName="Всего" isCalcAmount="true" property="6"/>
+            <msh:tableColumn columnName="Ахту- бин- ский" isCalcAmount="true" property="7"/>
+            <msh:tableColumn columnName="Воло- дар- ский " isCalcAmount="true" property="8"/>
+            <msh:tableColumn columnName="Ено- таевский" isCalcAmount="true" property="9"/>
+            <msh:tableColumn columnName="Икря- нинский" isCalcAmount="true" property="10"/>
+            <msh:tableColumn columnName="Камы- зякский" isCalcAmount="true" property="11"/>
+            <msh:tableColumn columnName="Красно- ярский" isCalcAmount="true" property="12"/>
+            <msh:tableColumn columnName="Лиман- ский" isCalcAmount="true" property="13"/>
+            <msh:tableColumn columnName="Нари- манов- ский" isCalcAmount="true" property="14"/>
+            <msh:tableColumn columnName="Привол- жский" isCalcAmount="true" property="15"/>
+            <msh:tableColumn columnName="Хара- балин- ский" isCalcAmount="true" property="16"/>
+            <msh:tableColumn columnName="Черно- ярский" isCalcAmount="true" property="17"/>
+            <msh:tableColumn columnName="Ино- город- ние" isCalcAmount="true" property="18"/>
+            <msh:tableColumn columnName="Иност- ранцы" isCalcAmount="true" property="19"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -822,8 +822,8 @@ order by dep.name   ,ovwf.name
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Должность" property="3"/>
             <msh:tableColumn columnName="ФИО врача" property="4"/>
-            <msh:tableColumn columnName="Кол-во пациентов" property="5"/>
-            <msh:tableColumn columnName="из них экстр." property="6"/>
+            <msh:tableColumn columnName="Кол-во пациентов" isCalcAmount="true" property="5"/>
+            <msh:tableColumn columnName="из них экстр." isCalcAmount="true" property="6"/>
 
         </msh:table>
     </msh:sectionContent>
@@ -885,13 +885,13 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Должность" property="3"/>
             <msh:tableColumn columnName="ФИО врача" property="4"/>
-            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" property="5"/>            
-            <msh:tableColumn columnName="Кол-во опер. пациентов" property="6"/>            
-            <msh:tableColumn columnName="из них экстр. госпит." property="7"/>            
-            <msh:tableColumn columnName="из них экстр. опер." property="8"/>            
-            <msh:tableColumn columnName="Кол-во операций" property="9"/>            
-            <msh:tableColumn columnName="из них экстр. госп." property="10"/>            
-            <msh:tableColumn columnName="из них экстр. опер." property="11"/>            
+            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="5"/>            
+            <msh:tableColumn columnName="Кол-во опер. пациентов" isCalcAmount="true" property="6"/>            
+            <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="7"/>            
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="8"/>            
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="9"/>            
+            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="10"/>            
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11"/>            
             <msh:tableColumn columnName="Сводный коэффициент" property="12"/>            
         </msh:table>
     </msh:sectionContent>
@@ -957,13 +957,13 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Должность" property="2"/>
             <msh:tableColumn columnName="ФИО врача" property="3"/>
-            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" property="4"/>            
-            <msh:tableColumn columnName="Кол-во опер. пациентов" property="5"/>            
-            <msh:tableColumn columnName="из них экстр. госпит." property="6"/>            
-            <msh:tableColumn columnName="из них экстр. опер." property="7"/>            
-            <msh:tableColumn columnName="Кол-во операций" property="8"/>            
-            <msh:tableColumn columnName="из них экстр. госп." property="9"/>            
-            <msh:tableColumn columnName="из них экстр. опер." property="10"/>            
+            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="4"/>            
+            <msh:tableColumn columnName="Кол-во опер. пациентов" isCalcAmount="true" property="5"/>            
+            <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="6"/>            
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="7"/>            
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="8"/>            
+            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true"property="9"/>            
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="10"/>            
             <msh:tableColumn columnName="Сводный коэффициент" property="11"/>            
         </msh:table>
     </msh:sectionContent>
@@ -1008,7 +1008,7 @@ order by vo.id,vo.code,vo.name
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Код" property="2"/>
             <msh:tableColumn columnName="Операция" property="3"/>
-            <msh:tableColumn columnName="Кол-во операций" property="4"/>            
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="4"/>            
             <msh:tableColumn columnName="Отделения" property="5"/>            
         </msh:table>
     </msh:sectionContent>
@@ -1082,12 +1082,12 @@ order by dep.name
          action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
-            <msh:tableColumn columnName="Всего поступивших больных" property="8"/>
-            <msh:tableColumn columnName="Всего выписанных больных" property="3"/>
-            <msh:tableColumn columnName="Всего койко- дней" property="4"/>
+            <msh:tableColumn columnName="Всего поступивших больных" isCalcAmount="true" property="8"/>
+            <msh:tableColumn columnName="Всего выписанных больных" isCalcAmount="true" property="3"/>
+            <msh:tableColumn columnName="Всего койко- дней" isCalcAmount="true" property="4"/>
             <msh:tableColumn columnName="Сред. койко- дней " property="5"/>
-            <msh:tableColumn columnName="Опер. больных" property="6"/>
-            <msh:tableColumn columnName="Кол-во операций" property="7"/>
+            <msh:tableColumn columnName="Опер. больных" isCalcAmount="true" property="6"/>
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="7"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
