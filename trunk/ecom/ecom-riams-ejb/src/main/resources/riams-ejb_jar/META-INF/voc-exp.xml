@@ -251,6 +251,7 @@
     		entity="ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart"
     		names='model,name,idcList'
     		queried="model,name,idcList"
+    		queryAppend="(deprecated is null or deprecated=false)"
     	/>
     </voc>
     <voc id='vocQualityEstimationMark' type='NativeVocService'>

@@ -34,6 +34,9 @@ public interface IPatientService {
 	public boolean updateDataByFond(String aUsername,Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress,boolean aIsPatient, boolean aIsPolicy
 			, boolean aIsDocument, boolean aIsAddress) ;
+	public boolean updateOrCreatePolicyByFond(Long aPatientId, String aRz, String aLastname, String aFirstname
+			, String aMiddlename, String aBirthday, String aComp, String aSeries
+			, String aNumber, String aDateFrom, String aDateTo,String aCurrentDate) ;
 	public PatientForm getPatientById(Long aId) ;
 	public String getOmcCodeByPassportType(Long aPassportType);
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;

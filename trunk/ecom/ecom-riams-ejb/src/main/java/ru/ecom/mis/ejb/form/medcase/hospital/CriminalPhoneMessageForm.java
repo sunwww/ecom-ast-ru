@@ -83,7 +83,7 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/** Тип сообщения */
 	@Comment("Тип сообщения")
-	@Persist
+	@Persist @Required
 	public Long getPhoneMessageType() {return thePhoneMessageType;}
 	/** Тип сообщения */
 	public void setPhoneMessageType(Long aNewProperty) {thePhoneMessageType = aNewProperty;	}
@@ -198,7 +198,7 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/** Подтип сообщения*/
 	@Comment("Подтип сообщения")
-	@Persist
+	@Persist @Required
 	public Long getPhoneMessageSubType() {return thePhoneMessageSubType;}
 	/** Подтип сообщения*/
 	public void setPhoneMessageSubType(Long a_Property) {

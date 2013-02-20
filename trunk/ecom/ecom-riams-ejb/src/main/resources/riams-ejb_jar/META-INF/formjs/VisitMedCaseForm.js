@@ -2,12 +2,6 @@ function onView(aForm, aVisit, aCtx) {
 	if(aForm.parent!=0) {
 		aForm.addDisabledField("parent") ;
 	}
-	if(aForm.startWorker==0) {
-		aForm.startWorker = aCtx.serviceInvoke("WorkerService", "findLogginedWorker").id ;
-	}
-	// FIXME определять функцию правильно
-	
-	
 }
 
 function onCreate(aForm, aVisit, aCtx) {
@@ -121,12 +115,12 @@ function onSave(aForm, aVisit, aCtx) {
 		if(aVisit.parent==null) {
 			var spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
 			aCtx.manager.persist(spo) ;
-			var worker = aVisit.getWorkFunctionExecute().getWorker() ; 
-			spo.setOwner(worker) ;
+			var workFunction = aVisit.getWorkFunctionExecute() ; 
+			spo.setOwnerFunction(workFunction) ;
 			spo.setDateStart(aVisit.getDateStart()) ;
-			spo.setLpu(worker.getLpu()) ;
+			spo.setLpu(workFunction.worker.getLpu()) ;
 			spo.setPatient(aVisit.getPatient()) ;
-			spo.setStartWorker(worker) ;
+			spo.setStartFunction(workFunction) ;
 			spo.setServiceStream(aVisit.getServiceStream()) ;
 			aVisit.setParent(spo) ;
 		}

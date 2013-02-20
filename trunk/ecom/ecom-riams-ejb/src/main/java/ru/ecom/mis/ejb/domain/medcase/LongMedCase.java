@@ -15,10 +15,8 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -33,15 +31,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="ownerFunction", table="MedCase")
 }) 
 public abstract class LongMedCase extends MedCase{
-	
-	
-	/**
-	 * Владелец
-	 */
-	@Comment("Владелец")
-	@OneToOne
-	public Worker getOwner() {return theOwner;	}
-	public void setOwner(Worker aNewProperty) {theOwner = aNewProperty;}
 
 	/** МКБ10*/
 	@Comment("МКБ10")
@@ -52,8 +41,8 @@ public abstract class LongMedCase extends MedCase{
 	/** Кто завершил */
 	@Comment("Кто завершил")
 	@OneToOne
-	public Worker getFinishWorker() {return theFinishWorker;	}
-	public void setFinishWorker(Worker aFinishWorker) {theFinishWorker = aFinishWorker;}
+	public WorkFunction getFinishFunction() {return theFinishFunction;	}
+	public void setFinishFunction(WorkFunction aFinishWorker) {theFinishFunction = aFinishWorker;}
 
 	/** Дата окончания */
 	@Comment("Дата окончания")
@@ -86,6 +75,7 @@ public abstract class LongMedCase extends MedCase{
 	public WorkFunction getOwnerFunction() {	return theOwnerFunction;}
 	public void setOwnerFunction(WorkFunction aOwnerFunction) {	theOwnerFunction = aOwnerFunction;	}
 
+
 	/** Рабочая функция лечащего врача */
 	private WorkFunction theOwnerFunction;
 
@@ -98,12 +88,9 @@ public abstract class LongMedCase extends MedCase{
 	/** Дата окончания */
 	private Date theDateFinish;
 	/** Кто завершил */
-	private Worker theFinishWorker;
+	private WorkFunction theFinishFunction;
 	/** МКБ10 */
 	private VocIdc10 theIdc10;
-	/**Владелец*/
-	@Deprecated
-	private Worker theOwner;
 	
 	
 	
@@ -145,25 +132,6 @@ public abstract class LongMedCase extends MedCase{
 	@Transient
 	public String getDuration() {
 		return getDaysCount();
-	}
-	/** Владелец (текст) */
-	@Comment("Владелец (текст)")
-	@Transient @Deprecated
-	public String getOwnerText() {
-		return theOwner!=null ? theOwner.getDoctorInfo() : "";
-	}
-	/** Владелец (текст) */
-	@Comment("Владелец (текст)")
-	@Transient
-	public String getOwnerFunctionInfo() {
-		return theOwnerFunction!=null ? theOwnerFunction.getWorkFunctionInfo() : "";
-	}
-
-	/** Кто закрыл */
-	@Comment("Кто закрыл")
-	@Transient
-	public String getFinishWorkerText() {
-		return theFinishWorker!=null ? theFinishWorker.getDoctorInfo():"";
 	}
 	
 	/** Количество дней */

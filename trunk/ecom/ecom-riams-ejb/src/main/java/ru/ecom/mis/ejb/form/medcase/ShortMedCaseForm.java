@@ -53,14 +53,6 @@ public class ShortMedCaseForm extends ChildMedCaseForm{
 	public String getDateExecute() {return theDateExecute;}
 	public void setDateExecute(String aDateExecute) {theDateExecute = aDateExecute;}
 	
-	/** Информация по рабочей функции исполнителя */
-	@Comment("Информация по рабочей функции исполнителя")
-	@Persist
-	public String getWorkFunctionExecuteInfo() {return theWorkFunctionExecuteInfo;}
-	public void setWorkFunctionExecuteInfo(String aWorkFunctionExecuteInfo) {theWorkFunctionExecuteInfo = aWorkFunctionExecuteInfo;}
-
-	/** Информация по рабочей функции исполнителя */
-	private String theWorkFunctionExecuteInfo;
 	/** Дата выполнения */
 	private String theDateExecute;
 	/** Время исполнения */

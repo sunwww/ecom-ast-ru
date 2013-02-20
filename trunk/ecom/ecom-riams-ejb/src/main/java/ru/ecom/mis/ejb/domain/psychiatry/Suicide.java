@@ -89,4 +89,16 @@ public class Suicide extends BaseEntity{
   * Описание
   */
  private String theNotes;
+	 /** Дата регистрации */
+	@Comment("Дата регистрации")
+	public Date getRegistrationDate() {
+		return theRegistrationDate;
+	}
+	
+	public void setRegistrationDate(Date aRegistrationDate) {
+		theRegistrationDate = aRegistrationDate;
+	}
+	
+	/** Дата регистрации */
+	private Date theRegistrationDate;
 }

@@ -107,6 +107,7 @@
   </form>
 
 <!--	Нетрудоспособоность	-->
+<!-- 
   <form        name = "$$map$$dis_disabilityCaseForm" 
      securityPrefix = "/Policy/Mis/Disability/DisabilityCase"
             comment = "Случай нетрудоспособности">
@@ -167,7 +168,7 @@
     			 view='entityView-dis_DisabilityPermission.do'/>
     <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityPermission" />
   </form>
-
+-->
   <!--	Сотрудник	-->
   <form        name = "$$map$$mis_workerForm" 
      securityPrefix = "/Policy/Mis/Worker/Worker"

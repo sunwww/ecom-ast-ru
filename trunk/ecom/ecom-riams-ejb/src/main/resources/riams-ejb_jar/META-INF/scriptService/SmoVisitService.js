@@ -175,15 +175,15 @@ function visitNoPatient(aContext, aVisitId) {
 		visit.noActuality = true ;
 	}
 	if (visit.timePlan!=null) visit.timePlan.medCase = null ;
-	//visit.workFunctionExecute = ;
-	//visit.startWorker = ;
+	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
+	.iterator().next() ;
+	/*
 	if(visit.startWorker==null) {
 		visit.startWorker = aContext.serviceInvoke("WorkerService", "findLogginedWorker") ;
-	}
+	}*/
 	// FIXME определять функцию правильно
 	if(visit.workFunctionExecute==null) {
-		visit.workFunctionExecute = aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
-			.iterator().next() ;
+		visit.workFunctionExecute = startWF ;
 	}
 	return visit.getId();
 }
@@ -199,7 +199,7 @@ function closeSpoByVisit(aContext, aVisitId) {
 	if(spo==null) throw "Визит не присоединен к СПО" ;
 	if(spo.getDateFinish()!=null) throw "СПО уже закрыто" ;
 	spo.setDateFinish(visit.getDateStart()) ;
-	spo.setFinishWorker(visit.getWorkFunctionExecute().getWorker()) ;
+	spo.setFinishFunction(visit.getWorkFunctionExecute()) ;
 	// FIXME диагноз
 	return spo.getId();
 }

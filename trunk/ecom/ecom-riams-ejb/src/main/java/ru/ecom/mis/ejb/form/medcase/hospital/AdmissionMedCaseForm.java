@@ -59,12 +59,6 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	@Persist
 	public Boolean getNoActuality() {return theNoActuality;}
 	public void setNoActuality(Boolean aNewProperty) {theNoActuality = aNewProperty;}
-
-	/** Исполнитель */
-	@Comment("Исполнитель")
-	@Persist 
-	public Long getStartWorker() {return theStartWorker;}
-	public void setStartWorker(Long aNewProperty) {theStartWorker = aNewProperty;}
 	
 
 
@@ -152,23 +146,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	@Persist
 	public Long getPatient() {	return thePatient;	}
 	public void setPatient(Long aPatient) {thePatient = aPatient;	}
-	
-	/** Владелец */
-	@Comment("Владелец")
-	@Persist 
-	public Long getOwner() {return theOwner;	}
-	public void setOwner(Long aOwner) {theOwner = aOwner;	}
-
-	/** Владелец (текст) */
-	@Comment("Владелец (текст)")
-	public String getOwnerText() {return theOwnerText;	}
-	public void setOwnerText(String aOwnerText) {theOwnerText = aOwnerText;}
-
-	/** Исполнитель (текст) */
-	@Comment("Исполнитель (текст)")
-	public String getStartWorkerText() {return theStartWorkerText;	}
-	public void setStartWorkerText(String aStartWorkerText) {theStartWorkerText = aStartWorkerText;}
-	
+		
 	/** Состояние опьянения */
 	@Comment("Состояние опьянения")
 	@Persist 
@@ -313,12 +291,6 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 		theHospType = aHospType;
 	}
 
-	
-	/** Информация о рабочей ф-ии леч врача */
-	@Comment("Информация о рабочей ф-ии леч врача")
-	@Persist
-	public String getOwnerFunctionInfo() {return theOwnerFunctionInfo;}
-	public void setOwnerFunctionInfo(String aOwnerFunctionInfo) {theOwnerFunctionInfo = aOwnerFunctionInfo;}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
@@ -351,8 +323,6 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private Long theHospitalization;
 	/** Рабочая функция лечащего врача */
 	private Long theOwnerFunction;
-	/** Информация о рабочей ф-ии леч врача */
-	private String theOwnerFunctionInfo;
 /** Тип текущего стационара */
 	private Long theHospType;
 	
@@ -397,12 +367,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private Long theTrauma;
 	/** Состояние опьянения */
 	private Long theIntoxication;
-	/** Исполнитель (текст) */
-	private String theStartWorkerText;
-	/** Владелец (текст) */
-	private String theOwnerText;
-	/** Владелец */
-	private Long theOwner;
+
 	/** Пациент */
 	private Long thePatient;
 	/** Обследован на ВИЧ */
@@ -432,8 +397,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private Boolean theEmergency;
 	/** Внешний направитель (ЛПУ) */
 	private Long theOrderLpu;
-	/** Исполнитель	 */
-	private Long theStartWorker;
+
 	/** Недействительность */
 	private Boolean theNoActuality;
 	/** Дата начала */

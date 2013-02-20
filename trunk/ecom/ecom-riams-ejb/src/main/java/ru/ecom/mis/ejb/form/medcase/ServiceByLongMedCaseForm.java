@@ -14,12 +14,6 @@ public class ServiceByLongMedCaseForm extends ServiceMedCaseForm {
 	public Integer getPrivilegeRecipeAmount() {return thePrivilegeRecipeAmount;	}
 	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;	}
 
-	/** Внутренний направитель (сотрудник) */
-	@Comment("Внутренний направитель (сотрудник)")
-	@Persist
-	public Long getOrderWorker() {return theOrderWorker;	}
-	public void setOrderWorker(Long aOrderWorker) {theOrderWorker = aOrderWorker;	}
-
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@Persist
@@ -69,8 +63,6 @@ public class ServiceByLongMedCaseForm extends ServiceMedCaseForm {
 	private Long theVisitResult;
 	/** Внешний направитель (ЛПУ) */
 	private Long theOrderLpu;
-	/** Внутренний направитель (сотрудник) */
-	private Long theOrderWorker;
 	/** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
 

@@ -129,7 +129,7 @@ public class PatientForm extends IdEntityForm {
     /** Отчество */
     @Comment("Отчество")
     @Persist
-    @Required @DoUpperCase @DoInputNonLat @VInputNonLat @DoTrimString
+    @DoUpperCase @DoInputNonLat @VInputNonLat @DoTrimString
     @VInputFIOByMaskOmc
     public String getMiddlename() { return theMiddlename ; }
     public void setMiddlename(String aMiddlename) { theMiddlename = aMiddlename ; }

@@ -83,6 +83,14 @@ public class OmcStandart extends VocBaseEntity {
 	public void setModel(String aModel) {
 		theModel = aModel;
 	}
+	
+	/** Не действует */
+	@Comment("Не действует")
+	public Boolean getDeprecated() {return theDeprecated;}
+	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
+
+	/** Не действует */
+	private Boolean theDeprecated;
 
 	/** model */
 	private String theModel;

@@ -31,6 +31,8 @@ public interface IWorkCalendarService {
 				,String aPatientInfo,Long aPatientId) ;
 	 public String preRecordByPatient(String aUsername,Long aTime
 				,String aPatientInfo,Long aPatientId);
+	 public void recordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime
+				,String aPatientInfo,Long aPatientId, Long aOrderLpu) ;
 	 public String addCreateNewTimeBySpecAndDate(String aDate
 				, Long aSpecialist, String aTime,Long aReserveType) throws ParseException ;
 }

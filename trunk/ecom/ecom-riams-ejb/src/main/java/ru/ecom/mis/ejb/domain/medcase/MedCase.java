@@ -31,7 +31,7 @@ import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.Worker;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.PrescriptionBlank;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -94,12 +94,6 @@ abstract public class MedCase extends BaseEntity {
 	@Comment("Недействительность")
 	public boolean getNoActuality() {return theNoActuality;}
 	public void setNoActuality(boolean aNewProperty) {theNoActuality = aNewProperty;}
-
-	/** Исполнитель */
-	@Comment("Исполнитель")
-	@OneToOne
-	public Worker getStartWorker() {return theStartWorker;}
-	public void setStartWorker(Worker aNewProperty) {theStartWorker = aNewProperty;}
 
 	/**ЛПУ - место исполнения  */
 	@Comment("ЛПУ - место исполнения ")
@@ -220,12 +214,7 @@ abstract public class MedCase extends BaseEntity {
 	/** Осмотры */
 	private List<Inspection> theInspections;
 
-    // [start] Вычисляемые поля
-	/** Кем открыт */
-	@Comment("Кем открыт")
-	@Transient
-	public String getStartWorkerText() {return theStartWorker!=null?theStartWorker.getDoctorInfo():"";}
-	// [end]
+
 	
 	  /** Переливания трансфузионных сред */
 	@Comment("Переливания трансфузионных сред")
@@ -348,8 +337,7 @@ abstract public class MedCase extends BaseEntity {
 	private VocMedCaseDefect theMedCaseDefect;
 	/**Недействительность */
 	private boolean theNoActuality;
-	/** Первый исполнитель*/
-	private Worker theStartWorker;
+
 	/**ЛПУ - место исполнения */
 	private MisLpu theLpu;
 	/** Хирургические операции */
@@ -412,15 +400,17 @@ abstract public class MedCase extends BaseEntity {
 	
 	/** Дата направления */
 	@Comment("Дата направления")
-	public Date getOrderDate() {
-		return theOrderDate;
-	}
+	public Date getOrderDate() {return theOrderDate;}
+	public void setOrderDate(Date aOrderDate) {theOrderDate = aOrderDate;}
+	
+	/** Рабочая функция начавшего случай */
+	@Comment("Рабочая функция начавшего случай")
+	@OneToOne
+	public WorkFunction getStartFunction() {return theStartFunction;}
+	public void setStartFunction(WorkFunction aStartFunction) {theStartFunction = aStartFunction;}
 
-	public void setOrderDate(Date aOrderDate) {
-		theOrderDate = aOrderDate;
-	}
-
-
+	/** Рабочая функция начавшего случай */
+	private WorkFunction theStartFunction;
 	/** Дата направления */
 	private Date theOrderDate;
 	

@@ -56,6 +56,8 @@ function f039(aCtx,aParams) {
 	if (obj.length>=9) ticketIs = (+(obj[8])>0)? true: false;
 	//throw ticketIs?"yes"+obj[7]:"no" ;
 	var service = new Packages.ru.ecom.mis.ejb.service.medcase.ReportsServiceBean() ;
+	service.setContext(aCtx.sessionContext) ;
+	service.setManager(aCtx.manager) ;
 	var queryTextBegin = service.getTextQueryBegin(ticketIs, groupBy
 		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	var queryTextEnd = service.getTextQueryEnd(ticketIs, groupBy

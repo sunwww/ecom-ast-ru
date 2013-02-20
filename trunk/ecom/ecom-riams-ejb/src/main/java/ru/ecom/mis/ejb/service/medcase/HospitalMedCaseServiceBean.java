@@ -742,7 +742,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
              form.setIsDeniedHospitalizating(hospit.getIsDeniedHospitalizating()) ;
              form.setDateStart(DateFormat.formatToDate(hospit.getDateStart()));
              form.setDateFinish(DateFormat.formatToDate(hospit.getDateFinish()));
-             form.setFinishWorkerText(hospit.getFinishWorkerText());
+             //form.setFinishWorkerText(hospit.getFinishWorkerText());
              form.setUsername(hospit.getUsername());
              form.setDaysCount(hospit.getDaysCount()) ;
              form.setStatCardNumber(hospit.getStatCardNumber()) ;

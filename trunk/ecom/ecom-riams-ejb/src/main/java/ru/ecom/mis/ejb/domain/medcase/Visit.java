@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -16,9 +16,7 @@ import javax.persistence.Transient;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
-import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
@@ -41,12 +39,6 @@ public class Visit extends ShortMedCase{
 	public Integer getPrivilegeRecipeAmount() {return thePrivilegeRecipeAmount;}
 	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;}
 	
-	/** Внутренний направитель (сотрудник) */
-	@Comment("Внутренний направитель (сотрудник)")
-	@OneToOne
-	public Worker getOrderWorker() {return theOrderWorker;}
-	public void setOrderWorker(Worker aOrderWorker) {theOrderWorker = aOrderWorker;}
-
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@OneToOne
@@ -94,8 +86,6 @@ public class Visit extends ShortMedCase{
 	
     /** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
-	/** Внутренний направитель (сотрудник) */
-	private Worker theOrderWorker;
 	/** Внешний направитель (ЛПУ) */
 	private MisLpu theOrderLpu;
 	/**Диагнозы*/
@@ -126,11 +116,6 @@ public class Visit extends ShortMedCase{
 		return getTimePlan()!=null && getTimePlan().getTimeFrom()!=null
 			? f.format(getTimePlan().getTimeFrom()) 
 			: "" ;		
-	}
-	
-	@Transient @Comment("Внутренний направитель (текст)")
-	public String getOrderWorkerText() {
-		return theOrderWorker!=null ? theOrderWorker.getDoctorInfo() : null ;
 	}
 	
 	@Transient @Comment("Цель визита (текст)")
