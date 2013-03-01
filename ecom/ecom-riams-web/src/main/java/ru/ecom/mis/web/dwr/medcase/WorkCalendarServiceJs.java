@@ -286,6 +286,58 @@ public class WorkCalendarServiceJs {
 		}
 		return res.toString() ; 
 	}
+	public String getInfoSpoAndWorkFunction(Long aSpo, Long aWorkFunctionPlan
+			,Long aServiceStream, Long aVisitReason
+			,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql = new StringBuilder() ;
+		sql.append("select spo.id as spoid,to_char(spo.dateStart,'yyyy-mm-dd')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+		sql.append(" from MedCase spo left join WorkFunction wf on wf.id=spo.startFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where spo.id='").append(aSpo).append("' and spo.dtype='PolyclinicMedCase'") ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#") ;
+			res.append(wqr.get2()).append("#") ;
+			
+			sql = new StringBuilder() ;
+			sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+			sql.append(" from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wf.id='").append(aWorkFunctionPlan).append("' ") ;
+			list = service.executeNativeSql(sql.toString(),1);
+			if (!list.isEmpty()) {
+				wqr = list.iterator().next() ;
+				res.append(wqr.get1()).append("#") ;
+				res.append(wqr.get2()).append("#") ;
+				
+				sql = new StringBuilder() ;
+				sql.append("select vss.id as vssid,vss.name from VocServiceStream vss where vss.id='").append(aServiceStream).append("' ") ;
+				list = service.executeNativeSql(sql.toString(),1);
+				if (!list.isEmpty()) {
+					wqr = list.iterator().next() ;
+					res.append(wqr.get1()).append("#") ;
+					res.append(wqr.get2()).append("#") ;
+					sql = new StringBuilder() ;
+					sql.append("select vss.id as vssid,vss.name from VocReason vss where vss.id='").append(aVisitReason).append("' ") ;
+					list = service.executeNativeSql(sql.toString(),1);
+					if (!list.isEmpty()) {
+						wqr = list.iterator().next() ;
+						res.append(wqr.get1()).append("#") ;
+						res.append(wqr.get2()).append("#") ;
+					} else {
+						res.append("").append("#") ;
+						res.append("").append("#") ;
+					}
+				} else {
+					res = new StringBuilder() ;
+				}
+			} else {
+				res = new StringBuilder() ;
+			}
+				
+		}
+		return res.toString() ; 
+	}
 	public String getPreRecord(Long aWorkCalendarDay, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

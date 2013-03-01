@@ -178,6 +178,7 @@
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
       document.forms[0].action = 'javascript:isExistTicket()';
+      
       function isExistTicket() {
  		 if (!$('emergency').checked) {
  			 WorkCalendarService.checkPolicyByPatient($('patient').value,
@@ -229,11 +230,30 @@
     			  }
     		  }
     	  }) ;
+      } else if ((+'${param.spo}')>0 && ((+$('parent').value)==0)) {
+    	  if ((+'${param.workFunction}')>0 && ((+$('workFunctionPlan').value)==0)) {
+    		  WorkCalendarService.getInfoSpoAndWorkFunction('${param.spo}','${param.workFunction}',+'${param.serviceStream}',+'${param.visitReason}', {
+        		  callback:function(aResult) {
+        			  if (aResult!='') {
+            			  var res=aResult.split('#') ;
+            			  $('parent').value=res[0] ;
+            			  $('parentName').value=res[1] ;
+            			  $('workFunctionPlan').value=res[2] ;
+            			  $('workFunctionPlanName').value=res[3] ;
+            			  $('serviceStream').value=res[4] ;
+            			  $('serviceStreamName').value=res[5] ;
+            			  $('visitReason').value=res[6] ;
+            			  $('visitReasonName').value=res[7] ;
+            			  updateDefaultDate() ;
+        			  }
+        		  }
+        	  }) ;
+    	  } 
       }
 	  	eventutil.addEventListener($('datePlanName'), eventutil.EVENT_KEY_UP, 
 	  		  	function() {
-		  		if ($('datePlanName').value.length==2) $('datePlanName').value=$('datePlanName').value+"." ; 
-		  		if ($('datePlanName').value.length==5) $('datePlanName').value=$('datePlanName').value+"." ; 
+		  			if ($('datePlanName').value.length==2) $('datePlanName').value=$('datePlanName').value+"." ; 
+		  			if ($('datePlanName').value.length==5) $('datePlanName').value=$('datePlanName').value+"." ; 
 	  		  	}
 	  	) ;
 	  	eventutil.addEventListener($('timePlanName'), eventutil.EVENT_KEY_UP, 
