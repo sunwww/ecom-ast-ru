@@ -147,7 +147,7 @@ tr.listFunctions {
         
 }
 tr.listFunctions td {    
-	padding-right: 15px; padding-left: 15px; border: none ;
+	padding-right: 0px; padding-left: 0px; border: none ;
 }
 
 td.label {
@@ -223,7 +223,7 @@ p.label {
     background-image: linear-gradient(top, #FAFAFA, #DDD);
 }
  
-.button:active,tr.listFunctions:active {
+.button:active,tr.listFunctions td:active {
     -moz-box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
     -webkit-box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
     box-shadow: 0 0 4px 2px rgba(0, 0, 0, .3) inset;
@@ -248,7 +248,7 @@ p.label {
     border-radius: .15em 0 0 .15em;
     pointer-events: none;
 }
-tr.listFunctions:before{
+tr.listFunctions td:before{
     background: #CCC;
     background: rgba(0, 0, 0, .1);
     float: left;       
@@ -301,7 +301,7 @@ tr.listFunctions:before{
     background-color: #879BC3;
 }
 
-.fb:before,tr.listFunctions:before {
+.fb:before,tr.listFunctions td:before {
     content: "\279C";
     background: #4467AC;
     background: rgba(0, 0, 0, .1);
