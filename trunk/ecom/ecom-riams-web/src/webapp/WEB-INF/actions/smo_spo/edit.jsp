@@ -3,13 +3,13 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-smo_spo.do" defaultField="dateStart">
+    <msh:form guid="formHello" action="/entityParentSaveGoView-smo_spo.do" defaultField="dateStart">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="patient" guid="bb02c92e-e6b5-4e05-9375-356e412bb394" />

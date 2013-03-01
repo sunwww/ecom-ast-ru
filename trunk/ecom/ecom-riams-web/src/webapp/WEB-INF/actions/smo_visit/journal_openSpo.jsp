@@ -141,7 +141,7 @@ select spo.id,spo.dateStart
     order by spo.dateStart, pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
-    viewUrl="entityShortView-smo_spo.do"
+    viewUrl="entityParentView-smo_spo.do?short=Short"
     action="entityParentView-smo_spo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

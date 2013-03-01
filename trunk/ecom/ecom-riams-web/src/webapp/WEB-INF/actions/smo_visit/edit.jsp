@@ -255,7 +255,11 @@
 <%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitPrescriptionBlank" name="Рецептурный бланк" title="Добавить рецептурный бланк" guid="78d-4642-ae35-b6d04" roles="/Policy/Mis/MedCase/PrescriptionBlank/Create" />
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
-    	name="Направление &larr;"   action="/javascript:goNewDirection('.do')"  
+    	name="Направление к план. раб. функции &larr;"   action="/javascript:goNewDirectionMine('.do')"  
+    	 title='Направление к план. раб. функции'  />
+    	         
+            <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
+    	name="Направление к другому специалисту &larr;"   action="/javascript:goNewDirectionOther('.do')"  
     	 title='Направление к другому специалисту'  />
     	         
     	 
@@ -350,8 +354,15 @@
   </script>
   <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
           <script type="text/javascript">//var theBedFund = $('bedFund').value;
-      	function goNewDirection() {
-      		window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&tmp="+Math.random() ;
+      	function goNewDirectionMine() {
+      		if (+$('parent').value>0) {
+      			window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&spo="+$('parent').value+"&workFunction="+$('workFunctionPlan').value+"&serviceStream="+$('serviceStream').value+"&visitReason="+$('visitReason').value+"&tmp="+Math.random() ;
+      		} else {
+      			alert('Направить к себе можно только после приема пациента!!!') ;
+      		}
+      	}
+      	function goNewDirectionOther() {
+    		window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&tmp="+Math.random() ;
       	}
       	</script>
       <script type="text/javascript">//var theBedFund = $('bedFund').value;

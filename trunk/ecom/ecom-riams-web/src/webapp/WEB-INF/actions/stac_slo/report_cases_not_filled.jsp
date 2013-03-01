@@ -136,6 +136,7 @@ select slo.id,slo.dateStart
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-slo.dateStart)+1) 
 			else (CURRENT_DATE-slo.dateStart)
 		  end as cnt2
+,to_char(max(p.dateRegistration),'dd.mm.yyyy')||' '||(select coalesce(cast(max(p.timeRegistration) as varchar(5)),'') from diary d1 where slo.id=d1.medCase_id and d1.dateRegistration=max(p.dateRegistration) group by d1.dateRegistration) as pdateregistration
     from medCase slo 
     left join MedCase as sls on sls.id = slo.parent_id 
     left join bedfund as bf on bf.id=slo.bedfund_id 
@@ -162,9 +163,10 @@ select slo.id,slo.dateStart
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
       <msh:tableColumn columnName="Операции" property="6"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>
+      <msh:tableColumn columnName="Дата посл. заполнения" property="9" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
