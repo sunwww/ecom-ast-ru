@@ -20,11 +20,23 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 </style>
 <msh:sideMenu></msh:sideMenu>
+<msh:sideMenu title="Рабочий календарь">
+    <msh:sideLink action="/js-smo_visit-findPolyAdmissions.do" name="Раб.календарь"
+    	 styleId="workCalendar" roles="/Policy/Mis/MedCase/Visit/View"/>
+    <msh:sideLink styleId="otherWorkFunction" 
+    	name="Пациенты, направленные по другим раб. функциям" 
+    	title="Пациенты, направленные по другим раб.функциям" 
+    	action="/js-smo_visit-findOtherFunctionsPolyAdmissions.do" />    
+    <msh:sideLink styleId="otherDays" 
+    	name="Принятые пациенты, направленные на другое число" 
+    	title="Принятые пациенты, направленные на другое число" 
+    	action="/js-smo_visit-findOtherDaysPolyAdmissions.do" />    
+</msh:sideMenu>
+
 <msh:sideMenu title="Прием" guid="fsdfsdf-dfsf">
     <msh:sideLink action="/smo_goingToSmo.do" name="Переход к визиту"
     	 styleId="smo_goingToSmo" roles="/Policy/Mis/MedCase/Visit/View"/>
-    <msh:sideLink action="/js-smo_visit-findPolyAdmissions.do" name="Раб.календарь"
-    	 styleId="workCalendar" roles="/Policy/Mis/MedCase/Visit/View"/>
+    	 
 	<msh:sideLink name="Учет посещений" action="/smo_journalRegisterVisit_list.do" 
 		title="Учет посещений" roles="/Policy/Mis/MedCase/Visit/JournalRegisterVisit"
 		styleId="journalRegisterVisit"/>
@@ -43,7 +55,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     name="Журнал обращений" action="/journal_visits_list.do" styleId="reportVisits"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Visit/ReportNationality" 
     name="Журнал СМО с разбивкой по гражданству" action="/journal_nationality_smo_list.do" styleId="reportNationality"/>
-	<msh:sideLink name="Открытые СПО" action="/smo_openSPO_list.do"
+	<msh:sideLink name="Открытые СПО" action="/smo_journal_openSpo.do"
 		styleId="journalOpenSPO" roles="/Policy/Mis/MedCase/Visit/OpenSpo"/>
 	<msh:sideLink name="Активные направления" action="/smo_activeDirect_list.do"
 		styleId="journalActiveDirect" roles="/Policy/Mis/MedCase/Visit/JournalActiveDirect"/>

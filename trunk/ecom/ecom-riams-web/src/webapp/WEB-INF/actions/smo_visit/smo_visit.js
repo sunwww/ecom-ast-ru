@@ -75,18 +75,26 @@ function getWorkFunctionId(aCtx) {
 	return calendarDayId ;
 }
 
-function findPolyAdmissions(aForm, aCtx) {
-	
-	if (Packages.ru.nuzmsh.web.tags.helper.RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll",aCtx.request)) {
-		return findPolyAdmissionsByZam(aForm, aCtx) ;
-	} else {
-		return findPolyAdmissionsBySpec(aForm, aCtx) ;
+function findPolyAdmissions(aForm, aCtx, aPath) {
+	if (aPath==null || aPath=='') {
+		aPath = "/WEB-INF/actions/smo_visit/listBySelectedDate.jsp" ;
 	}
+	if (Packages.ru.nuzmsh.web.tags.helper.RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll",aCtx.request)) {
+		return findPolyAdmissionsByZam(aForm, aCtx, aPath) ;
+	} else {
+		return findPolyAdmissionsBySpec(aForm, aCtx, aPath) ;
+	}
+}
+function findOtherFunctionsPolyAdmissions(aForm, aCtx) {
+	return findPolyAdmissions(aForm, aCtx, "/WEB-INF/actions/smo_visit/listBySelectedDate_otherFunction.jsp") ;
+}
+function findOtherDaysPolyAdmissions(aForm, aCtx) {
+	return findPolyAdmissions(aForm, aCtx, "/WEB-INF/actions/smo_visit/listBySelectedDate_otherDays.jsp") ;
 }
 /**
  * Поиск направлений за определенную дату
  */
-function findPolyAdmissionsBySpec(aForm, aCtx) {
+function findPolyAdmissionsBySpec(aForm, aCtx, aPathList) {
 	
 	var calendarDayId = getCalDayId(aCtx) ;
 	if(calendarDayId==null) {
@@ -100,10 +108,10 @@ function findPolyAdmissionsBySpec(aForm, aCtx) {
 	//aCtx.request.setAttribute("list", col) ;
 	if (calendarDayId==null) calendarDayId='-1' ;
 	aCtx.request.setAttribute("calenDayId",calendarDayId) ;
-	return aCtx.createForward("/WEB-INF/actions/smo_visit/listBySelectedDate.jsp") ;
+	return aCtx.createForward(aPathList) ;
 }
 
-function findPolyAdmissionsByZam(aForm, aCtx) {
+function findPolyAdmissionsByZam(aForm, aCtx, aPathList) {
 	
 	var calendarDayId = getCalDayId(aCtx) ;
 	var col = null;
@@ -124,29 +132,35 @@ function findPolyAdmissionsByZam(aForm, aCtx) {
 	if (calendarDayId==null) calendarDayId='-1' ;
 	aCtx.request.setAttribute("calenDayId",calendarDayId) ;
 	//aCtx.request.setAttribute("list", col ) ;
-	return aCtx.createForward("/WEB-INF/actions/smo_visit/listBySelectedDate.jsp") ;
+	return aCtx.createForward(aPathList) ;
 }
 
 function setWorkerInfo(aCtx) {
 	var workerInfo = aCtx.invokeScript("WorkerService", "findLogginedWorkerName") ;
 	var calDayId = getCalDayId(aCtx) ;
 	var append = "" ;
+	var d ='' ;
 	if(calDayId!=null) {
-		var d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", calDayId) ;
+		d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", calDayId) ;
 		var append = ", дата: "+d ;
+	} else {
+		
 	}
 	aCtx.request.setAttribute("worker", workerInfo + append) ;
+	aCtx.request.setAttribute("date_on_which_the_doctor", d==''?'current_date':"to_date('"+d+"','dd.mm.yyyy')") ;
 }
 function setWorkFunctionInfo(aCtx,aCalenDayId,aWorkFuncId) {
 	var workerInfo ="Выберите рабочую функцию" ;
 	var append="" ;
+	var d="" ;
 	if(aCalenDayId!=null) {
 		workerInfo = aCtx.invokeScript("WorkerService", "getWorkFunctionInfo", aWorkFuncId) ; 
-		var d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", aCalenDayId) ;
+		d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", aCalenDayId) ;
 		append = ", дата: "+d ;
 	} else {
 	}
 	aCtx.request.setAttribute("worker", workerInfo + append) ;
+	aCtx.request.setAttribute("date_on_which_the_doctor", d==''?'current_date':"to_date('"+d+"','dd.mm.yyyy')") ;
 }
 
 /**
@@ -185,4 +199,20 @@ function infoShortByPatient(aForm,aCtx) {
 }
 function infoByPatient(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/smo_visit/list_by_patient.jsp") ;
+}
+function replaceWF(aForm,aCtx) {
+	var id = aCtx.request.getParameter("id") ;
+	try {
+		
+		//var d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", calendarDayId) ;
+		var wf = aCtx.invokeScript("WorkerService", "getWorkFunctionByCalenDay", id) ;
+		aCtx.invokeScript("WorkerService", "replaceWorkFunction", wf) ;
+		///var wcd=aCtx.invokeScript("WorkerService", "getWorkCalendarDayByWCAndDate",id, d) ;
+		return aCtx.createForward("/js-smo_visit-findPolyAdmissions.do?tmp=4324123&id="+id) ;
+	} catch(e) {
+		//var calendarDayId = getCalDayId(aCtx) ;
+		//var d = aCtx.invokeScript("WorkerService", "getWorkCalendarDayCalendarDate", calendarDayId) ;
+		//var wcd=aCtx.invokeScript("WorkerService", "getWorkCalendarDayByWCAndDate",id, d) ;
+		return aCtx.createForward("/js-smo_visit-findPolyAdmissions.do?id="+id) ;
+	}
 }

@@ -99,7 +99,7 @@
       </msh:sideMenu>
       </msh:ifNotInRole>
       <msh:sideMenu title="Администрирование">
-      	<msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()"/>
+      	<msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo"/>
     	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
       </msh:sideMenu>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">

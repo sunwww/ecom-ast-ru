@@ -114,7 +114,7 @@
     order by ml.name
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />    
-    <msh:table name="datelist" viewUrl="stac_journalDischargeByUserDepartment.do?s=Short&" action="stac_journalCurrentByUserDepartment.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="datelist" viewUrl="stac_journalDischargeByUserDepartment.do?s=Short&" action="stac_journalDischargeByUserDepartment.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во выписанных" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

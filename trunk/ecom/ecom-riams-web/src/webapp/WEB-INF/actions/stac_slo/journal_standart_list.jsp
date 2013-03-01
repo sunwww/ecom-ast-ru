@@ -10,11 +10,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Просмотр данных по коечному фонду</msh:title>
+        <msh:title mainMenu="StacJournal">Просмотр данных по стандартам</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <tags:stac_journal currentAction="stac_journalByBedFund"/>
+        <tags:stac_journal currentAction="stac_journalByStandart"/>
     </tiles:put>
     
   <tiles:put name="body" type="string">
