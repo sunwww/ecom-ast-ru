@@ -26,9 +26,12 @@ import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcRoadTrafficInjury;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason;
 
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
@@ -396,4 +399,34 @@ public class Ticket extends BaseEntity {
 
 	/** Тип мед. обслуживания */
 	private VocWorkMedservice theWorkMedservice;
+	/** СПО */
+	@Comment("СПО")
+	@OneToOne
+	public MedCase getParent() {
+		return theParent;
+	}
+
+	public void setParent(MedCase aParent) {
+		theParent = aParent;
+	}
+
+	/** СПО */
+	private MedCase theParent;
+	/** Бригада скорой помощи */
+	@Comment("Бригада скорой помощи")
+	@OneToOne
+	public VocAmbulance getAmbulance() {return theAmbulance;}
+	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
+
+	/** Исход визита */
+	@Comment("Исход визита")
+	@OneToOne
+	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
+	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+
+	/** Исход визита */
+	private VocVisitOutcome theVisitOutcome;
+	/** Бригада скорой помощи */
+	private VocAmbulance theAmbulance;
+
 }

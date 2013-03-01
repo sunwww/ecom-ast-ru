@@ -1,9 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
 import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -148,4 +152,20 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 
 	/** Предварительный прием */
 	private Boolean theIsPreRecord;
+	/** Бригада скорой помощи */
+	@Comment("Бригада скорой помощи")
+	@OneToOne
+	public VocAmbulance getAmbulance() {return theAmbulance;}
+	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
+
+	/** Исход визита */
+	@Comment("Исход визита")
+	@OneToOne
+	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
+	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+
+	/** Исход визита */
+	private VocVisitOutcome theVisitOutcome;
+	/** Бригада скорой помощи */
+	private VocAmbulance theAmbulance;
 }

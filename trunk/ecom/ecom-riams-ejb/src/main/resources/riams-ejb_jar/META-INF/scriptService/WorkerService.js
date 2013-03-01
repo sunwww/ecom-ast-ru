@@ -1,16 +1,23 @@
 function replaceWorkFunction(aCtx,aParam) {
 	if (+aParam>0) {
 		
-	var username=aCtx.sessionContext.callerPrincipal.name ;
-	var sqluser = "select id as suid,login as sulogin from secuser where login='"+username+"'" ;
-	var listuser = aCtx.manager.createNativeQuery(sqluser).getResultList();
-	//throw username ;
-	if (listuser.size()>0) {
-		var suId=listuser.get(0)[0] ;
-		//throw suId+" username="+username ;
-		aCtx.manager.createNativeQuery("update WorkFunction set secuser_id=null where secuser_id='"+suId+"'").executeUpdate() ;
-		aCtx.manager.createNativeQuery("update WorkFunction set secuser_id='"+suId+"' where id='"+aParam+"'").executeUpdate() ;
-	}
+		var username=aCtx.sessionContext.callerPrincipal.name ;
+		var sqluser = "select su.id as suid,w.person_id as pwid from secuser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where login='"+username+"'" ;
+		var listuser = aCtx.manager.createNativeQuery(sqluser).getResultList();
+		//throw username ;
+		if (listuser.size()>0) {
+			var suId=listuser.get(0)[0] ;
+			var wId=listuser.get(0)[1] ;
+			var sqlCheck = "select wf.id,wf.worker_id from workfunction wf  left join worker w on w.id=wf.worker_id where wf.id='"+aParam+"' and w.person_id='"+wId+"'" ;
+			var listCheck = aCtx.manager.createNativeQuery(sqlCheck).getResultList();
+			if (listCheck.size()>0) {
+				//throw suId+" username="+username ;
+				aCtx.manager.createNativeQuery("update WorkFunction set secuser_id=null where secuser_id='"+suId+"'").executeUpdate() ;
+				aCtx.manager.createNativeQuery("update WorkFunction set secuser_id='"+suId+"' where id='"+aParam+"'").executeUpdate() ;
+			} else {
+				throw "Вы не можете изменить установить соответствие пользователя и рабочей функции" ;
+			}
+		}
 	}
 	
 }
@@ -122,8 +129,14 @@ function findLogginedWorkFunction(aCtx) {
 }
 
 function getWorkCalendarDayCalendarDate(aCtx, aCalDayId) {
-	return aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay
-			, new java.lang.Long(aCalDayId)).getCalendarDate() ;
+	var list = aCtx.manager.createNativeQuery("select wcd.id as wcdid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendar from WorkCalendarDay wcd" 
+			+" where wcd.id='"+aCalDayId+"'")
+			.setMaxResults(1)
+		.getResultList() ;
+	
+	return list.size()>0?list.get(0)[1]:null ;
+	//return aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay
+	//		, new java.lang.Long(aCalDayId)).getCalendarDate() ;
 }
 
 /**
@@ -177,18 +190,21 @@ function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 	return obj[1]!=null?obj[1]: (obj[2]!=null?obj[2] : obj[0])  ;
 }
 function getWorkFunctionByCalenDay(aCtx, aCalenDayId) {
-	if (aCalenDayId==null) {
-		return new java.lang.Long.valueOf("0") ;
-	} else {
-		var calenday = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay
-			, new java.lang.Long.valueOf(""+aCalenDayId)) ;
+	var list = aCtx.manager.createNativeQuery("select wf.id as wcdid,wc.id as wcid from WorkFunction wf left join WorkCalendar wc on wf.id=wc.workFunction_id left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id where wcd.id = '"+aCalenDayId+"'")
+		.getResultList() ;
+	if(list.size()==0) {
+		return "0" ;
 	}
-	return calenday.workFunction!=null?calenday.workFunction.id:new java.lang.Long.valueOf("0") ;
+	var workFunctId = list.get(0)[0] ;
+	//Long workFunc = list.get(0).getWorkFunction().getId() ;
+	return ""+workFunctId;
 }
 
 function getWorkFunctionInfo(aCtx,aWorkFunctionId) {
-	var workFunction = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction
-		, java.lang.Long.valueOf(""+aWorkFunctionId)) ;
-	return workFunction!=null?workFunction.workFunctionInfo:"" ;
+	var list = aCtx.manager.createNativeQuery("select wf.id as wfid,vwf.name||' '||(case when wf.dtype='GroupWorkFunction' then wf.groupName when wf.dtype='PersonalWorkFunction' then wp.lastname||' '||wp.firstname||' '||coalesce(wp.middlename,'') else '' end) as wfinfo from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id where wf.id = '"+aWorkFunctionId+"'")
+	.getResultList() ;
+	return list.size()>0?list.get(0)[1]:"" ;
+	//var workFunction = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction
+	//	, java.lang.Long.valueOf(""+aWorkFunctionId)) ;
+	//return workFunction!=null?workFunction.workFunctionInfo:"" ;
 } 
-

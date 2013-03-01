@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -170,6 +172,23 @@ public class Visit extends ShortMedCase{
 
 	/** Тип мед. обслуживания */
 	private VocWorkMedservice theWorkMedservice;
+	
+	/** Бригада скорой помощи */
+	@Comment("Бригада скорой помощи")
+	@OneToOne
+	public VocAmbulance getAmbulance() {return theAmbulance;}
+	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
+
+	/** Исход визита */
+	@Comment("Исход визита")
+	@OneToOne
+	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
+	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+
+	/** Исход визита */
+	private VocVisitOutcome theVisitOutcome;
+	/** Бригада скорой помощи */
+	private VocAmbulance theAmbulance;
 
 
 }

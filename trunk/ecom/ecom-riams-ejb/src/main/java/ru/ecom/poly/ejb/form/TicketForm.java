@@ -1,7 +1,5 @@
 package ru.ecom.poly.ejb.form;
 
-import org.jboss.annotation.ejb.CurrentMessage;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -349,5 +347,30 @@ public class TicketForm extends IdEntityForm {
 
 	/** Диагноз */
 	private Long theIllnesPrimary;
+
+	/** СПО */
+	@Comment("СПО")
+	@Persist
+	public Long getParent() {return theParent;}
+	public void setParent(Long aParent) {theParent = aParent;}
+
+	/** СПО */
+	private Long theParent;
+	/** Бригада скорой помощи */
+	@Comment("Бригада скорой помощи")
+	@Persist
+	public Long getAmbulance() {return theAmbulance;}
+	public void setAmbulance(Long aAmbulance) {theAmbulance = aAmbulance;}
+
+	/** Исход визита */
+	@Comment("Исход визита")
+	@Persist
+	public Long getVisitOutcome() {return theVisitOutcome;}
+	public void setVisitOutcome(Long aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+
+	/** Исход визита */
+	private Long theVisitOutcome;
+	/** Бригада скорой помощи */
+	private Long theAmbulance;
 
 }
