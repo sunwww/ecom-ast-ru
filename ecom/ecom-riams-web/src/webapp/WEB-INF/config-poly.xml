@@ -40,6 +40,13 @@
                 scope="request">
             <forward name="success" redirect="false" path="/WEB-INF/actions/polyStart.jsp" />
         </action>
+        <action path='/smo_journal_openSpo' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_openSpo.jsp" />
+        </action>
 
 <!--        <action path='/poly_medcardSearch' type='ru.ecom.poly.web.action.medcard.MedcardSearchAction'-->
 <!--                name='poly_medcardSearchForm'-->

@@ -79,16 +79,25 @@
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocMedCaseDefect" labelColSpan="3" property="medCaseDefect" label="Дефекты направления" horizontalFill="true" />
-        </msh:row>        
-        	<msh:row>
-        		<msh:separator label="Госпитализация" colSpan="4"/>
-        	</msh:row>
+        </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
+	       	<msh:row>
+	       		<msh:separator label="Скорая помощь" colSpan="4"/>
+	       	</msh:row>
 	        <msh:row>
-	        	<msh:textField property="orderDate" label="Планируемая дата госпитализации" labelColSpan="3"/>
+	        	<msh:autoComplete vocName="vocAmbulance" property="ambulance" label="Бригада СП" horizontalFill="true" />
+	        	<msh:autoComplete vocName="vocVisitOutcome" property="visitOutcome" label="Исход СП" horizontalFill="true" />
 	        </msh:row>
-	        <msh:row>
-	        	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
-	        </msh:row>
+        </msh:ifInRole>
+       	<msh:row>
+       		<msh:separator label="Госпитализация" colSpan="4"/>
+       	</msh:row>
+        <msh:row>
+        	<msh:textField property="orderDate" label="Планируемая дата госпитализации" labelColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
+        </msh:row>
 
         <msh:row>
           <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunctionExecute" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />

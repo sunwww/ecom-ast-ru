@@ -229,6 +229,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink key="CTRL+2" params="id" action="/print-surgicalOperation.do?m=printSurOperation&s=HospitalPrintService" name="Протокола операции"/>
+      	<msh:sideLink key="CTRL+3" params="id" action="/print-surgicalOperation2.do?m=printSurOperation&s=HospitalPrintService" name="Протокола операции 2 копии"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -237,7 +238,7 @@
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     <script type="text/javascript">// <![CDATA[//
-                                               
+    
 	var isChangeSizeEpicrisis=1 ;
 	var isChangeSizeHist=1 ;
 	function changeSizeEpicrisis() {

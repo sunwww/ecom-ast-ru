@@ -1180,7 +1180,7 @@ public class WorkCalendarServiceJs {
 	
 	
 	public String getInfoDay(String aDate, HttpServletRequest aRequest) throws NamingException {
-		IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class) ;
+		//IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class) ;
 		return aDate ;
 		
 	}

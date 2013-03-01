@@ -38,8 +38,14 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="4">  свод по операциям
         </td>
+     </msh:row>
+     <msh:row>
+     	<td></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="5">  реестр
+        	<input type="radio" name="typeView" value="5">  свод по отделениям
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="6">  реестр
         </td>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
@@ -200,7 +206,7 @@
     order by so.operationDate" />
     <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Количество операций" identificator="false" property="3" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -228,7 +234,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Кол-во операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -253,7 +259,31 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Код" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+    </msh:table>
+    </msh:sectionContent>    
+    </msh:section>
+    <%}
+    if (view!=null&&view.equals("5")) {
+    %>
+    <msh:section>
+    <msh:sectionTitle>Разбивка по отделениям</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
+    ,dep.name as depname
+    ,count(*) as cnt 
+    from SurgicalOperation so
+left join medservice vo on vo.id=so.medService_id
+left join mislpu dep on dep.id=so.department_id
+where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+group by so.department_id,dep.name
+order by dep.name 
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="3" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -280,13 +310,13 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Код" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
     <%
     }
-    if (view!=null&&view.equals("5")) {
+    if (view!=null&&view.equals("6")) {
     %>
     <msh:section>
     <msh:sectionTitle>Реестр хирургических операций</msh:sectionTitle>
