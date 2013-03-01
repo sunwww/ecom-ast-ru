@@ -125,16 +125,20 @@ order by owp.lastname,owp.middlename,owp.firstname
 select spo.id,spo.dateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
     ,pat.birthday  
-    ,	  (CURRENT_DATE-spo.dateStart)
-		   as cnt1
+    ,CURRENT_DATE-spo.dateStart as cnt1
+    ,max(vis.dateStart) as maxvisDateStart
+    ,case when max(vis.dateStart) is not null then current_date-max(vis.dateStart) else null end as cntdaymax
+    ,max(case when vis.dateStart is null then wcd.calendarDate else null end) as maxPlanDate
     from medCase spo 
+    left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
+    left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id
     left join Patient pat on spo.patient_id = pat.id 
     where spo.DTYPE='PolyclinicMedCase' and spo.ownerFunction_id='${curator}' 
      and spo.dateFinish is null
     group by  spo.id,spo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     ,spo.dateStart
-    order by pat.lastname,pat.firstname,pat.middlename
+    order by spo.dateStart, pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
     viewUrl="entityShortView-smo_spo.do"
@@ -143,7 +147,11 @@ select spo.id,spo.dateStart
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата начала СПО" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во к.дней" property="5"/>
+      <msh:tableColumn columnName="Кол-во дней" property="5"/>
+      <msh:tableColumn columnName="Дата последнего посещения" property="6"/>
+      <msh:tableColumn columnName="Кол-во дней после посл. посещения" property="7"/>
+      <msh:tableColumn columnName="Дата посл. планир. посещения" property="8"/>
+      
     </msh:table>
     </msh:sectionContent>
     </msh:section>
