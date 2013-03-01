@@ -43,31 +43,26 @@
   	 and wf1.group_id is null
   	group by wcd1.id,vwf1.name,lpu1.name
   	"/>
-  	<ecom:webQuery  name="wf3" nativeSql="select
-	wcd2.id
-  	,vwf2.name as vfw2name
-  	,count(case when wct2.medCase_id is not null then 1 else null end) as cntAll
-  	,count(case when mc2.dateStart is not null then 1 else null end) as cntPrin
-  	,lpu2.name as lpu2name
-  	from WorkCalendarDay wcd
-  	left join workCalendar wc on wc.id=wcd.workCalendar_id
-  	left join workFunction wf on wf.id=wc.workFunction_id
-  	left join worker w on w.id=wf.worker_id
-  	left join worker w1 on w1.person_id=w.person_id
-  	left join workFunction wf1 on wf1.worker_id=w1.id
-  	left join workFunction wf2 on wf2.id=wf1.group_id
-  	left join worker w2 on w2.id=wf2.worker_id
-  	left join vocworkfunction vwf2 on vwf2.id=wf2.workFunction_id
-  	left join workcalendar wc2 on wc2.workFunction_id=wf2.id
-  	left join workCalendarDay wcd2 on wcd2.workCalendar_id=wc2.id
-  	left join workCalendarTime wct2 on wct2.workCalendarDay_id=wcd2.id 
-  	left join medCase mc2 on wct2.id=mc2.timePlan_id
-  	left join mislpu lpu2 on lpu2.id=w2.lpu_id
-  	where wcd.id='${calenDayId}' and 
-  	
-  	wcd2.calendarDate=wcd.calendarDate and wcd2.id!=wcd.id
-  	
-  	group by wcd2.id,vwf2.name,lpu2.name
+  	<ecom:webQuery  name="wf3" nativeSql="select wcdN.id
+  	,vwfN.name as vwfNname,wfNG.groupName as fwNGgroupname
+  	,count(distinct case when wctN.medCase_id is not null then wctN.id else null end) as cntAll
+  	,count(distinct case when mcN.dateStart is not null then mcN else null end) as cntPrin
+from workCalendarDay wcdN
+left join WorkCalendar wcN on wcN.id=wcdN.workCalendar_id
+left join WorkFunction wfNG on wfNG.id=wcN.workFunction_id
+left join VocWorkFunction vwfN on vwfN.id=wfNG.workFunction_id
+left join MisLpu lpuN on lpuN.id=wfNG.lpu_id
+left join WorkFunction wfNP on wfNP.group_id=wfNG.id
+left join Worker wNP on wNP.id=wfNP.worker_id
+left join Worker wOld on wOld.person_id=wNP.person_id
+left join WorkFunction wfOld on wfOld.worker_id=wOld.id
+left join WorkCalendar wcOld on wcOld.workFunction_id=wfOld.id
+left join WorkCalendarDay wcdOld on wcdOld.workCalendar_id=wcOld.id
+left join WorkCalendarTime wctN on wctN.workCalendarDay_id=wcdN.id
+left join MedCase mcN on mcN.id=wctN.medCase_id
+where wcdOld.id='${calenDayId}' and wcdN.calendarDate=wcdOld.calendarDate
+and wcdN.id!='${calenDayId}'
+group by wcdN.id,wfNG.groupName,vwfN.name,lpuN.name
   	"/>
   	<msh:section title="Направления по другим специализациям">
   		<msh:table name="wf1" action="js-smo_visit-replaceWF.do"
@@ -83,9 +78,10 @@
   		<msh:table name="wf3" action="js-smo_visit-replaceWF.do"
   		 idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="специальность" property="2" />
-	      <msh:tableColumn columnName="кол-во направленных" property="3"/>
-	      <msh:tableColumn columnName="кол-во принятых" property="4" />
-	      <msh:tableColumn columnName="ЛПУ" property="5" />
+	      <msh:tableColumn columnName="название группы" property="3" />
+	      <msh:tableColumn columnName="кол-во направленных" property="4"/>
+	      <msh:tableColumn columnName="кол-во принятых" property="5" />
+	      <msh:tableColumn columnName="ЛПУ" property="6" />
 	    </msh:table>
   	</msh:section>
   	
