@@ -30,7 +30,7 @@
 	    </div>
 	    <script type="text/javascript">
 	    	//$('div1').style.display='none' ;
-	    	var cntElementsList = 15 ;
+	    	var cntElementsList = 10 ;
 	    	viewList(1) ;
 	    	
 	    	function viewList(aList) {
