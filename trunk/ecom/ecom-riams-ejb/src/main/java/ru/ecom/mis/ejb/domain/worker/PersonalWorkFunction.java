@@ -22,6 +22,7 @@ import ru.nuzmsh.util.StringUtil;
 @AIndexes({
 	@AIndex(properties={"secUser"},table="WorkFunction")
 	,@AIndex(properties={"worker"},table="WorkFunction")
+	,@AIndex(properties={"group"},table="WorkFunction")
 	
 })
 @Table(schema="SQLUser")

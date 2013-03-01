@@ -53,11 +53,17 @@ public class ReportsServiceBean implements IReportsService {
 		}
 		if (!isViewAll) {
 			List<Object[]>listWQR = theManager.createNativeQuery("select w.id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
+			//List<Object[]>listWQR = theManager.createNativeQuery("select w.person_id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
 			if (listWQR.isEmpty()) {
 				filter.append(" and w.id='0'") ;
 			} else {
 				filter.append(" and w.id='").append(listWQR.get(0)[0]).append("'") ;
 			}
+			//if (listWQR.isEmpty()) {
+			//	filter.append(" and w.person_id='0'") ;
+			//} else {
+			//	filter.append(" and w.person_id='").append(listWQR.get(0)[0]).append("'") ;
+			//}
 		}
 		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
 			if (aIsTicket) {
