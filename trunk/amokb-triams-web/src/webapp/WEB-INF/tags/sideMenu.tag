@@ -29,3 +29,10 @@
     	<p class="label">Шаг 6.</p>
     	<p class="info">Выбор времени</p>
     	</div>
+    	<br>
+    	<div class="button delete" style="margin-top:40px;" onclick="window.location='start.do'">
+    	<p class="label">Отмена</p>
+    	<p class="info"></p>
+    	</div>
+    	
+    	
