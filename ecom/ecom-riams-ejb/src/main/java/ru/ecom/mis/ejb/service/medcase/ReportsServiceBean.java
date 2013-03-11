@@ -47,7 +47,7 @@ public class ReportsServiceBean implements IReportsService {
 		String username = theContext.getCallerPrincipal().toString() ;
 		boolean isViewAll = false ;
 		if (aIsTicket) {
-			isViewAll=theContext.isCallerInRole("/Policy/Poly/Ticket/IsDoctorEdit") ;
+			isViewAll=theContext.isCallerInRole("/Policy/Poly/Ticket/ShowInfoAllUsers") ;
 		} else {
 			isViewAll=theContext.isCallerInRole("/Policy/Mis/MedCase/Visit/ViewAll") ;
 		}
