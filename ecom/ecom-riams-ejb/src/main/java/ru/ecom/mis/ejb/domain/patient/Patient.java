@@ -1018,6 +1018,13 @@ public class Patient extends BaseEntity{
 	public String getCommonNumber() {return theCommonNumber;}
 	public void setCommonNumber(String aNumber) {theCommonNumber = aNumber;}
 
+	/** Соотечественник */
+	@Comment("Соотечественник")
+	public Boolean getIsCompatriot() {return theIsCompatriot;}
+	public void setIsCompatriot(Boolean aIsCompatriot) {theIsCompatriot = aIsCompatriot;}
+
+	/** Соотечественник */
+	private Boolean theIsCompatriot;
 	/** Единый номер застрахованного */
 	private String theCommonNumber;
 }
