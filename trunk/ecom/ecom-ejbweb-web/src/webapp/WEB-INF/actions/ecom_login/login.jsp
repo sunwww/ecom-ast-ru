@@ -27,6 +27,8 @@
     	if (day==14) {path_curdate="0214";break;}
     	if (day>20 && day<24) {path_curdate="0223";break;}
     case 2:
+    	if (day==1) {path_curdate="0301";break;}
+    	if (day==5) {path_curdate="0305";break;}
     	if (day>5 && day<9) {path_curdate="0308";break;}
     case 11:
     	if (day>20) {path_curdate="1231";break;}
