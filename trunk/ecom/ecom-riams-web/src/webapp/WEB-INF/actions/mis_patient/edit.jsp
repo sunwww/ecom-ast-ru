@@ -353,6 +353,9 @@
           <msh:textField property="foreignRealAddress" label="Иностранный адрес" horizontalFill="true" fieldColSpan="3" guid="abeed74-48cb-4a8b-9f82-63wws98e" />
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="isCompatriot" label="Соотечественник"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
         	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
         </msh:row>
