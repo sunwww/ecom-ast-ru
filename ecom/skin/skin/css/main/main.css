@@ -201,7 +201,7 @@ img {
 
 #header ul#mainMenu li a.selected  {
 
-    border-bottom: 1px solid white ;
+    /*border-bottom: 1px solid white ;*/
     border-top-color:1px solid #999;
     border-left-color:1px solid #999;
 	border-right-color:1px solid #999;
