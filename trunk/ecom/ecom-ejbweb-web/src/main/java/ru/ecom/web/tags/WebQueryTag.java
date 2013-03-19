@@ -42,6 +42,15 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
 			LOG.error("Ошибка выполнения запроса: \n hql: "+theHql+", native: \n"+theNativeSql,e);
 			throw new IllegalStateException("Ошибка выполнения "+theHql+" "+theNativeSql+": "+e.getMessage(),e) ;
 		}
+        try {
+        if (!StringUtil.isNullOrEmpty(theNameFldSql)) {
+				request.setAttribute(theNameFldSql, (StringUtil.isNullOrEmpty(theNativeSql) 
+						? theHql : theNativeSql).replaceAll("\n", " ")) ;
+		}
+        } catch(Exception e) {
+        	throw new IllegalStateException("Ошибка сохранения запроса в свойство "+theNameFldSql+": "+e.getMessage(),e) ;
+    		
+        }
     	printIdeEnd() ;
     }
     
@@ -89,6 +98,18 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
 		theName = aName;
 	}
 
+	/** Куда сохранять запрос */
+	@Comment("Куда сохранять запрос")
+	public String getNameFldSql() {
+		return theNameFldSql;
+	}
+
+	public void setNameFldSql(String aNameFldSql) {
+		theNameFldSql = aNameFldSql;
+	}
+
+	/** Куда сохранять запрос */
+	private String theNameFldSql;
 	/** Куда выводить результат */
 	private String theName;
 	/** Запрос на HQL */

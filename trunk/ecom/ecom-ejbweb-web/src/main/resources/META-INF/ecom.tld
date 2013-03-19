@@ -282,6 +282,12 @@
 
 
         <attribute>
+            <description>Куда сохранять запрос</description>
+            <name>nameFldSql</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <description>Куда сохранять</description>
             <name>name</name>
             <required>true</required>
