@@ -19,6 +19,23 @@
           <msh:autoComplete showId="false" vocName="patient" property="person" viewOnlyField="false"  label="Персона" guid="e4a238b3-0a19-4405-adcf-8b7ef8fad03f" horizontalFill="true" viewAction="entityView-mis_patient.do" />
 <td align="right" width="1px"><div id="personButton"></div></td>
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         
         <msh:submitCancelButtonsRow colSpan="2" guid="9279e49d-2ee0-426b-9024-b06947a1f0a8" />
       </msh:panel>

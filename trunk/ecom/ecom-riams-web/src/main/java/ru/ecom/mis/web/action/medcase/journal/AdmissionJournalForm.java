@@ -238,4 +238,19 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** ЛПУ направителя */
 	private Long theLpuDirect;
+	
+	/** Пол */
+	@Comment("Пол")
+	public Long getSex() {return theSex;}
+	public void setSex(Long aSex) {theSex = aSex;}
+
+	/** Расхождение по диагнозу */
+	@Comment("Расхождение по диагнозу")
+	public Long getCategoryDifference() {return theCategoryDifference;}
+	public void setCategoryDifference(Long aCategoryDifference) {theCategoryDifference = aCategoryDifference;}
+
+	/** Расхождение по диагнозу */
+	private Long theCategoryDifference;
+	/** Пол */
+	private Long theSex;
 }

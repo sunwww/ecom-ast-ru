@@ -98,6 +98,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report_direct.jsp" />
         </action>
+        <action path='/stac_report_standartOmc' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/journal_standart_list.jsp" />
+        </action>
         <action path='/stac_report_13' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -446,24 +453,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/print_discharge_by_current.jsp" />
         </action>
-        		<!-- 
-        <action path='/stac_problemPolicy_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                input='/WEB-INF/actions/stac_sslAdmission/list_mpolicy_list.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_mpolicy_list.jsp" />
-        </action>
- -->
-        <action path='/stac_problemPolicy_print' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                input='/WEB-INF/actions/stac_sslAdmission/list_mpolicy_print.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/list_mpolicy_print.jsp" />
-        </action>
+
         		
 	</action-mappings>
 

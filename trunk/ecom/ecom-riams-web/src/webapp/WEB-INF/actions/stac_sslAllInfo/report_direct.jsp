@@ -209,12 +209,15 @@
     <ecom:webQuery name="report_direct_swod" nativeSql="
 select '&department=${param.department}&serviceStream=${param.serviceStream}&lpuDirect='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
 count(*) 
-,count(case when of.voc_code='А' then sls.id else null end) as cntVrAmb
-,count(case when of.voc_code='В' then sls.id else null end) as cntRVK
-,count(case when of.voc_code='К' then sls.id else null end) as cntAmb
-,count(case when of.voc_code='О' then sls.id else null end) as cntSam 
-,count(case when of.voc_code='П' then sls.id else null end) as cntPoly
-,count(case when of.voc_code='С' then sls.id else null end) as cntStac
+,count(case when sls.emergency='1' then sls.id else null end) as cntEmergency
+,count(case when sls.emergency='1' and of.voc_code='А' then sls.id else null end) as cntEmerVrAmb
+,count(case when sls.emergency='1' and of.voc_code='В' then sls.id else null end) as cntEmerRVK
+,count(case when sls.emergency='1' and of.voc_code='К' then sls.id else null end) as cntEmerAmb
+,count(case when sls.emergency='1' and of.voc_code='О' then sls.id else null end) as cntEmerSam 
+,count(case when sls.emergency='1' and of.voc_code='П' then sls.id else null end) as cntEmerPoly
+,count(case when sls.emergency='1' and of.voc_code='С' then sls.id else null end) as cntEmerStac
+,count(case when (sls.emergency is null or sls.emergency='0') then sls.id else null end) as cntPlan
+,count(case when (sls.emergency is null or sls.emergency='0') and of.voc_code='П' then sls.id else null end) as cntPlanPoly
 
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id
@@ -232,14 +235,28 @@ order by ${typeGroupName}
     <msh:table name="report_direct_swod" 
     viewUrl="stac_report_direct_in_hospital.do?typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_direct_in_hospital.do?typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+     <msh:tableNotEmpty>
+     	<tr>
+     		<th></th>
+     		<th></th>
+     		<th></th>
+     		<th></th>
+     		<th colspan="6" class="rigthBold">из них доставлено</th>
+     		<th></th>
+     		<th class="rigthBold">из них</th>
+     	</tr>
+     </msh:tableNotEmpty>
       <msh:tableColumn columnName="Наименование ЛПУ" property="2" />
-      <msh:tableColumn columnName="Кол-во" property="3" />
-      <msh:tableColumn columnName="Врач. амбулатория" property="4" />
-      <msh:tableColumn columnName="Коммисия РВК" property="5"/>
-      <msh:tableColumn columnName="Карета скорой помощи" property="6"/>
-      <msh:tableColumn columnName="Самообращение" property="7"/>
-      <msh:tableColumn columnName="Поликлиника" property="8"/>
-      <msh:tableColumn columnName="Стационар" property="9"/>
+      <msh:tableColumn columnName="Кол-во" property="3" isCalcAmount="true" />
+      <msh:tableColumn property="4" columnName="Кол-во экстренных" isCalcAmount="true"/>
+      <msh:tableColumn columnName="врач. амбулаторий" property="5" isCalcAmount="true"/>
+      <msh:tableColumn columnName="коммисий РВК" property="6" isCalcAmount="true"/>
+      <msh:tableColumn columnName="карета скорой помощи" property="7" isCalcAmount="true"/>
+      <msh:tableColumn columnName="самообращение" property="8" isCalcAmount="true"/>
+      <msh:tableColumn columnName="пол-ка" property="9" isCalcAmount="true"/>
+      <msh:tableColumn columnName="стационар" property="10" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во плановых" property="11" isCalcAmount="true"/>
+      <msh:tableColumn columnName="пол-ка" property="12" isCalcAmount="true"/>
     </msh:table>
     
     </msh:sectionContent>

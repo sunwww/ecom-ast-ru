@@ -165,7 +165,7 @@
         //$('${flatNumber}').value = $('${name}addressFlatNumber').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
 
-        AddressService.getAddressString(addressPk, '', '', '',,'' {
+        AddressService.getAddressString(addressPk, '', '', '','', {
             callback: function(aString) {
                 $('${name}addressPar').innerHTML = aString ;
             }

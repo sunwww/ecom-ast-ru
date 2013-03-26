@@ -30,7 +30,10 @@
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иностранцы
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>
         <msh:row>
@@ -88,6 +91,7 @@
     left join patient p on p.id=m.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where m.DTYPE='HospitalMedCase' 
     and m.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')  
     and to_date('${param.dateEnd}','dd.mm.yyyy') and m.moveToAnotherLPU_id is not null ${add} 
@@ -112,24 +116,20 @@
      --%>
     <script type='text/javascript'>
     
-    var typePatient = document.forms[0].typePatient ;
-     var typeDate = document.forms[0].typeDate ;
-     /* var period = document.forms[0].period ;
+    checkFieldUpdate('typePatient','${typePatient}',4) ;
+    //checkFieldUpdate('typeDate','${typeDate}',2) ;
+    //checkFieldUpdate('period','${period}',3) ;
     
-    
-    if ((+'${period}')==1) {
-    	period[1].checked='checked' ;
-    } else if ((+'${period}')==3) {
-    	period[0].checked='checked' ;
-    }else {
-    	period[2].checked='checked' ;
-    } */  
-    if ((+'${typePatient}')==1) {
-    	typePatient[0].checked='checked' ;
-    } else if ((+'${typePatient}')==2) {
-    	typePatient[1].checked='checked' ;
-    } else {
-    	typePatient[2].checked='checked' ;
+    function checkFieldUpdate(aField,aValue,aDefaultValue) {
+       	eval('var chk =  document.forms[0].'+aField) ;
+       	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+       	aValue=+aValue ;
+       	var max=chk.length ;
+       	if (aValue==0 || (aValue)>(max)) {
+       		chk[+aDefaultValue-1].checked='checked' ;
+       	} else {
+       		chk[+aValue-1].checked='checked' ;
+       	}
     }
     function find() {
     	var frm = document.forms[0] ;

@@ -20,6 +20,83 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	public String getOpenSpoBySmo(Long aSmoId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select spo.id,to_char(spo.dateStart,'dd.mm.yyyy') as dateStart,to_char(spo.dateFinish,'dd.mm.yyyy') as dateFinish")
+			.append(" , coalesce(spo.dateFinish,CURRENT_DATE)-spo.dateStart as cnt1")
+			.append(" , count(distinct case when vis.noActuality='1' then null else vis.id end) as cnt2")
+			.append(" ,to_char(max(vis.dateStart),'dd.mm.yyyy') as maxvisDateStart")
+			.append(" ,ovwf.name || ' '||owp.lastname as docfio" )
+			.append(" ,list(distinct vvr.name) as vvrname,list(distinct mkb.code||' '||vpd.name) as diag")
+			.append(" from medCase spo")
+			.append(" left join WorkFunction owf on owf.id=spo.ownerFunction_id")
+			.append(" left join Worker ow on ow.id=owf.workFunction_id")
+			.append(" left join Patient owp on owp.id=ow.person_id")
+			.append(" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id")
+			.append(" left join MedCase vis1 on vis1.patient_id=spo.patient_id")
+			.append(" left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'")
+			.append(" left join Diagnosis diag on diag.medcase_id=vis.id")
+			.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id")
+			.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+			.append(" left join VocVisitResult vvr on vvr.id=vis.visitResult_id")
+			.append(" left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id")
+			.append(" where spo.DTYPE='PolyclinicMedCase' and vis1.id='")
+			.append(aSmoId).append("'")
+			.append(" and (spo.dateFinish is null or spo.dateFinish between CURRENT_DATE-30 and CURRENT_DATE) and (vis1.dtype='PolyclinicMedCase' and spo.id!=vis1.id or spo.id!=vis1.parent_id)")
+			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname")
+			.append(" order by spo.dateStart") ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		res.append("<table border='1px'>") ;
+		if (list.isEmpty()) {
+			res.append("<tr><td>");
+			res.append("НЕТ СЛУЧАЕВ ДЛЯ ПЕРЕНОСА ДАННЫХ") ;
+			res.append("</td></tr>");
+		} else {
+			res.append("<tr><th></th><th>").append("Дата начала").append("</th><th>").append("Дата окончания");
+			res.append("</th><th>").append("Длит-ть").append("</th><th>").append("Кол-во").append("</th><th>").append("Дата посл. визита").append("</th><th>").append("Начавший СПО");
+			res.append("</th><th>").append("Результат визита").append("</th><th>").append("Диагноз");
+			//res.append("</th><th>").append("").append("</th><th>");
+			//res.append("</th><th>");
+			//res.append("</th><th>");
+			res.append("</th></tr>");
+			for (WebQueryResult wqr:list) {
+				res.append("<tr><td>");
+				res.append("<input type='radio' name='rbSpo' id='rbSpo' value='").append(wqr.get1()).append("'>") ;
+				res.append("</td><td>");
+				res.append(wqr.get2()!=null?wqr.get2():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get3()!=null?wqr.get3():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get4()!=null?wqr.get4():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get5()!=null?wqr.get5():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get6()!=null?wqr.get6():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get7()!=null?wqr.get7():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get8()!=null?wqr.get8():"") ;
+				res.append("</td><td>");
+				res.append(wqr.get9()!=null?wqr.get9():"") ;
+				res.append("</td></tr>");
+			}
+		}
+		res.append("</table>") ;
+		return res.toString() ;
+	}
+	public String moveVisitOtherSpo(Long aVisit, Long aNewSpo, HttpServletRequest aRequest) throws NamingException {
+		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
+		service.moveVisitInOtherSpo(aVisit,aNewSpo) ;
+		return aVisit+"#Визит перенесен" ;
+	}
+	public String unionSpos(Long aOldSpo, Long aNewSpo, HttpServletRequest aRequest) throws NamingException {
+		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
+		service.unionSpos(aOldSpo,aNewSpo) ;
+		return aNewSpo+"#СПО объединены" ;
+	}
+	
 	public String changeServiceStreamBySmo(Long aSmo, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;

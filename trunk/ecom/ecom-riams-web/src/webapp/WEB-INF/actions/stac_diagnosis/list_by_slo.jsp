@@ -43,7 +43,10 @@
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иностранцы
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>  --%>
      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">

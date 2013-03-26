@@ -10,12 +10,46 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityView-smo_spo.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="Номер" property="id" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="Дата открытия" property="dateStart" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Дата закрытия" property="dateFinish" guid="e4dcd1af-9c73-47f4-9c6a-a84b94bb9c58" />
-      <msh:tableColumn columnName="Количество визитов" property="visitsCount" guid="9195faa3-a32b-42a1-8efa-3ca84bc74b66" />
-      <msh:tableColumn columnName="Количество дней" property="daysCount" guid="f65381b5-6e76-4a75-be15-8933a0c1de82" />
+  	<ecom:webQuery name="listSpo" nativeSql=" select spo.id
+  	,to_char(spo.dateStart,'dd.mm.yyyy') as dateStart
+  	,to_char(spo.dateFinish,'dd.mm.yyyy') as dateFinish 
+  	, coalesce(spo.dateFinish,CURRENT_DATE)-spo.dateStart as cnt1 
+  	, count(distinct case when vis.noActuality='1' or vis.dateStart is null then null else vis.id end) as cnt2 
+  	, count(distinct case when vis.noActuality='1' or vis.dateStart is not null then null else vis.id end) as cnt3 
+  	, count(distinct case when vis.noActuality='1' then vis.id else null end) as cnt3 
+  	,to_char(max(vis.dateStart),'dd.mm.yyyy') as maxvisDateStart 
+  	,ovwf.name || ' '||owp.lastname as docfio 
+  	,list(distinct vvr.name) as vvrname
+  	,list(distinct mkb.code||' '||vpd.name) as diag 
+  	from medCase spo 
+  	left join WorkFunction owf on owf.id=spo.ownerFunction_id 
+  	left join Worker ow on ow.id=owf.worker_id 
+  	left join Patient owp on owp.id=ow.person_id 
+  	left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
+  	left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit' 
+  	left join Diagnosis diag on diag.medcase_id=vis.id 
+  	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
+  	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id 
+  	left join VocVisitResult vvr on vvr.id=vis.visitResult_id 
+  	left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id 
+  	where spo.DTYPE='PolyclinicMedCase' and spo.patient_id='${param.id}' 
+  	 
+  	group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname 
+  	order by spo.dateStart
+  	"/>
+    <msh:table name="listSpo" action="entityView-smo_spo.do" viewUrl="entityView-smo_spo.do?short=Short" idField="1"
+    >
+      <msh:tableColumn columnName="Номер" property="1" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
+      <msh:tableColumn columnName="Дата открытия" property="2"/>
+      <msh:tableColumn columnName="Дата закрытия" property="3"/>
+      <msh:tableColumn columnName="Длит-ть" property="4" />
+      <msh:tableColumn columnName="Кол-во визитов" property="5" />
+      <msh:tableColumn columnName="Кол-во направ." property="6" />
+      <msh:tableColumn columnName="Кол-во недейс." property="7" />
+      <msh:tableColumn columnName="Дата посл. визита" property="8"/>
+      <msh:tableColumn columnName="Специалист" property="9"/>
+      <msh:tableColumn columnName="Результат визитов" property="10"/>
+      <msh:tableColumn columnName="Диагнозы" property="11"/>
     </msh:table>
   </tiles:put>
 </tiles:insert>

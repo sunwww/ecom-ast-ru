@@ -283,7 +283,7 @@ where  (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
 and (vss.code = 'OBLIGATORYINSURANCE'
  and (pol.id is null or (polI.dtype = 'MedPolicyOmc' and ri.omcCode='10'))  or vss.code='OTHER') 
 ${addPat} ${addEmergency}  ${isDischarge}
-${addDuration}
+${addDuration1}
 
 group by  hmc.id  , 
 hmc.dateStart ,hmc.dateFinish,pat.id
@@ -450,7 +450,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
 and hmc.deniedHospitalizating_id is null
 ${departmentSql}
 ${addPat} ${addEmergency}  ${isDischarge}
-${addDuration}
+${addDuration1}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
     , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
@@ -581,8 +581,9 @@ order by dep.name,vss.name
    function checkFieldUpdate(aField,aValue,aDefault) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	eval('var aMax =  chk.length') ;
+   	if (aMax>aDefault) {aDefault=aMax}
    	if ((+aValue)>aMax) {
-   		chk[+aMax-1].checked='checked' ;
+   		chk[+aDefault-1].checked='checked' ;
    	} else {
    		chk[+aValue-1].checked='checked' ;
    	}

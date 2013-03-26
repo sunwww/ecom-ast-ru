@@ -15,18 +15,29 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
+  <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='6'"/>
+  <ecom:webQuery name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
+  <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
+  <ecom:webQuery name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
+  <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
   	String sexWoman = "1" ;
   	String typeAge=ActionUtil.updateParameter("Report14","typeAge","1", request) ;
   	String typeView=ActionUtil.updateParameter("Report14","typeView","1", request) ;
+  	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
+  	String dateAge="dateStart" ;
+  	if (typeDate!=null && typeDate.equals("2")) {
+  		dateAge="dateFinish" ;
+  	}
+  	request.setAttribute("dateAgeFld", dateAge) ;
   	if (typeAge!=null &&typeAge.equals("3")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
   				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-  				.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
   				.append(" -cast(to_char(p.birthday, 'mm') as int)")
-  				.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
   				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
   				.append(" <0)")
   				.append(" then -1 else 0 end) < 18 ") ;
@@ -34,11 +45,11 @@
   		request.setAttribute("age_info", "В. Дети") ;
   	} else if (typeAge!=null &&typeAge.equals("2")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
 			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
 			.append(" then -1 else 0 end) > case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
@@ -46,11 +57,11 @@
   		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
   	} else if (typeAge!=null &&typeAge.equals("1")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
 			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
 			.append(" then -1 else 0 end) >= 18 ") ;
@@ -59,23 +70,23 @@
   		request.setAttribute("reportInfo", "А. Взрослые") ;
   	} else if (typeAge!=null &&typeAge.equals("4")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
 			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
-			.append(" then -1 else 0 end) < 2 ") ;
+			.append(" then -1 else 0 end) < 1 ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "до года") ;
   	} else if (typeAge!=null &&typeAge.equals("5")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
 			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
 			.append(" then -1 else 0 end) between 0 and 14 ") ;
@@ -83,26 +94,36 @@
   		request.setAttribute("reportInfo", "0-14") ;
   	} else if (typeAge!=null &&typeAge.equals("6")) {
   		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.dateFinish,'yyyy') as int)")
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
 			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.dateFinish,'dd') as int)") 
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
 			.append(" then -1 else 0 end) between 15 and 17 ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "15-17") ;
   	}
-  	request.setAttribute("result_death", "6") ;
-  	request.setAttribute("orderType_amb", "3") ;
+  	//request.setAttribute("result_death", "6") ;
+  	//request.setAttribute("orderType_amb", "3") ;
+  	ActionUtil.getValueByList("result_death_sql", "result_death", request) ;
+  	ActionUtil.getValueByList("orderType_amb_sql", "orderType_amb", request) ;
+
   	String dep = request.getParameter("department") ; 
   	if (dep!=null&&!dep.equals("")&&!dep.equals("0")) {
   		request.setAttribute("department", " and sloa.department_id='"+dep+"'") ;
   	}
-  	request.setAttribute("diag_typeReg_cl", "4") ;
-  	request.setAttribute("diag_typeReg_pat", "5") ;
-  	request.setAttribute("diag_priority_m", "1") ;
+  	String hospType = request.getParameter("hospType") ; 
+  	if (hospType!=null&&!hospType.equals("")&&!hospType.equals("0")) {
+  		request.setAttribute("hospTypeSql", " and sls.hospType_id='"+hospType+"'") ;
+  	}
+  	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
+  	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
+  	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
+  	//request.setAttribute("diag_typeReg_cl", "4") ;
+  	//request.setAttribute("diag_typeReg_pat", "5") ;
+  	//request.setAttribute("diag_priority_m", "1") ;
   	if (noViewForm!=null && noViewForm.equals("1")) {
   	} else {
   		
@@ -113,8 +134,17 @@
     <input type="hidden" name="id" id="id" value=""/>
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
+      <msh:row>
+        <td class="label" title="Возраст считать нам момент (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Возраст считать:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDate" value="1">  на момент поступления
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDate" value="2"  >  на момент выписки
+        </td>
+       </msh:row>
       <msh:row>
         <td class="label" title="Возрастная группа (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возрастная группа:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -163,6 +193,9 @@
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип стационара" vocName="vocHospType"/>
+        </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
         <msh:textField property="dateEnd" label="по" />
@@ -178,6 +211,7 @@
            <script type='text/javascript'>
            checkFieldUpdate('typeAge','${typeAge}',1) ;
            checkFieldUpdate('typeView','${typeView}',1) ;
+           checkFieldUpdate('typeDate','${typeDate}',2) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -245,7 +279,7 @@
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Свод по отдениям</msh:sectionTitle>
+    <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="report14swod" nativeSql="
 select 
@@ -271,19 +305,19 @@ where
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and sloa.dateFinish is not null
-${age_sql}
+${age_sql} ${hospTypeSql}
 group by sloa.department_id,ml.name
 order by ml.name
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Кол-во выписанных" property="3"/>
-      <msh:tableColumn columnName="из них доставленых по экстренным показаниям" property="4"/>
-      <msh:tableColumn columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
-      <msh:tableColumn columnName="Проведено выписанными койко-дней" property="6"/>
-      <msh:tableColumn columnName="Умерло" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="6"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Умерло" property="7"/>
     </msh:table>
     
     </msh:sectionContent>
@@ -309,14 +343,17 @@ order by ml.name
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
 select 
-sls.id as slsid,list(vrspt.strCode) as listStr
+sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
+left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+where vrspt.classname='F14_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
+) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,cast(to_char(sls.dateFinish,'yyyy') as int)
+,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
-+(case when (cast(to_char(sls.dateFinish, 'mm') as int)
++(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
 -cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(sls.dateFinish,'dd') as int) 
++(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0)
 then -1 else 0 end) as age
@@ -342,18 +379,16 @@ left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 left join MedCase sloa on sloa.parent_id=sls.id
 left join BedFund bf on bf.id=sloa.bedFund_id
-left join ReportSetTYpeParameterType rspt on mkb.code between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
 where sls.dtype='HospitalMedCase' 
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
-and vrspt.id='${param.strcode}'
+
 and sloa.dateFinish is not null
 ${department}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-${age_sql}
-and vrspt.classname='F14_DIAG' 
+${age_sql}  ${hospTypeSql}
+
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
@@ -423,14 +458,14 @@ and vrspt.classname='F14_DIAG'
 ${department} and sloa.dateFinish is not null
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
-${age_sql}
+${age_sql}  ${hospTypeSql}
  
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -466,11 +501,11 @@ select
 sls.id as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,cast(to_char(sls.dateFinish,'yyyy') as int)
+,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
-+(case when (cast(to_char(sls.dateFinish, 'mm') as int)
++(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
 -cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(sls.dateFinish,'dd') as int) 
++(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0)
 then -1 else 0 end) as age
@@ -507,7 +542,7 @@ and vrspt.id='${param.strcode}'
 and sloa.dateFinish is not null
 ${department}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-${age_sql}
+${age_sql}  ${hospTypeSql}
 and vrspt1.classname='F14_DIAG' 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -593,14 +628,14 @@ order by p.lastname,p.firstname,p.middlename " />
     and vpd.id='${diag_priority_m}'
     )
     ) between rspt.codefrom and rspt.codeto
-    ${age_sql}
+    ${age_sql}  ${hospTypeSql}
      
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />
         <msh:table name="report14swod" 
-        viewUrl="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -634,11 +669,11 @@ order by p.lastname,p.firstname,p.middlename " />
     sls.id as slsid
     ,ss.code as sscode
     ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-    ,cast(to_char(sls.dateFinish,'yyyy') as int)
+    ,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
     -cast(to_char(p.birthday,'yyyy') as int)
-    +(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+    +(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
     -cast(to_char(p.birthday, 'mm') as int)
-    +(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+    +(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
     - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
     <0)
     then -1 else 0 end) as age
@@ -685,7 +720,7 @@ order by p.lastname,p.firstname,p.middlename " />
     and sloa.dateFinish is not null
     ${department}
     and sls.result_id='${result_death}'
-    ${age_sql}
+    ${age_sql}  ${hospTypeSql}
     and 
     coalesce(
     (select mkb.code from Diagnosis diag 
@@ -772,13 +807,13 @@ between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyy
 and sloa.dateFinish is not null
 ${department}
 and vrspt.classname='F14_OPER' 
-${age_sql}
+${age_sql}  ${hospTypeSql}
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
@@ -817,11 +852,11 @@ so.id as soid
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename
 ,sls.dateStart,sls.dateFinish
-,cast(to_char(sls.dateFinish,'yyyy') as int)
+,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
-+(case when (cast(to_char(sls.dateFinish, 'mm') as int)
++(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
 -cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(sls.dateFinish,'dd') as int) 
++(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0)
 then -1 else 0 end)
@@ -841,7 +876,7 @@ where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegi
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
 and vrspt1.classname='F14_OPER'
-${age_sql}
+${age_sql}  ${hospTypeSql}
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.code ,ms.name,ms.additioncode

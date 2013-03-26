@@ -23,6 +23,7 @@
     	left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id  
     	left join mislpu as d on d.id=m.department_id 
     	left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    	left join Omc_Oksm ok on p.nationality_id=ok.id
     	where m.DTYPE='HospitalMedCase' and m.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') 
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	and cast(m.ambulanceTreatment as int)=1 ${hospT} 

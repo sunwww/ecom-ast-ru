@@ -24,6 +24,7 @@
     from Ticket t left join medcard m on m.id=t.medcard_id     
     left join Patient p on p.id=m.person_id     
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
     left join workfunction wf on wf.id=t.workFunction_id    
     left join vocworkfunction vwf on vwf.id=wf.workFunction_id    
     left join worker  w on w.id=wf.worker_id    

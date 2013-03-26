@@ -44,7 +44,10 @@
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иностранцы
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>
       <msh:row>
@@ -200,6 +203,7 @@
     left join patient p on p.id=hmc.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
     ${dep} ${servStream} ${bedSubTypeSql}
     group by ${addGroup} m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name
@@ -247,6 +251,7 @@
     left join patient p on p.id=hmc.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where upper(m.DTYPE)=upper('DepartmentMedCase') and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,vbt.id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vas.name,d.name
@@ -301,6 +306,7 @@
     left join patient p on p.id=hmc.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where m.DTYPE='DepartmentMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,m.bedfund_id,vbst.id,vbt.name,vbst.name,vss.name,d.name
@@ -344,6 +350,7 @@
     left join patient p on p.id=hmc.patient_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where m.DTYPE='DepartmentMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${add}
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,vbst.id,vbt.id,vbt.name,vbst.name,d.name
@@ -481,7 +488,7 @@ if (typeView.equals("2")) {
     //var typeDate = document.forms[0].typeDate ;
     checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
-    checkFieldUpdate('typePatient','${typePatient}',3) ;
+    checkFieldUpdate('typePatient','${typePatient}',4) ;
     checkFieldUpdate('typeStatus','${typeStatus}',2) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
     

@@ -5,6 +5,33 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="style" type="string">
+        <style type="text/css">
+
+            #concomitantDiagnosLabel, #concomitantMkbLabel {
+                color: green ;
+            }
+
+            #concludingDiagnosLabel, #concludingMkbLabel, #concludingActuityLabel {
+                color: blue ;
+            }
+            #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
+                color: red ;
+            }
+            
+            .epicrisis {
+				left:0px;  width:99%; 
+				top:0px;  height:45em;
+			}
+			#epicriPanel {
+			width:100%;
+			}
+			.dischargeEpicrisis {
+			width:100%;
+			}
+        </style>
+
+    </tiles:put>
 
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="stac_deathCaseForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
@@ -22,34 +49,86 @@
     <!-- 
     	  - Случай смерти
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_deathCase.do" defaultField="deathDate" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
-      <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
-      <msh:hidden property="saveType" guid="5344b5d6-fefa-45e5-9221-3e6060a89d25" />
-      <msh:hidden property="medCase" guid="710eb92b-fc3f-4390-b32df6837280" />
-      <msh:hidden property="patient" guid="710eb92b-fc3f-4b44-9390-b32df6837280" />
-      <msh:hidden property="deathPlaceAddress" guid="710eb3f-4b44-9390-b32df6837280" />
-      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
-        <msh:separator label="Основные сведения" colSpan="" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
-        <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">
-          <msh:textField property="deathDate" label="Дата смерти" guid="a7996448-21ee-4647-b7bb-0d8501b9c2c5" />
-          <msh:textField property="deathTime" label="время" guid="11dd2d9a-3b35-4620-be61-eaede78e8a7a" />
+    <msh:form action="/entityParentSaveGoView-stac_deathCase.do"
+    	 defaultField="postmortemBureauNumber" >
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="medCase" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="deathPlaceAddress" />
+      <msh:hidden property="deathPlaceFlatNumber" />
+      <msh:hidden property="deathPlaceHouseNumber" />
+      <msh:hidden property="deathPlaceHouseBuilding" />
+      
+      <msh:panel colsWidth="1%,1%,1%">
+      	<msh:row>
+      		<msh:separator label="Основные сведения" colSpan="4"/>
+      	</msh:row>
+        <msh:row>
+          <msh:textField property="deathDate" label="Дата смерти" />
+          <msh:textField property="deathTime" label="время" />
         </msh:row>
-        <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
+        <msh:row>
+          <msh:textField property="postmortemBureauNumber" label="№ПАБ" />
+          <msh:textField property="postmortemBureauDate" label="Дата ПАБ" />
+        </msh:row>
+        <msh:row>
+          <msh:textField property="dateForensic" label="Дата МСЭ" />
+          <msh:checkBox property="isAutopsy" label="Вскрытие" />
+        </msh:row>
+        
+        <msh:row>
           <msh:autoComplete vocName="vocDeathPlace" property="deathPlace" label="Место смерти" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b216c" />
         </msh:row>
-        <msh:row guid="1da6d4c4-abb4-4a9b-bee3-a4618fa4ac95">
+        <msh:row>
           <msh:autoComplete showId="false" vocName="vocDeathReason" hideLabel="false" property="deathReason" viewOnlyField="false" label="Смерть произошла от:" guid="9eb66c69-6860-4464-b671-48494ec2dc85" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="e034c8ae-b8b7-40f8-82a7-eac5979cc85e">
+        <msh:row>
+        	<msh:textArea property="commentReason" label="Причина смерти" fieldColSpan="3" horizontalFill="true" rows="2"/>
+        </msh:row>
+        <msh:row>
           <td colspan="1" title="Адрес (deathPlaceAddressField)" class="label">
             <label id="deathPlaceAddressFieldLabel" for="deathPlaceAddressField">Адрес места смерти:</label>
           </td>
-          <td colspan="3" class="deathPlaceAddressField">
+          <td colspan="3" class="deathPlaceAddressField" id="deathPlaceAddressFieldRow">
             <input title="АдресNoneField" class=" horizontalFill" id="deathPlaceAddressField" name="deathPlaceAddressField" size="10" value="Адрес... " type="text" />
           </td>
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Диагнозы" colSpan="6"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" horizontalFill="true" label="Характер заболевания"
+        		fieldColSpan="3"
+        	/>
+        </msh:row>
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 закл.диаг." property="concludingMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+	        <msh:textArea rows="3" label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+    	    <msh:autoComplete vocName="vocIdc10" label="МКБ-10 патанат.диаг." property="pathanatomicalMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textArea rows="3" label="Патанатомический диагноз" property="pathanatomicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:separator label="Расхождения " colSpan="6"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="categoryDifference" label="Категория" vocName="vocDeathCategory"/>
+        	<msh:autoComplete property="latrogeny" label="Ятрогения" vocName="vocDeathCategory"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete fieldColSpan="3" property="diagnosisDifference" label="Приор. диагноза" vocName="vocPriorityDiagnosis" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textArea property="commentCategory" label="Комментарий" fieldColSpan="5" horizontalFill="true" rows="4"/>
+        </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/DeathCase/Child">
-        <msh:separator label="Для детей, умерших в возрасте до 1 года" colSpan="" guid="d4313623-45ca-43cc-826d-bc1b6" />
+        <msh:separator label="Для детей, умерших в возрасте до 1 года" colSpan=""/>
         <msh:row guid="d62f29-4e95-42a5-9063-9255a8">
           <msh:textField property="birthPlace" label="Место рождения" guid="80346725-7478-4afa-bc1d-f6e331bbff19" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
@@ -71,15 +150,10 @@
           <msh:textField property="birthWeight" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" labelColSpan="2" label="Масса (вес) при рождении, гр." />
         </msh:row>
         </msh:ifInRole>
-        <msh:separator label="В случае смерти от несчастного случая, отравления или травмы" colSpan="" guid="d4313623-45ca-43cc-821b6" />
+        <msh:separator label="В случае смерти, не от заболевания" colSpan="" guid="d4313623-45ca-43cc-821b6" />
         <msh:row guid="9b781b-afb9aedfb7a8">
-          <msh:textField label="Дата (травмы) отравления" property="accidentDate" guid="fff1dd9f3fad" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="f2aba5-68fb-4ccc-9982-7b4480cmca147">
-          <msh:autoComplete vocName="vocAccidentSubType" property="accidentSubType" label="Вид травмы" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" />
-        </msh:row>
-        <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
-          <msh:textField label="Место" property="accidentPlace" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" fieldColSpan="3" horizontalFill="true" />
+          <msh:textField label="Дата (травмы) отравления" property="accidentDate" guid="fff1dd9f3fad" />
+          <msh:textField label="Место" property="accidentPlace" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" fieldColSpan="1" horizontalFill="true" />
         </msh:row>
         <msh:row guid="a3509d1f-9324-49ca8f12a9347">
           <msh:textField property="accidentCircumstance" label="Обстоятельства" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" fieldColSpan="3" horizontalFill="true" />
@@ -97,6 +171,23 @@
         <msh:row guid="f2a5-68fb-4ccc-9982-7b4447">
           <msh:autoComplete vocName="vocAfterPregnance" property="afterPregnance" label="Умерла после окончания беременности" fieldColSpan="2" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" labelColSpan="2" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow colSpan="" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
@@ -122,11 +213,37 @@
         </msh:section>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
-    <tags:addressCity form="stac_deathCaseForm" name="deathPlaceAddress" addressField="deathPlaceAddressField" />
+<script type="text/javascript" src='./dwr/interface/AddressService.js' ></script>
+    <tags:addressNewTag form="stac_deathCaseForm" name="deathPlaceAddress" zipcode="" flatNumber="deathPlaceFlatNumber" houseNumber="deathPlaceHouseNumber" houseBuilding="deathPlaceHouseBuilding" addressField="deathPlaceAddressField" />
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_deathCaseForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>
-  <tiles:put name="javascript" type="string" />
+  <tiles:put name="javascript" type="string" >
+          <msh:ifFormTypeIsNotView formName="stac_deathCaseForm" guid="518fe547-aed9-be2229f04ba3">
+      <script type="text/javascript">//var theBedFund = $('bedFund').value;
+       
+  		try {
+	    if (pathanatomicalMkbAutocomplete) 
+	    	pathanatomicalMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('pathanatomicalMkb','pathanatomicalDiagnos');
+	    });} catch(e) {}
+  		try {
+	    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('concomitantMkb','concomitantDiagnos');
+	    });} catch(e) {}
+  		function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
+      
+    </script>
+    </msh:ifFormTypeIsNotView>
+  
+  </tiles:put>
 </tiles:insert>
 

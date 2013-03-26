@@ -26,7 +26,8 @@
     left join worker  w on w.id=wf.worker_id    
     left join patient wp on wp.id=w.person_id    
     left join vocIdc10 mkb on mkb.id=t.idc10_id    
-    left join vocreason vr on vr.id=t.vocreason_id    
+    left join vocreason vr on vr.id=t.vocreason_id  
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
     where t.date  =  to_date('${date}','dd.mm.yyyy')
     and t.status='2' ${add}     order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     

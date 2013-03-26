@@ -50,7 +50,7 @@
       <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание крови" title="Добавить переливание крови" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" />
       <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание транс.сред, кроме крови" title="Добавить переливание кроме трансфузионных сред всех, кроме крови" guid="42b3d7fc-e998-458f-b259-0c865d5270b8" />
     	
-    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операции"  
+    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"  
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
     	/>
 
@@ -268,7 +268,7 @@
       
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
             	where slo.id='${param.id}' and d.DTYPE='Protocol'
-            	order by  d.dateRegistration desc,  d.timeRegistration"/>
+            	order by  d.dateRegistration desc,  d.timeRegistration desc"/>
 
           <msh:table hideTitle="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableColumn columnName="#" property="sn"/>
