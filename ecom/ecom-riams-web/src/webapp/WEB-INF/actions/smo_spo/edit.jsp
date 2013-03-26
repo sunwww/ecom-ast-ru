@@ -7,7 +7,6 @@
 
   <tiles:put name="body" type="string">
     <!-- 
-    	  - Проба
     	  -->
     <msh:form guid="formHello" action="/entityParentSaveGoView-smo_spo.do" defaultField="dateStart">
       <msh:hidden guid="hiddenId" property="id" />
@@ -41,35 +40,74 @@
       <msh:ifInRole roles="/Policy/Mis/MedCase/Direction">
       <msh:section guid="sectionChilds" title="Направленные">
         <ecom:webQuery name="directions" nativeSql="
-        select v.id , wcd.calendarDate , wct.timeFrom 
-, owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename 
-, vr.name 
+         select v.id , wcd.calendarDate , wct.timeFrom 
+ ,ovwf.name as ovwfname
+, owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename  as fiodoc
+, vr.name as vrname
+, vss.name as vssname
+,case when v.noActuality='1' then 'Неактуален' else '' end as actual
 from MedCase v
 left join WorkCalendarDay wcd on v.datePlan_id = wcd.id 
 left join WorkCalendarTime wct on v.timePlan_id = wct.id 
 left join WorkFunction owf on owf.id=v.orderWorkFunction_id
+left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 left join Worker ow on owf.id = ow.id 
 left join Patient owp on ow.person_id = owp.id 
 left join VocReason vr on v.visitReason_id = vr.id 
+left join VocServiceStream vss on vss.id=v.serviceStream_id
 where v.parent_id='${param.id}' 
 and v.DTYPE='Visit' 
 and v.dateStart is null"/>
-        <msh:table guid="tableChilds" name="directions" action="entityParentView-smo_visit.do" idField="1">
+        <msh:table guid="tableChilds" name="directions" action="entityParentView-smo_visit.do" 
+        idField="1">
           <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="709291f1-be97-4cd5-87c3-04a112a96639" />
           <msh:tableColumn columnName="Дата" property="2" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
           <msh:tableColumn columnName="Время" property="3" guid="a744754f-5212-4807-910f-e4b252aec108" />
-          <msh:tableColumn columnName="Кто направил" property="4" guid="bf4cb2b2-eb35-4e8f-b8cb-4ccccb06d5ac" />
-          <msh:tableColumn columnName="Цель визита" property="5" guid="470b21ea-45ac-43b3-b592-349baaad13a8" />
+          <msh:tableColumn columnName="Раб.функция направителя" property="4" guid="bf4cb2b2-eb35-4e8f-b8cb-4ccccb06d5ac" />
+          <msh:tableColumn columnName="Кто направил" property="5" guid="bf4cb2b2-eb35-4e8f-b8cb-4ccccb06d5ac" />
+          <msh:tableColumn columnName="Цель визита" property="6" guid="470b21ea-45ac-43b3-b592-349baaad13a8" />
+          <msh:tableColumn columnName="Поток обслуживания" property="7" guid="470b21ea-45ac-43b3-b592-349baaad13a8" />
+          <msh:tableColumn columnName="Актуальность" property="8" guid="470b21ea-45ac-43b3-b592-349baaad13a8" />
         </msh:table>
       </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/View">
       <msh:section title="Исполненные визиты" guid="b5483338-a80a-45a8-881e-0f17c8e752d7">
-        <ecom:webQuery name="visits" nativeSql="select MedCase.id&#xA;        , MedCase.dateStart&#xA;&#x9;, Patient.lastname || ' ' ||  Patient.firstname || ' ' ||  Patient.middlename&#xA;  from MedCase&#xA;  left outer join WorkFunction     on MedCase.workFunctionExecute_id = WorkFunction.id&#xA;  left outer join Worker           on WorkFunction.worker_id = Worker.id&#xA;  left outer join Patient          on Worker.person_id       = Patient.id&#xA; where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='Visit'&#xA;   and MedCase.dateStart is not null&#xA;" guid="e0eb2cf2-270c-43ac-9bae-f59ec0866558" />
-        <msh:table idField="1" name="visits" action="entityParentView-smo_visit.do" guid="29d25014-7b5a-4030-846b-52223513c331">
+        <ecom:webQuery name="visits" nativeSql="
+ select vis.id as visid, vis.dateStart as visdatestart
+ ,vwf.name as vwfname 
+, pat.lastname || ' ' ||  pat.firstname || ' ' ||  pat.middlename as fio
+,vr.name as vrname,vvr.name as vvrname,vss.name as vssname
+,list(distinct mkb.code||' '||vpd.name)
+from MedCase vis
+    left join WorkFunction wf on vis.workFunctionExecute_id = wf.id
+    left join VocWorkFunction vwf on vwf.id=wf.workFunction_id   
+    left join Worker w on wf.worker_id = w.id   
+    left join Patient pat on w.person_id = pat.id  
+    left join VocReason vr on vis.visitReason_id = vr.id 
+    left join VocServiceStream vss on vss.id=vis.serviceStream_id
+    left join Diagnosis diag on diag.medcase_id=vis.id
+    left join VocIdc10 mkb on mkb.id=diag.idc10_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    left join VocVisitResult vvr on vvr.id=vis.visitResult_id
+
+where vis.parent_id='${param.id}'
+and vis.DTYPE='Visit'    
+and vis.dateStart is not null 
+group by vis.id, vis.dateStart,vwf.name, pat.lastname,  pat.firstname,  pat.middlename
+,vr.name ,vss.name,vvr.name
+order by vis.dateStart
+        " guid="e0eb2cf2-270c-43ac-9bae-f59ec0866558" />
+        <msh:table idField="1" name="visits" viewUrl="entityShortView-smo_visit.do" action="entityParentView-smo_visit.do" guid="29d25014-7b5a-4030-846b-52223513c331">
           <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="b054f045-3162-4186-83a9-6b5cabdebc17" />
           <msh:tableColumn columnName="Дата" property="2" guid="9a7bc699-7753-48ea-a2b5-82f2d4abb019" />
-          <msh:tableColumn columnName="Исполнитель" property="3" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Раб. функция врача" property="3" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="ФИО врача" property="4" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Цель визита" property="5" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Результат" property="6" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Поток" property="7" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Диагноз" property="8" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          
         </msh:table>
       </msh:section>
       </msh:ifInRole>
@@ -104,10 +142,14 @@ and v.dateStart is null"/>
     <msh:ifFormTypeIsView formName="smo_spoForm" guid="625411c7-8b7e-4d5b-acae-4fe679e24094">
       <msh:sideMenu guid="sideMenu-123" title="СПО">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_spo" name="Изменить" roles="/Policy/Mis/MedCase/Spo/Edit" />
-        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-smo_spo" name="Удалить" roles="/Policy/Mis/MedCase/Spo/Delete" />
+        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-smo_spo" name="Удалить" roles="/Policy/Mis/MedCase/Spo/Delete" />
         <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
         	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
         />
+		<msh:sideLink params="id" action="/js-smo_spo-reopenSpo" name="Открыть СПО" title="Открыть СПО" confirm="Открыть СПО?" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Reopen" />
+		<msh:sideLink params="id" action="/js-smo_spo-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+5" roles="/Policy/Mis/MedCase/Spo/Close" />
+      	<tags:mis_choiceSpo hiddenNewSpo="1" method="unionSpos" methodGetPatientByPatient="getOpenSpoBySmo" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Объединить с другим СПО" />
+        
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>

@@ -1,6 +1,10 @@
 package ru.ecom.mis.web.action.util;
 
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
+
+import ru.ecom.ejb.services.query.WebQueryResult;
 
 public class ActionUtil {
 	public static String updateParameter(String aSession, String aNameParameter, String aDefaultValue ,HttpServletRequest aRequest) {
@@ -25,6 +29,10 @@ public class ActionUtil {
 		aRequest.getSession(true).setAttribute(aSession+"."+aNameParameter, aValue) ;
 		aRequest.setAttribute(aNameParameter, aValue) ;		
 		return aValue ;
+	}
+	public static void getValueByList(String aNameGet,String aNameSet,HttpServletRequest aRequest) {
+		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
+		aRequest.setAttribute(aNameSet,col.isEmpty()?"0":""+col.iterator().next().get1()) ;
 	}
 
 }

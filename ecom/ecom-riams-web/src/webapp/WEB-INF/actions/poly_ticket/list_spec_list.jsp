@@ -29,7 +29,10 @@
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иностранцы
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>
         <msh:autoComplete vocName="workFunction" property="spec" 
@@ -88,6 +91,7 @@
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join Patient p on p.id=m.person_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id 
     left join Patient as wp on wp.id=w.person_id 
@@ -101,8 +105,8 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
             <msh:tableColumn columnName="Специалист" property="4"/>
-            <msh:tableColumn columnName="Кол-во беседа с род." property="5"/>
-            <msh:tableColumn columnName="Кол-во" property="3"/>
+            <msh:tableColumn columnName="Кол-во беседа с род." property="5" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во" property="3" isCalcAmount="true"/>
         </msh:table>
 	</msh:ifInRole>
 	<msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
@@ -110,7 +114,7 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
             <msh:tableColumn columnName="Специалист" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="3"/>
+            <msh:tableColumn columnName="Кол-во" property="3" isCalcAmount="true"/>
         </msh:table>
 	</msh:ifNotInRole>
     </msh:sectionContent>
@@ -124,6 +128,7 @@
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join vocidc10 as mkb on mkb.id=t.idc10_id 
     left join Patient p on p.id=m.person_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id 
@@ -140,8 +145,8 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="3"/>
             <msh:tableColumn columnName="Диагноз" property="4"/>
-            <msh:tableColumn columnName="Кол-во бесед" property="5"/>
-            <msh:tableColumn columnName="Кол-во" property="2"/>
+            <msh:tableColumn columnName="Кол-во бесед" property="5" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во" property="2" isCalcAmount="true"/>
         </msh:table>
     </msh:ifInRole>
     <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
@@ -149,7 +154,7 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="3"/>
             <msh:tableColumn columnName="Диагноз" property="4"/>
-            <msh:tableColumn columnName="Кол-во" property="2"/>
+            <msh:tableColumn columnName="Кол-во" property="2" isCalcAmount="true"/>
         </msh:table>
     </msh:ifNotInRole>
     </msh:sectionContent>
@@ -157,17 +162,16 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket_sum" nativeSql="select count(*)
     ,vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
-    , (select count(*) from Ticket t1 left join VocIdc10 
-    	as mkb on mkb.id=t1.idc10_id left join Medcard m1 
-    	on m1.id=t1.medcard_id where t1.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
-    	  and to_date('${dateEnd}','dd.mm.yyyy') and t1.workfunction_id=t.workfunction_id and mkb.code like 'Z%' ${add1} ) as idccnt 
-    ,count(case when cast(t.talk as int)=1  then 1 else null end) as cnttalk,wp.snils
+    , count(case when mkb.code like 'Z%' ${add1} then t.id else null end) as idccnt 
+    ,count(case when t.talk='1'  then 1 else null end) as cnttalk,wp.snils
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join Patient p on p.id=m.person_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join WorkFunction as wf on wf.id=t.workFunction_id 
     left join Worker as w on w.id=wf.worker_id 
     left join Patient as wp on wp.id=w.person_id 
+    left join VocIdc10 as mkb on mkb.id=t.idc10_id
     inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id  
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -179,9 +183,9 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="2"/>
             <msh:tableColumn columnName="СНИЛС спец." property="5"/>
-            <msh:tableColumn columnName="Кол-во Z*" property="3"/>
-            <msh:tableColumn columnName="Кол-во бесед" property="4"/>
-            <msh:tableColumn columnName="Всего" property="1"/>
+            <msh:tableColumn columnName="Кол-во Z*" property="3" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Кол-во бесед" property="4" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Всего" property="1" isCalcAmount="true"/>
         </msh:table>
     </msh:ifInRole>
     <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
@@ -189,8 +193,8 @@
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Специалист" property="2"/>
             <msh:tableColumn columnName="СНИЛС спец." property="5"/>
-            <msh:tableColumn columnName="Кол-во Z*" property="3"/>
-            <msh:tableColumn columnName="Всего" property="1"/>
+            <msh:tableColumn columnName="Кол-во Z*" property="3" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Всего" property="1" isCalcAmount="true"/>
         </msh:table>
     </msh:ifNotInRole>
     </msh:sectionContent>
@@ -205,21 +209,18 @@
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
      --%>
     <script type='text/javascript'>
-    var typePatient = document.forms[0].typePatient ;
-    // var period = document.forms[0].period ;
+    checkFieldUpdate('typePatient','${typePatient}',4) ;
     
-    /*
-    if ((+'${period}')==1) {
-    	period[0].checked='checked' ;
-    } else {
-    	period[1].checked='checked' ;
-    } */  
-    if ((+'${typePatient}')==1) {
-    	typePatient[0].checked='checked' ;
-    } else if ((+'${typePatient}')==2) {
-    	typePatient[1].checked='checked' ;
-    } else {
-    	typePatient[2].checked='checked' ;
+    
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	eval('var aMax =  chk.length') ;
+    	if (aMax>aDefault) {aDefault=aMax}
+    	if ((+aValue)>aMax) {
+    		chk[+aDefault-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
     }
     function find() {
     	var frm = document.forms[0] ;
@@ -229,7 +230,7 @@
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	frm.action='poly_ticketsBySpecialistPrint.do' ;
+    	frm.action='.do' ;
     }
     /*
     function getPeriod() {

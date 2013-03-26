@@ -31,8 +31,8 @@ public class ResultPatientListAction extends BaseAction {
 			aRequest.setAttribute("infoTypePat", "Поиск иностранцев ") ;
 		} else if (typePat.equals("2")){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
-			aRequest.setAttribute("addPat", " and (adr.addressId is not null and adr.kladr not like '30%')") ;
-			aRequest.setAttribute("addPat1", " and (adr1.addressId is not null and adr1.kladr not like '30%')") ;
+			aRequest.setAttribute("addPat", " and (adr.addressId is not null and adr.kladr not like '30%')   and (ok.id is null or ok.voc_code='643')") ;
+			aRequest.setAttribute("addPat1", " and (adr1.addressId is not null and adr1.kladr not like '30%')  and (ok1.id is null or ok1.voc_code='643')") ;
 			aRequest.setAttribute("infoTypePat", "Поиск проживающих в других регионах") ;
 		} else {
 			aRequest.setAttribute("addPat", "") ;
@@ -42,10 +42,12 @@ public class ResultPatientListAction extends BaseAction {
 		if (typeDuration.equals("1")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			aRequest.setAttribute("addDuration", " and sum(	  case when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart) end)>3 ") ;
+			aRequest.setAttribute("addDuration1", " and (	  case when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart) end)>3 ") ;
 			aRequest.setAttribute("infoTypeDuration", ", госпитализированных более 3х к.дней ") ;
 		} else if (typeDuration.equals("2")){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			aRequest.setAttribute("addDuration", " and sum(	  case when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart) end)<=3 ") ;
+			aRequest.setAttribute("addDuration1", " and (	  case when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart) end)<=3 ") ;
 			aRequest.setAttribute("infoTypeDuration", ", госпитализарованных до 3х к.дней включительно ") ;
 		} else {
 			aRequest.setAttribute("addDuration", "") ;

@@ -77,7 +77,7 @@
     from Ticket t left join medcard as m on m.id=t.medcard_id 
     left join Patient p on p.id=m.person_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
-    
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy')  
     and t.status='2' ${add} 
@@ -142,21 +142,18 @@
     <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
      --%>
     <script type='text/javascript'>
-    var typePatient = document.forms[0].typePatient ;
-    // var period = document.forms[0].period ;
+    checkFieldUpdate('typePatient','${typePatient}',4) ;
     
-    /*
-    if ((+'${period}')==1) {
-    	period[0].checked='checked' ;
-    } else {
-    	period[1].checked='checked' ;
-    } */  
-    if ((+'${typePatient}')==1) {
-    	typePatient[0].checked='checked' ;
-    } else if ((+'${typePatient}')==2) {
-    	typePatient[1].checked='checked' ;
-    } else {
-    	typePatient[2].checked='checked' ;
+    
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	eval('var aMax =  chk.length') ;
+    	if (aMax>aDefault) {aDefault=aMax}
+    	if ((+aValue)>aMax) {
+    		chk[+aDefault-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
     }
     function find() {
     	var frm = document.forms[0] ;

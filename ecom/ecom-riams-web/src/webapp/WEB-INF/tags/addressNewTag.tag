@@ -148,7 +148,7 @@
             $('${name}addressHouseNumber').value = $('${houseNumber}').value ;
             $('${name}addressHouseBuilding').value = $('${houseBuilding}').value ;
             $('${name}addressFlatNumber').value = $('${flatNumber}').value ;
-            $('${name}addressZipcode').value = $('${zipcode}').value ;
+            if ('${zipcode}'!='') $('${name}addressZipcode').value = $('${zipcode}').value ;
             //addressProvincialAreaPkAutocomplete.setVocId($('provincialAreaPk')) ;
 
 
@@ -208,7 +208,7 @@
         $('${houseNumber}').value = $('${name}addressHouseNumber').value ;
         $('${houseBuilding}').value = $('${name}addressHouseBuilding').value ;
         $('${flatNumber}').value = $('${name}addressFlatNumber').value ;
-        $('${zipcode}').value = $('${name}addressZipcode').value ;
+        if ('${zipcode}'!='') $('${zipcode}').value = $('${name}addressZipcode').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
 
         AddressService.getAddressString(addressPk, $('${name}addressHouseNumber').value, $('${name}addressHouseBuilding').value, $('${name}addressFlatNumber').value
@@ -258,9 +258,11 @@
         $('${addressField}').parentNode.innerHTML = "<span id='${name}addressPar'>"+
                                                  "Получение адреса..."
                 +"</span><input id='buttonShow${name}Address' type='button' value='"+inputLabel+"' onclick='show${name}Address()' />" ;
-
+                
+		var zipcode = '${zipcode}' ;
+		if (zipcode!='') zipcode=$(zipcode).value ;
         AddressService.getAddressString($('${name}').value
-                , $('${houseNumber}').value, $('${houseBuilding}').value, $('${flatNumber}').value,$('${zipcode}').value, {
+                , $('${houseNumber}').value, $('${houseBuilding}').value, $('${flatNumber}').value,zipcode, {
             callback: function(aString) {
                 $('${name}addressPar').innerHTML = aString ;
             }

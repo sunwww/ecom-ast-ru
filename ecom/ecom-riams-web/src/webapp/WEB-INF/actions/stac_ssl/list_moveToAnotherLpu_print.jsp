@@ -16,6 +16,7 @@
   	left join patient p on p.id=m.patient_id 
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
   	left join vocdeniedhospitalizating vdh on vdh.id = m.deniedhospitalizating_id 
+  	left join Omc_Oksm ok on p.nationality_id=ok.id
   	left join mislpu d on d.id=m.department_id 
   	left join StatisticStub ss on ss.id=m.statisticStub_id 
   	where m.DTYPE='HospitalMedCase' and m.dateFinish between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 

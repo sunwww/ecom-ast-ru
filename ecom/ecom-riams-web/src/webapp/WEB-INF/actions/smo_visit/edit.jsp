@@ -7,10 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Проба
-    	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-smo_visit.do" defaultField="dateStart">
+    <msh:form action="/entitySaveGoView-smo_visit.do" defaultField="dateStart">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="hiddenParent" property="parent" />
@@ -266,7 +263,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
-      	
+      	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       </msh:sideMenu>
       <msh:sideMenu title="Показать" guid="1e56f157-fd4c-4c13-9275-cfe7868b4ceb">
         <msh:sideLink params="id" action="/entityParentList-vac_vaccination" name="Вакцинации" title="Показать все вакцинации" roles="/Policy/Mis/Vaccination/View" guid="0b4406ba-1860-4063-a26a-ea11f6f9fb23" />

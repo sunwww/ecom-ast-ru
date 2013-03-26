@@ -41,11 +41,18 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/polyStart.jsp" />
         </action>
         <action path='/smo_journal_openSpo' type='ru.ecom.web.actions.base.ForwardAction'
-                name='stac_admissionJournalForm'
+                name='poly_journalBySpecForm'
                 validate='false'
                 scope="session"
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_openSpo.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_openSpo.jsp" />
+        </action>
+        <action path='/smo_journal_closeSpo' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_journalBySpecForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_closeSpo.jsp" />
         </action>
 
 <!--        <action path='/poly_medcardSearch' type='ru.ecom.poly.web.action.medcard.MedcardSearchAction'-->
@@ -164,16 +171,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_list.jsp" />
         </action>
-        <action path='/poly_ticketsBySpecialistPrint' type='ru.ecom.poly.web.action.ticket.TicketBySpecialistListAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                input='/WEB-INF/actions/poly_ticket/list_spec_print.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_print.jsp" />
-        </action>
-        
-        
         <action path='/poly_ticketsBySpecialistMkbData' type='ru.ecom.poly.web.action.ticket.TicketBySpecialistDataAction'
                 name='poly_ticketForm'
                 validate='false'
@@ -295,22 +292,6 @@
                 input='/WEB-INF/actions/poly_ticket/list_nonresident_list.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_list.jsp" />
-        </action>
-        <action path='/poly_problemTickets_list' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                input='/WEB-INF/actions/poly_ticket/list_mpolicy_list.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_mpolicy_list.jsp" />
-        </action>
-        <action path='/poly_problemTickets_print' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                input='/WEB-INF/actions/poly_ticket/list_mpolicy_data.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_mpolicy_data.jsp" />
         </action>
 
         <action path='/poly_ticketsByNonresidentPatientPrint' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'

@@ -20,12 +20,16 @@ public class TicketBySpecialistListAction  extends BaseAction {
 		
 		if (typePat.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
-			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "t.date", "p", "pvss", "pmp")) ;
+			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "t.date", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", " (по иногородним)") ;
 		} else if (typePat.equals("1")){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
-			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "t.date", "p", "pvss", "pmp")) ;
+			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "t.date", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", " (по региональным)") ;
+		} else if (typePat.equals("3")){
+			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+			aRequest.setAttribute("add", HospitalLibrary.getSqlGringo(true, "ok")) ;
+			aRequest.setAttribute("infoTypePat", "Поиск по иностранцам") ;
 		} else {
 			aRequest.setAttribute("add", "") ;
 			aRequest.setAttribute("infoTypePat", " (по всем)") ;

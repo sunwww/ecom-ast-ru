@@ -1,8 +1,13 @@
+<%@page import="java.util.Collection"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.awt.print.Printable"%>
+<%@page import="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="style" type="string">
@@ -25,28 +30,23 @@
     <!-- 
     	  - Хирургическая операция
     	  -->
-
+    	  <%
+        	SurgicalOperationForm frm = (SurgicalOperationForm)request.getAttribute("stac_surOperationForm") ;
+        	request.setAttribute("medcase", frm.getMedCase()) ;
+        	
+        %>
     <msh:form action="/entityParentSaveGoSubclassView-stac_surOperation.do" defaultField="" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
       <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e" colsWidth="15px,250px,15px">
-        <msh:hidden property="id" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
-        <msh:hidden property="patient" guid="e33f5f8a-ff2a-41d3-9487-b1bf168bc379" />
-        <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
-        <msh:hidden property="medCase" guid="77b53bb5-1d6f-4816-852d-2a0612d33303" />
-        <msh:hidden property="lpu" guid="57298530-fc77-496f-b415-e903df05a0e8" />
+        <msh:hidden property="id" />
+        <msh:hidden property="patient" />
+        <msh:hidden property="saveType" />
+        <msh:hidden property="medCase" />
+        <msh:hidden property="lpu" />
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="2" fieldColSpan="2"/>
         </msh:row>
         <msh:separator label="Сведения до операции" colSpan="" guid="a7a51c30-4065-4ab85b4ade6f66" />
-        <%--
-        <msh:row guid="03b71d93-07b4-4070-a1da-3f8752c80442">
-          <msh:textArea rows="6" hideLabel="false" property="preoperativeEpicrisis" viewOnlyField="false" label="Предоперационный эпикриз" guid="531235ed-942f-48b0-8c00-d3d30f7da592" fieldColSpan="3" />
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="eb0595fe-a9ab-4033-8bd7-ec5ce3fd35e2">
-            <td colspan="1">
-              <input type="button" value="Шаблон" onClick="showPreoperativeEpicrisisTempTemplateProtocol()" />
-            </td>
-          </msh:ifFormTypeIsNotView>
-        </msh:row> --%>
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:autoComplete property="idc10Before" label="МКБ до операции" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
         </msh:row>
@@ -77,9 +77,11 @@
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
         </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="abortion" vocName="vocAbortion" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
-        </msh:row>
+        <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
+	        <msh:row>
+	        	<msh:autoComplete property="abortion" vocName="vocAbortion" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
+	        </msh:row>
+        </mis:ifPatientIsWoman>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         	<msh:hidden property="surgeonFunctions"/>
         	<msh:hidden property="complications"/>
@@ -112,11 +114,11 @@
           <msh:autoComplete horizontalFill="true" vocName="vocOperationTechnology" property="technology" label="С испол. ВМТ"/>
         </msh:row>
         
-         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
-	         <msh:row>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
+	       <msh:row>
 	          <msh:checkBox property="base" label="Основная" guid="35bdec3d-2c23-47df-b8c7-4fb706224994" fieldColSpan="1" />
 	          <msh:checkBox property="minor" label="Малая операция" guid="a8774c57-1b50-4358-916d-ba51249357e7" />
-	        </msh:row>
+	       </msh:row>
         </msh:ifNotInRole>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">          
         
@@ -195,7 +197,6 @@
       <tags:templateProtocol property="operationText" name="OperationTextTemp" 
       idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
       />
-      <%--<tags:templateProtocol property="preoperativeEpicrisis" name="PreoperativeEpicrisisTemp" /> --%>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_surOperationForm" guid="e71c21cc-2a77-4d16-9ee0-ba293d19a42b">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View" guid="9a06820c-3f3b-4744-880d-06aa1745888d">

@@ -46,7 +46,8 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient as p on p.id=m.patient_id 
-    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join Omc_Oksm ok on p.nationality_id=ok.id 
     where m.DTYPE='DepartmentMedCase' and ${dateType } between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
     ${bedFund} ${addStatus} ${add } ${dep} ${servStream}
     order by p.lastname,p.firstname" 

@@ -62,12 +62,12 @@
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
-    	frm.action='stac_problemPolicy_list.do' ;
+    	//frm.action='.do' ;
     }
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	frm.action='stac_problemPolicy_print.do' ;
+    	//frm.action='.do' ;
     }
     function getPeriod() {
     	//var period = document.forms[0].period ;

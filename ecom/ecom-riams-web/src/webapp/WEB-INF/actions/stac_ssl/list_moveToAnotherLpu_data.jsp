@@ -27,6 +27,7 @@
   	left join vocdeniedhospitalizating vdh on vdh.id = m.deniedhospitalizating_id 
   	left join mislpu d on d.id=m.department_id 
   	left join StatisticStub ss on ss.id=m.statisticStub_id 
+  	left join Omc_Oksm ok on p.nationality_id=ok.id
   	where m.DTYPE='HospitalMedCase' and m.dateFinish between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
     and m.moveToAnotherLpu_id=${anotherLpu} ${addStatus} ${add}"/>
     <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено" guid="03092441-0d8d-421d-95ea-b110dd539b50">

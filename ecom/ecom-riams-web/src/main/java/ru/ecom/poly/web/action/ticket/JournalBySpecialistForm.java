@@ -144,4 +144,10 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 	/** Социальный статус */
 	private Long theSocialStatus;
 	
+	/** Отделение */
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+
+	/** Отделение */
+	private Long theDepartment;
 }
