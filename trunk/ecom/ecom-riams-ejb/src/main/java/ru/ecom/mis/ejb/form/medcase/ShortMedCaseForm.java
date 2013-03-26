@@ -5,6 +5,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
 /**
@@ -49,7 +50,7 @@ public class ShortMedCaseForm extends ChildMedCaseForm{
 
 	/** Дата выполнения */
 	@Comment("Дата выполнения")
-	@Persist @DateString @DoDateString
+	@Persist @DateString @DoDateString @MaxDateCurrent
 	public String getDateExecute() {return theDateExecute;}
 	public void setDateExecute(String aDateExecute) {theDateExecute = aDateExecute;}
 	

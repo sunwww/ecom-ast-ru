@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.birth;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;

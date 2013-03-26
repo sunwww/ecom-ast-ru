@@ -55,11 +55,15 @@ public class MedPolicyOmcForeign extends MedPolicy{
         StringBuilder sb = new StringBuilder();
         sb.append("Полис ОМС иногороднего: ") ;
         sb.append(getPolNumber()) ;
-        if(getActualDateFrom()!=null && getActualDateTo()!=null) {
+        if(getActualDateFrom()!=null) {
             sb.append(", действителен с ") ;
             sb.append(DateFormat.formatToDate(getActualDateFrom())) ;
             sb.append(" по ") ;
-            sb.append(DateFormat.formatToDate(getActualDateTo())) ;
+            if (getActualDateTo()!=null) {
+            	sb.append(DateFormat.formatToDate(getActualDateTo())) ;
+            } else {
+            	sb.append("нет даты окончания") ;
+            }
         }
         sb.append("Страховщика:");
         if(theInsuranceCompanyRegion!=null && !theInsuranceCompanyRegion.getName().equals("")) {

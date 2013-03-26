@@ -458,9 +458,9 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		wqr.set17(getDiagnos(medCase.diagnosOrder)) ;//"sls.diagnosisOrder",
 		//9. Диагноз при поступлении
 		wqr.set18(getDiagnos(medCase.diagnosEntrance)) ;//"sls.diagnosisAdmission",
-		wqr.set19(recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main")) ;
-		wqr.set20(recordDiagnosis(aCtx,slsId,"4","3","diagnosis.clinic.related")) ;
-		wqr.set21(recordDiagnosis(aCtx,slsId,"4","4","diagnosis.clinic.complication")) ;
+		wqr.set19(recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main")) ;
+		wqr.set20(recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related")) ;
+		wqr.set21(recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication")) ;
 		wqr.set22(recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main")) ;
 		wqr.set23(recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related")) ;
 		wqr.set24(recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication")) ;

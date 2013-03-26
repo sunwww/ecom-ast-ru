@@ -41,12 +41,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="medCase"),
 	@AIndex(properties="operationDate"),
 	@AIndex(properties={"surgeon"}),
-	//@AIndex(properties={"operationDate","surgeon"}),
 	@AIndex(properties={"operation"}),
 	@AIndex(properties={"medService"}),
 	@AIndex(properties="patient"),
 	@AIndex(properties="serviceStream"),
-	@AIndex(properties="department"),
+	@AIndex(properties="department")
     }) 
 @Table(schema="SQLUser")
 public class SurgicalOperation extends BaseEntity {

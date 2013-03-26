@@ -31,23 +31,33 @@ function onPreSave(aForm,aEntity , aCtx) {
 	
 }
 
-function onCreate(aForm, aWorkFunction, aContext) {
-	if ((0+aForm.group)==0 && (0+aForm.secUser)>0) {
+function onCreate(aForm, aEntity, aContext) {
+	if ((0+aForm.group)==0 && aForm.isCalendarCreate!=null&&aForm.isCalendarCreate) {
 		var calendar = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar() ;
 		calendar.workFunction = aWorkFunction ;
 		aContext.manager.persist(calendar) ;
-		aWorkFunction.workCalendar = calendar ;
+		aEntity.workCalendar = calendar ;
 	}
+	var date = new java.util.Date() ;
+	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
+
 	
 	//throw aEntity.worker.doctorInfo+""
 }
 
-function onSave(aForm, aWorkFunction, aContext) {
-	if(aWorkFunction.workCalendar==null) {
-		onCreate(aForm, aWorkFunction, aContext) ;
-	}
+function onSave(aForm, aEntity, aContext) {
+	//if(aWorkFunction.workCalendar==null) {
+	//	onCreate(aForm, aWorkFunction, aContext) ;
+	//}
 	//aContext.serviceInvoke("Hello", "helll", "asdf") ;
 	//throw "asdf";
+	var date = new java.util.Date() ;
+	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
+	
 }
 function errorThrow(aList) {
 	if (aList!=null && aList.size()>0) {

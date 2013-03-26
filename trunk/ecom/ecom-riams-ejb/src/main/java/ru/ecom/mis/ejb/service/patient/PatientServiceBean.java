@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -378,12 +379,24 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" and polNumber='").append(aNumber).append("'") ;
 			
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-			sql = new StringBuilder() ;
-			sql.append("update medpolicy set actualdateto=to_date('").append(aDateFrom).append("','dd.mm.yyyy')-1 where patient_id='").append(aPatientId)
+			try {
+				Date dat = DateFormat.parseSqlDate(aDateFrom) ;
+				Calendar cal = Calendar.getInstance() ;
+				cal.setTime(dat) ;
+				cal.add(Calendar.DAY_OF_MONTH, -1) ;
+				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+				String dateFrom = format.format(cal.getTime()) ;
+				sql = new StringBuilder() ;
+				sql.append("update medpolicy set actualdateto=(to_date('").append(dateFrom).append("','dd.mm.yyyy')) where patient_id='").append(aPatientId)
 				.append("' and actualdateFrom<to_date('").append(aDateFrom)
-				.append("','dd.mm.yyyy') and actualdateTo>to_date('").append(aDateFrom)
-				.append("','dd.mm.yyyy')") ;
+				.append("','dd.mm.yyyy') and (actualdateTo>=to_date('").append(aDateFrom)
+				.append("','dd.mm.yyyy') or actualdateTo is null)") ;
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} else {
 			sql = new StringBuilder() ;
 			sql.append("select count(*) from medpolicy ") ;
@@ -419,12 +432,23 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(", to_date('").append(aBirthday).append("','dd.mm.yyyy'),to_date('").append(aCurrentDate).append("','dd.mm.yyyy'))") ;
 				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 
-				sql = new StringBuilder() ;
-				sql.append("update medpolicy set actualdateto=to_date('").append(aDateFrom).append("','dd.mm.yyyy')-1 where patient_id='").append(aPatientId)
-					.append("' and actualdateFrom<to_date('").append(aDateFrom)
-					.append("','dd.mm.yyyy') and actualdateTo>to_date('").append(aDateFrom)
-					.append("','dd.mm.yyyy')") ;
-				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				try {
+					Date dat = DateFormat.parseSqlDate(aDateFrom) ;
+					Calendar cal = Calendar.getInstance() ;
+					cal.setTime(dat) ;
+					cal.add(Calendar.DAY_OF_MONTH, -1) ;
+					SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+					String dateFrom = format.format(cal.getTime()) ;
+					sql = new StringBuilder() ;
+					sql.append("update medpolicy set actualdateto=(to_date('").append(dateFrom).append("','dd.mm.yyyy')-1) where patient_id='").append(aPatientId)
+						.append("' and actualdateFrom<to_date('").append(aDateFrom)
+						.append("','dd.mm.yyyy') and (actualdateTo>=to_date('").append(aDateFrom)
+						.append("','dd.mm.yyyy') or actualdateTo is null)") ;
+					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				}
 			} else {
 				return false ;

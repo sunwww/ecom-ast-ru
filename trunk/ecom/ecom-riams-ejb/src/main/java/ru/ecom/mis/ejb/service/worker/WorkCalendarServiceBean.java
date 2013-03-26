@@ -199,7 +199,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			, Long aSpecialist, Long aDay, Long aTime
 			,String aPatientInfo,Long aPatientId, Long aOrderLpu) {
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select wct.id,wc.id from workcalendartime wct")
+		sql.append("select wct.id as wctid,wc.id as wcid,wf.id as wfid from workcalendartime wct")
 		.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
 		.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
 		.append(" left join workfunction wf on wc.workFunction_id=wf.id")
@@ -212,6 +212,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		System.out.println("sql="+sql) ;
 		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (l.size()>0) {
+			
 			sql = new StringBuilder() ;
 			 sql.append("select to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5)),case when wf.registrationInterval>0 then wf.registrationInterval when lpu1.registrationInterval>0 then lpu1.registrationInterval else lpu2.registrationInterval end from workCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join worker w on wf.worker_id=w.id left join MisLpu lpu2 on lpu2.id=w.lpu_id left join MisLpu lpu1 on lpu1.id=wf.lpu_id where wct.id='")
 				.append(aTime).append("' and wcd.id='").append(aDay)
@@ -234,7 +235,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			vis.setDatePlan(wcd) ;
 			WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTime) ;
 			vis.setTimePlan(wct) ;
-			WorkFunction wf = theManager.find(WorkFunction.class, aSpecialist) ;
+			WorkCalendar wc = theManager.find(WorkCalendar.class, aSpecialist) ;
+			WorkFunction wf = wc.getWorkFunction() ;
 			vis.setWorkFunctionPlan(wf) ;
 			List<VocServiceStream> lVss = theManager.createQuery("from VocServiceStream where code='OBLIGATORYINSURANCE' order by id").getResultList() ;
 			vis.setServiceStream(lVss.isEmpty()?null:lVss.get(0)) ;

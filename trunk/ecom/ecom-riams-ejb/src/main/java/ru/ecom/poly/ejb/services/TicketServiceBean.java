@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.util.JBossConfigUtil;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.form.TicketForm;
@@ -48,6 +52,62 @@ public class TicketServiceBean implements ITicketService {
 
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    public void unionSpos(Long aOldSpo,Long aNewSpo) {
+    	List<ShortMedCase> list = theManager.createQuery("from ShortMedCase where parent_id="+aOldSpo).getResultList() ;
+    	PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, aOldSpo) ;
+    	
+    	
+    	if (!list.isEmpty() && spoOld!=null) {
+    		PolyclinicMedCase spoNew = theManager.find(PolyclinicMedCase.class, aNewSpo) ;
+    		for (ShortMedCase vis:list) {
+				if (spoNew==null) throw new IllegalDataException("Неправильно определен СПО") ;
+	    		if (spoNew.getDateStart()!=null && spoNew.getDateStart().after(vis.getDateStart())) {
+	    			spoNew.setDateStart(vis.getDateStart()) ;
+	    			spoNew.setStartFunction(vis.getWorkFunctionExecute()) ;
+	    		}
+				vis.setParent(spoNew) ;
+				theManager.persist(vis) ;
+			}
+			theManager.persist(spoNew) ;
+			spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
+			theManager.remove(spoOld) ;
+    	}
+    }
+    public void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) {
+    	List<Object[]> list = theManager.createNativeQuery("select max(spo.id) as spo,count(allv.id) as allvid from medcase v left join medcase spo on spo.id=v.parent_id left join medcase allv on allv.parent_id=spo.id where v.id='"+aVisit+"' and (allv.dtype='Visit' or allv.dtype='ShortMedCase')").setMaxResults(1).getResultList() ;
+		ShortMedCase vis = theManager.find(ShortMedCase.class, aVisit) ;
+    	
+    	if (!list.isEmpty() && vis!=null) {
+    		Object[] spoA = list.get(0) ;
+    		Long spo = ConvertSql.parseLong(spoA[0]) ;
+    		Long cnt = ConvertSql.parseLong(spoA[1]) ;
+    		PolyclinicMedCase spoNew ;
+    		if (aNewSpo!=null&&!aNewSpo.equals(Long.valueOf(0))) {
+    			spoNew = theManager.find(PolyclinicMedCase.class, aNewSpo) ;
+    			if (spoNew==null) throw new IllegalDataException("Неправильно определен СПО") ;
+    		} else {
+    			spoNew = new PolyclinicMedCase() ;
+    			spoNew.setPatient(vis.getPatient()) ;
+    			spoNew.setDateStart(vis.getDateStart()) ;
+    			spoNew.setStartFunction(vis.getWorkFunctionExecute()) ;
+    			spoNew.setOwnerFunction(vis.getWorkFunctionExecute()) ;
+    		}
+    		if (spoNew.getDateStart().after(vis.getDateStart())) {
+    			spoNew.setDateStart(vis.getDateStart()) ;
+    		}
+    		theManager.persist(spoNew) ;
+    		vis.setParent(spoNew) ;
+    		theManager.persist(vis) ;
+    		System.out.print("спо="+spo+" кол-во визитов="+cnt) ;
+    		if (spo!=null && vis.getParent().getId()!=spo  && (cnt==null ||cnt.intValue()<2)) {
+    			System.out.print("удаление спо="+spo) ;
+    			
+    			PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, spo) ;
+    			spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
+    			theManager.remove(spoOld) ;
+    		}
+    	}
+    }
     
     public String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException  {
     	StringBuilder sqlMain = new StringBuilder() ;

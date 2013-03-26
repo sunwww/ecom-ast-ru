@@ -43,11 +43,15 @@ public class MedPolicyOmc extends MedPolicy {
         sb.append(getSeries()) ;
         sb.append(" ") ;
         sb.append(getPolNumber()) ;
-        if(getActualDateFrom()!=null && getActualDateTo()!=null) {
+        if(getActualDateFrom()!=null) {
             sb.append(", действителен с ") ;
             sb.append(DateFormat.formatToDate(getActualDateFrom())) ;
             sb.append(" по ") ;
-            sb.append(DateFormat.formatToDate(getActualDateTo())) ;
+            if (getActualDateTo()!=null) {
+            	sb.append(DateFormat.formatToDate(getActualDateTo())) ;
+            } else {
+            	sb.append("нет даты окончания") ;
+            }
         }
         if(getCompany()!=null) {
             sb.append(", ") ;

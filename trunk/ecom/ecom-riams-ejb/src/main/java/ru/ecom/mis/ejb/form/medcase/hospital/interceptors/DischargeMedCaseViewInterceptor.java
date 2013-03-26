@@ -60,14 +60,26 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			if (dischargeDepartment.getDischargeTime()!=null) form.setDischargeTime(DateFormat.formatToTime(dischargeDepartment.getDischargeTime())) ;
 			//List<MedCase> listdep = medCase.getChildMedCase();
 			}
-			
+			DiagnosisForm frm ;
 			//System.out.println("----------------1") ;
+			// Entrance
+			//DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), id, "1", "1", true) ;
+			//if (frm!=null){
+			//	form.setEntranceDiagnos(frm.getName());
+			//	form.setEntranceMkb(frm.getIdc10()) ;
+			//}
 			// Concluding
-
-			DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), id, "3", "1", true) ;
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "1", true) ;
 			if (frm!=null){
 				form.setConcludingDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
+			} else {
+				frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", true) ;
+				if (frm!=null) {
+					form.setConcludingDiagnos(frm.getName());
+					if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
+					if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
+				}
 			}
 			//Clinical
 			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", true) ;
@@ -88,50 +100,44 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				form.setConcomitantDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
 			}
-			/*
-			for (MedCase m:listdep) {
-				if (m instanceof DepartmentMedCase) {
-					DepartmentMedCase dep = (DepartmentMedCase)m ;
-					List<Diagnosis> diags= dep.getDiagnosis() ;
-					for (Diagnosis diag:diags) {
-						
-						if (diag.getRegistrationType()!=null && diag.getPriority()!=null) {
-							
-							String regType = diag.getRegistrationType().getCode() ;
-							String prior = diag.getPriority()!=null?diag.getPriority().getCode():"" ;
-							Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-							Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
-
-							// Concluding
-							if (regType.equals("3")&& prior.equals("1")){
-								form.setConcludingDiagnos(diag.getName());
-								if (mkb!=null) form.setConcludingMkb(mkb) ;
-							}
-						    //Clinical
-							if ( regType.equals("4") && prior.equals("1")){
-								form.setClinicalDiagnos(diag.getName());
-								if (mkb!=null) form.setClinicalMkb(mkb) ;
-								if(illnes!=null) form.setClinicalActuity(illnes) ;
-							}
-						    //Pathanatomical
-							if (regType.equals("5") && prior.equals("1")) {
-								form.setPathanatomicalDiagnos(diag.getName());
-								if (mkb!=null) form.setPathanatomicalMkb(mkb) ;
-							}	
-							//Concomitant
-							if (regType.equals("4") && prior.equals("3")) {
-								form.setConcomitantDiagnos(diag.getName());
-								if (mkb!=null) form.setConcomitantMkb(mkb) ;
-							}	
-							
-						}
-					}
-				}
-			}*/
 			
 		} else {
+			DiagnosisForm frm ;
+			//System.out.println("----------------1") ;
+			// Entrance
+			//DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), id, "1", "1", true) ;
+			//if (frm!=null){
+			//	form.setEntranceDiagnos(frm.getName());
+			//	form.setEntranceMkb(frm.getIdc10()) ;
+			//}
+			// Concluding
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "1", false) ;
+			if (frm!=null){
+				form.setConcludingDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
+				if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
+			}
+			//Clinical
+			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", false) ;
+			if (frm!=null){
+				form.setClinicalDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setClinicalMkb(frm.getIdc10()) ;
+				if (frm.getIllnesPrimary()!=null) form.setClinicalActuity(frm.getIllnesPrimary()) ;
+			}
+			//Pathanatomical
+			frm = getDiagnosis(aContext.getEntityManager(), id, "5", "1", false) ;
+			if (frm!=null) {
+				form.setPathanatomicalDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setPathanatomicalMkb(frm.getIdc10()) ;
+			}	
+			//Concomitant
+			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "3", false) ;
+			if (frm!=null) {
+				form.setConcomitantDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
+			}
 		}
-		
+		/*
 		//System.out.println("----------------1") ;
 		if (medCase!=null && medCase.getDiagnosis()!=null) {
 			List<Diagnosis> diagList = medCase.getDiagnosis() ;
@@ -172,9 +178,9 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					}	
 				}
 			}
-		}
+		}*/
 	}
-	private DiagnosisForm getDiagnosis(EntityManager aManager, Long aHospitalMedCase
+	public static DiagnosisForm getDiagnosis(EntityManager aManager, Long aHospitalMedCase
 			,String aRegType, String aPriority, boolean aIsDepartmentSearch) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select diag.illnesPrimary_id,diag.idc10_id,diag.name from diagnosis diag") ;
@@ -188,7 +194,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			sql.append(" where dep.id='").append(aHospitalMedCase).append("'");
 		}
 		
-		sql.append(" and vpd.code='").append(aPriority).append("'") ;
+		if (aPriority!=null) sql.append(" and vpd.code='").append(aPriority).append("'") ;
 		sql.append(" and vdrt.code='").append(aRegType).append("'");
 		
 		sql.append(" order by dep.dateStart desc");

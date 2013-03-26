@@ -188,19 +188,71 @@ function visitNoPatient(aContext, aVisitId) {
 	return visit.getId();
 }
 /**
- * Закрыть СПО
+ * Закрыть СПО по визиту
  */
 function closeSpoByVisit(aContext, aVisitId) {
 	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
-		, java.lang.Long.valueOf(aVisitId)) ;
+			, java.lang.Long.valueOf(aVisitId)) ;
 	if(visit.getDateStart()==null) throw "У визита нет даты приема" ;	
 	// FIXME последний ли визит в СПО?
 	var spo = visit.getParent() ;
 	if(spo==null) throw "Визит не присоединен к СПО" ;
 	if(spo.getDateFinish()!=null) throw "СПО уже закрыто" ;
-	spo.setDateFinish(visit.getDateStart()) ;
-	spo.setFinishFunction(visit.getWorkFunctionExecute()) ;
+	
 	// FIXME диагноз
+	return closeSpo(aContext, spo.id) ;
+}
+/**
+ * Закрыть СПО
+ */
+function closeSpo(aContext, aSpoId) {
+	
+	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
+			+" ,mkb.id as mkbid"
+			+" from MedCase vis"
+			+"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
+			+"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
+			+"     left join Worker w on wf.worker_id = w.id"
+			+"     left join Patient pat on w.person_id = pat.id"
+			+" left join VocReason vr on vis.visitReason_id = vr.id"
+			+" left join VocServiceStream vss on vss.id=vis.serviceStream_id"
+			+" left join Diagnosis diag on diag.medcase_id=vis.id"
+			+" left join VocIdc10 mkb on mkb.id=diag.idc10_id"
+			+" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
+			+" left join VocVisitResult vvr on vvr.id=vis.visitResult_id"
+			+" where vis.parent_id="+aSpoId
+			+" and vis.DTYPE='Visit'"
+			+" and vis.dateStart is not null"
+			+" and (vpd.code='1' or vpd.id is null) and (vis.noActuality='0' or vis.noActuality='1')"
+			+" group by vis.id, vis.dateStart, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
+			+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
+			+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
+	if (listVisLast.size()>0) {
+		var visLast = listVisLast.get(0)[0];
+		var mkb = listVisLast.get(0)[1];
+		var spo = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase
+				, java.lang.Long.valueOf(aSpoId)) ;
+		var visLastO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+				, java.lang.Long.valueOf(visLast)) ;
+		var mkbO = mkb!=null?aContext.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10
+				, java.lang.Long.valueOf(mkb)):null ;
+		spo.setDateFinish(visLastO.getDateStart()) ;
+		spo.setFinishFunction(visLastO.getWorkFunctionExecute()) ;
+		spo.setIdc10(mkbO) ;
+	} else {
+		if(spo==null) throw "Нет ни одного присоединенного визита к СПО" ;
+	}
+	return spo.getId();
+}
+/**
+ * Открыть СПО
+ */
+function reopenSpo(aContext, aSpoId) {
+	var spo = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase
+		, java.lang.Long.valueOf(aSpoId)) ;
+	spo.setDateFinish(null) ;
+	spo.setFinishFunction(null) ;
+	aContext.manager.persist(spo) ;
 	return spo.getId();
 }
 

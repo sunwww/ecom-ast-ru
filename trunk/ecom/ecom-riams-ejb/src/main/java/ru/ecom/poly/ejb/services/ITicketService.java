@@ -13,6 +13,10 @@ import ru.ecom.poly.ejb.form.TicketForm;
  * To change this template use File | Settings | File Templates.
  */
 public interface ITicketService {
+	// Перенос визита (короткого талона) в другое СПО
+	public void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) ;
+	// Объединение СПО
+	public void unionSpos(Long aOldSpo,Long aNewSpo) ;
 	// Получить список в json мед. услуг по специалисту и дате оказания услуги
 	public String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException;
 	// Поиск дублей по специалисту и дате оказания услуги
