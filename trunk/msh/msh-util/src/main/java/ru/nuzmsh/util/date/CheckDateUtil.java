@@ -13,7 +13,7 @@ public class CheckDateUtil {
 
     /**
      *
-     * @param aBirthDate Формат даты dd.MM.yyyyy
+     * @param aBirthDate Формат даты dd.MM.yyyy
      * @param aAge
      * @throws ParseException
      */

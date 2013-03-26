@@ -22,7 +22,7 @@ public class DateConverter {
 
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_1 = new SimpleDateFormat("yyyyMMdd");
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yy");
-    //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_3 = new SimpleDateFormat("dd.MM.yyyyy");
+    //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_3 = new SimpleDateFormat("dd.MM.yyyy");
 
     public static Date getDateFromGlobale(String aStr) throws ParseException {
         try {
@@ -33,7 +33,7 @@ public class DateConverter {
             	SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yy");
                 return GLOBALE_DATE_FORMAT_2.parse(aStr);
             } catch (Exception e2) {
-                try {SimpleDateFormat GLOBALE_DATE_FORMAT_3 = new SimpleDateFormat("dd.MM.yyyyy");
+                try {SimpleDateFormat GLOBALE_DATE_FORMAT_3 = new SimpleDateFormat("dd.MM.yyyy");
                     return GLOBALE_DATE_FORMAT_3.parse(aStr);
                 } catch (Exception e3) {
                     LOG.error("Ошибка преобразования даты: {" +aStr+"}", e3);
