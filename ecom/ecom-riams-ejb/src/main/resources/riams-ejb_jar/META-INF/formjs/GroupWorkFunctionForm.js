@@ -28,19 +28,32 @@ function onPreSave(aForm,aEntity , aCtx) {
 	
 }
 
-function onCreate(aForm, aWorkFunction, aContext) {
+function onCreate(aForm, aEntity, aCtx) {
+	var date = new java.util.Date() ;
+	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var calendar = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar() ;
-	aContext.manager.persist(calendar) ;
-	calendar.workFunction = aWorkFunction ;
-	aWorkFunction.workCalendar = calendar ;
+	calendar.workFunction = aEntity ;
+	aCtx.manager.persist(calendar) ;
+	aEntity.workCalendar = calendar ;
 	
 	
 	//throw aEntity.worker.doctorInfo+""
 }
-
-function onSave(aForm, aWorkFunction, aContext) {
-	if(aWorkFunction.workCalendar==null) {
-		onCreate(aForm, aWorkFunction, aContext) ;
+/**
+ * Перед сохранением
+ */
+function onSave(aForm, aEntity, aCtx) {
+	var date = new java.util.Date() ;
+	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	if(aEntity.workCalendar==null) {
+		var calendar = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar() ;
+		calendar.workFunction = aEntity ;
+		aCtx.manager.persist(calendar) ;
+		aEntity.workCalendar = calendar ;
 	}
 	
 	

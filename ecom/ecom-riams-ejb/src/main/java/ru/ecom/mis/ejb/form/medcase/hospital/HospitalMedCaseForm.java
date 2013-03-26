@@ -405,6 +405,13 @@ public class HospitalMedCaseForm extends MedCaseForm {
 		public Boolean getIncapacity() {return theIncapacity;}
 		public void setIncapacity(Boolean aIncapacity) {theIncapacity = aIncapacity;}
 
+		/** Острота диагноза заключительного */
+		@Comment("Острота диагноза клинического")
+		public Long getConcludingActuity() {return theConcludingActuity;}
+		public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+
+		/** Острота диагноза заключительного */
+		private Long theConcludingActuity;
 		/** Недееспособный (статья 29)*/
 		private Boolean theIncapacity;
 		/** Дата решения суда */

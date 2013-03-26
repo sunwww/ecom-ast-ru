@@ -8,7 +8,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionViewInterceptor;
@@ -43,7 +42,6 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 @ACreateInterceptors( {
 	@AEntityFormInterceptor(AdmissionSaveInterceptor.class)
-	,  @AEntityFormInterceptor(AdmissionCreateInterceptor.class)  
 })
 public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Дата начала */

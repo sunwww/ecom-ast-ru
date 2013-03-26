@@ -11,6 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
+import ru.nuzmsh.util.format.DateFormat;
 
 public class DirectionViewInterceptor implements IFormInterceptor {
 
@@ -21,7 +22,7 @@ public class DirectionViewInterceptor implements IFormInterceptor {
     	Visit entity = (Visit) aEntity ;
     	EntityManager manager = aContext.getEntityManager() ;
     	if (entity.getServiceStream()!=null && (entity.getServiceStream().getCode()==null || entity.getServiceStream().getCode().equals("1"))) {
-    	String datePlan = form.getDateStart()!=null && !form.getDateStart().equals("")?form.getDateStart():entity.getDatePlanText() ;
+    	String datePlan = form.getDateStart()!=null && !form.getDateStart().equals("")?form.getDateStart():entity.getDatePlan()!=null?DateFormat.formatToDate(entity.getDatePlan().getCalendarDate()):"" ;
     	if (datePlan.equals("")) {
     		form.setInfoByPolicy("НЕТ ДАТЫ НАПРАВЛЕНИЯ");
     	} else {

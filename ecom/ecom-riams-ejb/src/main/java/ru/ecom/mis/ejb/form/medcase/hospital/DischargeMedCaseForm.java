@@ -64,13 +64,12 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 	
 	/** Клинический диагноз */
 	@Comment("Клинический диагноз")
-	@Required
 	public String getClinicalDiagnos() {return theClinicalDiagnos;}
 	public void setClinicalDiagnos(String aClinicalDiagnos) {theClinicalDiagnos = aClinicalDiagnos;}
 
 	/** Клинический диагноз по МКБ-10 */
 	@Comment("Клинический диагноз по МКБ-10")
-	@Required @Mkb
+	@Mkb(clazz="VocIdc10",field="code")
 	public Long getClinicalMkb() {return theClinicalMkb;}
 	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
 
@@ -81,18 +80,19 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 	
 	/** Патанатомический диагноз по МКБ-10 */
 	@Comment("Патанатомический диагноз по МКБ-10")
-	@Mkb
+	@Mkb(clazz="VocIdc10",field="code")
 	public Long getPathanatomicalMkb() {return thePathanatomicalMkb;}
 	public void setPathanatomicalMkb(Long aPathanatomicalMkb) {thePathanatomicalMkb = aPathanatomicalMkb;}
 
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
+	@Required
 	public String getConcludingDiagnos() {return theConcludingDiagnos;}
 	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
-	@Mkb
+	@Mkb(clazz="VocIdc10",field="code") @Required
 	public Long getConcludingMkb() {return theConcludingMkb;}
 	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
 
@@ -104,10 +104,17 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 	
 	/** Острота диагноза клинического */
 	@Comment("Острота диагноза клинического")
-	@Required
 	public Long getClinicalActuity() {return theClinicalActuity;}
 	public void setClinicalActuity(Long aClinicalActuity) {theClinicalActuity = aClinicalActuity;}
 
+	/** Острота диагноза заключительного */
+	@Comment("Острота диагноза клинического")
+	@Required
+	public Long getConcludingActuity() {return theConcludingActuity;}
+	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+
+	/** Острота диагноза заключительного */
+	private Long theConcludingActuity;
 	/** Острота диагноза клинического */
 	private Long theClinicalActuity;
 	/** Исход госпитализации */

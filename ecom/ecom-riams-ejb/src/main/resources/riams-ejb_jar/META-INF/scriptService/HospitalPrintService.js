@@ -185,25 +185,46 @@ function printCoveringLetterByDay(aCtx,aParams) {
 function printReestrByDay(aCtx,aParams) {
 	var ids = aParams.get("id") ;
 	var id = ids.split(":") ;
-	var dateBegin = id[3] ;
-	var typeDate = +id[2] ;
+	var typeEmergency = +id[0] ;
 	var typeHour = id[1] ;
-	var typeEmergency = id[0] ;
+	var typeDate = +id[2] ;
+	var typePatient = +id[3] ;
+	var typeDepartment = +id[4] ;
+	var dateBegin = id[5] ;
+	var pigeonHole = id[6] ;
+	var department = id[7] ;
+	var serviceStream = id[8] ;
 	var emer = "" ;
 	var emerInfo = "все" ;
+	var departmentFldIdSql="m.department_id",departmentFldNameSql="ml.name",departmentFldAddSql="" ;
+	if (typeDepartment==2) {
+		departmentFldIdSql="coalesce(slo.department_id,m.department_id)" ;
+		departmentFldNameSql="coalesce(sloml.name,ml.name)" ;
+		departmentFldAddSql=" and (slo.id is null or slo.transferDate is null) " ;
+	}
 	if (+typeEmergency==1) {
 		emer=" and m.emergency='1' " ;
 		emerInfo="экстренно" ;
-	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+	} else if (typeEmergency!=null && +typeEmergency==2) {
 		emer=" and (m.emergency is null or m.emergency = '0')" ;
 		emerInfo="планово" ;
 	} 
 	map.put("emerInfo",emerInfo) ;
-	
+	var addPat="",infoTypePat="" ;
+	if (typePatient==3) {
+		addPat= " and (ok.id is not null and ok.voc_code!='643') " ;
+		infoTypePat= " иностранцам " ;
+	} else if (typePatient==2){
+		addPat=" and (adr.addressId is not null and adr.kladr not like '30%')   and (ok.id is null or ok.voc_code='643')" ;
+		infoTypePat= " проживающим в других регионах" ;
+	} else if (typePatient==1){
+		addPat= " and (adr.addressId is not null and adr.kladr like '30%')   and (ok.id is null or ok.voc_code='643')" ;
+		infoTypePat= " региональным пациентам" ;
+	}
 	var dateI = "dateStart" ;
 	var timeI = "entranceTime" ;
 	
-	var pigeonHole = id[4] ;
+	
 	var pigeonHoleName = "все" ;
 	var pigeonHoleId = "" ;
 	var pigeonHoleId1 = "" ;
@@ -220,20 +241,34 @@ function printReestrByDay(aCtx,aParams) {
 	}
 	map.put("pigeonHoleName",pigeonHoleName) ;
 	
-	var department = id[5] ;
+	
 	var departmentName = "все" ;
 	var departmentId = "" ;
-    if (department!=null
-    		&& +department>0) {
-    	departmentId = " and ml.id='"+department+"' " ;
-    	var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from MisLpu vph where vph.id="+department).setMaxResults(1).getResultList() ;
+	if (department!=null
+			&& +department>0) {
+		departmentId = " and "+departmentFldIdSql+"='"+department+"' " ;
+		var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from MisLpu vph where vph.id="+department).setMaxResults(1).getResultList() ;
 		if (list.size()>0) {
 			var ob = list.get(0) ;
-			pigeonHoleName = ob[0] ;
+			departmentName = ob[0] ;
+			
+		}
+	}
+	map.put("departmentName",departmentName) ;
+	
+	var serviceStreamName = "все" ;
+	var serviceStreamId = "" ;
+    if (serviceStream!=null
+    		&& +serviceStream>0) {
+    	serviceStreamId = " and m.serviceStream_id='"+serviceStream+"' " ;
+    	var list = aCtx.manager.createNativeQuery("select vph.name,vph.id from VocServiceStream vph where vph.id="+serviceStream).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var ob = list.get(0) ;
+			serviceStreamName = ob[0] ;
 			
 		}
     }
-    map.put("departmentName",departmentName) ;
+    map.put("serviceStreamName",serviceStreamName) ;
     
     var dateI = null ; var period = "" ;
 	var timeI = null ; var period1 = "" ;
@@ -251,7 +286,9 @@ function printReestrByDay(aCtx,aParams) {
 		period1=null ;
 		dateInfo="состоящим" ;
 	}
-	
+	if (typeDepartment==2) {
+		dateI= null ;period1= null ;
+	}
 	var date = dateBegin ;
 	var dat = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(date) ;
     var cal = java.util.Calendar.getInstance() ;
@@ -259,6 +296,43 @@ function printReestrByDay(aCtx,aParams) {
     cal.add(java.util.Calendar.DAY_OF_MONTH, 1) ;
     var format=new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var date1=format.format(cal.getTime()) ;
+    
+    var timeSql = null, timeInfo ="",dateInfo="";
+    if (typeHour==1) {
+		timeSql= "08:00" ;timeInfo="(8 часов)" ;
+	} else if (typeHour==2) {
+		timeSql= "08:00" ;timeInfo="(9 часов)" ;
+	} 
+    if (typeDate==1) {
+		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
+		dateI = "dateStart" ; timeI = "entranceTime" ;
+		dateInfo="поступившим" ;
+	} else if (typeDate==2) {
+		dateI = "dateFinish" ; timeI = "dischargeTime" ;
+		dateInfo="выписанным" ;
+	} else {
+		
+		var periodF = "" ;
+		periodF=periodF+" and (m.dateFinish is null ";
+		periodF=periodF+" or " ;
+		periodF=periodF+Packages.ru.nuzmsh.util.query.ReportParamUtil.getDateFrom(false, "m.dateFinish", "m.dischargeTime", timeSql!=null?date1:date, timeSql) ;
+		periodF=periodF+" and " ;
+		periodF=periodF+Packages.ru.nuzmsh.util.query.ReportParamUtil.getDateTo(false, "m.dateStart", "m.entranceTime", timeSql!=null?date:date1, timeSql) ;
+		periodF=periodF+") " ;
+	
+		period=periodF ;
+		period1=null ;
+		dateInfo="состоящим" ;
+	}
+    if (dateI!=null) {
+    	
+    	period = Packages.ru.nuzmsh.util.query.ReportParamUtil.getPeriodByDate(true,false, "m."+dateI, "m."+timeI, date, date1, timeSql) ;
+    	//aRequest.setAttribute("period",period) ;
+    	//hourInfo=timeInfo ;
+		period1=period ;
+    }
+    
+    /*
     if (dateI!=null) {
     	//aRequest.setAttribute("dateI", dateI) ;
     	if (typeHour!=null && typeHour.equals("1")) {
@@ -277,17 +351,22 @@ function printReestrByDay(aCtx,aParams) {
     		hourInfo="" ;
     	}
 		period1=period ;
-    }
+    }*/
 	var sqlDep = "select" 
-    +" ml.id as mlid,ml.name as mlname"
+    +" "+departmentFldIdSql+" as mlid,"+departmentFldNameSql+" as mlname"
     +" from MedCase as m  "
     +" left join StatisticStub as sc on sc.medCase_id=m.id" 
-    +" left outer join Patient pat on m.patient_id = pat.id" 
+    +" left join Patient pat on m.patient_id = pat.id" 
+    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
+	+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
+	+" left join address2 adr on adr.addressId = pat.address_addressId"
     +" left join MisLpu as ml on ml.id=m.department_id "
     +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
-    +" where m.DTYPE='HospitalMedCase' "+period+""
+    +" left join MedCase slo on slo.parent_id=m.id"
+    +" left join MisLpu as sloml on sloml.id=slo.department_id"
+    +" where m.DTYPE='HospitalMedCase' "+period+" "+departmentId+addPat
     +" and m.deniedHospitalizating_id is null"
-    +"  "+emer+pigeonHoleId+departmentId+" group by ml.id,ml.name order by ml.name";
+    +"  "+emer+serviceStreamId+pigeonHoleId+departmentFldAddSql+" group by "+departmentFldIdSql+","+departmentFldNameSql+" order by "+departmentFldNameSql;
 	
 	var listDep = aCtx.manager.createNativeQuery(sqlDep).getResultList() ;
 	var retDep = new java.util.ArrayList() ;
@@ -306,22 +385,25 @@ function printReestrByDay(aCtx,aParams) {
 		    +" ,cast(m.dischargeTime as varchar(5)) as mdischargeTime"
 		    +" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio"
 		    +" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency"
-		    +" ,ml.name as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
+		    +" ,"+departmentFldNameSql+" as mlname,cast(m.entranceTime as varchar(5)) as entranceTime"
 		    +" ,pat.id||' ('||coalesce(pat.patientSync,'         ')||')'"
 		    +", case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'"  
 		    +" when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient"
+		    +" , vss.name as vssname"
 		    +" from MedCase as m  "
 		    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
 		    +" left outer join Patient pat on m.patient_id = pat.id" 
 		    +" left join MisLpu as ml on ml.id=m.department_id "
-		    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
 		    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
 			+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
 			+" left join address2 adr on adr.addressId = pat.address_addressId"
-		    +" where m.DTYPE='HospitalMedCase' "+period+""
+		    +" left join MedCase slo on slo.parent_id=m.id"
+		    +" left join MisLpu as sloml on sloml.id=slo.department_id"
+		    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
+		    +" where m.DTYPE='HospitalMedCase' "+period+" and "+departmentFldIdSql+"='"+depId+"'"
 		    +" and m.deniedHospitalizating_id is null"
-		    +" and m.department_id='"+depId+"'"
-		    +"  "+emer+pigeonHoleId+departmentId+" order by ml.name,pat.lastname,pat.firstname,pat.middlename";
+		    
+		    +"  "+emer+pigeonHoleId+serviceStreamId+addPat+departmentFldAddSql+" order by pat.lastname,pat.firstname,pat.middlename";
 			
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		var ret = new java.util.ArrayList() ;
@@ -333,8 +415,9 @@ function printReestrByDay(aCtx,aParams) {
 			par.set2(obj[6]) ;
 			par.set3(obj[4]) ;
 			par.set4(obj[10]) ;
-			par.set5(obj[2]) ;
+			par.set5(obj[1]) ;
 			par.set6(obj[11]) ;
+			par.set7(obj[12]) ;
 			ret.add(par) ;
 		}
 		parDep.set2(ret) ;
@@ -367,9 +450,9 @@ function printReestrByDay(aCtx,aParams) {
 		+" left join WorkFunction wf on wf.secUser_id=su.id"
 		+" left join Worker w on w.id=wf.worker_id"
 		+" left join MisLpu ml1 on ml1.id=w.lpu_id "
-	    +" where m.DTYPE='HospitalMedCase' "+period+""
+	    +" where m.DTYPE='HospitalMedCase' "+period+" "+departmentId
 	    +" and m.deniedHospitalizating_id is not null"
-	    +"  "+emer+pigeonHoleId1+departmentId+" order by pat.lastname,pat.firstname,pat.middlename";
+	    +"  "+emer+pigeonHoleId1+serviceStreamId+addPat+" order by pat.lastname,pat.firstname,pat.middlename";
 		
 		var deniedlist = new java.util.ArrayList() ;
 		var j=1 ;
@@ -937,9 +1020,9 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		slsId = medCase.id ;
 		recordDiagnosis(aCtx,slsId,"1","2","diagnosis.order.main") ;
 		recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
-		recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
-		recordDiagnosis(aCtx,slsId,"4","3","diagnosis.clinic.related") ;
-		recordDiagnosis(aCtx,slsId,"4","4","diagnosis.clinic.complication") ;
+		recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main") ;
+		recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related") ;
+		recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
 		recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
 		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
 		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;

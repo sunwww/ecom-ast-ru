@@ -407,6 +407,14 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
+     <!-- Справочник категорий расхождения диагнозов в связи со смертью -->
+    <voc id='vocDeathCategory' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory'
+                names   = 'name'
+                queried = 'name'
+                />
+    </voc> 
     
     <!-- Справочник причин смерти -->
     <voc id='vocDeathReason' type='EntityVocService'>
@@ -443,15 +451,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
-    
-    <!-- Справочник видов травм, не связанных с производством -->
-    <voc id='vocAccidentSubType' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAccidentSubType'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+     
     <!-- Справочник видов сертификатов -->
     <voc id='vocCertificateType' type='EntityVocService'>
         <EntityVocService
