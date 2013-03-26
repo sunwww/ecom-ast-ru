@@ -115,6 +115,7 @@
 						<li><msh:link action="stac_resultPatient_list.do" roles="/Policy/Mis/Journal/ResultHospitalization">
 	                            Журнал результатов госпитализации (в том числе по смерти)
 	                        </msh:link></li>
+	                    <li><msh:link roles="/Policy/Mis/MedCase/Stac/Journal/DeathCase" action="stac_deathCase_list">Журнал по смертности"</msh:link></li>
 						<li><msh:link action="stac_analysis_department_list.do" roles="/Policy/Mis/Journal/AnalysisWorkDepartment">
 	                            Анализ работы отделений
 	                        </msh:link></li>
