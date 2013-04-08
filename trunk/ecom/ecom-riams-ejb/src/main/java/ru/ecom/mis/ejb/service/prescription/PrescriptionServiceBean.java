@@ -50,8 +50,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		description.append(template.getOwnerInfo()) ;
 		description.append('\n');
 		description.append("Дата создания:") ;
-		if (template.getDate()!=null) {
-			description.append(DateFormat.formatToDate(template.getDate())) ;
+		if (template.getCreateDate()!=null) {
+			description.append(DateFormat.formatToDate(template.getCreateDate())) ;
 		}
 		description.append('\n');
 		description.append("-----------------------------");
@@ -92,8 +92,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			PrescriptList list = new PrescriptList() ;
 			
 			list.setMedCase(medCase) ;
-			list.setDate(new java.sql.Date(new Date().getTime())) ;
-			list.setUsername(theContext.getCallerPrincipal().toString());
+			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
+			list.setCreateUsername(theContext.getCallerPrincipal().toString());
 			list.setName(template.getName()) ;
 			list.setComments(template.getComments());
 			list.setWorkFunction(wf) ;
@@ -102,8 +102,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		} else  {
 //			System.out.println("MedCase не существует ! Создается PrescriptListTemplate") ;
 			PrescriptListTemplate list = new PrescriptListTemplate() ;
-			list.setDate(new java.sql.Date(new Date().getTime())) ;
-			list.setUsername(theContext.getCallerPrincipal().toString());
+			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
+			list.setCreateUsername(theContext.getCallerPrincipal().toString());
 			list.setName(template.getName()) ;
 			List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
 			for (TemplateCategory tempCateg:template.getCategories()) {
