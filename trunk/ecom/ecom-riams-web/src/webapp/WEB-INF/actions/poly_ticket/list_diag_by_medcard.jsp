@@ -42,20 +42,7 @@
   		</td>
   		</tr>
   		</table>
-    	<msh:sectionTitle>Диагнозы по талонам</msh:sectionTitle>
-    	<msh:sectionContent>
-	    	<ecom:webQuery name="diag" nativeSql="select m.id||':'||t.idc10_id,mkb.code,mkb.name,count(*),max(t.date) 
-	    		from Ticket t left join vocidc10 mkb on mkb.id=t.idc10_id 
-	    		left join medcard m on m.id=t.medcard_id 
-	    		where m.id='${param.id}' and t.status=2 and (t.talk is null or cast(t.talk as int)=0) group by m.id,t.idc10_id,mkb.code,mkb.name"/>
-	    	<msh:table name="diag" action="js-poly_ticket-listDiag.do" idField="1">
-	    		
-	    		<msh:tableColumn property="2" columnName="Код МКБ"/>
-	    		<msh:tableColumn property="3" columnName="Наим.МКБ"/>
-	    		<msh:tableColumn property="4" columnName="Кол-во"/>
-	    		<msh:tableColumn property="5" columnName="Дата послед.посещения"/>
-	    	</msh:table>
-    	</msh:sectionContent>
+
     	<msh:sectionTitle>Диагнозы по листу уточненных диагнозов</msh:sectionTitle>
     	<msh:sectionContent>
 		    <ecom:webQuery name="list" nativeSql="select 
@@ -63,9 +50,10 @@
 		    , vi.code || ' ' || vi.name   as idc10
 		    , vad.name                 as acuity
 		    , vk.code || ' ' || vk.name       as ksg   
-		    , case when (visit.DTYPE='VISIT' or visit.DTYPE='POLYCLINICMEDCASE') then 'Поликлиника' 
-		    	when (visit.DTYPE='HOSPITALMEDCASE' or visit.DTYPE='DEPARTMENTMEDCASE') then 'Стационар' 
-		    	when (visit.DTYPE='SERVICEMEDCASE') then 'Услуги' 
+		    , case when (visit.DTYPE='Visit' or visit.DTYPE='PolyclinicMedCase') then 'Поликлиника' 
+		    	when (visit.DTYPE='HospitalMedCase' or visit.DTYPE='DepartmentMedCase') then 'Стационар' 
+		    	when (visit.DTYPE='ServiceMedCase') then 'Услуги'
+		    	when (visit.DTYPE='ShortMedCase') then 'Талоны'  
 		    	else 'неизвестно'
 		    	end   
 		    , vpd.name as priority, count(*)

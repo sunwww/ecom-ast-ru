@@ -8,10 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='body' type='string'>
-        <msh:form action="entityParentSaveGoParentView-poly_prescriptionBlank.do" defaultField="series">
+        <msh:form action="entityParentSaveGoSubclassView-poly_prescriptionBlank.do" defaultField="series">
             <msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
             <msh:hidden property="ticket"/>
+            <msh:hidden property="medCase"/>
 
             <msh:panel>
 

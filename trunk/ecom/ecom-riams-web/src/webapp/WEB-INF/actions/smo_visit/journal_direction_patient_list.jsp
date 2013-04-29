@@ -282,17 +282,17 @@ ${queryTextBegin}
 ,count(distinct case when adr.kladr like '30000001%' then wct.medcase_id else null end) as cntAstrakhan
 ,count(distinct case when adr.kladr like '30000002%' then wct.medcase_id else null end) as cntZnamenkc
 ,count(distinct case when adr.kladr like '30%' and adr.kladr not like '30000%' then wct.medcase_id else null end) as cntRayon
-,count(distinct case when pvr.code='А' then wct.medcase_id else null end) as cntAhtub
-,count(distinct case when pvr.code='В' then wct.medcase_id else null end) as cntVolodar
-,count(distinct case when pvr.code='Е' then wct.medcase_id else null end) as cntEnotaev
-,count(distinct case when pvr.code='ИК' then wct.medcase_id else null end) as cntIkrian
-,count(distinct case when pvr.code='КА' then wct.medcase_id else null end) as cntKamiz
-,count(distinct case when pvr.code='КР' then wct.medcase_id else null end) as cntKrasnoiar
-,count(distinct case when pvr.code='ЛМ' then wct.medcase_id else null end) as cntLiman
-,count(distinct case when pvr.code='НР' then wct.medcase_id else null end) as cntNarim
-,count(distinct case when pvr.code='ПР' then wct.medcase_id else null end) as cntPrivol
-,count(distinct case when pvr.code='ХР' then wct.medcase_id else null end) as cntHarab
-,count(distinct case when pvr.code='Ч' then wct.medcase_id else null end) as cntChernoiar
+,count(distinct case when adr.kladr like '30002%' then wct.medcase_id else null end) as cntAhtub
+,count(distinct case when adr.kladr like '30003%' then wct.medcase_id else null end) as cntVolodar
+,count(distinct case when adr.kladr like '30004%' then wct.medcase_id else null end) as cntEnotaev
+,count(distinct case when adr.kladr like '30005%' then wct.medcase_id else null end) as cntIkrian
+,count(distinct case when adr.kladr like '30006%' then wct.medcase_id else null end) as cntKamiz
+,count(distinct case when adr.kladr like '30007%' then wct.medcase_id else null end) as cntKrasnoiar
+,count(distinct case when adr.kladr like '30008%' then wct.medcase_id else null end) as cntLiman
+,count(distinct case when adr.kladr like '30009%' then wct.medcase_id else null end) as cntNarim
+,count(distinct case when adr.kladr like '30010%' then wct.medcase_id else null end) as cntPrivol
+,count(distinct case when adr.kladr like '30011%' then wct.medcase_id else null end) as cntHarab
+,count(distinct case when adr.kladr like '30012%' then wct.medcase_id else null end) as cntChernoiar
 ,count(distinct case when adr.kladr not like '30%' and ok.voc_code='643' then wct.medcase_id else null end) as cntInog
 ,count(distinct case when ok.voc_code!='643' then wct.medcase_id else null end) as cntInost
 

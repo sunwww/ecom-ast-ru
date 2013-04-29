@@ -54,7 +54,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Visit/ReportVisits" 
     name="Журнал обращений" action="/journal_visits_list.do" styleId="reportVisits"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Visit/ReportNationality" 
-    name="Журнал СМО с разбивкой по гражданству" action="/journal_nationality_smo_list.do" styleId="reportNationality"/>
+    name="Журнал СМО с разбивкой по гражданству" action="/journal_nationality_smo.do" styleId="reportNationality"/>
 	<msh:sideLink name="Открытые СПО" action="/smo_journal_openSpo.do"
 		styleId="smo_journal_openSpo" roles="/Policy/Mis/MedCase/Visit/OpenSpo"/>
 	<msh:sideLink name="Закрытые СПО" action="/smo_journal_closeSpo.do"

@@ -24,39 +24,36 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="По номеру" action="/poly_tickets.do" key="ALT+7" 
 		title="По талону" roles="/Policy/Poly/Ticket/View"
 		styleId="tickets"/>
-	<msh:sideLink name="По специалисту" action="/poly_ticketspec.do" key="ALT+8" 
+	<msh:sideLink name="По специалисту" action="/smo_ticketspec.do" key="ALT+8" 
 		title="По специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketspec"/>
-	<msh:sideLink name="Открытые" action="/poly_ticketsopen.do" key="ALT+9" 
+	<msh:sideLink name="Открытые" action="/smo_ticketsopen.do" key="ALT+9" 
 		title="По специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketopen"/>
-	<msh:sideLink name="Дубли" action="/poly_doubleTickets_list.do" 
+	<msh:sideLink name="Дубли" action="/smo_doubleTickets.do" 
 		title="Дубли талонов по специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketdouble"/>
 
 </msh:sideMenu>
 <msh:sideMenu title="Статистика">
-	<msh:sideLink name="по пользователю" action="/poly_ticketsByUserList" params="" 
+	<msh:sideLink name="по пользователю" action="/smo_ticketsByUserList" params="" 
 		roles="/Policy/Poly/Ticket/StatByUser" styleId="ticketsByUser"
 	/>
-	<msh:sideLink name="по типу населению" action="/poly_ticketsByNonredidentPatientList" params="" 
+	<msh:sideLink name="по типу населению" action="/smo_ticketsByNonredidentPatientList" params="" 
 		roles="/Policy/Poly/Ticket/StatByPatient" styleId="ticketsByResident"
 	/>
-	<msh:sideLink name="по специалистам" action="/poly_ticketsBySpecialistList" params="" 
+	<msh:sideLink name="по специалистам" action="/smo_ticketsBySpecialistList" params="" 
 		roles="/Policy/Poly/Ticket/StatBySpecialist" styleId="ticketsBySpec"
 	/>
-	<msh:sideLink name="учет посещений" action="/poly_journalRegisterVisit_list" params="" 
+	<msh:sideLink name="учет посещений" action="/smo_journalRegisterVisit_list" params="" 
 		roles="/Policy/Poly/Ticket/RegistrationVisit" styleId="journalRegisterVisit"
 	/>
-	<msh:sideLink name="Форма 039У-02" action="/poly_f039_list.do?ticketIs=1" params="" 
+	<msh:sideLink name="Форма 039У-02" action="/smo_f039.do" params="" 
 		roles="/Policy/Poly/Ticket/Report039" styleId="report039"
 	/>
 	<msh:sideLink action="/psych_listByArea" 
 	name="Список пациентов по участкам" roles="/Policy/Poly/Ticket/Psych" styleId="psychDriveArea"/>
-	
-	<!--<msh:sideLink name="Форма 039У-02 доп" action="/poly_f039_add_list" params="" 
-		roles="/Policy/Poly/Ticket/RegistrationVisit" styleId="form039add"
-	/>-->
+
 </msh:sideMenu>
     <msh:sideMenu title="Поиск">
       <msh:sideLink key="CTRL+7" params="" action="/poly_medcards" name="⇧ Мед.карты" 

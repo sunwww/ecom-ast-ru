@@ -41,6 +41,23 @@
         <msh:row guid="32fvs6eb-b971-441e-9a90-584627">
           <msh:autoComplete vocName="workFunction" label="Отменил" property="cancelSpecial" guid="303s6541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>

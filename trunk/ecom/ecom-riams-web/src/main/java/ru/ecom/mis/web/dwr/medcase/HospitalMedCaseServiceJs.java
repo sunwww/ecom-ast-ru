@@ -106,11 +106,6 @@ public class HospitalMedCaseServiceJs {
     	return service.findDoubleOperationByPatient(aSurOperation, aPatient, aOperation, aDate) ;
     }
     
-    public String checkMedPolicy(Long aPatient, Long aServiceStream, HttpServletRequest aRequest) throws NamingException, ParseException{
-    	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-    	return service.checkMedPolicy(aPatient, aServiceStream);
-    	
-    }
     public String getOperations(Long aPatient, String aDateStart
     		,String aDateFinish, HttpServletRequest aRequest) throws NamingException, ParseException {
     	StringBuilder sql = new StringBuilder() ;

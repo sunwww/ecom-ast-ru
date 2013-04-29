@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 	<tiles:put name='title' type='string'>
 		<msh:title mainMenu="Journals">Журналы</msh:title>
@@ -39,7 +39,7 @@
 						<li><msh:link action="journal_serviceMedCase.do" roles="/Policy/Mis/Journal/MedService">
 	                            Журнал услуг
 	                        </msh:link></li>
-						<li><msh:link action="journal_nationality_smo_list.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
+						<li><msh:link action="journal_nationality_smo.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
 	                            Журнал обращений с группировкой по гражданству (475-Пр)
 	                        </msh:link></li>
 	                   <li><msh:link action="stac_journalRepeatCaseByHospital_list" roles="/Policy/Mis/Journal/RepeatCase">
@@ -125,6 +125,9 @@
 						<li><msh:link action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
 	                            Журнал диагнозов по отделениям (СЛО)
 	                        </msh:link></li>
+	                    <li><msh:link  roles="/Policy/Mis/MedCase/Stac/Journal/StandartOmc" action="stac_report_standartOmc.do">
+	                    		Журнал по стандартам (СЛО)
+	                    	</msh:link></li>
 						<li><msh:link action="stac_journalOpenByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/OpenningCaseByHospital">
 	                            Журнал открытых СЛС (госпитализаций)
 	                        </msh:link></li>

@@ -688,26 +688,25 @@ order by operdep.name, dischdep.name
     } 
     	if (view==null || view.equals("6")) { 
     %>
-    <msh:section title="Свод по отделениям по районам">
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_list_otd_rayon_swod" nativeSql="
+    <msh:section>
+    <ecom:webQuery nameFldSql="journal_list_otd_rayon_swod_sql" name="journal_list_otd_rayon_swod" nativeSql="
     select
 dmc.department_id as depid,dep.name as depname
 ,count(distinct hmc.id) as cntDischarge
 ,count(distinct case when adr.kladr like '30000001%' then hmc.id else null end) as cntAstrakhan
 ,count(distinct case when adr.kladr like '30000002%' then hmc.id else null end) as cntZnamenkc
 ,count(distinct case when adr.kladr like '30%' and adr.kladr not like '30000%' then hmc.id else null end) as cntRayon
-,count(distinct case when vr.code='А' then hmc.id else null end) as cntAhtub
-,count(distinct case when vr.code='В' then hmc.id else null end) as cntVolodar
-,count(distinct case when vr.code='Е' then hmc.id else null end) as cntEnotaev
-,count(distinct case when vr.code='ИК' then hmc.id else null end) as cntIkrian
-,count(distinct case when vr.code='КА' then hmc.id else null end) as cntKamiz
-,count(distinct case when vr.code='КР' then hmc.id else null end) as cntKrasnoiar
-,count(distinct case when vr.code='ЛМ' then hmc.id else null end) as cntLiman
-,count(distinct case when vr.code='НР' then hmc.id else null end) as cntNarim
-,count(distinct case when vr.code='ПР' then hmc.id else null end) as cntPrivol
-,count(distinct case when vr.code='ХР' then hmc.id else null end) as cntHarab
-,count(distinct case when vr.code='Ч' then hmc.id else null end) as cntChernoiar
+,count(distinct case when adr.kladr like '30002%' then hmc.id else null end) as cntAhtub
+,count(distinct case when adr.kladr like '30003%' then hmc.id else null end) as cntVolodar
+,count(distinct case when adr.kladr like '30004%' then hmc.id else null end) as cntEnotaev
+,count(distinct case when adr.kladr like '30005%' then hmc.id else null end) as cntIkrian
+,count(distinct case when adr.kladr like '30006%' then hmc.id else null end) as cntKamiz
+,count(distinct case when adr.kladr like '30007%' then hmc.id else null end) as cntKrasnoiar
+,count(distinct case when adr.kladr like '30008%' then hmc.id else null end) as cntLiman
+,count(distinct case when adr.kladr like '30009%' then hmc.id else null end) as cntNarim
+,count(distinct case when adr.kladr like '30010%' then hmc.id else null end) as cntPrivol
+,count(distinct case when adr.kladr like '30011%' then hmc.id else null end) as cntHarab
+,count(distinct case when adr.kladr like '30012%' then hmc.id else null end) as cntChernoiar
 ,count(distinct case when adr.kladr not like '30%' and ok.voc_code='643' then hmc.id else null end) as cntInog
 ,count(distinct case when ok.voc_code!='643' then hmc.id else null end) as cntInost
 ,(select count(*) from MedCase hmc1 
@@ -740,6 +739,18 @@ group by dmc.department_id,dep.name
 order by dep.name   
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+	    <form action="print-stac_analysis_department_6.do" method="post" target="_blank">
+	    Свод по отделениям по районам. Период с ${param.dateBegin} по ${dateEnd}.
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_list_otd_rayon_swod_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="период с ${param.dateBegin} по ${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    </msh:sectionTitle>
+    <msh:sectionContent>
         <msh:table name="journal_list_otd_rayon_swod"
          action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
              <msh:tableNotEmpty>

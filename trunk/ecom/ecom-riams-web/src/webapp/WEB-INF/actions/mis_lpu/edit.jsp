@@ -77,6 +77,23 @@
         		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipmentByLpu" horizontalFill="true" parentId="mis_lpuForm.id" label="Принтер"/>
         	</msh:ifFormTypeAreViewOrEdit>
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow colSpan="2" guid="fe0172d0-16e6-490d-9bf2-ab6ac96e7402" />
       </msh:panel>
     </msh:form>

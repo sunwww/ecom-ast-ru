@@ -134,13 +134,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_diagnosis/list_by_slo.jsp" />
         </action>
-        <action path='/stac_groupByBedFundList' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+        <action path='/stac_groupByBedFundList' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
-                input='/WEB-INF/actions/stac_ssl/list_groupByBedFund_list.jsp'
+                input='/WEB-INF/actions/stac_slo/journal_groupByBedFund.jsp'
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_groupByBedFund_list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/journal_groupByBedFund.jsp" />
         </action>
         <action path='/stac_groupByMoveToAnotherLpuList' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
                 name='stac_admissionJournalForm'

@@ -7,6 +7,9 @@
     <form-beans>
 
         <form-bean name="poly_medcardForm" type="ru.ecom.poly.ejb.form.MedcardForm"/>
+
+        <form-bean name="smo_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
+        <form-bean name="smo_short_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.ShortTicketMedCaseForm" />
         
         <form-bean name="poly_ticketForm"      type="ru.ecom.poly.ejb.form.TicketForm" />
         <form-bean name="poly_short_ticketForm"      type="ru.ecom.poly.ejb.form.ShortTicketForm" />
@@ -54,7 +57,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_closeSpo.jsp" />
         </action>
-
+        <action path='/smo_doubleTickets' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/list_double.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/list_double.jsp" />
+        </action>
 <!--        <action path='/poly_medcardSearch' type='ru.ecom.poly.web.action.medcard.MedcardSearchAction'-->
 <!--                name='poly_medcardSearchForm'-->
 <!--                validate='false'-->
@@ -118,6 +128,25 @@
 <!--            <forward name="success" redirect="true" path="/poly_tickets.do" />-->
 <!--        </action>-->
 
+        <action path='/smo_ticketspec' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/listSpec.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listSpec.jsp" />
+        </action>
+
+        <action path='/smo_ticketsopen' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/listOpen.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listOpen.jsp" />
+        </action>
+
+
         <action path='/poly_ticketspec' type='ru.ecom.poly.web.action.ticket.TicketSpecSearchAction'
                 name='mis_searchForm'
                 validate='true'
@@ -126,7 +155,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listSpec.jsp" />
         </action>
-
         <action path='/poly_tickets' type='ru.ecom.poly.web.action.ticket.TicketSearchAction'
                 name='mis_searchForm'
                 validate='true'
@@ -154,6 +182,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listOpen.jsp" />
         </action>
+
         
         <action path='/poly_ticketsByUserList' type='ru.ecom.poly.web.action.ticket.TicketStatByUserAction'
                 name='stac_admissionJournalForm'
@@ -215,9 +244,9 @@
                 name='poly_journalBySpecForm'
                 validate='true'
                 scope='session'
-                input='/WEB-INF/actions/smo_visit/f039_list.jsp'
+                input='/WEB-INF/actions/smo_visit/f039_new.jsp'
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_list.jsp"/>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_new.jsp"/>
         </action>
         <action path='/smo_openSPO' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
@@ -242,21 +271,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_visits.jsp"/>
         </action>
-        <action path='/journal_nationality_smo_list' type='ru.ecom.web.actions.base.ForwardAction'               
+        <action path='/journal_nationality_smo' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='poly_journalBySpecForm'
                 validate='true'
                 scope='session'
                 input='/WEB-INF/actions/smo_visit/list_nationality.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality.jsp"/>
-        </action>
-        <action path='/journal_nationality_smo_data' type='ru.ecom.web.actions.base.ForwardAction'               
-        		name='poly_journalBySpecForm'
-                validate='true'
-                scope='session'
-                input='/WEB-INF/actions/smo_visit/list_nationality_data.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality_data.jsp"/>
         </action>
         <action path='/journal_visit_diagnosis' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='stac_admissionJournalForm'

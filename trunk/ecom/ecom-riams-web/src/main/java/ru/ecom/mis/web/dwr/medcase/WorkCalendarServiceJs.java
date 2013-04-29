@@ -158,10 +158,13 @@ public class WorkCalendarServiceJs {
 		
 		//return service.findDoubleBySpecAndDate(aId , aMedcard, aSpec, aDate) ;
 	}
-	public String getWorkFunctionByUsername(HttpServletRequest aRequest) throws NamingException {
+	public String getWorkFunctionByUsername(Long aWorkFunctionPlan, HttpServletRequest aRequest) throws NamingException, JspException {
+		boolean anyWFadd = RolesHelper.checkRoles("/Policy/Mis/MedCase/Direction/CreateNewTimeAllFunction", aRequest) ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
+		Collection<WebQueryResult> list =null;
+
 		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
 		sql.append(" from WorkFunction wf")
 			.append(" left join SecUser su on su.id=wf.secUser_id ")
@@ -172,7 +175,37 @@ public class WorkCalendarServiceJs {
 			.append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
 			.append(" left join patient wp on wp.id=w1.person_id ")
 			.append("where su.login='").append(username).append("' and wc1.id is not null ") ;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		
+		list = service.executeNativeSql(sql.toString());
+		sql = new StringBuilder() ;
+		sql.append("select wf1.id as wf1id,vwf.name ||' '||wfGr.groupName as workFunction ") ;
+		sql.append(" from WorkFunction wf")
+			.append(" left join SecUser su on su.id=wf.secUser_id ")
+			.append(" left join Worker w on w.id=wf.worker_id")
+			.append(" left join worker w1 on w1.person_id=w.person_id")
+			.append(" left join WorkFunction wf1 on wf1.worker_id=w1.id")
+			.append(" left join WorkFunction wfGr on wfGr.id=wf1.group_id")
+			.append(" left join WorkCalendar wc1 on wfGr.id=wc1.workFunction_id")
+			.append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
+			.append(" left join patient wp on wp.id=w1.person_id ")
+			.append("where su.login='").append(username).append("' and wc1.id is not null ") ;
+		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString());
+		if (list1.isEmpty()) list.addAll(list1) ;
+		if (anyWFadd) {
+			sql = new StringBuilder() ;
+			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+			sql.append(" from WorkFunction wf")
+				.append(" left join SecUser su on su.id=wf.secUser_id ")
+				.append(" left join Worker w on w.id=wf.worker_id")
+				.append(" left join worker w1 on w1.person_id=w.person_id")
+				.append(" left join WorkFunction wf1 on wf1.worker_id=w1.id")
+				.append(" left join WorkCalendar wc1 on wf1.id=wc1.workFunction_id")
+				.append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
+				.append(" left join patient wp on wp.id=w1.person_id ")
+				.append("where wf1.id='").append(aWorkFunctionPlan).append("' and wc1.id is not null ") ;
+			list1 = service.executeNativeSql(sql.toString());
+			if (!list1.isEmpty()) list.addAll(list1) ;
+		}
 		StringBuilder res = new StringBuilder() ;
 		res.append("<ul>") ;
 		for (WebQueryResult wqr:list) {

@@ -172,16 +172,21 @@ public class PatientServiceJs {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction) ;
 	}
+	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, boolean aChechFull, HttpServletRequest aRequest) throws NamingException, Exception {
+		boolean checkFullBirthday = false ;
+		if (aChechFull) {
+			checkFullBirthday = RolesHelper.checkRoles("/Policy/Mis/Patient/BanDoubleCreate", aRequest) ;
+		}
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction,checkFullBirthday) ;
+	}
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename, String aBirthday, Long aSex, Long aSocialStatus, String aSnils, HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		SnilsStringValidator val = new SnilsStringValidator() ;
 		val.validate(aSnils, null, aRequest) ;
 		
 		return service.addPatient(aLastname, aFirstname, aMiddlename, aBirthday, aSex, aSocialStatus, aSnils) ;
-	}
-	public String infoByPolicy(Long aPatient, HttpServletRequest aRequest) throws Exception  {
-		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.infoMedPolicy(aPatient);
 	}
 	public boolean setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus,HttpServletRequest aRequest)throws Exception  {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ; 

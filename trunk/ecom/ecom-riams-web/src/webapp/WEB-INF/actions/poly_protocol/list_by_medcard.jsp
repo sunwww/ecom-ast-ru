@@ -18,21 +18,24 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   	<ecom:webQuery name="listByMedcard" nativeSql="select t.id
-,t.date as datstart, 
+,t.datestart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
-vpd.name as vpdname ,mkb.code,mkb.name as dsname,prot.record as protrecord, vr.name as vrname, vvr.name as vvrname
- from ticket t 
-left join vocreason vr on vr.id=t.vocreason_id
-left join vocvisitresult vvr on vvr.id = t.vocvisitresult_id
-left join vocidc10 mkb on mkb.id=t.idc10_id
-left join VocPrimaryDiagnosis vpd on vpd.id = t.primary_id
-left join diary prot on prot.ticket_id=t.id
-left join workFunction wf on wf.id=t.workFunction_id
+(select vpd.name ||' '||mkb.code||' '||mkb.name 
+from diagnosis diag
+left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join VocPrimaryDiagnosis vpd on vpd.id = diag.primary_id
+where diag.medcase_id=t.id) as diag,prot.record as protrecord, vr.name as vrname, vvr.name as vvrname
+ from MedCase t 
+left join vocreason vr on vr.id=t.visitreason_id
+left join vocvisitresult vvr on vvr.id = t.visitresult_id
+
+left join diary prot on prot.medCase_id=t.id
+left join workFunction wf on wf.id=t.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join medcard m on m.id=t.medcard_id
-where m.id='${param.id}'  and t.date is not null and t.status='2'"/>
+where m.id='${param.id}' and t.dtype='ShortMedCase' and t.dateStart is not null"/>
     <msh:table name="listByMedcard" action="entityView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />

@@ -15,32 +15,45 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:panel guid="panel" colsWidth="3">
         <msh:row guid="b556ehb-b971-441e-9a90-53217">
-          <msh:autoComplete viewAction="entityView-pres_dietPrescription.do" vocName="Diet" property="diet" label="Диета" guid="3a3eg4d1b-8802-467d-b205-7115918" horizontalFill="true" fieldColSpan="3" size="50" />
+          <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" property="diet" label="Диета" horizontalFill="true" fieldColSpan="5" />
         </msh:row>
-        <msh:row guid="b52546hb-b971-441e-9a90-53217">
-          <msh:separator colSpan="6" label="График приема" guid="52167v-7fee-45e5-96ec-7753b" />
+        <msh:row >
+          <msh:separator colSpan="8" label="График приема" />
         </msh:row>
-        <msh:row guid="b55j6eb-b971-441e-9a90-5258c07">
-          <msh:textField label="Дата начала" property="planStartDate" guid="3am3e4d1b-8802-467d-b205-714658" horizontalFill="true" />
-          <msh:textField label="Время" property="planStartTime" guid="3978b-8802-467d-b205-71r5fb3" horizontalFill="true" />
+        <msh:row >
+          <msh:textField label="Дата начала" property="planStartDate" />
+          <msh:textField label="Время" property="planStartTime" />
         </msh:row>
-        <msh:row guid="bg55j6eb-b971-441e-9a90-58257">
-          <msh:textField label="Дата окончания" property="planEndDate" guid="3a357b-8802-467d-b205-795118" horizontalFill="true" />
-          <msh:textField label="Время" property="planEndTime" guid="3365b-8802-467d-b205-71r5fb3" horizontalFill="true" />
+        <msh:row >
+          <msh:autoComplete vocName="workFunction" label="Назначил" property="prescriptSpecial" horizontalFill="true" fieldColSpan="5" />
         </msh:row>
-        <msh:row guid="32fv6eb-b971-441e-9a90-513217">
-          <msh:autoComplete vocName="workFunction" label="Назначил" property="prescriptSpecial" guid="30gn-8802-467d-b205-798518" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row >
+          <msh:textField label="Дата окончания" property="planEndDate" />
+          <msh:textField label="Время" property="planEndTime" />
         </msh:row>
-        <msh:row guid="3364b-b971-441e-9a90-5951">
-          <msh:textField label="Дата отмены" property="cancelDate" guid="34d1b-8802-467d-b205-764518" horizontalFill="true" />
-          <msh:textField label="Время" property="cancelTime" guid="3a3-8802-467d-b205-7312" horizontalFill="true" />
+        <msh:row >
+          <msh:textField label="Дата отмены" property="cancelDate" />
+          <msh:textField label="Время" property="cancelTime" />
         </msh:row>
-        <msh:row guid="06eb-b971-441e-9a90-591507">
-          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" guid="d35495n-8802-467d-b205-7159b018" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row >
+          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" guid="d35495n-8802-467d-b205-7159b018" horizontalFill="true" fieldColSpan="5" />
         </msh:row>
-        <msh:row guid="32fv6eb-b971-441e-9a90-584627">
-          <msh:autoComplete vocName="workFunction" label="Отменил" property="cancelSpecial" guid="3036541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row >
+          <msh:autoComplete vocName="workFunction" label="Отменил" property="cancelSpecial" guid="3036541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="5" />
+        </msh:row>      
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="8"/>
         </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>              
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>

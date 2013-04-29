@@ -59,6 +59,7 @@
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-diet_diet" name="Удалить диету" roles="/Policy/IdeMode/Hello/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="b44f5659-2a4a-4e49-9700-31b3a7eb150f">
+        <msh:sideLink action="/entityParentPrepareCreate-diet_diet" name="Добавить подчиненную диету" roles="/Policy/Mis/Diet/Create" params="id"/>
         <msh:sideLink roles="/Policy/Mis/Dish/Create" action="/entityPrepareCreate-diet_dish" name="Новое блюдо" title="Добавить новое блюдо" guid="3250fe37-f85c-4e87-b447-4124027e2e4e" />
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="b6202b67-4d44-4463-a63f-40471c1086f8">

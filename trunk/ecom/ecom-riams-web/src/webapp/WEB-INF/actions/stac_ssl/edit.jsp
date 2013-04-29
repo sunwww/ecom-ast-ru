@@ -162,20 +162,7 @@
   <tiles:put name="javascript" type="string">
   	<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <script type="text/javascript">
-    /*
-    	PatientService.infoByPolicy($('patient').value, {
-    		callback: function(aResult) {
-    			//alert(aResult) ;
-    			if (aResult.length>0) {
-    				$('medPolicyInformation').innerHTML = "ВНИМАНИЕ!!! <br> "+aResult ;
-    				$('medPolicyInformation').style.display = 'block' ;
-    			} else {
-    			$('medPolicyInformation').style.display = 'none' ;
-    			}
-    		}
-    	});*/
-    </script>  
+
   </tiles:put>
 </tiles:insert>
 

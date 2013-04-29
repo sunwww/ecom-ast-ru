@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -44,7 +45,7 @@
 	        	<input type="radio" name="typeOperation" value="1">  да
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeOperation" value="2"  colspan="2">  нет
+	        	<input type="radio" name="typeOperation" value="2"  >  нет
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeOperation" value="3">  все
@@ -118,7 +119,9 @@
     String date = (String)request.getParameter("dateBegin") ;
     String result = (String)request.getParameter("result") ;
     String view = (String)request.getAttribute("typeView") ;
-    if (date!=null && !date.equals("") && result!=null && !result.equals(""))  {
+    
+    if (date!=null && !date.equals(""))  {
+    	ActionUtil.setParameterFilterSql("result","vhr.id", request) ;
     	String dateEnd = (String)request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
@@ -135,12 +138,12 @@
     		request.setAttribute("dep", "") ;
     		request.setAttribute("dep1", "") ;
     	}
-    	if (view!=null && (view.equals("1") || view.equals("5"))) {
+    	if ((view!=null && (view.equals("1") || view.equals("5")) )&& result!=null && !result.equals("")) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list" nativeSql="
+    <ecom:webQuery maxResult="2000" name="journal_list" nativeSql="
     
     select  
     hmc.id as hmcid
@@ -188,7 +191,7 @@
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	
     	and dmc.dateFinish is not null
-    	and hmc.result_id=${param.result}
+    	${resultSql}
     	${depIsNoOmc}
     	
     ${addPat} 
@@ -225,8 +228,8 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_swod" nativeSql="
     
-    select  
-    d.name as depname
+    select  '&department='||d.id||'&result='||vhr.id as id
+    ,d.name as depname,vhr.name as vhrname
     ,count(*)
     ,count(case when hmc.emergency='1' then 1 else null end) as cntEmer
     ,count(case when hmc.emergency='1' then null else 1 end) as cntPlan
@@ -256,25 +259,26 @@
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	
     	and dmc.dateFinish is not null
-    	and hmc.result_id=${param.result}
+    	${resultSql}
     	${dep}
     	
     ${addPat} 
     
     
-    group by d.name
-    order by d.name
+    group by d.id,d.name,vhr.id,vhr.name
+    order by d.name,vhr.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_swod"
-         action="stac_resultPatient_list.do" idField="1" noDataMessage="Не найдено">
+         action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="1"/>
-            <msh:tableColumn columnName="Кол-во" property="2" isCalcAmount="true"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="3" isCalcAmount="true"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="4" isCalcAmount="true"/>
-            <msh:tableColumn columnName="Кол-во оперированных" property="5" isCalcAmount="true"/>
-            <msh:tableColumn columnName="Ср. койко дней" property="6" />
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="Результат госпитализации" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="4" isCalcAmount="true"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="5" isCalcAmount="true"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во плановых" property="6" isCalcAmount="true"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во оперированных" property="7" isCalcAmount="true"/>
+            <msh:tableColumn columnName="Ср. койко дней" property="8" />
             
         </msh:table>
     </msh:sectionContent>
@@ -287,7 +291,11 @@
     <ecom:webQuery name="journal_list_swod" nativeSql="
     
     select  
-    case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end as depname
+    '&department='||case when d.isNoOmc='1' and pd.id is not null then pd.id else d.id end
+    ||'&result='||vhr.id as id
+    
+    ,case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end as depname
+    ,vhr.name as vhrname
     ,count(*)
     ,count(case when hmc.emergency='1' then 1 else null end) as cntEmer
     ,count(case when hmc.emergency='1' then null else 1 end) as cntPlan
@@ -319,25 +327,30 @@
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	
     	and dmc.dateFinish is not null
-    	and hmc.result_id=${param.result}
+    	${resultSql}
     	${depIsNoOmc}
     	
     ${addPat} 
     
     
-    group by case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
+    group by 
+    case when d.isNoOmc='1' and pd.id is not null then pd.id else d.id end
+    , case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
+    ,vhr.id,vhr.name
     order by case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
+    ,vhr.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_swod"
-         action="stac_resultPatient_list.do" idField="1" noDataMessage="Не найдено">
+         action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="1"/>
-            <msh:tableColumn columnName="Кол-во" property="2"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="3"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="4"/>
-            <msh:tableColumn columnName="Кол-во оперированных" property="5"/>
-            <msh:tableColumn columnName="Ср. койко дней" property="6"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="Результат госпитализации" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во плановых" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во оперированных" property="7"/>
+            <msh:tableColumn columnName="Ср. койко дней" property="8"/>
             
         </msh:table>
     </msh:sectionContent>
@@ -350,7 +363,9 @@
     <ecom:webQuery name="journal_list_swod_all" nativeSql="
     
     select  
-	count(*) as cnt
+    '&result='||vhr.id as id
+    ,vhr.name as vhrname
+	,count(*) as cnt
     ,count(case when hmc.emergency='1' then 1 else null end) as cntEmer
     ,count(case when hmc.emergency='1' then null else 1 end) as cntPlan
 	,count(case
@@ -378,22 +393,23 @@
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	
     	and dmc.dateFinish is not null
-    	and hmc.result_id=${param.result}
+    	${resultSql}
     	${dep}
     	
     ${addPat} 
     
-    
+    group by vhr.id,vhr.name
 
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_swod_all"
-         action="stac_resultPatient_list.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="Кол-во" property="1"/>
-            <msh:tableColumn columnName="Кол-во экстренных" property="2"/>
-            <msh:tableColumn columnName="Кол-во плановых" property="3"/>
-            <msh:tableColumn columnName="Кол-во оперированных" property="4"/>
-            <msh:tableColumn columnName="Ср. койко/дней" property="5"/>
+         action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="Результат госпитализации" property="2"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во плановых" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во оперированных" property="6"/>
+            <msh:tableColumn columnName="Ср. койко/дней" property="7"/>
             
         </msh:table>
     </msh:sectionContent>

@@ -19,7 +19,7 @@ public class AddressUpdateAction extends BaseAction {
         //SearchForm form = (SearchForm) aForm;
         //form.validate(aMapping, aRequest);
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-        //System.out.println("search="+form.getNumberTicket()) ;
+        
         String clear = aRequest.getParameter("clear") ;
     	long id = 0 ;
         if (clear!=null && clear.equals("1")) {

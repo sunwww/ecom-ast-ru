@@ -21,6 +21,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 
 <msh:sideMenu title="Журналы">
+	<msh:sideLink name="Список отчетов" 
+	action="/javascript:getDefinition('riams_journals.do?short=Short',null)" styleId="viewShort" />
+
 	    <msh:sideMenu title="СЛС">
 	    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
 	    	key="ALT+1" styleId="stac_findSlsByStatCard"
@@ -112,6 +115,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByDepartment" key="ALT+8"
 	    		action="/stac_reestrByDepartment" name="По отделению"
 	    	/>
+	    	<msh:sideLink styleId="stac_journalByStandart"
+	    		roles="/Policy/Mis/MedCase/Stac/Journal/StandartOmc" 
+	    		action="/stac_report_standartOmc" name="По стандартам"
+	    	/>
 	    	<msh:sideLink styleId="stac_journalByBedFund"
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund" 
 	    		action="/stac_groupByBedFundList" name="По коечному фонду"
@@ -125,4 +132,4 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    		action="/journal_doc_externalMedService" name="Внеш. лаборатория"
 	    	/>
 	    </msh:sideMenu>
-    </msh:sideMenu>
+</msh:sideMenu>

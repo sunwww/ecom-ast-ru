@@ -17,31 +17,7 @@
         <msh:row guid="b556ehb-b971-441e-9a90-53217">
           <msh:autoComplete viewAction="entityView-pres_template_dietPrescription.do" vocName="Diet" property="diet" label="Диета" guid="3a3eg4d1b-8802-467d-b205-7115918" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
-        <msh:row guid="b52546hb-b971-441e-9a90-53217">
-          <msh:separator colSpan="6" label="График приема" guid="52167v-7fee-45e5-96ec-7753b" />
-        </msh:row>
-        <msh:row guid="b55j6eb-b971-441e-9a90-5258c07">
-          <msh:textField label="Дата начала" property="planStartDate" guid="3am3e4d1b-8802-467d-b205-714658" horizontalFill="true" />
-          <msh:textField label="Время" property="planStartTime" guid="3978b-8802-467d-b205-71r5fb3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="bg55j6eb-b971-441e-9a90-58257">
-          <msh:textField label="Дата окончания" property="planEndDate" guid="3a357b-8802-467d-b205-795118" horizontalFill="true" />
-          <msh:textField label="Время" property="planEndTime" guid="3365b-8802-467d-b205-71r5fb3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="32fv6eb-b971-441e-9a90-513217">
-          <msh:autoComplete vocName="vocWorker" label="Назначил" property="prescriptor" guid="30gn-8802-467d-b205-798518" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
-        <msh:row guid="3364b-b971-441e-9a90-5951">
-          <msh:textField label="Дата отмены" property="cancelDate" guid="34d1b-8802-467d-b205-764518" horizontalFill="true" />
-          <msh:textField label="Время" property="cancelTime" guid="3a3-8802-467d-b205-7312" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="06eb-b971-441e-9a90-591507">
-          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" guid="d35495n-8802-467d-b205-7159b018" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
-        <msh:row guid="32fv6eb-b971-441e-9a90-584627">
-          <msh:autoComplete vocName="worker" label="Отменил" property="cancelWorker" guid="3036541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
         <mis:canShowPrescriptionFulfilments formName="pres_template_dietPrescriptionForm" guid="6eb-b971-441e-9a90-58">

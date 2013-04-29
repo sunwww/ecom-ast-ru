@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -15,13 +17,20 @@
     </tiles:put>
   <tiles:put name="body" type="string">
   	
-  	<%
+  <%
+	String typeEmergency =ActionUtil.updateParameter("Report_hospital_standart","typeEmergency","3", request) ;
+	String typePatient =ActionUtil.updateParameter("Report_hospital_standart","typePatient","1", request) ;
   	String id = request.getParameter("id") ;
   	String[] params = id.split(":") ;
   	request.setAttribute("dateStart", params[1]) ;
   	request.setAttribute("dateEnd", params[2]) ;
   	request.setAttribute("nationality", params[0].equals("0")?" is null ":"='"+params[0]+"'") ;
-  	%>  	
+  	if (typeEmergency!=null && typeEmergency.equals("1")) {
+   		request.setAttribute("emergencySql", " and v.emergency='1' ") ;
+   	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+   		request.setAttribute("emergencySql", " and (v.emergency is null or v.emergency='0') ") ;
+   	} 
+	%> 	
   	<msh:section title="Поликлиника">
 
   	
@@ -39,10 +48,10 @@ left join Worker we on we.id=wfe.worker_id
 left join Patient pe on pe.id=we.person_id
 left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
-where  v.dateStart between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+where  v.dateStart between between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and v.DTYPE='Visit' and v.dateStart is not null
 and (v.noActuality is null or v.noActuality='0')
-and p.nationality_id ${nationality}
+and p.nationality_id ${nationality} ${emergencySql}
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
@@ -60,15 +69,16 @@ order by p.lastname,p.firstname,p.middlename"/>
 	    ,to_char(v.dateFinish,'DD.MM.YYYY') as dateFinish
 	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 	    ,ss.code as sscode 
-
+	    ,ml.name as mlname
 from medcase v 
 left join patient p on p.id=v.patient_id
 left join statisticstub ss on ss.id=v.statisticStub_id
-where  v.dateStart between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+left join mislpu ml on ml.id=v.department_id
+where  v.dateStart between between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and v.DTYPE='HospitalMedCase' and v.dateStart is not null
 and (v.noActuality is null or v.noActuality='0')
 and v.deniedHospitalizating_id is null
-and p.nationality_id ${nationality}
+and p.nationality_id ${nationality} ${emergencySql}
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityShortView-stac_ssl.do" 
  name="list_stac"
@@ -78,8 +88,36 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="Пациент" property="4" />
 	      <msh:tableColumn columnName="Дата поступления" property="2" />
 	      <msh:tableColumn columnName="Дата выписки" identificator="false" property="3" />
+	      <msh:tableColumn property="6" columnName="Отделение"/>
 	    </msh:table>
   	</msh:section>
+  	<msh:section title="Отказы от госпитализаций">
+
+  	
+	    <ecom:webQuery name="list_stac1" nativeSql="select v.id
+	    
+	    ,to_char(v.dateStart,'DD.MM.YYYY') as dateStart
+	    ,to_char(v.dateFinish,'DD.MM.YYYY') as dateFinish
+	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
+	    ,ss.code as sscode 
+
+from medcase v 
+left join patient p on p.id=v.patient_id
+left join statisticstub ss on ss.id=v.statisticStub_id
+where  v.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+and v.DTYPE='HospitalMedCase' and v.dateStart is not null
+and (v.noActuality is null or v.noActuality='0')
+and v.deniedHospitalizating_id is not null
+and p.nationality_id ${nationality} ${emergencySql}
+order by p.lastname,p.firstname,p.middlename"/>
+<msh:table viewUrl="entityShortView-stac_ssl.do" 
+ name="list_stac1"
+ action="entityView-stac_ssl.do" idField="1" >
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="4" />
+	      <msh:tableColumn columnName="Дата обращения" property="2" />
+	    </msh:table>
+  	</msh:section>  	
   	<msh:section title="Талоны">
 
   	
@@ -101,10 +139,13 @@ left join Patient pe on pe.id=we.person_id
 left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 where  v.date between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and v.status='2'
-and p.nationality_id ${nationality}
+and p.nationality_id ${nationality} ${emergencySql}
 
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+<msh:table viewUrl="entityShortView-poly_ticket.do" 
+editUrl="entityParentEdit-poly_ticket.do" 
+name="list_ticket" action="entityView-poly_ticket.do" 
+idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" >
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
 	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />

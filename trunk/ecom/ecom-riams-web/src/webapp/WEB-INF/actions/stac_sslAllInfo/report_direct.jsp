@@ -217,7 +217,7 @@ count(*)
 ,count(case when sls.emergency='1' and of.voc_code='П' then sls.id else null end) as cntEmerPoly
 ,count(case when sls.emergency='1' and of.voc_code='С' then sls.id else null end) as cntEmerStac
 ,count(case when (sls.emergency is null or sls.emergency='0') then sls.id else null end) as cntPlan
-,count(case when (sls.emergency is null or sls.emergency='0') and of.voc_code='П' then sls.id else null end) as cntPlanPoly
+,count(case when (sls.emergency is null or sls.emergency='0') and vht.code='POLYCLINIC' then sls.id else null end) as cntPlanPoly
 
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id
@@ -225,6 +225,7 @@ left join misLpu ml on ml.id=sls.orderLpu_id
 left join misLpu dep on dep.id=sls.department_id
 left join omc_frm of on of.id=sls.orderType_id
 left join vocServiceStream vss on vss.id=sls.serviceStream_id
+left join VocHospType vht on sls.sourceHospType_id=vht.id
 where slo.dtype='DepartmentMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')

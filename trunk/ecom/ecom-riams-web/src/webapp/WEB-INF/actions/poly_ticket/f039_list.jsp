@@ -21,9 +21,9 @@
     <input type="hidden" name="s" id="s" value="TicketService"/>
     <input type="hidden" name="id" id="id"/>
     <input type="hidden" name="ticketIs" id="ticketIs" value="1"/>
-    <msh:panel colsWidth="1%,1%,1%">
+    <msh:panel>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="10" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
       <msh:row>
         	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -31,23 +31,23 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
-        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="specialist" vocName="workFunction" 
-        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="lpu" vocName="lpu"
-        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
-        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workPlaceType" vocName="vocWorkPlaceType"
-        		horizontalFill="true" fieldColSpan="6" size="70"/>
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
@@ -55,35 +55,32 @@
 	        	<input type="radio" name="typeGroup" value="1">  датам
 	        </td>
 	        
-	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="2">ЛПУ
-	        </td>
-        </msh:row>
-        <msh:row>
-        	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="3">  врачам
+	        	<input type="radio" name="typeGroup" value="2"> ЛПУ
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="3"> врачам
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="4">  сотрудникам
 	        </td>
 	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="4">  специальностям
+	        	<input type="radio" name="typeGroup" value="5">  специальностям
 	        </td>
         </msh:row>
         <msh:row>
         	<td></td>
-	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="5">Поток обслуж.  
+	        <td  onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="6">Поток обслуж.  
 	        </td>
-	        <td colspan="3" onclick="this.childNodes[1].checked='checked';" style="text-align: left">
-	        	<input type="radio" name="typeGroup" value="6">Место обслуж.  
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';" style="text-align: left">
+	        	<input type="radio" name="typeGroup" value="7">Место обслуж.  
 	        </td>
-
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="8">Соц. статус  
+	        </td>
         </msh:row>
         <msh:row>
-        	<td></td>
-	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="7">Соц. статус  
-	        </td>
-        </msh:row>        <msh:row>
         <td colspan="6" class="buttons" style="text-align: left">
 			<input type="button" title="Найти [CTRL+ENTER]" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;poly_f039_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 			<input type="button" title="Печать [CTRL+ENTER]" onclick="this.value=&quot;Печать&quot;; getId(0);this.form.action=&quot;print-f039.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">
