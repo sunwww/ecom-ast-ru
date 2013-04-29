@@ -8,7 +8,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = ModePrescription.class)
@@ -19,7 +21,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 public class ModePrescriptionForm extends PrescriptionForm {
 	/** Режим */
 	@Comment("Режим")
-	@OneToOne
+	@Persist @Required
 	public Long getModePrescription() {return theModePrescription;}
 	public void setModePrescription(Long aModePrescription) {theModePrescription = aModePrescription;}
 

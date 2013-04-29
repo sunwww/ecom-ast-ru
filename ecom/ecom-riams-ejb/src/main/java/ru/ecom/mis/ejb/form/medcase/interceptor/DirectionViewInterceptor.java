@@ -10,7 +10,7 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
-import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class DirectionViewInterceptor implements IFormInterceptor {
@@ -18,7 +18,7 @@ public class DirectionViewInterceptor implements IFormInterceptor {
     private final static Logger LOG = Logger.getLogger(DirectionViewInterceptor.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
-    	ShortMedCaseForm form = (ShortMedCaseForm) aForm ;
+    	TicketMedCaseForm form = (TicketMedCaseForm) aForm ;
     	Visit entity = (Visit) aEntity ;
     	EntityManager manager = aContext.getEntityManager() ;
     	if (entity.getServiceStream()!=null && (entity.getServiceStream().getCode()==null || entity.getServiceStream().getCode().equals("1"))) {

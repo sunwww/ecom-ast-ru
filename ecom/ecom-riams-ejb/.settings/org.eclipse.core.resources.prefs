@@ -1,4 +1,4 @@
-#Fri Aug 12 03:56:47 MSD 2011
+#Sat Apr 20 13:05:10 MSD 2013
 =\=\=\=\=\=\=
 <<<<<<<=.mine
 >>>>>>>=.r1862
@@ -23,8 +23,8 @@ encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/MedcardForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/MisLpuForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/MortalityReportDateForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/PersonalWorkFunctionForm.js=UTF-8
-encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/ShortTicketForm.js=UTF-8
-encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/TicketForm.js=UTF-8
+encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/ShortTicketMedCaseForm.js=UTF-8
+encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/TicketMedCaseForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/VaccinationForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/VisitMedCaseForm.js=UTF-8
 encoding//src/main/resources/riams-ejb_jar/META-INF/formjs/VocDrugUnlicensedNameForm.js=UTF-8

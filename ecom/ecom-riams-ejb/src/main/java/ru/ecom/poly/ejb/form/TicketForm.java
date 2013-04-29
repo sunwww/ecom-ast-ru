@@ -39,7 +39,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 	, view = "entityView-poly_ticket.do"
 	, shortView = "entityShortView-poly_ticket.do"
 	, list = "entityParentList-poly_ticket.do"
-	, shortList = "entityParentShortList-poly_ticket.do" 
+	, shortList = "entityParentShortList-poly_old_ticket.do" 
 )
 @EntityFormSecurityPrefix("/Policy/Poly/Ticket")
 @ASaveInterceptors(

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -21,6 +22,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.poly.ejb.domain.Medcard;
 import ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
@@ -37,7 +39,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-    @AIndex(properties="datePlan", table="MedCase")
+	@AIndex(properties="datePlan", table="MedCase"),
+    @AIndex(properties="workFunctionExecute", table="MedCase")
     }) 
 public class ShortMedCase extends MedCase{
 	
@@ -267,5 +270,27 @@ public class ShortMedCase extends MedCase{
 	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;}
     /** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
+
+	/**  Медицинская карта */
+    @OneToOne
+    public Medcard getMedcard() {return theMedcard;}
+    public void setMedcard(Medcard aMedcard) {theMedcard = aMedcard;}
+    /** Медицинская карта */
+    private Medcard theMedcard;
+    
+    /** Разговор с родственником */
+	@Comment("Разговор с родственником")
+	public Boolean getIsTalk() {return theIsTalk;}
+	public void setIsTalk(Boolean aIsTalk) {theIsTalk = aIsTalk;}
+
+	/** Направление на госпитализацию */
+	@Comment("Направление на госпитализацию")
+	public Boolean getIsDirectHospital() {return theIsDirectHospital;}
+	public void setIsDirectHospital(Boolean aIsDirectHospital) {theIsDirectHospital = aIsDirectHospital;}
+
+	/** Направление на госпитализацию */
+	private Boolean theIsDirectHospital;
+	/** Разговор с родственником */
+	private Boolean theIsTalk;
 
 }

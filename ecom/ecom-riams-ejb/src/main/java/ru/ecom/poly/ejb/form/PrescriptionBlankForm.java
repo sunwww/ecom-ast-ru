@@ -2,6 +2,7 @@ package ru.ecom.poly.ejb.form;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.poly.ejb.domain.PrescriptionBlank;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -22,7 +23,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Рецептурный бланк")
 @WebTrail(comment = "Рецептурный бланк", nameProperties = "writingOutDate", view = "entityView-prescriptionBlank.do")
 @EntityFormSecurityPrefix("/Policy/Poly/PrescriptionBlank")
-@Parent(property = "ticket", parentForm = TicketForm.class)
+@Parent(property = "medCase", parentForm = MedCaseForm.class)
 public class PrescriptionBlankForm extends IdEntityForm {
     /**
      * Номер *

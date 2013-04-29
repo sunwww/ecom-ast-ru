@@ -35,12 +35,17 @@ public class MedcardServiceBean implements IMedcardService{
     /**
      * Поиск мед. карты по номеру
      */
-    public List<MedcardForm> findMedCard(String aNumber) {
+    public List<MedcardForm> findMedCard(String aNumber, boolean aIsExactMatch) {
         if (CAN_DEBUG) {
             LOG.debug("findMedcard() Number = " + aNumber );
         }
         QueryClauseBuilder builder = new QueryClauseBuilder();
-        builder.addLike("number", "%"+aNumber+"%");
+        if (aIsExactMatch) {
+        	builder.addLike("number", "%"+aNumber+"%");
+        } else {
+        	builder.add("number", aNumber);
+        }
+        
         Query query = builder.build(theManager, "from Medcard where", " order by Number");
         return createList(query);
     }

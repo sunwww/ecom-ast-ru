@@ -8,6 +8,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.poly.ejb.form.TicketForm;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -34,7 +35,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.protocol.Protocol.class)
 @WebTrail(comment = "Заключение", nameProperties = "info", view = "entityParentView-poly_protocol.do")
-@Parent(property = "ticket", parentForm = TicketForm.class)
+@Parent(property = "medCase", parentForm = MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Protocol")
 @ASaveInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)

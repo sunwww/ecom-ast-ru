@@ -183,7 +183,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 	public static DiagnosisForm getDiagnosis(EntityManager aManager, Long aHospitalMedCase
 			,String aRegType, String aPriority, boolean aIsDepartmentSearch) {
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select diag.illnesPrimary_id,diag.idc10_id,diag.name from diagnosis diag") ;
+		sql.append("select diag.illnesPrimary_id,diag.idc10_id,diag.name,diag.traumaType_id as traumatype,diag.id as diagid from diagnosis diag") ;
 		sql.append(" left join medcase dep on dep.id=diag.medCase_id");
 		sql.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id");
 		sql.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id");
@@ -195,7 +195,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		}
 		
 		if (aPriority!=null) sql.append(" and vpd.code='").append(aPriority).append("'") ;
-		sql.append(" and vdrt.code='").append(aRegType).append("'");
+		if (aRegType!=null) sql.append(" and vdrt.code='").append(aRegType).append("'");
 		
 		sql.append(" order by dep.dateStart desc");
 		sql.append("") ;
@@ -205,7 +205,10 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			DiagnosisForm frm = new DiagnosisForm() ;
 			frm.setIdc10(ConvertSql.parseLong(obj[1])) ;
 			frm.setIllnesPrimary(ConvertSql.parseLong(obj[0])) ;
+			frm.setTraumaType(ConvertSql.parseLong(obj[3])) ;
 			frm.setName(obj[2]!=null?(String)obj[2]:"") ;
+			Long id = ConvertSql.parseLong(obj[4]) ;
+			frm.setId(id==null?Long.valueOf(0):id.longValue()) ;
 			return frm ;
 		}
 		return null ;

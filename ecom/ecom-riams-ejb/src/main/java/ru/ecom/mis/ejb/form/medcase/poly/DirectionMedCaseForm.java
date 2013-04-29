@@ -6,9 +6,9 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
-import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -30,7 +30,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)
 )
-public class DirectionMedCaseForm extends ShortMedCaseForm {
+public class DirectionMedCaseForm extends TicketMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist
@@ -124,4 +124,15 @@ public class DirectionMedCaseForm extends ShortMedCaseForm {
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
 	/** Поток обслуживания */
 	private Long theServiceStream;	
+	/**
+	 * Рабочая функция исполнения
+	 */
+	@Comment("Рабочая функция исполнения")
+	@Persist 
+	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
+	/** Рабочая функция исполнения */
+	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
+
+	/** Рабочая функция исполнения */
+	private Long theWorkFunctionExecute;
 }

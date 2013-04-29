@@ -101,6 +101,9 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+aForm.preAdmissionDefect>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (aForm.supplyOrderNumber!=null&&aForm.supplyOrderNumber!="") throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+	} else {
+		if (+aForm.orderType>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
+		if (+aForm.preAdmissionTime>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
 	}
 	
 	if (aForm.deniedHospitalizating>0) {

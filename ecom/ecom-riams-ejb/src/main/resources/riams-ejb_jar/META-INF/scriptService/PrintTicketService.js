@@ -97,7 +97,7 @@ function recordMultiText(aKey, aValue) {
 	
 function printInfo(aCtx, aParams) {
 	
-	var ticket = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.Ticket
+	var ticket = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, new java.lang.Long(aParams.get("id"))) ;
 	var mc = ticket.medcard;
     var prs = mc.person;
@@ -106,12 +106,28 @@ function printInfo(aCtx, aParams) {
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
-    record("ticketd",FORMAT.format(ticket.date)) ;
+    record("ticketd",FORMAT.format(ticket.orderDate)) ;
     record("medcard",mc) ;
     record("idticket",""+ticket.id) ;
-    recordBlanks("blank",ticket.prescriptionBlanks,4);
     recordVocProba("sex", prs.sex, 1, 2);
-    recordVocProba("paym", ticket.vocPaymentType, 1, 5);
+    recordVocProba("paym", ticket.serviceStream, 1, 5);
+    if (ticket.getWorkFunctionExecute()!=null) {
+    	record("Doctor", ticket.getWorkFunctionExecute().getWorkerInfo());
+    	ifVocIsNotNull(ticket.getWorkFunctionExecute().getWorkFunction(),"DoctorFunction") ;
+    	if (ticket.workFunction.worker!=null && ticket.workFunction.worker.lpu!=null) {
+    		record("LPUName",ticket.workFunction.worker.lpu.name) ;
+    	} else {
+    		record("LPUName","") ;
+    	}
+    } else {
+    	record("Doctor","") ;
+    	record("DoctorFunction","") ;
+    	record("LPUName","") ;
+    }
+    
+    //TODO доработать
+    /*
+    recordBlanks("blank",ticket.prescriptionBlanks,4);
     recordVocProba("servPl", ticket.vocServicePlace, 1, 3);
     recordVocProba("reas", ticket.vocReason, 1, 4);
     recordVocProba("res", ticket.vocVisitResult, 1, 10);
@@ -130,8 +146,7 @@ function printInfo(aCtx, aParams) {
 		record("village.k1","") ;
 		record("village.k2","") ;
 	}
-	
-
+	*/
     /*
    if (prs.getMedPolicies().size() > 0) {
             plc = prs.getMedPolicies().get(prs.getMedPolicies().size()-1);
@@ -165,19 +180,6 @@ function printInfo(aCtx, aParams) {
         // Инвалидность
         
         // Специалист
-    if (ticket.getWorkFunction()!=null) {
-    	record("Doctor", ticket.getWorkFunction().getWorkerInfo());
-    	ifVocIsNotNull(ticket.getWorkFunction().getWorkFunction(),"DoctorFunction") ;
-    	if (ticket.workFunction.worker!=null && ticket.workFunction.worker.lpu!=null) {
-    		record("LPUName",ticket.workFunction.worker.lpu.name) ;
-    	} else {
-    		record("LPUName","") ;
-    	}
-    } else {
-    	record("Doctor","") ;
-    	record("DoctorFunction","") ;
-    	record("LPUName","") ;
-    }
     */
     //Город, село
 	//if (prs.address!=null) {
@@ -252,7 +254,7 @@ function recordDate(aKey, aDate) {
 		map.put(aKey+".year","") ;
 	}
 }
-function recordBoolean(aKey,aBool) {
+function recordBoCreateolean(aKey,aBool) {
 	if (aBool!=null && aBool==true) {
 		map.put(aKey+".k1","<text:span text:style-name=\"T13\">") ;
 		map.put(aKey+".k2","</text:span>");

@@ -38,29 +38,4 @@ public class DietPrescriptionForm extends PrescriptionForm{
 	/** Диета */
 	private Long theDiet;
 	
-	/** Диета (текст) */
-	@Comment("Диета (текст)")
-	@Persist
-	public String getDietName() {
-		return theDietName  ;
-	}
-
-	public void setDietName(String aDietName) {
-	}
-
-	/** Диета (текст) */
-	private String theDietName;
-	
-	/** Описание назначения */
-	@Comment("Описание назначения")
-	@Persist
-	public String getDescriptionInfo() {
-	    
-		return theDescriptionInfo ;
-	}
-   public void setDescriptionInfo (String aDescriptionInfo) {theDescriptionInfo = aDescriptionInfo ; }
-   private String theDescriptionInfo ;
-
-
-	
 }

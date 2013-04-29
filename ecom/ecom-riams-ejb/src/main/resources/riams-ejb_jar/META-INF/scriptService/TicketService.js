@@ -124,8 +124,8 @@ function f039add(aCtx,aParams) {
 	var service = new Packages.ru.ecom.mis.ejb.service.medcase.ReportsServiceBean() ;
 	var queryTextBegin = service.getTextQueryBegin(ticketIs, groupBy
 		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
-	var queryTextEnd = service.getTextQueryEnd(ticketIs, groupBy
-		, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
+	//var queryTextEnd = service.getTextQueryEnd(ticketIs, groupBy
+	//	, beginDate, finishDate, specialist, workFunction, lpu, serviceStream,workPlaceType) ;
 	
 	var vd = ticketIs?"":"Start" ;
 	var sql= queryTextBegin
@@ -175,8 +175,8 @@ function f039add(aCtx,aParams) {
 	
 	+" ,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (to_date(case when to_char(t.date"+vd+",'dd.mm')='29.02' then '28.02' else to_char(t.date"+vd+",'dd.mm') end ||'.'||(cast(to_char(t.date"+vd+",'yyyy') as int)-18),'dd.mm.yyyy')>=p.birthday) then 1 else null end) as cntProfHomeold"
 	
-		+queryTextEnd;
-	
+	//	+queryTextEnd;
+	;
 	
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	
@@ -250,7 +250,7 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 	+"               case when p.HouseNonresident is not null and p.HouseNonresident!='' then ' д.'||p.HouseNonresident else '' end" 
 	+" ||case when p.BuildingHousesNonresident is not null and p.BuildingHousesNonresident!='' then ' корп.'|| p.BuildingHousesNonresident else '' end" 
 	+"||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end"
-	+"   else '' "
+	+"   else p.foreignRegistrationAddress "
 	+"  end as address"
 	//+",$$ByPatient^ZAddressLib(p.id)"
 	+",vr.name as vrname"

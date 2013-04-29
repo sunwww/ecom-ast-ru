@@ -48,6 +48,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
+	
     /** Только принят */
     public static final int STATUS_NULL = 0 ;
     /** ОТКАЗ */
@@ -59,7 +60,6 @@ abstract public class MedCase extends BaseEntity {
 	@OneToOne
 	public VocServiceStream getServiceStream() {return theServiceStream;}
 	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
-
 	/** Пациент */
 	@Comment("Пациент")
 	@ManyToOne
@@ -414,5 +414,26 @@ abstract public class MedCase extends BaseEntity {
 	/** Дата направления */
 	private Date theOrderDate;
 	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
 
+	/** Время создания */
+	private Time theCreateTime;
+	
+	/** Время редактирования */
+	@Comment("Время редактирования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+
+	/** Время редактирования */
+	private Time theEditTime;
+
+	/** Дата окончания */
+	@Comment("Дата окончания")
+	public Date getDateFinish() {return theDateFinish;	}
+	public void setDateFinish(Date aNewProperty) {theDateFinish = aNewProperty;}
+	/** Дата окончания */
+	private Date theDateFinish;
 }

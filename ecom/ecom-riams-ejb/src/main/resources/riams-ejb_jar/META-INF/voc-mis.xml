@@ -915,8 +915,8 @@
     <voc id='vocOpenedSpoByPatient' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase'
-                names   = 'dateStart,startFunction.workFunctionInfo'
-                queried = 'startFunction.worker.person.lastname'
+                names   = 'dateStart,ownerFunction.workFunctionInfo'
+                queried = 'ownerFunction.worker.person.lastname'
             queryAppend = 'dateFinish is null'
                 parent  = 'patient_id'
         />

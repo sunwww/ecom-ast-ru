@@ -287,7 +287,8 @@ function printDocument(aCtx, aParams) {
 		
 	}
 	
-	var msc = doc.medSocCommission;
+	var mscList = aCtx.manager.createQuery("from MedSocCommission where disabilityDocument_id="+id).setMaxResults(1).getResultList() ;
+	var msc = mscList.size()>0?mscList.get(0):null ;
 	if (msc!=null) {
 		recordDate(msc.assignmentDate,"doc.medSocCommission.assignmentDate") ;
 		recordDate(msc.registrationDate,"doc.medSocCommission.registrationDate") ;
@@ -360,15 +361,27 @@ function printDocument(aCtx, aParams) {
 		cal.add(java.util.Calendar.DAY_OF_MONTH,1) ;
 		dateClose=new java.sql.Date(cal.getTime().getTime()) ;
 	}
-	
-	if (+closeReasonCode>1) {
+	if (closeReason==null) {
 		recordDate(null,"doc.endDate") ;
-		recordDate(dateClose,"doc.otherEnd.date") ;
-		recordChar(closeReason!=null?closeReason.codeF:"",2,"doc.otherEnd.code") ;
-	} else {
-		recordDate(dateClose,"doc.endDate") ;
 		recordDate(null,"doc.otherEnd.date") ;
 		recordChar("",2,"doc.otherEnd.code") ;
+	} else {
+		closeReasonCode = +closeReasonCode ;
+		if (closeReasonCode>1) {
+			if (closeReasonCode>=3 && (closeReasonCode<=5 || closeReasonCode==7)) {
+				recordDate(null,"doc.endDate") ;
+				recordDate(dateClose,"doc.otherEnd.date") ;
+				recordChar(closeReason!=null?closeReason.codeF:"",2,"doc.otherEnd.code") ;
+			} else {
+				recordDate(null,"doc.endDate") ;
+				recordDate(null,"doc.otherEnd.date") ;
+				recordChar(closeReason!=null?closeReason.codeF:"",2,"doc.otherEnd.code") ;
+			}
+		} else {
+			recordDate(dateClose,"doc.endDate") ;
+			recordDate(null,"doc.otherEnd.date") ;
+			recordChar("",2,"doc.otherEnd.code") ;
+		}
 	}
 	var lpu=lastWorker!=null?lastWorker.lpu:null ;
 	if (lpu==null) {

@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -12,8 +11,6 @@ import javax.persistence.PersistenceContext;
 
 import org.jboss.annotation.security.SecurityDomain;
 
-import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -31,10 +28,12 @@ public class ReportsServiceBean implements IReportsService {
 		} else if (aGroupBy.equals("3")) {
 			title = "Врач" ;
 		} else if (aGroupBy.equals("4")) {
-			title = "Специальность" ;
+			title = "Раб. функция" ;
 		} else if (aGroupBy.equals("5")) {
-			title = "Поток обслуживания" ;
+			title = "Специальность" ;
 		} else if (aGroupBy.equals("6")) {
+			title = "Поток обслуживания" ;
+		} else if (aGroupBy.equals("7")) {
 			title = "Место обслуживания" ;
 		} else {
 			title = "Дата" ;
@@ -134,23 +133,23 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null && aSpecialist>Long.valueOf(0)){
 			WorkFunction wf = aManager.find(WorkFunction.class,aSpecialist) ;
 			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
 		}
-		if (aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
 			VocWorkFunction vwf = aManager.find(VocWorkFunction.class, aWorkFunction) ;
 			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
 		}
-		if (aLpu>Long.valueOf(0)){
+		if (aLpu!=null&&aLpu>Long.valueOf(0)){
 			MisLpu lpu = aManager.find(MisLpu.class, aLpu) ;
 			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
 		}
-		if (aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
 			VocServiceStream vss = aManager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
-		if (aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
 			VocWorkPlaceType vwpt = aManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
 			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
 		}
@@ -174,10 +173,13 @@ public class ReportsServiceBean implements IReportsService {
 			id = "wf.id" ;
 			name = "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename" ;
 		} else if (aGroupBy.equals("4")) {
+			id = "wp.id" ;
+			name = "wp.lastname||' '||wp.firstname||' '||wp.middlename" ;
+		} else if (aGroupBy.equals("5")) {
 			//vocWorkFunction
 			id = "vwf.id" ;
 			name = "vwf.name" ;
-		} else if (aGroupBy.equals("5")) {
+		} else if (aGroupBy.equals("6")) {
 			//vocWorkFunction
 			if (aIsTicket) {
 				id = "t.vocPaymentType_id" ;
@@ -185,7 +187,7 @@ public class ReportsServiceBean implements IReportsService {
 				id = "t.serviceStream_id" ;
 			}
 			name = "vss.name" ;
-		} else if (aGroupBy.equals("6")) {
+		} else if (aGroupBy.equals("7")) {
 			//vocWorkFunction
 			if (aIsTicket) {
 				id = "t.vocServicePlace_id" ;
@@ -225,10 +227,14 @@ public class ReportsServiceBean implements IReportsService {
 			group = "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
 			order = "vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
 		} else if (aGroupBy.equals("4")) {
+			//doctor
+			group = "wp.id,wp.lastname,wp.firstname,wp.middlename" ;
+			order = "wp.lastname,wp.firstname,wp.middlename" ;
+		} else if (aGroupBy.equals("5")) {
 			//vocWorkFunction
 			group = "vwf.id,vwf.name" ;
 			order = "vwf.name" ;
-		} else if (aGroupBy.equals("5")) {
+		} else if (aGroupBy.equals("6")) {
 			//vocWorkFunction
 			if (aIsTicket) {
 				group = "t.vocPaymentType_id,vss.name" ;
@@ -236,7 +242,7 @@ public class ReportsServiceBean implements IReportsService {
 				group= "t.serviceStream_id,vss.name" ;
 			}
 			order = "vss.name" ;
-		} else if (aGroupBy.equals("6")) {
+		} else if (aGroupBy.equals("7")) {
 			//vocWorkFunction
 			if (aIsTicket) {
 				group = "t.vocServicePlace_id,vwpt.name" ;

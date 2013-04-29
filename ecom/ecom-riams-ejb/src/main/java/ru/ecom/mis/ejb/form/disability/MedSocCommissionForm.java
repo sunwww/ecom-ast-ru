@@ -46,13 +46,13 @@ public class MedSocCommissionForm extends IdEntityForm {
 
 	/** Дата регистрации документов */
 	@Comment("Дата регистрации документов")
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString
 	public String getRegistrationDate() {return theRegistrationDate;}
 	public void setRegistrationDate(String aRegistrationDate) {theRegistrationDate = aRegistrationDate;}
 	
 	/** Дата освидетельствования */
 	@Comment("Дата освидетельствования")
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString 
 	public String getExaminationDate() {return theExaminationDate;}
 	public void setExaminationDate(String aExaminationDate) {theExaminationDate = aExaminationDate;}
 
@@ -64,7 +64,7 @@ public class MedSocCommissionForm extends IdEntityForm {
 
 	/** Степень ограничения трудоспособности */
 	@Comment("Степень ограничения трудоспособности")
-	@Persist @Required
+	@Persist 
 	public Long getDisabilityDergee() {return theDisabilityDergee;}
 	public void setDisabilityDergee(Long aDisabilityDergee) {theDisabilityDergee = aDisabilityDergee;}
 
