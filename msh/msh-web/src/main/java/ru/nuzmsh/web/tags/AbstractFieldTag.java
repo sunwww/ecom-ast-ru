@@ -440,6 +440,9 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
             if(!theHideLabel) {
                 Element labelElement = getLabelElement() ;
                 tdLabel.addElement(labelElement) ;
+            } else {
+            	
+            	tdLabel.setStyle("display:none") ;
             }
 
             if(isCustomize) {
