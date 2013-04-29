@@ -134,11 +134,16 @@
         <action path="/ecom_login" name="ecom_loginForm" scope="request" validate="false" type="ru.ecom.web.login.LoginAction">
             <forward name="success" path="/WEB-INF/actions/ecom_login/login.jsp" redirect="false"/>
         </action>
+        <action path="/ecom_redirectMany" name="ecom_loginForm" scope="request" validate="false" type="ru.ecom.web.login.LoginAction">
+            <forward name="success" path="/WEB-INF/actions/ecom_login/redirectMany.jsp" redirect="false"/>
+        </action>
 
         <action path="/ecom_loginSave" name="ecom_loginForm" scope="request" validate="true"
                 type="ru.ecom.web.login.LoginSaveAction"
                 input='/WEB-INF/actions/ecom_login/login.jsp'>
             <forward name="success" path="/start.do" redirect="true"/>
+            <forward name="manyParams" path="/ecom_redirectMany.do" redirect="true"/>
+            
         </action>
 
         <action path="/ecom_loginExit" name="" scope="request" validate="false" type="ru.ecom.web.login.LoginExitAction">

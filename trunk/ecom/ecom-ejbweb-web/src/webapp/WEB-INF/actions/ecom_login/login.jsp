@@ -30,6 +30,8 @@
     	if (day==1) {path_curdate="0301";break;}
     	if (day==5) {path_curdate="0305";break;}
     	if (day>5 && day<9) {path_curdate="0308";break;}
+    case 3:
+    	if (day==1) {path_curdate="0401";break;}
     case 11:
     	if (day>20) {path_curdate="1231";break;}
     default:

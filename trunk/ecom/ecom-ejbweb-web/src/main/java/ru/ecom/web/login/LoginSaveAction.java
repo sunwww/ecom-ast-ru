@@ -1,6 +1,9 @@
 package ru.ecom.web.login;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -13,6 +16,7 @@ import javax.ejb.EJBAccessException;
 import javax.naming.CommunicationException;
 import javax.naming.NamingException;
 import javax.security.auth.login.FailedLoginException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.config.ForwardConfig;
 
 import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -86,17 +91,57 @@ public class LoginSaveAction extends LoginExitAction {
                 LOG.debug("next(3) = "+next) ;
             } catch (Exception e) {
             	LOG.warn("next в URLEncode: "+next, e);
+            	
             	next = form.getNext().substring(form.getNext().indexOf('/',2)) ;
                 LOG.debug("next(4) = "+next) ;
             }
             
-//            if(next.indexOf('?')>0) {
-//                String path  = next.substring(0,next.indexOf('?'));
-//                String param = next.substring(next.indexOf('?')+1) ;
-//                next = path + URLEncoder.encode(param) ;
-//            }
-            
+            if (next.length()>1900) {
+                if(next.indexOf('?')>0) {
+                    String path  = next.substring(1,next.indexOf('?'));
+                    String param = next.substring(next.indexOf('?')+1) ;
+                    
+                    
+                    
+                    String[] paramM=param.split("&") ;
+                    StringBuilder res = new StringBuilder() ;
+                    res.append("<form method='post' action='"+path+"'>") ;
+                    //ArrayList<WebQueryResult> list = new ArrayList<WebQueryResult>() ;
+                    for (int i=0;i<paramM.length;i++) {
+                		String val = paramM[i] ;
+                        String valN  = val.substring(0,val.indexOf('='));
+                        String valV = val.substring(val.indexOf('=')+1) ;
+                        String valV1 = URLDecoder.decode(valV,"utf-8") ;
+                        //WebQueryResult wqr = new WebQueryResult() ; 
+                        //wqr.set1(valN) ;
+                        //wqr.set2(valV) ;
+                        //wqr.set3(valV1) ;
+                        res.append("<textarea name='"+valN+"' >") ;
+                        res.append(valV1.trim()) ;
+                        res.append("</textarea>") ;
+                        res.append(""+valN+"=") ;
+                        res.append(valV1) ;
+                        //list.add(wqr) ;
+                        
+                    }
+                    res.append("Загрузка...");
+                    //System.out.print(res) ;
+                    res.append("</form>");
+                    //StringBuilder resS = new StringBuilder() ;
+                    aRequest.setAttribute("textScript","<script type='text/javascript'>document.forms[0].submit() ;</script>") ;
+                    //aRequest.setAttribute("listParam", list) ; 
+                    aRequest.setAttribute("textParam", res) ; 
+                    
+                    aRequest.setAttribute("path", path.replaceFirst("/", "")) ;
+                    aRequest.setAttribute("next", param) ;
+                    aRequest.getRequestDispatcher("ecom_redirectMany.do").forward(aRequest, aResponse) ;
+                }
+            	
+            	
+            } 
+            	
             return new ActionForward(next,true) ;
+            
         }
     }
     public static void checkMessage(HttpServletRequest aRequest,String aUsername) throws JspException, NamingException {

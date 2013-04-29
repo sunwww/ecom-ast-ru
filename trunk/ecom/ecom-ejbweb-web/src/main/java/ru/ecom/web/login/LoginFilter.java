@@ -80,18 +80,25 @@ public class LoginFilter implements Filter {
             StringBuilder sb = new StringBuilder();
             sb.append(request.getRequestURI()) ;
             sb.append("?") ;
-
+            if (params!=null) {
             while (params.hasMoreElements()) {
-                String param = (String) params.nextElement();
-                sb.append(param) ;
-                sb.append('=') ;
-                sb.append(URLEncoder.encode(request.getParameter(param), "utf-8")) ;
-                sb.append("&") ;
+	                String param = (String) params.nextElement();
+	                sb.append(param) ;
+	                sb.append('=') ;
+	                sb.append(request.getParameter(param)!=null?URLEncoder.encode(request.getParameter(param), "utf-8"):"") ;
+	                sb.append("&") ;
+	            }
             }
-
-            response.sendRedirect("ecom_login.do?next="
+            
+            //
+            if (sb.length()>1999) {
+            	request.setAttribute("next", sb.toString()) ;
+            	request.getRequestDispatcher("ecom_login.do").forward(request, response) ;
+            } else {
+            	response.sendRedirect("ecom_login.do?next="
             		//+ URLEncoder.encode(sb.toString(), "utf-8"));
             		+ theStringSafeEncode.encode(sb.toString()));
+            }
         } else {
             aChain.doFilter(request, aResponse);
         }

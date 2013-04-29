@@ -29,6 +29,12 @@ public class LoginAction extends BaseAction {
                 form.setUsername(loginInfo.getUsername());
             }
         }
+        if (aRequest.getParameter("next")==null) {
+        	if (aRequest.getAttribute("next")!=null) {
+        		LoginForm form = (LoginForm) aForm ;
+        		form.setNext((String)aRequest.getAttribute("next")) ;
+        	}
+        }
         
         return aMapping.findForward("success") ;
     }
