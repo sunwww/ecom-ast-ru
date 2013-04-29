@@ -232,13 +232,13 @@
 			<msh:tableColumn property="4" columnName="Приоритет"/>
 			<msh:tableColumn property="2" columnName="Код МКБ10"/>
 			<msh:tableColumn property="6" columnName="Наименование болезни"/>
-			<msh:tableColumn property="3" columnName="Кол-во СЛО"/>
-			<msh:tableColumn property="7" columnName="Кол-во госпитализаций"/>
-			<msh:tableColumn property="12" columnName="Кол-во госпитализаций с операцией"/>
-			<msh:tableColumn property="8" columnName="Кол-во выписанных"/>
-			<msh:tableColumn property="10" columnName="Кол-во к/дней"/>
+			<msh:tableColumn property="3" isCalcAmount="true" columnName="Кол-во СЛО"/>
+			<msh:tableColumn property="7" isCalcAmount="true" columnName="Кол-во госпитализаций"/>
+			<msh:tableColumn property="12" isCalcAmount="true" columnName="Кол-во госпитализаций с операцией"/>
+			<msh:tableColumn property="8" isCalcAmount="true" columnName="Кол-во выписанных"/>
+			<msh:tableColumn property="10" isCalcAmount="true" columnName="Кол-во к/дней"/>
 			<msh:tableColumn property="11" columnName="Средний к/день"/>
-			<msh:tableColumn property="9" columnName="Кол-во умерших"/>
+			<msh:tableColumn property="9" isCalcAmount="true" columnName="Кол-во умерших"/>
 		</msh:table>
     <% } else { %>
     	<i>Выберите параметры и нажмите найти </i>

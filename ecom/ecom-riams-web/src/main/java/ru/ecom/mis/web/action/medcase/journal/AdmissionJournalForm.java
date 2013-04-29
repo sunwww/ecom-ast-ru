@@ -249,6 +249,30 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	public Long getCategoryDifference() {return theCategoryDifference;}
 	public void setCategoryDifference(Long aCategoryDifference) {theCategoryDifference = aCategoryDifference;}
 
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	public Long getBedType() {
+		return theBedType;
+	}
+
+	public void setBedType(Long aBedType) {
+		theBedType = aBedType;
+	}
+
+	/** Стандарт */
+	@Comment("Стандарт")
+	public Long getStandart() {
+		return theStandart;
+	}
+
+	public void setStandart(Long aStandart) {
+		theStandart = aStandart;
+	}
+
+	/** Стандарт */
+	private Long theStandart;
+	/** Профиль коек */
+	private Long theBedType;
 	/** Расхождение по диагнозу */
 	private Long theCategoryDifference;
 	/** Пол */

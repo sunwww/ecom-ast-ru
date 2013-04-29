@@ -252,20 +252,7 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
  
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <script type="text/javascript">
-    	PatientService.infoByPolicy($('patient').value, {
-    		callback: function(aResult) {
-    			//alert(aResult) ;
-    			if (aResult.length>0) {
-    				$('medPolicyInformation').innerHTML = "ВНИМАНИЕ!!!<br>"+aResult ;
-    				$('medPolicyInformation').style.display = 'block' ;
-    				
-    			} else {
-    				$('medPolicyInformation').style.display = 'none' ;
-    			}
-    		}
-    	});
-    </script>
+
 
      <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
     	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/TransferAtBudget">

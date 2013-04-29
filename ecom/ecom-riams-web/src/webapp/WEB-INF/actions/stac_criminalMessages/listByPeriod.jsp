@@ -58,20 +58,26 @@
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
 	        	<input type="radio" name="typeView1" value="1">  реестр
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView1" value="2"  >  свод по дням 
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView1" value="3"  >  общий свод по госпитализациям
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeView1" value="2">  реестр по приказу минзрава 03.02.2010 №42-Пр/13 
 	        </td>
         </msh:row>
         <msh:row>
-                <td></td>
-                <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
-	        	<input type="radio" name="typeView1" value="4"  >  общий свод отказов от госпитализаций
+            <td></td>
+ 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+	        	<input type="radio" name="typeView1" value="3"  >  свод по дням 
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView1" value="5"  >  общий свод по обращениям
+	        	<input type="radio" name="typeView1" value="4"  >  общий свод по госпитализациям
+	        </td>
+        </msh:row>
+        <msh:row>
+            <td></td>
+            <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeView1" value="5"  >  общий свод отказов от госпитализаций
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+	        	<input type="radio" name="typeView1" value="6"  >  общий свод по обращениям
 	        </td>
         </msh:row>
       <msh:row>
@@ -236,7 +242,111 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:sectionContent>
     </msh:section>
     <% }  
-    	if (view!=null && (view.equals("2"))) {%>
+    if (view!=null && (view.equals("2"))) {%>
+    
+    <msh:section>
+    <ecom:webQuery nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
+    select pm.id, 
+    p.lastname||' '||p.firstname||' '||p.middlename as fiopat
+    ,pol.series||' '||polNumber as seriesPolicy
+    ,ri.name as rename
+    ,p.passportSeries||' '||p.passportNumber as passportInfo
+    ,to_char(p.birthday,'dd.mm.yyyy') as pbirthday
+    ,vs.name as vsname
+    , case when p.address_addressId is not null 
+          then coalesce(a.fullname,a.name) 
+               ||case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end
+               ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end
+	       ||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end
+       when p.territoryRegistrationNonresident_id is not null
+	  then okt.name||' '||p.RegionRegistrationNonresident||' '||oq.name||' '||p.SettlementNonresident
+	       ||' '||ost.name||' '||p.StreetNonresident
+               ||case when p.HouseNonresident is not null and p.HouseNonresident!='' then ' д.'||p.HouseNonresident else '' end
+	       ||case when p.BuildingHousesNonresident is not null and p.BuildingHousesNonresident!='' then ' корп.'|| p.BuildingHousesNonresident else '' end
+	       ||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end
+       else  p.foreignRegistrationAddress end as address
+    ,to_char(m.dateStart,'dd.mm.yyyy') as mdateStart
+    ,to_char(m.dateFinish,'dd.mm.yyyy') as mdateFinish
+    ,ml.name as mlname
+    
+    ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5))
+    ||' '||vpht.name||coalesce(' '||vpmst.name,'') 
+    ||' '||pm.place as pmplace
+    ,pm.diagnosis as pmdiagnosis
+    ,vpmo.name||case when vho.id is null then '' else ' - '||vho.name end as vphoname
+    ,case when m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is null then 'Стационар'
+          when m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is not null then 'Помощь в приемном отделении'
+     else m.dtype end as typeHelp
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+    left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+    left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+    left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+    left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+    left join WorkFunction wf on wf.id=pm.workFunction_id
+    left join Worker w on w.id=wf.worker_id
+    left join Patient wp on wp.id=w.person_id
+    
+    left join medcase m on m.id=pm.medCase_id
+    left join medcase_medpolicy mcmp on mcmp.medcase_id=m.id
+    left join medpolicy pol on pol.id=mcmp.policies_id
+    left join reg_ic ri on ri.id=pol.company_id
+    left join VocHospitalizationOutcome vho on vho.id=m.outcome_id
+    left join Patient p on p.id=m.patient_id
+    left join VocSex vs on vs.id=p.sex_id
+    left join Address2 a on a.addressId=p.address_addressId
+    left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
+    left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
+    left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
+    
+    left join MisLpu as ml on ml.id=m.department_id 
+    left join SecUser su on su.login=m.username
+    left join WorkFunction wf1 on wf1.secUser_id=su.id
+    left join Worker w1 on w1.id=wf1.worker_id
+    left join MisLpu ml1 on ml1.id=w1.lpu_id     
+    where pm.dtype='CriminalPhoneMessage'
+    and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
+and ( m.noActuality is null or m.noActuality='0')
+${period}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+    order by ${paramDate}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    
+    <form action="print-stac_criminalMessage_pr42.do" method="post" target="_blank">
+    Реестр с ${param.dateBegin} по ${param.dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <msh:table name="journal_militia"
+    viewUrl="entityShortView-stac_criminalMessages.do" 
+     action="entityParentView-stac_criminalMessages.do" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="ФИО пациента" property="2" />
+      <msh:tableColumn columnName="Серия и номер полиса" property="3" />
+      <msh:tableColumn columnName="Наименование СМО" property="4" />
+      <msh:tableColumn columnName="Серия и номер паспорта" property="5" />
+      <msh:tableColumn columnName="Дата рождения" property="6" />
+      <msh:tableColumn columnName="пол" property="7" />
+      <msh:tableColumn columnName="Домашний адрес, место работы" property="8" />
+      <msh:tableColumn property="9" columnName="Дата начала лечения"/>
+      <msh:tableColumn columnName="Дата окончания лечения" property="10" />
+      <msh:tableColumn columnName="Название отделения" property="11" />
+      <msh:tableColumn columnName="Краткая информация об обстоятельствах получения травмы" property="12" />
+      <msh:tableColumn columnName="Диагноз" property="13" />
+      <msh:tableColumn columnName="Исход лечения" property="14" />
+      <msh:tableColumn columnName="Вид м/помощи" property="15" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <% }  
+    	if (view!=null && (view.equals("3"))) {%>
     
     <msh:section>
     <msh:sectionTitle>Свод по дням с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
@@ -271,7 +381,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <% 
     	}
     	
-    if (view!=null && (view.equals("3"))) {%>
+    if (view!=null && (view.equals("4"))) {%>
     <msh:section>
     <msh:sectionTitle>Свод по госпитализациям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
@@ -303,7 +413,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:section>
     <%
     } 
-	if (view!=null && (view.equals("4"))) {%>
+	if (view!=null && (view.equals("5"))) {%>
     <msh:section>
     <msh:sectionTitle>Свод по отказам с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
@@ -337,7 +447,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:section>
     <%
     } 
-	if (view!=null && (view.equals("5"))) {%>
+	if (view!=null && (view.equals("6"))) {%>
     <msh:section>
     <msh:sectionTitle>Свод по обращениям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>

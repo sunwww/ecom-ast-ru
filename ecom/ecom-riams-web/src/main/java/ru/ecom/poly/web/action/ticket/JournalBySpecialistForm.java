@@ -150,4 +150,17 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Отделение */
 	private Long theDepartment;
+	
+	/** Гражданство */
+	@Comment("Гражданство")
+	public Long getNationality() {
+		return theNationality;
+	}
+
+	public void setNationality(Long aNationality) {
+		theNationality = aNationality;
+	}
+
+	/** Гражданство */
+	private Long theNationality;
 }

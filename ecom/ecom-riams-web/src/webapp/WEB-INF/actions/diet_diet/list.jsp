@@ -10,7 +10,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="helloSideMenu-123" title="Добавить">
-      <msh:sideLink guid="helloSideLinkNew" key="ALT+N" action="/entityParentPrepareCreate-diet_diet" name="Добавить диету" roles="/Policy/Mis/Diet/Create" params="id" />
+      <msh:sideLink guid="helloSideLinkNew" key="ALT+N" action="/entityPrepareCreate-diet_diet" name="Добавить диету" roles="/Policy/Mis/Diet/Create"  />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="0ecbb4d3-2ad1-4400-9736-a3ed7c5ca571">
       <msh:sideLink action="/entityList-diet_diet" name="⇧Список всех диет" guid="13a3d527-25c9-4ee7-92b2-5f445ddbb27f" />

@@ -26,10 +26,19 @@
         <msh:row guid="b28cb409-df33-4406-bef7-9a79f93b49dd">
           <ecom:oneToManyOneAutocomplete label="Категории шаблона" property="categories" vocName="vocTemplateCategory" colSpan="4" />
         </msh:row>
-        <msh:row guid="fdabbac6-97a9-4171-af88-2506106b38a3">
-          <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="d4f27875-9c0e-4b2d-807a-e4b1d002ec30" />
-          <msh:textField property="date" label="Дата создания" viewOnlyField="true" guid="4f0598d7-0dfd-414a-acef-274fb76dda94" />
+          <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        	<msh:label property="createUsername" label="пол-ль"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редакт."/>
+        	<msh:label property="editTime" label="время"/>
+        	<msh:label property="editUsername" label="пол-ль"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>
@@ -57,6 +66,8 @@
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="9825ef2b-1d4b-4070-b035-b6707a878e5c">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-pres_template_drugPrescription" name="Лекарственное средство" roles="/Policy/Mis/Prescription/Template/DrugPrescription/View" guid="f5549341-6246-4cc4-8369-6f7b04931f2a" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-pres_template_dietPrescription" name="Диету" guid="71dca8ec-ccdf-4f2a-88c7-750cbc00b045" roles="/Policy/Mis/Prescription/Template/DietPrescription/View" />
+        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ModePrescription/View" params="id" action="/entityParentPrepareCreate-pres_template_modePrescription" name="Режим" />
         <msh:sideLink action=" javascript:shownewTemplatePrescription(1,&quot;.do&quot;)" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
       </msh:sideMenu>
       <tags:template_menu currentAction="prescriptions"/>

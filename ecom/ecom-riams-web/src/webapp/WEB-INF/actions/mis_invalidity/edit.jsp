@@ -11,58 +11,58 @@
             <msh:hidden property="saveType"/>
             <msh:hidden property="patient"/>
 
-            <msh:panel>
-                <msh:row>
-                	<msh:textField property="dateFrom" label="Дата установления"/>
-                	<msh:checkBox property="initial" label="Первичная инв."/>
-                </msh:row>
-                <msh:row>
-                	<msh:autoComplete property="registrationPlace" label="Место регистрации" vocName="mainLpu" horizontalFill="true" fieldColSpan="3"/>
-                </msh:row>
-                <msh:row>
-                    <msh:checkBox label="Инвалид с детства" property="childhoodInvalid" />
-                </msh:row>
-                <msh:row>
-                	<msh:checkBox property="withoutExam" label="Без переосвидетельства" horizontalFill="true"/>
-                	<msh:checkBox property="incapable" label="Недееспособный"  horizontalFill="true"/>
-                </msh:row>
-                <msh:row>
-                	<msh:textField property="lawCourtDate" label="Дата суда"/>
-                	<msh:autoComplete property="lawCourt" label="Суд" vocName="vocLawCourt" size="30" />
-                </msh:row>
-                <msh:row>
-                	<msh:textField property="revisionDate" label="Дата пересмотра"/>
-                	<msh:textField property="dateTo" label="Дата снятия инв."/>
-                </msh:row>
-                <msh:row>
-                	<msh:textField property="lastRevisionDate" label="Дата посл. пересмотра"/>
-                	<msh:textField property="nextRevisionDate" label="Дата след. пересмотра"/>
-                </msh:row>
-                <msh:row>
-                	<msh:checkBox property="greatePatrioticWarInvalid" label="Инвалид ВОВ"/>
-                </msh:row>
-                <msh:row>
-                	<msh:checkBox property="isWorking" label="Трудоспособен"/>
-                	<msh:autoComplete property="group" label="Группа инвалидности" horizontalFill="true" vocName="vocInvalidity"/>
-                </msh:row>
-                <msh:row>
-                	<msh:autoComplete property="healthViolation" label="Гл.наруш. сост. здор. при инвал." vocName="vocInvalidityHealthViolation" horizontalFill="true" fieldColSpan="3"/>
-                </msh:row>
-                <msh:row>
-                	<msh:autoComplete property="vitalRestriction" label="Вед. огран. жизнедеят. при инвал." vocName="vocInvalidityVitalRestriction" horizontalFill="true" fieldColSpan="3"/>
-                </msh:row>
-                <msh:row>
-                	<msh:autoComplete property="workPlace" horizontalFill="true" label="Вид места работы" vocName="vocInvalidWorkPlace" fieldColSpan="3"/>
-                </msh:row>
-                <msh:row>
-                	<msh:checkBox property="workProfDisutility" fieldColSpan="3" label="Работа в условиях профвредности"/>
-                </msh:row>
-                <msh:row>
-	                <msh:autoComplete property="idc10" label="МКБ10" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10"/>
-                </msh:row>
-                <msh:row>
-                	<msh:textField property="diagnosis" label="Диагноз" fieldColSpan="3" horizontalFill="true"/>
-                </msh:row>
+ 	 <msh:panel>
+        <msh:row>
+        	<msh:textField property="dateFrom" label="Дата установления"/>
+        	<msh:checkBox property="initial" label="Первичная инв."/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="registrationPlace" label="Место регистрации" vocName="mainLpu" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+            <msh:checkBox label="Инвалид с детства" property="childhoodInvalid" />
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="withoutExam" label="Без переосвидетельства" horizontalFill="true"/>
+        	<msh:checkBox property="incapable" label="Недееспособный"  horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="lawCourtDate" label="Дата суда"/>
+        	<msh:autoComplete property="lawCourt" label="Суд" vocName="vocLawCourt" size="30" />
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="revisionDate" label="Дата пересмотра"/>
+        	<msh:textField property="dateTo" label="Дата снятия инв."/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="lastRevisionDate" label="Дата посл. пересмотра"/>
+        	<msh:textField property="nextRevisionDate" label="Дата след. пересмотра"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="greatePatrioticWarInvalid" label="Инвалид ВОВ"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isWorking" label="Трудоспособен"/>
+        	<msh:autoComplete property="group" label="Группа инвалидности" horizontalFill="true" vocName="vocInvalidity"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="healthViolation" label="Гл.наруш. сост. здор. при инвал." vocName="vocInvalidityHealthViolation" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="vitalRestriction" label="Вед. огран. жизнедеят. при инвал." vocName="vocInvalidityVitalRestriction" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="workPlace" horizontalFill="true" label="Вид места работы" vocName="vocInvalidWorkPlace" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="workProfDisutility" fieldColSpan="3" label="Работа в условиях профвредности"/>
+        </msh:row>
+        <msh:row>
+         <msh:autoComplete property="idc10" label="МКБ10" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="diagnosis" label="Диагноз" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
@@ -80,8 +80,8 @@
         <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
-                <msh:submitCancelButtonsRow colSpan="2"/>
-            </msh:panel>
+        <msh:submitCancelButtonsRow colSpan="2"/>
+    </msh:panel>
 
 
 

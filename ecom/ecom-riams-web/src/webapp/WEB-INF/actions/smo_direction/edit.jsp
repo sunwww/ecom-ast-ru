@@ -42,6 +42,7 @@
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
           <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" />
         </msh:row>
+        
         <msh:ifFormTypeIsNotView formName="smo_directionForm">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
@@ -52,17 +53,17 @@
         </msh:row>
         </msh:ifInRole>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateNewTime">
-        <msh:row>
-        	<msh:separator label="<a href='javascript:getWorkFunctionByUsername()'>Создание дополнительного времени</a>" colSpan="4"/>
-        </msh:row>
-        <msh:row>
-        	<td colspan="4" id="tdCreateNewTime">
-        		
-        		<div id="workFunctionByUsername">
-        			
-        		</div>
-        	</td>
-        </msh:row>
+		        <msh:row>
+		        	<msh:separator label="<a href='javascript:getWorkFunctionByUsername()'>Создание дополнительного времени</a>" colSpan="4"/>
+		        </msh:row>
+		        <msh:row>
+		        	<td colspan="4" id="tdCreateNewTime">
+		        		
+		        		<div id="workFunctionByUsername">
+		        			
+		        		</div>
+		        	</td>
+		        </msh:row>
         </msh:ifInRole>
         </msh:ifFormTypeIsNotView>
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
@@ -274,13 +275,14 @@
     }
     
     function getWorkFunctionByUsername() {
-    	WorkCalendarService.getWorkFunctionByUsername(
+    	WorkCalendarService.getWorkFunctionByUsername($('workFunctionPlan').value,
       			{
       				callback:function(aDateDefault) {
     	$("workFunctionByUsername").innerHTML="<a href='javascript:hideNewTime()'>Скрыть</a><br/>"+aDateDefault ;
     				}
       			}) ;
     }
+
     function hideNewTime() {
     	$("workFunctionByUsername").innerHTML="" ;
     }

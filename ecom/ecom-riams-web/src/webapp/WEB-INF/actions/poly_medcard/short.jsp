@@ -99,7 +99,7 @@
     <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
 	    <msh:sideMenu title="Добавить">
 	        <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-poly_ticket" name="Талон" title="Создать новый талон" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
-	        <msh:sideLink roles="/Policy/Poly/ShortTicket/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_short_ticket" name="Талон на прием" title="Создать талон на прием" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
+	        <msh:sideLink roles="/Policy/Poly/ShortTicket/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-smo_short_ticket" name="Талон на прием" title="Создать талон на прием" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
 	    </msh:sideMenu>
     <msh:sideMenu title="Показать все">
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/entityParentList-poly_ticket" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
@@ -112,22 +112,6 @@
     <ecom:titleTrail mainMenu="Medcard" beginForm="poly_medcardForm" guid="8d54b767-f785-4513-8a11-3dd5d2112e48" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
-  <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-  	<script type="text/javascript">
-  	PatientService.infoByPolicy($('person').value, {
-    		callback: function(aResult) {
-    			//alert(aResult) ;
-    			if (aResult.length>0) {
-    				$('medPolicyInformation').innerHTML = aResult ;
-    				$('medPolicyInformation').style.display = 'block' ;
-    			} else {
-    			$('medPolicyInformation').style.display = 'none' ;
-    			}
-    		}
-    	});
-  	</script>
-  </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
 </tiles:insert>
 

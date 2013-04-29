@@ -66,7 +66,7 @@ select m.id,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varch
     	<msh:tableColumn columnName="#" property="sn"/>
       <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Статус пациента" property="7" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчетсво пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Год рождения" property="6" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Диагноз" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
@@ -106,7 +106,7 @@ where d.DTYPE='DepartmentMedCase'
       <msh:tableColumn columnName="Дата перевода" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7" />
       <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Статус пациента" property="9" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчетсво пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Год рождения" property="6" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
     </msh:table>

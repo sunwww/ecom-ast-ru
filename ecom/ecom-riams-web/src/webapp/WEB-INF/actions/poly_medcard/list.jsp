@@ -25,7 +25,17 @@
     <tiles:put name='body' type='string'>
             <msh:form action="/poly_medcards.do" defaultField="number" method="GET">
                 <msh:panel>
-                    <msh:row>
+				    <msh:row>
+					    <td colspan="1" class='label'>
+					    <input type="hidden" name="exactMatchH" id="exactMatchH">
+					    <input type='checkbox' name='exactMatch' id='exactMatch' onClick='javascript:document.location.href="poly_medcards.do?number="+$("number").value+"&exactMatch="+$("exactMatch").checked'>
+					    </td>
+					    <td colspan=3 class='onlyYear'>
+						    <label id='exactMatchLabel' for="exactMatch"> Полное совпадение номера</label>
+					    
+					    </td>
+				    </msh:row>
+				    <msh:row>
                         <msh:textField property="number" label="Номер мед. карты" size="30"/>
                         <td><input type='submit' value='Найти'></td>
                     </msh:row>
@@ -51,6 +61,17 @@
     	
     	$('number').focus() ;
     	$('number').select() ;
-    //]]></script>    </tiles:put>
+
+  		if ((+'${exactMatch}')==1) {
+    		$('exactMatch').checked='checked' ;
+    		$('exactMatchH').value='1' ;
+    	} else {
+    		$('exactMatch').checked='' ;
+    		$('exactMatchH').value='0' ;
+    	}
+  	
+  	</script>
+  
+     </tiles:put>
 
 </tiles:insert>

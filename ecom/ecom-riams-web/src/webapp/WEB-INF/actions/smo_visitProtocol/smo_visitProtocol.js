@@ -15,3 +15,10 @@ function viewShortProtocol(aForm,aCtx) {
 		"/entityShortView-smo_visitProtocol.do?id="+list[2]) ;
 	
 }
+function infoByMedcard(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_visitProtocol/list_by_medcard.jsp") ;
+}
+function infoByMedcardShort(aForm,aCtx) {
+	aCtx.request.setAttribute("short","Short") ;
+	return aCtx.createForward("/WEB-INF/actions/smo_visitProtocol/list_by_medcard.jsp") ;
+}

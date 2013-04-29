@@ -57,7 +57,7 @@
 		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 		      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 		      <msh:tableColumn columnName="Отделение" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Фамилия имя отчетсво пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+		      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 		      <msh:tableColumn columnName="Год рождения" property="5" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 		      <msh:tableColumn columnName="Дата пост. (отд)" property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 		      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
@@ -75,7 +75,7 @@
 	      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 	      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 	      <msh:tableColumn columnName="Отделение" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-	      <msh:tableColumn columnName="Фамилия имя отчетсво пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 	      <msh:tableColumn columnName="Год рождения" property="5" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 	      <msh:tableColumn columnName="Дата пост. (отд)" property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 	      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />

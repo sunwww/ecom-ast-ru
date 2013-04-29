@@ -990,9 +990,12 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	});
     	}
     	function isExistPatient() {
-    		
+    		var checkFull = false
+    		if ($('saveType').value=='1') {
+    			checkFull = true ;
+    		}
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
-				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
+				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do',checkFull, {
                    callback: function(aResult) {
                       if (aResult) {
 				    		showPatientDouble(aResult) ;

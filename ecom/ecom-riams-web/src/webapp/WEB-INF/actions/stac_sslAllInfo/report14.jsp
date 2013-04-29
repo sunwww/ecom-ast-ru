@@ -15,7 +15,7 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
-  <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='6'"/>
+  <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
   <ecom:webQuery name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
   <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   <ecom:webQuery name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
@@ -690,8 +690,8 @@ order by p.lastname,p.firstname,p.middlename " />
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     where sls.id=diag.medcase_id  
-    and vdrt.id='4'
-    and vpd.id='1'
+    and vdrt.id='${diag_typeReg_cl}'
+    and vpd.id='${diag_priority_m}'
     ) as mkbcode1
     ,
     (select mkb.code from Diagnosis diag 
@@ -699,8 +699,8 @@ order by p.lastname,p.firstname,p.middlename " />
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     where sls.id=diag.medcase_id  
-    and vdrt.id='5'
-    and vpd.id='1'
+    and vdrt.id='${diag_typeReg_pat}'
+    and vpd.id='${diag_priority_m}'
     ) as mkbcode2
      ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
     ,case when sls.emergency='1' then 'Да' else null end as emer
@@ -789,7 +789,7 @@ select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode
 ,count(distinct case when vot.code='1' then so.id else null end) as cntTech
 ,count(distinct case when sls.result_id='${result_death}' then sls.id else null end) as cntPatDeath
 ,count(distinct case when voo.code='2' then so.id else null end) as cntDeathOper
-,count(distinct case when sls.result_id='6' and vot.code='1' then so.id else null end) as cntDeathTech
+,count(distinct case when sls.result_id='${result_death}' and vot.code='1' then so.id else null end) as cntDeathTech
  from medcase sls
 left join MedCase sloa on sloa.parent_id=sls.id
 left join BedFund bf on bf.id=sloa.bedFund_id

@@ -41,6 +41,4 @@ public class Report039Action  extends BaseAction {
 		aRequest.setAttribute("groupByTitle", repService.getTitle(groupBy)) ;
 		return aMapping.findForward("success") ;
 	}
-	
-
 }

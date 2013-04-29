@@ -17,11 +17,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		JournalBySpecialistForm form = (JournalBySpecialistForm)aRequest.getSession().getAttribute("poly_journalBySpecForm");
 		String id = aRequest.getParameter("id") ;
-		//boolean aTicketIs =  fr!=null &&fr.equals("1")?true:false;
-		//IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		IReportsService repService  = Injection.find(aRequest).getService(IReportsService.class) ;
 		String groupBy =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeGroup","1", aRequest) ;
-		//String typeUser =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeUser","3", aRequest) ;
 		String view ; 
 		
 		String whereDop = "" ;

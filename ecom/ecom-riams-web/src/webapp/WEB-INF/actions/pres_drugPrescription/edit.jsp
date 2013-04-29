@@ -24,12 +24,8 @@
           <msh:textField property="frequency" label="Частота" guid="3acgb-8802-467d-b205-71b018" horizontalFill="true" />
           <msh:autoComplete vocName="vocFrequencyUnit" label="раза в " property="frequencyUnit" guid="3bbba3deЫ-8802-467d-b205-715fb379b018" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="32v6eb-b971-441e-9a90-5194a8019c07">
-          <msh:textField property="orderTime" label="Время приема (в минутах)" guid="3a3e-8802-467d-b205-715f" horizontalFill="true" />
-          <msh:autoComplete vocName="vocPrescriptOrderType" label="Тип приема" property="orderType" guid="3gn-8802-467d-b205-715fb379b018" horizontalFill="true" />
-        </msh:row>
         <msh:row guid="b55h6geb-b971-441e-9a90-5194a8019c07">
-          <msh:textField label="Количество на один прием" property="amount" guid="3a3d8-467d-b205-715fb379b018" horizontalFill="true" />
+          <msh:textField label="Кол-во на один прием" property="amount" guid="3a3d8-467d-b205-715fb379b018" horizontalFill="true" />
           <msh:autoComplete vocName="vocDrugAmountUnit" label="в единицах (мг, г, мл)" property="amountUnit" guid="325b68-8802-467d-b205-7118" horizontalFill="true" />
         </msh:row>
         <msh:row guid="326eb-b971-441e-9a90-5194a8019c07">
@@ -61,6 +57,23 @@
         <msh:row guid="32fv6eb-b971-441e-9a90-51d207">
           <msh:autoComplete vocName="workFunction" label="Отменил" property="cancelSpecial" guid="30gсn-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
