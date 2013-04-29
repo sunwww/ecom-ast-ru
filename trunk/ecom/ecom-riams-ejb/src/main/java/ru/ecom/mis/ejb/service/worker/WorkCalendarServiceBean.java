@@ -4,10 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -29,7 +27,6 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarAlgorithm;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDayPattern;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
@@ -41,9 +38,6 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.Worker;
-import ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm;
-import ru.ecom.mis.ejb.service.lpu.LpuServiceBean;
 import ru.nuzmsh.util.format.DateFormat;
 
 
@@ -716,12 +710,14 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			//int weekYear =cal1.get(Calendar.WEEK_OF_YEAR) ;
 			//boolean parityYear= (weekYear%2==1)?true:false ;
 			int weekMonth =cal1.get(Calendar.WEEK_OF_MONTH) ;
-			boolean parityWeek= (weekMonth%2==1)?true:false ;
+			boolean parityWeek= (weekMonth%2==1)?false:true ;
 			int weekDayV =cal1.get(Calendar.DAY_OF_WEEK);
 			int weekDay =cal1.get(Calendar.DAY_OF_WEEK) -1;
 			if (weekDay==0) weekDay=7;
 			int monthDay =cal1.get(Calendar.DAY_OF_MONTH) ;
-			boolean parityDay= (monthDay%2==1)?true:false ;
+			boolean parityDay= (monthDay%2==1)?false:true ;
+			int monthId = cal1.get(Calendar.MONTH)+1 ;
+			boolean parityMonth= (monthId%2==1)?false:true ;
 			
 			//System.out.println("--------------->calFrom="+format.format(calFrom1.getTime())) ;
 			//System.out.println("--------------->calTo="+format.format(calTo1.getTime())) ;
@@ -734,7 +730,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			}
 			if (isNewJour) {
 				List<JournalPatternCalendar> list1 = theManager
-					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (workBusy_id is null or workBusy.isWorking='1') and (NoActive is null or cast(NoActive as integer)=0) and dateFrom<=:dateCal and (dateTo is null or dateTo>=:dateCal) order by dateFrom")
+					.createQuery("from JournalPatternCalendar where workCalendar=:cal and (workBusy_id is null or workBusy.isWorking='1') and (NoActive is null or NoActive='0') and dateFrom<=:dateCal and (dateTo is null or dateTo>=:dateCal) order by dateFrom")
 					.setParameter("cal", aWorkCalendar)
 					.setParameter("dateCal",cal1.getTime())
 					.getResultList() ;
@@ -778,15 +774,45 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 						// Поиск алгоритма по профдню WorkCalendarProphDayAlgorithm
 						StringBuilder sql = new StringBuilder() ;
 						
-						sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" left join VocWeekMonthOrder vwmo on vwmo.id=wca.monthOrder_id").append(" left join VocWeekDay vwd on vwd.id=wca.weekDay_id").append(" where dtype='WorkCalendarProphDayAlgorithm' and pattern_id=:pattern").append(" and (wca.monthDay=:monthDay or vwmo.code=:monthOrder").append(" and vwd.code=:weekDay)") ;
-						Query query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("monthDay", monthDay).setParameter("monthOrder", monthOrder).setParameter("weekDay", weekDaySt) ;
+						sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ")
+						.append(" left join VocWeekMonthOrder vwmo on vwmo.id=wca.monthOrder_id")
+						.append(" left join VocWeekDay vwd on vwd.id=wca.weekDay_id")
+						.append(" left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id")
+						.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")
+						.append(" where dtype='WorkCalendarProphDayAlgorithm' and pattern_id=:pattern")
+						.append(" and (wca.monthDay=:monthDay or vwmo.code=:monthOrder")
+						.append(" and vwd.code=:weekDay) and (wca.parity_id is null ")	
+								.append(" or (vwcp.code='MONTH' and vdp.code=:monthParity)")
+								.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
+								.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
+						Query query = theManager.createNativeQuery(sql.toString())
+								.setParameter("pattern", pattern.getId())
+								.setParameter("monthDay", monthDay)
+								.setParameter("monthOrder", monthOrder)
+								.setParameter("weekDay", weekDaySt) 
+										.setParameter("monthParity",parityMonth?"YES":"NO")
+										.setParameter("weekParity", parityWeek?"YES":"NO")
+										.setParameter("dayParity", parityDay?"YES":"NO");
+								;
 						if (query.getResultList().isEmpty()) {
 							// Поиск алгоритма по датам WorkCalendarDatesAlgorithm
 							sql = new StringBuilder() ;
 							boolean nextSearch =true ;
 							Date dateCur = new Date(cal1.getTime().getTime()) ;
-							sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ").append(" where wca.dtype='WorkCalendarDatesAlgorithm' and pattern_id=:pattern").append(" and :day between wca.dateFrom and wca.dateTo") ;
-							query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("day", cal1.getTime());
+							sql.append("select wca.id,wca.dayPattern_id from WorkCalendarAlgorithm wca ")
+							.append(" left join VocWorkCalendarParity vwcp on vwcp.id=wca.calendarParity_id")
+							.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")
+							.append(" where wca.dtype='WorkCalendarDatesAlgorithm' and wca.pattern_id=:pattern")
+							.append(" and :day between wca.dateFrom and wca.dateTo and (wca.parity_id is null ")	
+								.append(" or (vwcp.code='MONTH' and vdp.code=:monthParity)")
+								.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
+								.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
+							query = theManager.createNativeQuery(sql.toString())
+									.setParameter("pattern", pattern.getId()).setParameter("day", cal1.getTime())
+										.setParameter("monthParity",parityMonth?"YES":"NO")
+										.setParameter("weekParity", parityWeek?"YES":"NO")
+										.setParameter("dayParity", parityDay?"YES":"NO");
+									;
 							//System.out.println("----------------WorkCalendarDatesAlgorithm=");
 							nextSearch= !getParrentDay(aWorkCalendar, dateCur, query) ;
 							//System.out.println("----------------WorkCalendarDatesAlgorithm="+listA.size());
@@ -801,9 +827,14 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 								.append(" left join VocDayParity vdp on vdp.id=wca.parity_id")
 								.append(" where dtype='WorkCalendarWeekAlgorithm' and pattern_id=:pattern")	
 								.append(" and cast(vww.code as int)>=:dayBy and (wca.parity_id is null ")	
+								.append(" or (vwcp.code='MONTH' and vdp.code=:monthParity)")
 								.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
 								.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
-								query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("dayBy", weekDay).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
+								query = theManager.createNativeQuery(sql.toString())
+										.setParameter("pattern", pattern.getId()).setParameter("dayBy", weekDay)
+										.setParameter("monthParity",parityMonth?"YES":"NO")
+										.setParameter("weekParity", parityWeek?"YES":"NO")
+										.setParameter("dayParity", parityDay?"YES":"NO");
 								System.out.println("----------------WorkCalendarWeekAlgorithm=");
 								System.out.println("----------------dayBy="+weekDay);
 								nextSearch = !getParrentDay(aWorkCalendar, dateCur, query) ;
@@ -822,9 +853,14 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 									.append(" where dtype='WorkCalendarWeekDaysAlgorithm' and pattern_id=:pattern")	
 									.append(" and wca.").append(daySymbol).append("_id is not null")
 									.append(" and (wca.parity_id is null ")
+									.append(" or (vwcp.code='WONTH' and vdp.code=:monthParity)")
 									.append(" or (vwcp.code='WEEK' and vdp.code=:weekParity)")
 									.append(" or (vwcp.code='DAY' and vdp.code=:dayParity) )") ;
-									query = theManager.createNativeQuery(sql.toString()).setParameter("pattern", pattern.getId()).setParameter("weekParity", parityWeek?"YES":"NO").setParameter("dayParity", parityDay?"YES":"NO");
+									query = theManager.createNativeQuery(sql.toString())
+											.setParameter("pattern", pattern.getId())
+											.setParameter("monthParity",parityMonth?"YES":"NO")
+											.setParameter("weekParity", parityWeek?"YES":"NO")
+											.setParameter("dayParity", parityDay?"YES":"NO");
 									System.out.println("----------------WorkCalendarWeekDaysAlgorithm=");
 									getParrentDay(aWorkCalendar, dateCur, query) ;
 									//System.out.println("----------------WorkCalendarWeekDaysAlgorithm="+listA.size());

@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.ServiceMedCasePreCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -31,7 +32,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ServiceMedCasePreCreateInterceptor.class)
 )
-public class ServiceMedCaseForm extends ShortMedCaseForm {
+public class ServiceMedCaseForm extends TicketMedCaseForm {
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@Persist @Required

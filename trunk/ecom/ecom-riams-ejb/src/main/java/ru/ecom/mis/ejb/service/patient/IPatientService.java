@@ -41,8 +41,6 @@ public interface IPatientService {
 	public String getOmcCodeByPassportType(Long aPassportType);
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;
 	public void movePatientDoubleData(Long aIdNew, Long aIdOld);
-	// Информация по полисам ОМС по пациенту
-	public String infoMedPolicy(Long aPatient) ;
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename,
 			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) ;
 	
@@ -61,7 +59,8 @@ public interface IPatientService {
     
     public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) throws ParseException;
-    
+    public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException;
     LpuAreaAddressPoint findPoint(Address aAddress, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
     
     public void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;

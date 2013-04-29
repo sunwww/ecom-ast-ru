@@ -561,22 +561,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 	}
     
-    public String infoMedPolicy(Long aPatient) {
-    	try {
-			//Date date = new Date() ;
-			Object[] polerr = (Object[]) theManager.createNativeQuery("SELECT TOP 1 " 
-			                              +"$$CheckPatientOMC^ZMedPolicy('"+ aPatient+"'),id " 
-			                              +"FROM vocSex")
-				//.setParameter("patid", form.getId())
-				.getSingleResult();
-			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-			String err =( polerr[0]==null?"": (String) polerr[0]);
-			return err ;
-		
-		} catch(Exception e){
-		}
-		return "" ;
-    }
+    
 	public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
@@ -689,7 +674,12 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" left join workfunction wf on wf.worker_id=w.id") ;
 			sql.append(" left join secuser su on su.id=wf.secuser_id") ;
 			
-			sql.append(" where") ;
+			sql.append(" where ((su.login='").append(username).append("' or p.createUsername='").append(username).append("') and lpcc.transferDate is null and lpcc.finishDate is null)") ;
+			//builder.add("su.login", username) ;
+			
+			//builder.addIsNull("lpcc.transferDate", "") ;
+			//builder.addIsNull("lpcc.finishDate", "") ;
+
 			if (!StringUtil.isNullOrEmpty(aLastname)) {
 				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
 				if (st.hasMoreTokens())
@@ -698,10 +688,6 @@ public class PatientServiceBean implements IPatientService {
 					builder.addLike("p.firstname", st.nextToken() + "%");
 				if (st.hasMoreTokens())
 					builder.addLike("p.middlename", st.nextToken() + "%");
-				builder.add("su.login", username) ;
-				
-				builder.addIsNull("lpcc.transferDate", "") ;
-				builder.addIsNull("lpcc.finishDate", "") ;
 				
 				Query query = builder.buildNative(theManager, sql.toString()," order by p.lastname,p.firstname");
 				appendNativeToList(query, ret);
@@ -1033,16 +1019,28 @@ public class PatientServiceBean implements IPatientService {
 	}
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException {
+		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction, false) ;
+	}
+	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException {
 		StringBuilder sql = new StringBuilder() ;
 		aFirstname = aFirstname.toUpperCase().trim() ;
 		aMiddlename = aMiddlename.toUpperCase().trim() ;
 		aLastname = aLastname.toUpperCase().trim() ;
-		String birthyear = aBirthday.substring(6) ;
-		System.out.println("birthyear="+birthyear) ;
 		sql.append("")
 			.append(" from Patient p")
 			.append(" where (")
-			.append(" (UPPER(p.lastname) =:lastname and UPPER(p.firstname) = :firstname and UPPER(p.middlename)=:middlename and to_char(p.birthday,'yyyy')=:birthyear)") ;
+			.append(" (UPPER(p.lastname) =:lastname and UPPER(p.firstname) = :firstname and UPPER(p.middlename)=:middlename and ");
+		String birthyear ;
+		if (!aIsFullBirthdayCheck) {
+			birthyear= aBirthday.substring(6) ;
+			System.out.println("birthyear="+birthyear) ;
+			sql.append("to_char(p.birthday,'yyyy')=:birthyear)") ;
+		} else {
+			birthyear= aBirthday ;
+			System.out.println("birthyear="+birthyear) ;
+			sql.append("p.birthday=to_date(:birthyear,'dd.mm.yyyy'))") ;
+		}
 		if (aSnils!=null && !aSnils.equals("") && !aSnils.equals("999-999-999 99")) {
 			sql.append(" or (p.snils='").append(aSnils).append("')") ;
 		}

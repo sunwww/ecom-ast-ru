@@ -28,8 +28,6 @@ public interface IHospitalMedCaseService {
 	public String getIdc10ByDocDiag(Long aIdDocDiag) ;
 	public String getOperationsText(Long aPatient, String aDateStart,String aDateFinish) ;
 	public String getnvestigationsTextDTM(Long aPatient, String aDateStart,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs) ;
-	//Проверка полиса ОМС по пациенту
-	public String checkMedPolicy(Long aPatient, Long aServiceStream) ;
 	//Получить данные диагноза по умолчанию для акушерства
 	public String getTypeDiagByAccoucheur() ;
 	//Удаление данных по выписке пациента

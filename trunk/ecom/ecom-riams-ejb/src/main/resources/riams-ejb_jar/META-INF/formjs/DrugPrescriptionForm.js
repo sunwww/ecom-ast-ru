@@ -1,3 +1,4 @@
+
 /**
  * Перед сохранением
  */
@@ -18,3 +19,4 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 
 }
+

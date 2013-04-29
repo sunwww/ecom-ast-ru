@@ -12,6 +12,6 @@ import ru.ecom.poly.ejb.form.MedcardForm;
  * To change this template use File | Settings | File Templates.
  */
 public interface IMedcardService {
-    List<MedcardForm> findMedCard(String aNumber);
+    List<MedcardForm> findMedCard(String aNumber, boolean aIsExactMatch);
 	String getNewMedcardNumber();
 }

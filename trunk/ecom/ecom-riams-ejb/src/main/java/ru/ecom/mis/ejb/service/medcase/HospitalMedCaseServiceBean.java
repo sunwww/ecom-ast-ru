@@ -351,37 +351,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		return "" ;
     	}
     }
-    public String checkMedPolicy(Long aPatient, Long aServiceStream) {
-    	//
-    	VocServiceStream streamOMC = theManager.find(VocServiceStream.class, aServiceStream) ;
-    	if (streamOMC==null || streamOMC.getCode().equals("OBLIGATORYINSURANCE")) {
-        	try {
-    			//Date date = new Date() ;
-    			Object[] polerr = (Object[]) theManager.createNativeQuery("SELECT TOP 1 " 
-    			                              +"$$CheckPatientOMC^ZMedPolicy('"+ aPatient+"'),id " 
-    			                              +"FROM vocSex")
-    				//.setParameter("patid", form.getId())
-    				.getSingleResult();
-    			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-    			String err = (String) polerr[0] ;
-    			if(polerr[0]!=null && err.length()>0) {
-    				List<VocServiceStream> listStreamBudget = theManager.createQuery("from VocServiceStream where code='BUDGET'").getResultList() ;
-    				Long idStreamBudget = Long.valueOf(0) ;
-    				if (!listStreamBudget.isEmpty()) {
-    					idStreamBudget = listStreamBudget.get(0).getId() ;
-    				}
-    				return "0#" + idStreamBudget;
-    			} else {
-    				return "1" ;
-    			}
-    		
-    		} catch(Exception e){
-    		}
-    		
-    	}
-    	
-		return "1" ;
-    }
     
     public String getTypeDiagByAccoucheur() {
     	StringBuilder ret= new StringBuilder() ;

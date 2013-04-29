@@ -44,10 +44,6 @@ public abstract class LongMedCase extends MedCase{
 	public WorkFunction getFinishFunction() {return theFinishFunction;	}
 	public void setFinishFunction(WorkFunction aFinishWorker) {theFinishFunction = aFinishWorker;}
 
-	/** Дата окончания */
-	@Comment("Дата окончания")
-	public Date getDateFinish() {return theDateFinish;	}
-	public void setDateFinish(Date aNewProperty) {theDateFinish = aNewProperty;}
 
 	/** Случаи нетрудоспособности */
 	@Comment("Случаи нетрудоспособности")
@@ -85,8 +81,7 @@ public abstract class LongMedCase extends MedCase{
 	private Time theEntranceTime;
 	/** Случаи нетрудоспособности */
 	private List<DisabilityCase> theDisabilityCases;
-	/** Дата окончания */
-	private Date theDateFinish;
+
 	/** Кто завершил */
 	private WorkFunction theFinishFunction;
 	/** МКБ10 */

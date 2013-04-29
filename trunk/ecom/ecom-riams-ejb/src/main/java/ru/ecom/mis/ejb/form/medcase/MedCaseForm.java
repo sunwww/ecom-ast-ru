@@ -4,7 +4,6 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
-
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm;
@@ -12,6 +11,7 @@ import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -32,7 +32,11 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Случай медицинского обслуживания")
 @WebTrail(comment = "СМО", nameProperties= "info", view="entitySubclassView-mis_medCase.do")
 @Parent(property="patient", parentForm=PatientForm.class)
-@Subclasses({ ServiceMedCaseForm.class, PolyclinicMedCaseForm.class, VisitMedCaseForm.class, DepartmentMedCaseForm.class, AdmissionMedCaseForm.class, ExtHospitalMedCaseForm.class,HospitalMedCaseForm.class,NewBornMedCaseForm.class})
+@Subclasses({ ServiceMedCaseForm.class, PolyclinicMedCaseForm.class
+	, VisitMedCaseForm.class, DepartmentMedCaseForm.class, AdmissionMedCaseForm.class
+	, TicketMedCaseForm.class
+	, ExtHospitalMedCaseForm.class,HospitalMedCaseForm.class
+	,NewBornMedCaseForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase")
 public class MedCaseForm extends IdEntityForm {
 
@@ -280,5 +284,22 @@ public class MedCaseForm extends IdEntityForm {
 
 	/** Дефект */
 	private Long theMedCaseDefect;
+
+	/** Время создания */
+	@Comment("Время создания")
+	@Persist @DoTimeString @TimeString
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Время создания */
+	private String theCreateTime;
+	/** Время редактирования */
+	@Comment("Время редактирования")
+	@Persist @DoTimeString @TimeString
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+
+	/** Время редактирования */
+	private String theEditTime;
 }
 

@@ -25,44 +25,10 @@ public class PatientViewInterceptor implements IFormInterceptor {
 				form.setAttachedByPolicy(true);
 			}
 		}
-		/*
-		if(aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")){
-			String sql = "select id from PsychiatricCareCard where patient_id="+form.getId()+" order by id desc" ;
-			List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
-					.setMaxResults(1).getResultList() ;
-			Long med = list.size()>0?parseLong(list.get(0)):Long.valueOf(0) ;
-			form.setCareCard(med) ;
-		}
-		String sql = "select id from medcard where person_id="+form.getId()+" order by id desc" ;
-		List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
-				.setMaxResults(1).getResultList() ;
-		Long med = list.size()>0?parseLong(list.get(0)):Long.valueOf(0) ;
-		
-		form.setMedcardLast(med) ;
-		*/
-		//java.util.Date current = new java.util.Date();
 		if (form.getBirthday()!=null && !form.getBirthday().equals("")) {
 			String age = AgeUtil.getAgeCache(new java.util.Date(),pat.getBirthday(), 2) ;
 			form.setAge(age) ;
 		}
-		
-		//
-		/*
-		try {
-			//Date date = new Date() ;
-			Object[] polerr = (Object[]) aManager
-			.createNativeQuery("SELECT TOP 1 " 
-			                              +"$$CheckPatientOMC^ZMedPolicy('"+ form.getId()+"'),id " 
-			                              +"FROM vocSex")
-				//.setParameter("patid", form.getId())
-				.getSingleResult();
-			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-			if(polerr[0]!=null) form.addMessage(new FormMessage(""+polerr[0]));
-		
-		} catch(Exception e){
-			
-		}*/
-		// AND cast("_Date_" as integer) between cast(actualDateFrom as integer) and cast(actualDateTo as integer)
 		
 	}
 	

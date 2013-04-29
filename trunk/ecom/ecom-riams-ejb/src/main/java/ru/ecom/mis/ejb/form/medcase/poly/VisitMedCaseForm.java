@@ -1,15 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
-import ru.ecom.mis.ejb.form.medcase.ShortMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -35,7 +31,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)
 )
-public class VisitMedCaseForm extends ShortMedCaseForm {
+public class VisitMedCaseForm extends TicketMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist
@@ -47,8 +43,6 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	@Persist
 	public Long getOrderLpu() {return theOrderLpu;}
 	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
-
-
 
 	/** Результат визита */
 	@Comment("Результат визита")
@@ -77,9 +71,7 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	 /** Диспансерный учет * */
     @Persist
     public Long getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(Long aVocDispanseryRegistration) {
-        theDispRegistration = aVocDispanseryRegistration;
-    }
+    public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
     
     /** Дата следующего визита */
 	@Comment("Дата следующего визита")
@@ -96,6 +88,13 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 	@Persist @Required
 	public Long getHospitalization() {return theHospitalization;}
 	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
+	/** Дата начала */
+	@Comment("Дата начала")
+	@Persist @DateString @DoDateString @MaxDateCurrent
+	public String getDateStart() {return theDateStart;}
+	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	/** Дата начала */
+	private String theDateStart;
 	/** Госпитализация (впервые, повторно) */
 	private Long theHospitalization;
 
@@ -152,20 +151,17 @@ public class VisitMedCaseForm extends ShortMedCaseForm {
 
 	/** Предварительный прием */
 	private Boolean theIsPreRecord;
-	/** Бригада скорой помощи */
-	@Comment("Бригада скорой помощи")
-	@OneToOne
-	public VocAmbulance getAmbulance() {return theAmbulance;}
-	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
 
-	/** Исход визита */
-	@Comment("Исход визита")
-	@OneToOne
-	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
-	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+	
+	/**
+	 * Рабочая функция исполнения
+	 */
+	@Comment("Рабочая функция исполнения")
+	@Persist 
+	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
+	/** Рабочая функция исполнения */
+	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
 
-	/** Исход визита */
-	private VocVisitOutcome theVisitOutcome;
-	/** Бригада скорой помощи */
-	private VocAmbulance theAmbulance;
+	/** Рабочая функция исполнения */
+	private Long theWorkFunctionExecute;
 }
