@@ -18,7 +18,7 @@
     	</msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <ecom:webQuery name="allInfo" nativeSql="select sm.id,sm.dateExecute,sm.timeExecute, sm.medService_id,vms.name as vmsname, sm.medServiceAmount, sm.workFunctionExecute_id,vwf.name||' ' ||wp.lastname||' '||wp.firstname||' '||wp.middlename, p.record
+    <ecom:webQuery name="allInfo" nativeSql="select sm.id,sm.dateStart,sm.timeExecute, sm.medService_id,vms.name as vmsname, sm.medServiceAmount, sm.workFunctionExecute_id,vwf.name||' ' ||wp.lastname||' '||wp.firstname||' '||wp.middlename, p.record
     	from medcase as sm  
     	left join diary p on p.medCase_id=sm.id 
     	left join medservice vms on vms.id=sm.medService_id 

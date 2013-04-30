@@ -202,6 +202,9 @@
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
+        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациенту"
+         title="Добавить талон" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
@@ -299,16 +302,20 @@
     				if (aResult!="") {
         				var val = aResult.split("@") ;
         				$('parent').value = val[0];
-        				$('parnetName')= val[1];
+        				$('parentName').value= val[1];
+    				} else {
+        				$('parent').value = '';
+        				$('parentName').value= '';
     				}
+    				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+    	      	 		callback: function(aResult) {
+    	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+    	      	 		}
+    	      	 	}) ;
     			}
     		}) ;
-    		TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      	 		callback: function(aResult) {
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 		}
-	      	 	}) ;
-	    });
+    	});
+	    
 	      	eventutil.addEventListener($('dateStart'),'blur',function(){
 		  		if (oldValue!=$('dateStart').value) {
 		  			var wf = +$("workFunctionExecute").value;
@@ -386,11 +393,25 @@
     		if (wf=='') {wf=0;}
     		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      	 		callback: function(aResult) {
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 		}
-	      	 	}) ;
+    		 
+     		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
+    			callback: function(aResult) {
+    				if (aResult!="") {
+        				var val = aResult.split("@") ;
+        				$('parent').value = val[0];
+        				$('parentName').value= val[1];
+    				} else {
+        				$('parent').value = '';
+        				$('parentName').value= '';
+    				}
+    				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+    	      	 		callback: function(aResult) {
+    	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+    	      	 		}
+    	      	 	}) ;
+    			}
+    		}) ;
+    		 
    	    		//if (theOtmoa_medServices && val[3]!="") theOtmoa_medServices.setIds(val[3]) ;
    			}
    		}

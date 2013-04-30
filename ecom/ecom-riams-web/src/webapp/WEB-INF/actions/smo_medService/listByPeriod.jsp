@@ -42,7 +42,7 @@
     <tr>
     <td valign="top">
 	    <msh:section title="УСЛУГИ: Общие">
-		    <ecom:webQuery name="journal_medService" nativeSql="select dateExecute, count(id) from MedCase where DTYPE='ServiceMedCase' and dateExecute  between '${param.dateBegin}'  and '${param.dateEnd}'  group by dateExecute " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />    
+		    <ecom:webQuery name="journal_medService" nativeSql="select dateStart, count(id) from MedCase where DTYPE='ServiceMedCase' and dateStart  between '${param.dateBegin}'  and '${param.dateEnd}'  group by dateStart " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />    
 		    <msh:table name="journal_medService" action="js-smo_medService-listByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 		      <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 		      <msh:tableColumn columnName="Количество услуг" identificator="false" property="2" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -61,7 +61,7 @@
 	    <ecom:webQuery name="jour_service" nativeSql="
 	    select 
 	    smc.id
-	    ,smc.dateExecute as smcdateExecute
+	    ,smc.dateStart as smcdateStart
 	    ,smc.timeExecute as smctimeExecute
 	    ,smc.medServiceAmount as smcmedService
 	    ,ms.name as msname
@@ -78,7 +78,7 @@
 	    left join Worker w on w.id=wf.worker_id 
 	    left join Patient wp on wp.id=w.person_id 
 	    left join VocAdditionStatus vas on vas.id=p.additionStatus_id
-	    where smc.DTYPE='ServiceMedCase' and smc.dateExecute  between '${param.dateBegin}'  and '${param.dateEnd}' 
+	    where smc.DTYPE='ServiceMedCase' and smc.dateStart  between '${param.dateBegin}'  and '${param.dateEnd}' 
 	    "/>
 	    <msh:table name="jour_service" action="entityView-smo_medService.do" idField="1" >
 	    	<msh:tableColumn columnName="#" property="sn"/>

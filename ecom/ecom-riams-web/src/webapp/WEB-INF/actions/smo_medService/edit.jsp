@@ -11,7 +11,7 @@
     	  - Сервис мед.услуг
     	  -->
     	  <tags:templateProtocol version="Visit" idSmo="smo_medServiceForm.parent" voc="protocolVisitByPatient" />
-    <msh:form action="/entityParentSaveGoSubclassView-smo_medService.do" defaultField="dateExecute" guid="58611d9a-bd7a-465f-8d35-a1d6d03d0257">
+    <msh:form action="/entityParentSaveGoSubclassView-smo_medService.do" defaultField="dateStart" guid="58611d9a-bd7a-465f-8d35-a1d6d03d0257">
       <msh:hidden property="id" guid="0144d27c-76ff-41a2-9bab-52844196a1cc" />
       <msh:hidden property="saveType" guid="63c88f1b-4cc9-493e-90ad-984cfafeb17d" />
       <msh:hidden property="parent" guid="c6ff741b-f806-46cb-af60-37434635bd3c" />
@@ -21,14 +21,14 @@
         
       <msh:panel guid="ff562351-b995-43c7-871f-aca0b9977b65" colsWidth="5%,20%,5%,30%">
         <msh:row guid="bb138544-81d9-4339-b3a7-cab980708336">
-          <msh:textField property="dateExecute" label="Дата" guid="b2d29f22-2b89-4b43-a6af-ef7c8b8c5fb3" />
+          <msh:textField property="dateStart" label="Дата" guid="b2d29f22-2b89-4b43-a6af-ef7c8b8c5fb3" />
           <msh:textField property="timeExecute" label="Время" guid="8d583c3f-dda1-43a9-8417-5a2d43a6cd40" />
         </msh:row>
         <msh:row guid="348da311-be75-4c71-86c5-3fbf138985dc">
           <msh:autoComplete property="serviceStream" label="Поток обслуживания" vocName="vocServiceStream" guid="13482ebc-6632-411c-a30d-11315eb7410c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row guid="ba482184-7fcc-4a7f-97a3-124fc3d51391">
-          <msh:autoComplete parentId="smo_medServiceForm.dateExecute" property="categoryMedService" label="Категория услуги" vocName="medService" guid="4f0640d9-5cb8-4347-818a-b130d593ca0d" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete parentId="smo_medServiceForm.dateStart" property="categoryMedService" label="Категория услуги" vocName="medService" guid="4f0640d9-5cb8-4347-818a-b130d593ca0d" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row guid="ba482184-7fcc-4a7f-97a3-124fc3d51391">
           <msh:autoComplete parentId="5#12.02.2010" property="medService" label="Медицинская услуга" 
@@ -161,7 +161,7 @@
     	document.forms[0].action = 'javascript:isExistMedService()';
     	function isExistMedService() {
     		 
-    		HospitalMedCaseService.findDoubleServiceByPatient($('id').value,$('patient').value,$('medService').value, $('dateExecute').value
+    		HospitalMedCaseService.findDoubleServiceByPatient($('id').value,$('patient').value,$('medService').value, $('dateStart').value
     		, {
                    callback: function(aResult) {
                    		//alert(aResult);
@@ -184,15 +184,14 @@
   
     	<msh:ifFormTypeIsNotView formName="smo_medServiceForm">
   	<script type="text/javascript" >
-  	var oldValue = $('dateExecute').value ;
-  	medServiceAutocomplete.setParentId($('categoryMedService').value+'#'+$('dateExecute').value) ;
-  	//$('dateExecute').addOnChangeCallback(function() {alert(2)}) ;
-  	eventutil.addEventListener($('dateExecute'), "change", 
+  	var oldValue = $('dateStart').value ;
+  	medServiceAutocomplete.setParentId($('categoryMedService').value+'#'+$('dateStart').value) ;
+  	eventutil.addEventListener($('dateStart'), "change", 
   	function() {
   		changeParentMedService() ;
   	}) ;
-  	eventutil.addEventListener($('dateExecute'),'blur',function(){
-  		if (oldValue!=$('dateExecute').value) {
+  	eventutil.addEventListener($('dateStart'),'blur',function(){
+  		if (oldValue!=$('dateStart').value) {
   			changeParentMedService() ;
   		}
   	}) ;
@@ -200,10 +199,10 @@
   		changeParentMedService() ;
   	}) ;
   	function changeParentMedService() {
-  		medServiceAutocomplete.setParentId($('categoryMedService').value+'#'+$('dateExecute').value) ;
+  		medServiceAutocomplete.setParentId($('categoryMedService').value+'#'+$('dateStart').value) ;
   		$('medService').value='' ;
   		$('medServiceName').value='' ;
-  		oldValue = $('dateExecute').value ;
+  		oldValue = $('dateStart').value ;
   	}
   	</script>
   	</msh:ifFormTypeIsNotView>

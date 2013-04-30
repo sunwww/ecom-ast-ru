@@ -22,6 +22,7 @@
   	String typeReestr =ActionUtil.updateParameter("Form039Action","typeReestr","2", request) ;
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
 	String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
+	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String person = request.getParameter("person") ;
 	
 	if (person!=null && !person.equals("") && !person.equals("0")) {
@@ -109,6 +110,19 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="3">  039 cons
 	        </td>
+
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="База (typeDtype)" colspan="1"><label for="typeDtypeName" id="typeDtypeLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDtype" value="1">  Визит.
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDtype" value="2" >  Талон.
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDtype" value="3">  Все
+	        </td>
 	        <td colspan="2">
 	        	<input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_f039_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 	        	${personClear}
@@ -132,6 +146,13 @@
     		ActionUtil.setParameterFilterSql("workPlaceType","smo.workPlaceType_id", request) ;
     		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+    		if (typeDtype.equals("1")) {
+    			request.setAttribute("dtypeSql", "smo.dtype='Visit'") ;
+    		} else if (typeDtype.equals("2")) {
+    			request.setAttribute("dtypeSql", "smo.dtype='ShortMedCase'") ;
+    		} else {
+    			request.setAttribute("dtypeSql", "(smo.dtype='ShortMedCase' or smo.dtype='Visit')") ;
+    		}
     		if (typeGroup.equals("1")) {
     			// Группировка по дате
        			request.setAttribute("groupSql", "to_char(smo.dateStart,'dd.mm.yyyy')") ;
@@ -217,8 +238,8 @@ then -1 else 0 end) as age
 ,vss.name as vssname
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
+LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -228,7 +249,7 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
-WHERE  smo.dtype='Visit' 
+WHERE  ${dtypeSql} 
 and smo.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
@@ -331,8 +352,8 @@ then -1 else 0 end)<18
 
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
+LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -342,7 +363,7 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
-WHERE  smo.dtype='Visit' 
+WHERE  ${dtypeSql} 
 and smo.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
@@ -441,8 +462,8 @@ select
 
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
+LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -452,7 +473,7 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
-WHERE  smo.dtype='Visit' 
+WHERE  ${dtypeSql} 
 and smo.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
@@ -605,8 +626,8 @@ then 1 else null end) as cntAll14
 ) then 1 else null end) as cntProfHomeold
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
+LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -616,7 +637,7 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
-WHERE  smo.dtype='Visit' 
+WHERE  ${dtypeSql} 
 and smo.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
@@ -667,6 +688,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     
     
     function checkFieldUpdate(aField,aValue,aDefault) {
