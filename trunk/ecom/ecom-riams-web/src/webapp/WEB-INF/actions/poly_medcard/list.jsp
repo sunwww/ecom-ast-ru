@@ -18,7 +18,7 @@
         		params="" title="2-ая часть талона"/>
         </msh:sideMenu>
         <msh:sideMenu>
-                <tags:ticket_finds currentAction="medcard"/>
+                <tags:ticket_finds currentAction="medcardfind"/>
         </msh:sideMenu>
     </tiles:put>
 
