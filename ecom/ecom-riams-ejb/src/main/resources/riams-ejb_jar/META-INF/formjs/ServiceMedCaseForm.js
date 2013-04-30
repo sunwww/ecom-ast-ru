@@ -6,11 +6,11 @@ function onPreCreate(aForm, aContext) {
 	var medCase = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, new java.lang.Long(aForm.parent)) ;
 	if (medCase!=null && medCase.patient!=null)
 		aForm.setPatient(medCase.patient.id) ;
-	checkDateExecute(aContext,aForm.dateExecute,aForm.timeExecute,aForm.id) ;
+	checkDateStart(aContext,aForm.dateStart,aForm.timeExecute,aForm.id) ;
 	
 }
 function onPreSave(aForm, aEntity, aContext) {
-	checkDateExecute(aContext,aForm.dateExecute,aForm.timeExecute,aForm.id) ;
+	checkDateStart(aContext,aForm.dateStart,aForm.timeExecute,aForm.id) ;
 }
 /**
  * При сохранении
@@ -28,7 +28,7 @@ function createProtocol(aText, aEntity , aContext) {
 	if (aText!=null && aText.trim() !="") {
 		var protocol = new Packages.ru.ecom.poly.ejb.domain.protocol.Protocol() ;
 		protocol.medCase = aEntity ;
-		protocol.dateRegistration = aEntity.dateExecute ;
+		protocol.dateRegistration = aEntity.dateStart ;
 		protocol.timeRegistration = aEntity.timeExecute ;
 		protocol.username = aEntity.username ;
 		protocol.record = aText ;
@@ -39,17 +39,17 @@ function createProtocol(aText, aEntity , aContext) {
 }
 
 
-function checkDateExecute(aCtx,aExecuteDate,aExecuteTime,aId) {
+function checkDateStart(aCtx,aExecuteDate,aExecuteTime,aId) {
 	
 	stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/MedService/OnlyCurrentDay") ;
 	if (stat) {
 		
 			var cal1 = java.util.Calendar.getInstance() ;
 			var cal2 = java.util.Calendar.getInstance() ;
-			var dateExecute = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aExecuteDate,aExecuteTime);
+			var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aExecuteDate,aExecuteTime);
 			var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 			cal2.setTime(dateCur) ;		
-			cal1.setTime(dateExecute) ;
+			cal1.setTime(dateStart) ;
 			
 			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
 				cal1.get(java.util.Calendar.MONTH)==cal2.get(java.util.Calendar.MONTH) &&
