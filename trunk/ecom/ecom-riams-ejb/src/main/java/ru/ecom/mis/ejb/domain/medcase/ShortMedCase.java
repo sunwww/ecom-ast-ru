@@ -143,19 +143,6 @@ public class ShortMedCase extends MedCase{
 	public void setTimeExecute(Time aNewProperty) {
 		theTimeExecute = aNewProperty;
 	}
-
-	/** Дата выполнения */
-	@Comment("Дата выполнения")
-	public Date getDateExecute() {
-		return theDateExecute;
-	}
-
-	public void setDateExecute(Date aDateExecute) {
-		theDateExecute = aDateExecute;
-	}
-
-	/** Дата выполнения */
-	private Date theDateExecute;
 	/**
 	 * Время исполнения
 	 */
