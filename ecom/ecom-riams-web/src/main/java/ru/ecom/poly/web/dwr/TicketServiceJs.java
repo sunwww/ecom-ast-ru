@@ -30,14 +30,15 @@ public class TicketServiceJs {
 			.append(" left join Worker ow on ow.id=owf.worker_id")
 			.append(" left join Patient owp on owp.id=ow.person_id")
 			.append(" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id")
-			.append(" where spo.id='").append(aPatient).append("'")
-			.append(" and spo.DTYPE='PolyclinicMedCase' and (spo.noActuality='0' or spo.noActuality is null) and spo.ownerFunction_id='").append(aWorkFunction).append("'")
-			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname")
-			.append(" order by spo.dateStart") ;
+			.append(" where spo.patient_id='").append(aPatient).append("'")
+			.append(" and spo.DTYPE='PolyclinicMedCase' and (spo.noActuality='0' or spo.noActuality is null) and spo.ownerFunction_id='")
+			.append(aWorkFunction).append("'")
+			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname,owp.firstname,owp.middlename")
+			.append(" order by spo.dateStart desc") ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
 		WebQueryResult obj = list.isEmpty()?null:list.iterator().next() ;
-		return obj!=null?"":res.append(obj.get1()).append("@").append(obj.get2()).toString() ;
+		return obj==null?"":res.append(obj.get1()).append("@").append(obj.get2()).toString() ;
 	}
 	
 	public String getOpenSpoBySmo(Long aSmoId, HttpServletRequest aRequest) throws NamingException {
