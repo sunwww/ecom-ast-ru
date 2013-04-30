@@ -16,6 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
+import ru.nuzmsh.forms.validator.validators.Mkb;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
@@ -164,4 +165,26 @@ public class VisitMedCaseForm extends TicketMedCaseForm {
 
 	/** Рабочая функция исполнения */
 	private Long theWorkFunctionExecute;
+	
+	/** Заключительный диагноз по МКБ-10 */
+	@Comment("Заключительный диагноз по МКБ-10")
+	@Mkb 
+	public Long getConcludingMkb() {return theConcludingMkb;}
+	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
+	/** Заключительный диагноз */
+	@Comment("Заключительный диагноз")
+	public String getConcludingDiagnos() {return theConcludingDiagnos;}
+	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+
+	/** Острота диагноза заключительного */
+	@Comment("Острота диагноза клинического")
+	public Long getConcludingActuity() {return theConcludingActuity;}
+	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	/** Острота диагноза заключительного */
+	private Long theConcludingActuity;
+	/** Заключительный диагноз */
+	private String theConcludingDiagnos;
+	/** Заключительный диагноз по МКБ-10 */
+	private Long theConcludingMkb;
+	
 }

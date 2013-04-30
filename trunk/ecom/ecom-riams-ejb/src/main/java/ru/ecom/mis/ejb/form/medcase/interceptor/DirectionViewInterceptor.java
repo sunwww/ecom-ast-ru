@@ -22,20 +22,20 @@ public class DirectionViewInterceptor implements IFormInterceptor {
     	Visit entity = (Visit) aEntity ;
     	EntityManager manager = aContext.getEntityManager() ;
     	if (entity.getServiceStream()!=null && (entity.getServiceStream().getCode()==null || entity.getServiceStream().getCode().equals("1"))) {
-    	String datePlan = form.getDateStart()!=null && !form.getDateStart().equals("")?form.getDateStart():entity.getDatePlan()!=null?DateFormat.formatToDate(entity.getDatePlan().getCalendarDate()):"" ;
-    	if (datePlan.equals("")) {
-    		form.setInfoByPolicy("НЕТ ДАТЫ НАПРАВЛЕНИЯ");
-    	} else {
-    	List<Object[]> polerr = manager
-    			.createNativeQuery("SELECT id " 
-                      +"FROM MedPolicy where patient_id='"+(entity.getPatient()!=null?entity.getPatient().getId():"0")+"' "
-                      +"AND to_date('"+datePlan+"','dd.mm.yyyy') between actualDateFrom and coalesce(actualDateTo,CURRENT_DATE) "
-                      +"and DTYPE like 'MedPolicyOmc%'")
-    				.getResultList();
-    			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-		if(polerr.size()==0) form.setInfoByPolicy("НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС");
-		if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
-    	}
+	    	String datePlan = form.getDateStart()!=null && !form.getDateStart().equals("")?form.getDateStart():entity.getDatePlan()!=null?DateFormat.formatToDate(entity.getDatePlan().getCalendarDate()):"" ;
+	    	if (datePlan.equals("")) {
+	    		form.setInfoByPolicy("НЕТ ДАТЫ НАПРАВЛЕНИЯ");
+	    	} else {
+	    	List<Object[]> polerr = manager
+	    			.createNativeQuery("SELECT id " 
+	                      +"FROM MedPolicy where patient_id='"+(entity.getPatient()!=null?entity.getPatient().getId():"0")+"' "
+	                      +"AND to_date('"+datePlan+"','dd.mm.yyyy') between actualDateFrom and coalesce(actualDateTo,CURRENT_DATE) "
+	                      +"and DTYPE like 'MedPolicyOmc%'")
+	    				.getResultList();
+	    			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
+				if(polerr.size()==0) form.setInfoByPolicy("НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС");
+				if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
+	    	}
     	}
 	}
 

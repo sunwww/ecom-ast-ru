@@ -44,7 +44,7 @@ public class ServiceMedCasePreCreateInterceptor implements IParentFormIntercepto
     		form.setServiceStream(ConvertSql.parseLong(row[1])) ;
     	}
     	form.setCreateDate(DateFormat.formatToDate(date));
-        form.setDateExecute(DateFormat.formatToDate(date));
+        form.setDateStart(DateFormat.formatToDate(date));
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         form.setTimeExecute(timeFormat.format(date));
         /*

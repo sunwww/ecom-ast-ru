@@ -151,12 +151,13 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
+	@Required
 	public String getConcludingDiagnos() {return theConcludingDiagnos;}
 	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
-	@Mkb
+	@Mkb @Required
 	public Long getConcludingMkb() {return theConcludingMkb;}
 	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
 
@@ -167,6 +168,7 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
+	@Required
 	public Long getConcludingActuity() {return theConcludingActuity;}
 	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
 
@@ -231,6 +233,15 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	private Long theConcludingMkb;
 	/** Заключительный диагноз */
 	private String theConcludingDiagnos;
+	
+	/** Дата направления */
+	@Comment("Дата направления")
+	@Persist @DoDateString @DateString
+	public String getOrderDate() {return theOrderDate;}
+	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+
+	/** Дата направления */
+	private String theOrderDate;
 	
 }
 
