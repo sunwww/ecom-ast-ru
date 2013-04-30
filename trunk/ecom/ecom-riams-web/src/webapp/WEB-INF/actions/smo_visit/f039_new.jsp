@@ -238,8 +238,8 @@ then -1 else 0 end) as age
 ,vss.name as vssname
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
-LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -352,8 +352,8 @@ then -1 else 0 end)<18
 
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
-LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -462,8 +462,8 @@ select
 
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
-LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -626,8 +626,8 @@ then 1 else null end) as cntAll14
 ) then 1 else null end) as cntProfHomeold
 FROM MedCase smo  
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.Id=p.address_Id 
-LEFT JOIN Address2 ad2 on ad2.Id=ad1.parent_Id  
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
