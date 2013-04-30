@@ -22,6 +22,7 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 public class TicketServiceJs {
 	
 	public String getOpenSpoByPatient(Long aWorkFunction, Long aPatient, HttpServletRequest aRequest) throws NamingException {
+		
 		StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select spo.id,to_char(spo.dateStart,'yyyy-mm-dd') ||' '||ovwf.name || ' '||owp.lastname|| ' '||owp.firstname|| ' '||owp.middlename as docfio" )
@@ -182,7 +183,8 @@ public class TicketServiceJs {
 	}
 	public String getMedServiceBySpec(Long aSpec, String aDate, HttpServletRequest aRequest) throws ParseException, NamingException {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
-		return service.getMedServiceBySpec(aSpec, aDate);
+		if (aDate!=null && !aDate.equals("")) return service.getMedServiceBySpec(aSpec, aDate);
+		return "" ;
 	}
 	public Long getWorkFunction(HttpServletRequest aRequest) throws NamingException {
 		IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
