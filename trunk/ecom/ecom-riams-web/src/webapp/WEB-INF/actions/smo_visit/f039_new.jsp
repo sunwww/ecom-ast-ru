@@ -257,7 +257,7 @@ ${personSql}
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
         <msh:table
-         name="journal_ticket" action="entityShortView-smo_visit.do" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Дата посещения" property="2"/>            
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Дата рождения" property="4"/>

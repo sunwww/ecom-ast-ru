@@ -36,10 +36,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
 </msh:sideMenu>
 <msh:sideMenu title="Статистика">
-	<msh:sideLink name="по пользователю" action="/smo_ticketsByUserList" params="" 
+	<msh:sideLink name="по пользователю" action="/smo_ticketsByUser" params="" 
 		roles="/Policy/Poly/Ticket/StatByUser" styleId="ticketsByUser"
 	/>
-	<msh:sideLink name="по типу населению" action="/smo_ticketsByNonredidentPatientList" params="" 
+	<msh:sideLink name="по типу населению" action="/smo_journal_nonredidentPatient" params="" 
 		roles="/Policy/Poly/Ticket/StatByPatient" styleId="ticketsByResident"
 	/>
 	<msh:sideLink name="по специалистам" action="/smo_ticketsBySpecialistList" params="" 
