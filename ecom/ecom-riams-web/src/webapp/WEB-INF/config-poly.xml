@@ -30,11 +30,13 @@
     </global-forwards>
 
     <action-mappings>
-        <action path='/start' type='ru.ecom.web.actions.base.ForwardAction'
-                name='poly_medcardForm'
+        <action path='/smo_ticketsByUser' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
                 validate='false'
-                scope="request">
-            <forward name="success" redirect="false" path="/poly_medcards.do" />
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/journal_statByUser.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_statByUser.jsp" />
         </action>
 
         <action path='/poly_start' type='ru.ecom.web.actions.base.ForwardAction'
@@ -128,6 +130,14 @@
 <!--            <forward name="success" redirect="true" path="/poly_tickets.do" />-->
 <!--        </action>-->
 
+        <action path='/smo_journal_nonredidentPatient' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/journal_nonresident.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_nonresident.jsp" />
+        </action>
         <action path='/smo_ticketspec' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
                 validate='true'
