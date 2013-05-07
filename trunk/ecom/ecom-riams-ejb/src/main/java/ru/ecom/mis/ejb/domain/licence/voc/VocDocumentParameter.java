@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,6 +17,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Справочник параметров документа")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "parameterGroup" }) })
 public class VocDocumentParameter extends VocBaseEntity{
 	/**
 	 * Группа параметров

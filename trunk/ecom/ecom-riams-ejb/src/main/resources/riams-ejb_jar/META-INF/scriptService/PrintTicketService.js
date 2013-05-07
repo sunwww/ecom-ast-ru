@@ -106,7 +106,7 @@ function printInfo(aCtx, aParams) {
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
-    record("ticketd",FORMAT.format(ticket.orderDate)) ;
+    record("ticketd",FORMAT.format(ticket.dateFinish)) ;
     record("medcard",mc) ;
     record("idticket",""+ticket.id) ;
     recordVocProba("sex", prs.sex, 1, 2);
@@ -114,8 +114,8 @@ function printInfo(aCtx, aParams) {
     if (ticket.getWorkFunctionExecute()!=null) {
     	record("Doctor", ticket.getWorkFunctionExecute().getWorkerInfo());
     	ifVocIsNotNull(ticket.getWorkFunctionExecute().getWorkFunction(),"DoctorFunction") ;
-    	if (ticket.workFunction.worker!=null && ticket.workFunction.worker.lpu!=null) {
-    		record("LPUName",ticket.workFunction.worker.lpu.name) ;
+    	if (ticket.workFunctionExecute.worker!=null && ticket.workFunctionExecute.worker.lpu!=null) {
+    		record("LPUName",ticket.workFunctionExecute.worker.lpu.name) ;
     	} else {
     		record("LPUName","") ;
     	}
@@ -125,86 +125,7 @@ function printInfo(aCtx, aParams) {
     	record("LPUName","") ;
     }
     
-    //TODO доработать
-    /*
-    recordBlanks("blank",ticket.prescriptionBlanks,4);
-    recordVocProba("servPl", ticket.vocServicePlace, 1, 3);
-    recordVocProba("reas", ticket.vocReason, 1, 4);
-    recordVocProba("res", ticket.vocVisitResult, 1, 10);
-    recordVocProba("ill", ticket.primary, 1, 2);
-    recordVocProba("tr", ticket.vocTrauma, 1, 13);
-    recordVocProba("disDocSt", ticket.disabilityDocumentStatus, 1, 2);
-    recordVocProba("disReas", ticket.disabilityReason, 1, 6);
-    //recordVocProba("disSex", ticket.sex, 1, 2);
-    recordVocProba("disp", ticket.dispRegistration, 1, 4);
-    if (prs.address!=null) {
-    	recordBoolean("city",prs.address.addressIsCity);
-		recordBoolean("village",prs.address.addressIsVillage);
-	} else {
-		record("city.k1","") ;
-		record("city.k2","") ;
-		record("village.k1","") ;
-		record("village.k2","") ;
-	}
-	*/
-    /*
-   if (prs.getMedPolicies().size() > 0) {
-            plc = prs.getMedPolicies().get(prs.getMedPolicies().size()-1);
-    }
-
-        // 1.льгота
-        // 2.Номер полиса ОМС      
-        
-    if (plc!=null) {
-		record("pat.polOmc", plc.getSeries() + plc.getPolNumber());
-	} else {
-		record("pat.polOmc","") ;
-	}
-   */
-        // Пол
-   // ifVocIsNotNull(prs.getSex(),"Sex");
-   //recordArray("pat.sex",mc.sex,1,2,"__");
-       /*
-        // Адрес
-    if (prs.getAddress()!=null) {
-    	record("Address", prs.getAddress().getAddressInfo());
-    	recordBoolean("p.c",mc.person.address.addressIsCity);
-		recordBoolean("p.v",mc.person.address.addressIsVillage);
-    } else {
-    	record("Address", "") ;
-    	recordBoolean("p.c");
-		recordBoolean("p.v");
-    }
-        // социальный статус
-    ifVocIsNotNull(prs.getSocialStatus(),"SocialStatus");
-        // Инвалидность
-        
-        // Специалист
-    */
-    //Город, село
-	//if (prs.address!=null) {
-		
-   /* } else  {
-    	recordBoolean("p.c");
-		recordBoolean("p.v");
-       // Специалист
-        // Вид оплаты
-    ifVocIsNotNull(ticket.getVocPaymentType(),"PaymentType");
-        // Место обслуживания
-    ifVocIsNotNull(ticket.getVocServicePlace(),"ServicePlace");
-        // Цель посещения
-    ifVocIsNotNull(ticket.getVocReason(),"Reason");
-        // Результат обращения
-    ifVocIsNotNull(ticket.getVocVisitResult(), "VisitResult");
-        // Диагноз по МКБ
-    ifIsNotNull(ticket.getIdc10(), "Idc10", ticket.getIdc10().getCode() + " " + ticket.getIdc10().getName());
-        // Характер заболевания
-    ifIsNotNull(ticket.getVocIllnesType(),"IllnesType", ticket.getVocIllnesType().getName());
-        // Диспансерный учет
-    ifVocIsNotNull(ticket.getVocDispanseryRegistration(),"DispanseryRegistration");
-        // Травма
-    ifVocIsNotNull(ticket.getVocTrauma(),"Trauma");
-  */   	
+    
     return map ;
 }
 

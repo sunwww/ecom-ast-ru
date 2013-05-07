@@ -958,10 +958,10 @@
     <voc id='workFunctionByTicket' type='NativeVocService'>
     	<NativeVocService
     			from = 'WorkFunction as wf '
-    			parent = " ( (select m.lpu_id from medcard as m where m.id=:parent) is null or w.lpu_id=(select m.lpu_id from medcard as m where m.id=:parent) )"
+    			parent = " (select m.id from medcard as m where m.id=:parent and (m.lpu_id is null or w.lpu_id=m.lpu_id))>0 "
     			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
     			queried =" (cast(wf.id as varchar(6)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
-    			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0)"
+    			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
     			order =''
     			nameId='wf.id'
     			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
