@@ -40,6 +40,7 @@
 
 		<!-- Медкарта -->
 		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
+		<form-bean name="voc_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.VocDocumentParameterForm" />
 		<!-- Договора -->
 		<form-bean name="contract_contractAccountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
 		<form-bean name="contract_contractAccountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />

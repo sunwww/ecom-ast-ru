@@ -13,8 +13,10 @@
       <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
       <msh:hidden property="isTalk" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="dateFinish"/>
       <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:panel colsWidth="15%,15%,15%,55%" guid="fecf8cd8-e883-4375-b47a-2954067ec3a7">
+      
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
           <msh:textField label="Запись на прием: Дата" property="dateStart" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
           <msh:textField label="Время" property="timeExecute" fieldColSpan="1" guid="ed78c5e3-5e2c-4d8c-b64e-75767dcf0775" />
@@ -218,6 +220,13 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+      	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
+  		<msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
+  			<script type="text/javascript">
+  				if ($('dateStart').value=="") $('dateStart').value=$('dateFinish').value 
+  			</script>
+  		</msh:ifFormTypeAreViewOrEdit>
+  	</msh:ifFormTypeIsNotView>
     <script type="text/javascript">
     function viewProtocolByMedcard(d) {
     	var m = document.forms[0].medcard ;
@@ -332,7 +341,7 @@
 		function changeParentMedService() {
 		}
     	function isExistTicket() {
-    		 
+    		 if ($('dateStart').value!="") {
     		TicketService.findDoubleBySpecAndDate($('id').value,document.forms[0].medcard.value,$('workFunctionExecute').value, $('dateStart').value
     		, {
                    callback: function(aResult) {
@@ -342,7 +351,7 @@
 				    		alert('Уже заведен талон посещения на '+$('dateStart').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
 				    			 ;
                        } else {
-                     		TicketService.checkHospitalByMedcard($('dateStart').value,document.forms[0].medcard.value,$('serviceStream').value
+                     		TicketService.checkHospitalByMedcard($('dateFinish').value,document.forms[0].medcard.value,$('serviceStream').value
                      		  		,{callback: function(aString) {
                      		        	//alert(aString) ;
                      		            if (aString!=null) {
@@ -361,7 +370,9 @@
                        }
                    }
 	        	}
-	        	)
+	        	) } else {
+	        		
+	        	}
     		}
     		function getValue(aFld) {
     			if (aFld) {

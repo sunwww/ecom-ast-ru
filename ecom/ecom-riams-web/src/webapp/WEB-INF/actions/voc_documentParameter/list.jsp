@@ -1,0 +1,100 @@
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+
+  <tiles:put name="title" type="string">
+    <msh:title mainMenu="Voc" title="Кодификатор" guid="dd8765db-fd78-4593-98ff-d87a7a48d574" />
+  </tiles:put>
+  <tiles:put name="side" type="string" />
+  <tiles:put name="body" type="string">
+  
+          <%
+        	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+        	request.setAttribute("login", login) ;
+        %>
+        <ecom:webQuery name="infoByLogin"
+        maxResult="1" nativeSql="
+        select wf.id,w.lpu_id,case when wf.isAdministrator='1' then '1' else null end as isAdmin
+        from SecUser su
+        left join WorkFunction wf on su.id=wf.secUSer_id
+        left join Worker w on wf.worker_id=w.id
+        where su.login='${login}'
+        "
+        />
+        <%
+        	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
+	    	List list= (List)request.getAttribute("infoByLogin");
+	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+        	String department = request.getParameter("department") ;
+        	String curator = request.getParameter("curator") ;
+        	String workFunc = wqr!=null?""+wqr.get1():"0" ;
+        	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+
+ 
+        	int type=0 ;
+        	if (isViewAllDepartment || isBossDepartment) {
+        		type=2 ;
+       		} else if (isViewAllDepartment) {
+       			type=1 ;
+       		} else if (wqr!=null) {
+       			if (isBossDepartment) {
+       				type=2 ;
+       				department=""+wqr.get2() ;
+       			} else {
+       				type=3 ;
+       				curator=workFunc ;
+       			}
+       		}
+       		request.setAttribute("department", department) ;
+       		request.setAttribute("curator", curator) ;        	
+       	%>
+  	<ecom:webQuery name="list" nativeSql="select vdp.id,vdpg.name,vdp.name
+  	,vdp.dimension from VocDocumentParameter vdp
+left join VocDocumentParameterGroup vdpg on vdp.parameterGroup_id=vdpg.id
+left join VocDocumentParameterConfig vdpc on vdpc.documentParameter_id=vdp.id
+order by vdpg.name,vdp.id"/>
+    <msh:table selection="multy"  name="list" action="entityView-voc_documentParameter.do" idField="1">
+	<msh:tableNotEmpty name="list">
+		  	<msh:toolbar >
+			                	<tbody>
+			                		<msh:toolbar>
+				                		<tr>
+				                			<th class='linkButtons' colspan="6">
+			                					
+			                					<table>
+			                					<msh:ifInRole roles="">
+			                					
+			                					<msh:autoComplete size="100" property="lpu" horizontalFill="true" label="Отделение" vocName="lpu"/>
+			                					</msh:ifInRole>
+			                					<msh:ifNotInRole roles="">
+			                					</msh:ifNotInRole>
+			                					<msh:checkBox property="isLowerCase" label="Отображать в нижнем регистре"/>
+			                					</table>
+			                					<input type='button' value='Установить' onclick="javascript:update()" />
+			                					<input type='button' value='Снять' onclick="javascript:remove()" />
+			                				</th>
+				                		</tr>
+			                		</msh:toolbar>
+			                	</tbody>
+		  	</msh:toolbar>
+  	</msh:tableNotEmpty>
+      <msh:tableColumn columnName="Название группы" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn property="3" columnName="Название параметра" />
+      <msh:tableColumn columnName="Размерность" property="4"/>
+    </msh:table>
+  </tiles:put>
+  <tiles:put name="side" type="string">
+    <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
+      <msh:sideLink params="" action="/entityPrepareCreate-voc_documentParameter" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
+    </msh:sideMenu>
+    <tags:voc_menu currentAction="medService"/>
+  </tiles:put>
+</tiles:insert>
+

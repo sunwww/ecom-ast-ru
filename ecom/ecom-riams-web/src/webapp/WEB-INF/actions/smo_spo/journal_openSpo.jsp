@@ -96,8 +96,11 @@
     select 
 owf.id||'&department=${department}&curator='||owf.id as id
 ,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
+,count(distinct pat.id) as cntPat 
 ,count(distinct spo.id) as cntSpo 
+,count(distinct vis.id) as cntVis 
 from MedCase spo
+left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
 left join Patient pat on spo.patient_id=pat.id 
 left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 left join Worker ow on owf.worker_id=ow.id 
@@ -112,7 +115,9 @@ order by owp.lastname,owp.middlename,owp.firstname
     action="smo_journal_openSpo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Лечащий врач" property="2" />
-      <msh:tableColumn columnName="Кол-во пациентов" property="3" />
+      <msh:tableColumn columnName="Кол-во пациентов" isCalcAmount="true" property="3" />
+      <msh:tableColumn columnName="Кол-во СПО" isCalcAmount="true" property="4" />
+      <msh:tableColumn columnName="Кол-во визитов" isCalcAmount="true" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -130,6 +135,7 @@ select spo.id,spo.dateStart
     ,case when max(vis.dateStart) is not null then current_date-max(vis.dateStart) else null end as cntdaymax
     ,to_char(max(case when vis.dateStart is null then wcd.calendarDate else null end),'dd.mm.yyyy') as maxPlanDate
     ,list(distinct vvr.name) as vvrname,list(distinct mkb.code||' '||vpd.name) as diag
+    ,count(distinct vis.id) as cntVis
     from medCase spo 
     left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
     left join Diagnosis diag on diag.medcase_id=vis.id
@@ -152,6 +158,7 @@ select spo.id,spo.dateStart
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата начала СПО" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Кол-во дней" property="5"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во визитов" property="11" />
       <msh:tableColumn columnName="Диагнозы" property="10"/>
       <msh:tableColumn columnName="Результаты визитов" property="9"/>
       <msh:tableColumn columnName="Дата последнего посещения" property="6"/>

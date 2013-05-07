@@ -8,10 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="entitySaveGoView-smo_short_ticket.do" defaultField="date" guid="77bf3d00-cfc6-49eb-9751-76e82d38751c">
+    <msh:form action="entitySaveGoView-smo_short_ticket.do" defaultField="dateFinish" guid="77bf3d00-cfc6-49eb-9751-76e82d38751c">
       <msh:hidden property="id" guid="e862851f-7390-4fe6-9a37-3b22306138b4" />
       <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+
       <msh:panel>
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
           <msh:textField label="Дата приема" property="dateFinish" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
@@ -19,6 +20,9 @@
         <msh:row guid="47073a0b-da87-49e0-9ff0-711dc597ce07">
           <msh:autoComplete parentId="smo_short_ticketForm.medcard" vocName="workFunctionByTicket" property="workFunctionExecute" label="Специалист" fieldColSpan="3" size="100" horizontalFill="true" guid="a8404201-1bae-467e-b3e9-5cef63411d01" />
         </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Вид оплаты" horizontalFill="true" guid="e5ac1267-bc69-44b2-8aba-b7455ac064c4" />
+        </msh:row>        
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
         </msh:row>
