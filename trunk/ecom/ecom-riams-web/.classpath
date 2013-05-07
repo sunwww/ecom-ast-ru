@@ -31,21 +31,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-ejbweb-ejb"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-ejbweb-web"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-riams-ejb"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/ecom/gwt/idemode/ecom-gwt-idemode.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/gwt/gwt-servlet.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/ecom/gwt/clazz/ecom-gwt-clazz.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-ejb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-forms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-web"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecs"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/org.apache.axis_1.4.0.v201005080400/lib/axis.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/org.apache.commons.discovery_0.2.0.v201004190315/lib/commons-discovery-0.2.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/javax.xml.rpc_1.1.0.v201005080400/lib/jaxrpc.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/javax.xml.soap_1.2.0.v201005080501/lib/saaj.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/javax.wsdl_1.6.2.v201012040545.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/eclipse/plugins/org.apache.commons.logging_1.0.4.v201101211617.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/axis"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/imageio"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ant"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gwt"/>
 	<classpathentry kind="output" path="target/webapp/WEB-INF/classes"/>
 </classpath>

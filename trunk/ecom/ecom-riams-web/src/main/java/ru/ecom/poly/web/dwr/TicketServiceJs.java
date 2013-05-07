@@ -1,8 +1,10 @@
 package ru.ecom.poly.web.dwr;
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,8 @@ import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
@@ -150,8 +154,49 @@ public class TicketServiceJs {
 		return "Сохранено" ;
 	}
 	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {
-		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
-		return service.findDoubleBySpecAndDate(aId , aMedcard, aSpec, aDate) ;
+		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	
+    	if(!StringUtil.isNullOrEmpty(aDate)) {
+            return "" ;
+        }
+    	System.out.println("id="+aId) ;
+    	System.out.println("medcard="+aMedcard) ;
+    	System.out.println("spec="+aSpec) ;
+    	System.out.println("date="+aDate) ;
+    	
+        StringBuilder sql = new StringBuilder() ;
+        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
+        	.append(" from MedCase as t ")
+        	.append(" left join medcard as m on m.id=t.medcard_id")
+			.append(" left join patient as p on m.person_id=p.id")
+			.append(" left join workfunction as wf on wf.id=t.workfunctionExecute_id")
+			.append(" left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id")
+			.append(" left join worker as w on wf.worker_id=w.id")
+			.append(" left join patient as wp on wp.id = w.person_id")
+			.append(" where t.dtype='ShortMedCase' and t.medcard_id='").append(aMedcard)
+			.append("' and t.workFunctionExecute_id='").append(aSpec)
+			.append("' and coalesce(t.dateStart,t.dateFinish)=to_date('").append(aDate).append("','dd.mm.yyyy') and (t.istalk is null or t.istalk='0')") ;
+        
+        if (aId!=null) sql.append(" and t.id!=").append(aId);
+
+        Collection<WebQueryResult> doubles = service.executeNativeSql(sql.toString()) ;
+        if (doubles.size()>0) {
+        	StringBuilder ret = new StringBuilder() ;
+			ret.append("<br/><ol>") ;
+			for (WebQueryResult res:doubles) {
+				ret.append("<li>")
+				.append("<a href='entityParentView-poly_ticket.do?id=").append(res.get1()).append("'>пациент: ")
+				.append(res.get2())
+				.append(" дата приема ").append(res.get3()).append(" ").append(res.get4()).append(" ")
+				.append(" специал. ").append(res.get5())
+				.append("</a>")
+				.append("</li>") ;
+			}
+			ret.append("</ol><br/>") ;
+			return ret.toString() ;
+        }
+		return ""; 
 	}
 	public String findProvReason(HttpServletRequest aRequest) throws NamingException {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;

@@ -30,7 +30,7 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
