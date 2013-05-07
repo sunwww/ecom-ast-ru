@@ -4,7 +4,7 @@ function onPreCreate(aForm, aCtx) {
 				param.put("obj","Ticket") ;
 				param.put("permission" ,"dateClosePeriod") ;
 				param.put("date",
-					Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(aForm.date)) ;
+					Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(aForm.dateFinish)) ;
 				param.put("id", aForm.id) ;
 	var isClosedPeriod=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 	if (+isClosedPeriod==1) {

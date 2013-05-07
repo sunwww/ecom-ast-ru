@@ -178,15 +178,15 @@ public class TicketServiceBean implements ITicketService {
     	System.out.println("date="+aDate) ;
     	
         StringBuilder sql = new StringBuilder() ;
-        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(t.date,'dd.mm.yyyy'),t.recordTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
-        	.append(" from Ticket as t ")
+        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
+        	.append(" from MedCase as t ")
         	.append(" left join medcard as m on m.id=t.medcard_id")
 			.append(" left join patient as p on m.person_id=p.id")
-			.append(" left join workfunction as wf on wf.id=t.workfunction_id")
+			.append(" left join workfunction as wf on wf.id=t.workfunctionExecute_id")
 			.append(" left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id")
 			.append(" left join worker as w on wf.worker_id=w.id")
 			.append(" left join patient as wp on wp.id = w.person_id")
-			.append(" where t.medcard_id=:medcard and t.workFunction_id=:workFunction and t.date=:date and (t.talk is null or cast(t.talk as integer)=0)") ;
+			.append(" where t.dtype='ShortMedCase' and t.medcard_id=:medcard and t.workFunctionExecute_id=:workFunction and coalesce(t.dateStart,t.dateFinish)=:date and (t.istalk is null or t.istalk='0')") ;
         String add ="" ;
         if (aId!=null) sql.append(" and t.id!=").append(aId);
 
