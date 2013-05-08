@@ -23,7 +23,7 @@
     if (reestr!=null && reestr.equals("1")) {
     	%>
     <ecom:webQuery name="list" nativeSql=" select t.id as tid,m.number as mnumber
-    , p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||to_char(p.birthday,'DD.MM.YYYY'),t.dateCreate,t.date as tdate
+    , p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||to_char(p.birthday,'DD.MM.YYYY'),t.createDate,t.dateStart as tdate
     ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
     ,vr.name as vrname  from MedCase t 
     left join medcard m on m.id=t.medcard_id     
@@ -34,7 +34,7 @@
     left join patient wp on wp.id=w.person_id       
     left join vocreason vr on vr.id=t.visitreason_id    
     where t.dateStart=to_date('${param.dateStart}','dd.mm.yyyy') 
-    and t.workfunctionExecute_id='${param.workfunction}' 
+    and t.workfunctionExecute_id='${param.workFunction}' 
     and t.medcard_id='${param.medcard}' order by t.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="list" action="entityParentView-smo_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
       <msh:tableColumn columnName="#" property="sn" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
@@ -71,9 +71,9 @@
     
     <msh:section>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select '&reestr=1&medcard='||t.medcard_id||'&dateStart='||to_char(t.dateStart,'dd.mm.yyyy')||'&workFunction='||t.workFunctionExecute_id, t.medcard_id as person,t.dateStart as tdateStart
+    <ecom:webQuery name="journal_ticket" nativeSql="select '&reestr=1&medcard='||t.medcard_id||'&dateStart='||to_char(t.dateStart,'dd.mm.yyyy')||'&workFunction='||t.workFunctionExecute_id as idcolum, t.medcard_id as person,t.dateStart as tdateStart
 			,count(*) as cnt
-			,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename,pm.lastname||' '||pm.firstname||' '||pm.middlename, m.number 
+			,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename as pfio,pm.lastname||' '||pm.firstname||' '||pm.middlename as pmfio, m.number 
     				from MedCase t 
     				
     				left join WorkFunction as wf on wf.id=t.workFunctionExecute_id 

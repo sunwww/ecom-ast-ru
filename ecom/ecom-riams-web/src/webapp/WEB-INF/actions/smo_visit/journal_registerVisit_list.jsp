@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -16,6 +17,8 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
+  <%	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
+  %>
     <msh:form action="/smo_journalRegisterVisit_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" name="m" id="m" value="journalRegisterVisitByFrm"/>
@@ -38,12 +41,12 @@
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
         		horizontalFill="true" fieldColSpan="3"/>
-        	`
+        	
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="specialist" vocName="workFunction" 
         		horizontalFill="true" fieldColSpan="3"/>
-        	`
+        	
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
@@ -57,12 +60,27 @@
         	<msh:autoComplete property="rayon" vocName="vocRayon" size="25"/>
         	
         </msh:row>
+         <msh:row>
+	        <td class="label" title="База (typeDtype)" colspan="1">
+	        <label for="typeDtypeName" id="typeDtypeLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDtype" value="1">  Визит.
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDtype" value="2" >  Талон.
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDtype" value="3">  Все
+	        </td>
+        </msh:row>
+        
+        <msh:row>
         <td colspan="4" class="buttons">
 			<input type="button" value="Отменить" title="Отменить изменения [SHIFT+ESC]" onclick="this.disabled=true; window.history.back()" id="cancelButton">
 			<input type="button" title="Найти [CTRL+ENTER]" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;smo_journalRegisterVisit_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 			<input type="button" title="Печать [CTRL+ENTER]" onclick="this.value=&quot;Печать&quot;; getId();this.form.action=&quot;print-journalRegistration.do&quot;;this.form.target=&quot;_blank&quot; ; this.form.submit(); return true ;" value="Печать" class="default" id="submitButton" autocomplete="off">
 		</td>
-
+		</msh:row>
     </msh:panel>
     </msh:form>
     
@@ -73,7 +91,9 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}</msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" name="listRegisterVisit" action="entitySubclassView-mis_medCase.do" idField="id" noDataMessage="Не найдено">
+        <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" 
+        name="listRegisterVisit" 
+        action="entitySubclassView-mis_medCase.do" idField="id" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="№визита" property="id"/>            
             <msh:tableColumn columnName="Дата приема" property="date"/>            
@@ -95,6 +115,19 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
+    checkFieldUpdate('typeDtype','${typeDtype}',3) ;
+    
+    
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	eval('var aMax =  chk.length') ;
+    	if (aMax>aDefault) {aDefault=aMax}
+    	if ((+aValue)>aMax) {
+    		chk[+aDefault-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
+    }
   		function getId() {
   			var args=$('beginDate').value+":"+$('finishDate').value
   			+":"+$('specialist').value+":"+$('rayon').value+":"+$('primaryInYear').value 
@@ -106,6 +139,7 @@
   				args=args+"dateStart,timeExecute" ;
   			}
   			args=args+":"+$('workFunction').value+":"+$('lpu').value+":"+$('serviceStream').value ;
+  			args=args+":" +getCheckedRadio(document.forms[0],"typeDtype");
   			$('id').value =args ; 
   		}
   	</script>
