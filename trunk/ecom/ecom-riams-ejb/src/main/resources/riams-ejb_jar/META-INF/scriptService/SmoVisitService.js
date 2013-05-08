@@ -286,9 +286,15 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 	var func = obj[7] ;
 	var lpu = obj[8] ;
 	var serviceStream = obj[9] ;
+	var dtype=+obj[10] ;
 	if (+sn<1) sn=1 ;
-	
-	var sql = "where t.dtype='Visit' and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
+	var dtypeSql = " (t.dtype='Visit' or t.dtype='ShortMedCase') "
+	if (dtype==1) {
+		dtypeSql="t.dtype='Visit'" ;
+	} else if (dtype==2) {
+		dtypeSql="t.dtype='ShortMedCase'" ;
+	}
+	var sql = "where "+dtypeSql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
 	if (lpu!=null && (+lpu>0)) {
 		sql = sql + " and w.lpu_id='"+lpu+"'"
 	}
@@ -309,7 +315,7 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		sql = sql+" and p.rayon_id='"+rayon+"'" ;
 	}
 	sql = 
-		"select t.id ,to_char(t.dateStart,'dd.MM.yyyy')||' '||cast(timeExecute as varchar(5)) as dateexecute"
+		"select t.id ,to_char(t.dateStart,'dd.MM.yyyy')||' '||coalesce(cast(timeExecute as varchar(5)),'') as dateexecute"
 		+",vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as spec"
 		+",p.lastname||' '||p.firstname||' '||p.middlename as fio"
 		+",vs.name as vsname,to_char(p.birthday,'dd.mm.yyyy') as birthday"
@@ -321,19 +327,16 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		+"       when p.territoryRegistrationNonresident_id is not null"
 		+"          then okt.name||' '||p.RegionRegistrationNonresident||' '||oq.name||' '||p.SettlementNonresident"
 		+"               ||' '||ost.name||' '||p.StreetNonresident||"
-		//+"               coalesce(' д.'||p.HouseNonresident,'') ||coalesce(' корп.'|| p.BuildingHousesNonresident,'') ||coalesce(' кв. '|| p.ApartmentNonresident,'')"
 		+"               case when p.HouseNonresident is not null and p.HouseNonresident!='' then ' д.'||p.HouseNonresident else '' end" 
 		+" ||case when p.BuildingHousesNonresident is not null and p.BuildingHousesNonresident!='' then ' корп.'|| p.BuildingHousesNonresident else '' end" 
 		+"||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end"
 		+"   else '' "
 		+"  end as address"
-		//+",$$ByPatient^ZAddressLib(p.id)"
 		+",vr.name as vrname"
 		+",t.id"
 		+",(select list(mp.series||' '||mp.polNumber||' '||ri.name||' ('||to_char(mp.actualDateFrom,'dd.MM.yyyy')||coalesce('-'||to_char(mp.actualDateTo,'dd.MM.yyyy')||')','-нет даты окончания')) from medpolicy mp left join reg_ic ri on ri.id=mp.company_id where mp.patient_id=p.id "
 		+" and t.dateStart between mp.actualDateFrom and COALESCE(mp.actualDateTo,CURRENT_DATE)) as policy"
 		+", vh.code as vhcode "
-		//+",list(mkb.code) as mkbcode,t.directHospital, "
 		+", (select list (mkb.code) from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.medCase_id=t.id) as diag"
 		+", vss.name as vssname"
 		+", (select list (ms.name) from medcase ser left join medservice ms on ms.id=ser.medService_id where ser.parent_id=t.id and ser.dtype='ServiceMedCase') as usl"
@@ -353,7 +356,7 @@ function journalRegisterVisit(aCtx,aParams,frm) {
 		+" left join vochospitalization vh on vh.id=t.hospitalization_id "	
 		+" left join VocServiceStream vss on vss.id=t.serviceStream_id "
 		+sql 
-		+" and (t.noActuality is null or cast(t.noActuality as integer)=0) and t.dateStart is not null order by "+order
+		+" and (t.noActuality is null or t.noActuality='0') and t.dateStart is not null order by "+order
 		;
 	//throw sql ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
