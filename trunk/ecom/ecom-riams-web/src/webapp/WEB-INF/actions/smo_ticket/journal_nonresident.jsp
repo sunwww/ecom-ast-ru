@@ -17,7 +17,7 @@
     
   <tiles:put name="body" type="string">
   <%
-	String typePatient =ActionUtil.updateParameter("Form039Action","typePatient","1", request) ;
+	String typePatient =ActionUtil.updateParameter("Form039Action","typePatient","4", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
   %>
     <msh:form action="/smo_journal_nonredidentPatient.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -34,9 +34,12 @@
         	<input type="radio" name="typePatient" value="2">  иногородные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иностранцы
         </td>
-     </msh:row>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  все
+        </td>
+        </msh:row>
         <msh:row>
 	        <td class="label" title="База (typeDtype)" colspan="1"><label for="typeDtypeName" id="typeDtypeLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -53,7 +56,7 @@
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
            <td>
-            <input type="submit" onclick="find()" value="Найти" />
+            <input type="submit" value="Найти" />
           </td>
            <td>
             <input type="submit" onclick="print()" value="Печать" />
@@ -64,6 +67,14 @@
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
+    String dateSearch = (String)request.getParameter("dateSearch") ;
+	if (typeDtype.equals("1")) {
+		request.setAttribute("dtypeSql", "t.dtype='Visit'") ;
+	} else if (typeDtype.equals("2")) {
+		request.setAttribute("dtypeSql", "t.dtype='ShortMedCase'") ;
+	} else {
+		request.setAttribute("dtypeSql", "(t.dtype='ShortMedCase' or t.dtype='Visit')") ;
+	}
     if (date!=null && !date.equals(""))  {
     	String date1 = (String)request.getParameter("dateEnd") ;
     	if (date1==null || date1.equals("")) {
@@ -72,15 +83,17 @@
     		request.setAttribute("dateEnd", date1) ;
     	}
     	// /Policy/Mis/MisLpu/Psychiatry
+
     	%>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${infoTypePat}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select  
-    to_CHAR(t.dateStart,'DD.MM.YYYY')||':${param.typePatient}' as idPar
+    '&dateSearch='||to_CHAR(t.dateStart,'DD.MM.YYYY')||
+    '&typePatient=${param.typePatient}&typeDtype=${param.typeDtype}' as idPar
     ,t.dateStart as tdate,count(*) as cnt
-    ,count(case when t.talk='1' then 1 else null end) as cntTalk
+    ,count(case when t.istalk='1' then 1 else null end) as cntTalk
     from MedCase t 
     left join medcard as m on m.id=t.medcard_id 
     left join Patient p on p.id=m.person_id
@@ -88,20 +101,20 @@
     left join Omc_Oksm ok on p.nationality_id=ok.id
     where t.dateStart  between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy')
-      and t.dtype='ShortMedCase' ${add} 
+     and ${dtypeSql} ${add} 
     group by t.dateStart" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_ticket" action="smo_ticketsByNonredidentPatientData.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket" action="smo_journal_nonredidentPatient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
-            <msh:tableColumn columnName="Кол-во" property="3"/>
-            <msh:tableColumn columnName="Кол-во беседа с род." property="4" cssClass="cssPsychiatry"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во беседа с род." property="4" cssClass="cssPsychiatry"/>
         </msh:table>
     </msh:sectionContent>
     <msh:sectionTitle>Итог</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket_sum" maxResult="1" nativeSql="select 
+    <ecom:webQuery name="journal_ticket_sum"  nativeSql="select 
     count(*) as cnt
-    ,count(case when t.talk='1' then 1 else null end) as tlk 
+    ,count(case when t.istalk='1' then 1 else null end) as tlk 
     ,vss.name as vssname
     from MedCase t 
     left join medcard as m on m.id=t.medcard_id 
@@ -110,19 +123,55 @@
     left join VocServiceStream vss on vss.id=t.serviceStream_id
     where t.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') 
      and to_date('${dateEnd}','dd.mm.yyyy') 
-     ${add}
+     and ${dtypeSql} ${add}
     group by t.serviceStream_id,vss.name
-    ,p.lastname,p.middlename,p.firstname
+   
     "/>
-        <msh:table name="journal_ticket_sum" action="" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket_sum" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Поток обслуживания" property="3"/>
-            <msh:tableColumn columnName="Кол-во" property="1"/>
-            <msh:tableColumn columnName="Кол-во бесед с род." property="2"  cssClass="cssPsychiatry"/>
+            <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="1"/>
+            <msh:tableColumn columnName="Кол-во бесед с род." isCalcAmount="true" property="2"  cssClass="cssPsychiatry"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } else {%>
+    <% } else if (dateSearch!=null && !dateSearch.equals(""))  {
+    	request.setAttribute("dateSearch", dateSearch) ;
+    	%>
+    <ecom:webQuery name="journal_priem" nativeSql=" select p.id as pid,m.number as mnumber
+    , p.lastname||' '|| p.firstname||' '||p.middlename as fiopat,p.birthday
+    ,  t.id as tid,t.dateStart as tdate
+    ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
+    ,1 as mkbcode ,vr.name as vrname, case when t.istalk='1' then 'Да' else '' end
+    from MedCase t left join medcard m on m.id=t.medcard_id     
+    left join Patient p on p.id=m.person_id     
+    left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
+    left join workfunction wf on wf.id=t.workFunctionExecute_id    
+    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    
+    left join worker  w on w.id=wf.worker_id    
+    left join patient wp on wp.id=w.person_id        
+    left join vocreason vr on vr.id=t.visitreason_id  
+    left join Omc_Oksm ok on p.nationality_id=ok.id  
+    where t.dateStart  =  to_date('${dateSearch}','dd.mm.yyyy')
+    and ${dtypeSql} ${add}
+    order by p.lastname,p.firstname,p.middlename" />
+    
+ 	    <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" 
+	    deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" 
+	    name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
+	      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Беседа с родст." property="10" cssClass="cssPsychiatry" />
+	    </msh:table>
+     	<%
+    }else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
     <script type='text/javascript'>
@@ -146,7 +195,7 @@
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	frm.action='smo_ticketsByNonresidentPatientPrint.do' ;
+    	frm.action='smo_journal_nonredidentPatient.do' ;
     }
     </script>
   </tiles:put>

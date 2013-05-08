@@ -42,13 +42,13 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="по типу населению" action="/smo_journal_nonredidentPatient" params="" 
 		roles="/Policy/Poly/Ticket/StatByPatient" styleId="ticketsByResident"
 	/>
-	<msh:sideLink name="по специалистам" action="/smo_ticketsBySpecialistList" params="" 
+	<msh:sideLink name="по специалистам" action="/smo_journal_visit_by_specialist" params="" 
 		roles="/Policy/Poly/Ticket/StatBySpecialist" styleId="ticketsBySpec"
 	/>
 	<msh:sideLink name="учет посещений" action="/smo_journalRegisterVisit_list" params="" 
 		roles="/Policy/Poly/Ticket/RegistrationVisit" styleId="journalRegisterVisit"
 	/>
-	<msh:sideLink name="Форма 039У-02" action="/smo_f039.do" params="" 
+	<msh:sideLink name="Форма 039У-02" action="/visit_f039_list.do" params="" 
 		roles="/Policy/Poly/Ticket/Report039" styleId="report039"
 	/>
 	<msh:sideLink action="/psych_listByArea" 

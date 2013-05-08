@@ -138,6 +138,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_nonresident.jsp" />
         </action>
+        <action path='/smo_journal_visit_by_specialist' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/smo_ticket/journal_specialist.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_specialist.jsp" />
+        </action>        
         <action path='/smo_ticketspec' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
                 validate='true'
