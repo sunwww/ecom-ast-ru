@@ -924,6 +924,7 @@
 
 
 	<!-- Рабочая функция -->
+	<!--
     <voc id='workFunction' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction'
@@ -933,7 +934,19 @@
                 queryConvertType="UPPER_CASE"
         />
     </voc> 
-    
+      -->
+    <voc id='workFunction' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'WorkFunction as wf '
+    			parent = ''
+    			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			queried =" (cast(wf.id as varchar(20))= :querId or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) )"
+    			queryAppend = " wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
+    			order =''
+    			nameId='wf.id'
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
+    	/>
+    </voc>      
     <voc id='workFunctionByDirect' type='NativeVocService'>
     	<NativeVocService
     			from = 'WorkFunction as wf '
