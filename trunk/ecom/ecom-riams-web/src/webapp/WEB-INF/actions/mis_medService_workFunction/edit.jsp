@@ -39,6 +39,15 @@
         <msh:row>
           <msh:autoComplete vocName="lpu" property="lpu" label="ЛПУ" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocBedSubType" property="bedSubType" label="Тип коек" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocRoomType" property="roomType" label="Уровень палат" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
