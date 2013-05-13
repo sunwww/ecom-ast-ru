@@ -1,7 +1,12 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -25,7 +30,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class WorkFunctionServiceForm extends IdEntityForm {
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
-	@Persist @Required
+	@Persist
 	public Long getVocWorkFunction() {
 		return theVocWorkFunction;
 	}
@@ -59,5 +64,33 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 
 	/** ЛПУ */
 	private Long theLpu;
+	
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	@Persist
+	public Long getBedType() {return theBedType;}
+	public void setBedType(Long aBedType) {theBedType = aBedType;}
+
+	/** Профиль коек */
+	private Long theBedType;
+	
+	/** Тип коек */
+	@Comment("Тип коек")
+	@Persist
+	public Long getBedSubType() {return theBedSubType;}
+	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private Long theBedSubType;
+	
+	/** Уровень палат */
+	@Comment("Уровень палат")
+	@Persist
+	public Long getRoomType() {return theRoomType;}
+	public void setRoomType(Long aRoomType) {theRoomType = aRoomType;}
+
+	/** Уровень палат */
+	private Long theRoomType;
+
 
 }
