@@ -71,7 +71,7 @@
     
     <msh:section>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_ticket" nativeSql="select '&reestr=1&medcard='||t.medcard_id||'&dateStart='||to_char(t.dateStart,'dd.mm.yyyy')||'&workFunction='||t.workFunctionExecute_id as idcolum, t.medcard_id as person,t.dateStart as tdateStart
+    <ecom:webQuery name="journal_ticket" nativeSql="select t.medcard_id||'&reestr=1&medcard='||t.medcard_id||'&dateStart='||to_char(t.dateStart,'dd.mm.yyyy')||'&workFunction='||t.workFunctionExecute_id as idcolum, t.medcard_id as person,t.dateStart as tdateStart
 			,count(*) as cnt
 			,vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename as pfio,pm.lastname||' '||pm.firstname||' '||pm.middlename as pmfio, m.number 
     				from MedCase t 

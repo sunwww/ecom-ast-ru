@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
@@ -36,10 +37,9 @@
         	String curator = request.getParameter("curator") ;
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
         	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
-
  
         	int type=0 ;
-        	if (isViewAllDepartment || isBossDepartment) {
+        	if (isViewAllDepartment) {
         		type=2 ;
        		} else if (isViewAllDepartment) {
        			type=1 ;
@@ -52,13 +52,22 @@
        				curator=workFunc ;
        			}
        		}
+        	if (department!=null &&!department.equals("")&&!department.equals("0")) {
+           		request.setAttribute("departmentInfoSql", "case when vdpc.deparmentid='"+department+"' then ml.name || case when vdpc.isLowerCase='1' then ' (НР)' else '' end else '' end") ;
+        	} else {
+        		request.setAttribute("departmentInfoSql", "ml.name || case when vdpc.isLowerCase='1' then ' (НР)' else '' end") ;
+        	}
        		request.setAttribute("department", department) ;
        		request.setAttribute("curator", curator) ;        	
        	%>
-  	<ecom:webQuery name="list" nativeSql="select vdp.id,vdpg.name,vdp.name
-  	,vdp.dimension from VocDocumentParameter vdp
+  	<ecom:webQuery name="list" nativeSql="select vdp.id as vdpid,vdpg.name as vdpgname,vdp.name as vdpname
+  	,vdp.dimension as vdpdimension
+  	, list(distinct ${departmentInfoSql}) as list
+  	from VocDocumentParameter vdp
 left join VocDocumentParameterGroup vdpg on vdp.parameterGroup_id=vdpg.id
 left join VocDocumentParameterConfig vdpc on vdpc.documentParameter_id=vdp.id
+left join MisLpu ml on ml.id=vdpc.department_id
+group by vdp.id, vdpg.name, vdp.name, vdp.dimension 
 order by vdpg.name,vdp.id"/>
     <msh:table selection="multy"  name="list" action="entityView-voc_documentParameter.do" idField="1">
 	<msh:tableNotEmpty name="list">
@@ -66,17 +75,16 @@ order by vdpg.name,vdp.id"/>
 			                	<tbody>
 			                		<msh:toolbar>
 				                		<tr>
-				                			<th class='linkButtons' colspan="6">
-			                					
-			                					<table>
-			                					<msh:ifInRole roles="">
-			                					
+			                					<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
 			                					<msh:autoComplete size="100" property="lpu" horizontalFill="true" label="Отделение" vocName="lpu"/>
 			                					</msh:ifInRole>
-			                					<msh:ifNotInRole roles="">
-			                					</msh:ifNotInRole>
 			                					<msh:checkBox property="isLowerCase" label="Отображать в нижнем регистре"/>
-			                					</table>
+				                		</tr>
+				                		<tr>
+			                									    
+			                					            			<th class='linkButtons' colspan="6">
+			                					
+
 			                					<input type='button' value='Установить' onclick="javascript:update()" />
 			                					<input type='button' value='Снять' onclick="javascript:remove()" />
 			                				</th>
@@ -88,6 +96,7 @@ order by vdpg.name,vdp.id"/>
       <msh:tableColumn columnName="Название группы" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn property="3" columnName="Название параметра" />
       <msh:tableColumn columnName="Размерность" property="4"/>
+      <msh:tableColumn columnName="Привязка к отделениям" property="5"/>
     </msh:table>
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -95,6 +104,8 @@ order by vdpg.name,vdp.id"/>
       <msh:sideLink params="" action="/entityPrepareCreate-voc_documentParameter" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="medService"/>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
   </tiles:put>
 </tiles:insert>
 

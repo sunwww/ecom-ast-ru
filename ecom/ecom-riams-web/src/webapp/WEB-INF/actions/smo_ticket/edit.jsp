@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
     <msh:form action="entityParentSaveGoView-smo_ticket.do" defaultField="dateStart" guid="77bf3d00-cfc6-49eb-9751-76e82d38751c">
@@ -294,8 +294,8 @@
 	      	 		callback: function(aResult) {
 	      	 			var ind = aResult.indexOf('#') ;
 	      	 			if (ind!=-1) {
-	      	 				$('vocReason').value=aResult.substring(0,ind) ;
-	      	 				$('vocReasonName').value=aResult.substring(ind+1) ;
+	      	 				$('visitReason').value=aResult.substring(0,ind) ;
+	      	 				$('visitReasonName').value=aResult.substring(ind+1) ;
 	      	 			}
 	      	 		}
 	      	 	}) ;

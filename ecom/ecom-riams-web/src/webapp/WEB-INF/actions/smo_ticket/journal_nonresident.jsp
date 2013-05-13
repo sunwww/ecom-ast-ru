@@ -156,9 +156,9 @@
     and ${dtypeSql} ${add}
     order by p.lastname,p.firstname,p.middlename" />
     
- 	    <msh:table viewUrl="entityShortView-poly_ticket.do" editUrl="entityParentEdit-poly_ticket.do" 
-	    deleteUrl="entityParentDeleteGoParentView-poly_ticket.do" 
-	    name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+ 	    <msh:table viewUrl="entityParentView-smo_ticket.do?short=Short" editUrl="entityParentEdit-smo_ticket.do" 
+	    deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" 
+	    name="journal_priem" action="entityParentView-smo_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
 	      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
 	      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

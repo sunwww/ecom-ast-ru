@@ -281,7 +281,7 @@ where  (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
         and (dmc.id is null or dmc.transferDate is null) 
       ${department1Sql}
 and (vss.code = 'OBLIGATORYINSURANCE'
- and (pol.id is null or (polI.dtype = 'MedPolicyOmc' and ri.omcCode='10'))  or vss.code='OTHER') 
+ and (pol.id is null or (polI.dtype = 'MedPolicyOmc' and (ri.deprecated='1' or ri.isRegion='0' or ri.isRegion is null)))  or vss.code='OTHER') 
 ${addPat} ${addEmergency}  ${isDischarge}
 ${addDuration1}
 
