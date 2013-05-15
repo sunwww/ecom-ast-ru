@@ -1,27 +1,13 @@
 package ru.ecom.report.rtf;
 
-import ru.ecom.report.replace.ReplaceHelper;
-import ru.ecom.report.replace.IValueGetter;
-import ru.ecom.report.replace.IValueInit;
-import ru.ecom.report.replace.SetValueException;
-import ru.ecom.report.util.ClassLoaderServiceHelper;
-
-import sun.awt.windows.ThemeReader;
-
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ru.ecom.report.replace.IValueInit;
+import ru.ecom.report.replace.ReplaceHelper;
+import ru.ecom.report.util.ClassLoaderServiceHelper;
 import bsh.EvalError;
 
 /**
