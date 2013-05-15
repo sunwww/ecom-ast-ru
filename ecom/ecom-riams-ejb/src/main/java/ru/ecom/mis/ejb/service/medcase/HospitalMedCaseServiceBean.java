@@ -22,12 +22,16 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
 
 import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
+import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.ExtHospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy;
@@ -60,7 +64,53 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+    public void createNewDiary(String aTitle, String aText, String aUsername) {
+    	TemplateProtocol protocol = new TemplateProtocol() ;
+    	protocol.setText(aText) ;
+    	protocol.setTitle(aTitle) ;
+    	protocol.setUsername(aUsername) ;
+    	protocol.setDate(new java.sql.Date(new java.util.Date().getTime()));
+    	theManager.persist(protocol) ;
+    }
+	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) {
+		String[] obj = aIds.split(",") ;
+		String aTableSql = "VocDocumentParameterConfig where department_id='"+aDepartment+"' and documentParameter_id " ;
+		MisLpu department = theManager.find(MisLpu.class, aDepartment) ;
+		for (int i = 0; i < obj.length; i++) {
+			String jsId = obj[i];
+			if (jsId!=null && jsId!="" || jsId=="0") {
+				//System.out.println("    id="+jsonId) ;
+				
+				Long jsonId=java.lang.Long.valueOf(jsId) ;
+				
+				String sql ="from "+aTableSql+" ='"+jsonId+"' " ;
+				List<VocDocumentParameterConfig> count = theManager.createQuery(sql).setMaxResults(1).getResultList() ;
+				VocDocumentParameterConfig vdpc ;
+				if (count.isEmpty()) {
+					VocDocumentParameter documentParameter = theManager.find(VocDocumentParameter.class, jsonId) ;
+					vdpc = new VocDocumentParameterConfig() ; 
+					vdpc.setDepartment(department) ;
+					vdpc.setDocumentParameter(documentParameter) ;
+				} else {
+					vdpc = count.get(0) ;
+				}
+				vdpc.setIsLowerCase(aIsLowerCase) ;
+				theManager.persist(vdpc) ;
+			}
+		}
+		if (aIsRemoveExist && aIds.length()>0 ) {
+			String sql = "delete "+aTableSql+" not in ("+aIds+") " ;
+			theManager.createNativeQuery(sql).executeUpdate();
+		} else {
+		}
+	}
+	public void removeDataFromParameterConfig(Long aDepartment, String aIds) {
+		String aTableSql = "VocDocumentParameterConfig where department_id='"+aDepartment+"' and documentParameter_id " ;
+		String sql = "delete from "+aTableSql+" in ("+aIds+") " ;
+		theManager.createNativeQuery(sql).executeUpdate();
+	}
+	
+	
     public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) {
     	List<Object[]> list = theManager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' where sls.id="+aSmo+" group by sls.id,sls.dtype").getResultList() ;
     	if (!list.isEmpty()) {

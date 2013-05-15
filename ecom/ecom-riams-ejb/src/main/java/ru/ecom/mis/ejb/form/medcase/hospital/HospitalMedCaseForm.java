@@ -1,9 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -351,13 +355,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Педикулез */
 	private Long thePediculosis;
-	/** Отказ от госпитализации инфо */
-	@Comment("Отказ от госпитализации инфо")
-	@Persist
-	public String getDeniedHospitalizatingInfo() {return theDeniedHospitalizatingInfo;}
-	public void setDeniedHospitalizatingInfo(String aDeniedHospitalizatingInfo) {
-		theDeniedHospitalizatingInfo = aDeniedHospitalizatingInfo;
-	}
 
 	/** Редкий случай */
 	@Comment("Редкий случай")
@@ -388,22 +385,11 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	 @Persist
 	 public Long getPsychReason() {return thePsychReason;}
 	 public void setPsychReason(Long aPsychReason) {thePsychReason = aPsychReason;}
-	 /** Принудительное лечение */
-		@Comment("Принудительное лечение")
-		@Persist
-		public Boolean getCompulsoryTreatment() {return theCompulsoryTreatment;}
-		public void setCompulsoryTreatment(Boolean aCompulsoryTreatment) {theCompulsoryTreatment = aCompulsoryTreatment;}
 		/** Дата решения суда */
 		@Comment("Дата решения суда")
 		@DateString @DoDateString @Persist
 		public String getLawCourtDesicionDate() {return theLawCourtDesicionDate;}
 		public void setLawCourtDesicionDate(String aLawCourtDesicionDate) {theLawCourtDesicionDate = aLawCourtDesicionDate;}
-
-		/** Недееспособный (статья 29) */
-		@Comment("Недееспособный (статья 29)")
-		@Persist
-		public Boolean getIncapacity() {return theIncapacity;}
-		public void setIncapacity(Boolean aIncapacity) {theIncapacity = aIncapacity;}
 
 		/** Острота диагноза заключительного */
 		@Comment("Острота диагноза клинического")
@@ -412,12 +398,8 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 		/** Острота диагноза заключительного */
 		private Long theConcludingActuity;
-		/** Недееспособный (статья 29)*/
-		private Boolean theIncapacity;
 		/** Дата решения суда */
 		private String theLawCourtDesicionDate;
-		/** Принудительное лечение */
-		private Boolean theCompulsoryTreatment;
 	 /**
 	  * Причина госпитализации в психиатрический стационар
 	  */
@@ -430,8 +412,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theConcomitantDiagnos;
 	/** Редкий случай */
 	private Boolean theRareCase;
-	/** Отказ от госпитализации инфо */
-	private String theDeniedHospitalizatingInfo;
+
 	/** Отделение (текст) */
 	private String theDepartmentInfo;
 	/** Сопровождающее лицо */
@@ -556,5 +537,38 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Направитель */
 	private Long theOrderLpu;
+	
+	/** Порядок поступления */
+	@Comment("Порядок поступления")
+	@Persist
+	public Long getAdmissionOrder() {return theAdmissionOrder;}
+	public void setAdmissionOrder(Long aAdmissionOrder) {theAdmissionOrder = aAdmissionOrder;}
+
+	/** Решение суда по 35 статье */
+	@Comment("Решение суда по 35 статье")
+	@Persist
+	public Long getJudgment35() {return theJudgment35;}
+	public void setJudgment35(Long aJudgment35) {theJudgment35 = aJudgment35;}
+
+	/** Число дней лечебных отпусков */
+	@Comment("Число дней лечебных отпусков")
+	@Persist
+	public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
+	public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
+
+	/** Число лечебных отпусков */
+	@Comment("Число лечебных отпусков")
+	@Persist
+	public Integer getMedicalHolidays() {return theMedicalHolidays;}
+	public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
+
+	/** Число лечебных отпусков */
+	private Integer theMedicalHolidays;
+	/** Число дней лечебных отпусков */
+	private Integer theMedicalHolidayDays;
+	/** Решение суда по 35 статье */
+	private Long theJudgment35;
+	/** Порядок поступления */
+	private Long theAdmissionOrder;
 
 }

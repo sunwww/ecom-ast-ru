@@ -19,12 +19,14 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCause;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
@@ -32,6 +34,8 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -257,7 +261,8 @@ public class HospitalMedCase extends LongMedCase {
 		}
 		return statCardNumber;
 	}
-
+	
+	/*
 	@Transient
 	@Comment("Диагноз приемного отделения, при поступлении")
 	public Diagnosis getDiagnosEntrance() {
@@ -372,11 +377,8 @@ public class HospitalMedCase extends LongMedCase {
 			}
 			return diagConcominant;
 	} 
-		
-	@Transient
-	public String getDeniedHospitalizatingInfo() {
-		return theDeniedHospitalizating!=null?theDeniedHospitalizating.getName():"" ;
-	}
+		*/
+
 	/** Температурный лист */
 	@Comment("Температурный лист")
 	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
@@ -407,27 +409,14 @@ public class HospitalMedCase extends LongMedCase {
 	 public VocPsychHospitalReason getPsychReason() {return thePsychReason;}
 	 public void setPsychReason(VocPsychHospitalReason aPsychReason) {thePsychReason = aPsychReason;}
 	 
-	 /** Принудительное лечение */
-	@Comment("Принудительное лечение")
-	public Boolean getCompulsoryTreatment() {return theCompulsoryTreatment;}
-	public void setCompulsoryTreatment(Boolean aCompulsoryTreatment) {theCompulsoryTreatment = aCompulsoryTreatment;}
 
 	/** Дата решения суда */
 	@Comment("Дата решения суда")
 	public Date getLawCourtDesicionDate() {return theLawCourtDesicionDate;}
 	public void setLawCourtDesicionDate(Date aLawCourtDesicionDate) {theLawCourtDesicionDate = aLawCourtDesicionDate;}
 
-	/** Недееспособный (статья 29) */
-	@Comment("Недееспособный (статья 29)")
-	public Boolean getIncapacity() {return theIncapacity;}
-	public void setIncapacity(Boolean aIncapacity) {theIncapacity = aIncapacity;}
-
-	/** Недееспособный (статья 29)*/
-	private Boolean theIncapacity;
 	/** Дата решения суда */
 	private Date theLawCourtDesicionDate;
-	/** Принудительное лечение */
-	private Boolean theCompulsoryTreatment;
 	 /** Причина госпитализации в психиатрический стационар */
 	 private VocPsychHospitalReason thePsychReason;
 	 /** Педикулез */
@@ -546,5 +535,36 @@ public class HospitalMedCase extends LongMedCase {
 	//
 	// /** Вид травмы */
 	// private VocHospitalizationTrauma theTrauma;
+	
+	/** Порядок поступления */
+	@Comment("Порядок поступления")
+	@OneToOne
+	public VocAdmissionOrder getAdmissionOrder() {return theAdmissionOrder;}
+	public void setAdmissionOrder(VocAdmissionOrder aAdmissionOrder) {theAdmissionOrder = aAdmissionOrder;}
+
+	/** Решение суда по 35 статье */
+	@Comment("Решение суда по 35 статье")
+	@OneToOne
+	public VocJudgment getJudgment35() {return theJudgment35;}
+	public void setJudgment35(VocJudgment aJudgment35) {theJudgment35 = aJudgment35;}
+
+	/** Число дней лечебных отпусков */
+	@Comment("Число дней лечебных отпусков")
+	public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
+	public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
+
+	/** Число лечебных отпусков */
+	@Comment("Число лечебных отпусков")
+	public Integer getMedicalHolidays() {return theMedicalHolidays;}
+	public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
+
+	/** Число лечебных отпусков */
+	private Integer theMedicalHolidays;
+	/** Число дней лечебных отпусков */
+	private Integer theMedicalHolidayDays;
+	/** Решение суда по 35 статье */
+	private VocJudgment theJudgment35;
+	/** Порядок поступления */
+	private VocAdmissionOrder theAdmissionOrder;
 
 }

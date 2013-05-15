@@ -20,6 +20,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Лист назначений
@@ -181,5 +182,11 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	/** Лек. ср-во 1 */
 	private DrugPrescriptionForm theDrugForm1 = new DrugPrescriptionForm();
 
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	@Persist
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
+	private Long theWorkFunction ;
 }

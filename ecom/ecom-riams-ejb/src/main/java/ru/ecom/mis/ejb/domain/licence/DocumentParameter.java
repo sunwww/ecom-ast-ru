@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +18,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Параметр документа")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "document" }) })
 public class DocumentParameter extends BaseEntity{
 	/**
 	 * Параметр
