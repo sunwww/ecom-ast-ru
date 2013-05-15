@@ -10,6 +10,7 @@ import javax.servlet.jsp.JspException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
+import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
@@ -19,6 +20,22 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public String createNewDiary(String aTitle, String aText, HttpServletRequest aRequest) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		service.createNewDiary(aTitle, aText, username) ;
+		return "Сохранено" ;
+	}
+	public void updateDataFromParameterConfig(Long aDepartment, Long aIsLowerCase, String aIds, HttpServletRequest aRequest) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+		service.updateDataFromParameterConfig(aDepartment, aIsLowerCase!=null && aIsLowerCase.equals(Long.valueOf(1)), aIds, false) ;
+		return ;
+	}
+	public void removeDataFromParameterConfig(Long aDepartment, String aIds, HttpServletRequest aRequest) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+		service.removeDataFromParameterConfig(aDepartment, aIds) ;
+		return ;
+	}
 	public String changeServiceStreamBySmo(Long aSmo, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
@@ -133,7 +150,7 @@ public class HospitalMedCaseServiceJs {
     	
     	
     }
-    public String getExpMedservices(Long aPatient, String aDateStart
+    public String getExpMedservices(int aIsParamDepartment, int aIsLowerCase, int aIsNewStr,  Long aPatient, String aDateStart
     		,String aDateFinish, HttpServletRequest aRequest) throws NamingException, ParseException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder period = new StringBuilder() ;
@@ -144,36 +161,67 @@ public class HospitalMedCaseServiceJs {
     	} else {
     		period.append("CURRENT_DATE") ;
     	}
-		StringBuilder sql = new StringBuilder().append("select em.NumberDoc")
-/*			.append(",'Фамилия '||em.PatientLastname||'Имя '||PatientFirstname||'Отчество '")
-			.append("||em.PatientMiddlename")
-		.append(" ||'Дата рождения'||em.PatientBirthday	as fio,")	
-		.append(" 'ЛПУ: '||em.OrderLpu")
-		.append(" ||'\nВрач: '||em.Orderer")
-		.append(" ||'\nНомер направления: '||em.NumberDoc")
-		.append(" ||'\nДата направления: '||to_char(em.OrderDate,'dd.mm.yyyy')")
-		.append(" ||'\nВремя направления: '||cast(em.OrderTime as varchar(5))")		
-		.append(" ||'\nДата получения результата: '||to_char(em.CreateDate,'dd.mm.yyyy')")
-		.append(" ||'\nВремя получения результата: '||cast(em.CreateTime as varchar(5))")
-		
-		.append("	as orderInfo")*/
-		.append(" ,'\nНомер направления: '||em.NumberDoc")
-		.append(" ||'\nДата направления: '||to_char(em.OrderDate,'dd.mm.yyyy')")
-		.append(" ||'\nДата получения результата: '||to_char(em.CreateDate,'dd.mm.yyyy') as infoDirect")
-		.append(" ,replace(list('\n'||em.comment),'\n, \n','\n\n') as comment from Document em") 
-		.append(" left join patient p on p.id=em.patient_id")  
-		.append(" left join medcase m on m.patient_id=p.id")
-		.append(" where p.id='").append(aPatient).append("'")
-		.append(" and em.dtype='ExternalMedservice'")
-		.append(" and (em.orderDate ").append(period)
-		.append(" or em.createDate ").append(period)
-		.append(") group by em.numberdoc,em.orderDate,em.createDate order by em.orderDate,em.createDate");
+    	StringBuilder sql = new StringBuilder() ;
+    	String razd = "\n" ;
+    	if (aIsNewStr==1) {
+    		razd = "; " ;
+    	}
+    	if (aIsParamDepartment==2) {
+			/*sql.append("select em.NumberDoc")
+			.append(" ,'\n '||to_char(em.OrderDate,'dd.mm.yyyy') ||' ' ")
+			.append(" || replace(list('\n'||em.comment),'\n, \n','\n\n') as comment from Document em") 
+			.append(" left join patient p on p.id=em.patient_id")  
+			.append(" where p.id='").append(aPatient).append("'")
+			.append(" and em.dtype='ExternalMedservice'")
+			.append(" and (em.orderDate ").append(period)
+			.append(" or em.createDate ").append(period)
+			.append(") group by em.numberdoc,em.orderDate order by em.orderDate");
+			*/
+    		sql.append("select em.NumberDoc ||' от ','").append(razd).append("'||to_char(em.OrderDate,'dd.mm.yyyy')||' '||vdpg.name||': '|| ")
+    		.append(" list(vdp.name||': '||dp.value||' '||vdp.dimension)  as infoDirect")
+    		.append(" from Document em ")
+    		.append(" left join DocumentParameter dp on dp.document_id=em.id ")
+    		.append(" left join VocDocumentParameter vdp on vdp.id = dp.parameter_id")
+    		.append(" left join VocDocumentParameterGroup vdpg on vdpg.id=vdp.parameterGroup_id")
+    		.append(" where em.patient_id='").append(aPatient).append("'")
+    		.append(" and em.dtype='ExternalMedservice'")
+    		.append(" and (em.orderDate ").append(period)
+    		.append(" or em.createDate ").append(period)
+    		.append(" )")
+    		.append(" group by em.numberdoc,em.orderDate,vdpg.id,vdpg.name order by vdpg.name,em.orderDate") ;
+    		
+    	} else {
+    		//String department = "219" ;
+    		IWorkerService serviceWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
+    		Long department = serviceWorker.getWorkingLpu(); 
+    		sql.append("select em.NumberDoc ||' от ','").append(razd).append("'||to_char(em.OrderDate,'dd.mm.yyyy')||' '||lower(vdpg.name)||': '|| ")
+			.append(" list(case when vdpc.isLowerCase='1'")
+			.append(" then lower(vdp.name||': '||dp.value||' '||vdp.dimension)")
+			.append(" else  vdp.name||': '||dp.value||' '||vdp.dimension")
+			.append(" end)  as infoDirect")
+			.append(" from Document em ")
+			.append(" left join DocumentParameter dp on dp.document_id=em.id ")
+			.append(" left join VocDocumentParameter vdp on vdp.id = dp.parameter_id")
+			.append(" left join VocDocumentParameterConfig vdpc on vdpc.documentParameter_id = vdp.id")
+			.append(" left join VocDocumentParameterGroup vdpg on vdpg.id=vdp.parameterGroup_id")
+			.append(" where em.patient_id='").append(aPatient).append("'")
+			.append(" and em.dtype='ExternalMedservice'")
+			.append(" and (em.orderDate ").append(period)
+			.append(" or em.createDate ").append(period)
+			.append(" ) and vdpc.department_id='").append(department).append("'")
+			.append(" group by em.orderDate,em.numberdoc,vdpg.id,vdpg.name order by vdpg.name,em.orderDate") ;
+    	}
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString()) ;
 		StringBuilder result = new StringBuilder() ;
 		for (WebQueryResult wqr :list1) {
-			result.append(wqr.get2()).append(wqr.get3()) ;
+			//result.append(wqr.get1()) ;
+			if (wqr.get2()!=null) result.append(wqr.get2()) ;
+				
 		}
-		return result.toString() ;
+		result.append("\n");
+		//if (aType==2) return result.toString().toLowerCase().replaceAll("\n\n", ",").replaceAll("\n", ", ").replaceAll("  ", " ") ;
+		return aIsLowerCase==1?result.substring(1).trim().toLowerCase():result.substring(1).trim() ;
+		//return result.toString() ;
     }
     public String getLabInvestigations(Long aPatient, String aDateStart
 			,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs, HttpServletRequest aRequest) throws NamingException, ParseException {

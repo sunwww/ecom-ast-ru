@@ -76,6 +76,7 @@
         </msh:ifInRole>
         <msh:row>
         	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="3"/>
+        	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" fieldColSpan="3"/>
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         	<msh:ifFormTypeIsView formName="smo_ticketForm">
