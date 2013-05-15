@@ -1,9 +1,7 @@
 package ru.ecom.web.login;
 
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,7 +14,6 @@ import javax.ejb.EJBAccessException;
 import javax.naming.CommunicationException;
 import javax.naming.NamingException;
 import javax.security.auth.login.FailedLoginException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.config.ForwardConfig;
 
 import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -160,7 +156,7 @@ public class LoginSaveAction extends LoginExitAction {
 	    	for (WebQueryResult wqr:list1) {
 	    		Long id = ConvertSql.parseLong(wqr.get1()) ;
 		    	serviceLogin.dispatchMessage(id) ;
-		    	new UserMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+		    	UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
 	    	}
 		}
 		sqlA = new StringBuilder() ;
@@ -229,7 +225,7 @@ public class LoginSaveAction extends LoginExitAction {
 		    	System.out.println("get id message") ;
 		    	Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более 2х дней:", res1.toString(), aUsername) ;
 		    	System.out.println("id="+id) ;
-		    	new UserMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
+		    	UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
 	    	}
 	    	
     	}
@@ -266,7 +262,7 @@ public class LoginSaveAction extends LoginExitAction {
   		    	}
   		    	Long id=serviceLogin.createSystemMessage("Без полисные:", res1.toString(), aUsername) ;
   		    	//System.out.println(res1.toString()) ;
-  		    	new UserMessage(aRequest,id,"Без полисные:", res1.toString(),"stac_receivedWithoutPolicy_list.do") ;
+  		    	UserMessage.addMessage(aRequest,id,"Без полисные:", res1.toString(),"stac_receivedWithoutPolicy_list.do") ;
   	    	}
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/DirectHospital", aRequest)) {
@@ -321,8 +317,8 @@ public class LoginSaveAction extends LoginExitAction {
 		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
 		    	}
 		    	Long id=serviceLogin.createSystemMessage("Не оформлены данные по пациентам поступившим в приемное отделение более 2х дней назад:", res1.toString(), aUsername) ;
-		    	//System.out.println(res1.toString()) ;
-		    	new UserMessage(aRequest,id,"Не оформлены данные по пациентам поступившим в приемное отделение более 2х дней назад:", res1.toString(),"stac_journalByDepartmentAdmission.do") ;
+		    	
+		    	UserMessage.addMessage(aRequest,id,"Не оформлены данные по пациентам поступившим в приемное отделение более 2х дней назад:", res1.toString(),"stac_journalByDepartmentAdmission.do") ;
 		    	
 	    	}
 	    	
