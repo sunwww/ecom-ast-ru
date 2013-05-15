@@ -14,22 +14,23 @@ public class UserMessage {
 
     private static final String ATTRIBUTE_ID = UserMessage.class+".USER_MESSAGE" ;
 
-    public UserMessage(ServletRequest aRequest, Long aId, String aTitle, String aMessage) {
-        this(aRequest,aId ,aTitle,aMessage,null) ;
+    public static void addMessage(ServletRequest aRequest, Long aId, String aTitle, String aMessage) {
+    	addMessage(aRequest,aId ,aTitle,aMessage,null) ;
     }
-    public UserMessage(ServletRequest aRequest,Long aId, String aTitle, String aMessage, String aUrl) {
-        theMessage = aMessage ;
-        theTitle = aTitle ;
-        theUrl=aUrl ;
-        theId = aId ;
+    public static void addMessage(ServletRequest aRequest,Long aId, String aTitle, String aMessage, String aUrl) {
+    	UserMessage us = new UserMessage() ;
+    	us.setMessage(aMessage) ;
+        us.setTitle(aTitle) ;
+        us.setUrl(aUrl) ;
+        us.setId(aId) ;
         Date date = new Date() ;
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm") ;
-        theInfo = format.format(date) ;
+        us.theInfo = format.format(date) ;
         List<UserMessage> list = findInRequest(aRequest) ;
         if (list==null) {
         	list = new ArrayList<UserMessage>() ;
         }
-        list.add(this) ;
+        list.add(us) ;
         setInRequest(aRequest, list) ;
     }
     public static void setInRequest(ServletRequest aRequest, List<UserMessage> aList) {
@@ -86,11 +87,26 @@ public class UserMessage {
         }
         
     }
-    private final Long theId ;
-    private final String theMessage ;
-    private final String theUrl ;
-    private final String theTitle ;
-    private final String theInfo ;
+    public void setMessage(String aMessage) {
+    	theMessage = aMessage ;
+    }
+    public void setId(Long aId) {
+    	theId = aId ;
+    }
+    public void setUrl(String aUrl) {
+    	theUrl = aUrl ;
+    }
+    public void setTitle(String aTitle) {
+    	theTitle = aTitle ;
+    }
+    public void setInfo(String aInfo) {
+    	theInfo = aInfo ;
+    }
+    private Long theId ;
+    private String theMessage ;
+    private String theUrl ;
+    private String theTitle ;
+    private String theInfo ;
     //private final Exception theException ;
 
 }
