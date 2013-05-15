@@ -260,12 +260,11 @@ public class MedCaseForm extends IdEntityForm {
 	
     /** Закрыть */
 	@Comment("Закрыть СПО")
-	@Persist
-	public Long getIsCloseSpo() {return theIsCloseSpo;}
-	public void setIsCloseSpo(Long aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
+	public Boolean getIsCloseSpo() {return theIsCloseSpo;}
+	public void setIsCloseSpo(Boolean aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
 
 	/** Закрыть */
-	private Long theIsCloseSpo;
+	private Boolean theIsCloseSpo;
 	
 	/** Гостиничная услуга */
 	@Comment("Гостиничная услуга")

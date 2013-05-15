@@ -281,13 +281,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Тип текущего стационара */
 	@Comment("Тип текущего стационара")
 	@Persist
-	public Long getHospType() {
-		return theHospType;
-	}
-
-	public void setHospType(Long aHospType) {
-		theHospType = aHospType;
-	}
+	public Long getHospType() {return theHospType;}
+	public void setHospType(Long aHospType) {theHospType = aHospType;}
 
 
 	/** Рабочая функция лечащего врача */

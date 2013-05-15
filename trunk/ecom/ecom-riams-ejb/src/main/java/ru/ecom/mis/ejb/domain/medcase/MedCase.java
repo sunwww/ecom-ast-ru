@@ -351,14 +351,6 @@ abstract public class MedCase extends BaseEntity {
     /**Выписанные рецептурные бланки */
     private List<PrescriptionBlank> thePrescriptionBlanks;
     
-    /** Закрыть */
-	@Comment("Закрыть")
-	public Long getIsCloseSpo() {return theIsCloseSpo;}
-	public void setIsCloseSpo(Long aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
-
-	/** Закрыть */
-	private Long theIsCloseSpo;
-	
 	/** Дата операции */
 	@Comment("Дата операции")
 	public Date getOperationDate() {

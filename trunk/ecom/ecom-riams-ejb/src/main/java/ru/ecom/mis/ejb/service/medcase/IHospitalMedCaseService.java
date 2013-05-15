@@ -17,6 +17,9 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public void createNewDiary(String aTitle, String aText, String aUsername) ;
+	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
+	public void removeDataFromParameterConfig(Long aDepartment, String aIds) ;
 	public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) ;
 	public void unionSloWithNextSlo(Long aSlo) ;
 	public void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) ;

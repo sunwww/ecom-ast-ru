@@ -279,5 +279,12 @@ public class Address extends BaseEntity {
 //     * Идентификатор
 //     */
 //    private long theId;
+    /** ОКАТО */
+	@Comment("ОКАТО")
+	public String getOkato() {return theOkato;}
+	public void setOkato(String aOkato) {theOkato = aOkato;}
+
+	/** ОКАТО */
+	private String theOkato;
 
 }
