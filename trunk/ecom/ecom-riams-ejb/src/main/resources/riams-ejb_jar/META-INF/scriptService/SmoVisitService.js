@@ -221,7 +221,7 @@ function closeSpo(aContext, aSpoId) {
 			+" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
 			+" left join VocVisitResult vvr on vvr.id=vis.visitResult_id"
 			+" where vis.parent_id="+aSpoId
-			+" and vis.DTYPE='Visit'"
+			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
 			+" and vis.dateStart is not null"
 			+" and (vpd.code='1' or vpd.id is null) and (vis.noActuality='0' or vis.noActuality='1')"
 			+" group by vis.id, vis.dateStart, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
