@@ -38,6 +38,9 @@
 
     </tiles:put>
       <tiles:put name="side" type="string">
+    	  	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+    	  		<tags:template_new_diary name="newTemp" roles="/Policy/Diary/Template/Create" field="dischargeEpicrisis" title="Создание шаблона на основе выписки"/>
+    	  	</msh:ifNotInRole>
     	  	<tags:stac_hospitalMenu currentAction="stac_sslDischarge"/>  
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -73,14 +76,18 @@
       <msh:hidden property="deniedHospitalizating"/>
       <msh:hidden property="ambulanceTreatment"/>
       <msh:hidden property="username"/>
-        <msh:hidden property="compulsoryTreatment"/>
-        <msh:hidden property="incapacity"/>
+        <msh:hidden property="judgment35"/>
+        <msh:hidden property="admissionOrder"/>
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
-              
+              <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
+              	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+              		<msh:hidden property="dischargeEpicrisis"/>
+              	</msh:ifNotInRole>
+              </msh:ifFormTypeIsView>
       <msh:panel colsWidth="5%,10%,5%,80%">
         <msh:separator label="Приемное отделение" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
         <msh:row guid="25f2a536-4fb6-4413-89db-a478145e097e">
@@ -127,6 +134,7 @@
 	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
 	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
 	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
+	                        
                </td>
 	        </msh:row>
 	        </msh:ifFormTypeIsNotView>

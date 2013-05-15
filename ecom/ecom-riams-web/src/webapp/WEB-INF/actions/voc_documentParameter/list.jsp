@@ -53,7 +53,7 @@
        			}
        		}
         	if (department!=null &&!department.equals("")&&!department.equals("0")) {
-           		request.setAttribute("departmentInfoSql", "case when vdpc.deparmentid='"+department+"' then ml.name || case when vdpc.isLowerCase='1' then ' (НР)' else '' end else '' end") ;
+           		request.setAttribute("departmentInfoSql", "case when vdpc.department_id='"+department+"' then ml.name || case when vdpc.isLowerCase='1' then ' (НР)' else '' end else null end") ;
         	} else {
         		request.setAttribute("departmentInfoSql", "ml.name || case when vdpc.isLowerCase='1' then ' (НР)' else '' end") ;
         	}
@@ -77,6 +77,9 @@ order by vdpg.name,vdp.id"/>
 				                		<tr>
 			                					<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
 			                					<msh:autoComplete size="100" property="lpu" horizontalFill="true" label="Отделение" vocName="lpu"/>
+			                					<td>
+			                					<input type='button' value='Просмотр' onclick="javascript:viewDepartment()" />
+			                					</td>
 			                					</msh:ifInRole>
 			                					<msh:checkBox property="isLowerCase" label="Отображать в нижнем регистре"/>
 				                		</tr>
@@ -85,8 +88,9 @@ order by vdpg.name,vdp.id"/>
 			                					            			<th class='linkButtons' colspan="6">
 			                					
 
-			                					<input type='button' value='Установить' onclick="javascript:update()" />
-			                					<input type='button' value='Снять' onclick="javascript:remove()" />
+			                					<input type='button' value='Установить' onclick="javascript:updateDataFromConfig()" />
+			                					<input type='button' value='Снять' onclick="javascript:remomeDataFromConfig()" />
+			                					
 			                				</th>
 				                		</tr>
 			                		</msh:toolbar>
@@ -106,6 +110,77 @@ order by vdpg.name,vdp.id"/>
     <tags:voc_menu currentAction="medService"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+  	<script type="text/javascript">
+	if ($('isLowerCase')) {
+		$('isLowerCase').checked=true ;
+	}
+  		function updateDataFromConfig() {
+            var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
+            if (ids) {
+            	var department = +'${department}' ;
+            	if ($('lpu')) {
+            		if (+$('lpu').value>0) {
+            			department = +$('lpu').value ;
+            		}
+            	}
+            	var isLowerCase = '0' ;
+            	if ($('isLowerCase')) {
+            		if ($('isLowerCase').checked) {
+            			isLowerCase = '1' ;
+            		}
+            	}
+            	if (department>0) {
+            		HospitalMedCaseService.updateDataFromParameterConfig(department,isLowerCase,ids, {
+	                    callback: function(aResult) {
+
+	                        document.location.reload() ;
+	                      }
+	                     }
+	                    );
+
+            	} else {
+            		alert('Неопределено отделение!!!') ;
+            	}
+            } else {
+                alert("Нет выделенных параметров");
+            }
+  		}
+  		function remomeDataFromConfig() {
+            var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
+            if (ids) {
+            	var department = +'${department}' ;
+            	if ($('lpu')) {
+            		if (+$('lpu').value>0) {
+            			department = +$('lpu').value ;
+            		}
+            	}
+            	
+            	if (department>0) {
+            		HospitalMedCaseService.removeDataFromParameterConfig(department,ids, {
+	                    callback: function(aResult) {
+	                    	document.location.reload() ;
+	                      }
+	                     }
+	                    );
+
+            	} else {
+            		alert('Неопределено отделение!!!') ;
+            	}
+            } else {
+                alert("Нет выделенных параметров");
+            }
+  		}
+  		function viewDepartment() {
+        	var department = +'${department}' ;
+        	if ($('lpu')) {
+        		if (+$('lpu').value>0) {
+        			department = +$('lpu').value ;
+        		}
+        	}
+  			goToPage('entityList-voc_documentParameter.do?department='+department,'0') ;
+  		}
+  	</script>
   </tiles:put>
 </tiles:insert>
 

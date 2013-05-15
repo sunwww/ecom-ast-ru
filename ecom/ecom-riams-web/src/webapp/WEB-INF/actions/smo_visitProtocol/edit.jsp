@@ -41,7 +41,9 @@
         <msh:hidden property="medCase"/>
         <msh:hidden property="specialist"/>
 
-            
+            <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
+            	<msh:hidden property="record"/>
+            </msh:ifFormTypeIsView>
             <msh:panel colsWidth="1%,1%,1%,1%,1%,1%,65%">
                 <msh:row>
                     <msh:textField label="Дата" property="dateRegistration" fieldColSpan="1" guid="b58ehb-b971-441e-9a90-58019c07" />
@@ -92,6 +94,7 @@
 
 <tiles:put name='side' type='string'>
     <msh:sideMenu>
+    <tags:template_new_diary name="newTemp" roles="/Policy/Diary/Template/Create" field="record" title="Создание шаблона"></tags:template_new_diary>
 
         <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
             <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Edit" key="ALT+2" params="id" action="/entityParentEdit-smo_visitProtocol"
@@ -155,16 +158,7 @@
 
     	<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm"><msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     		<script type="text/javascript">
-    		/*TemplateProtocolService.getUsername(
-    			{
-                    callback: function(aString) {
-                        if($('username').value != aString){
-                         	alert('Вы можете редактировать только созданный Вами протокол');
-                         	window.location.href= "entityParentView-smo_visitProtocol.do?id=${param.id}";
-                         }
-                     }
-                 }
-    		);*/
+
     		TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
     			{
                     callback: function(aString) {
@@ -181,5 +175,4 @@
     	</msh:ifFormTypeAreViewOrEdit>
     
     </tiles:put>
-
 </tiles:insert>

@@ -18,33 +18,61 @@
 <div id='${name}EpicrisisDialog' class='dialog'>
     <h2>Выбор параметров</h2>
     <div class='rootPane'>
-		<form>
+		<form name="${name}EpicrisisParameterForm">
 		    <msh:panel>
 		    	<msh:ifInRole roles="/Policy/Mis/MedCase/Document/External/Medservice/View">
 		            <msh:row>
-			        	<msh:checkBox property="${name}ExtLabs" label="Внешние лабораторные исследования"/>
+			        	<msh:checkBox property="${name}ExtLabs" label="Внешние лаб. исследования" fieldColSpan="2"/>
+			        </msh:row>
+		            <msh:row>
+		            	<td></td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsReg" value="1"> перевести в ниж.регистр
+				        </td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsReg" checked="checked" value="2"> оставить без изменений
+				        </td>
+			        </msh:row>
+		            <msh:row>
+		            	<td></td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsStr" value="1"> в одну строку
+				        </td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsStr" checked="checked" value="2"> на отдельные строки
+				        </td>
+			        </msh:row>
+		            <msh:row>
+		                <td></td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsDep" value="1"> исп. найстройки по отделению
+				        </td>
+				        <td onclick="this.childNodes[1].checked='checked';">
+				        	<input type="radio" name="${name}ExtLabsDep" checked="checked" value="2"> не использовать
+				        </td>
 			        </msh:row>
 		    	</msh:ifInRole>
 			        
 		    	<msh:ifInRole roles="/Policy/Mis/MisLpu/IsNuzMsch">
+
 		            <msh:row>
-			        	<msh:checkBox property="${name}Labs" label="Лабораторные исследования (DTM)"/>
+			        	<msh:checkBox property="${name}Labs" label="Лабораторные исследования (DTM)" fieldColSpan="2"/>
 			        </msh:row>
 		            <msh:row>
-			        	<msh:checkBox property="${name}Fisio" label="Физио (DTM)"/>
+			        	<msh:checkBox property="${name}Fisio" label="Физио (DTM)" fieldColSpan="2"/>
 			        </msh:row>
 		            <msh:row>
-			        	<msh:checkBox property="${name}Func" label="Функцион.диагностика (DTM)"/>
+			        	<msh:checkBox property="${name}Func" label="Функцион.диагностика (DTM)" fieldColSpan="2"/>
 			        </msh:row>
 		            <msh:row>
-			        	<msh:checkBox property="${name}Cons" label="Консультации (DTM)"/>
+			        	<msh:checkBox property="${name}Cons" label="Консультации (DTM)" fieldColSpan="2"/>
 			        </msh:row>
 		            <msh:row>
-			        	<msh:checkBox property="${name}Luch" label="Лучевая диагностика (DTM)"/>
+			        	<msh:checkBox property="${name}Luch" label="Лучевая диагностика (DTM)" fieldColSpan="2"/>
 			        </msh:row>
 		        </msh:ifInRole>
 		        <msh:row>
-		            <msh:checkBox property="${name}Operations" label="Операции"/>
+		            <msh:checkBox property="${name}Operations" label="Операции" fieldColSpan="2"/>
 		        </msh:row>
 		    </msh:panel>
 		        <msh:row>
@@ -126,7 +154,11 @@
 
      function get${name}ExpMedserviceInfo() {
       	if ($('${name}ExtLabs').checked) {
- 			HospitalMedCaseService.getExpMedservices($('${patient}').value,$('${dateStart}').value
+      		var frm = document.forms["${name}EpicrisisParameterForm"]
+      		var reg = getCheckedRadio(frm,"${name}ExtLabsReg") ;
+      		var str = getCheckedRadio(frm,"${name}ExtLabsStr") ;
+      		var dep = getCheckedRadio(frm,"${name}ExtLabsDep") ;
+ 			HospitalMedCaseService.getExpMedservices(dep, reg, str, $('${patient}').value,$('${dateStart}').value
  				,$('${dateFinish}').value, {
  					callback: function(aString) {
  						$('${property}').value += "\n" ;

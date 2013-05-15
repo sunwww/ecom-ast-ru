@@ -37,8 +37,7 @@
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
-        <msh:hidden property="compulsoryTreatment"/>
-        <msh:hidden property="incapacity"/>
+        <msh:hidden property="admissionOrder"/>
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
@@ -166,10 +165,12 @@
 		        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:checkBox property="compulsoryTreatment" label="Недобровольная госпитализация лечение (статья 29)" fieldColSpan="3"/>
+	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="3" vocName="vocAdmissionOrder"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:checkBox property="incapacity" label="Недееспособный"/>
+	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" fieldColSpan="3" vocName="vocJudgment"/>
+	        </msh:row>
+	        <msh:row>
 	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
 	        </msh:row>
         </msh:ifInRole>

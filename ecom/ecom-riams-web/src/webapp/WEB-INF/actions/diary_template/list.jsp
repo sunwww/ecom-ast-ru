@@ -13,9 +13,8 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="5c2883ac-df70-40c1-a975-229d00e2621b">
-      <msh:section guid="92e2265f-8ba1-4ea9-8ec0-9654a10b9196" >
-      	<msh:sectionTitle> <msh:link action="js-temp_protocol-listTemplate.do">Шаблоны протоколов</msh:link> </msh:sectionTitle>
-        <msh:sectionContent guid="eb35fa0c-65db-404d-b8f6-3239dea7a096">Шаблон протокола нужен для удобства заполнения дневников специалистов однотипными данными.</msh:sectionContent>
+      <msh:section createRoles="/Policy/Diary/Template/Create" createUrl="entityPrepareCreate-temp_protocol.do" listUrl="js-temp_protocol-listTemplate.do" title="Шаблоны протоколов">
+       Шаблон протокола нужен для удобства заполнения дневников специалистов однотипными данными.
       </msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/Pattern/View" guid="fefe28f6-197f-4e19-a9f4-aa1b0a78efdb">
@@ -25,10 +24,10 @@
       </msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/Prescription/Template/View" guid="9b953018-e294-43a4-82e4-4d12111f12d7">
-      <msh:section guid="7639e4ad-8652-4858-8654-a8e8f99f893c" >
-      	<msh:sectionTitle> <msh:link action="js-pres_template-listTemplate.do">Шаблоны назначений</msh:link> </msh:sectionTitle>
-        <msh:sectionContent guid="cd84ab60-a60a-4bfd-a436-c8ca9d4b9264">Дает возможность создавать шаблоны назначений </msh:sectionContent>
-      </msh:section>
+      <msh:section guid="7639e4ad-8652-4858-8654-a8e8f99f893c" title="Шаблоны назначений"
+      	listUrl="js-pres_template-listTemplate.do" createRoles="/Policy/Mis/Prescription/Template/Create"
+      	createUrl="entityPrepareCreate-pres_template.do"
+      >Дает возможность создавать шаблоны назначений</msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/KeyWord/View" guid="d315d153-2753-4dff-bff5-1b9988acd8fb">
       <msh:section guid="b3781dc8-6ae8-4c74-b40e-1dbb737bc3f3" >
@@ -41,6 +40,10 @@
       	<msh:sectionTitle> <msh:link action="entityParentList-temp_category.do?id=0">Классификатор</msh:link> </msh:sectionTitle>
         <msh:sectionContent guid="17f3e1fd-9c64-46a9-b26d-d303096066ae">Создан для группировки шаблонов</msh:sectionContent>
       </msh:section>
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Voc/VocDocumentParameter/View">
+    	<msh:section listUrl="entityList-voc_documentParameter.do" title="Параметры для внешней лаборатории">
+    	</msh:section>
     </msh:ifInRole>
   </tiles:put>
 </tiles:insert>
