@@ -15,14 +15,14 @@
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="dateFinish"/>
       <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
-      <msh:panel colsWidth="15%,15%,15%,55%" guid="fecf8cd8-e883-4375-b47a-2954067ec3a7">
+      <msh:panel colsWidth="1%,1%,1%,97%">
       
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
-          <msh:textField label="Запись на прием: Дата" property="dateStart" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
+          <msh:textField label="Дата приема" property="dateStart" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
           <msh:textField label="Время" property="timeExecute" fieldColSpan="1" guid="ed78c5e3-5e2c-4d8c-b64e-75767dcf0775" />
         </msh:row>
         <msh:row>
-        	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
+        	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
@@ -75,7 +75,9 @@
 	        </msh:row>
         </msh:ifInRole>
         <msh:row>
-        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="3"/>
+        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="4" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" fieldColSpan="3"/>
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
@@ -89,10 +91,10 @@
         	<msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
         <msh:row>
-	   	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="3"/>
+	   	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="6"/>
 	    </msh:row>
         <msh:row guid="1283d16a-e417-4add-acf5-5185dbb7737d">
-          <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Сопутствующие заболевания" property="concomitantDiseases" colSpan="4" guid="1204d6c4-a3ff-44aa-a698-b99816d10337" />
+          <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Соп. заболевания" property="concomitantDiseases" colSpan="6" guid="1204d6c4-a3ff-44aa-a698-b99816d10337" />
         </msh:row>
 
         <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
@@ -107,7 +109,7 @@
         	<msh:textField label="Пользователь" property="username" viewOnlyField="true" />
         </msh:row>
         </msh:ifFormTypeAreViewOrEdit>
-	    <msh:submitCancelButtonsRow colSpan="4" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
+	    <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="smo_ticketForm">
