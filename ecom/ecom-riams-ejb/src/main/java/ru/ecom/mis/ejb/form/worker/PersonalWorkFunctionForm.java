@@ -26,7 +26,7 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 
 	/** Пользователь системы */
 	@Comment("Пользователь системы")
-		@Persist
+	@Persist
 	public Long getSecUser() {return theSecUser;}
 	public void setSecUser(Long aSecUser) {theSecUser = aSecUser;}
 
@@ -61,6 +61,7 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
+	@Persist
 	public String getCategory() {return theCategory;}
 	public void setCategory(String aCategory) {theCategory = aCategory;}
 

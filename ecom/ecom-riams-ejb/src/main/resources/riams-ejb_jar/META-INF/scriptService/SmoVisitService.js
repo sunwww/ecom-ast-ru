@@ -232,7 +232,7 @@ function closeSpo(aContext, aSpoId) {
 		var mkb = listVisLast.get(0)[1];
 		var spo = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase
 				, java.lang.Long.valueOf(aSpoId)) ;
-		var visLastO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+		var visLastO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 				, java.lang.Long.valueOf(visLast)) ;
 		var mkbO = mkb!=null?aContext.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10
 				, java.lang.Long.valueOf(mkb)):null ;
@@ -240,7 +240,7 @@ function closeSpo(aContext, aSpoId) {
 		spo.setFinishFunction(visLastO.getWorkFunctionExecute()) ;
 		spo.setIdc10(mkbO) ;
 	} else {
-		if(spo==null) throw "Нет ни одного присоединенного визита к СПО" ;
+		if(spo==null) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 	}
 	return spo.getId();
 }

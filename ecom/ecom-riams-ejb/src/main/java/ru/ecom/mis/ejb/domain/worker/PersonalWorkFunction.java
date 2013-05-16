@@ -101,7 +101,6 @@ public class PersonalWorkFunction extends WorkFunction {
 	
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
-	@Persist
 	public String getCategory() {return theCategory;}
 	public void setCategory(String aCategory) {theCategory = aCategory;}
 
