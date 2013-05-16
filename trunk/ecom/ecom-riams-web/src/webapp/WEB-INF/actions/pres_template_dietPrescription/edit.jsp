@@ -9,7 +9,7 @@
     <!-- 
     	  - Назначение диеты
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_template_dietPrescription.do" defaultField="id" title="Назначение диеты">
+    <msh:form guid="formHello" action="/entityParentSaveGoParentView-pres_template_dietPrescription.do" defaultField="id" title="Назначение диеты">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-216fc7c32ad6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />

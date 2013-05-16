@@ -9,7 +9,7 @@
     <!-- 
     	  - Назначение лекарственного средства
     	  -->
-    <msh:form action="/entityParentSaveGoView-pres_template_drugPrescription.do" defaultField="id" title="Назначение лекарственного средства" guid="112eae14-f772-4a7a-810f-b2fb21ecd727">
+    <msh:form action="/entityParentSaveGoParentView-pres_template_drugPrescription.do" defaultField="id" title="Назначение лекарственного средства" guid="112eae14-f772-4a7a-810f-b2fb21ecd727">
       <msh:hidden property="id" guid="5503cd86-19d0-4690-8393-6ca38cd12f94" />
       <msh:hidden property="saveType" guid="0ef44ff6-a77c-4590-8d15-29762b52ecdd" />
       <msh:hidden property="prescriptionList" guid="6a976239-5f6a-4a8b-ba76-9d26ecc44f19" />

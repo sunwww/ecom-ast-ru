@@ -9,7 +9,7 @@
     <!-- 
     	  - Назначение режима
     	  -->
-    <msh:form action="/entityParentSaveGoView-pres_template_modePrescription.do" defaultField="id" title="Назначение режимма">
+    <msh:form action="/entityParentSaveGoParentView-pres_template_modePrescription.do" defaultField="id" title="Назначение режимма">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />

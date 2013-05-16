@@ -9,7 +9,7 @@
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_template_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
+    <msh:form guid="formHello" action="/entityParentSaveGoParentView-pres_template_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
