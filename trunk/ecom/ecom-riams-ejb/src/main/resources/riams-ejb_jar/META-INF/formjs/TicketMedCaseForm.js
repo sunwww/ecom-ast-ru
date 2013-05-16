@@ -57,9 +57,7 @@ function onSave(aForm, aEntity, aCtx) {
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	saveAdditionData(aForm,aEntity,aCtx.manager) ;
-	if (aForm.isCloseSpo!=null && aForm.isCloseSpo) {
-		aEntity.parent.dateFinish(new java.sql.Date(date.getTime())) ;
-	}
+	
 }
 function saveAdditionData(aForm,aEntity,aManager) {
 	if(aEntity.parent==null) {
@@ -104,7 +102,17 @@ function saveAdditionData(aForm,aEntity,aManager) {
 			,"from MedCase where parent_id='"+aEntity.getId()+"' and dtype='ServiceMedCase' and medService_id"
 			) ;
 
-
+	
+		
+	
+	if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
+		try {
+			aCt.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
+		} catch(e) {
+			
+		}
+		
+	}
 	
 }
 
