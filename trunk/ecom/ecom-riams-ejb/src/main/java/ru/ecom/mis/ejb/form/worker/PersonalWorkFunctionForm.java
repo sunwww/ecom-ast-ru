@@ -59,6 +59,13 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	public void setIsCalendarCreate(Boolean aIsCalendarCreate) {theIsCalendarCreate = aIsCalendarCreate;}
 
 
+	/** Категория специалиста */
+	@Comment("Категория специалиста")
+	public String getCategory() {return theCategory;}
+	public void setCategory(String aCategory) {theCategory = aCategory;}
+
+	/** Категория специалиста */
+	private String theCategory;
 	/** Создавать календарь */
 	private Boolean theIsCalendarCreate;
 	/** Пользователь */
