@@ -20,21 +20,30 @@
         <msh:row guid="154fb2a0-a3ac-4034-9cbb-087444dbe299">
           <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
+        <msh:row guid="b28cb409-df33-4406-bef7-9a79f93b49dd">
+          <ecom:oneToManyOneAutocomplete label="Категории шаблона" property="categories" vocName="vocTemplateCategory" colSpan="4" />
+        </msh:row>        
+
        <msh:ifFormTypeIsCreate formName="pres_templateForm">
-        <msh:row>
-        	<msh:separator label="Режим" colSpan="10"/>
-        </msh:row>
-        <msh:row>
-          <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="9" />
-        </msh:row>
-        <msh:row>
-        	<msh:separator label="Диета" colSpan="10"/>
-        </msh:row>
-        <msh:row guid="b556ehb-b971-441e-9a90-53217">
-        	
-          <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
-          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="9" />
-        </msh:row>
+       <msh:ifInRole roles="/Policy/Mis/Prescription/Template/ModePrescription/Create">
+	        <msh:row>
+	        	<msh:separator label="Режим" colSpan="10"/>
+	        </msh:row>
+	        <msh:row>
+	          <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="9" />
+	        </msh:row>
+        </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/Prescription/Template/DietPrescription/Create">
+	        <msh:row>
+	        	<msh:separator label="Диета" colSpan="10"/>
+	        </msh:row>
+	        <msh:row guid="b556ehb-b971-441e-9a90-53217">
+	        	
+	          <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
+	          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="9" />
+	        </msh:row>
+        </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/Prescription/Template/DrugPrescription/Create">
         <msh:row>
         	<msh:separator label="Лекарственные назначения" colSpan="10"/>
         </msh:row>
@@ -48,7 +57,7 @@
         		<th>Продолжительность</th>
         	</msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<th rowspan="2">1</th>
+	        	<th rowspan="2"> 1 </th>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm1.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm1.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm1.amount"   size="3" hideLabel="true"/>
@@ -62,7 +71,7 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm1.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<th rowspan="2">2</th>
+	        	<th rowspan="2"> 2 </th>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm2.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm2.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm2.amount"   size="3" hideLabel="true"/>
@@ -75,7 +84,7 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm2.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<th rowspan="2">3</th>
+	        	<th rowspan="2"> 3 </th>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm3.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm3.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm3.amount"   size="3" hideLabel="true"/>
@@ -88,7 +97,7 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm3.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<th rowspan="2">4</th>
+	        	<th rowspan="2"> 4 </th>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm4.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm4.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm4.amount"   size="3" hideLabel="true"/>
@@ -101,7 +110,7 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm4.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<th rowspan="2">5</th>
+	        	<th rowspan="2"> 5 </th>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm5.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm5.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm5.amount"   size="3" hideLabel="true"/>
@@ -116,8 +125,9 @@
 	        
         </msh:panel>
         </td></tr>
-        
+        </msh:ifInRole>
         </msh:ifFormTypeIsCreate>
+
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
@@ -171,7 +181,7 @@
       <tags:template_menu currentAction="prescriptions"/>
     </msh:ifFormTypeIsView>
   </tiles:put>
-  <tiles:put name="style">
+  <tiles:put name="style" type="string">
   	<style type="text/css">
          #borderTable {
          	border: 2px gray;
