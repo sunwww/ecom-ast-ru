@@ -12,6 +12,7 @@ import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.util.StringUtil;
 /**
  * Персональная рабочая функция
@@ -97,6 +98,15 @@ public class PersonalWorkFunction extends WorkFunction {
 	public boolean getViewDirect() {
 		return theGroup==null?true :false;
 	}
+	
+	/** Категория специалиста */
+	@Comment("Категория специалиста")
+	@Persist
+	public String getCategory() {return theCategory;}
+	public void setCategory(String aCategory) {theCategory = aCategory;}
+
+	/** Категория специалиста */
+	private String theCategory;
 	/** Групповая рабочая функция */
 	private GroupWorkFunction theGroup;
 
