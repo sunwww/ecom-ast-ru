@@ -100,13 +100,14 @@ owf.id||'&department=${department}&curator='||owf.id as id
 ,count(distinct spo.id) as cntSpo 
 ,count(distinct vis.id) as cntVis 
 from MedCase spo
-left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
+left join MedCase vis on vis.parent_id=spo.id 
 left join Patient pat on spo.patient_id=pat.id 
 left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 left join Worker ow on owf.worker_id=ow.id 
 left join Patient owp on ow.person_id=owp.id 
 where spo.dtype='PolyclinicMedCase' 
 and spo.dateFinish is null and ow.lpu_id='${department}' 
+and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -137,7 +138,7 @@ select spo.id,spo.dateStart
     ,list(distinct vvr.name) as vvrname,list(distinct mkb.code||' '||vpd.name) as diag
     ,count(distinct vis.id) as cntVis
     from medCase spo 
-    left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
+    left join MedCase vis on vis.parent_id=spo.id 
     left join Diagnosis diag on diag.medcase_id=vis.id
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -145,7 +146,7 @@ select spo.id,spo.dateStart
     left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id
     left join Patient pat on spo.patient_id = pat.id 
     where spo.DTYPE='PolyclinicMedCase' and spo.ownerFunction_id='${curator}' 
-     and spo.dateFinish is null
+     and spo.dateFinish is null and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
     group by  spo.id,spo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart

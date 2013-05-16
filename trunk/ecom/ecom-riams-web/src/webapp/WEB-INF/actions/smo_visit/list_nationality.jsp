@@ -180,13 +180,14 @@ left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join VocVisitResult vvr on vvr.id=m.visitResult_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-and m.DTYPE='Visit' 
+and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
 and (m.noActuality is null or m.noActuality='0')
 ${emergencySql} ${departmentWFSql}
 ${serviceStreamSql}
  ${nationalitySql} ${patientSql}
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+<msh:table viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do" 
+	idField="1">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
 	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
@@ -262,43 +263,6 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="Дата обращения" property="2" />
 	    </msh:table>
   	</msh:section>  	
-  	<msh:section title="Талоны">
-
-  	
-	    <ecom:webQuery name="list_ticket" maxResult="1000" nativeSql="select m.id
-	    
-	    ,to_char(m.date,'DD.MM.YYYY') as dateStart
-
-	   
-	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
-	    ,vwfe.name||' '||pe.lastname as pefio
-	
-
-from ticket m 
-left join medcard mc on mc.id=m.medcard_id
-left join patient p on p.id=mc.person_id
-left join Omc_Oksm vn on vn.id=p.nationality_id
-left join WorkFunction wfe on wfe.id=m.workFunction_id
-left join Worker we on we.id=wfe.worker_id
-left join MisLpu ml on ml.id=we.lpu_id
-left join Patient pe on pe.id=we.person_id
-left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
-left join VocServiceStream vss on vss.id=m.vocPaymentType_id
-
-where  m.date between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-and m.status='2'
-${emergencySql} ${departmentWFSql} ${serviceStreamSql} ${nationalitySql} ${patientSql}
-order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-poly_ticket.do" 
-editUrl="entityParentEdit-poly_ticket.do" 
-name="list_ticket" action="entityView-poly_ticket.do" 
-idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" >
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-	    </msh:table>
-  	</msh:section>
 
 
 
@@ -312,8 +276,8 @@ idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" >
 <ecom:webQuery nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
 select ${groupId}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId} as idparam,${groupSql} as vnname
 ,count(*) as cntAll
-,count(distinct case when m.dtype='Visit' then m.id else null end) as polic
-,count(distinct case when m.dtype='Visit' and vss.code='CHARGED' then m.id else null end) as policCh
+,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') then m.id else null end) as polic
+,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') and vss.code='CHARGED' then m.id else null end) as policCh
 ,count(distinct case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') then m.id else null end) as hospitAll
 ,sum(case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') then case when smo.dateFinish=smo.dateStart then 1 else smo.dateFinish-smo.dateStart end else null end) as hospitDaysAll
 ,count(distinct case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') and vss.code='CHARGED' then m.id else null end) as hospitAllCh
@@ -351,7 +315,7 @@ left join Worker w on w.id=wf.worker_id
 left join MisLpu mlV on mlV.id=w.lpu_id
 left join MisLpu ml on ml.id=m.department_id
 
-where (m.dtype='Visit' 
+where ((m.dtype='Visit' or m.dtype='ShortMedCase') 
 and m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 
 or m.dtype='DepartmentMedCase'
@@ -430,23 +394,7 @@ group by ${group1SqlId},${group1Sql}
             <msh:tableColumn columnName="отказы от госп." property="17" isCalcAmount="true"/>
         </msh:table>
     </msh:sectionContent>
-    <msh:sectionTitle>Данные по талонной версии (посещения)</msh:sectionTitle>
-<msh:sectionContent>
-        <msh:table
-         name="journal_swod1" action="journal_nationality_smo.do?typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
-              <tr>
-                <th colspan="1" />
-                <th colspan="1" />
-                <th colspan="2" class="rightBold">Амбулаторно-поликлиническая помощь</th>
-              </tr>
-            </msh:tableNotEmpty>            
-            <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn columnName="всего" property="3" isCalcAmount="true"/>
-            <msh:tableColumn columnName="в т.ч. платно" property="4" isCalcAmount="true"/>
-        </msh:table>
-    </msh:sectionContent>
+    
     </msh:section>    	
     	<%
     	//окончание свода

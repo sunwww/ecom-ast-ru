@@ -196,8 +196,10 @@
     <msh:ifFormTypeIsView formName="smo_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
       <msh:sideMenu guid="e6c81315-888f-4d80-856b-ce3095ca1d55" title="Талон" >
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+2" params="id" action="/entityEdit-smo_ticket" name="Изменить" guid="89585df8-aadb-4d59-abd9-c0d16a6170a9" title="Изменить талон" />
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+3" params="id" action="/poly_closeTicket" name="Закрыть" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Закрыть талон" />
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
+		<msh:sideLink params="id" action="/js-smo_visit-closeSpo" 
+		name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" 
+			key="ALT+4" roles="/Policy/Poly/Ticket/Edit" />        
+			<msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-doNotAddTalk" name="Сделать обычным посещением" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         
         <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm" guid="7f581b0a-a8b3-4d57-9cff-6dc6db1c85e3">
