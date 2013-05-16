@@ -238,7 +238,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     ,to_char(max(case when vis.dateStart is null then wcd.calendarDate else null end),'dd.mm.yyyy') as maxPlanDate
     ,list(distinct vvr.name) as vvrname,list(distinct mkb.code||' '||vpd.name) as diag
     from medCase spo 
-    left join MedCase vis on vis.parent_id=spo.id and vis.DTYPE='Visit'
+    left join MedCase vis on vis.parent_id=spo.id 
     left join Diagnosis diag on diag.medcase_id=vis.id
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -251,7 +251,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     where spo.DTYPE='PolyclinicMedCase' 
      and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
      and spo.ownerFunction_id='${curator}' 
- and ow.lpu_id='${department}'
+ and ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
  ${additionSpoSql} 
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday

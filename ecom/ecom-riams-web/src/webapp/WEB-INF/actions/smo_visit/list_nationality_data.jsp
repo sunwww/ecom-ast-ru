@@ -49,11 +49,11 @@ left join Patient pe on pe.id=we.person_id
 left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.dateStart between between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-and v.DTYPE='Visit' and v.dateStart is not null
+and (m.dtype='Visit' or m.dtype='ShortMedCase') and v.dateStart is not null
 and (v.noActuality is null or v.noActuality='0')
 and p.nationality_id ${nationality} ${emergencySql}
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+<msh:table viewUrl="entitySubclassView-smo_visit.do" name="list_yes" action="entitySublassView-mis_medCase.do" idField="1">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
 	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
@@ -118,40 +118,6 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="Дата обращения" property="2" />
 	    </msh:table>
   	</msh:section>  	
-  	<msh:section title="Талоны">
-
-  	
-	    <ecom:webQuery name="list_ticket" nativeSql="select v.id
-	    
-	    ,to_char(v.date,'DD.MM.YYYY') as dateStart
-
-	   
-	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
-	    ,vwfe.name||' '||pe.lastname as pefio
-	
-
-from ticket v 
-left join medcard m on m.id=v.medcard_id
-left join patient p on p.id=m.person_id
-left join WorkFunction wfe on wfe.id=v.workFunction_id
-left join Worker we on we.id=wfe.worker_id
-left join Patient pe on pe.id=we.person_id
-left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
-where  v.date between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and v.status='2'
-and p.nationality_id ${nationality} ${emergencySql}
-
-order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-poly_ticket.do" 
-editUrl="entityParentEdit-poly_ticket.do" 
-name="list_ticket" action="entityView-poly_ticket.do" 
-idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" >
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-	    </msh:table>
-  	</msh:section>
   </tiles:put>
   
 </tiles:insert>

@@ -99,15 +99,6 @@
         <msh:row>
           <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunctionExecute" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
-        <%--
-        <msh:ifFormTypeIsNotView formName="smo_visitForm">
-        <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/View">
-        <msh:row>
-	        <ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="3"/>
-	    </msh:row>        
-	    </msh:ifInRole>
-	    </msh:ifFormTypeIsNotView>
-	     --%>
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
