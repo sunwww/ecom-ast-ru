@@ -460,10 +460,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		wqr.set18(getDiagnos(medCase.diagnosEntrance)) ;//"sls.diagnosisAdmission",
 		wqr.set19(recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main")) ;
 		wqr.set20(recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related")) ;
-		wqr.set21(recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication")) ;
+		wqr.set21(recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.complication")) ;
 		wqr.set22(recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main")) ;
 		wqr.set23(recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related")) ;
-		wqr.set24(recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication")) ;
+		wqr.set24(recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.complication")) ;
 		wqr.set25(recordDisability(aCtx,slsId,"dis")) ;
 		wqr.set26(medCase.orderDate!=null?medCase.orderDate:"") ;
 		return wqr ;

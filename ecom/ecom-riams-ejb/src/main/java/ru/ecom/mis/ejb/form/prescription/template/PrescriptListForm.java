@@ -3,9 +3,13 @@ package ru.ecom.mis.ejb.form.prescription.template;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
+import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
+import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
 import ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm;
 import ru.ecom.mis.ejb.form.prescription.template.interceptors.PrescriptListCreateInterceptor;
 
@@ -26,9 +30,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Шаблон листа назначения")
 @WebTrail(comment = "Шаблон листа назначения", nameProperties = { "name" }, view = "entityView-pres_template.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/Template")
-@AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(PrescriptListCreateInterceptor.class)
-)
+@ACreateInterceptors({
+    @AEntityFormInterceptor(PrescriptListCreateInterceptor.class)
+})
 public class PrescriptListForm extends AbstractPrescriptionListForm {
 	/** Рабочая функция */
 	@Comment("Рабочая функция")

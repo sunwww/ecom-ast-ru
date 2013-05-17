@@ -1022,10 +1022,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
 		recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main") ;
 		recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related") ;
-		recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
+		recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.complication") ;
 		recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
 		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
-		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
+		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.complication") ;
 		recordDisability(aCtx,slsId,"dis") ;
 
 }
