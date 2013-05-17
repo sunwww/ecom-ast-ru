@@ -42,6 +42,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
    </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
+    <msh:sideLink roles="/Policy/Mis/MedCase/ClinicExpertCard/View"
+     name="КЭР" params="id" action="/entityParentList-expert_ker"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
  
  <%--    <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}"  params=""

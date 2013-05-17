@@ -10,6 +10,7 @@
        <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>
        <form-bean name="exp_vocCritForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationCritForm"/>
        <form-bean name="exp_vocMarkForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationMarkForm"/>
+       <form-bean name="expert_kerForm" type="ru.ecom.mis.ejb.form.expert.ClinicExpertCardForm"/>
        <form-bean name="expert_cardForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationCardForm"/>
        <form-bean name="expert_qualityEstimationForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationForm"/>
     
