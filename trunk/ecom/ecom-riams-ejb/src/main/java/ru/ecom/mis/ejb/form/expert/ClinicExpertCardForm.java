@@ -1,13 +1,11 @@
 package ru.ecom.mis.ejb.form.expert;
 
-import java.sql.Date;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.expert.ClinicExpertCard;
-import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.form.expert.interceptor.ClinicExpertCardPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -24,9 +22,10 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "КЭР", nameProperties = "id", view = "entityView-expert_ker.do")
 @Parent(property = "medCase", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/ClinicExpertCard")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
+)
 public class ClinicExpertCardForm extends IdEntityForm {
-	
-	
 	/** СМО */
 	@Comment("СМО")
 	@Persist
