@@ -15,7 +15,7 @@
 				<td class='col1'>
 				<div class='menu'>
 				<h2>Сообщения</h2>
-				<ul>
+				<ul style='list-style: none outside none; margin-bottom: 10px;  padding-left: 5px;'>
 					<li><msh:link roles='/Policy/Mis/Journal/InfectiousMessages' action="journal_infectMessage.do">
                             Журнал экстренных сообщений об инфекции
                         </msh:link></li>
@@ -29,7 +29,7 @@
 				</td><td style='padding-left: 5em'>
 					<div class='menu'>
 					<h2>Общие</h2>
-					<ul>
+					<ul style='list-style: none outside none; margin-bottom: 10px;  padding-left: 5px;'>
 						<li><msh:link action="journal_vaccination.do" roles="/Policy/Mis/Journal/Vaccination">
 	                            Журнал прививок
 	                        </msh:link></li>
@@ -65,7 +65,7 @@
 				<td style='padding-left: 5em'>
 				<div class='menu'>
 					<h2>Поликлиника</h2>
-					<ul>
+					<ul style='list-style: none outside none; margin-bottom: 10px;  padding-left: 5px;'>
 						<li><msh:link action="visit_f039_list.do?ticketIs=0" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                            039 форма
 	                        </msh:link></li>
@@ -82,7 +82,7 @@
 					</div>
 				<div class='menu'>
 					<h2>Роддом</h2>
-					<ul>
+					<ul style='list-style: none outside none; margin-bottom: 10px;  padding-left: 5px;'>
 						<li><msh:link action="journal_roddom_histology.do" roles="/Policy/Mis/Pregnancy/Report/HistologyPlacenta">
 	                            Журнал гистологий плацент
 	                        </msh:link></li>
@@ -93,7 +93,7 @@
 				<td style='padding-left: 5em'>
 					<div class='menu'>
 					<h2>Стационар</h2>
-					<ul>
+					<ul style='list-style: none outside none; margin-bottom: 10px;  padding-left: 5px;'>
 						<li><msh:link action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
 	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций 
 	                        </msh:link></li>

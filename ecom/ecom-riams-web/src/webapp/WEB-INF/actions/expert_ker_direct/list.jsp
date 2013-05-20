@@ -11,12 +11,12 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="helloSideMenu-123">
       <msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/MedCase/ClinicExpertCard/Create" key="ALT+N"
-       action="/entityParentPrepareCreate-expert_ker" name="Создать новое" params="id" />
+       action="/entityParentPrepareCreate-expert_ker_direct" name="Создать новое" params="id" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityParentView-expert_ker.do" idField="id" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
-      <msh:tableColumn columnName="ИД" property="id" guid="0696a7-ed40-4ebf-a274-1e4" />
+    <msh:table name="list" action="entityParentView-expert_ker.do" viewUrl="entityParentView-expert_ker.do?short=Short" idField="id" >
+      <msh:tableColumn columnName="ИД" property="id"  />
     </msh:table>
   </tiles:put>
 </tiles:insert>
