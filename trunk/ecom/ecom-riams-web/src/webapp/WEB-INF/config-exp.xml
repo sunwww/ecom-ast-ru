@@ -11,10 +11,9 @@
        <form-bean name="exp_vocCritForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationCritForm"/>
        <form-bean name="exp_vocMarkForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationMarkForm"/>
        <form-bean name="expert_kerForm" type="ru.ecom.mis.ejb.form.expert.ClinicExpertCardForm"/>
+       <form-bean name="expert_ker_directForm" type="ru.ecom.mis.ejb.form.expert.DirectOfMedicalCommissionForm"/>
        <form-bean name="expert_cardForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationCardForm"/>
        <form-bean name="expert_qualityEstimationForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationForm"/>
-    
-    
        <form-bean name="exp_regicForm" type="ru.ecom.expomc.ejb.services.form.registry.RegInsuranceCompanyForm" />
        <form-bean name="exp_formatForm" type="ru.ecom.expomc.ejb.services.form.format.FormatForm" />
        <form-bean name="exp_fieldForm" type="ru.ecom.expomc.ejb.services.form.format.FieldForm" />

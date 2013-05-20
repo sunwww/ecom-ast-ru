@@ -42,8 +42,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
    </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
-    <msh:sideLink roles="/Policy/Mis/MedCase/ClinicExpertCard/View"
-     name="КЭР" params="id" action="/entityParentList-expert_ker"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
  
  <%--    <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}"  params=""
@@ -151,13 +149,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show" 
     	name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'  
     	key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
-<%--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/ExpertCard/Show" name="Эксперт"   params="id"  action='/expertCardListView' title='Экспертные карты'/>   
-     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Nurse/Show" name="Лица по уходу"   params="id"  action='/nurseListView' title='Лица по уходу'/> 
-     <msh:sideLink roles="/Policy/Mis/Disability/DisabilityCase/View"  
-    	name="Нетрудоспособность"   params="id"  action='/entityParentList-dis_case' 
-    	title='Листы нетрудоспособности' 
-    	styleId="dis_case"
-    	/> 
+
     <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  --%>
 	<msh:sideLink roles="/Policy/Mis/MedCase/DeathCase/View"  name="Случай смерти"   
 		params="id"  action='/entityParentList-stac_deathCase' title='Просмотр случая смерти'

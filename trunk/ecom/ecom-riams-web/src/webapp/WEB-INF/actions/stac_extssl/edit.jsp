@@ -67,17 +67,18 @@
         </msh:row>
 
         <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
-        <msh:row>
-	        <msh:autoComplete label="Причина госпитализации в псих. стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="2" fieldColSpan="2" horizontalFill="true"/>
-        </msh:row>
-
-        <msh:row>
-        	<msh:checkBox property="compulsoryTreatment" label="Недобровольная госпитализация (статья 29)" fieldColSpan="3"/>
-        </msh:row>
-        <msh:row>
-        	<msh:checkBox property="incapacity" label="Недееспособный"/>
-        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
-        </msh:row>
+	        <msh:row>
+		        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="3" vocName="vocAdmissionOrder"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" fieldColSpan="3" vocName="vocJudgment"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
+	        </msh:row>
         </msh:ifInRole>
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"
