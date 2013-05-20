@@ -7,20 +7,28 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertComposition;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertConclusion;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertDeviationStandards;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertModeCase;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertOrderConclusion;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatientStatus;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatternCase;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertSubject;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "medCase" })
+,@AIndex(properties={"patient"})
+})
 public class ClinicExpertCard extends BaseEntity {
 	
 	/** СМО */
@@ -109,6 +117,11 @@ public class ClinicExpertCard extends BaseEntity {
 	@Comment("Дополнительная информация по заключению")
 	public String getAdditionInfo() {return theAdditionInfo;}
 	public void setAdditionInfo(String aAdditionInfo) {theAdditionInfo = aAdditionInfo;}
+	
+	/** Дополнительная информация по МСЭ */
+	@Comment("Дополнительная информация по МСЭ")
+	public String getAdditionInfoHA() {return theAdditionInfoHA;}
+	public void setAdditionInfoHA(String aAdditionInfoHA) {theAdditionInfoHA = aAdditionInfoHA;}
 
 	/** Состав экспертов */
 	@Comment("Состав экспертов")
@@ -122,10 +135,19 @@ public class ClinicExpertCard extends BaseEntity {
 	public VocExpertPatientStatus getPatientStatus() {return thePatientStatus;}
 	public void setPatientStatus(VocExpertPatientStatus aPatientStatus) {thePatientStatus = aPatientStatus;}
 
+	/** Причина задержки */
+	@Comment("Причина задержки")
+	public String getDelayReason() {return theDelayReason;}
+	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
+
+	/** Причина задержки */
+	private String theDelayReason;
 	/** Статус пациента */
 	private VocExpertPatientStatus thePatientStatus;
 	/** Состав экспертов */
 	private VocExpertComposition theExpComposition;
+	/** Дополнительная информация по МСЭ */
+	private String theAdditionInfoHA;
 	/** Дополнительная информация по заключению */
 	private String theAdditionInfo;
 	/** Дата получения заключения МСЭ */
@@ -173,6 +195,58 @@ public class ClinicExpertCard extends BaseEntity {
 	public Date getExpertDate() {return theExpertDate;}
 	public void setExpertDate(Date aExpertDate) {theExpertDate = aExpertDate;}
 
+	/** Дата направления */
+	@Comment("Дата направления")
+	public Date getOrderDate() {return theOrderDate;}
+	public void setOrderDate(Date aOrderDate) {theOrderDate = aOrderDate;}
+
+	/** Дата выхода на нетрудосп. */
+	@Comment("Дата выхода на нетрудосп.")
+	public Date getDisabilityDate() {return theDisabilityDate;}
+	public void setDisabilityDate(Date aDisabilityDate) {theDisabilityDate = aDisabilityDate;}
+
+	/** Диагноз осн. */
+	@Comment("Диагноз осн.")
+	@OneToOne
+	public VocIdc10 getMainDiagnosis() {return theMainDiagnosis;}
+	public void setMainDiagnosis(VocIdc10 aMainDiagnosis) {theMainDiagnosis = aMainDiagnosis;}
+
+	/** Обоснование направления */
+	@Comment("Обоснование направления")
+	@OneToOne
+	public VocExpertOrderConclusion getOrderConclusion() {return theOrderConclusion;}
+	public void setOrderConclusion(VocExpertOrderConclusion aOrderConclusion) {theOrderConclusion = aOrderConclusion;}
+
+	/** Диагноз сопутствующий */
+	@Comment("Диагноз сопутствующий")
+	public String getConcomitantDiagnosis() {return theConcomitantDiagnosis;}
+	public void setConcomitantDiagnosis(String aConcomitantDiagnosis) {theConcomitantDiagnosis = aConcomitantDiagnosis;}
+
+	/** Диагноз осложнение */
+	@Comment("Диагноз осложнение")
+	public String getComplicationDiagnosis() {return theComplicationDiagnosis;}
+	public void setComplicationDiagnosis(String aComplicationDiagnosis) {theComplicationDiagnosis = aComplicationDiagnosis;}
+
+	/** Направивший специалист */
+	@Comment("Направивший специалист")
+	@OneToOne
+	public WorkFunction getOrderFunction() {return theOrderFunction;}
+	public void setOrderFunction(WorkFunction aOrderFunction) {theOrderFunction = aOrderFunction;}
+
+	/** Направивший специалист */
+	private WorkFunction theOrderFunction;
+	/** Диагноз осложнение */
+	private String theComplicationDiagnosis;
+	/** Диагноз сопутствующий */
+	private String theConcomitantDiagnosis;
+	/** Обоснование направления */
+	private VocExpertOrderConclusion theOrderConclusion;
+	/** Диагноз осн. */
+	private VocIdc10 theMainDiagnosis;
+	/** Дата выхода на нетрудосп. */
+	private Date theDisabilityDate;
+	/** Дата направления */
+	private Date theOrderDate;
 	/** Дата экспертизы */
 	private Date theExpertDate;
 
