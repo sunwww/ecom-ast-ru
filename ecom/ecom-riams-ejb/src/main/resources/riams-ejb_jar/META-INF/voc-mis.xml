@@ -888,6 +888,18 @@
      			parent = 'disabilityCase_id'
      	/>
      </voc>
+     <voc id='disabilityDocumentByPatient'  type='NativeVocService'>
+    	<NativeVocService
+    			from = 'DisabilityDocument as dd '
+    			parent = " dc.patient_id = :parent "
+    			names  = " dd.number "
+    			queried =" (dd.number like :query ) "
+    			queryAppend = " "
+    			order =''
+    			nameId='dd.id'
+    			join=' left join DisabilityCase dc on dc.id=dd.disabilityCase_id'
+    	/>
+     </voc>
      
      <!-- Время календаря по дню -->
     <!-- <voc id='vocWorkCalendarTimeWorkCalendarDay' type='EntityVocService'>

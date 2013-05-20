@@ -15,62 +15,49 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = ClinicExpertCard.class)
-@Comment("КЭР")
-@WebTrail(comment = "КЭР", nameProperties = "id", view = "entityView-expert_ker.do")
+@Comment("Врачебная комиссия")
+@WebTrail(comment = "Врачебная комиссия", nameProperties = "id", view = "entityView-expert_ker.do")
 @Parent(property = "medCase", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/ClinicExpertCard")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
 )
-public class ClinicExpertCardForm extends IdEntityForm {
-	/** СМО */
-	@Comment("СМО")
-	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
-	/** Профессия */
-	@Comment("Профессия")
-	@Persist
-	public String getProfession() {return theProfession;}
-	public void setProfession(String aProfession) {theProfession = aProfession;}
+
 
 	/** Характеристика случая экспертизы */
 	@Comment("Характеристика случая экспертизы")
-	@Persist
+	@Persist @Required
 	public Long getPatternCase() {return thePatternCase;}
 	public void setPatternCase(Long aPatternCase) {thePatternCase = aPatternCase;}
 
-	/** Листок нетрудоспособности */
-	@Comment("Листок нетрудоспособности")
-	@Persist
-	public Long getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
 
 	/** Вид экспертизы */
 	@Comment("Вид экспертизы")
-	@Persist
+	@Persist @Required
 	public Long getModeCase() {return theModeCase;}
 	public void setModeCase(Long aModeCase) {theModeCase = aModeCase;}
 
 	/** Предмет экспертизы */
 	@Comment("Предмет экспертизы")
-	@Persist
+	@Persist @Required
 	public Long getSubjectCase() {return theSubjectCase;}
 	public void setSubjectCase(Long aSubjectCase) {theSubjectCase = aSubjectCase;}
 
 	/** Отклонение от стандартов */
 	@Comment("Отклонение от стандартов")
-	@Persist
+	@Persist @Required
 	public Long getDeviationStandards() {return theDeviationStandards;}
 	public void setDeviationStandards(Long aDeviationStandards) {theDeviationStandards = aDeviationStandards;}
 
 	/** Текст оклонения от стандартов */
 	@Comment("Текст оклонения от стандартов")
-	@Persist
+	@Persist 
 	public String getDeviationStandardsText() {return theDeviationStandardsText;}
 	public void setDeviationStandardsText(String aDeviationStandardsText) {theDeviationStandardsText = aDeviationStandardsText;}
 
@@ -88,7 +75,7 @@ public class ClinicExpertCardForm extends IdEntityForm {
 
 	/** Обоснование заключения */
 	@Comment("Обоснование заключения")
-	@Persist
+	@Persist @Required
 	public Long getConclusion() {return theConclusion;}
 	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
 
@@ -124,18 +111,19 @@ public class ClinicExpertCardForm extends IdEntityForm {
 
 	/** Состав экспертов */
 	@Comment("Состав экспертов")
-	@Persist
+	@Persist @Required
 	public Long getExpComposition() {return theExpComposition;}
 	public void setExpComposition(Long aExpComposition) {theExpComposition = aExpComposition;}
 
-	/** Статус пациента */
-	@Comment("Статус пациента")
-	@Persist
-	public Long getPatientStatus() {return thePatientStatus;}
-	public void setPatientStatus(Long aPatientStatus) {thePatientStatus = aPatientStatus;}
 
-	/** Статус пациента */
-	private Long thePatientStatus;
+	/** Причина задержки */
+	@Comment("Причина задержки")
+	@Persist
+	public String getDelayReason() {return theDelayReason;}
+	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
+
+	/** Причина задержки */
+	private String theDelayReason;
 	/** Состав экспертов */
 	private Long theExpComposition;
 	/** Дополнительная информация по заключению */
@@ -162,31 +150,25 @@ public class ClinicExpertCardForm extends IdEntityForm {
 	private Long theSubjectCase;
 	/** Вид экспертизы */
 	private Long theModeCase;
-	/** Листок нетрудоспособности */
-	private Long theDisabilityDocument;
 	/** Характеристика случая экспертизы */
 	private Long thePatternCase;
-	/** Профессия */
-	private String theProfession;
-	/** СМО */
-	private Long theMedCase;
 
-	/** Пациент */
-	@Comment("Пациент")
-	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
 
-	/** Пациент */
-	private Long thePatient;
+
 	
 	/** Дата экспертизы */
 	@Comment("Дата экспертизы")
-	@Persist @DateString @DoDateString
+	@Persist @DateString @DoDateString @Required
 	public String getExpertDate() {return theExpertDate;}
 	public void setExpertDate(String aExpertDate) {theExpertDate = aExpertDate;}
 
 	/** Дата экспертизы */
 	private String theExpertDate;
 	
+	/** Дополнительная информация по МСЭ */
+	@Comment("Дополнительная информация по МСЭ")
+	public String getAdditionInfoHA() {return theAdditionInfoHA;}
+	public void setAdditionInfoHA(String aAdditionInfoHA) {theAdditionInfoHA = aAdditionInfoHA;}	
+	/** Дополнительная информация по МСЭ */
+	private String theAdditionInfoHA;
 }
