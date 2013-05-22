@@ -5,7 +5,7 @@ function addTalk(aForm, aCtx) {
 	var id=aCtx.request.getParameter("id") ;
 	var col = aCtx.invokeScript("TicketService", "addTalk"
 			, id ) ;
-	return aCtx.createForward("/poly_ticket_addTalk.do?id="+id) ;
+	return aCtx.createForward("/entityParentView-poly_ticket.do?id="+id) ;
 }
 function doNotAddTalk(aForm, aCtx) {
 	var id=aCtx.request.getParameter("id") ;

@@ -95,7 +95,7 @@
              left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
              left join Patient wp on wp.id=w.person_id
              where smc.dtype='ShortMedCase' ${workFunctionSql}
-             and smc.dateFinish=to_date('${dateFilter}','dd.mm.yyyy') "/>
+             and smc.dateFinish=to_date('${dateFilter}','dd.mm.yyyy') and smc.dateStart is null"/>
 	        <msh:table viewUrl="entityShortView-smo_ticket.do" 
 	        editUrl="entityParentEdit-smo_ticket.do" 
 	        deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" 

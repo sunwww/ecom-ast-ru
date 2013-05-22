@@ -321,9 +321,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/journal_ticket_spec_print.jsp"/>
         </action>
-        <action path='/poly_ticket_addTalk' type='ru.ecom.poly.web.action.ticket.AddTalkForTicketAction'>
-        	<forward name="success" redirect="false" path="entityParentView-poly_ticket.do" />
-        </action>
         <action path='/poly_ticketsByNonredidentPatientList' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='stac_admissionJournalForm'
                 validate='false'

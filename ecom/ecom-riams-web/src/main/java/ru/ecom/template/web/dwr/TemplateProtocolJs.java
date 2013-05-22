@@ -174,7 +174,7 @@ public class TemplateProtocolJs {
 				sql.append(" left join worker w on wf.worker_id=w.id");
 				sql.append(" left join patient wp on wp.id=w.person_id");
 				sql.append(" where smo.patient_id='").append(patient).append("'");
-				sql.append(" and (smo.dtype='Visit')");
+				sql.append(" and (smo.dtype='Visit' or smo.dtype='ShortMedCase')");
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
