@@ -3,20 +3,13 @@ var map = new java.util.HashMap() ;
 function printVisits(aCtx, aParams) {
 	var ids1 = aParams.get("id1") ;
 	var ids = ids1.split(",") ;
-	//infoSmo(aCtx,ids[0]) ;
-	//infoPrint(aCtx,ids[0]) ;
 	var ret = new java.lang.StringBuilder () ;
-	//ret.append(ids) ;
-	//var list = new 
-	//throw ids ;
 	
 	
 	var ret = new java.util.ArrayList() ;
 	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
     var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
-	//var startDate =  FORMAT_2.parse(obj[0])) ;
-	//var finishDate = FORMAT_1.format( FORMAT_2.parse(obj[1])) ;
 	var current = new java.util.Date() ;
 	var curDate = new java.sql.Date(current.getTime()) ;
 	
@@ -59,7 +52,6 @@ function printVisits(aCtx, aParams) {
 				diagPrimary = diagPrimary + " " + ( diag.primary!=null?diag.primary.name:"");
 				if (diag.traumaType!=null) {diagTravm = diagTravm + " " + diag.traumaType.name}
 				if (diag.idc10Reason!=null) {diagTravmMkb = diagTravmMkb + " " + diag.idc10Reason.code + " " + diag.idc10Reason.name}
-				//diagTravmMkb = diagTravmMkb + " " + diag.idc10Reason.getCode() + " " + diag.idc10Reason.getName();
 			}
 			if (diag.priority!=null && diag.priority.id == 2) {
 			if (!diagText2.equals("")) diagText2 = diagText2 +"; ";
@@ -249,7 +241,7 @@ function printMedService(aCtx,aParams) {
 }
 function printVisit(aCtx, aParams) {
 	//var map = new java.util.HashMap() ;
-	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, new java.lang.Long(aParams.get("id"))) ;
 	var list = aCtx.manager.createQuery("from Protocol where medCase_id=:visit")
 		.setParameter("visit",visit.id).getResultList();
