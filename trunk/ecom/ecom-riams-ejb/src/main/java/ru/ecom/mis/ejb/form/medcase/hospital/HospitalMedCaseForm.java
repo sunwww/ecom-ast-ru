@@ -570,5 +570,20 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theJudgment35;
 	/** Порядок поступления */
 	private Long theAdmissionOrder;
+	
+	/** Осложнение текст диагноза */
+	@Comment("Осложнение текст диагноза")
+	public String getComplicationDiagnos() {return theComplicationDiagnos;}
+	public void setComplicationDiagnos(String aComplicationDiagnos) {theComplicationDiagnos = aComplicationDiagnos;}
+
+	/** Осложнение МКБ диагноза */
+	@Comment("Осложнение МКБ диагноза")
+	public Long getComplicationMkb() {return theComplicationMkb;}
+	public void setComplicationMkb(Long aComplicationMkb) {theComplicationMkb = aComplicationMkb;}
+
+	/** Осложнение МКБ диагноза */
+	private Long theComplicationMkb;
+	/** Осложнение текст диагноза */
+	private String theComplicationDiagnos;
 
 }

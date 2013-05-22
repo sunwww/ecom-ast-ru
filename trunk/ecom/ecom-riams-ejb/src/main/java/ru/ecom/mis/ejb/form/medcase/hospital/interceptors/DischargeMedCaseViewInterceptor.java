@@ -81,6 +81,19 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
 				}
 			}
+			// Complication
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "4", true) ;
+			if (frm!=null){
+				form.setComplicationDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
+			} else {
+				frm = getDiagnosis(aContext.getEntityManager(), id, "4", "4", true) ;
+				if (frm!=null) {
+					form.setComplicationDiagnos(frm.getName());
+					if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
+					//if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
+				}
+			}			
 			//Clinical
 			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", true) ;
 			if (frm!=null){
@@ -95,12 +108,18 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				if (frm.getIdc10()!=null) form.setPathanatomicalMkb(frm.getIdc10()) ;
 			}	
 			//Concomitant
-			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "3", true) ;
-			if (frm!=null) {
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "3", true) ;
+			if (frm!=null){
 				form.setConcomitantDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
-			}
-			
+			} else {
+				frm = getDiagnosis(aContext.getEntityManager(), id, "4", "3", true) ;
+				if (frm!=null) {
+					form.setConcomitantDiagnos(frm.getName());
+					if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
+					//if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
+				}
+			}	
 		} else {
 			DiagnosisForm frm ;
 			//System.out.println("----------------1") ;
@@ -131,10 +150,16 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				if (frm.getIdc10()!=null) form.setPathanatomicalMkb(frm.getIdc10()) ;
 			}	
 			//Concomitant
-			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "3", false) ;
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "3", false) ;
 			if (frm!=null) {
 				form.setConcomitantDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
+			}
+			//Complication
+			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "4", false) ;
+			if (frm!=null) {
+				form.setComplicationDiagnos(frm.getName());
+				if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
 			}
 		}
 		/*
