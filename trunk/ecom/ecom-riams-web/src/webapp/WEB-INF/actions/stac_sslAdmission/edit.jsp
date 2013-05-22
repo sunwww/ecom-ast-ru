@@ -289,6 +289,23 @@
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
+      eventutil.addEventListener($('emergency'), "change",function(){
+            if (+$('emergency').checked) {
+                $('orderTypeName').className="autocomplete horizontalFill required";
+                $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+            } else {
+                $('orderTypeName').className="autocomplete horizontalFill";
+                $('preAdmissionTimeName').className="autocomplete horizontalFill";
+        	}
+
+        }) ;
+		 if (+$('emergency').checked) {
+             $('orderTypeName').className="autocomplete horizontalFill required";
+             $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+         } else {
+             $('orderTypeName').className="autocomplete horizontalFill";
+             $('preAdmissionTimeName').className="autocomplete horizontalFill";
+     	}
 		if ($('deniedHospitalizatingName')) {
             var ch = function ch() {
             
@@ -316,7 +333,9 @@
                 $('hospitalizationName').className="autocomplete horizontalFill required";
                 $('serviceStreamName').className="autocomplete horizontalFill required";
         	}
-        }</script>
+        }
+
+		</script>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" guid="6c59f9b3-c9b2-4822-aff8-9225ca67edb1">
       <script type="text/javascript">/** функция изменения стат.номера*/

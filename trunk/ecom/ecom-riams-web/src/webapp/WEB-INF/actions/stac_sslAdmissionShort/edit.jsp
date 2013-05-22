@@ -41,7 +41,7 @@
         </msh:row>
         <msh:row guid="25f2a536-4fb6-4413-89db-a478145e097e">
           <msh:textField property="statCardNumber" label="Номер стат.карты" labelColSpan="1" guid="e5f3d524-cca8-4a5a-a408-196ab6b79627" />
-          <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
+          <msh:autoComplete vocName="vocHospType" size="35" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
         </msh:row>
 
         <msh:row guid="0e91a1ca-c366-435c-8f2c-274d23d87fd3">
@@ -69,12 +69,15 @@
         <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
           <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="8036eaf5-7144-46a4-9015-e4f198230a2c">
+        <msh:row>
           <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения" guid="7d5f0ad3-3f43-42b7-8c46-f2fcceead05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:separator label="Доставлен" colSpan="9" guid="f2136abf-c311-42e4-86ad-c24b7da708d5" />
         <msh:row guid="e811bd41-db0a-4275-b786-75f958759453">
           <msh:autoComplete showId="false" vocName="vocOmcFrm" hideLabel="false" property="orderType" viewOnlyField="false" guid="ff2a0045-c4fc-4efd-9bcd-f84951ac74a2" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete property="preAdmissionTime" label="Часы заболевания" vocName="vocPreAdmissionTime" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:separator label="*Госпитализация" colSpan="9" guid="4909ac97-3ad7-4eab-a657-1d103779ed47" />
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
@@ -175,6 +178,24 @@
                     $('departmentName').className="autocomplete horizontalFill required";
                     $('hospitalizationName').className="autocomplete horizontalFill required";
                     $('serviceStreamName').className="autocomplete horizontalFill required";
+                    
+                    eventutil.addEventListener($('emergency'), "change",function(){
+                        if (+$('emergency').checked) {
+                            $('orderTypeName').className="autocomplete horizontalFill required";
+                            $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+                        } else {
+                            $('orderTypeName').className="autocomplete horizontalFill";
+                            $('preAdmissionTimeName').className="autocomplete horizontalFill";
+                    	}
+
+                    }) ;
+            		 if (+$('emergency').checked) {
+                         $('orderTypeName').className="autocomplete horizontalFill required";
+                         $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+                     } else {
+                         $('orderTypeName').className="autocomplete horizontalFill";
+                         $('preAdmissionTimeName').className="autocomplete horizontalFill";
+                 	}
         </script>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="stac_sslAdmissionShortForm" guid="6c59f9b3-c9b2-4822-aff8-9225ca67edb1">
