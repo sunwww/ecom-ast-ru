@@ -153,6 +153,7 @@
        			} else {
        				type=3 ;
        				curator=workFunc ;
+       				department=""+wqr.get2() ;
        			}
        		}
        		request.setAttribute("department", department) ;
