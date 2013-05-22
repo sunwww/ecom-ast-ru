@@ -66,28 +66,7 @@
         </msh:section>
       </msh:ifInRole>
       </td>
-      <td style="padding-right: 4px">
-    	<ecom:webQuery name="lastVisit" nativeSql="select 
-    	t.id,t.date,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
-    	from ticket t 
-    	left join medcard m on m.id=t.medcard_id
-    	left join patient p on p.id=m.person_id
-    	left join workfunction wf on wf.id=t.workFunction_id
-    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-    	left join worker w on w.id=wf.worker_id
-    	left join patient wp on wp.id=w.person_id
-    	where m.person_id=${param.id}
-    	order by t.date desc
-    	" maxResult="1" />
-    <msh:tableNotEmpty name="lastVisit">
-     <msh:section title="Последнее посещение по талонам">
-    	<msh:table name="lastVisit" action="entityParentView-poly_ticket.do" idField="1">
-	    	<msh:tableColumn property="2" columnName="Дата"/>
-    		<msh:tableColumn property="3" columnName="Специалист"/>
-    	</msh:table>
-     </msh:section>
-    </msh:tableNotEmpty>
-          </td><td style="padding-right: 4px">
+	<td style="padding-right: 4px">
     
     	<ecom:webQuery name="lastVisit1" nativeSql="select 
     	m.id,coalesce(m.dateStart,wcd.calendarDate) as dateFrom
@@ -103,7 +82,7 @@
     	left join patient wp on wp.id=w.person_id
     	left join worker w1 on w1.id=wf1.worker_id
     	left join patient wp1 on wp1.id=w1.person_id
-    	where m.patient_id=${param.id} and m.DTYPE='Visit'
+    	where m.patient_id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
     	order by coalesce(m.dateStart,wcd.calendarDate) desc
     	" maxResult="1" />
      <msh:section title="Последнее посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 

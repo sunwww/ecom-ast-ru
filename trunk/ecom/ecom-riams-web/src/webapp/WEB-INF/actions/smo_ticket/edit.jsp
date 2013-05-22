@@ -22,7 +22,8 @@
           <msh:textField label="Время" property="timeExecute" fieldColSpan="1" guid="ed78c5e3-5e2c-4d8c-b64e-75767dcf0775" />
         </msh:row>
         <msh:row>
-        	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:checkBox label="Неотложная помощь" property="emergency" />
+        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="4" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
@@ -74,12 +75,11 @@
 	        	<msh:autoComplete vocName="vocVisitOutcome" property="visitOutcome" label="Исход СП" horizontalFill="true" />
 	        </msh:row>
         </msh:ifInRole>
-        <msh:row>
-        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="4" horizontalFill="true"/>
-        </msh:row>
+        <msh:ifFormTypeIsNotView formName="smo_ticketForm">
         <msh:row>
         	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" fieldColSpan="3"/>
         </msh:row>
+        </msh:ifFormTypeIsNotView>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         	<msh:ifFormTypeIsView formName="smo_ticketForm">
 	        <msh:row>
@@ -121,7 +121,7 @@
     			from MedCase t1 
     			left join MedCase t2 on t1.medcard_id=t2.medcard_id
     			 and t1.dateStart=t2.dateStart 
-    			where t1.dtype='ShortMedCase' and t2.'ShortMedCase' and t2.id='${param.id}'
+    			where t1.dtype='ShortMedCase' and t2.dtype='ShortMedCase' and t2.id='${param.id}'
     			 and t1.workFunctionExecute_id=t2.workFunctionExecute_id
     			   and t1.isTalk='1'"/>
     			<msh:table deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" viewUrl="entityShortView-smo_ticket.do" name="ticketTalk" action="entityParentView-smo_ticket.do" idField="1">
@@ -214,6 +214,8 @@
          title="Добавить талон" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
+        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key="SHIFT+8" params="id" 
+	        action="/print-visit.do?s=VisitPrintService&amp;m=printVisit" name="Талона с заключением" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона с заключением" />
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
         <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" guid="5138-f936-45d0-ac70-066c" key="SHIFT+9" title="Печатать направления на бак.исследование" />
       </msh:sideMenu>
