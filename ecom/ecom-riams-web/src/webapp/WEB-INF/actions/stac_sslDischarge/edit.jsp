@@ -20,8 +20,8 @@
             #concludingDiagnosLabel, #concludingMkbLabel {
                 color: black ;
             }
-            #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
-                color: red ;
+            #complicationDiagnosLabel, #complicationMkbLabel {
+                color: purple;
             }
             
             .epicrisis {
@@ -174,10 +174,16 @@
 	        <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textField label="Диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 ослож." property="complicationMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+    	    <msh:textField label="Осложнение" property="complicationDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
 	        <msh:row>
@@ -306,6 +312,10 @@
   		try {
 	    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('concomitantMkb','concomitantDiagnos');
+	    });} catch(e) {}
+  		try {
+	    if (complicationMkbAutocomplete) complicationMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('complicationMkb','complicationDiagnos');
 	    });} catch(e) {}
   		function setDiagnosisText(aFieldMkb,aFieldText) {
   			var val = $(aFieldMkb+'Name').value ;

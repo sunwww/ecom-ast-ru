@@ -150,7 +150,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'  
     	key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
 
-    <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  --%>
+    <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  
 	<msh:sideLink roles="/Policy/Mis/MedCase/DeathCase/View"  name="Случай смерти"   
 		params="id"  action='/entityParentList-stac_deathCase' title='Просмотр случая смерти'
 		styleId="stac_deathCase"
