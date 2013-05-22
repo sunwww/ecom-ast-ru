@@ -15,27 +15,68 @@ function doNotAddTalk(aContext, aTicketId) {
 }
 
 function addTalk(aContext, aTicketId) {
-	var ticket = aContext.manager.find(Packages.ru.ecom.poly.ejb.domain.Ticket
+	var ticket = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, java.lang.Long.valueOf(aTicketId)) ;
 	var profs = aContext.manager.createQuery("from VocReason where code='PROFYLACTIC'").getResultList() ;
 	var prof = profs.size() ? profs.get(0) : null ;
-	var ticketCopy = new Packages.ru.ecom.poly.ejb.domain.Ticket() ;
+	var ticketCopy = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase() ;
+	// Талон беседы с родственником
 	ticketCopy.medcard = ticket.medcard ;
-	ticketCopy.illnesPrimary = ticket.illnesPrimary ;
-	ticketCopy.vocIllnesType = ticket.vocIllnesType ;
-	ticketCopy.vocPaymentType = ticket.vocPaymentType ;
-	ticketCopy.vocReason = prof ;
-	ticketCopy.vocServicePlace = ticket.vocServicePlace ;
-	ticketCopy.vocVisitResult = ticket.vocVisitResult ;
-	ticketCopy.workFunction = ticket.workFunction ;
-	ticketCopy.idc10 = ticket.idc10 ;
-	ticketCopy.primary = ticket.primary ;
+	ticketCopy.patient = ticket.patient ;
+	//ticketCopy.illnesPrimary = ticket.illnesPrimary ;
+	//ticketCopy.vocIllnesType = ticket.vocIllnesType ;
+	ticketCopy.serviceStream = ticket.serviceStream ;
+	ticketCopy.visitReason = prof ;
+	ticketCopy.workPlaceType = ticket.workPlaceType ;
+	ticketCopy.visitResult = ticket.visitResult ;
+	ticketCopy.workFunctionExecute = ticket.workFunctionExecute ;
+	//ticketCopy.idc10 = ticket.idc10 ;
+	//ticketCopy.primary = ticket.primary ;
 	ticketCopy.hospitalization = ticket.hospitalization;
-	ticketCopy.date = ticket.date ;
-	ticketCopy.time = ticket.time ;
-	ticketCopy.talk = java.lang.Boolean.TRUE ;
-	ticketCopy.status = Packages.ru.ecom.poly.ejb.domain.Ticket.STATUS_CLOSED
+	ticketCopy.dateStart = ticket.dateStart ;
+	ticketCopy.timeExecute = ticket.timeExecute ;
+	ticketCopy.isTalk = java.lang.Boolean.TRUE ;
+	//ticketCopy.status = Packages.ru.ecom.poly.ejb.domain.Ticket.STATUS_CLOSED
 	aContext.manager.persist(ticketCopy);
+	// Диагноз
+	var listDiag = aContext.manager.createQuery("from Diagnosis where medCase_id=:medcase and priority.code=:priority")
+		.setParameter("medcase",ticket.id)
+		.setParameter("priority","1")
+		.getResultList() ;
+	if (!listDiag.isEmpty()) {
+		var diag=listDiag.get(0) ;
+		var diagCopy = new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis() ;
+		diagCopy.idc10 = diag.idc10;
+		diagCopy.illnesPrimary = diag.illnesPrimary;
+		diagCopy.name =diag.name ;
+		diagCopy.patient = diag.patient ;
+		
+		diagCopy.medCase=ticketCopy ;
+		diagCopy.priority=diag.priority ;
+		aContext.manager.persist(diagCopy);
+	}
+	// Создание и закрытие СПО
+	var spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
+	
+	var workFunction = ticket.getWorkFunctionExecute() ; 
+	spo.setOwnerFunction(workFunction) ;
+	spo.setDateStart(ticket.getDateStart()) ;
+	spo.setLpu(workFunction.worker.getLpu()) ;
+	spo.setPatient(ticket.getPatient()) ;
+	spo.setStartFunction(workFunction) ;
+	spo.setServiceStream(ticket.getServiceStream()) ;
+	spo.setNoActuality(false) ;
+	aContext.manager.persist(spo) ;
+	ticketCopy.setParent(spo) ;
+	
+	aContext.manager.persist(ticketCopy) ;
+	try {
+		aCt.serviceInvoke("SmoVisitService", "closeSpo",spo.id) ;
+	} catch(e) {
+		
+	}
+
+
 	return ticketCopy.getId();
 	
 }
