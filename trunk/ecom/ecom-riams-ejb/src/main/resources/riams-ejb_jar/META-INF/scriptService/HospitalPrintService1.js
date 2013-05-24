@@ -455,9 +455,12 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		wqr.set16(recordZavOtd(aCtx,lastotdId,"dep.zav")) ;//
 		slsId = medCase.id ;
 		//8. Диагноз направившего учреждения
-		wqr.set17(getDiagnos(medCase.diagnosOrder)) ;//"sls.diagnosisOrder",
+		//wqr.set17(getDiagnos(medCase.diagnosOrder)) ;//"sls.diagnosisOrder",
+		wqr.set17(recordDiagnosis(aCtx,slsId,"2","0","diagnosis.order.main")) ;
 		//9. Диагноз при поступлении
-		wqr.set18(getDiagnos(medCase.diagnosEntrance)) ;//"sls.diagnosisAdmission",
+		//wqr.set18(getDiagnos(medCase.diagnosEntrance)) ;//"sls.diagnosisAdmission",
+		
+		wqr.set18(recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main")) ;
 		wqr.set19(recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main")) ;
 		wqr.set20(recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related")) ;
 		wqr.set21(recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication")) ;
@@ -616,8 +619,10 @@ function printSurOperations(aCtx,aParams) {
 function recordDiagnosis(aCtx,aSlsId,aRegistrationType,aPriority,aField,aDtype) {
 	var wqr = new Packages.ru.ecom.ejb.services.query.WebQueryResult() ;
 	if (aDtype==null || aDtype=='') aDtype='HospitalMedCase' ;
-	var sql="select sls.id,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code= '"+aPriority+"'  then mkb.code else null end) as diagCode"
-		+" ,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code='"+aPriority+"' then diag.name else null end) as diagText" 
+	var prioritySql="" ;
+	if (+aPriority>0) {prioritySql=" and vpd.code='"+aPriority+"' "}
+	var sql="select sls.id,list(case when vdrt.code='"+aRegistrationType+"'"+prioritySql+"  then mkb.code else null end) as diagCode"
+		+" ,list(case when vdrt.code='"+aRegistrationType+"' "+prioritySql+" then diag.name else null end) as diagText" 
 		+" from MedCase sls" 
 		+" left join Diagnosis diag on diag.medCase_id=sls.id"
 		+" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id"
