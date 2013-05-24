@@ -124,7 +124,7 @@
     			where t1.dtype='ShortMedCase' and t2.dtype='ShortMedCase' and t2.id='${param.id}'
     			 and t1.workFunctionExecute_id=t2.workFunctionExecute_id
     			   and t1.isTalk='1'"/>
-    			<msh:table deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" viewUrl="entityShortView-smo_ticket.do" name="ticketTalk" action="entityParentView-smo_ticket.do" idField="1">
+    			<msh:table deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" viewUrl="entityParentView-smo_ticket.do?short=Short" name="ticketTalk" action="entityParentView-smo_ticket.do" idField="1">
     				<msh:tableColumn property="sn" columnName="#"/>
     				<msh:tableColumn property="1" columnName="ИД талона"/>
     				<msh:tableColumn property="2" columnName="talk"/>

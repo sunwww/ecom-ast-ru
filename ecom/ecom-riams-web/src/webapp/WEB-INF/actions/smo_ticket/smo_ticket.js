@@ -1,6 +1,3 @@
-function f039list(aForm,aCtx) {
-	return aCtx.createForward("/WEB-INF/actions/poly_ticket/f039_list.jsp") ;
-}
 function addTalk(aForm, aCtx) {
 	var id=aCtx.request.getParameter("id") ;
 	var col = aCtx.invokeScript("TicketService", "addTalk"
@@ -14,19 +11,11 @@ function doNotAddTalk(aForm, aCtx) {
         return aCtx.createForward("/entityParentView-smo_ticket.do?id="+id) ;
 }
 function listDiag(aForm, aCtx) {
-	return aCtx.createForward("/WEB-INF/actions/poly_ticket/list_diag.jsp") ;
+	return aCtx.createForward("/WEB-INF/actions/smo_ticket/list_diag.jsp") ;
 }
 function infoDiagByMedcard(aForm,aCtx) {
-	return aCtx.createForward("/WEB-INF/actions/poly_ticket/list_diag_by_medcard.jsp") ;
+	return aCtx.createForward("/WEB-INF/actions/smo_ticket/list_diag_by_medcard.jsp") ;
 }
-function journalRegisterVisit(aForm,aCtx) {
-	var form = aCtx.session.getAttribute("poly_journalBySpecForm");
-	if (form!=null) {
-		var col = aCtx.invokeScript("TicketService","journalRegisterVisit", 
-			form.beginDate+":"+form.finishDate+":"+form.specialist+":"+form.rayon+":"+form.primaryInYear) ;
-		aCtx.request.setAttribute('listRegisterVisit',col) ;
-	} else {
-		aCtx.request.setAttribute('listRegisterVisit',new java.util.ArrayList()) ;
-	}
-	return aCtx.createForward("/poly_journalRegisterVisit_list.do") ;
+function list(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_ticket/list.jsp") ;
 }

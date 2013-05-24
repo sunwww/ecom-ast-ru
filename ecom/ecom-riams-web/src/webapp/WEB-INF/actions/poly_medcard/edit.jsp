@@ -58,9 +58,9 @@
     </msh:tableNotEmpty>
 	  <msh:ifInRole roles="/Policy/Poly/Ticket/View">
 	      <msh:section title="Открытые талоны" createRoles="/Policy/Poly/Ticket/Create" viewRoles="/Policy/Poly/Ticket/View" 
-	      shortList="entityParentList-smo_ticket.do?short=Short&id=${param.id}" 
+	      shortList="js-smo_ticket-list.do?short=Short&id=${param.id}" 
 	      createUrl="entityParentPrepareCreate-smo_ticket.do?id=${param.id}" 
-	      listUrl="entityParentList-smo_ticket.do?id=${param.id}">
+	      listUrl="js-smo_ticket-list.do?id=${param.id}">
 	        <msh:sectionContent guid="6963aae2-0581-4f08-8844-279f55ea6b45">
 	        <ecom:webQuery name="tickets"
 	        	nativeSql="select 
@@ -115,7 +115,7 @@
 	        <msh:sideLink roles="/Policy/Poly/ShortTicket/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-smo_short_ticket" name="Талон на прием" title="Создать талон на прием" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
 	    </msh:sideMenu>
     <msh:sideMenu title="Показать все">
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/entityParentList-smo_ticket" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/js-smo_ticket-list" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
     </msh:sideMenu>
     <msh:sideMenu title="Печать">
     <msh:sideLink roles="/Policy/Mis/Patient/View"  key="CTRL+1"
