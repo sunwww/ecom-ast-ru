@@ -300,7 +300,7 @@ function printBillings(aCtx, aParams)
 		var id1=ids[i] ;
 		var indlast = id1.lastIndexOf("!") ;
 		var id = id1.substring(indlast+1) ;
-		
+
 		var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(id)) ;
 		medCase.setPrintDate(curDate) ;
@@ -317,6 +317,17 @@ function printBillings(aCtx, aParams)
 		//выписной диагноз
 		mapS.set6(getDiagnos(medCase.diagnosConcluding)); //"sls.diagnosConcluding",
 		mapS.set7(recordMultiText(medCase.dischargeEpicrisis)); //"sls.dischargeRecord",
+		var ret2 = new java.util.ArrayList() ;
+		var ret1 = new java.util.ArrayList() ;
+		var retwq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		ret1.add(retwq) ;
+		if (medCase.result!=null&& (medCase.result.code=="11" || medCase.result.code=="15")) {
+			mapS.set8(ret1) ; //death
+			mapS.set9(ret2) ; //normal
+		} else {
+			mapS.set8(ret2) ;
+			mapS.set9(ret1) ;
+		}
 		ret.add(mapS) ;
 		
 	}
