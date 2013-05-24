@@ -38,8 +38,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Талон", nameProperties = "id"
 	, view = "entityView-smo_ticket.do"
 	, shortView = "entityShortView-smo_ticket.do"
-	, list = "entityParentList-smo_ticket.do"
-	, shortList = "entityParentShortList-smo_ticket.do" 
+	, list = "js-smo_ticket-list.do"
+	, shortList = "js-smo_ticket-list.do?short=Short" 
 )
 @EntityFormSecurityPrefix("/Policy/Poly/Ticket")
 @ASaveInterceptors(

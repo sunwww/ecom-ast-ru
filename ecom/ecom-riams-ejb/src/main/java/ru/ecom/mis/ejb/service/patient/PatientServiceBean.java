@@ -1000,7 +1000,7 @@ public class PatientServiceBean implements IPatientService {
 		try {
 			birthday = DateFormat.parseSqlDate(aBirthday);
 			pat.setBirthday(birthday) ;
-			SimpleDateFormat dat = new SimpleDateFormat("yyyy-MM-dd") ;
+			SimpleDateFormat dat = new SimpleDateFormat("dd.MM.yyyy") ;
 			date = dat.format(birthday) ;
 		} catch (ParseException e) {
 			new ParseException("Неправильно введена дата рождения пациента", 0) ;

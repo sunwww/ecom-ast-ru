@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.form.medcase.death;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -39,9 +40,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ASaveInterceptors(
         @AEntityFormInterceptor(DeathCaseSaveInterceptor.class)
 )
+@ACreateInterceptors( {
+	@AEntityFormInterceptor(DeathCaseSaveInterceptor.class)
+})
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DeathCasePreCreateInterceptor.class)
 )
+
 public class DeathCaseForm extends IdEntityForm{
 	/** Мед. случай */
 	@Comment("Мед. случай")
