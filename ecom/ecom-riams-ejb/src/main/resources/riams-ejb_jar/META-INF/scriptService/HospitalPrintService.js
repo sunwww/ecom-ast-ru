@@ -1018,7 +1018,7 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		map.put("sls.lastOtd",lastotd) ;
 		recordZavOtd(aCtx,lastotdId,"dep.zav") ;
 		slsId = medCase.id ;
-		recordDiagnosis(aCtx,slsId,"1","2","diagnosis.order.main") ;
+		recordDiagnosis(aCtx,slsId,"2","0","diagnosis.order.main") ;
 		recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
 		recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main") ;
 		recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related") ;
@@ -1210,8 +1210,11 @@ function recordDisability(aContext,aSlsId,aField) {
 
 function recordDiagnosis(aCtx,aSlsId,aRegistrationType,aPriority,aField,aDtype) {
 	if (aDtype==null || aDtype=='') aDtype='HospitalMedCase' ;
-	var sql="select sls.id,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code= '"+aPriority+"'  then mkb.code else null end) as diagCode"
-		+" ,list(case when vdrt.code='"+aRegistrationType+"' and vpd.code='"+aPriority+"' then diag.name else null end) as diagText" 
+	var prioritySql="" ;
+	if (+aPriority>0) {prioritySql=" and vpd.code='"+aPriority+"' "}
+	
+	var sql="select sls.id,list(case when vdrt.code='"+aRegistrationType+"' "+prioritySql+"  then mkb.code else null end) as diagCode"
+		+" ,list(case when vdrt.code='"+aRegistrationType+"' "+prioritySql+" then diag.name else null end) as diagText" 
 		+" from MedCase sls" 
 		+" left join Diagnosis diag on diag.medCase_id=sls.id"
 		+" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id"
