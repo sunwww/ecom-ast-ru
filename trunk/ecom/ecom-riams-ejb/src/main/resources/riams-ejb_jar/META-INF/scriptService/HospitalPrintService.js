@@ -1346,11 +1346,24 @@ function printBilling(aCtx, aParams)
 	var id = aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 			, new java.lang.Long(id)) ;
+	var ret = new java.util.ArrayList() ;
+	var ret1 = new java.util.ArrayList() ;
+	
+	var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	ret1.add(wq) ;
+	if (medCase.result!=null&& (medCase.result.code=="11" || medCase.result.code=="15")) {
+		map.put("title.death",ret1) ;
+		map.put("title.normal",ret) ;
+	} else {
+		map.put("title.death",ret) ;
+		map.put("title.normal",ret1) ;
+	}
 	//Свединия по пациенту	
 	recordPatient(medCase,aCtx) ;
 	//Диагнозы
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
 	map.put("sls.emergency", ((medCase.emergency!=null && medCase.emergency) ? "в экстренном порядке":"в плановом порядке")) ;
+	
 	//5. Даты: поступления, выбытия
 	map.put("sls.Start",medCase.dateStart) ;
 	map.put("sls.Finish",medCase.dateFinish) ;
