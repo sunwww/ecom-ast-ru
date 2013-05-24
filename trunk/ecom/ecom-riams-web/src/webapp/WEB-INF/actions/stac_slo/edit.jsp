@@ -39,6 +39,8 @@
     	 title='Выписка' styleId="stac_sslDischarge" />
       </msh:sideMenu>
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
+      <msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Create" 
+       action="/entityParentPrepareCreate-expert_ker_direct" name="Направление на ВК" params="id" />
       	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" name="Дневник специалиста" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" title="Дневник специалиста" guid="11cc057f-b309-4193-9d22-199373cfd28d" />
         </msh:ifNotInRole>
