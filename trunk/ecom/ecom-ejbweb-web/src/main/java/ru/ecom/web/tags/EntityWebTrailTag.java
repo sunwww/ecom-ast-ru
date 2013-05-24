@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.config.FormBeanConfig;
 import org.apache.struts.config.ModuleConfig;
-import org.hibernate.mapping.Subclass;
 
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -26,7 +25,6 @@ import ru.ecom.ejb.services.entityform.map.MapClassLoader;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.web.actions.entity.AbstractEntityAction;
 import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.map.WebMapClassLoaderHelper;
 import ru.ecom.web.util.EntityInjection;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
@@ -243,7 +241,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     	sb.append("<span><a") ;
     	sb.append(" href='") ;
     	sb.append(aListAction) ;
-    	sb.append("?id=") ;
+    	if (aListAction.indexOf("?")<0) {sb.append("?id=") ;} else {sb.append("&id=");} ;
     	sb.append(aId);
     	sb.append("'");
         sb.append("'>");
@@ -252,7 +250,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         if (aListShortAction!=null && !aListShortAction.equals("")) {
         	sb.append("<a class='a_instance_message' href='javascript:void(0)' onclick='getDefinition(\"").append(aListShortAction);
             //aSb.append(" class='a_instance_message' onmouseover='getDefinition(\"").append(aDefaultShortAction);
-        	sb.append("?id=") ;
+        	if (aListShortAction.indexOf("?")<0) {sb.append("?id=") ;} else {sb.append("&id=");} ;
         	sb.append(aId);
         	sb.append("\", event); return false ;' ");
             //sb.append("onmouseout='hideMessage()'") ;
@@ -289,7 +287,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             aSb.append("<a ") ;
             aSb.append(" href='") ;
             aSb.append(aDefaultViewAction) ;
-            aSb.append("?id=") ;
+            if (aDefaultViewAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
             aSb.append(aId);
             aSb.append("'");
             aSb.append(" title='") ;
@@ -323,7 +321,8 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         if (firstIsLink&&aDefaultShortAction!=null && !aDefaultShortAction.equals("")) {
         	aSb.append("<a class='a_instance_message' href='javascript:void(0)' onclick='getDefinition(\"").append(aDefaultShortAction);
             //aSb.append(" class='a_instance_message' onmouseover='getDefinition(\"").append(aDefaultShortAction);
-            aSb.append("?id=") ;
+        	if (aDefaultShortAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
+            //aSb.append("?id=") ;
             aSb.append(aId);
             aSb.append("\", event); return false ;' ");
             //aSb.append("onmouseout='hideMessage()'") ;
