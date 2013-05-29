@@ -202,7 +202,8 @@ public class WorkCalendarServiceJs {
 				.append(" left join WorkCalendar wc1 on wf1.id=wc1.workFunction_id")
 				.append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
 				.append(" left join patient wp on wp.id=w1.person_id ")
-				.append("where wf1.id='").append(aWorkFunctionPlan).append("' and wc1.id is not null ") ;
+				.append("where wf1.id='").append(aWorkFunctionPlan).append("' and wc1.id is not null ")
+				.append(" group by wf1.id ,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName)");
 			list1 = service.executeNativeSql(sql.toString());
 			if (!list1.isEmpty()) list.addAll(list1) ;
 		}
