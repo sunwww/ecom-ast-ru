@@ -265,6 +265,7 @@
       
       workFunctionPlanAutocomplete.addOnChangeCallback(function(){
   		updateDefaultDate() ;
+  		
   		}) ;
       datePlanAutocomplete.addOnChangeCallback(function(){
     	  getPreRecord() ;
@@ -333,12 +334,12 @@
 	  					$('datePlan').value=calDayId ;
 				        $('datePlanName').value = calDayInfo;
 				        getPreRecord();
-  					}
-	  				else {
+  					} else {
 	  					$('datePlan').value=0 ;
 				        $('datePlanName').value = "";
 				        getPreRecord();
 	  				}
+  					getWorkFunctionByUsername() ;
 	  			}
   			}
   			) ;
