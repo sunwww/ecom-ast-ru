@@ -106,5 +106,28 @@ public class VocIdc10 extends VocIdCodeName {
 
 	/** Неактуаленный */
 	private Boolean theNoActuality;
+	
+	/** Используется в ОМС */
+	@Comment("Используется в ОМС")
+	public Boolean getUseOmc() {return theUseOmc;}
+	public void setUseOmc(Boolean aUseOmc) {theUseOmc = aUseOmc;}
+
+	/** Класс или блок */
+	@Comment("Класс или блок")
+	public Boolean getIsBlock() {return theIsBlock;}
+	public void setIsBlock(Boolean aIsBlock) {theIsBlock = aIsBlock;}
+
+	/** Родитель */
+	@Comment("Родитель")
+	@OneToOne
+	public VocIdc10 getParent() {return theParent;}
+	public void setParent(VocIdc10 aParent) {theParent = aParent;}
+
+	/** Родитель */
+	private VocIdc10 theParent;
+	/** Класс или блок */
+	private Boolean theIsBlock;
+	/** Используется в ОМС */
+	private Boolean theUseOmc;
 
 }
