@@ -191,7 +191,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 				Long workFunc = list.get(0).getWorkFunction().getId() ;
 				Object executed = theManager.createNativeQuery("select count(*)"
                      +  " from medcase"
-                     + " where workfunctionExecute_id=:workFunction"
+                     + " where workfunctionExecute_id=:workFunction and dtype='Visit'"
                      + " and dateStart=:date")
                    //  .setParameter("workFunction",aWorkFunction)
                    .setParameter("workFunction",workFunc)
