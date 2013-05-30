@@ -174,7 +174,7 @@ public class TemplateProtocolJs {
 				sql.append(" left join worker w on wf.worker_id=w.id");
 				sql.append(" left join patient wp on wp.id=w.person_id");
 				sql.append(" where smo.patient_id='").append(patient).append("'");
-				sql.append(" and (smo.dtype='Visit' or smo.dtype='ShortMedCase')");
+				sql.append(" and (smo.dtype='Visit' or smo.dtype='ShortMedCase') and d.dtype='Protocol'");
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
@@ -198,7 +198,7 @@ public class TemplateProtocolJs {
 				sql.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id");
 				sql.append(" left join worker w on wf.worker_id=w.id");
 				sql.append(" left join patient wp on wp.id=w.person_id");
-				sql.append(" where mc.person_id='").append(patient).append("'");
+				sql.append(" where mc.person_id='").append(patient).append("' and d.dtype='Protocol'");
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
@@ -249,7 +249,7 @@ public class TemplateProtocolJs {
 			sql.append(" left join worker w on wf.worker_id=w.id");
 			sql.append(" left join patient wp on wp.id=w.person_id");
 			sql.append(" where smo.patient_id='").append(patient).append("'");
-			sql.append(" and (smo.dtype='HospitalMedCase' or smo.dtype='DepartmentMedCase')");
+			sql.append(" and (smo.dtype='HospitalMedCase' or smo.dtype='DepartmentMedCase') and d.dtype='Protocol'");
 			sql.append(" order by d.dateRegistration desc");
 			sql.append(" ") ;
 			res.append("<ul>");

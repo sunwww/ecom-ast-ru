@@ -65,7 +65,7 @@
     			,sc.code as sccode
     			,vtp.name as vtpname
             	from MedCase mc
-            	left join Diary d on mc.id=d.medCase_id
+            	left join Diary d on mc.id=d.medCase_id 
             	left join VocTypeProtocol vtp on vtp.id=d.type_id
             	left join Patient pat on pat.id=mc.patient_id
             	left join MedCase as sls on sls.id = mc.parent_id 
@@ -78,7 +78,7 @@
             	and (sls.dateFinish is null or sls.dateFinish>(CURRENT_DATE-2)) 
             	
             	${filterAdd}
-            	and d.id is not null 
+            	and d.dtype='Protocol'
             	${dop}
             	
             	order by pat.lastname,pat.id,d.dateRegistration,d.timeRegistration"/>

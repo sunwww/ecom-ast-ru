@@ -44,7 +44,7 @@
 				left join MedCase m on m.id=p.medcase_id 
 				left join MisLpu d on d.id=m.department_id
             	where (m.parent_id='${param.id}' and m.dtype='DepartmentMedCase' or m.id='${param.id}' and m.dtype='HospitalMedCase')
-            	${dop}
+            	${dop} and p.dtype='Protocol'
             	order by p.dateRegistration,p.timeRegistration"/>
                 <msh:table selection="multiply" name="protocols" action="js-smo_visitProtocol-viewProtocol.do" idField="1" noDataMessage="Нет протоколов">
                     <msh:tableNotEmpty>

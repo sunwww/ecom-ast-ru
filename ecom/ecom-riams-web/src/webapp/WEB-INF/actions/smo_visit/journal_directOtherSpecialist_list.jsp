@@ -108,7 +108,7 @@
 from medcase v 
 left join Diagnosis diag on diag.medCase_id=v.id
 left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join Diary d on d.medCase_id=v.id
+left join Diary d on d.medCase_id=v.id and d.dtype='Protocol'
 left join WorkCalendarDay wcd on wcd.id=v.datePlan_id
 left join patient p on p.id=v.patient_id
 left join WorkFunction wfe on wfe.id=v.workFunctionExecute_id

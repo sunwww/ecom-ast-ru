@@ -30,7 +30,7 @@ left join vocvisitresult vvr on vvr.id = mc.visitresult_id
 left join diagnosis ds on ds.medcase_id=mc.id
 left join vocidc10 mkb on mkb.id=ds.idc10_id
 left join VocPriorityDiagnosis vpd on vpd.id = ds.priority_id
-left join diary prot on prot.medcase_id=mc.id
+left join diary prot on prot.medcase_id=mc.id and prot.dtype='Protocol'
 left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
