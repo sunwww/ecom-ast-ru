@@ -224,7 +224,10 @@
           ,p.dateRegistration as pdateregistration,p.timeRegistration as ptimeRegistration
           ,p.record as precord
           ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
-           from diary p left join workfunction wf on wf.id=p.specialist_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where p.medcase_id=${param.id} and p.dtype='Protocol'"/>
+           from diary p left join workfunction wf on wf.id=p.specialist_id 
+           left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id 
+           left join vocworkfunction vwf on vwf.id=wf.workfunction_id 
+           where p.medcase_id=${param.id} and p.dtype='Protocol'"/>
           <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false" guid="d0e60067-9aec-4ee0-b20a-4f6b37">
               <msh:tableColumn property="sn" columnName="#"/>
 		      <msh:tableColumn columnName="Дата" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
