@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+
 @Entity
 @Table(schema="SQLUser")
 public class Hello extends NoLiveBaseEntity {
