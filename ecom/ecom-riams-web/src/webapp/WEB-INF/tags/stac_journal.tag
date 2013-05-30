@@ -94,6 +94,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		        styleId="stac_journalByCurator" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" key="ALT+6" 
 		        action="/stac_journalByCurator" name="По лечащему врачу" />  
+ 	        <msh:sideLink 
+		        styleId="js-smo_draftProtocol-list.jsp" 
+		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" 
+		        action="/stac_journalByCurator" name="Черновики протоколов" />  
 
  	        <msh:sideLink 
 		        styleId="stac_journalTrafficByPatient" 
