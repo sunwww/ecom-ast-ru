@@ -29,7 +29,7 @@ where diag.medcase_id=t.id) as diag,prot.record as protrecord, vr.name as vrname
 left join vocreason vr on vr.id=t.visitReason_id
 left join vocvisitresult vvr on vvr.id = t.visitresult_id
 
-left join diary prot on prot.medCase_id=t.id
+left join diary prot on prot.medCase_id=t.id and prot.dtype='Protocol'
 left join workFunction wf on wf.id=t.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id

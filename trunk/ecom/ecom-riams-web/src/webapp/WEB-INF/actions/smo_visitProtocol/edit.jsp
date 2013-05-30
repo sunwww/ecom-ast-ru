@@ -86,7 +86,13 @@
                 </msh:row>
                 </msh:ifFormTypeIsView>
                 <msh:row>
-	                <msh:submitCancelButtonsRow colSpan="3"/>
+                    <td><input type="button" 
+                    onclick="this.form.action='entityParentSaveGoSubclassView-smo_draftProtocol.do';this.form.submit();"
+                    value="Сохранить черновик"/></td>
+                
+                </msh:row>
+                <msh:row>
+	                <msh:submitCancelButtonsRow colSpan="3" />
                 </msh:row>
             </msh:panel>
     </msh:form>

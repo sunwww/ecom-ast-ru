@@ -166,15 +166,14 @@
         <msh:sectionTitle guid="fe1105d3-8dc3-4adc-a89f-1af1b8f184b3">Протоколы</msh:sectionTitle>
         <msh:sectionContent guid="f3a17575-c8c3-4322-99be-8b73ac86ce6e">
           <ecom:webQuery name="protocols" 
-          nativeSql="select d.id,to_char(d.dateRegistration,'dd.mm.yyyy')||' '||cast(d.timeRegistration as varchar(5)) as registr
-          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+          nativeSql="select d.id,to_char(d.dateRegistration,'dd.mm.yyyy')||' '||cast(d.timeRegistration as varchar(5)) || ' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           ,d.record as drecord
            from diary d
            left join WorkFunction wf on wf.id=d.specialist_id
            left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
            left join Worker w on w.id=wf.worker_id
            left join Patient wp on wp.id=w.person_id
-            where d.medcase_id='${param.id}'
+            where d.medcase_id='${param.id}' and d.dtype='Protocol'
             order by d.dateRegistration, d.timeRegistration
             " 
             />

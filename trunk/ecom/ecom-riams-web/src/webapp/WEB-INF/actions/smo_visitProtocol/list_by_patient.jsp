@@ -20,7 +20,16 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <ecom:webQuery name="listByPatient" nativeSql="select pr.id, pr.dateREgistration,pr.timeRegistration,pr.record,vwf.name||' '||wp.lastname||' '||wp.firstname|| ' '||wp.middlename, case when (mc.DTYPE='VISIT' or mc.DTYPE='POLYCLINICMEDCASE') then 'Поликлиника' when mc.DTYPE='SERVICEMEDCASE' then 'Услуга' else 'Стационар' end from diary pr left join medcase mc on mc.id=pr.medcase_id  left join workfunction wf on wf.id=pr.specialist_id left join worker w on w.id=wf.worker_id left join vocWorkFunction vwf on vwf.id=wf.workFunction_id left join patient wp on wp.id=w.person_id where mc.patient_id='${param.id}' "/>
+    <ecom:webQuery name="listByPatient" nativeSql="select pr.id, pr.dateREgistration
+    ,pr.timeRegistration,pr.record,vwf.name||' '||wp.lastname||' '||wp.firstname|| ' '||wp.middlename
+    , case when (mc.DTYPE='Visit' or mc.DTYPE='PolyclinicMedCase' or mc.dtype='ShortMedCase') 
+    then 'Поликлиника' when mc.DTYPE='ServiceMedCase' then 'Услуга' 
+    else 'Стационар' end from diary pr 
+    left join medcase mc on mc.id=pr.medcase_id  
+    left join workfunction wf on wf.id=pr.specialist_id 
+    left join worker w on w.id=wf.worker_id 
+    left join vocWorkFunction vwf on vwf.id=wf.workFunction_id 
+    left join patient wp on wp.id=w.person_id where mc.patient_id='${param.id}' and pr.dtype='Protocol'"/>
     <msh:tableNotEmpty name="listByPatient">
   <msh:section title="Заключения по медицинским случаям обслуживания">
     <msh:table name="listByPatient" action="entityParentView-smo_visitProtocol.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -29,17 +38,6 @@
       <msh:tableColumn columnName="Время" property="3" guid="0694f40-4ebf-a274-1efd6901cfe4" />
       <msh:tableColumn columnName="Текст" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" cssClass="preCell"/>
       <msh:tableColumn columnName="Специалист" property="5" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-    </msh:table>
-  </msh:section>
-  </msh:tableNotEmpty>
-    <ecom:webQuery name="listByPatientTic" nativeSql="select pr.id, pr.dateREgistration,pr.timeRegistration,pr.record,vwf.name||' '||wp.lastname||' '||wp.firstname|| ' '||wp.middlename from diary pr left join ticket tic on tic.id=pr.ticket_id  left join workfunction wf on wf.id=pr.specialist_id left join worker w on w.id=wf.worker_id left join medcard m on m.id=tic.medcard_id left join vocWorkFunction vwf on vwf.id=wf.workFunction_id left join patient wp on wp.id=w.person_id where m.person_id='${param.id}' "/>
-    <msh:tableNotEmpty name="listByPatientTic">
-    <msh:section title="Заключения по талонам">
-    <msh:table name="listByPatientTic" action="entityParentView-poly_protocol.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="1" property="dateRegistration" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="2" property="timeRegistration" guid="0694f40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="3" property="record" guid="6682eeef-105f-43a0-be61-30a865f27972" cssClass="preCell"/>
-      <msh:tableColumn columnName="4" property="specialistInfo" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
     </msh:table>
   </msh:section>
   </msh:tableNotEmpty>
