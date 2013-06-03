@@ -846,7 +846,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 
         name="Амбул.карты" title="Печать амбул.карты" 
         guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/View" />
-        <msh:sideLink params="id" action="/print-vis_emergencyTicket.do?s=PatientPrintService&amp;m=printInfo" name="Талона экст." title="Печать талона для экстрен. приема" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/PrintEmergency" />
         <msh:sideLink key="SHIFT+8" params="id" action="/print-pat.do?s=PatientPrintService&amp;m=printInfo" name="Сведений о пациенте" title="Печать сведений о пациенте" guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/View" />
         <msh:sideLink key="SHIFT+9" action="/print-agreement.do?s=PatientPrintService&amp;m=printAgreement" 
         	name="Информ. согласия на мед. вмешательство" title="Печать информационного согласия"  
