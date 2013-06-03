@@ -19,6 +19,7 @@ import ru.ecom.mis.ejb.domain.expert.voc.VocExpertOrderConclusion;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatientStatus;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatternCase;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertSubject;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -233,6 +234,14 @@ public class ClinicExpertCard extends BaseEntity {
 	public WorkFunction getOrderFunction() {return theOrderFunction;}
 	public void setOrderFunction(WorkFunction aOrderFunction) {theOrderFunction = aOrderFunction;}
 
+	/** Направившее ЛПУ */
+	@Comment("Направившее ЛПУ")
+	@OneToOne
+	public MisLpu getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Направившее ЛПУ */
+	private MisLpu theOrderLpu;
 	/** Направивший специалист */
 	private WorkFunction theOrderFunction;
 	/** Диагноз осложнение */

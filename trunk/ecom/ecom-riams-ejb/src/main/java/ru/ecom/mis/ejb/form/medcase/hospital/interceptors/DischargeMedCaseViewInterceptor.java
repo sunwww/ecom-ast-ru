@@ -9,13 +9,9 @@ import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
-import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.ExtHospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
