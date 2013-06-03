@@ -105,6 +105,14 @@ public class DirectOfMedicalCommissionForm extends IdEntityForm {
 	public String getDelayReason() {return theDelayReason;}
 	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
 
+	/** Направившее ЛПУ */
+	@Comment("Направившее ЛПУ")
+	@Persist
+	public Long getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Направившее ЛПУ */
+	private Long theOrderLpu;
 	/** Причина задержки */
 	private String theDelayReason;
 	/** Листок нетрудоспособности */
