@@ -1,4 +1,17 @@
 var map = new java.util.HashMap() ;
+function printDirectVK(aCtx,aParams) {
+	var id = new java.lang.Long(aParams.get("id")) ;
+	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.ClinicExpertCard,id);
+	map.put("directVk",doc) ;
+	map.put("sls",doc.medCase.parent) ;
+	map.put("patient",doc.medCase.patient) ;
+	map.put("direct.countDaysDisability",recordDuration(doc.disabilityDate,doc.orderDate)) ;
+	//map.put("patInfo.age","") ;
+	recordAge("patInfo.age",doc.medCase.patient.birthday,doc.orderDate,1,1,1) ;
+	recordZavOtd(aCtx,doc.lpu!=null?doc.lpu.id:null,"direct.administrator") ;
+	recordOwnerFunction(aCtx,doc.orderFunction!=null?doc.orderFunction.id:null,"direct.doctor") ;
+	return map ;
+}
 /** Печать служебной записки по госпитализациям без прикрепленных полисов */
 function receivedWithoutPolicy(aCtx,aParams) {
 	var dateBegin = aParams.get("dateBegin") ;
@@ -1051,6 +1064,27 @@ function recordZavOtd(aCtx,aLastOtdId,aField) {
 		map.put(aField+".lastname",null);
 	}
 }
+function recordOwnerFunction(aCtx,aOwnerFunctiondId,aField) {
+	if (+aOwnerFunctiondId>0) {
+		var sql = "select p.lastname||' '||p.firstname||' '||p.middlename,wf.id,p.lastname " 
+			+" from workfunction wf " 
+			+" left join worker w on w.id=wf.worker_id"
+			+" left join patient p on p.id=w.person_id"
+			+" where wf.id='"+aOwnerFunctiondId+"'" ;
+		var list = aCtx.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
+		if (list.size()>0) {
+			var obj=list.get(0) ;
+			map.put(aField+".info",obj[0]);
+			map.put(aField+".lastname",obj[2]);
+		} else {
+			map.put(aField+".info",null);
+			map.put(aField+".lastname",null);
+		}
+	} else {
+		map.put(aField+".info",null);
+		map.put(aField+".lastname",null);
+	}
+}
 
 function printConsentBySlo(aCtx,aParams) {
 	var sloId=new java.lang.Long(aParams.get("id")) ;
@@ -1544,3 +1578,31 @@ function recordBoolean(aKey) {
 		map.put(aKey+".k2","</text:span>");
 }
 
+function recordAge(aKey,aDateBegin,aDateEnd,aIsYear,aIsMonth,aIsDay) {
+	if (aDateBegin!=null && aDateEnd!=null) {
+		var calenB = java.util.Calendar.getInstance() ;
+		calenB.setTime(aDateBegin) ;
+		var calenE = java.util.Calendar.getInstance() ;
+		calenE.setTime(aDateEnd) ;
+		if (aIsDay!=null && aIsDay==1) {
+			map.put(aKey+".cntday",""+(calenE.get(java.util.Calendar.DAY_OF_MONTH)-calenB.get(java.util.Calendar.DAY_OF_MONTH)+1)) ;
+		}
+		if (aIsMonth!=null && aIsMonth==1) {
+			map.put(aKey+".cntmonth",""+(calenE.get(java.util.Calendar.MONTH)-calenB.get(java.util.Calendar.MONTH))) ;
+		}
+		if (aIsYear!=null && aIsYear==1) {
+			map.put(aKey+".cntyear",""+(calenE.get(java.util.Calendar.YEAR)-calenB.get(java.util.Calendar.YEAR))) ;
+		}
+	} else {
+		map.put(aKey+".cntday","");
+		map.put(aKey+".cntmonth","");
+		map.put(aKey+".cntyear","");
+	}
+}
+function recordDuration(aDateBegin,aDateEnd) {
+	var calenB = java.util.Calendar.getInstance() ;
+	calenB.setTime(aDateBegin) ;
+	var calenE = java.util.Calendar.getInstance() ;
+	calenE.setTime(aDateEnd) ;
+	return ""+(( (calenE.getTime().getTime()-calenB.getTime().getTime())/(1000*60*60*24))+1) ;
+}
