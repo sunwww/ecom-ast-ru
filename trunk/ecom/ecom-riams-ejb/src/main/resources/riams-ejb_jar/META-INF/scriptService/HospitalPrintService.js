@@ -5,7 +5,9 @@ function printDirectVK(aCtx,aParams) {
 	map.put("directVk",doc) ;
 	map.put("sls",doc.medCase.parent) ;
 	map.put("patient",doc.medCase.patient) ;
-	map.put("direct.countDaysDisability",recordDuration(doc.disabilityDate,doc.orderDate)) ;
+	map.put("direct.countDaysDisability",recordDuration(doc.disabilityDate,doc.orderDate,1)) ;
+	map.put("direct.preDays",recordDuration(doc.orderDate,doc.preFinishDate,0)) ;
+	
 	//map.put("patInfo.age","") ;
 	recordAge("patInfo.age",doc.medCase.patient.birthday,doc.orderDate,1,1,1) ;
 	recordZavOtd(aCtx,doc.lpu!=null?doc.lpu.id:null,"direct.administrator") ;
@@ -1599,10 +1601,10 @@ function recordAge(aKey,aDateBegin,aDateEnd,aIsYear,aIsMonth,aIsDay) {
 		map.put(aKey+".cntyear","");
 	}
 }
-function recordDuration(aDateBegin,aDateEnd) {
+function recordDuration(aDateBegin,aDateEnd,aAddCount) {
 	var calenB = java.util.Calendar.getInstance() ;
 	calenB.setTime(aDateBegin) ;
 	var calenE = java.util.Calendar.getInstance() ;
 	calenE.setTime(aDateEnd) ;
-	return ""+(( (calenE.getTime().getTime()-calenB.getTime().getTime())/(1000*60*60*24))+1) ;
+	return ""+(( (calenE.getTime().getTime()-calenB.getTime().getTime())/(1000*60*60*24))+aAddCount) ;
 }

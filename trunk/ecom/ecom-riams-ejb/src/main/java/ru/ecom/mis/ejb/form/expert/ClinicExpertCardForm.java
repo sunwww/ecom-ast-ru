@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.expert.ClinicExpertCard;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertReason;
 import ru.ecom.mis.ejb.form.expert.interceptor.ClinicExpertCardPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -121,6 +124,30 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 	public String getDelayReason() {return theDelayReason;}
 	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
 
+	/** Причина направления */
+	@Comment("Причина направления")
+	@Persist 
+	public Long getReasonDirect() {return theReasonDirect;}
+	public void setReasonDirect(Long aReasonDirect) {theReasonDirect = aReasonDirect;}
+
+	/** Лечение на момент подачи */
+	@Comment("Лечение на момент подачи")
+	@Persist 
+	public String getTreatmentCurrent() {return theTreatmentCurrent;}
+	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
+
+	/** Срок предполагаемого лечения */
+	@Comment("Срок предполагаемого лечения")
+	@Persist @DateString @DoDateString
+	public String getPreFinishDate() {return thePreFinishDate;}
+	public void setPreFinishDate(String aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+
+	/** Срок предполагаемого лечения */
+	private String thePreFinishDate;
+	/** Лечение на момент подачи */
+	private String theTreatmentCurrent;
+	/** Причина направления */
+	private Long theReasonDirect;
 	/** Причина задержки */
 	private String theDelayReason;
 	/** Состав экспертов */
