@@ -88,7 +88,7 @@
   	}
   	
   	var fnPeriod = function() {setPeriod("disabilityDate","orderDate",'infoReadOnly',1) ;} ; 
-  	var fnPeriod1 = function() {setPeriod("orderDate","preFinishDate",'infoReadPreOnly',-1) ;} ; 
+  	var fnPeriod1 = function() {setPeriod("orderDate","preFinishDate",'infoReadPreOnly',0) ;} ; 
   	
     function updateFldPeriod(aFld,aFnPeriod) {
     	eventutil.addEventListener($(aFld), eventutil.EVENT_KEY_UP,	aFnPeriod) ;   	
