@@ -33,7 +33,10 @@
         	<msh:autoComplete property="orderFunction" fieldColSpan="3" label="Специалист"
         		vocName="workFunction" horizontalFill="true"/>
         </msh:row>
-
+        <msh:row>
+        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        		vocName="vocExpertReason" horizontalFill="true"/>
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="mainDiagnosis" fieldColSpan="3" label="Код осн. диаг." horizontalFill="true" vocName="vocIdc10"/>
         </msh:row>
@@ -42,6 +45,9 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="complicationDiagnosis" label="Осложнение" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>      
+        <msh:row>
+        	<msh:textField property="treatmentCurrent" label="Лечение на момент подачи" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>        
         <msh:row>
         	<msh:autoComplete property="orderConclusion" fieldColSpan="3" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
