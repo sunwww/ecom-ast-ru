@@ -55,6 +55,10 @@
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="2" fieldColSpan="2"/>
         </msh:row>
+        <msh:row>
+        	<msh:textField property="preFinishDate" label="Срок предполагаемого лечения" labelColSpan="3"/>
+        	<td style="text-align: left; font-weight: bold" id="infoReadPreOnly" />
+        </msh:row>        
         </msh:panel>
         <msh:panel colsWidth="1%,1%,1%,97%">
         <msh:row>
