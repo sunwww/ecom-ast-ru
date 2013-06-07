@@ -103,7 +103,7 @@ public class DirectOfMedicalCommissionForm extends IdEntityForm {
 
 	/** Причина задержки */
 	@Comment("Причина задержки")
-	@Persist @Required
+	@Persist 
 	public String getDelayReason() {return theDelayReason;}
 	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
 
@@ -127,7 +127,7 @@ public class DirectOfMedicalCommissionForm extends IdEntityForm {
 
 	/** Срок предполагаемого лечения */
 	@Comment("Срок предполагаемого лечения")
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString 
 	public String getPreFinishDate() {return thePreFinishDate;}
 	public void setPreFinishDate(String aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
 
