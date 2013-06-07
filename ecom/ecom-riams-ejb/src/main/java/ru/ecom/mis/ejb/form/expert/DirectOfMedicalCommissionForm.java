@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import java.sql.Date;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -111,6 +113,30 @@ public class DirectOfMedicalCommissionForm extends IdEntityForm {
 	public Long getOrderLpu() {return theOrderLpu;}
 	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
 
+	/** Причина направления */
+	@Comment("Причина направления")
+	@Persist @Required
+	public Long getReasonDirect() {return theReasonDirect;}
+	public void setReasonDirect(Long aReasonDirect) {theReasonDirect = aReasonDirect;}
+
+	/** Лечение на момент подачи */
+	@Comment("Лечение на момент подачи")
+	@Persist @Required
+	public String getTreatmentCurrent() {return theTreatmentCurrent;}
+	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
+
+	/** Срок предполагаемого лечения */
+	@Comment("Срок предполагаемого лечения")
+	@Persist @DateString @DoDateString @Required
+	public String getPreFinishDate() {return thePreFinishDate;}
+	public void setPreFinishDate(String aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+
+	/** Срок предполагаемого лечения */
+	private String thePreFinishDate;
+	/** Лечение на момент подачи */
+	private String theTreatmentCurrent;
+	/** Причина направления */
+	private Long theReasonDirect;
 	/** Направившее ЛПУ */
 	private Long theOrderLpu;
 	/** Причина задержки */

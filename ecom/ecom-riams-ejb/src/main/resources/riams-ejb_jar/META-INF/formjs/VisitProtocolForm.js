@@ -34,6 +34,24 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='"+aEntity.id+"' and d.dtype='Protocol'").getResultList() ;
+	if (protocols.isEmpty()) {
+		onPreCreate(aForm, aCtx) ;
+		
+	}
+}
+/**
+ * При сохранении
+ */
+function onSave(aForm, aEntity, aCtx) {
+	//throw "select d.id,d.record from Diary d where d.id='"+aEntity.id+"' and d.dtype='Protocol'" ;
+	var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='"+aEntity.id+"' and d.dtype='Protocol'").getResultList() ;
+	if (protocols.isEmpty()) {
+		//throw "123" ;
+		
+		aCtx.manager.createNativeQuery("update Diary set dtype='Protocol' where id='"+aEntity.id+"'").executeUpdate() ;
+		
+	}
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {

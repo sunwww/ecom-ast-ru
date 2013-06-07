@@ -18,6 +18,7 @@ import ru.ecom.mis.ejb.domain.expert.voc.VocExpertModeCase;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertOrderConclusion;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatientStatus;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatternCase;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertReason;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertSubject;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -141,6 +142,28 @@ public class ClinicExpertCard extends BaseEntity {
 	public String getDelayReason() {return theDelayReason;}
 	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
 
+	/** Причина направления */
+	@Comment("Причина направления")
+	@OneToOne
+	public VocExpertReason getReasonDirect() {return theReasonDirect;}
+	public void setReasonDirect(VocExpertReason aReasonDirect) {theReasonDirect = aReasonDirect;}
+
+	/** Лечение на момент подачи */
+	@Comment("Лечение на момент подачи")
+	public String getTreatmentCurrent() {return theTreatmentCurrent;}
+	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
+
+	/** Срок предполагаемого лечения */
+	@Comment("Срок предполагаемого лечения")
+	public Date getPreFinishDate() {return thePreFinishDate;}
+	public void setPreFinishDate(Date aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+
+	/** Срок предполагаемого лечения */
+	private Date thePreFinishDate;
+	/** Лечение на момент подачи */
+	private String theTreatmentCurrent;
+	/** Причина направления */
+	private VocExpertReason theReasonDirect;
 	/** Причина задержки */
 	private String theDelayReason;
 	/** Статус пациента */
