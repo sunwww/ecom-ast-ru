@@ -85,12 +85,14 @@
                 	<msh:textField property="printTime" label="Время" viewOnlyField="true"/>
                 </msh:row>
                 </msh:ifFormTypeIsView>
+                <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
                 <msh:row>
                     <td><input type="button" 
                     onclick="this.form.action='entityParentSaveGoSubclassView-smo_draftProtocol.do';this.form.submit();"
-                    value="Сохранить черновик"/></td>
+                    value="Сохранить как черновик"/></td>
                 
                 </msh:row>
+                </msh:ifFormTypeIsCreate>
                 <msh:row>
 	                <msh:submitCancelButtonsRow colSpan="3" />
                 </msh:row>

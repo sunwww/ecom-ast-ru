@@ -26,7 +26,7 @@
         	<msh:textField property="disabilityDate" label="Дата  выхода на нетруд."/>
         	<msh:textField property="orderDate" label="Дата напр."/>
         	<td style="text-align: left; font-weight: bold" id="infoReadOnly" />
-        </msh:row>  
+        </msh:row>
         <msh:row>
 
         </msh:row>
@@ -37,6 +37,10 @@
         <msh:row>
         	<msh:autoComplete property="orderFunction" fieldColSpan="5" label="Специалист"
         		vocName="workFunctionByLpu" parentAutocomplete="orderLpu" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="disabilityDocument" fieldColSpan="5" label="Лист нетруд." parentId="expert_ker_directForm.patient"
@@ -52,41 +56,52 @@
         	<msh:textField property="complicationDiagnosis" label="Осложнение" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>        
         <msh:row>
+        	<msh:textField property="treatmentCurrent" label="Лечение на момент подачи" horizontalFill="true" fieldColSpan="5"/>
+        </msh:row>                
+        <msh:row>
         	<msh:autoComplete property="orderConclusion" fieldColSpan="5" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="4" fieldColSpan="2"/>
         </msh:row>
+        <msh:row>
+        	<msh:textField property="preFinishDate" label="Срок предполагаемого лечения" labelColSpan="3"/>
+        	<td style="text-align: left; font-weight: bold" id="infoReadPreOnly" />
+        </msh:row>        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put type="string" name="javascript">
   	<script type="text/javascript">
-  	function setPeriod(aBeginFld,aFinishFld) {
+  	function setPeriod(aBeginFld,aFinishFld,aFldInfo,aAddCnt) {
   		try {
-  			if ($('disabilityDate').value.length==10 &&  $('orderDate').value.length==10) {
-	  			var dateTo = new Date($('orderDate').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
-	  			var dateFrom = new Date($('disabilityDate').value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+  			if ($(aBeginFld).value.length==10 &&  $(aFinishFld).value.length==10) {
+	  			var dateTo = new Date($(aFinishFld).value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
+	  			var dateFrom = new Date($(aBeginFld).value.replace(/(\d+).(\d+).(\d+)/, '$3/$2/$1')+" 12:12:12 GMT +0300") ;
 	  			var one_day=1000*60*60*24 ;
-	  			$('infoReadOnly').innerHTML=" &nbsp;кол-во дней: "+(1+((dateTo.getTime()-dateFrom.getTime())/one_day)) +"";
+	  			$(aFldInfo).innerHTML=" &nbsp;кол-во дней: "+(aAddCnt+((dateTo.getTime()-dateFrom.getTime())/one_day)) +"";
   			}
   		} catch(e) {
-  			//alert('222') ;
+  			alert(e) ;
   		}
   	}
   	
-  	var fnPeriod = function() {setPeriod("disabilityDate","orderDate") ;} ; 
+  	var fnPeriod = function() {setPeriod("disabilityDate","orderDate",'infoReadOnly',1) ;} ; 
+  	var fnPeriod1 = function() {setPeriod("orderDate","preFinishDate",'infoReadPreOnly',-1) ;} ; 
   	
-    function updateFldPeriod(aFld) {
-    	eventutil.addEventListener($(aFld), eventutil.EVENT_KEY_UP,	fnPeriod) ;   	
-    	eventutil.addEventListener($(aFld), eventutil.EVENT_KEY_DOWN, fnPeriod) ;
-    	eventutil.addEventListener($(aFld), "blur", fnPeriod) ;
-    	eventutil.addEventListener($(aFld), "change", fnPeriod) ;
+    function updateFldPeriod(aFld,aFnPeriod) {
+    	eventutil.addEventListener($(aFld), eventutil.EVENT_KEY_UP,	aFnPeriod) ;   	
+    	eventutil.addEventListener($(aFld), eventutil.EVENT_KEY_DOWN, aFnPeriod) ;
+    	eventutil.addEventListener($(aFld), "blur", aFnPeriod) ;
+    	eventutil.addEventListener($(aFld), "change", aFnPeriod) ;
     }
-  	updateFldPeriod("disabilityDate") ; 
-  	updateFldPeriod("orderDate") ;
-  	setPeriod("disabilityDate","orderDate") ;
+  	updateFldPeriod("disabilityDate",fnPeriod) ; 
+  	updateFldPeriod("orderDate",fnPeriod) ;
+  	updateFldPeriod("preFinishDate",fnPeriod1) ; 
+  	updateFldPeriod("orderDate",fnPeriod1) ;
+  	setPeriod("disabilityDate","orderDate",'infoReadOnly',1) ;
+  	setPeriod("orderDate","preFinishDate",'infoReadPreOnly',0) ;
   	</script>
   </tiles:put>
   <tiles:put name="title" type="string">
