@@ -193,7 +193,7 @@ public class LoginSaveAction extends LoginExitAction {
 	    			.append(" and (wf.isAdministrator='1' or (wf.isAdministrator is null or wf.isAdministrator='0') and slo.ownerFunction_id=wf.id)")
 	    			.append(" and slo.dtype='DepartmentMedCase'")
 	    			.append(" and slo.dateFinish is null and slo.transferDate is null")
-	    			.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id)<(current_date-2) and p.dtype='Protocol'")
+	    			.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ")
 	    			.append(" group by wf.isAdministrator")
 	    			//.append(",pat.lastname,pat.middlename,pat.firstname")
 	    			.append(" ,owp.lastname,owp.middlename,owp.firstname")
@@ -211,7 +211,7 @@ public class LoginSaveAction extends LoginExitAction {
     			sql.append(" and slo.dtype='DepartmentMedCase'");
     			sql.append(" and slo.transferDate is null");
     			sql.append(" and slo.dateStart < current_date-2");
-    			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id)<(current_date-2) and p.dtype='Protocol'") ;
+    			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ") ;
     			sql.append(" group by ml.name");
     			//sql.append(" having max(p.dateRegistration)<current_date-2") ;
     			sql.append(" order by ml.name");
