@@ -62,6 +62,7 @@
 		<form-bean name="contract_naturalPersonForm" type="ru.ecom.mis.ejb.form.contract.NaturalPersonForm" />
 		<form-bean name="contract_nosologyIntervalForm" type="ru.ecom.mis.ejb.form.contract.NosologyIntervalForm" />
 		<form-bean name="contract_priceListForm" type="ru.ecom.mis.ejb.form.contract.PriceListForm" />
+		<form-bean name="contract_priceGroupForm" type="ru.ecom.mis.ejb.form.contract.PriceGroupForm" />
 		<form-bean name="contract_priceMedServiceForm" type="ru.ecom.mis.ejb.form.contract.PriceMedServiceForm" />
 		<form-bean name="contract_pricePositionForm" type="ru.ecom.mis.ejb.form.contract.PricePositionForm" />
 		<form-bean name="contract_servedPersonForm" type="ru.ecom.mis.ejb.form.contract.ServedPersonForm" />

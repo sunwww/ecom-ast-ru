@@ -24,15 +24,17 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_priceListForm">
-			<msh:section title="Позиции прейскуранта">
-			<ecom:parentEntityListAll formName="contract_pricePositionForm" attribute="priceList" />
-				<msh:table name="priceList" action="entityParentView-contract_pricePosition.do" idField="id">
+			<msh:section title="Группы позиций" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
+				createUrl="entityPrepareCreate-contract_priceGroup.do?priceList=${param.id}">
+			<ecom:webQuery name="priceGroup" nativeSql="
+							select pg.id,pg.code,pg.name from PriceGroup pg 
+							where pg.priceList_id = '${param.id}' and pg.parent_id is null
+							group by pg.code
+							" />
+				<msh:table name="priceGroup" action="entityParentView-contract_priceGroup.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Код" property="code"/>
-					<msh:tableColumn columnName="Наименование" property="name"/>
-					<msh:tableColumn columnName="Дата начала действия" property="dateFrom"/>
-					<msh:tableColumn columnName="Дата окончания" property="dateTo"/>
-					<msh:tableColumn columnName="Цена" property="cost"/>
+					<msh:tableColumn columnName="Код" property="2"/>
+					<msh:tableColumn columnName="Наименование" property="3"/>
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
@@ -46,7 +48,7 @@
 			<msh:sideLink key="ALT+DEL" params="id" action="/entityDelete-contract_priceList" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/PriceList/Delete"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
-			<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-contract_pricePosition" name="Позиции прейскуранта" title="Позиции прейскуранта" roles="/Policy/Mis/Contract/PriceList/PricePosition/Create"/>
+			<msh:sideLink key="ALT+N" action="/entityPrepareCreate-contract_priceGroup.do?priceList=${param.id}" name="Группа позиций" title="Группа позиций" roles="/Policy/Mis/Contract/PriceList/PriceGroup/Create"/>
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="price"/>
 	</tiles:put>
