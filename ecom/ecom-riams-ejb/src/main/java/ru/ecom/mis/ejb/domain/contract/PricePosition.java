@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -24,6 +25,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique= false, properties = {"name"})
 	,@AIndex(unique= false, properties = {"priceList"})
+	,@AIndex(unique= false, properties = {"priceGroup"})
 })
 public class PricePosition extends BaseEntity{
 	/**
@@ -31,23 +33,15 @@ public class PricePosition extends BaseEntity{
 	 */
 	@Comment("Прайс-лист")
 	@ManyToOne
-	public PriceList getPriceList() {
-		return thePriceList;
-	}
-	public void setPriceList(PriceList aPriceList) {
-		thePriceList = aPriceList;
-	}
+	public PriceList getPriceList() {return thePriceList;}
+	public void setPriceList(PriceList aPriceList) {thePriceList = aPriceList;}
 	/**
 	 * Прайс-лист
 	 */
 	private PriceList thePriceList;
 	@OneToMany(mappedBy="pricePosition", cascade=CascadeType.ALL)
-	public List<PriceMedService> getMedServices() {
-		return theMedServices;
-	}
-	public void setMedServices(List<PriceMedService> aMedServices) {
-		theMedServices = aMedServices;
-	}
+	public List<PriceMedService> getMedServices() {return theMedServices;}
+	public void setMedServices(List<PriceMedService> aMedServices) {theMedServices = aMedServices;}
 	/**
 	 * Медицинские услуги
 	 */
@@ -56,13 +50,8 @@ public class PricePosition extends BaseEntity{
 	 * Название
 	 */
 	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
 	/**
 	 * Название
 	 */
@@ -71,13 +60,8 @@ public class PricePosition extends BaseEntity{
 	 * Код
 	 */
 	@Comment("Код")
-	
-	public String getCode() {
-		return theCode;
-	}
-	public void setCode(String aCode) {
-		theCode = aCode;
-	}
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
 	/**
 	 * Код
 	 */
@@ -86,13 +70,8 @@ public class PricePosition extends BaseEntity{
 	 * Цена
 	 */
 	@Comment("Цена")
-	
-	public BigDecimal getCost() {
-		return theCost;
-	}
-	public void setCost(BigDecimal aCost) {
-		theCost = aCost;
-	}
+	public BigDecimal getCost() {return theCost;}
+	public void setCost(BigDecimal aCost) {theCost = aCost;}
 	/**
 	 * Цена
 	 */
@@ -101,13 +80,8 @@ public class PricePosition extends BaseEntity{
 	 * Дата начала действия
 	 */
 	@Comment("Дата начала действия")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
+	public Date getDateFrom() {return theDateFrom;}
+	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
 	/**
 	 * Дата начала действия
 	 */
@@ -116,15 +90,33 @@ public class PricePosition extends BaseEntity{
 	 * Дата окончания действия
 	 */
 	@Comment("Дата окончания действия")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
+	public Date getDateTo() {return theDateTo;}
+	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
 	/**
 	 * Дата окончания действия
 	 */
 	private Date theDateTo;
+	
+	/** Ед.измерения */
+	@Comment("Ед.измерения")
+	public String getExpUnit() {return theExpUnit;}
+	public void setExpUnit(String aExpUnit) {theExpUnit = aExpUnit;}
+
+	/** Код экспорта */
+	@Comment("Код экспорта")
+	public String getExpParentCode() {return theExpParentCode;}
+	public void setExpParentCode(String aExpCode) {theExpParentCode = aExpCode;}
+
+	/** Группа */
+	@Comment("Группа")
+	@OneToOne
+	public PriceGroup getPriceGroup() {return thePriceGroup;}
+	public void setPriceGroup(PriceGroup aPriceGroup) {thePriceGroup = aPriceGroup;}
+
+	/** Группа */
+	private PriceGroup thePriceGroup;
+	/** Код экспорта */
+	private String theExpParentCode;
+	/** Ед.измерения */
+	private String theExpUnit;
 }
