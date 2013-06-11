@@ -13,7 +13,7 @@
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_criminalMessages" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Edit" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_criminalMessages" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Delete" />
-        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_criminalMessages" name="⇧Cписок сообщений в милицию" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" />
+        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_criminalMessages" name="⇧Cписок сообщений в полицию" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="5d2e6cab-8667-4344-9d02-b4a248383066">
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" guid="a5ab8aa6-8be1-43f4-8aae-f5024f6283ca" />
@@ -22,7 +22,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <!-- 
-    	  - Сообщение в милицию
+    	  - Сообщение в полицию
     	  -->
     <msh:form  action="/entityParentSave-stac_criminalMessages.do?sslid=${param.sslid}" defaultField="phoneDate" guid="b37b5d4a-9687-45bf-b42c-613fd9b1739d" editRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create">
       <msh:hidden property="id" guid="c5a9c42c-d593-4fae-a685-44586a81938b" />

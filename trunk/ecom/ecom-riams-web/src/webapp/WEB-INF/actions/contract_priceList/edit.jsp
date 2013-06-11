@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 		<msh:form action="/entitySaveGoView-contract_priceList.do" defaultField="name">
 			<msh:hidden property="id" />
@@ -29,7 +29,7 @@
 			<ecom:webQuery name="priceGroup" nativeSql="
 							select pg.id,pg.code,pg.name from PriceGroup pg 
 							where pg.priceList_id = '${param.id}' and pg.parent_id is null
-							group by pg.code
+							order by pg.code
 							" />
 				<msh:table name="priceGroup" action="entityParentView-contract_priceGroup.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>

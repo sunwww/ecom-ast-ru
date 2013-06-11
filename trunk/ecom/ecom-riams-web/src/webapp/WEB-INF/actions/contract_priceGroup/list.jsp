@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_priceListForm" title="Список позиций прейскуранта"/>
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_priceGroupForm" title="Список позиций прейскуранта"/>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
@@ -17,8 +17,8 @@
 	<tiles:put name='body' type='string' >
 		<msh:table name="list" action="entityParentView-contract_priceGroup.do" idField="id">
 			<msh:tableColumn columnName="#" property="sn" />
-			<msh:tableColumn columnName="Название" property="name" />
 			<msh:tableColumn columnName="Код" property="code" />
+			<msh:tableColumn columnName="Название" property="name" />
 		</msh:table>
 	</tiles:put>
 </tiles:insert>

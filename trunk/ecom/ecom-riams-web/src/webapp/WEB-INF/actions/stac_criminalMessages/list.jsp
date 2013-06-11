@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Сообщения в милицию" guid="7c2f862e-0345-431a-a391-39b33538ad1b" />
+    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Сообщения в полицию" guid="7c2f862e-0345-431a-a391-39b33538ad1b" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Дополнительно" guid="0ddb2181-a1e1-4f7c-93f6-aa77081d080b">
@@ -68,7 +68,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_criminalMessages" name="Сообщение" title="Добавить сообщение в милиция" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" />
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_criminalMessages" name="Сообщение" title="Добавить сообщение в полицию" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

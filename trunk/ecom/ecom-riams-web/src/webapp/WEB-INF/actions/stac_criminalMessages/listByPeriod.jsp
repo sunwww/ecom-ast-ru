@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в милицию"></msh:title>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в полицию"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="stac_criminalMessages" />
