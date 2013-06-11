@@ -67,7 +67,7 @@ public class CreateReplaceMapHelper {
         r("InfectiousDisease","Инфекционные болезни") ;
         r("Info","Просмотр общей информации") ;
         r("MedPolicy","Мед. полис") ;
-        r("Militia","Сообщение в милицию") ;
+        r("Militia","Сообщение в полицию") ;
         r("Nurse","Лица по уходу") ;
         r("NurseDays","Лица по уходу: пребывание") ;
         r("NurseService","Лица по уходу: сервис") ;

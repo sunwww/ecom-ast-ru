@@ -14,7 +14,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = PriceGroup.class)
 @Comment("Позиция прейскуранта")
-@WebTrail(comment = "Позиция прейскуранта", nameProperties= "id", list="entityParentList-contract_priceGroup.do", view="entityParentView-contract_priceGroup.do")
+@WebTrail(comment = "Позиция прейскуранта", nameProperties= "name", list="entityParentList-contract_priceGroup.do", view="entityParentView-contract_priceGroup.do")
 @Parent(property="parent", parentForm=PriceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList/PriceGroup")
 public class PriceGroupForm  extends IdEntityForm {

@@ -16,7 +16,7 @@ import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
-@Comment("Сообщения в милицию")
+@Comment("Сообщения в полицию")
 @EntityForm
 @EntityFormPersistance(clazz= PhoneMessage.class)
 @WebTrail(comment = "Сообщения", nameProperties= "id", view="entitySublcassView-stac_phoneMessage.do")

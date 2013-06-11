@@ -14,7 +14,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormPersistance(clazz = PricePosition.class)
 @Comment("Позиция прейскуранта")
 @WebTrail(comment = "Позиция прейскуранта", nameProperties= "id", list="entityParentList-contract_pricePosition.do", view="entityParentView-contract_pricePosition.do")
-@Parent(property="priceGroup", parentForm=PriceGroupForm.class)
+@Parent(property="name", parentForm=PriceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList/PricePosition")
 public class PricePositionForm extends IdEntityForm{
 	/**
@@ -22,12 +22,8 @@ public class PricePositionForm extends IdEntityForm{
 	 */
 	@Comment("Прайс-лист")
 	@Persist
-	public Long getPriceList() {
-		return thePriceList;
-	}
-	public void setPriceList(Long aPriceList) {
-		thePriceList = aPriceList;
-	}
+	public Long getPriceList() {return thePriceList;}
+	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
 	/**
 	 * Прайс-лист
 	 */
@@ -37,12 +33,8 @@ public class PricePositionForm extends IdEntityForm{
 	 */
 	@Comment("Название")
 	@Persist
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
 	/**
 	 * Название
 	 */
@@ -52,12 +44,8 @@ public class PricePositionForm extends IdEntityForm{
 	 */
 	@Comment("Код")
 	@Persist
-	public String getCode() {
-		return theCode;
-	}
-	public void setCode(String aCode) {
-		theCode = aCode;
-	}
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
 	/**
 	 * Код
 	 */
@@ -67,12 +55,8 @@ public class PricePositionForm extends IdEntityForm{
 	 */
 	@Comment("Цена")
 	@Persist
-	public String getCost() {
-		return theCost;
-	}
-	public void setCost(String aCost) {
-		theCost = aCost;
-	}
+	public String getCost() {return theCost;}
+	public void setCost(String aCost) {theCost = aCost;}
 	/**
 	 * Цена
 	 */
@@ -83,12 +67,8 @@ public class PricePositionForm extends IdEntityForm{
 	@Comment("Дата начала действия")
 	@Persist
 	@DateString @DoDateString
-	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
+	public String getDateFrom() {return theDateFrom;}
+	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
 	/**
 	 * Дата начала действия
 	 */
@@ -97,14 +77,9 @@ public class PricePositionForm extends IdEntityForm{
 	 * Дата окончания действия
 	 */
 	@Comment("Дата окончания действия")
-	@Persist
-	@DateString @DoDateString
-	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
-	}
+	@Persist @DateString @DoDateString
+	public String getDateTo() {return theDateTo;}
+	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
 	/**
 	 * Дата окончания действия
 	 */

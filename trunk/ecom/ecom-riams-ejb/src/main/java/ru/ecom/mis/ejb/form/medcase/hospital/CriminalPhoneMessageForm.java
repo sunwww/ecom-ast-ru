@@ -17,10 +17,10 @@ import ru.nuzmsh.forms.validator.validators.PhoneString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
-@Comment("Сообщения в милицию")
+@Comment("Сообщения в полицию")
 @EntityForm
 @EntityFormPersistance(clazz= CriminalPhoneMessage.class)
-@WebTrail(comment = "Сообщение в милицию", nameProperties= "id", view="entityParentView-stac_criminalMessages.do")
+@WebTrail(comment = "Сообщение в полицию", nameProperties= "id", view="entityParentView-stac_criminalMessages.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage")
 public class CriminalPhoneMessageForm extends PhoneMessageForm {
