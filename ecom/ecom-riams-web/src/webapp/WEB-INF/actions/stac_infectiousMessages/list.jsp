@@ -21,7 +21,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_infectiousMessages" name="Сообщение" title="Добавить сообщение в милиция" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" roles="/Policy/Mis/MedCase/Stac/Ssl/InfectiousMessages/Create" />
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_infectiousMessages" name="Сообщение" title="Добавить сообщение об инфекции" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" roles="/Policy/Mis/MedCase/Stac/Ssl/InfectiousMessages/Create" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" />

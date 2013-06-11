@@ -205,8 +205,8 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Кол-во коек в палате */
 	private Long theCountBed;
-	/** Тип сообщения в милицию */
-	@Comment("Тип сообщения в милицию")
+	/** Тип сообщения в полицию */
+	@Comment("Тип сообщения в полицию")
 	public Long getPhoneMessageType() {
 		return thePhoneMessageType;
 	}
@@ -215,8 +215,8 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 		thePhoneMessageType = aPhoneMessageType;
 	}
 	
-	/** Подтип сообщений в милицию */
-	@Comment("Подтип сообщений в милицию")
+	/** Подтип сообщений в полицию */
+	@Comment("Подтип сообщений в полицию")
 	public Long getPhoneMessageSubType() {
 		return thePhoneMessageSubType;
 	}
@@ -225,10 +225,10 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 		thePhoneMessageSubType = aPhoneMessageSubType;
 	}
 
-	/** Подтип сообщений в милицию */
+	/** Подтип сообщений в полицию */
 	private Long thePhoneMessageSubType;
 
-	/** Тип сообщения в милицию */
+	/** Тип сообщения в полицию */
 	private Long thePhoneMessageType;
 	
 	/** ЛПУ направителя */

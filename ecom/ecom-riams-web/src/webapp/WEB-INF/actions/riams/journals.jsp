@@ -20,7 +20,7 @@
                             Журнал экстренных сообщений об инфекции
                         </msh:link></li>
 					<li><msh:link roles="/Policy/Mis/Journal/CriminalMessages" action="journal_militiaMessage.do">
-                             Журнал сообщений в милицию
+                             Журнал сообщений в полицию
                         </msh:link></li>
                         
 				</ul>

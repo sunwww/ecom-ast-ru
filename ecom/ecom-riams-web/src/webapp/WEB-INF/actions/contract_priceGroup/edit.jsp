@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 		<msh:form action="/entityParentSaveGoView-contract_priceGroup.do" defaultField="code">
 			<msh:hidden property="id" />
@@ -12,6 +12,10 @@
 			<msh:hidden property="priceList" />
 			<msh:hidden property="parent" />
 			<msh:panel>
+				<msh:row>
+					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"
+						vocName="priceList" shortViewAction="entityView-contract_priceList.do?short=Short" viewAction="entityView-contract_priceList.do"/>
+				</msh:row>
 				<msh:row>
 					<msh:textField property="code" label="Код"/>
 				</msh:row>

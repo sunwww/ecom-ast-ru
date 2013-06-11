@@ -23,12 +23,6 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-      	<msh:autoComplete property="pigeonHole" fieldColSpan="7" 
-      		horizontalFill="true" label="Приемник"
-      		vocName="vocPigeonHole"
-      		/>
-      </msh:row>
       <msh:row>
         <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
@@ -48,7 +42,7 @@
 	        	<input type="radio" name="typeView1" value="1">  реестр
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
-	        	<input type="radio" name="typeView1" value="2">  реестр по приказу минзрава 03.02.2010 №42-Пр/13 
+	        	<input type="radio" name="typeView1" value="2">  свод по отделениям 
 	        </td>
         </msh:row>
         <msh:row>
@@ -70,7 +64,6 @@
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
-            <input type="submit" onclick="print()" value="Печать реестра" />
           </td>
       </msh:row>
       
