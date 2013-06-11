@@ -150,8 +150,11 @@ public class AutoCompleteTag extends AbstractFieldTag {
             	if (!StringUtil.isNullOrEmpty(theShortViewAction)) {
             		Xa a = new Xa() ;
             		a.setHref("javascript:void(0) ;") ;
-            		a.setOnClick(new StringBuilder().append("getDefinition('")
-            				.append(theShortViewAction).append("?id=").append(id).append("',event); ").toString()) ;
+            		StringBuilder onclick = new StringBuilder().append("getDefinition('") ; 
+            		onclick.append(theShortViewAction) ;
+            		if (theShortViewAction.indexOf("?")==-1) {onclick.append("?id=") ;} else {onclick.append("&id=") ;}
+            		onclick.append(id).append("',event); ") ;
+            		a.setOnClick(onclick.toString()) ;
             		a.setTagText("<img src='/skin/images/main/view1.png' alt='Просмотр' title='Просмотр' height='14' width='14'/>") ;
             		d.addElement(a) ;
             	}
