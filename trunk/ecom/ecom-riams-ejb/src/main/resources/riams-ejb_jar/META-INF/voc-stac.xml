@@ -469,9 +469,6 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
-    <voc id='vocBedFund' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ejb.service.lpu.BedFundByLpuValueVoc</IAllValue>
-    </voc>
     
     <!-- Справочник осложнений родов -->
     <voc id='vocChildbirthComplication' type='EntityVocService'>

@@ -30,8 +30,8 @@ public class NewBornMedCaseCreateInterceptor implements IParentFormInterceptor{
                 throw new IllegalStateException("Нельзя заводить случай для мертворожденного") ;
                
     		}
-    		List<Object[]> listDep = manager
-    			.createNativeQuery("select count(*),id from MedCase where newBorn_id = :parentId and DTYPE='NewBornMedCase' ")
+    		List<Object> listDep = manager
+    			.createNativeQuery("select id from MedCase where newBorn_id = :parentId and DTYPE='NewBornMedCase' ")
     			.setParameter("parentId", aParentId)
     			.getResultList() ;
     		if (listDep.isEmpty()) {
