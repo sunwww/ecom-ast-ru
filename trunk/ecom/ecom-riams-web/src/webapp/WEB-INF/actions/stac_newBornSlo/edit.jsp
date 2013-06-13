@@ -73,21 +73,33 @@
           <msh:textField property="entranceTime" label="время" guid="11dd2d9a-3b35-4620-be61-eaede78e8a7a" />
         </msh:row>
         <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
-          <msh:autoComplete vocName="lpu" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+          <msh:autoComplete parentId="stac_newBornSloForm.lpu" vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
         <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
-          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c" />
+          <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c" />
         </msh:row>
         <msh:row guid="f2aba5-68fb-4ccc-9982-7b4480cmca147">
-          <msh:autoComplete vocName="vocBedFund" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
+          <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
         </msh:row>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
-          <msh:textField label="№палаты" property="roomNumber" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" />
-          <msh:autoComplete property="roomType" vocName="vocRoomType" label="Тип палаты" horizontalFill="true"/>
+          <%-- <msh:textField label="№палаты" property="roomNumber" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" /> --%>
+          <msh:autoComplete property="roomNumber" vocName="hospitalRoomByLpu" label="№палаты" parentId="stac_newBornSloForm.department"/>
+          <msh:autoComplete property="bedNumber" vocName="hospitalBedByRoom" label="№ койки" parentAutocomplete="roomNumber"/>
+          <%-- <msh:autoComplete property="roomType" vocName="vocRoomType" label="Тип палаты" horizontalFill="true"/> --%>
          </msh:row>
          <msh:row>
-          <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />
-          <msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
+         <%-- <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />  --%>
+        </msh:row>
+        </msh:ifNotInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        <msh:hidden property="roomNumber"/>
+        <msh:hidden property="roomType"/>
+        <msh:hidden property="bedNumber"/>
+        </msh:ifInRole>
+         <msh:row>
+           <msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
+        	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
         </msh:row>
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
           <msh:autoComplete vocName="workFunction" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
@@ -167,34 +179,137 @@
       	}
       	</script>
   
-    <msh:ifFormTypeIsNotView formName="stac_newBornSloForm" guid="518fe547-aed9-be2229f04ba3">
+        <msh:ifFormTypeIsNotView formName="stac_newBornSloForm" guid="518fe547-aed9-be2229f04ba3">
       <script type="text/javascript">//var theBedFund = $('bedFund').value;
+      if (+$('prevMedCase').value==0) {
+    	  $('serviceStreamName').select() ;
+    	  $('serviceStreamName').focus() ;
+      }
+      var lpuDate ;
+       
+  		try {
+	    if (clinicalMkbAutocomplete) clinicalMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('clinicalMkb','clinicalDiagnos');
+	    });} catch(e) {}
+  		try {
+	    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('concomitantMkb','concomitantDiagnos');
+	    });} catch(e) {}
+  		function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
+      
+      
+      
+      
       	function goDischarge() {
       		window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
       	}
-      	$('lpuAndDate').value = $('department').value +":"+$('serviceStream').value+":" +$('dateStart').value;
+      	$('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
+      	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
+      	serviceStreamAutocomplete.setParentId(lpuDate) ;
       	//bedFundAutocomplete.setVocId(theBedFund);
       	//alert(departmentAutocomplete) ;
-      	transferDepartmentAutocomplete.setParentId($('lpu').value) ;
-      	try {
-      		departmentAutocomplete.setParentId($('lpu').value) ;
-	      	departmentAutocomplete.addOnChangeCallback(function() {
-	      	 	updateLpuAndDate() ;
-	      	 });
-      	} catch (e) {
-      	}
+      	//transferDepartmentAutocomplete.setParentId($('lpu').value) ;
+      	
       	if (bedFundAutocomplete) bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.addOnChangeCallback(function() {
       	 	updateLpuAndDate() ;
+      	 	updateBedFund() ;
       	 });
-      	 
+      	updateLpuAndDate() ;
       	 function updateLpuAndDate() {
-      	 	$('lpuAndDate').value = $('department').value +":"+$('serviceStream').value+":" +$('dateStart').value;
+      		 //var serviceStream=+$('serviceStream').value ;
+           	$('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
+          	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	 	//alert("lpuAndDate"+$('lpuAndDate').value) ;
+      	 	lpuDate = (+$('department').value) +"#"+$('dateStart').value ;
       	 	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
-      	 	bedFundAutocomplete.setVocId('');
-      	 }</script>
+      	 	serviceStreamAutocomplete.setParentId(lpuDate) ;
+      	 	//var id = $('bedFund').value ;
+      	 	//bedFundAutocomplete.setVocId(id);
+      	 }
+      	 function updateBedFund() {
+      		HospitalMedCaseService.getDefaultBedFundBySlo($('parent').value
+      				, $('department').value, $('serviceStream').value
+      				, $('dateStart').value,{
+      			callback: function(aResult) {
+      				var res = aResult.split('#') ;
+
+      				if (+res[0]!=0) {
+      					$('bedFund').value = res[0] ; 
+      					$('bedFundName').value = res[1] ; 
+      				} else {
+      		      	 	$('bedFund').value='0';
+      		      	 	$('bedFundName').value='';
+      				}
+      			}
+      		}) ;
+
+      	 }
+      	 </script>
+      	 	
+      	 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
+      	 	<script type="text/javascript">
+      	 	try {
+          		//departmentAutocomplete.setParentId($('lpu').value) ;
+    	      	departmentAutocomplete.addOnChangeCallback(function() {
+    	      		try {
+    	      			roomNumberAutocomplete.setParentId($('department').value) ;
+    	      			$('roomNumber').value='0' ;
+    	      			$('roomNumberName').value='' ;
+    	      		} catch(e) {}
+    	      		
+    	      		updateLpuAndDate() ;
+    	      	 	ownerFunctionAutocomplete.setParentId($('department').value) ;
+    	      		updateBedFund() ;
+    	      	 });
+          	} catch (e) {
+          	}
+      	 	</script>
+      	 </msh:ifNotInRole>
+      	 <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
+      	 	<script type="text/javascript">
+      	 	try {
+          		//departmentAutocomplete.setParentId($('lpu').value) ;
+    	      	departmentAutocomplete.addOnChangeCallback(function() {
+    	      		updateLpuAndDate() ;
+    	      		roomNumberAutocomplete.setParentId($('department').value) ;
+    	      		$('roomNumber').value='0' ;
+    	      		$('roomNumberName').value='' ;
+    	      	 	ownerFunctionAutocomplete.setParentId($('department').value) ;
+    	      		HospitalMedCaseService.getDefaultInfoBySlo($('parent').value
+    	      				, $('department').value, $('serviceStream').value
+    	      				, $('dateStart').value,{
+    	      			callback: function(aResult) {
+    	      				var res = aResult.split('#') ;
+    	      				if (+res[0]!=0) {
+    	      					$('ownerFunction').value = res[0] ; 
+    	      					$('ownerFunctionName').value = res[1] ; 
+    	      				} else {
+    	      		      	 	$('ownerFunction').value='0';
+    	      		      	 	$('ownerFunctionName').value='';
+    	      				}
+    	      				if (+res[2]!=0) {
+    	      					$('bedFund').value = res[2] ; 
+    	      					$('bedFundName').value = res[3] ; 
+    	      				} else {
+    	      		      	 	$('bedFund').value='0';
+    	      		      	 	$('bedFundName').value='';
+    	      				}
+    	      			}
+    	      		})
+    	      	 });
+          	} catch (e) {
+          	}
+      	 	</script>
+      	 </msh:ifInRole>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
