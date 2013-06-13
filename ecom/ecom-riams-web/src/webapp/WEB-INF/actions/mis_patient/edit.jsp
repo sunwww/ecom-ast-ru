@@ -441,16 +441,8 @@
           </msh:section>
         </msh:tableNotEmpty>
       </msh:ifInRole>
-    </msh:ifFormTypeIsView>
-    
-    <!-- Инвалидность -->
-    <msh:ifFormTypeIsView formName="mis_patientForm">
-    	<msh:ifInRole roles="/Policy/Mis/Patient/Invalidity/View">
-    		<msh:section>
-    			<msh:sectionTitle>Инвалидность
-   					<msh:link action="entityParentPrepareCreate-mis_invalidity.do?id=${param.id}"  roles="/Policy/Mis/Patient/Invalidity/Create">Добавить</msh:link>
-    			</msh:sectionTitle>
-    			<msh:sectionContent>
+    	<msh:ifInRole roles="/Policy/Mis/Patient/Invalidity/View" >
+    		<msh:section title="Инвалидность" createUrl="entityParentPrepareCreate-mis_invalidity.do?id=${param.id}" createRoles="/Policy/Mis/Patient/Invalidity/Create">
 		    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.lastRevisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate,i.withoutExam,i.incapable from invalidity i left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id where i.patient_id=${param.id}" name="invalidities"/>
 		    		<msh:table viewUrl="entityShortView-mis_invalidity.do" editUrl="entityParentEdit-mis_invalidity.do"  name="invalidities" action="entityParentView-mis_invalidity.do" idField="1">
 		    			<msh:tableColumn property="sn" columnName="#"/>
@@ -464,7 +456,6 @@
 		    			<msh:tableColumn property="9" columnName="Инвалид ВОВ"/>
 		    			<msh:tableColumn property="13" columnName="Недеесп."/>
 		    		</msh:table>
-    			</msh:sectionContent>
     		</msh:section>
     	</msh:ifInRole>
     </msh:ifFormTypeIsView>
@@ -498,7 +489,8 @@
          left join reg_ic as ri on ri.id=mp.company_id 
          left join vocmedpolicyomc vmo on vmo.id=mp.type_id
          where mp.patient_id=${param.id} and mp.actualDateFrom <=CURRENT_DATE and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE)"  name="policies"  />
-        
+        <table>
+          <tr valign="top"><td style="padding-right: 8px">
           <msh:section guid="746b6d8a-b92f-4bd0-9899-d32855f3aa95">
           <msh:sectionTitle>
           АКТУАЛЬНЫЕ ПОЛИСЫ. 
@@ -528,8 +520,13 @@
             </msh:table> --%>
           </msh:sectionContent>
           </msh:section>
+          </td>><td style="padding-right: 8px">
+          <msh:section title="Физ.обсл.лицо">
+          </msh:section>
+          </td></tr></table>
           <table>
           <tr valign="top"><td style="padding-right: 8px">
+          
           <msh:ifInRole roles="/Policy/Mis/Patient/Kinsman">
           	<msh:section>
           		<msh:sectionTitle>Родственники / представители (для иногородних) <a href='entityParentPrepareCreate-mis_kinsman.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
