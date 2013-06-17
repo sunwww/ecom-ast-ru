@@ -241,7 +241,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Показать" guid="d07f7449-b875-45c6-8007-0867170d328d">
         <msh:sideLink key="ALT+5" params="id" roles="/Policy/Mis/Licence/View" action="/entityParentList-mis_licence" title="Список лицензий" name="Лицензии" guid="c454da7d-9684-4d70-ad84-d830308e5bd4" />
-        <msh:sideLink key="ALT+6" params="id" action="/entityParentList-mis_worker" title="Список сотрудников" name="Сотрудников" guid="92fa6023-206c-40c6-974f-155ccc7689e1" roles="/Policy/Mis/Worker/Worker/View" />
+        <msh:sideLink key="ALT+6" params="id" action="/js-mis_worker-all" title="Список сотрудников" name="Сотрудников" guid="92fa6023-206c-40c6-974f-155ccc7689e1" roles="/Policy/Mis/Worker/Worker/View" />
         <msh:sideLink roles="/Policy/Mis/Diet/View" params="id" action="/entityParentList-diet_diet" name="Диеты" title="Показать диеты" guid="163ca91b-6130-4bf4-b6e6-f4266a33c60f" />
         <msh:sideLink key="ALT+7" params="id" action="/entityParentList-work_staff" name="Штатное расписание" title="Штатное расписание" guid="7cef38f4-b980-4a43-b9f3-245e46c0f86b" roles="/Policy/Mis/Worker/Staff/View" />
         <msh:sideLink key="ALT+8" params="id" action="/entityParentList-mis_equipment" title="Список оборудования" name="Оборудование" guid="4d5beb13-c643-4b90-adce-26c88b21a56f" roles="/Policy/Mis/Equipment/Equipment/View" />

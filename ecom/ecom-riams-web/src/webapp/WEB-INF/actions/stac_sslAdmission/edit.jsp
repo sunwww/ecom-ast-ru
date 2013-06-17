@@ -122,11 +122,11 @@
           <msh:textField property="orderNumber" label="№ напр" guid="51e5754c-2356-4ef6-91b2-9634893cc329" />
           <msh:textField property="orderDate" label="Дата" guid="3e74c0ff-d603-4923-b207-b4ce0d665841" />
         </msh:row>
-        <msh:row guid="8036eaf5-7144-46a4-9015-e4f198230a2c">
-          <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения" guid="7d5f0ad3-3f43-42b7-8c46-f2fcceead05c" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
         <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
           <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row guid="8036eaf5-7144-46a4-9015-e4f198230a2c">
+          <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения" guid="7d5f0ad3-3f43-42b7-8c46-f2fcceead05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:separator label="Доставлен (только для экстренных больных)" colSpan="9" guid="f2136abf-c311-42e4-86ad-c24b7da708d5" />
         <msh:row guid="e811bd41-db0a-4275-b786-75f958759453">
@@ -165,12 +165,10 @@
 		        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="3" vocName="vocAdmissionOrder"/>
+	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="3" vocName="vocAdmissionOrder" horizontalFill="true"/>
 	        </msh:row>
 	        <msh:row>
-	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" fieldColSpan="3" vocName="vocJudgment"/>
-	        </msh:row>
-	        <msh:row>
+	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
 	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
 	        </msh:row>
         </msh:ifInRole>
@@ -245,6 +243,7 @@
     			$('dateStart').focus() ;
     		</script>
     	</msh:ifNotInRole>
+			   	
     	</msh:ifFormTypeIsNotView>
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
@@ -288,6 +287,21 @@
     	</msh:ifInRole>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
+    
+    <script type="text/javascript">
+		try{	
+		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('orderMkb','orderDiagnos');
+	    });} catch(e) {}
+  		function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
+  		</script> 
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
       eventutil.addEventListener($('emergency'), "change",function(){
             if (+$('emergency').checked) {

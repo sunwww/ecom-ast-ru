@@ -27,8 +27,8 @@
 			<msh:section title="Группы позиций" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
 				createUrl="entityPrepareCreate-contract_priceGroup.do?priceList=${param.id}">
 			<ecom:webQuery name="priceGroup" nativeSql="
-							select pg.id,pg.code,pg.name from PriceGroup pg 
-							where pg.priceList_id = '${param.id}' and pg.parent_id is null
+							select pg.id,pg.code,pg.name from PricePosition pg 
+							where pg.priceList_id = '${param.id}' and pg.dtype='PriceGroup' and pg.parent_id is null
 							order by pg.code
 							" />
 				<msh:table name="priceGroup" action="entityParentView-contract_priceGroup.do" idField="1">
