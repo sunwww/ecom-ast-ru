@@ -30,8 +30,8 @@
 			<msh:section title="Группы прейскуранта" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
 				createUrl="entityParentPrepareCreate-contract_priceGroup.do?id=${param.id}">
 			<ecom:webQuery name="priceGroup" nativeSql="
-							select pg.id,pg.code,pg.name from PriceGroup pg 
-							where pg.parent_id = '${param.id}' order by pg.code" />
+							select pg.id,pg.code,pg.name from PricePosition pg 
+							where pg.parent_id = '${param.id}' and pg.dtype='PriceGroup' order by pg.code" />
 				<msh:table name="priceGroup" action="entityParentView-contract_priceGroup.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Код" property="2"/>
@@ -42,7 +42,7 @@
 				createUrl="entityParentPrepareCreate-contract_pricePosition.do?id=${param.id}">
 			<ecom:webQuery name="pricePosition" nativeSql="
 							select pp.id,pp.code,pp.name,pp.cost,pp.dateFrom,pp.dateTo from PricePosition pp 
-							where pp.priceGroup_id = '${param.id}' ORDER BY pp.code" />
+							where pp.priceGroup_id = '${param.id}' and pp.dtype='PricePosition' ORDER BY pp.code" />
 				<msh:table name="pricePosition" action="entityParentView-contract_pricePosition.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Код" property="2"/>

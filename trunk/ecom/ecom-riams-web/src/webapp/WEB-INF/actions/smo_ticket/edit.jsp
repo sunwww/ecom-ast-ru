@@ -294,7 +294,7 @@
     	var oldValue = $('dateStart').value ;
     	document.forms[0].action = 'javascript:isExistTicket()';
     	concludingMkbAutocomplete.addOnChangeCallback(function() {
-    		if ($('concludingDiagnos').value=='') {$('concludingDiagnos').value=$('concludingMkbName').value;} 
+    		setDiagnosisText('concludingMkb','concludingDiagnos') ;
     		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
 	      	 	TicketService.findProvReason({
 	      	 		callback: function(aResult) {
@@ -307,6 +307,14 @@
 	      	 	}) ;
 	      	 }
 	    });
+  		function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				$(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
     	if ($('workFunctionExecuteName')) workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     		var wf = +$("workFunctionExecute").value;
     		if (wf=='') {wf=0;}

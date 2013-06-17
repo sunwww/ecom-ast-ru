@@ -43,18 +43,24 @@
       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
         <msh:section title="Мед.карты (псих.помощью)" createUrl="entityParentPrepareCreate-psych_careCard.do?id=${param.id}">
 		        <ecom:webQuery name="psychCard" 
-		        nativeSql="select pcc.id,pcc.cardNumber
-							,(select to_char(po.startDate,'dd.mm.yyyy')||' '||vpac.code from PsychiaticObservation po
-							left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id where po.careCard_id=pcc.id
-							having max(po.startDate)=po.startDate)
-							,(select mkb.code from Diagnosis d
-							left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
-							left join vocidc10 mkb on mkb.id=d.idc10_id
-							where d.patient_id=pcc.patient_id and vpd.code='1'
-							having max(d.establishDate)=d.establishDate
-							)
-							from PsychiatricCareCard pcc
-							where pcc.patient_id='${param.id}'
+		        nativeSql="select pcc.id,pcc.cardNumber 
+,(select list(distinct to_char(po.startDate,'dd.mm.yyyy')||' '||vpac.code)
+from PsychiaticObservation po 
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
+where po.careCard_id=pcc.id and
+(select max(po1.startDate)
+from PsychiaticObservation po1 
+where po1.careCard_id=pcc.id)=po.startDate) 
+,(select list(distinct mkb.code) from Diagnosis d 
+left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
+left join vocidc10 mkb on mkb.id=d.idc10_id 
+where d.patient_id=pcc.patient_id and vpd.code='1' and d.medcase_id is null
+and 
+(
+select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+ where d1.patient_id=pcc.patient_id and vpd1.code='1' and d1.medcase_id is null
+)=d.establishDate ) 
+from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		         "
 		         />
 		        <msh:table viewUrl="entityShortView-psych_careCard.do" hideTitle="false" disableKeySupport="false" idField="1" name="psychCard" action="entityParentView-psych_careCard.do" disabledGoFirst="false" disabledGoLast="false">
@@ -69,7 +75,7 @@
 	<td style="padding-right: 4px">
     
     	<ecom:webQuery name="lastVisit1" nativeSql="select 
-    	m.id,coalesce(m.dateStart,wcd.calendarDate) as dateFrom
+    	m.id,m.dateStart as dateFrom
     	,coalesce(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
     	,vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename) as worker
     	from medCase m
@@ -83,7 +89,8 @@
     	left join worker w1 on w1.id=wf1.worker_id
     	left join patient wp1 on wp1.id=w1.person_id
     	where m.patient_id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
-    	order by coalesce(m.dateStart,wcd.calendarDate) desc
+    	and m.dateStart is not null
+    	order by m.dateStart desc
     	" maxResult="1" />
      <msh:section title="Последнее посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 
      viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
