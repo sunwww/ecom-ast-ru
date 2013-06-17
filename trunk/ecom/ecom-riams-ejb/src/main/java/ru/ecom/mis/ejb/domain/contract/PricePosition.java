@@ -110,11 +110,11 @@ public class PricePosition extends BaseEntity{
 	/** Группа */
 	@Comment("Группа")
 	@OneToOne
-	public PriceGroup getPriceGroup() {return thePriceGroup;}
-	public void setPriceGroup(PriceGroup aPriceGroup) {thePriceGroup = aPriceGroup;}
+	public PricePosition getParent() {return theParent;}
+	public void setParent(PricePosition aPriceGroup) {theParent = aPriceGroup;}
 
 	/** Группа */
-	private PriceGroup thePriceGroup;
+	private PricePosition theParent;
 	/** Код экспорта */
 	private String theExpParentCode;
 	/** Ед.измерения */
