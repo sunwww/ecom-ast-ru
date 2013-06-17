@@ -35,9 +35,12 @@ public class CategoryTreeServiceJs {
     	String table , fldId, fldView, fldParent ;
     	if (aTable.toUpperCase().equals("MEDSERVICE")) {
     		table="MedService ms" ;fldId="ms.id";fldView="ms.code||' '||ms.name" ;fldParent="ms.parent";
+    	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
+    		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" ;fldParent="pp.parent";
     	} else {
     		return "" ;
     	}
+    	
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select ").append(fldId).append(" as fldId ").append(fldView).append(" as fldView")
     		.append(" from ").append(table)
@@ -55,7 +58,7 @@ public class CategoryTreeServiceJs {
     			.append(wqr.get2()).append("</div>") ;
     	}
     	
-    	return "" ;
+    	return rs.toString() ;
     }
     
 }
