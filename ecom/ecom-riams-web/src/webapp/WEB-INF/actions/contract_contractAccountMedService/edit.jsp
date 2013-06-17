@@ -108,6 +108,7 @@
 		</script>	
 	</tiles:put>
 	<tiles:put name="body" type="string">
+	<tags:dir_medService name="Dir" title="Прейскурант" table='PricePosition' addWhere=' and pp.priceList_id=2'></tags:dir_medService>
 		<input type="hidden" id="" name=""/>
 		<%--<msh:form action="/entityParentSaveGoView-contract_contractAccountMedService.do" defaultField="typeName">
 		 	<msh:hidden property="id" />
@@ -121,7 +122,7 @@
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>--%>
-<form action="" id="add_persons" method="post" onsubmit="addRow();return false;">
+<form action="javascript:void(0)" id="add_persons" method="post" onsubmit="addRow();return false;">
 <fieldset>
 <legend>Добавить медицинскую услугу</legend>
     <ul>
@@ -131,6 +132,7 @@
     		<td>
 			<msh:autoComplete property="medService" parentId="${param.id}" label="Медицинская услуга" vocName="PriceMedService" horizontalFill="true" size="90"/>
 			</td>
+			<td><input type="button" value="..." onclick=""></td>
 			<td colspan='1' title='кол-во' class='label'>
 			<label id='CountName' for='Count'>Кол-во:</label>
 			</td>
