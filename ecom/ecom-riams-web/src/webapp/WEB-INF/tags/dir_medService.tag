@@ -4,8 +4,9 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
-<%@ attribute name="roles" required="true" description="Роли" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
+<%@ attribute name="table" required="true" description="Заголовок" %>
+<%@ attribute name="addWhere" description="Заголовок" %>
 
 
 <style type="text/css">
@@ -70,6 +71,10 @@
      	theIs${name}DirMedServiceDialogInitialized = true ;
      }
      function get${name}Category(aDiv,aParent) {
-    	 CategoryTreeService.
+    	 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', "PRICEPOSITION", 0, {
+    		 callback: function() {
+    			 
+    		 }
+    	 })
      }
 </script>
