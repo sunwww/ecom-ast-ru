@@ -35,3 +35,20 @@ function errorThrow(aList, aError) {
 		throw aError + error ;
 	}
 }
+
+function onPreDelete(aEntityId, aContext) {
+	var medcard = aContext.manager.find(Packages.ru.ecom.poly.ejb.domain.Medcard
+			, new java.lang.Long(aEntityId)) ;
+	if (medcard!=null) {
+		var other_medcard_sql="select mc.id from Medcard mc where person_id='"+medcard.person.id+"' and mc.id!='"+medcard.id+"'" ;
+		var other_medcard_list=aContext.manager.createNativeQuery(other_medcard_sql).getResultList() ;
+		if (!other_medcard_list.isEmpty()) {
+			var newmedcard=other_medcard_list.get(0) ;
+			aContext.manager.createNativeQuery("update medcase set medcard_id="+newmedcard+" where medcard_id="+medcard.id).executeUpdate() ;
+			aContext.manager.createNativeQuery("update ticket set medcard_id="+newmedcard+" where medcard_id="+medcard.id).executeUpdate() ;
+		} else {
+			aContext.manager.createNativeQuery("delete from ticket where medcard_id="+medcard.id).executeUpdate() ;
+		}
+	}
+	
+}

@@ -14,7 +14,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormPersistance(clazz = PricePosition.class)
 @Comment("Позиция прейскуранта")
 @WebTrail(comment = "Позиция прейскуранта", nameProperties= "id", list="entityParentList-contract_pricePosition.do", view="entityParentView-contract_pricePosition.do")
-@Parent(property="name", parentForm=PriceGroupForm.class)
+@Parent(property="parent", parentForm=PriceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList/PricePosition")
 public class PricePositionForm extends IdEntityForm{
 	/**
@@ -88,9 +88,9 @@ public class PricePositionForm extends IdEntityForm{
 	/** Группа прейскуранта */
 	@Comment("Группа прейскуранта")
 	@Persist
-	public Long getPriceGroup() {return thePriceGroup;}
-	public void setPriceGroup(Long aPriceGroup) {thePriceGroup = aPriceGroup;}
+	public Long getParent() {return theParent;}
+	public void setParent(Long aPriceGroup) {theParent = aPriceGroup;}
 
 	/** Группа прейскуранта */
-	private Long thePriceGroup;
+	private Long theParent;
 }
