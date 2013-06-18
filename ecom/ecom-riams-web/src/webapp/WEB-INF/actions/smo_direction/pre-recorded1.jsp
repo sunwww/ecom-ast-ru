@@ -669,7 +669,12 @@ ul.listTimes li.first {
   	    	aText=replaceAll(aText, "Ь","M" ) ;
   	    	aText=replaceAll(aText, "Ю","." ) ;
   	    	aText=replaceAll(aText, "Б","," ) ;
+  	    	aText=replaceAll(aText, "Х","[" ) ;
+  	    	aText=replaceAll(aText, "Ъ","]" ) ;
+  	    	aText=replaceAll(aText, "Ж",";" ) ;
+  	    	aText=replaceAll(aText, "Э","'" ) ;  	    	
   	    	return aText ;
+  	    	
   		}
   		function replaceAll(aText,aSymbRep,aSymbIs) {
   			while (aText.indexOf(aSymbIs)>-1) {
