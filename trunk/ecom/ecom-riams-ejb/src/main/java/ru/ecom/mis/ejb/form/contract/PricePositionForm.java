@@ -91,6 +91,14 @@ public class PricePositionForm extends IdEntityForm{
 	public Long getParent() {return theParent;}
 	public void setParent(Long aPriceGroup) {theParent = aPriceGroup;}
 
+	/** Комментарий */
+	@Comment("Комментарий")
+	@Persist
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+
+	/** Комментарий */
+	private String theComment;
 	/** Группа прейскуранта */
 	private Long theParent;
 }
