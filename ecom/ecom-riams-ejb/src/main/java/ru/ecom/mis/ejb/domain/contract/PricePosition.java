@@ -113,6 +113,13 @@ public class PricePosition extends BaseEntity{
 	public PricePosition getParent() {return theParent;}
 	public void setParent(PricePosition aPriceGroup) {theParent = aPriceGroup;}
 
+	/** Комментарий */
+	@Comment("Комментарий")
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+
+	/** Комментарий */
+	private String theComment;
 	/** Группа */
 	private PricePosition theParent;
 	/** Код экспорта */
