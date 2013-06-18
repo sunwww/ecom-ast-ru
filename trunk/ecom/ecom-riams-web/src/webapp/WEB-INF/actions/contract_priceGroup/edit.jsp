@@ -42,7 +42,7 @@
 				createUrl="entityParentPrepareCreate-contract_pricePosition.do?id=${param.id}">
 			<ecom:webQuery name="pricePosition" nativeSql="
 							select pp.id,pp.code,pp.name,pp.cost,pp.dateFrom,pp.dateTo from PricePosition pp 
-							where pp.priceGroup_id = '${param.id}' and pp.dtype='PricePosition' ORDER BY pp.code" />
+							where pp.parent_id = '${param.id}' and pp.dtype='PricePosition' ORDER BY pp.code" />
 				<msh:table name="pricePosition" action="entityParentView-contract_pricePosition.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Код" property="2"/>
