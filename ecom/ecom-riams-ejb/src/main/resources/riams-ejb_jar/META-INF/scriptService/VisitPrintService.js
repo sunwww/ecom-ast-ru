@@ -1,7 +1,8 @@
 var map = new java.util.HashMap() ;
 // Печать визитов
 function printVisits(aCtx, aParams) {
-	var ids1 = aParams.get("id1") ;
+	var ids1 = aParams.get("id") ;
+	var ids2 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
 	var ret = new java.lang.StringBuilder () ;
 	
@@ -14,8 +15,14 @@ function printVisits(aCtx, aParams) {
 	var curDate = new java.sql.Date(current.getTime()) ;
 	
 	var curTime = new java.sql.Time(current.getTime()) ;
-	for (var i=0; i < ids.length; i++) {
+	map.put("ids",ids.length) ;
+	
+	
+	for (var i=1; i < ids.length; i++) {
 		var id1=ids[i] ;
+		if (id1.indexOf("!")!=-1) {
+		
+		
 		var indlast = id1.lastIndexOf("!") ;
 		var protId = id1.substring(indlast+1) ;
 		var id1=id1.substring(0,indlast) ;
@@ -41,8 +48,8 @@ function printVisits(aCtx, aParams) {
 		var diagTravm="";
 		var diagTravmMkb = "";
 		var diagnosis = medCase.getDiagnosis() ;
-		for(var i=0; i<diagnosis.size(); i++) {
-			var diag = diagnosis.get(i);
+		for(var ii=0; ii<diagnosis.size(); ii++) {
+			var diag = diagnosis.get(ii);
 			
 			if (diag.priority!=null && diag.priority.id == 1) {
 			if (!diagText1.equals("")) diagText1 = diagText1 +"; "; 
@@ -73,9 +80,11 @@ function printVisits(aCtx, aParams) {
 			}
 		}
 		mapS.set6(diagMkb1+" "+diagText1) ;
+		
 		ret.add(mapS) ;
 		
-	}
+	}}
+	
 	map.put("visits",ret) ;
 	
 	return map ;
