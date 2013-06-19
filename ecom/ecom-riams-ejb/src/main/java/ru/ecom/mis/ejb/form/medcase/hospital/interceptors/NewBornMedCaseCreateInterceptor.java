@@ -11,10 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.birth.NewBorn;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.NewBornMedCase;
-import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
