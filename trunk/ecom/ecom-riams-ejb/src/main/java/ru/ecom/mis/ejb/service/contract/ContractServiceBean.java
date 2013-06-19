@@ -26,14 +26,7 @@ public class ContractServiceBean implements IContractService {
 				.setParameter("CAMS", oldid)
 				.getResultList() ;
 		if (list.size()>0) {
-			/*sql.append("update contractAccountMedservice SET CountMedService = '");
-			sql.append(aCount);
-			sql.append("', Cost='");
-			sql.append(aPrice);
-			sql.append("' where account_id=");
-			sql.append(aAccount);
-			sql.append(" and medservice_id=");
-			sql.append(aPriceMedService);*/
+			
 			ContractAccountMedService ms = list.get(0) ;
 			ms.setCountMedService(aCount) ;
 			ms.setCost(aPrice) ;
@@ -52,26 +45,9 @@ public class ContractServiceBean implements IContractService {
 			//sql.append(aPrice);sql.append("', '");
 			//sql.append(aCount);sql.append("')");
 		}
-		theManager.createNativeQuery(sql.toString());
+		//theManager.createNativeQuery(sql.toString());
 	}
-	public String getCostByMedService(Long aPriceMedService,String aDate) {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select pp.cost ") ;
-		sql.append(" from PricePosition pp ");
-		sql.append(" where pp.id='")
-		.append(aPriceMedService).append("'") ;
-		//sql.append("select pp.cost ") ;
-		//sql.append(" from PriceMedService pms ");
-		//sql.append(" left join PricePosition pp on pp.id=pms.pricePosition_id where pms.id='")
-		//.append(aPriceMedService).append("'") ;
-		List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
-		Object obj = null ;
-		if (list.size()>0) {
-			obj = list.get(0) ;
-		}
-		return obj!=null?obj.toString():"" ;
-		
-	}
+	
 	@PersistenceContext EntityManager theManager ;
 
 }

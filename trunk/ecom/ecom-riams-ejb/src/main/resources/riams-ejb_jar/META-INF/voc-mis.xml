@@ -21,16 +21,15 @@
 </voc>
 <voc id="priceMedServiceByContractAccout" type="NativeVocService">
 		<NativeVocService
-			from="PricePosition PP"
+			from="PriceMedService PMS"
                 parent='CA.id = :parent'
-                nameId="pp.id"
+                nameId="PMS.id"
                 queryAppend=""
                 join="
-                	left join PriceMedService PMS ON PP.priceList_id = PMS.pricePosition_id
+                	left join PricePosition PP ON PP.id = PMS.pricePosition_id
 					left join MedContract MC ON MC.priceList_id = PP.priceList_id
 					left join ServedPerson SP ON SP.contract_id=MC.id
 					left join ContractAccount CA ON CA.servedPerson_id=sp.id
-					left join MedService MS ON PMS.medService_id = MS.id             
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
