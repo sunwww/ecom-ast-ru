@@ -202,7 +202,7 @@
 </fieldset>
 </form>
 <br>
-<form action='/riams/contract_contractAccountMedServiciesSave.do'>
+<form action='contract_contractAccountMedServiciesSave.do'>
 <input id='id' name='id' type='hidden' value="${param.id}">
 <input id='cnt' name='cnt' type='hidden' value="0">
 <div id="divAllCount1"><h1>Сумма: 0 руб</h1></div>
@@ -226,11 +226,11 @@
 </br>
 		<ecom:webQuery name="operation" nativeSql="
 			SELECT 
-  				MS.name,
-  				MS.code, 
-  				PP.cost, 
-  				PP.id,
-  				CA.id 
+  				MS.name as msname,
+  				MS.code as mscode, 
+  				PP.cost as ppcost, 
+  				PP.id as ppid,
+  				CA.id as caid 
 			FROM 
   				contractaccount AS CA
 			LEFT JOIN servedperson AS SP ON CA.servedperson_id = SP.id
@@ -243,7 +243,8 @@
 			"/>
 			<ecom:webQuery name="meservc" nativeSql="
 			SELECT 
-  				MS.name, PP.cost, CAMS.countMedService, PMS.id as pmsid, CAMS.id as camsid
+  				MS.name as msname, PP.cost as ppcost, CAMS.countMedService as camscountmedservice
+  				, PMS.id as pmsid, CAMS.id as camsid
 			FROM 
   				contractAccountMedService AS CAMS
 			LEFT JOIN PricePosition AS PP ON CAMS.medservice_id = PP.id

@@ -26,16 +26,24 @@ public class ContractAccountMedServiceSaveAction extends BaseAction {
 		Long account = ConvertSql.parseLong(idS) ;
 		for(int i=1; i<=cntRec;i++){
 			Long oldid = ConvertSql.parseLong(aRequest.getParameter("oldid"+i));
-			String price = aRequest.getParameter("cost"+i) ;
-			BigDecimal cost = new BigDecimal(price);
-			Integer cnt = Integer.valueOf(aRequest.getParameter("count"+i)) ;
+			
 			Long priceMedService = ConvertSql.parseLong(aRequest.getParameter("service"+i)) ;
-			if(cnt!=null && cnt>Long.valueOf(0) 
-					&&priceMedService!=null && priceMedService>Long.valueOf(0)
-					)  {
-				System.out.println("---oldid="+oldid) ;
-				System.out.println("---add account="+account+"----service="+ priceMedService+"----cnt="+ cnt+"---cost="+ cost) ;
-				service.addMedServiceByAccount(account, priceMedService, cnt, cost, oldid) ;
+			if (priceMedService!=null && priceMedService>Long.valueOf(0)) {
+				String price = aRequest.getParameter("cost"+i) ;
+				BigDecimal cost = new BigDecimal(price);
+				Integer cnt = Integer.valueOf(aRequest.getParameter("count"+i)) ;
+				
+				if(cnt!=null && cnt>Long.valueOf(0) 
+						&&priceMedService!=null && priceMedService>Long.valueOf(0)
+						)  {
+					System.out.println("---oldid="+oldid) ;
+					System.out.println("---add account="+account+"----service="+ priceMedService+"----cnt="+ cnt+"---cost="+ cost) ;
+					service.addMedServiceByAccount(account, priceMedService, cnt, cost, oldid) ;
+				}
+			} else {
+				if (oldid!=null && oldid>Long.valueOf(0)) {
+					//Удаление услуги
+				}
 			}
 		}
 		
