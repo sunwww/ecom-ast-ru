@@ -146,7 +146,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       	<msh:hidden property="firstname"/>
       	<msh:hidden property="middlename"/>
       	<msh:row>
-      		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
+      		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"></div></td>
       	</msh:row>
       	<msh:row >
       		<msh:textField property="patientSync" label="Код синх." viewOnlyField="true"/>
@@ -424,7 +424,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="9cb680e9-523e-4691-9059-a241a709bb06">
-      <div style="height: 500px" />
+      <div style="height: 500px" ></div>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="c1b89933-a744-46a8-ba32-014ac1b4fcb4">
           <table>
@@ -527,9 +527,18 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
             </msh:table> --%>
           </msh:sectionContent>
           </msh:section>
-          </td>><td style="padding-right: 8px">
+          </td><td style="padding-right: 8px">
+          <ecom:webQuery name="nat_person" nativeSql="select cp.id,cp.patient_id from ContractPerson cp where cp.patient_id='${param.id}' and cp.dtype='NaturalPerson'"/>
+          <msh:tableEmpty name="nat_person">
+	          <msh:section title="Физ.обсл.лицо" createRoles="/Policy/Mis/Contract/ContractPerson/NaturalPerson/Create" createUrl="entitySaveGoView-contract_naturalPerson.do?saveType=1&patient=${param.id}"/>
+          </msh:tableEmpty>
+          <msh:tableNotEmpty name="nat_person">
           <msh:section title="Физ.обсл.лицо">
+          	<msh:table name="nat_person" action="entityPrepareView-contract_naturalPerson.do" idField="1">
+          		<msh:tableColumn property="1"/>
+          	</msh:table>
           </msh:section>
+          </msh:tableNotEmpty>
           </td></tr></table>
           <table>
           <tr valign="top"><td style="padding-right: 8px">

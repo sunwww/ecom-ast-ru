@@ -130,7 +130,7 @@
     		<table>
     		<tr>
     		<td>
-			<msh:autoComplete property="medService" parentId="${param.id}" label="Медицинская услуга" vocName="PriceMedService" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="medService" parentId="${param.id}" label="Медицинская услуга" vocName="priceMedServiceByContractAccout" horizontalFill="true" size="90"/>
 			</td>
 			<td><input type="button" value="..." onclick=""></td>
 			<td colspan='1' title='кол-во' class='label'>

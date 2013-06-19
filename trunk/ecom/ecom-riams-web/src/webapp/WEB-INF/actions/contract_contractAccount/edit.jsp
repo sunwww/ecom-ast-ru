@@ -52,7 +52,7 @@
 							  ,CAMS.cost as camscost,CAMS.countMedService as camscountMedService
 							  ,CAMS.cost*CAMS.countMedService as totalValue
 							   from ContractAccountMedService CAMS
-							left join PriceMedService PMS ON PMS.pricePosition_id = CAMS.medservice_id
+							left join PriceMedService PMS ON PMS.id = CAMS.medservice_id
 							left join MedService MS ON MS.id = PMS.medService_id
 							left join PricePosition pp on pp.id=pms.pricePosition_id
 							where CAMS.account_id = '${param.id}'
