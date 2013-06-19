@@ -4,5 +4,4 @@ import java.math.BigDecimal;
 
 public interface IContractService {
 	public void addMedServiceByAccount(Long aAccount,Long aPriceMedService, Integer aCount, BigDecimal aPrice, Long oldid) ;
-	public String getCostByMedService(Long aPriceMedService,String aDate) ;
 }

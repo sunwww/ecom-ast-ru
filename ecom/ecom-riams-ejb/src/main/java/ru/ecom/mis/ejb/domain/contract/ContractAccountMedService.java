@@ -42,9 +42,9 @@ public class ContractAccountMedService extends BaseEntity{
 	 */
 	private ContractAccount theAccount;
 	/**
-	 * Обслуживаемая персона
+	 * Мед Услуга
 	 */
-	@Comment("Обслуживаемая персона")
+	@Comment("Мед Услуга")
 	@OneToOne
 	public PriceMedService getMedService() {
 		return theMedService;
