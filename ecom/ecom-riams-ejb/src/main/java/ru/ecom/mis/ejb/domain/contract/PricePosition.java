@@ -25,7 +25,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique= false, properties = {"name"})
 	,@AIndex(unique= false, properties = {"priceList"})
-	,@AIndex(unique= false, properties = {"priceGroup"})
+	,@AIndex(unique= false, properties = {"parent"})
 })
 public class PricePosition extends BaseEntity{
 	/**
