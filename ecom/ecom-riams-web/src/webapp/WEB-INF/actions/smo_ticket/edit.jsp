@@ -365,7 +365,7 @@
 				    		alert('Уже заведен талон посещения на '+$('dateStart').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
 				    			 ;
                        } else {
-                     		TicketService.checkHospitalByMedcard($('dateFinish').value,document.forms[0].medcard.value,$('serviceStream').value
+                     		TicketService.checkHospitalByMedcard($('dateStart').value,document.forms[0].medcard.value,$('serviceStream').value
                      		  		,{callback: function(aString) {
                      		        	//alert(aString) ;
                      		            if (aString!=null) {

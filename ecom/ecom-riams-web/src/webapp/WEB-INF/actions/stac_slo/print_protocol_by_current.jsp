@@ -56,7 +56,7 @@
             <msh:sectionTitle>Протоколы ${title}</msh:sectionTitle>
             <msh:sectionContent>
             	<ecom:webQuery name="protocols"  nativeSql="select 
-            	d.dateRegistration||'!'||d.timeRegistration||'!'||d.id as idf
+            	to_char(d.dateRegistration,'dd.mm.yyyy')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as idf
             	, to_char(d.dateRegistration,'dd.mm.yyyy')||' '||cast(d.timeRegistration as varchar(5)) as datereg
             	, substring(d.record,1,100)||'...' as drecord
             	, d.printDate as dpritndate

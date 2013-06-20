@@ -29,7 +29,11 @@
     <ecom:webQuery name="datelist" nativeSql="
     select m.id,m.dateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-    ,pat.birthday,sc.code,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) as oper  
+    ,pat.birthday,sc.code
+    ,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) 
+    ||list((current_Date-so1.operationDate)||' дн. после операции: '||ms1.name)
+    as oper
+      
     ,	  case 
 			when (CURRENT_DATE-sls.dateStart)=0 then 1 
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1) 
@@ -45,8 +49,10 @@
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left outer join Patient pat on m.patient_id = pat.id 
-    left join SurgicalOperation so on so.medCase_id in (m.id,sls.id)
+    left join SurgicalOperation so on so.medCase_id = m.id
+    left join SurgicalOperation so1 on so1.medCase_id = sls.id
     left join medservice ms on ms.id=so.medService_id
+    left join medservice ms1 on ms1.id=so1.medService_id
     where m.DTYPE='DepartmentMedCase' and m.ownerFunction_id='${curator}' and m.transferDate is null and m.dateFinish is null
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
@@ -76,10 +82,11 @@
     select m.ownerFunction_id,ml.name as mlname,ovwf.name as ovwfname,owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'') as worker
     ,count(distinct sls.id) as cntAll
     ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
-    ,count(distinct case when so.id is not null then sls.id else null end) as cntOper    
+    ,count(distinct case when (so.id is not null or so1.id is not null) then sls.id else null end) as cntOper    
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
-    left join SurgicalOperation so on so.medCase_id in (m.id,sls.id)
+    left join SurgicalOperation so on so.medCase_id = m.id
+    left join SurgicalOperation so1 on so1.medCase_id = sls.id
     left join WorkFunction owf on owf.id=m.ownerFunction_id
     left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
     left join Worker ow on ow.id=owf.worker_id
