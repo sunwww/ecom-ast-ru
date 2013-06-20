@@ -36,6 +36,7 @@ public class LpuSync implements ISync {
     	
         Iterator<OmcLpu> iterator = QueryIteratorUtil.iterate(OmcLpu.class, theEntityManager.createQuery(queryString));
         while (iterator.hasNext()) {
+        	
             OmcLpu omcLpu = iterator.next();
             String code = omcLpu.getCode();
             if (i % 10 == 0 && monitor.isCancelled()) break;
@@ -46,14 +47,18 @@ public class LpuSync implements ISync {
                 lpu.setOmcCode(code);
                 
             }
-            lpu.setName(omcLpu.getName()) ;
+            int lenMax= omcLpu.getName().length() ;
+            if (lenMax>254) lenMax=254 ;
+            System.out.println("lenMax="+lenMax) ;
+            lpu.setName(omcLpu.getName().substring(0,lenMax)) ;
 			lpu.setOmcCode(omcLpu.getCode()) ;
 			lpu.setEmail(omcLpu.getMail()) ;
 			lpu.setDirector(omcLpu.getDirector());
 			lpu.setPhone(omcLpu.getPhone());
-			lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
+			//lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
 			try {
-    			lpu.setInn(Long.parseLong(omcLpu.getInn())) ;
+    			//lpu.setInn(Long.parseLong(omcLpu.getInn())) ;
+    			//lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
 			} catch (Exception e) {
 			}
             theEntityManager.persist(lpu);
@@ -66,6 +71,7 @@ public class LpuSync implements ISync {
                 sb.append(omcLpu != null ? omcLpu.getName() : "");
                 sb.append(" ");
                 sb.append(omcLpu != null ? omcLpu.getCode() : "");
+                
                 monitor.setText(sb.toString());
 //                tx.commit();
 //                tx.begin();

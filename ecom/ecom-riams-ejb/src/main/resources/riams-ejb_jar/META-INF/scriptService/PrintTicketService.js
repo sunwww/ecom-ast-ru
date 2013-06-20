@@ -106,7 +106,7 @@ function printInfo(aCtx, aParams) {
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
-    record("ticketd",FORMAT.format(ticket.dateFinish)) ;
+    record("ticketd",ticket.dateFinish!=null?FORMAT.format(ticket.dateFinish):"") ;
     record("medcard",mc) ;
     record("idticket",""+ticket.id) ;
     recordVocProba("sex", prs.sex, 1, 2);
