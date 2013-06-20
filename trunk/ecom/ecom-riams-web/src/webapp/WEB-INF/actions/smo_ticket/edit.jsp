@@ -23,7 +23,11 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" />
-        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" fieldColSpan="4" horizontalFill="true"/>
+        <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+        	<msh:ifFormTypeIsView formName="smo_ticketForm">
+	        	<msh:checkBox label="Беседа с родств." property="isTalk"/>
+	        </msh:ifFormTypeIsView>
+        </msh:ifInRole>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
@@ -77,16 +81,10 @@
         </msh:ifInRole>
         <msh:ifFormTypeIsNotView formName="smo_ticketForm">
         <msh:row>
-        	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" fieldColSpan="3"/>
+        	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" />
+        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" horizontalFill="true"/>
         </msh:row>
         </msh:ifFormTypeIsNotView>
-        <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
-        	<msh:ifFormTypeIsView formName="smo_ticketForm">
-	        <msh:row>
-	        	<msh:checkBox label="Беседа с родств." property="isTalk"/>
-	        </msh:row>
-	        </msh:ifFormTypeIsView>
-        </msh:ifInRole>
         <msh:row guid="7dfb3b2c-407d-48f1-9e70-76cb3328f5f5">
         	<msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
