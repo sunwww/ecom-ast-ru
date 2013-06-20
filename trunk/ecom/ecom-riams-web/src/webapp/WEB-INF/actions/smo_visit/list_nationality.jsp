@@ -310,7 +310,7 @@ left join Omc_Oksm vn on vn.id=p.nationality_id
 left join VocHospType vht on vht.id=m.hospType_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 
-left join WorkFunction wf on wf.id=m.workFunctionExecute_id and m.dtype='Visit'
+left join WorkFunction wf on wf.id=m.workFunctionExecute_id 
 left join Worker w on w.id=wf.worker_id
 left join MisLpu mlV on mlV.id=w.lpu_id
 left join MisLpu ml on ml.id=m.department_id

@@ -448,13 +448,13 @@ left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 left join MedCase sloa on sloa.parent_id=sls.id
 left join BedFund bf on bf.id=sloa.bedFund_id
-left join ReportSetTYpeParameterType rspt on mkb.code between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
+left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and vrspt.classname='F14_DIAG'
+and mkb.code between rspt.codefrom and rspt.codeto 
 ${department} and sloa.dateFinish is not null
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
@@ -796,8 +796,8 @@ left join BedFund bf on bf.id=sloa.bedFund_id
 left join MedCase sloall on sloall.parent_id=sls.id
 left join surgicaloperation so on so.medCase_id=sloall.id
 left join MedService ms on ms.id=so.medService_id
-left join ReportSetTYpeParameterType rspt on ms.additioncode between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+left join VocReportSetParameterType vrspt on vrspt.classname='F14_OPER'
+left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join VocOperationTechnology vot on vot.id=so.technology_id
 left join VocOperationOutcome voo on voo.id=so.outcome_id
 left join Patient p on p.id=sls.patient_id
@@ -806,7 +806,7 @@ sls.dtype='HospitalMedCase' and sls.dateFinish
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and sloa.dateFinish is not null
 ${department}
-and vrspt.classname='F14_OPER' 
+and  ms.additioncode between rspt.codefrom and rspt.codeto
 ${age_sql}  ${hospTypeSql}
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
