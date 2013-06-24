@@ -55,7 +55,9 @@
         	<msh:autoComplete property="kinsman" label="Представитель (иног.)" 
         	parentId="stac_sslAdmissionShortForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-
+        <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
+          <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
         <msh:row guid="b128654b-7eff-41b3-b73f-3cb819122a44">
           <msh:checkBox hideLabel="false" property="emergency" viewOnlyField="false" guid="e3373f9c-ca5f-4aa2-957b-9e7a0cb6cc39" horizontalFill="false" />
         </msh:row>

@@ -28,9 +28,9 @@
     , vi.code || ' ' || vi.name   as idc10
     , vad.name                 as acuity
     , vk.code || ' ' || vk.name       as ksg   
-    , case when (visit.DTYPE='VISIT' or visit.DTYPE='POLYCLINICMEDCASE') then 'Поликлиника' 
-    	when (visit.DTYPE='HOSPITALMEDCASE' or visit.DTYPE='DEPARTMENTMEDCASE') then 'Стационар' 
-    	when (visit.DTYPE='SERVICEMEDCASE') then 'Услуги' 
+    , case when (visit.DTYPE='Visit' or visit.DTYPE='PolyclinicMedCase' or visit.dtype='ShortMedCase') then 'Поликлиника' 
+    	when (visit.DTYPE='HospitalMedCase' or visit.DTYPE='DepartmentMedCase') then 'Стационар' 
+    	when (visit.DTYPE='ServiceMedCase') then 'Услуги' 
     	else 'неизвестно'
     	end   
     , vpd.name as priority

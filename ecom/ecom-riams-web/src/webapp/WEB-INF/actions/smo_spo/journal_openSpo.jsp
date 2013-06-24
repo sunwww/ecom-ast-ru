@@ -95,7 +95,7 @@
     <ecom:webQuery name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&curator='||owf.id as id
-,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
+,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
 ,count(distinct pat.id) as cntPat 
 ,count(distinct spo.id) as cntSpo 
 ,count(distinct vis.id) as cntVis 
@@ -104,11 +104,12 @@ left join MedCase vis on vis.parent_id=spo.id
 left join Patient pat on spo.patient_id=pat.id 
 left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 left join Worker ow on owf.worker_id=ow.id 
+left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 left join Patient owp on ow.person_id=owp.id 
 where spo.dtype='PolyclinicMedCase' 
 and spo.dateFinish is null and ow.lpu_id='${department}' 
 and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
-group by owf.id,owp.lastname,owp.middlename,owp.firstname 
+group by owf.id,owp.lastname,owp.middlename,owp.firstname,ovwf.name 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 

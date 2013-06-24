@@ -41,6 +41,8 @@
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
+       	<msh:hidden property="judgment35"/>
+       	<msh:hidden property="lawCourtDesicionDate"/>
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
         
@@ -116,7 +118,7 @@
           <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu" guid="c44b474f-6dba-4ba8-9af7-56a0dca363ad" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row guid="f2aba5-68fb-4ccc-9982-7b44a147">
-          <msh:autoComplete vocName="vocHospType" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
+          <msh:autoComplete vocName="vocHospTypeInAdmission" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
         </msh:row>
         <msh:row guid="544d70a3-19bf-4793-af89-fc135837">
           <msh:textField property="orderNumber" label="№ напр" guid="51e5754c-2356-4ef6-91b2-9634893cc329" />
@@ -152,6 +154,16 @@
         <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
+	        <msh:row>
+	        	<msh:autoComplete vocName="vocHospitalization" property="admissionInHospital" label="Поступление в стационар" horizontalFill="true" labelColSpan="1"/>
+		        <msh:autoComplete label="Причина госпитализации" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="1" horizontalFill="true"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="1" vocName="vocAdmissionOrder" horizontalFill="true"/>
+		        <msh:autoComplete label="Откуда поступил" vocName="vocHospitalizationWhereAdmission" property="whereAdmission" labelColSpan="1" horizontalFill="true"/>
+	        </msh:row>
+        </msh:ifInRole>
         <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
 	        <msh:row>
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicies" label="Прик.полис ОМС" horizontalFill="true" fieldColSpan="3" vocName="omcPolicyByPatient"/>
@@ -160,18 +172,6 @@
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicyDmc" label="Прик.полис ДМС" horizontalFill="true" fieldColSpan="3" vocName="dmcPolicyByPatient"/>
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
-	        <msh:row>
-		        <msh:autoComplete label="Причина госпитализации в психиатрический стационар" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="3"/>
-	        </msh:row>
-	        <msh:row>
-	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="3" vocName="vocAdmissionOrder" horizontalFill="true"/>
-	        </msh:row>
-	        <msh:row>
-	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
-	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
-	        </msh:row>
-        </msh:ifInRole>
         <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="2d66565b-265f-499f-9116-7755ec98c043">
           <msh:row guid="fafc8638-6d3f-4cf9-bb0a-5c7fe0b25e53">
             <td colspan="9">
@@ -376,7 +376,27 @@
 	            }
 	        }
         }</script>
+        
+        
     </msh:ifFormTypeIsView>
+  </tiles:put>
+  <tiles:put type="string" name="style">
+  	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
+        <style type="text/css">
+            #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
+            #orderMkbLabel,#orderDiagnosLabel,
+            #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
+            ,#orderLpuLabel
+             {
+                color: blue ;
+            }
+            #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
+            #orderMkbName,#orderDiagnos,
+            #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
+                background-color:#FFFFA0;
+            }
+        </style>
+  	</msh:ifInRole>
   </tiles:put>
 </tiles:insert>
 
