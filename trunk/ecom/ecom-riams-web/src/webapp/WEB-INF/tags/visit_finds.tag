@@ -37,6 +37,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink action="/smo_goingToSmo.do" name="Переход к визиту"
     	 styleId="smo_goingToSmo" roles="/Policy/Mis/MedCase/Visit/View"/>
     	 
+	<msh:sideLink name="Список отчетов" 
+	action="/javascript:getDefinition('riams_journals.do?short=Short',null)" styleId="viewShort" />
 	<msh:sideLink name="Учет посещений" action="/smo_journalRegisterVisit_list.do" 
 		title="Учет посещений" roles="/Policy/Mis/MedCase/Visit/JournalRegisterVisit"
 		styleId="journalRegisterVisit"/>

@@ -66,8 +66,14 @@
 				<div class='menu'>
 					<h2>Поликлиника</h2>
 					<ul style='list-style: none outside none; '>
-						<li><msh:link action="visit_f039_list.do?ticketIs=0" roles="/Policy/Mis/MedCase/Visit/Report039">
+						<li><msh:link action="visit_f039_list.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                            039 форма
+	                        </msh:link></li>
+						<li><msh:link action="smo_journal_closeSpo.do?ticketIs=0" roles="/Policy/Mis/MedCase/Visit/Report039">
+	                            Закрытые СПО
+	                        </msh:link></li>
+						<li><msh:link action="smo_journal_openSpo.do" roles="/Policy/Mis/MedCase/Visit/Report039">
+	                            Открытые СПО
 	                        </msh:link></li>
 						<li><msh:link action="visit_journal_direction.do" roles="/Policy/Mis/MedCase/Direction/Journal">
 	                            Журнал направленных

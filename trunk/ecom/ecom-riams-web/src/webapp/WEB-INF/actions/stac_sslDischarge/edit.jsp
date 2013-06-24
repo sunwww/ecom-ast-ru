@@ -7,7 +7,21 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="style" type="string">
+  	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <style type="text/css">
+            #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
+            #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
+            ,#judgment35Label,#lawCourtDesicionDate
+             {
+                color: blue ;
+            }
+            #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
+            #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
+                background-color:#FFFFA0;
+            }
+        </style>
+  	</msh:ifInRole>
+  	<style type="text/css">
 
 
             #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel {
@@ -226,6 +240,20 @@
         <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
+	        <msh:row>
+	        	<msh:autoComplete vocName="vocHospitalization" property="admissionInHospital" label="Поступление в стационар" horizontalFill="true" labelColSpan="1"/>
+		        <msh:autoComplete label="Причина госпитализации" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="1" horizontalFill="true"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="1" vocName="vocAdmissionOrder" horizontalFill="true"/>
+		        <msh:autoComplete label="Откуда поступил" vocName="vocHospitalizationWhereAdmission" property="whereAdmission" labelColSpan="1" horizontalFill="true"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
+	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
+	        </msh:row>
+        </msh:ifInRole>
         <msh:separator colSpan="8" label="RW" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
         <msh:row guid="f6e5b8dd-89fd-4442-9779-4995ba7cc3d8">
           <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
@@ -328,7 +356,22 @@
   		function savePreRecord() {
   			HospitalMedCaseService.preRecordDischarge(
   					$('id').value,$('dischargeEpicrisis').value, {
-	                    callback: function(aResult) {
+	                    callb  	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
+	                    <style type="text/css">
+	                    #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
+	                    #orderMkbLabel,#orderDiagnosLabel,
+	                    #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
+	                    ,#orderLpuLabel
+	                     {
+	                        color: blue ;
+	                    }
+	                    #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
+	                    #orderMkbName,#orderDiagnos,
+	                    #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
+	                        background-color:#FFFFA0;
+	                    }
+	                </style>
+	          	</msh:ifInRole>ack: function(aResult) {
 	                        alert("Сохранено") ;
 	                    }
   					}

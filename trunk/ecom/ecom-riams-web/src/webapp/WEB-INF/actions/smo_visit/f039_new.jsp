@@ -175,7 +175,7 @@
        			request.setAttribute("groupGroup", "wp.id,wp.lastname,wp.firstname,wp.middlename") ;
        			request.setAttribute("groupOrder", "wp.lastname,wp.firstname,wp.middlename") ;
     		} else if (typeGroup.equals("3")) {
-    			// Группировка по сотрудник 
+    			// Группировка по сотрудникам 
        			request.setAttribute("groupSql", "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
        			request.setAttribute("groupSqlId", "'&specialist='||wf.id") ;
        			request.setAttribute("groupName", "Сотрудник") ;

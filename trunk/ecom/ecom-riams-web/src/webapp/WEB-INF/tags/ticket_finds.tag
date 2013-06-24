@@ -36,6 +36,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
 </msh:sideMenu>
 <msh:sideMenu title="Статистика">
+	<msh:sideLink name="Список отчетов" 
+	action="/javascript:getDefinition('riams_journals.do?short=Short',null)" styleId="viewShort" />
 	<msh:sideLink name="по пользователю" action="/smo_ticketsByUser" params="" 
 		roles="/Policy/Poly/Ticket/StatByUser" styleId="ticketsByUser"
 	/>
