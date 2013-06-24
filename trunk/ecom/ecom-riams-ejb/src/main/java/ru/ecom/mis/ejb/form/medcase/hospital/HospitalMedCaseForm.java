@@ -7,6 +7,8 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
@@ -585,5 +587,23 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theComplicationMkb;
 	/** Осложнение текст диагноза */
 	private String theComplicationDiagnos;
+
+
+	/** Поступление в данный стационар */
+	@Comment("Поступление в данный стационар")
+	@Persist
+	public Long getAdmissionInHospital() {return theAdmissionInHospital;}
+	public void setAdmissionInHospital(Long aAdmissionInHospital) {theAdmissionInHospital = aAdmissionInHospital;}
+
+	/** Откуда поступил */
+	@Comment("Откуда поступил")
+	@Persist
+	public Long getWhereAdmission() {return theWhereAdmission;}
+	public void setWhereAdmission(Long aWhereAdmission) {theWhereAdmission = aWhereAdmission;}
+
+	/** Откуда поступил */
+	private Long theWhereAdmission;
+	/** Поступление в данный стационар */
+	private Long theAdmissionInHospital;
 
 }

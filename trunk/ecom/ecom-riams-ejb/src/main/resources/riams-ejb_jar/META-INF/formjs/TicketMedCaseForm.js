@@ -90,6 +90,7 @@ function saveAdditionData(aForm,aEntity,aManager) {
 			  ,"objNew.setIdc10(objS);"
 			  ,"objNew.setPriority(vocConcomType);"]
 			,"from Diagnosis where medCase_id='"+aEntity.getId()+"' ") ;
+	
 	// Медицинские услуги
 	saveArray(aEntity, aManager,aForm.getMedServices()
 			,Packages.ru.ecom.mis.ejb.domain.medcase.MedService
@@ -156,6 +157,8 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 		sql = "delete "+aTableSql+" not in ("+ids.substring(1)+") " ;
 		aManager.createNativeQuery(sql).executeUpdate();
 	} else {
+		sql = "delete "+aTableSql+" !='0' " ;
+		aManager.createNativeQuery(sql).executeUpdate();
 	}
 	
 }
@@ -195,7 +198,11 @@ function saveArray_back(aManager, aJsonString, aAddSql, aTableName
 				.append(" not in (").append(ids.substring(1)+") ") ;
 			aManager.createNativeQuery(sql.toString()).executeUpdate();
 		} else {
-	}
+			sql = new java.lang.StringBuilder() ;
+			sql.append("delete from ").append(aTableName)
+				.append(" where ").append(aAddSql).append("") ;
+			aManager.createNativeQuery(sql.toString()).executeUpdate();
+		}
 
 }
 

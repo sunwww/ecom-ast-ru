@@ -24,6 +24,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCause;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
@@ -34,8 +35,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -237,6 +236,22 @@ public class HospitalMedCase extends LongMedCase {
 	
 
 
+	/** Поступление в данный стационар */
+	@Comment("Поступление в данный стационар")
+	@OneToOne
+	public VocHospitalization getAdmissionInHospital() {return theAdmissionInHospital;}
+	public void setAdmissionInHospital(VocHospitalization aAdmissionInHospital) {theAdmissionInHospital = aAdmissionInHospital;}
+
+	/** Откуда поступил */
+	@Comment("Откуда поступил")
+	@OneToOne
+	public VocHospitalizationOutcome getWhereAdmission() {return theWhereAdmission;}
+	public void setWhereAdmission(VocHospitalizationOutcome aWhereAdmission) {theWhereAdmission = aWhereAdmission;}
+
+	/** Откуда поступил */
+	private VocHospitalizationOutcome theWhereAdmission;
+	/** Поступление в данный стационар */
+	private VocHospitalization theAdmissionInHospital;
 	/** Редкий случай */
 	private Boolean theRareCase;
 
