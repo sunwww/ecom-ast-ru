@@ -19,6 +19,20 @@
 		queried="upper(ce.name) like upper(:query)"
 	/>
 </voc>
+<voc id="priceMedServiceByPriceList" type="NativeVocService">
+		<NativeVocService
+			from="PriceMedService PMS"
+                parent='PP.priceList_id = :parent'
+                nameId="PMS.id"
+                queryAppend=""
+                join="
+                	left join PricePosition PP ON PP.id = PMS.pricePosition_id
+				"
+                order=""
+                names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
+	    		queried=" (upper(PP.code) like upper(:query) or upper(PP.name) like upper(:query)) "
+			/>
+	</voc>
 <voc id="priceMedServiceByContractAccout" type="NativeVocService">
 		<NativeVocService
 			from="PriceMedService PMS"
