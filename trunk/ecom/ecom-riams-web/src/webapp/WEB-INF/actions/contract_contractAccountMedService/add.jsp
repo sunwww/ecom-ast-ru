@@ -182,7 +182,7 @@
     		<table>
     		<tr>
     		<td>
-			<msh:autoComplete property="medService" parentId="${param.id}" label="Медицинская услуга" vocName="priceMedServiceByContractAccout" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="priceMedServicies" parentAutocomplete="priceList" label="Медицинская услуга" vocName="priceMedServiceByContractAccout" horizontalFill="true" size="90"/>
 			</td>
 			<td colspan='1' title='кол-во' class='label'>
 				<label id='CountName' for='Count'>Кол-во:</label>

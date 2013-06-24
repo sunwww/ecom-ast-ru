@@ -12,14 +12,36 @@
       <msh:hidden property="saveType" guid="81d410cd-ac37-4309-9fe7-a8d0943c5ae1" />
       <msh:panel guid="41b857b2-e843-401e-8a0f-33f2fbd66417">
         <msh:row guid="b18bbff8-d1ea-4681-bd11-5a712a9fac54">
-          <msh:autoComplete property="patient" label="Пациент" vocName="patient" horizontalFill="true" size="150" guid="221d7df7-faf5-440d-916d-f1d486129027" />
+          <msh:autoComplete property="patient" label="Пациент" vocName="patient" horizontalFill="true" size="150" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="4" guid="b57bcf78-314d-4821-a8d5-4606a69280dd" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
+      
+      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
+      	shortList="js-contract_medContract-list_by_customer.do?short=Short&id=${param.id}" title="Список последних 10 договоров заказчика">
+      	<ecom:webQuery name="medContracts" nativeSql="
+      	select mc.id as mcid ,ca.id||' '||case when sp.id=mc.customer_id then '' else cp.id||coalesce(cpp.lastname,'')  end
+,mc.dateFrom as mcdateFrom 
+,mc.dateTo as mcdateTo,pl.name as plname 
+from MedContract mc 
+left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
+left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
+left join PriceList pl on pl.id=mc.priceList_id 
+where mc.customer_id='${param.id}' 
+order by mc.dateFrom desc
+      	" maxResult="10"/>
+      	<msh:table name="medContracts" viewUrl="entityView-medContract.do?short=Short" action="entityView-medContract" idField="1">
+      		<msh:tableColumn property="2" columnName="№счета по обслуживаемой персоне"/>
+      		<msh:tableColumn property="3" columnName="Дата начала"/>
+      		<msh:tableColumn property="4" columnName="Дата окончания"/>
+      		<msh:tableColumn property="5" columnName="Прейкурант"/>
+      		<msh:tableColumn property="5" columnName="Прейкурант"/>
+      	</msh:table>
+      </msh:section>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Contract" beginForm="contract_naturalPersonForm" guid="e33fe6e9-a1e4-492c-ac29-f07b1db0efe0" />
+    <ecom:titleTrail mainMenu="Contract" beginForm="contract_naturalPersonForm"  />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="dea2e8ca-c7db-4592-a9ec-727f6d330ad1">

@@ -16,7 +16,7 @@
 			<msh:hidden property="editDate" />
 			<msh:hidden property="editTime" />
 			<msh:hidden property="editUsername" />
-			<msh:panel>
+			<msh:panel>	
 				<msh:row>
 					<msh:textField property="contractNumber" label="Номер договора"/>
 				</msh:row>
