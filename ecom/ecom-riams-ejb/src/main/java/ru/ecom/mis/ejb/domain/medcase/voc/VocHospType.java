@@ -37,6 +37,30 @@ public class VocHospType extends VocBaseEntity {
 		theCodefds = aCodefds;
 	}
 
+	/** Не отображать */
+	@Comment("Не отображать")
+	public Boolean getIsNotViewDefault() {
+		return theIsNotViewDefault;
+	}
+
+	public void setIsNotViewDefault(Boolean aIsNotViewDefault) {
+		theIsNotViewDefault = aIsNotViewDefault;
+	}
+
+	/** Не отображать в поступлении */
+	@Comment("Не отображать в поступлении")
+	public Boolean getIsNotViewAdmission() {
+		return theIsNotViewAdmission;
+	}
+
+	public void setIsNotViewAdmission(Boolean aIsNotViewAdmission) {
+		theIsNotViewAdmission = aIsNotViewAdmission;
+	}
+
+	/** Не отображать в поступлении */
+	private Boolean theIsNotViewAdmission;
+	/** Не отображать */
+	private Boolean theIsNotViewDefault;
 	/** Код федеральный дневной стационар */
 	private String theCodefds;
 

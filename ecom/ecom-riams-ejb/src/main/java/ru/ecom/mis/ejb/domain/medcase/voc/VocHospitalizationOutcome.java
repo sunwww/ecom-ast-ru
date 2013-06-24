@@ -15,5 +15,19 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник исходов госпитализации")
 @Table(schema="SQLUser")
 public class VocHospitalizationOutcome extends VocBaseEntity {
+	/** Не отображать при выписке */
+	@Comment("Не отображать при выписке")
+	public Boolean getIsNotViewDischarge() {return theIsNotViewDischarge;}
+	public void setIsNotViewDischarge(Boolean aIsNotViewDischarge) {theIsNotViewDischarge = aIsNotViewDischarge;}
+
+	/** Не отображать при поступлении */
+	@Comment("Не отображать при поступлении")
+	public Boolean getIsNotViewAdmission() {return theIsNotViewAdmission;}
+	public void setIsNotViewAdmission(Boolean aIsNotViewAdmission) {theIsNotViewAdmission = aIsNotViewAdmission;}
+
+	/** Не отображать при поступлении */
+	private Boolean theIsNotViewAdmission;
+	/** Не отображать при выписке */
+	private Boolean theIsNotViewDischarge;
 
 }

@@ -164,6 +164,16 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
                 names   = 'name'
                 queried = 'name'
+                queryAppend="(isNotViewDischarge is null or isNotViewDischarge='0')"
+                />
+    </voc> 
+    <!-- Справочник исходов госпитализации -->
+    <voc id='vocHospitalizationWhereAdmission' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                names   = 'name'
+                queried = 'name'
+                queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
                 />
     </voc> 
     <voc id='vocAnesthesiaMethod' type='EntityVocService'>
@@ -379,6 +389,15 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
                 names   = 'name'
                 queried = 'name'
+                queryAppend="(isNotViewDefault is null or isNotViewDefault='0')"
+                />
+    </voc> 
+    <voc id='vocHospTypeInAdmission' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
+                names   = 'name'
+                queried = 'name'
+                queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
                 />
     </voc> 
     <!-- Справочник типов листов назначений -->
