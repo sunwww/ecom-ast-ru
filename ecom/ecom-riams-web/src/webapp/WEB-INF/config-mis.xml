@@ -57,6 +57,7 @@
 		<form-bean name="contract_contractRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractRuleForm" />
 		<form-bean name="contract_guaranteeIntervalForm" type="ru.ecom.mis.ejb.form.contract.GuaranteeIntervalForm" />
 		<form-bean name="contract_juridicalPersonForm" type="ru.ecom.mis.ejb.form.contract.JuridicalPersonForm" />
+		<form-bean name="contract_medContract_personForm" type="ru.ecom.mis.ejb.form.contract.MedContractByPersonForm" />
 		<form-bean name="contract_medContractForm" type="ru.ecom.mis.ejb.form.contract.MedContractForm" />
 		<form-bean name="contract_medServiceIntervalForm" type="ru.ecom.mis.ejb.form.contract.MedServiceIntervalForm" />
 		<form-bean name="contract_naturalPersonForm" type="ru.ecom.mis.ejb.form.contract.NaturalPersonForm" />
