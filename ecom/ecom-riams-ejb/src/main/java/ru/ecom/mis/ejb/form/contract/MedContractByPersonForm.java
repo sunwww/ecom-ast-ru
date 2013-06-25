@@ -10,6 +10,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = MedContract.class)
@@ -25,6 +26,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 public class MedContractByPersonForm extends MedContractForm {
 	/** Обслуживаемая персона */
 	@Comment("Обслуживаемая персона")
+	@Required
 	public Long getServedPerson() {return theServedPerson;}
 	public void setServedPerson(Long aServedPerson) {theServedPerson = aServedPerson;}
 	
@@ -43,6 +45,7 @@ public class MedContractByPersonForm extends MedContractForm {
 	public Long getPriceMedService() {return thePriceMedService;}
 	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
 
+	
 	/** Услуг */
 	private Long thePriceMedService;
 	/** Список услуг */
