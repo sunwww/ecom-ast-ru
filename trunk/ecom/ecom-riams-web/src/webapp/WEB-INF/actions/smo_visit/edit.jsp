@@ -284,6 +284,22 @@
   	<script type="text/javascript">
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
+  	alert($("workFunctionExecute").value) ;
+		TicketService.getOpenSpoByPatient((+$("workFunctionPlan").value),$('patient').value,{
+			callback: function(aResult) {
+				if (aResult!="") {
+    				var val = aResult.split("@") ;
+    				$('parent').value = val[0];
+    				$('parentName').value= val[1];
+				} else {
+    				$('parent').value = '';
+    				$('parentName').value= '';
+				}
+			}
+		}) ;
+	
+  	
+  	
   	function checkVisit() {
   		TicketService.checkHospital($('dateStart').value,$('patient').value,$('serviceStream').value
   		,{callback: function(aString) {

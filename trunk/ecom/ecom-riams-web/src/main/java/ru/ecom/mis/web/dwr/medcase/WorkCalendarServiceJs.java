@@ -327,7 +327,7 @@ public class WorkCalendarServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql = new StringBuilder() ;
-		sql.append("select spo.id as spoid,to_char(spo.dateStart,'yyyy-mm-dd')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+		sql.append("select spo.id as spoid,coalesce(to_char(spo.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(spo.dateFinish,'dd.mm.yyyy'),'')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
 		sql.append(" from MedCase spo left join WorkFunction wf on wf.id=spo.startFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where spo.id='").append(aSpo).append("' and spo.dtype='PolyclinicMedCase'") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
 		if (!list.isEmpty()) {

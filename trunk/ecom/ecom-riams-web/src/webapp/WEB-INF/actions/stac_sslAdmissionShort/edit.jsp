@@ -55,6 +55,14 @@
         	<msh:autoComplete property="kinsman" label="Представитель (иног.)" 
         	parentId="stac_sslAdmissionShortForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
+	        <msh:row>
+	        	<msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" fieldColSpan="3"/>
+	        </msh:row>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+        	<msh:hidden property="hotelServices"/>
+        </msh:ifNotInRole>
         <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
           <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -177,6 +185,20 @@
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionShortForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
+      
+		try{	
+		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('orderMkb','orderDiagnos');
+	    });} catch(e) {}
+		function setDiagnosisText(aFieldMkb,aFieldText) {
+			var val = $(aFieldMkb+'Name').value ;
+			var ind = val.indexOf(' ') ;
+			//alert(ind+' '+val)
+			if (ind!=-1) {
+				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+			}
+		}
+		
                     $('departmentName').className="autocomplete horizontalFill required";
                     $('hospitalizationName').className="autocomplete horizontalFill required";
                     $('serviceStreamName').className="autocomplete horizontalFill required";
