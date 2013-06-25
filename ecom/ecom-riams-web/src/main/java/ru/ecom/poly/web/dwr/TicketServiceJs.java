@@ -1,14 +1,11 @@
 package ru.ecom.poly.web.dwr;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.jsp.JspException;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -20,7 +17,6 @@ import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
@@ -29,18 +25,23 @@ public class TicketServiceJs {
 		
 		StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select spo.id,to_char(spo.dateStart,'yyyy-mm-dd') ||' '||ovwf.name || ' '||owp.lastname|| ' '||owp.firstname|| ' '||owp.middlename as docfio" )
+		StringBuilder sql1 = new StringBuilder() ;
+		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list1 = service.executeNativeSql(sql1.toString(),1) ;
+		WebQueryResult obj1 = list1.isEmpty()?null:list1.iterator().next() ;
+		sql.append("select spo.id,coalesce(to_char(spo.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(spo.dateFinish,'dd.mm.yyyy'),'') ||' '||ovwf.name || ' '||owp.lastname|| ' '||owp.firstname|| ' '||owp.middlename as docfio" )
 			.append(" from medCase spo")
 			.append(" left join WorkFunction owf on owf.id=spo.ownerFunction_id")
 			.append(" left join Worker ow on ow.id=owf.worker_id")
 			.append(" left join Patient owp on owp.id=ow.person_id")
 			.append(" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id")
 			.append(" where spo.patient_id='").append(aPatient).append("'")
-			.append(" and spo.DTYPE='PolyclinicMedCase' and (spo.noActuality='0' or spo.noActuality is null) and spo.ownerFunction_id='")
-			.append(aWorkFunction).append("'")
+			.append(" and spo.DTYPE='PolyclinicMedCase' and spo.dateFinish is null and (spo.noActuality='0' or spo.noActuality is null) and ovwf.id='")
+			.append(obj1.get1()).append("'")
 			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname,owp.firstname,owp.middlename")
 			.append(" order by spo.dateStart desc") ;
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
 		WebQueryResult obj = list.isEmpty()?null:list.iterator().next() ;
 		return obj==null?"":res.append(obj.get1()).append("@").append(obj.get2()).toString() ;

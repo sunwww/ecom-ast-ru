@@ -74,69 +74,7 @@
                );
 			
 			}
-			
-			
-		
-		
-		
-		</script>	
-			<script type="text/javascript">
-	function addRowOld(aName, aNameId, aCount, aPrice, aContractAMS)
-	{
-	    // Считываем значения с формы
-		//alert(aNameId) ;
-	    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>";
-	    var nameId = aNameId;
-	   
-
-   	    var cnt=+$('cnt').value+1 ;
-		$('cnt').value = cnt;
-        //alert(cnt) ;
-	    var name = aName;
-	    //alert('aa') ;
-	    //nameId = aNameID;
-	    var count = aCount;
-	   	var costName="cost"+cnt;
-	    //cost = document.getElementsByName("cost"+nameId)[0].value;
-	    
-	    // Находим нужную таблицу
-	    var tbody = document.getElementById('tab1').getElementsByTagName('TBODY')[0];
-		if(nameId!="")if(nameId!=null){
-		    // Создаем строку таблицы и добавляем ее
-		    var row = document.createElement("TR");
-		    tbody.appendChild(row);
-		
-		    // Создаем ячейки в вышесозданной строке
-		    // и добавляем тх
-		    var td1 = document.createElement("TD");
-		    var td2 = document.createElement("TD");
-		    var td3 = document.createElement("TD");
-		    var td4 = document.createElement("TD");
-		    
-		    row.appendChild(td1);
-		    row.appendChild(td2);
-		    row.appendChild(td3);
-		    row.appendChild(td4);
-		
-		    // Наполняем ячейки
-		    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='"+aContractAMS+"' type='hidden' >";
-               if (+aPrice>0)  {
-               	td2.innerHTML =  aPrice +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aPrice+"' type='hidden' / >";
-               	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aPrice)*(+count)+"' size='9' readonly='true' />" ;
-               } else {
-               	td2.innerHTML = "0" ;
-               	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
-               }
-			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
-			    //$('sum'+cnt).readOnly=true ;
-			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
-            eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
-
-			 
-			
-        }
-    		
-	}
+	
 	function checkSum() {
 		var costAll = 0;
 		var medServAll = "";
@@ -148,19 +86,26 @@
 				var sum = (cost*count) ;
 				costAll = costAll + sum ;
 				$('sum'+i).value=sum ;
-				//medServAll = medServAll+$('service'+i).value+":"+cost+":"+count+"#";
+				if (medServAll!='') medServAll=medServAll+"#" ;
+				medServAll = medServAll+$('service'+i).value+":"+count;
 			}
 			
 		}
-		//$('cost'+i).value
-		//if(medServAll!=null)$('additionMedService').value=medServAll;
+		$('priceMedServicies').value=medServAll;
 		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
 		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
+		
 	}
+	$('autoAccount')
 	</script>
 	</tiles:put>
 	
 	<tiles:put name="body" type="string">
+  <msh:ifFormTypeIsView formName="contract_medContract_personForm">
+  <script type="text/javascript">
+  	window.location.href='entityView-contract_medContract.do?id='+${param.id} ;
+  </script>
+  </msh:ifFormTypeIsView>	
 		<msh:form action="/entitySaveGoView-contract_medContract_person.do" defaultField="contractNumber">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
@@ -196,11 +141,7 @@
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
 					<msh:textField property="dateTo" label="Дата окончания "/>
-				</msh:row>
-				<msh:row>
-					<msh:checkBox property="autoAccount" label="Создать счет"/>
-				</msh:row>
-				
+				</msh:row>				
 				</msh:panel>
 								
 		

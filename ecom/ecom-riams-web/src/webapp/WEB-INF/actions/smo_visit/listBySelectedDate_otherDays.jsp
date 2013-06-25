@@ -20,7 +20,7 @@
   <tiles:put name="body" type="string">
   	
     
-  	<msh:section title="Принятые пациенты на текущее число, а принятые другим числом">
+  	<msh:section title="Принятые пациенты направленные на текущее число, а принятые другим числом">
 	    <ecom:webQuery name="list_other" nativeSql="select v.id 
 	    ,to_char(wcd.calendarDate,'DD.MM.YYYY')||' '||cast(wct.timeFrom as varchar(5)) as timeFrom
 	    ,to_char(v.dateStart,'DD.MM.YYYY')||' '||cast(v.timeExecute as varchar(5)) as dateStart
