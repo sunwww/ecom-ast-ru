@@ -38,10 +38,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
       />
     </msh:sideMenu>
 <msh:sideMenu title="Журналы по КЭР">
-      <msh:sideLink name="Свод" action="/dis_swod.do"
+      <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"
       	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalByPeriod" styleId="journalKERByPeriod"
       />
-      <msh:sideLink name="Свод" action="/dis_swod.do"
+      <msh:sideLink name="Открытые направления на ВК" action="/expert_kersopen.do"
       	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalOpenCase" styleId="journalOpenKER"
       />
 
