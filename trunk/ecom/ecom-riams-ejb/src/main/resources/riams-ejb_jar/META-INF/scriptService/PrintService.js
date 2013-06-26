@@ -3,13 +3,17 @@ var map = new java.util.HashMap() ;
 function printNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");
+	var cntBegin = +aParams.get("cntBegin");
 	var sqlColumn = aParams.get("sqlColumn");
+	if (cntBegin<1) cntBegin=1 ;
 	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
 	var ret = new java.util.ArrayList() ;
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		par.set1(""+(i+1)) ;
+		
+		par.set1(""+cntBegin) ;
+		++cntBegin ;
 		for (var j=2;j<=obj.length;j++) {
 			eval("par.set"+(j)+"(obj[j-1]);") ;
 		}
