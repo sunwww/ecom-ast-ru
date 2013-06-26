@@ -79,12 +79,12 @@
 	        	<msh:autoComplete vocName="vocVisitOutcome" property="visitOutcome" label="Исход СП" horizontalFill="true" />
 	        </msh:row>
         </msh:ifInRole>
-        <msh:ifFormTypeIsNotView formName="smo_ticketForm">
         <msh:row>
+        <msh:ifFormTypeIsNotView formName="smo_ticketForm">
         	<msh:checkBox property="isCloseSpo" label="Закрыть СПО" />
-        	<msh:checkBox property="isDirectHospital" label="Направлен на стационарное лечение" horizontalFill="true"/>
-        </msh:row>
         </msh:ifFormTypeIsNotView>
+        	<msh:checkBox fieldColSpan="2" property="isDirectHospital" label="Направлен на стационарное лечение" horizontalFill="true"/>
+        </msh:row>
         <msh:row guid="7dfb3b2c-407d-48f1-9e70-76cb3328f5f5">
         	<msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
@@ -315,9 +315,10 @@
   		}
     	if ($('workFunctionExecuteName')) workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     		var wf = +$("workFunctionExecute").value;
-    		if (wf=='') {wf=0;}
+    		
     		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    		if (wf>0) {
     		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
@@ -335,6 +336,7 @@
     	      	 	}) ;
     			}
     		}) ;
+    		}else {$('parent').value = '';$('parentName').value = '';if (theOtmoa_medServices) theOtmoa_medServices.setIds("") ;}
     	});
 	    
 	      	eventutil.addEventListener($('dateStart'),'blur',function(){
@@ -413,10 +415,10 @@
    	   			if (val[4]!=""&&(+val[4]>0)) $('emergency').checked=true;
    	   			
    	   		var wf = +$("workFunctionExecute").value;
-    		if (wf=='') {wf=0;}
+   	   		
     		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 
+    		 if (wf>0) {
      		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
@@ -434,6 +436,7 @@
     	      	 	}) ;
     			}
     		}) ;
+    		 }
     		 
    	    		//if (theOtmoa_medServices && val[3]!="") theOtmoa_medServices.setIds(val[3]) ;
    			}
@@ -445,4 +448,3 @@
   </msh:ifFormTypeIsCreate>
 </tiles:put>
 </tiles:insert>
-

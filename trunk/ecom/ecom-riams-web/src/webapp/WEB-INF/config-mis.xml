@@ -332,7 +332,7 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_doubleVisits_data.jsp" />
         </action>
 
-       <action path='/smo_journalRegisterVisit_list' type='ru.ecom.mis.web.action.medcase.journal.JournalRegisterVisitAction'
+       <action path='/smo_journalRegisterVisit_list' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='true'
                 scope='session'

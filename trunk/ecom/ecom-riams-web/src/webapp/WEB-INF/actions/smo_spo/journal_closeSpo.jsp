@@ -21,7 +21,7 @@
     
   <tiles:put name="body" type="string">
   <%
-	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","1", request) ;
+	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","3", request) ;
   
 
   %>
@@ -34,7 +34,7 @@
      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по МКБ (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">МКБ:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1">  более 2х случаев
+        	<input type="radio" name="typeView" value="1">  2 и более случаев
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="2">  есть открытый СПО
