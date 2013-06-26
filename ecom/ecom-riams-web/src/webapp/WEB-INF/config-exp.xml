@@ -56,12 +56,6 @@
 
     <action-mappings>
 
-        <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
-            scope='request' validate="false" name="">
-            <forward name="success" redirect='true' path="/exp_reg.do" />
-        </action>
-
-
         <!-- ЭКСПЕРТИЗА -->
 
         <action path="/edit-expert_estimation" type="ru.ecom.expomc.web.actions.exportformat.TestSqlAction"
@@ -69,7 +63,24 @@
             <forward name="success" path="/WEB-INF/actions/exp_exportformat/testSql.jsp"/>
         </action>
         
-        
+		<!-- Клинико-экспертная работа -->
+        <action path='/expert_kersopen' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/expert_ker/openList.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/expert_ker/openList.jsp" />
+        </action>
+        <action path='/expert_journal_ker' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/expert_ker/listByPeriod.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/expert_ker/listByPeriod.jsp" />
+        </action>
+		        
         <!-- IKO 070301 +++ События формы "формат экспорта" -->
         
         

@@ -38,7 +38,7 @@
 		    	smc.id as smcid,to_char(smc.createDate,'dd.mm.yyyy') as createdate
 		    	,cast(smc.createTime as varchar(5)) as createtime
 		    	,vwf.name||' '||wp.lastname as workFunction
-		    	,p.lastname||p.firstname||p.middlename as patient
+		    	,p.lastname||' '||p.firstname||' '||p.middlename as patient
 		    	from MedCase smc 
 		    	left join Patient p on p.id=smc.patient_id
 		    	left join WorkFunction wf on smc.workFunctionExecute_id=wf.id

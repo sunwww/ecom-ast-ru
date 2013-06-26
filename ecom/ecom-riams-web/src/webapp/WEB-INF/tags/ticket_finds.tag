@@ -21,7 +21,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 <msh:sideMenu></msh:sideMenu>
 <msh:sideMenu title="Поиск талонов" guid="fsdfsdf-dfsf">
-	<msh:sideLink name="По номеру" action="/poly_tickets.do" key="ALT+7" 
+	<msh:sideLink name="По номеру" action="/smo_goingToSmo.do" key="ALT+7" 
 		title="По талону" roles="/Policy/Poly/Ticket/View"
 		styleId="tickets"/>
 	<msh:sideLink name="По специалисту" action="/smo_ticketspec.do" key="ALT+8" 

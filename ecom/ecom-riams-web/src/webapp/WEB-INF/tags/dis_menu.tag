@@ -25,7 +25,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		title="Поиск документов нетрудоспособности по серии и номеру" roles="/Policy/Mis/Disability/Case/Document/View"
 		styleId="find_number"/>
 </msh:sideMenu>
-    <msh:sideMenu title="Журналы">
+    <msh:sideMenu title="Журналы НТ">
       <msh:sideLink key="CTRL+7" params="" action="/dis_documentClose" name="Выданных документов НТ" 
         roles='/Policy/Mis/Disability/Case/Document/View' styleId="closeDNT" />
       <msh:sideLink key="CTRL+8" params="" action="/dis_documentOpen" name="Открытых документов НТ" 
@@ -37,3 +37,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
       	roles="/Policy/Mis/Disability/Case/Document/View" styleId="swodNT"
       />
     </msh:sideMenu>
+<msh:sideMenu title="Журналы по КЭР">
+      <msh:sideLink name="Свод" action="/dis_swod.do"
+      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalByPeriod" styleId="journalKERByPeriod"
+      />
+      <msh:sideLink name="Свод" action="/dis_swod.do"
+      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalOpenCase" styleId="journalOpenKER"
+      />
+
+</msh:sideMenu>
