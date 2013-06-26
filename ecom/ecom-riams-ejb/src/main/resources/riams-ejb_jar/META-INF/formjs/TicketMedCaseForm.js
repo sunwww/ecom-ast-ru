@@ -44,7 +44,7 @@ function onPreDelete(aId, aCtx) {
  * При создании
  */
 function onCreate(aForm, aEntity, aContext) {
-	saveAdditionData(aForm,aEntity,aContext.manager) ;
+	saveAdditionData(aForm,aEntity,aContext) ;
 }
 
 /**
@@ -56,10 +56,10 @@ function onSave(aForm, aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	saveAdditionData(aForm,aEntity,aCtx.manager) ;
+	saveAdditionData(aForm,aEntity,aCtx) ;
 	
 }
-function saveAdditionData(aForm,aEntity,aManager) {
+function saveAdditionData(aForm,aEntity,aCtx) {
 	if(aEntity.parent==null) {
 		var spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
 		
@@ -71,14 +71,24 @@ function saveAdditionData(aForm,aEntity,aManager) {
 		spo.setStartFunction(workFunction) ;
 		spo.setServiceStream(aEntity.getServiceStream()) ;
 		spo.setNoActuality(false) ;
-		aManager.persist(spo) ;
+		aCtx.manager.persist(spo) ;
 		aEntity.setParent(spo) ;
 	}
 	
-	aManager.persist(aEntity) ;
+	aCtx.manager.persist(aEntity) ;
+	
+	if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
+		//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
+		try {
+			
+			aCtx.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
+		} catch(e) {}
+		
+	}
+	
 	
 	// Сопутствующий диагноз
-	saveArray(aEntity,aManager,aForm.getConcomitantDiseases()
+	saveArray(aEntity,aCtx.manager,aForm.getConcomitantDiseases()
 			,Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10
 			,["var vocConcomType = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor.getVocByCode(aManager,\"VocPriorityDiagnosis\",\"3\") ;"
 			  ,"aTableSql=aTableSql+\"and priority_id='\"+vocConcomType.getId()+\"' and idc10_id\";"
@@ -92,7 +102,7 @@ function saveAdditionData(aForm,aEntity,aManager) {
 			,"from Diagnosis where medCase_id='"+aEntity.getId()+"' ") ;
 	
 	// Медицинские услуги
-	saveArray(aEntity, aManager,aForm.getMedServices()
+	saveArray(aEntity, aCtx.manager,aForm.getMedServices()
 			,Packages.ru.ecom.mis.ejb.domain.medcase.MedService
 			,[]
 			,["var objNew=new Packages.ru.ecom.mis.ejb.domain.medcase.ServiceMedCase() ;"
@@ -106,14 +116,7 @@ function saveAdditionData(aForm,aEntity,aManager) {
 	
 		
 	
-	if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
-		try {
-			aCt.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
-		} catch(e) {
-			
-		}
-		
-	}
+
 	
 }
 
