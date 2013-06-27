@@ -5,7 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslAdmissionForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />

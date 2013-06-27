@@ -149,6 +149,9 @@
 						<li><msh:link action="stac_planning_hospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Journal/PlanningHospitalizations">
 	                            Планирование госпитализаций
 	                        </msh:link></li>
+						<li><msh:link action="stac_journal_denied_without_diagnosis.do.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
+	                            Отказы от госпитализаций без диагнозов
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
