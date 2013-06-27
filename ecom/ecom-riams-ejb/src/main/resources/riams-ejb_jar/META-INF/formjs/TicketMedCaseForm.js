@@ -62,7 +62,6 @@ function onSave(aForm, aEntity, aCtx) {
 function saveAdditionData(aForm,aEntity,aCtx) {
 	if(aEntity.parent==null) {
 		var spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
-		
 		var workFunction = aEntity.getWorkFunctionExecute() ; 
 		spo.setOwnerFunction(workFunction) ;
 		spo.setDateStart(aEntity.getDateStart()) ;
@@ -71,20 +70,27 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		spo.setStartFunction(workFunction) ;
 		spo.setServiceStream(aEntity.getServiceStream()) ;
 		spo.setNoActuality(false) ;
+		if (aForm.isCloseSpo!=null && aForm.isCloseSpo) {
+			spo.setDateFinish(aEntity.getDateStart()) ;
+			spo.setFinishFunction(workFunction) ;
+		}
 		aCtx.manager.persist(spo) ;
 		aEntity.setParent(spo) ;
-	}
-	
-	aCtx.manager.persist(aEntity) ;
-	
-	if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
-		//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
-		try {
+		aCtx.manager.persist(aEntity) ;
+	} else {
+		if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
+			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
+			try {
+				
+				aCtx.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
+			} catch(e) {}
 			
-			aCtx.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
-		} catch(e) {}
-		
+		}		
 	}
+	
+	
+	
+
 	
 	
 	// Сопутствующий диагноз
