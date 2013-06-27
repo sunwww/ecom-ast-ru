@@ -91,6 +91,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report007.jsp" />
         </action>
+        <action path='/stac_journal_denied_without_diagnosis' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_diagnosis/listDeniedByPeriod.jsp" />
+        </action>
         <action path='/stac_report_direct_in_hospital' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

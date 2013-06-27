@@ -198,7 +198,8 @@
          left outer join VocPriorityDiagnosis on Diagnosis.priority_id = VocPriorityDiagnosis.id
          left outer join VocIdc10     on Diagnosis.idc10_id = VocIdc10.id
          where Diagnosis.medCase_id=${param.id}" />
-        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'>Добавить новый диагноз</a>" >
+        <msh:section createRoles="/Policy/Mis/MedCase/Diagnosis/Create" createUrl="entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }"
+         title="Диагнозы" >
           <msh:table name="diags" action="entityParentView-stac_diagnosis.do" idField="1" guid="7312ce0c-0c61-482d-9079-71b2a0f29484">
               <msh:tableColumn property="sn" columnName="#" />
             <msh:tableColumn columnName="Тип регистрации" property="2" guid="e2fc05a6-e089-4c90-8fb2-a8377e6f8967" />

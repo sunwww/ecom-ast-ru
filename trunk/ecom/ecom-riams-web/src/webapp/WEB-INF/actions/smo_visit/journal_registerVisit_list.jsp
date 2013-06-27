@@ -92,12 +92,12 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
-        		horizontalFill="true" fieldColSpan="3"/>
+        		horizontalFill="true" fieldColSpan="6"/>
         	
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="specialist" vocName="workFunction" 
-        		horizontalFill="true" fieldColSpan="3"/>
+        		horizontalFill="true" fieldColSpan="6"/>
         	
         </msh:row>
         <msh:row>
@@ -106,10 +106,10 @@
         </msh:row>
         
         <msh:row>
-        	<msh:autoComplete labelColSpan="3" property="primaryInYear" vocName="vocHospitalization" size="25"/>
+        	<msh:autoComplete labelColSpan="6" property="primaryInYear" vocName="vocHospitalization" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="rayon" vocName="vocRayon" size="25"/>
+        	<msh:autoComplete property="rayon" vocName="vocRayon" fieldColSpan="6" horizontalFill="true"/>
         	
         </msh:row>
          <msh:row>
@@ -204,7 +204,7 @@
         </msh:table>
         
         <ecom:webQuery name="listCount" nativeSql="
-	select case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else 'Нет' end as direct,count(distinct t.id) as cnt
+	select case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else 'Нет' end as direct,count(t.id) as cnt
 	 from MedCase t 
 	${sql}
 	and (t.noActuality is null or t.noActuality='0')
@@ -250,6 +250,4 @@
   		}
   	</script>
   </tiles:put>
-
 </tiles:insert>
-

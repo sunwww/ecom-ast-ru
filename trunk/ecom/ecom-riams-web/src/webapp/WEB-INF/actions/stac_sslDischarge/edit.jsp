@@ -7,6 +7,22 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="style" type="string">
+	  	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
+	                    <style type="text/css">
+	                    #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
+	                    #orderMkbLabel,#orderDiagnosLabel,
+	                    #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
+	                    ,#orderLpuLabel
+	                     {
+	                        color: blue ;
+	                    }
+	                    #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
+	                    #orderMkbName,#orderDiagnos,
+	                    #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
+	                        background-color:#FFFFA0;
+	                    }
+	                </style>
+	          	</msh:ifInRole>
   	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <style type="text/css">
             #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
@@ -356,22 +372,7 @@
   		function savePreRecord() {
   			HospitalMedCaseService.preRecordDischarge(
   					$('id').value,$('dischargeEpicrisis').value, {
-	                    callb  	<msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
-	                    <style type="text/css">
-	                    #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
-	                    #orderMkbLabel,#orderDiagnosLabel,
-	                    #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
-	                    ,#orderLpuLabel
-	                     {
-	                        color: blue ;
-	                    }
-	                    #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
-	                    #orderMkbName,#orderDiagnos,
-	                    #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
-	                        background-color:#FFFFA0;
-	                    }
-	                </style>
-	          	</msh:ifInRole>ack: function(aResult) {
+	                    callback: function(aResult) {
 	                        alert("Сохранено") ;
 	                    }
   					}
