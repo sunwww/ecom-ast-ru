@@ -9,7 +9,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="Poly">Просмотр данных по закрытым СПО</msh:title>
@@ -22,8 +22,8 @@
   <tiles:put name="body" type="string">
   <%
 	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","3", request) ;
-  
-
+  String shortParam = request.getParameter("short") ;
+  if (shortParam==null || !shortParam.equals("Short")) {
   %>
     <msh:form action="/smo_journal_closeSpo.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
@@ -64,7 +64,7 @@
         </msh:row>
     </msh:panel>
     </msh:form>
-    
+    <%} %>
     <%
     String date = (String)request.getParameter("beginDate") ;
     if (date!=null && !date.equals(""))  {
@@ -190,8 +190,10 @@
     </msh:table>
     </msh:sectionContent>
     </msh:section> 
-    <% } %>
-    <%   if (type==2 )  {	%>
+    <% 
+    } 
+    if (type==2 )  {	
+    %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
@@ -249,10 +251,10 @@ select spo.id,spo.dateStart,spo.dateFinish
     left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 	left join Worker ow on owf.worker_id=ow.id 
 	left join Patient owp on ow.person_id=owp.id 
-    where spo.DTYPE='PolyclinicMedCase' 
-     and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-     and spo.ownerFunction_id='${curator}' 
- and ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
+    where spo.ownerFunction_id='${curator}' 
+ and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+     and spo.DTYPE='PolyclinicMedCase' 
+     and   ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
  ${additionSpoSql} 
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
