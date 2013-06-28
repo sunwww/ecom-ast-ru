@@ -931,7 +931,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th colspan="2">из всех посещений в связи с заболеванием</th>
+         		<th colspan="3">из всех посещений в связи с заболеванием</th>
          	</tr>
          </msh:tableNotEmpty>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
