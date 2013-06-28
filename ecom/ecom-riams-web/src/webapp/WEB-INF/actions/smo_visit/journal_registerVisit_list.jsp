@@ -160,7 +160,7 @@
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id  
     	left join workfunction wf on wf.id=t.workFunctionExecute_id  left join worker w on w.id=wf.worker_id 
     	left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join patient wp on wp.id=w.person_id 
-    	left join vocsex vs on vs.id=p.sex_id left join vocidc10 mkb on mkb.id=t.idc10_id 
+    	left join vocsex vs on vs.id=p.sex_id 
     	left join Address2 a on a.addressId=p.address_addressId 
     	left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id 
     	left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id 
@@ -206,14 +206,22 @@
         <ecom:webQuery name="listCount" nativeSql="
 	select case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else 'Нет' end as direct,count(t.id) as cnt
 	 from MedCase t 
+    	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id  
+    	left join workfunction wf on wf.id=t.workFunctionExecute_id  left join worker w on w.id=wf.worker_id 
+    	left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join patient wp on wp.id=w.person_id 
+    	left join vocsex vs on vs.id=p.sex_id
+    	left join vochospitalization vh on vh.id=t.hospitalization_id  
+    	left join VocServiceStream vss on vss.id=t.serviceStream_id
 	${sql}
 	and (t.noActuality is null or t.noActuality='0')
 	 group by case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else 'Нет' end       
         "/>
+        <msh:tableNotEmpty name="listCount">
          <msh:table name="listCount" action="javascript:void(0)" idField="1">
         	<msh:tableColumn columnName="Напр. на стац.лечение" property="1"/>
         	<msh:tableColumn columnName="Кол-во" property="2"/>
         </msh:table>
+       </msh:tableNotEmpty>
     </msh:sectionContent>
 
     </msh:section>
