@@ -154,7 +154,17 @@ select spo.id,spo.dateStart
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
     viewUrl="entityParentView-smo_spo.do?short=Short"
-    action="entityParentView-smo_spo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-smo_spo.do" idField="1" selection="multiply" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+                    <msh:tableNotEmpty>
+                        <tr>
+                            <th colspan='14'>
+                                <msh:toolbar>
+                                    <a href='javascript:spoClosedCurrentDate()'>Закрыть текущим числом</a>
+                                    <a href='javascript:sloClosedDateLastVisit()'>Закрыть датой последнего визита</a>
+                                </msh:toolbar>
+                            </th>
+                        </tr>
+                    </msh:tableNotEmpty>    
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -172,5 +182,25 @@ select spo.id,spo.dateStart
     </msh:section>
     <% } %>
 
+  </tiles:put>
+  <tiles:put type="string" name="javascript">
+  	<script type="text/javascript">
+  	function spoClosedCurrentDate() {
+  		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
+        if (ids) {
+            window.location = 'js-smo_spo-spoClosedCurrentDate.do?' + ids;
+        } else {
+            alert("Нет выделенных СПО");
+        }
+  	}
+  	function sloClosedDateLastVisit() {
+  		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
+        if (ids) {
+            window.location = 'js-smo_spo-spoClosedDateLastVisit.do?' + ids;
+        } else {
+            alert("Нет выделенных СПО");
+        }
+  	}
+  	</script>
   </tiles:put>
 </tiles:insert>

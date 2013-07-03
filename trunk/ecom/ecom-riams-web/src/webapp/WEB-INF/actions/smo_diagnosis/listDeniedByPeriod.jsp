@@ -33,19 +33,7 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
- <%--
-     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по МКБ (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">МКБ:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1">  2 и более случаев
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="2">  есть открытый СПО
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="3">  реестр СПО
-        </td>
-        </msh:row> --%>
+ 
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="5"
@@ -61,6 +49,9 @@
 	        <msh:textField property="dateEnd" label="по" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
+	            <msh:ifInRole roles="/Policy/Poly/Ticket/GenerateByDenied">
+	            <input type="button" onclick="createNewVisitByDenied()" value="Генерировать" />
+	            </msh:ifInRole>
 	          </td>
         </msh:row>
     </msh:panel>
@@ -272,6 +263,14 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     	frm.target='_blank' ;
     	//frm.action='stac_groupByBedFundList.do' ;
     }
+    function createNewVisitByDenied() {
+  		var ids = true ;
+        if (ids) {
+            window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
+        } else {
+            alert("Не заданы все параметры");
+        }
+  	}
     </script>
   </tiles:put>
 </tiles:insert>

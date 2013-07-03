@@ -264,7 +264,7 @@
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
       </msh:sideMenu>
       <msh:tableNotEmpty name="childs">
       <msh:sideMenu title="Печать" guid="cdf02c63-67bc-4542-a68d-38398f5059bd">
@@ -284,20 +284,23 @@
   	<script type="text/javascript">
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
-  	alert($("workFunctionExecute").value) ;
+  	//alert($("workFunctionExecute").value) ;
+  	if (+$('parent').value=='0') {
 		TicketService.getOpenSpoByPatient((+$("workFunctionPlan").value),$('patient').value,{
 			callback: function(aResult) {
-				if (aResult!="") {
-    				var val = aResult.split("@") ;
-    				$('parent').value = val[0];
-    				$('parentName').value= val[1];
-				} else {
-    				$('parent').value = '';
-    				$('parentName').value= '';
-				}
+				try {
+					if (aResult!="") {
+	    				var val = aResult.split("@") ;
+	    				$('parent').value = val[0];
+	    				$('parentName').value= val[1];
+					} else {
+	    				$('parent').value = '';
+	    				$('parentName').value= '';
+					}
+				} catch(e) {}
 			}
 		}) ;
-	
+  	}
   	
   	
   	function checkVisit() {

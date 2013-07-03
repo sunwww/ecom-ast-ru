@@ -17,11 +17,22 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
+  <msh:ifNotInRole roles="/Policy/Mis/MedCase/ClinicExpertCard/Create">
   <msh:section createRoles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Create" createUrl="entityParentPrepareCreate-expert_ker_direct.do?id=${param.id}" title="Направление на ВК">
-    <msh:table name="list" action="entityParentView-expert_ker.do" idField="id" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
+    <msh:table name="list" action="entityParentView-expert_ker_direct.do" idField="id" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
       <msh:tableColumn columnName="ИД" property="id" guid="0696a7-ed40-4ebf-a274-1e4" />
+      <msh:tableColumn columnName="Дата направления" property="orderDate" guid="0696a7-ed40-4ebf-a274-1e4" />
     </msh:table>
   </msh:section>
+  </msh:ifNotInRole>
+  <msh:ifInRole roles="/Policy/Mis/MedCase/ClinicExpertCard/Create">
+  <msh:section createRoles="/Policy/Mis/MedCase/ClinicExpertCard/Create" createUrl="entityParentPrepareCreate-expert_ker.do?id=${param.id}" title="Направление на ВК">
+    <msh:table name="list" action="entityParentView-expert_ker.do" idField="id" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
+      <msh:tableColumn columnName="ИД" property="id" guid="0696a7-ed40-4ebf-a274-1e4" />
+      <msh:tableColumn columnName="Дата направления" property="orderDate" guid="0696a7-ed40-4ebf-a274-1e4" />
+    </msh:table>
+  </msh:section>
+  </msh:ifInRole>
   </tiles:put>
 </tiles:insert>
 

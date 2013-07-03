@@ -8,20 +8,19 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал врачебной комиссии"/>
+    <msh:title guid="helloItle-123" mainMenu="Contract" title="Списки договор по физическим лицам"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:style_currentMenu currentAction="stac_criminalMessages" />
-    	<tags:dis_menu currentAction="journalKERByPeriod" />
+    	<tags:contractMenu currentAction="naturalPerson"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
   
-	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
-	String typeDtype =ActionUtil.updateParameter("Expert_Ker","typeView","3", request) ;
+	//String typePatient =ActionUtil.updateParameter("Contract_NaturalPerson","typeEmergency","4", request) ;
+	String typeDtype =ActionUtil.updateParameter("Contract_NaturalPerson","typeView","3", request) ;
   %>
   
-    <msh:form action="/expert_journal_ker.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/contract_journal_natural_person_by period.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
@@ -30,19 +29,6 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
-      <msh:row>
-        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeEmergency" value="1">  экстренные
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeEmergency" value="2" >  плановые
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeEmergency" value="3">  все
-        </td>
-      </msh:row>
-
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
@@ -56,9 +42,6 @@
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
-        </msh:row>
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
@@ -69,7 +52,7 @@
     </msh:form>
     <script type='text/javascript'>
     
-    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
+    //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -110,21 +93,18 @@
     		request.setAttribute("dateEnd", date1) ;
     	}
     	String view = (String)request.getAttribute("typeView") ;
-
-    	if (typeEmergency!=null && typeEmergency.equals("1")) {
-    		request.setAttribute("emergencySql", " and slo.emergency='1' ") ;
-    		request.setAttribute("emergencyInfo", ", поступивших по экстренным показаниям") ;
-    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
-    		request.setAttribute("emergencySql", " and (slo.emergency is null or slo.emergency='0') ") ;
-    		request.setAttribute("emergencyInfo", ", поступивших по плановым показаниям") ;
-    	} 
-    	ActionUtil.setParameterFilterSql("department","ml.id", request) ;
-
+    	String department="" ;
+    	String dep = request.getParameter("department") ;
+    	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
+    		department= " and ml.id='"+dep+"'" ;
+    	}
+    	request.setAttribute("department", department) ;
+    	
     	%>
  <%
     if (view!=null && (view.equals("1"))) {%>
     
-    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select 
 cec.id,to_char(expertDate,'dd.mm.yyyy')
@@ -173,7 +153,7 @@ left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
 left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
-${emergencySql} ${departmentSql}
+${emerIs} ${department}
     order by cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -219,7 +199,7 @@ ${emergencySql} ${departmentSql}
        	<%if (view!=null && (view.equals("2"))) {%>
     
     <msh:section>
-    <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
+    <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
    select 
@@ -243,7 +223,7 @@ left join VocExpertSubject ves on ves.id=cec.subjectCase_id
 left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
-${emergencySql} ${departmentSql}
+${emerIs} ${department}
 	group by ml.id,ml.name
     order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />

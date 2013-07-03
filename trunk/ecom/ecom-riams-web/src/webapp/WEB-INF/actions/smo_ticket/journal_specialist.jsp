@@ -93,7 +93,7 @@
     	}
     	String spec =""+request.getParameter("spec") ;
     	if (spec!=null && !spec.equals("") && !spec.equals("0") &!spec.equals("null")) {
-    		request.setAttribute("spec", " and t.workFunction_id='"+spec+"'") ;
+    		request.setAttribute("spec", " and t.workFunctionExecute_id='"+spec+"'") ;
     	} else {
     		request.setAttribute("spec", "") ;
     	}

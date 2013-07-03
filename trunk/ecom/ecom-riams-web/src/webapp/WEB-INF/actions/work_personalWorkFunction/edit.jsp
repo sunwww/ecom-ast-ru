@@ -37,6 +37,7 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isAdministrator" label="Начальник"/>
+        	<msh:checkBox property="emergency" label="Экстр. пункт"/>
         </msh:row>
         <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
         	<msh:row>
