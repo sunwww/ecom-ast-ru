@@ -348,15 +348,15 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_registerVisit_print.jsp"/>
         </action>
-        		<!--        <action     path = "/mis_lpuAreaSave"
-			type = 'ru.ecom.web.actions.parententity.SaveAction'
-			scope = 'request'
-			validate = "true"
-			name = "mis_lpuAreaForm"
-			input = "/WEB-INF/actions/mis_lpuArea/edit.jsp">
-			<forward name="success" path="/entityView-mis_lpu.do" redirect="true"/>
-			</action>
-		-->
+		<!-- Реестры по договорам -->	
+		<action path='/contract_journal_natural_person_by period'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm"
+			validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list.jsp" />
+		</action>
 		<!-- Реестры по договорам -->	
 		<action path='/contract_reports'
 			type='ru.ecom.web.actions.base.ForwardAction' 

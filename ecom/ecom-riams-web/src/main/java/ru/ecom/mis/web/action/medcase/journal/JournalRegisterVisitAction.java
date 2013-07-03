@@ -40,14 +40,14 @@ public class JournalRegisterVisitAction  extends BaseAction {
 		}
 		args=args+":"+form.getWorkFunction()+":"+form.getLpu()+":"+form.getServiceStream()+":"+typeDtype ;
 		aRequest.setAttribute("func", form.getWorkFunction()) ;
-		if (form!=null) {
+		/*if (form!=null) {
 			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 
 			aRequest.setAttribute("listRegisterVisit",script.invoke("SmoVisitService","journalRegisterVisitByMap", 
 				new Object[]{args})) ;
 		} else {
 			aRequest.setAttribute("listRegisterVisit",new java.util.ArrayList()) ;
 		}
-		
+		*/
 		return aMapping.findForward("success") ;
 	}
 	

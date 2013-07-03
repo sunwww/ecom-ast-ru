@@ -38,6 +38,9 @@
         	<msh:label property="editTime" label="время"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="emergency" label="Экстр. пункт"/>
+        </msh:row>
+        <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />

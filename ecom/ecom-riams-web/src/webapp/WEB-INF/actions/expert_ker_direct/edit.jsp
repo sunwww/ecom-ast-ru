@@ -68,7 +68,22 @@
         	<msh:textField property="preFinishDate" label="Срок предполагаемого лечения" labelColSpan="3"/>
         	<td style="text-align: left; font-weight: bold" id="infoReadPreOnly" />
         </msh:row>        
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+        </msh:panel>
+        <msh:panel colsWidth="5%,5%,5%,5%,5%">
+	        <msh:row>
+	        	<msh:separator label="Дополнительная информация" colSpan="6"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:label property="createDate" label="Дата создания"/>
+	        	<msh:label property="createTime" label="время"/>
+	        	<msh:label property="createUsername" label="пользователь"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:label property="editDate" label="Дата редактирования"/>
+	        	<msh:label property="editTime" label="время"/>
+	        	<msh:label property="editUsername" label="пользователь"/>
+	        </msh:row>  
+	        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
       </msh:panel>
     </msh:form>
   </tiles:put>

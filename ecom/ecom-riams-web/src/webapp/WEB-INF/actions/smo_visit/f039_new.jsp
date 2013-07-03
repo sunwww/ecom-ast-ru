@@ -326,39 +326,39 @@ then -1 else 0 end)<18
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)>=60 then 1 else null end) as cntAll60
-,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllnessAll
-,count(case when vr.code='ILLNESS' 
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllnessAll
+,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC'
 	and (
 	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)<18
 	) then 1 else null end) as cntIllnes17
-,count(case when vr.code='ILLNESS' and 
+,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC' and 
 	(
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)>=60
 	) then 1 else null end) as cntIllnes60
-,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProfAll
+,count(case when vr.code='PROFYLACTIC'  and vwpt.code='POLYCLINIC' then 1 else null end) as cntProfAll
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHomeAll
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
 	and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)<18
 	) then 1 else null end) as cntIllnesHome17
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
 	and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)<2
 	) then 1 else null end) as cntIllnesHome01
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
 	and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -383,7 +383,7 @@ then -1 else 0 end)<18
 ,count(case when (vss.code='BUDGET') then 1 else null end) as cntBudget
 ,count(case when (vss.code='CHARGED') then 1 else null end) as cntCharged
 ,count(case when (vss.code='PRIVATEINSURANCE') then 1 else null end) as cntPrivateIns
-,count(case when vr.code='CONSULTATION' then 1 else null end) as cntConsultationAll
+,count(case when vr.code='CONSULTATION' and vwpt.code='POLYCLINIC' then 1 else null end) as cntConsultationAll
 
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
@@ -426,8 +426,8 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="22"/>
             <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="в том числе конс" property="22"/>
             <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
             <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
             <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
@@ -464,15 +464,15 @@ select
 	(to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(smo.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntAll60
 
-,count(case when vr.code='CONSULTATION' then 1 else null end) as cntConsultationAll
-,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllnessAll
-,count(case when vr.code='ILLNESS' 
+,count(case when vr.code='CONSULTATION' and vwpt.code='POLYCLINIC' then 1 else null end) as cntConsultationAll
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllnessAll
+,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC'
 	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(smo.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnes17
-,count(case when vr.code='ILLNESS' and 
+,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC' and 
 	(to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
 	||(cast(to_char(smo.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntIllnes60
-,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProfAll
+,count(case when vr.code='PROFYLACTIC' and vwpt.code='POLYCLINIC' then 1 else null end) as cntProfAll
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHomeAll
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
@@ -603,26 +603,26 @@ then 1 else null end) as cntAll14
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)>17
 ) then 1 else null end) as cntAlloldV 
-,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllness 
-,count(case when vr.code='ILLNESS' and (
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllness 
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 0 and 14
 ) then 1 else null end) as cntIllnes14
-,count(case when vr.code='ILLNESS' and (
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 15 and 17
 ) then 1 else null end) as cntIllnes17 
-,count(case when vr.code='ILLNESS' and (
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) >17 
 )then 1 else null end) as cntIllnesold 
-,count(case when vr.code='PROFYLACTIC' then 1 else null end) as cntProf 
+,count(case when vr.code='PROFYLACTIC' and vwpt.code='POLYCLINIC' then 1 else null end) as cntProf 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHome 
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
 ,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
@@ -733,14 +733,14 @@ select
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 0 and 17
 then 1 else null end) as cntAll17
-,count(case when vr.code='ILLNESS' then 1 else null end) as cntIllness 
-,count(case when vr.code='ILLNESS' and (
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllness 
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) > 17
 ) then 1 else null end) as cntIllnesOld
-,count(case when vr.code='ILLNESS' and (
+,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
@@ -830,67 +830,9 @@ select
 
 ,count(*) as cntAll 
 ,count(distinct case when vr.code='PROFYLACTIC' then smo.id else null end) as cntProf 
-,count(distinct case when vr.code='ILLNESS' then smo.id else null end) as cntIllnessSmo
-,count(distinct case when vr.code='ILLNESS' then smo.patient_id else null end) as cntIllnessPat
-,count(distinct case when vr.code='ILLNESS' then spo.id else null end) as cntIllnessSpo
- 
-,count(case when vr.code='ILLNESS' and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 0 and 14
-) then 1 else null end) as cntIllnes14
-,count(case when vr.code='ILLNESS' and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 15 and 17
-) then 1 else null end) as cntIllnes17 
-,count(case when vr.code='ILLNESS' and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) >17 
-)then 1 else null end) as cntIllnesold 
-,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHome 
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end)<15
-) then 1 else null end) as cntIllnesHome14 
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 15 and 17
-) then 1 else null end) as cntIllnesHome17 
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end)>17
-) then 1 else null end) as cntIllnesHomeold 
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntProfHome 
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end)<15
-) then 1 else null end) as cntProfHome14 
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 15 and 17
-) then 1 else null end) as cntProfHome17 
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
-		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end)>17
-) then 1 else null end) as cntProfHomeold
+,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then smo.id else null end) as cntIllnessSmo
+,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then smo.patient_id else null end) as cntIllnessPat
+,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then spo.id else null end) as cntIllnessSpo
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 

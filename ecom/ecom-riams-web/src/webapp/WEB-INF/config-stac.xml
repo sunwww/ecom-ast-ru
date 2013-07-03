@@ -12,6 +12,7 @@
         <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />
         <form-bean name="stac_extsslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm" />
         <form-bean name="stac_sslDischargeForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm" />
+        <form-bean name="stac_sslDischargePreForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.PreDischargeMedCaseForm" />
         <form-bean name="stac_newBornSloForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm" />
         <form-bean name="stac_sloForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm" />
         <form-bean name="stac_surOperationForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm" />

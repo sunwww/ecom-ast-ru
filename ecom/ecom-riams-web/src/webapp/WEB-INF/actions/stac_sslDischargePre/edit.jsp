@@ -74,10 +74,15 @@
     	  	<tags:stac_hospitalMenu currentAction="stac_sslDischarge"/>  
   </tiles:put>
   <tiles:put name="body" type="string">
+    <msh:ifFormTypeIsView formName="stac_sslDischargePreForm">
+  <script type="text/javascript">
+  	window.location.href='entityParentView-stac_sslDischarge.do?id='+${param.id} ;
+  </script>
+  </msh:ifFormTypeIsView>
     <!-- 
-    	  - Случай стационарного лечения (выписка)
+    	  - Случай стационарного лечения (выписка предварительная)
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_sslDischarge.do" defaultField="" guid="d9a511ed-3808-4b26-9c6b-c0c4655f3bfb" title="Случай стационарного лечения. ВЫПИСКА">
+    <msh:form action="/entityParentSaveGoView-stac_sslDischargePre.do" defaultField="" guid="d9a511ed-3808-4b26-9c6b-c0c4655f3bfb" title="Случай стационарного лечения. ВЫПИСКА">
       <msh:hidden property="id" guid="ca766a3b-4eb3-4c57-8997-68fe5cb52623" />
       <msh:hidden property="patient" guid="7ad1d4c1-b642-4f31-98d4-a22c6cccf6d8" />
       <msh:hidden property="saveType" guid="dab3ef4c-4014-43b7-be41-c2398a50b816" />
@@ -113,7 +118,7 @@
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
-              <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
+              <msh:ifFormTypeIsView formName="stac_sslDischargePreForm">
               	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
               		<msh:hidden property="dischargeEpicrisis"/>
               	</msh:ifNotInRole>
@@ -125,13 +130,12 @@
         </msh:row>
         <msh:row guid="0e91a1ca-c366-435c-8f2c-274d23d87fd3">
           <msh:textField property="dateStart" label="Дата поступления" guid="e3fd4642-a532-4510-a528-c6e766328d61" viewOnlyField="true" />
-          <msh:textField property="entranceTime" label="время" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff" viewOnlyField="true" />
         </msh:row>
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
           <msh:checkBox property="relativeMessage" label="Сообщение родственникам" guid="21e6d68e-e0a2-4854-85e7-9344d25e3d46" viewOnlyField="true" />
           <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
-        <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslDischargeForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
+        <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslDischargePreForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
         	<msh:separator label="Беременность" colSpan="9"/>
 	        <msh:row>
 	        	<msh:autoComplete viewOnlyField="true" viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="stac_sslAdmissionForm.patient" vocName="pregnancyByPatient" horizontalFill="true"/>
@@ -157,7 +161,7 @@
 	        <msh:row>
 	        <msh:separator colSpan="8" label="Выписной эпикриз" />
 	        </msh:row>
-        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargePreForm">
 	        <msh:row>
               <td colspan="4" align="center">
 	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
@@ -172,7 +176,7 @@
 	        <msh:row>
 	        <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
 	        </msh:row>
-        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargePreForm">
 	        <msh:row>
               <td colspan="4" align="center">
 	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
@@ -217,7 +221,7 @@
         <msh:row>
     	    <msh:textField label="Осложнение" property="complicationDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
-        <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
+        <msh:ifFormTypeIsView formName="stac_sslDischargePreForm">
 	        <msh:row>
 	    	    <msh:autoComplete vocName="vocIdc10" label="МКБ-10 патанат.диаг." property="pathanatomicalMkb" fieldColSpan="3" horizontalFill="true"/>
 	        </msh:row>
@@ -227,7 +231,7 @@
         </msh:ifFormTypeIsView>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель (иног.)" viewAction="entityParentView-mis_kinsman.do" 
-        	parentId="stac_sslDischargeForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
+        	parentId="stac_sslDischargePreForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
 	        <msh:row>
@@ -293,15 +297,15 @@
       </msh:panel>
     </msh:form>
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
-    	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-    	<tags:templateProtocol property="dischargeEpicrisis" name="Text" version="Visit" idSmo="stac_sslDischargeForm.id" voc="protocolVisitByPatient" />
+    	<msh:ifFormTypeIsNotView formName="stac_sslDischargePreForm">
+    	<tags:templateProtocol property="dischargeEpicrisis" name="Text" version="Visit" idSmo="stac_sslDischargePreForm.id" voc="protocolVisitByPatient" />
     	<tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
     	</msh:ifFormTypeIsNotView>
     </msh:ifNotInRole>
-    <tags:stac_infoBySls form="stac_sslDischargeForm"/>
+    <tags:stac_infoBySls form="stac_sslDischargePreForm"/>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargeForm" guid="ad9ca7d1-36d7-41ac-a186-cf6fca58b389" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargePreForm" guid="ad9ca7d1-36d7-41ac-a186-cf6fca58b389" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
@@ -310,7 +314,7 @@
         		$('outcomeName').focus() ;
         	</script>
         </msh:ifInRole>
-     <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+     <msh:ifFormTypeIsNotView formName="stac_sslDischargePreForm">
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
         	<script type="text/javascript">
         		$('dischargeEpicrisis').select() ;
@@ -384,4 +388,3 @@
   	</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
-

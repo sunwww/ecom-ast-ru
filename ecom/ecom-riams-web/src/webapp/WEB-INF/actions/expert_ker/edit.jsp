@@ -108,6 +108,21 @@
         	<msh:textField property="receiveHADate" label="Дата получ. рез."/>
         	<msh:textField property="additionInfoHA" label="Доп.инфор."  horizontalFill="true"/>
         </msh:row>
+        </msh:panel>
+        <msh:panel colsWidth="5%,5%,5%,5%,5%">
+	        <msh:row>
+	        	<msh:separator label="Дополнительная информация" colSpan="6"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:label property="createDate" label="Дата создания"/>
+	        	<msh:label property="createTime" label="время"/>
+	        	<msh:label property="createUsername" label="пользователь"/>
+	        </msh:row>
+	        <msh:row>
+	        	<msh:label property="editDate" label="Дата редактирования"/>
+	        	<msh:label property="editTime" label="время"/>
+	        	<msh:label property="editUsername" label="пользователь"/>
+	        </msh:row>  
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
@@ -122,10 +137,25 @@
       <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Delete" />
     </msh:sideMenu>
     
-    <msh:sideMenu title="Перейти" guid="sideMenu-123">
-      <msh:sideLink guid="7a5-4caf-4e14-aa70-287" action="/entityParentListRedirect-expert_ker" name="К списку" params="id" roles="/Policy/Mis/MedCase/ClinicExpertCard/View"/>
-    </msh:sideMenu>
+
     </msh:ifFormTypeIsView>
+	<msh:sideMenu title="Журналы по КЭР">
+	      <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"
+	      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalByPeriod" styleId="journalKERByPeriod"
+	      />
+	      <msh:sideLink name="Открытые направления на ВК" action="/expert_kersopen.do"
+	      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalOpenCase" styleId="journalOpenKER"
+	      />
+	
+	</msh:sideMenu>    
+    <msh:ifFormTypeIsNotView formName="expert_kerForm">
+    	<msh:ifFormTypeAreViewOrEdit formName="expert_kerForm">
+		    <msh:sideMenu guid="sideMenu-123">
+		      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Delete" />
+		    </msh:sideMenu>
+    	</msh:ifFormTypeAreViewOrEdit>
+    </msh:ifFormTypeIsNotView>
+    
   </tiles:put>
 </tiles:insert>
 
