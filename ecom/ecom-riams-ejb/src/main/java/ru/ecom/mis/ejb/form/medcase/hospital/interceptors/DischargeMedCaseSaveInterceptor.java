@@ -47,13 +47,16 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 		}
 		
 		StringBuilder sqlupdate = new StringBuilder() ;
-		System.out.println() ;
-		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
-		aManager.createNativeQuery(sqlupdate.toString())
+		if (medCase.getDischargeTime()!=null) {
+			sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
+		
+			aManager.createNativeQuery(sqlupdate.toString())
+		
 			//.setParameter("dateF", medCase.getDateFinish())
 			//.setParameter("timeF", medCase.getDischargeTime())
-			.setParameter("parent", form.getId())
-			.executeUpdate() ;
+				.setParameter("parent", form.getId())
+				 .executeUpdate() ;
+		}
 		if (adding4is|| adding5is||adding3is||adding1is) {
 			boolean adding4 = false ;
 			if (!adding4is) adding4 = true ; 

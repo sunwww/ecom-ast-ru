@@ -199,6 +199,13 @@ public class WorkFunctionForm extends IdEntityForm{
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	/** Экстренность */
+	@Comment("Экстренность")
+	@Persist
+	public Boolean getEmergency() {return theEmergency;}
+	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
 
+	/** Экстренность */
+	private Boolean theEmergency;
 }
 
