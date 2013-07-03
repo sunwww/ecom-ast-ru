@@ -250,4 +250,12 @@ abstract public class WorkFunction extends BaseEntity {
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Экстренность */
+	@Comment("Экстренность")
+	public Boolean getEmergency() {return theEmergency;}
+	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
+
+	/** Экстренность */
+	private Boolean theEmergency;
 }

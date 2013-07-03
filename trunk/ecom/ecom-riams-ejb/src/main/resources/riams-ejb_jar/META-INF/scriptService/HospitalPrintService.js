@@ -1602,9 +1602,14 @@ function recordAge(aKey,aDateBegin,aDateEnd,aIsYear,aIsMonth,aIsDay) {
 	}
 }
 function recordDuration(aDateBegin,aDateEnd,aAddCount) {
-	var calenB = java.util.Calendar.getInstance() ;
-	calenB.setTime(aDateBegin) ;
-	var calenE = java.util.Calendar.getInstance() ;
-	calenE.setTime(aDateEnd) ;
-	return ""+(( (calenE.getTime().getTime()-calenB.getTime().getTime())/(1000*60*60*24))+aAddCount) ;
+	try {
+		var calenB = java.util.Calendar.getInstance() ;
+		calenB.setTime(aDateBegin) ;
+		
+		var calenE = java.util.Calendar.getInstance() ;
+		calenE.setTime(aDateEnd) ;
+		return ""+(( (calenE.getTime().getTime()-calenB.getTime().getTime())/(1000*60*60*24))+aAddCount) ;
+	} catch(e) {
+		return "" ;
+	}
 }

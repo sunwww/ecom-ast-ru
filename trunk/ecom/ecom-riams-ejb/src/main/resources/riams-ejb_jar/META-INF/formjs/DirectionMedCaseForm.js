@@ -18,7 +18,6 @@ function checks(aCtx,aVisit) {
 		if (obj[0]!=null) throw "Пациент "+obj[1]+" уже направлен на это время";
 	}
 	
-	
 }
 
 function createOrSave(aForm, aVisit, aCtx) {
@@ -28,6 +27,11 @@ function createOrSave(aForm, aVisit, aCtx) {
 	aVisit.orderWorkFunction =  workFunc;
 	if(aVisit.parent!=null&&aVisit.parent.dateFinish!=null) {
 		aVisit.parent=null ;}
+	if ((aForm.emergency==null || !aForm.emergency)&&
+			aVisit.workFunctionPlan.emergency!=null &&aVisit.workFunctionPlan.emergency) {
+		aVisit.setEmergency(true) ;
+	}
+	
 	aCtx.manager.persist(aVisit)
 }
 
