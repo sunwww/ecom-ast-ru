@@ -4,6 +4,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
+import ru.ecom.mis.ejb.form.contract.interceptor.MedContractByPersonPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -21,7 +22,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="customer", parentForm=ContractPersonForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract")
 @AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(MedContractPreCreateInterceptor.class)
+        @AParentEntityFormInterceptor(MedContractByPersonPreCreateInterceptor.class)
 )
 public class MedContractByPersonForm extends MedContractForm {
 	/** Обслуживаемая персона */
