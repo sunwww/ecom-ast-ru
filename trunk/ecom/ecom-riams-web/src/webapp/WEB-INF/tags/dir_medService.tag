@@ -7,6 +7,7 @@
 <%@ attribute name="title" required="true" description="Заголовок" %>
 <%@ attribute name="table" required="true" description="Заголовок" %>
 <%@ attribute name="addWhere" description="Заголовок" %>
+<%@ attribute name="functionAdd" description="Функция для добавления" %>
 
 
 <style type="text/css">
@@ -25,7 +26,7 @@
     <msh:panel>
     	<msh:row>
     		<td>
-    		<span id="${name}DirMedServiceMainMenu"></span>
+    		<span style="font-size: 18px" id="${name}DirMedServiceMainMenu"></span>
     		</td>
     	</msh:row>
     </msh:panel>
@@ -51,7 +52,6 @@
          	init${name}DirMedServiceDialog() ;
           }
          the${name}DirMedServiceDialog.show() ;
-         $("${name}DirMedService").focus() ;
 
      }
 
@@ -67,14 +67,43 @@
 
      // инициализация диалогового окна
      function init${name}DirMedServiceDialog() {
-    	 get${name}Category("${name}DirMedServiceMainMenu",0) ;
-     	theIs${name}DirMedServiceDialogInitialized = true ;
+    	 theIs${name}DirMedServiceDialogInitialized = true ;
+    	 get${name}Category("${name}DirMedServiceMainMenu",0,0) ;
+     	 
      }
-     function get${name}Category(aDiv,aParent) {
-    	 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', "PRICEPOSITION", 0, {
-    		 callback: function() {
-    			 
-    		 }
-    	 })
+     function get${name}CategoryAdd(aId,aName) {
+    	 if ('${functionAdd}'!='') {
+    		${functionAdd}(aId,aName);
+    	 }
+     }
+     function get${name}Category(aDiv,aParent,aLevel) {
+   		if ($(aDiv).innerHTML=="") { 
+    		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', "PRICEPOSITION", +aParent,+aLevel, {
+	    		 callback: function(aResult) {
+	    			 //the${name}DirMedServiceDialog.hide() ;
+	    			 $(aDiv).innerHTML = aResult ; 
+	    			 if (+aParent>0) {
+	    				 $(aDiv+"V").innerHTML="-" ;
+	    				 
+	    			 } else {
+	    				 the${name}DirMedServiceDialog.hide() ;
+	    				 the${name}DirMedServiceDialog.show() ;
+	    			 }
+	    			 
+	    			 //the${name}DirMedServiceDialog.show() ;
+	    			 
+	    		 }
+	    	 }) ;
+   		} else {
+   			
+   			if ($(aDiv+"V").innerHTML=="+") {
+   				$(aDiv+"").style.display = "inline" ;
+   				$(aDiv+"V").innerHTML="-" ;
+   			} else {
+   				$(aDiv+"").style.display = "none" ;
+   				$(aDiv+"V").innerHTML="+" ;
+   			}
+   			
+		}
      }
 </script>
