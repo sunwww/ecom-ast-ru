@@ -30,32 +30,51 @@ public class CategoryTreeServiceJs {
 //            return "Mkb" ;
         }
     }
-    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent, HttpServletRequest aRequest) throws NamingException {
+    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String table , fldId, fldView, fldParent ;
+    	String table , fldId, fldView, fldParent ,fldParent1, fldOrderBy , fldIsChild ;
+    	int level=aLevel+1;
     	if (aTable.toUpperCase().equals("MEDSERVICE")) {
-    		table="MedService ms" ;fldId="ms.id";fldView="ms.code||' '||ms.name" ;fldParent="ms.parent";
+    		table="MedService ms" ;fldId="ms.id";fldView="ms.code||' '||ms.name" ;fldParent="ms.parent";fldOrderBy="ms.code" ;
+    		fldIsChild="1" ;
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
-    		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" ;fldParent="pp.parent";
+    		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" ;fldParent="pp.parent_id";fldOrderBy="pp.code";
+    		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else {
     		return "" ;
     	}
     	
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select ").append(fldId).append(" as fldId ").append(fldView).append(" as fldView")
+    	sql.append("select ").append(fldId).append(" as fldId, ").append(fldView).append(" as fldView")
+    		.append(", case when ").append(fldIsChild).append(">0 then 1 else null end as ascntChild")
     		.append(" from ").append(table)
     		.append(" where ").append(fldParent) ;
-    	if (aParent!=null&&aParent>aParent.valueOf(0)) {
+    	if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
     		sql.append(" is null") ;
     	} else {
     		sql.append("=").append("'").append(aParent).append("'") ;
     	}
+    	sql.append(" order by ").append(fldOrderBy) ;
     	Collection<WebQueryResult> list=service.executeNativeSql(sql.toString()) ;
     	StringBuilder rs = new StringBuilder() ;
     	for (WebQueryResult wqr : list) {
-    		rs.append("<div id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
-    			.append("(").append("\"").append(wqr.get1()).append("\"").append(")").append("'>")
-    			.append(wqr.get2()).append("</div>") ;
+    		if (wqr.get3()!=null) {
+        		rs.append("<div id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
+    			.append("(").append("\"").append(aName).append(wqr.get1()).append("Dir\",\"").append(wqr.get1()).append("\",").append(level).append(")").append("'>") ;
+	    		for (int i=0;i<aLevel;i++) {
+	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
+	    		}
+	    		rs.append("<span id='").append(aName).append(wqr.get1()).append("DirV'>+</span>") ;
+	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
+    		} else {
+    			rs.append("<div id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
+    			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>") ;
+	    		for (int i=0;i<aLevel;i++) {
+	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
+	    		}
+	    		rs.append("<input type='button' value='Д'>");
+	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
+    		}
     	}
     	
     	return rs.toString() ;
