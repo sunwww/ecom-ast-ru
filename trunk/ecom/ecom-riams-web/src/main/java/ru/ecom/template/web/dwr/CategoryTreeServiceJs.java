@@ -32,13 +32,18 @@ public class CategoryTreeServiceJs {
     }
     public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String table , fldId, fldView, fldParent ,fldParent1, fldOrderBy , fldIsChild ;
+    	String table , fldId, fldView, fldParent , fldOrderBy , fldIsChild,join="",whereAdd="" ;
     	int level=aLevel+1;
-    	if (aTable.toUpperCase().equals("MEDSERVICE")) {
-    		table="MedService ms" ;fldId="ms.id";fldView="ms.code||' '||ms.name" ;fldParent="ms.parent";fldOrderBy="ms.code" ;
-    		fldIsChild="1" ;
+    	if (aTable.toUpperCase().equals("PRICEMEDSERVICE")) {
+    		table="PricePosition pp" ;fldId="case when pp.dtype='PriceGroup' then pp.id else pms.id end";
+    				fldView="case when pp.dtype='PriceGroup' then pp.code||' '||pp.name else pp.code||' '||pp.name||' ('||pp.cost||')' end" 
+    				;fldParent="pp.parent_id";fldOrderBy="pp.code";
+    				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
+    				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
+    		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
-    		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" ;fldParent="pp.parent_id";fldOrderBy="pp.code";
+    		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" 
+    				;fldParent="pp.parent_id";fldOrderBy="pp.code";
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else {
     		return "" ;
@@ -48,12 +53,14 @@ public class CategoryTreeServiceJs {
     	sql.append("select ").append(fldId).append(" as fldId, ").append(fldView).append(" as fldView")
     		.append(", case when ").append(fldIsChild).append(">0 then 1 else null end as ascntChild")
     		.append(" from ").append(table)
+    		.append(" ").append(join)
     		.append(" where ").append(fldParent) ;
     	if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
     		sql.append(" is null") ;
     	} else {
     		sql.append("=").append("'").append(aParent).append("'") ;
     	}
+    	sql.append(" ").append(whereAdd).append(" ") ;
     	sql.append(" order by ").append(fldOrderBy) ;
     	Collection<WebQueryResult> list=service.executeNativeSql(sql.toString()) ;
     	StringBuilder rs = new StringBuilder() ;
@@ -67,12 +74,13 @@ public class CategoryTreeServiceJs {
 	    		rs.append("<span id='").append(aName).append(wqr.get1()).append("DirV'>+</span>") ;
 	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
     		} else {
-    			rs.append("<div id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
+    			rs.append("<div id='").append(aName).append(wqr.get1()).append("' ondblclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>") ;
 	    		for (int i=0;i<aLevel;i++) {
 	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
 	    		}
-	    		rs.append("<input type='button' value='Д'>");
+	    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
+    			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
 	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
     		}
     	}
