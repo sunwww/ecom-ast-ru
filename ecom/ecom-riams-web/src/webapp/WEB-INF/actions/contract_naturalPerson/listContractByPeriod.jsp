@@ -39,8 +39,8 @@
 	        </td>
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateFrom" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:textField property="dateTo" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
       <msh:row>
            <td colspan="11">
@@ -69,14 +69,14 @@
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
-    	frm.action='expert_journal_ker.do' ;
+    	frm.action='contract_journal_natural_person_by period.do' ;
     }
     function print() {
     	var frm = document.forms[0] ;
     	frm.m.value="printCriminalMessage" ;
     	frm.s.value="HospitalPrintReport" ;
     	frm.target='_blank' ;
-    	frm.action='print-stac_criminalMessage.do' ;
+    	frm.action='print-contract_journal_natural_person_by period.do' ;
     	
     }
     </script>
@@ -158,7 +158,7 @@ ${emerIs} ${department}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
     
-    <form action="print-expert_journalKer.do" method="post" target="_blank">
+    <form action="print-contract_naturalPerson.do" method="post" target="_blank">
     Реестр с ${param.dateBegin} по ${dateEnd}.
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_expert_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
@@ -170,8 +170,8 @@ ${emerIs} ${department}
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="journal_expert"
-    viewUrl="entityParentView-expert_ker.do?short=Short" 
-     action="entityParentView-expert_ker.do" idField="1" >
+    viewUrl="entityParentView-contract_naturalPerson.do?short=Short" 
+     action="entityParentView-contract_naturalPerson.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата экспертизы" property="2" />
       <msh:tableColumn columnName="ФИО врача" property="3" />
@@ -228,8 +228,8 @@ ${emerIs} ${department}
     order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-    viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="contract_journal_natural_person_by period.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
+     action="contract_journal_natural_person_by period.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
       <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />

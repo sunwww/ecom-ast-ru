@@ -268,7 +268,7 @@
 		
 		
 
-		<tags:dir_medService name="1" table="PRICEPOSITION" title="Прейскурант" functionAdd="addRowWithDir"/>
+		<tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir"/>
 		
 		
 		

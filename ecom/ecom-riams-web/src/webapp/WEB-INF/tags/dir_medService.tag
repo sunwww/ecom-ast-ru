@@ -78,7 +78,7 @@
      }
      function get${name}Category(aDiv,aParent,aLevel) {
    		if ($(aDiv).innerHTML=="") { 
-    		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', "PRICEPOSITION", +aParent,+aLevel, {
+    		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', '${table}', +aParent,+aLevel, {
 	    		 callback: function(aResult) {
 	    			 //the${name}DirMedServiceDialog.hide() ;
 	    			 $(aDiv).innerHTML = aResult ; 
