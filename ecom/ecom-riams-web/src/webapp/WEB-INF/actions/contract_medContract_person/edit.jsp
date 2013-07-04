@@ -7,6 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 	<tiles:put name="javascript" type="string">
+	<link rel="stylesheet" type="text/css" href="css/check/tree.css">
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script>
 			var d = document;
@@ -16,7 +17,59 @@
 			var cnt ;
 			var cost;
 			var count;
+			function addRowWithDir(aId,aName) {
+				//alert(aId) ;
+			    ContractService.getCostByPriceMedService(aId, {
+		               callback: function(aResult) {
+		            	   var cnt=+$('cnt').value+1 ;
+		   					$('cnt').value = cnt;
+		                   
+						    var name = aName;
+						    nameId=aId ;
+						    var count = 1;
+						   	var costName="cost"+cnt;
+						    //cost = document.getElementsByName("cost"+nameId)[0].value;
+						    
+						    // Находим нужную таблицу
+						    var tbody = document.getElementById('tab1').getElementsByTagName('TBODY')[0];
+							if(nameId!="")if(nameId!=null){
+							    // Создаем строку таблицы и добавляем ее
+							    var row = document.createElement("TR");
+							    tbody.appendChild(row);
+							
+							    // Создаем ячейки в вышесозданной строке
+							    // и добавляем тх
+							    var td1 = document.createElement("TD");
+							    var td2 = document.createElement("TD");
+							    var td3 = document.createElement("TD");
+							    var td4 = document.createElement("TD");
+							    
+							    row.appendChild(td1);
+							    row.appendChild(td2);
+							    row.appendChild(td3);
+							    row.appendChild(td4);
+							
+							    // Наполняем ячейки
+							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
+				                   if (+aResult>0)  {
+				                   	td2.innerHTML =  aResult +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aResult+"' type='hidden' / >";
+				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aResult)*(+count)+"' size='9' readonly='true' />" ;
+				                   	//alert(+(+aResult)*(+count));
+				                   } else {
+				                	td2.innerHTML =  aResult +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aResult+"' type='hidden' / >";
+				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
+				                   }
+				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
+				   			    //$('sum'+cnt).readOnly=true ;
+				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
+				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
 
+				   			 checkSum() ;
+							}
+		                }
+		    		}
+               );
+			}
 			function addRow() {
 			    // Считываем значения с формы
 				
@@ -163,6 +216,7 @@
 			</td>
 			<td>        	
             <input type="button" name="subm" onclick="addRow();" value="+" tabindex="4" />
+            <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />
             </td>
             </tr>
             </table>
@@ -214,7 +268,7 @@
 		
 		
 
-		
+		<tags:dir_medService name="1" table="PRICEPOSITION" title="Прейскурант" functionAdd="addRowWithDir"/>
 		
 		
 		
