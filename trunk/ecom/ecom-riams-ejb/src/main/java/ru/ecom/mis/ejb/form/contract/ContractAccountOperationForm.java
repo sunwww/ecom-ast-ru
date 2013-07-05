@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
 
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
@@ -20,7 +18,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = ContractAccountOperation.class)
 @Comment("Операция договорного счета")
-@WebTrail(comment = "Операция договорного счета", nameProperties= "id", list="entityParentList-contract_contractAccountOperation.do", view="entityParentView-contract_contractAccountOperation.do")
+@WebTrail(comment = "Операция договорного счета", nameProperties= "id", list="entityParentList-contract_accountOperation.do", view="entityParentView-contract_accountOperation.do")
 @Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation")
 public class ContractAccountOperationForm extends IdEntityForm{
@@ -39,21 +37,6 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	 * Договорной счет
 	 */
 	private Long theAccount;
-	/**
-	 * Тип операции
-	 */
-	@Comment("Тип операции")
-	@Persist @Required
-	public Long getType() {
-		return theType;
-	}
-	public void setType(Long aType) {
-		theType = aType;
-	}
-	/**
-	 * Тип операции
-	 */
-	private Long theType;
 	/**
 	 * Дата
 	 */
@@ -102,21 +85,7 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	 * Стоимость
 	 */
 	private String theCost;
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	@Comment("Случай медицинского обслуживания")
-	@Persist
-	public Long getMedcase() {
-		return theMedcase;
-	}
-	public void setMedcase(Long aMedcase) {
-		theMedcase = aMedcase;
-	}
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	private Long theMedcase;
+
 	/**
 	 * Отменившая операция
 	 */
@@ -212,30 +181,4 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	/** Дата создания */
 	private String theCreateDate;
 	
-	/** Тип операции (информация) */
-	@Comment("Тип операции (информация)")
-	@Persist
-	public String getTypeInfo() {return theTypeInfo;}
-	public void setTypeInfo(String aTypeInfo) {theTypeInfo = aTypeInfo;}
-
-	/** Случай мед. обслуживания (информация) */
-	@Comment("Случай мед. обслуживания (информация)")
-	@Persist
-	public String getMedcaseInfo() {return theMedcaseInfo;}
-	public void setMedcaseInfo(String aMedcaseInfo) {theMedcaseInfo = aMedcaseInfo;}
-
-	/** Отменившая операция (информация) */
-	@Comment("Отменившая операция (информация)")
-	@Persist
-	public String getRepealOperationInfo() {return theRepealOperationInfo;}
-	public void setRepealOperationInfo(String aRepealOperationInfo) {theRepealOperationInfo = aRepealOperationInfo;}
-
-	/** Отменившая операция (информация) */
-	private String theRepealOperationInfo;
-	/** Случай мед. обслуживания (информация) */
-	private String theMedcaseInfo;
-	/** Тип операции (информация) */
-	private String theTypeInfo;
-	
-
 }

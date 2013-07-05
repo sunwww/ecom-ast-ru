@@ -16,7 +16,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ContractAccountMedService.class)
 @Comment("Медицинские услуги")
-@WebTrail(comment = "Медицинские услуги", nameProperties= "id", list="entityParentList-contract_contractAccountMedService.do", view="entityParentView-contract_contractAccountMedService.do")
+@WebTrail(comment = "Медицинские услуги", nameProperties= "id", list="entityParentList-contract_accountMedService.do", view="entityParentView-contract_accountMedService.do")
 @Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService")
 public class ContractAccountMedServiceForm extends IdEntityForm{

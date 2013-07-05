@@ -59,76 +59,34 @@ public class ContractAccount extends BaseEntity{
 	 */
 	@Comment("Сумма баланса")
 	
-	public BigDecimal getBalanceSum() {
-		return theBalanceSum;
-	}
-	public void setBalanceSum(BigDecimal aBalanceSum) {
-		theBalanceSum = aBalanceSum;
-	}
-	/**
-	 * Сумма баланса
-	 */
+	public BigDecimal getBalanceSum() {return theBalanceSum;}
+	public void setBalanceSum(BigDecimal aBalanceSum) {theBalanceSum = aBalanceSum;}
+	/** Сумма баланса */
 	private BigDecimal theBalanceSum;
-	/**
-	 * Резервированная сумма
-	 */
+	
+	/** Резервированная сумма */
 	@Comment("Резервированная сумма")
-	
-	public BigDecimal getReservationSum() {
-		return theReservationSum;
-	}
-	public void setReservationSum(BigDecimal aReservationSum) {
-		theReservationSum = aReservationSum;
-	}
-	/**
-	 * Резервированная сумма
-	 */
+	public BigDecimal getReservationSum() {return theReservationSum;}
+	public void setReservationSum(BigDecimal aReservationSum) {theReservationSum = aReservationSum;}
+	/** Резервированная сумма */
 	private BigDecimal theReservationSum;
-	/**
-	 * Дата открытия
-	 */
+	/** Дата открытия */
 	@Comment("Дата открытия")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
-	/**
-	 * Дата открытия
-	 */
+	public Date getDateFrom() {return theDateFrom;}
+	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
+	/** Дата открытия */
 	private Date theDateFrom;
-	/**
-	 * Дата закрытия
-	 */
+	/** Дата закрытия */
 	@Comment("Дата закрытия")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	/**
-	 * Дата закрытия
-	 */
+	public Date getDateTo() {return theDateTo;}
+	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
+	/** Дата закрытия */
 	private Date theDateTo;
-	/**
-	 * Блокирован
-	 */
+	/** Блокирован */
 	@Comment("Блокирован")
-	
-	public Boolean getBlock() {
-		return theBlock;
-	}
-	public void setBlock(Boolean aBlock) {
-		theBlock = aBlock;
-	}
-	/**
-	 * Блокирован
-	 */
-	
+	public Boolean getBlock() {return theBlock;}
+	public void setBlock(Boolean aBlock) {theBlock = aBlock;}
+	/** Блокирован */
 	private Boolean theBlock;
 	
 	@Comment("Мед. услуги")
@@ -198,4 +156,4 @@ public class ContractAccount extends BaseEntity{
 		if (theBlock!=null && theBlock) res.append("(счет заблокирован");
 		return res.toString();
 	}
-	}
+}

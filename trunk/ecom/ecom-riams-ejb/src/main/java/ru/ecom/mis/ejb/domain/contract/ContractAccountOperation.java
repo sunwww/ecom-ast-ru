@@ -2,58 +2,42 @@ package ru.ecom.mis.ejb.domain.contract;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.ContractAccount;
-import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-	/**
-	 * Операция договорного счета
-	 */
-	@Comment("Операция договорного счета")
+/**
+ * Операция договорного счета
+ */
+@Comment("Операция договорного счета")
 @Entity
 @Table(schema="SQLUser")
-	@AIndexes({
-		@AIndex(unique= false, properties = {"account"})
-		,@AIndex(unique= false, properties = {"medcase"})
-	})
+@AIndexes({
+	@AIndex(unique= false, properties = {"account"})
+})
 public class ContractAccountOperation extends BaseEntity{
-	/**
-	 * Договорной счет
-	 */
+	/** Договорной счет */
 	@Comment("Договорной счет")
 	@ManyToOne
-	public ContractAccount getAccount() {
-		return theAccount;
-	}
-	public void setAccount(ContractAccount aAccount) {
-		theAccount = aAccount;
-	}
-	/**
-	 * Договорной счет
-	 */
+	public ContractAccount getAccount() {return theAccount;}
+	public void setAccount(ContractAccount aAccount) {theAccount = aAccount;}
+	/** Договорной счет */
 	private ContractAccount theAccount;
 	/**
 	 * Тип операции
 	 */
 	@Comment("Тип операции")
 	@OneToOne
-	public VocAccountOperation getType() {
-		return theType;
-	}
-	public void setType(VocAccountOperation aType) {
-		theType = aType;
-	}
+	public VocAccountOperation getType() {return theType;}
+	public void setType(VocAccountOperation aType) {theType = aType;}
 	/**
 	 * Тип операции
 	 */
@@ -62,13 +46,8 @@ public class ContractAccountOperation extends BaseEntity{
 	 * Дата
 	 */
 	@Comment("Дата")
-	
-	public Date getOperationDate() {
-		return theOperationDate;
-	}
-	public void setOperationDate(Date aOperationDate) {
-		theOperationDate = aOperationDate;
-	}
+	public Date getOperationDate() {return theOperationDate;}
+	public void setOperationDate(Date aOperationDate) {theOperationDate = aOperationDate;}
 	/**
 	 * Дата
 	 */
@@ -77,13 +56,8 @@ public class ContractAccountOperation extends BaseEntity{
 	 * Время операции
 	 */
 	@Comment("Время операции")
-	
-	public Time getOperationTime() {
-		return theOperationTime;
-	}
-	public void setOperationTime(Time aOperationTime) {
-		theOperationTime = aOperationTime;
-	}
+	public Time getOperationTime() {return theOperationTime;}
+	public void setOperationTime(Time aOperationTime) {theOperationTime = aOperationTime;}
 	/**
 	 * Время операции
 	 */
@@ -103,21 +77,7 @@ public class ContractAccountOperation extends BaseEntity{
 	 * Стоимость
 	 */
 	private BigDecimal theCost;
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	@Comment("Случай медицинского обслуживания")
-	@OneToOne
-	public MedCase getMedcase() {
-		return theMedcase;
-	}
-	public void setMedcase(MedCase aMedcase) {
-		theMedcase = aMedcase;
-	}
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	private MedCase theMedcase;
+
 	/**
 	 * Отменившая операция
 	 */
@@ -205,23 +165,5 @@ public class ContractAccountOperation extends BaseEntity{
 	private Time theCreateTime;
 	/** Дата создания */
 	private Date theCreateDate;
-	
-	@Transient
-	public String getTypeInfo() {
-		return theType!=null?theType.getName():"" ;
-	}
-	@Transient
-	public String getMedcaseInfo() {
-		return theMedcase!=null?theMedcase.getInfo():"" ;
-	}
-	@Transient
-	public String getRepealOperationInfo() {
-		
-		return theRepealOperation!=null?
-				new StringBuilder().append(theRepealOperation.getTypeInfo()).append(" ")
-				.append(theCost).append(" руб.").toString()
-				:"" ;
-	}
-	
 	
 }
