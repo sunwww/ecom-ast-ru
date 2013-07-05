@@ -6,8 +6,9 @@
 <%@ attribute name="name" required="true" description="Название" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
 <%@ attribute name="table" required="true" description="Заголовок" %>
-<%@ attribute name="addWhere" description="Заголовок" %>
+<%@ attribute name="addParam" description="Заголовок" %>
 <%@ attribute name="functionAdd" description="Функция для добавления" %>
+<%@ attribute name="clearDirParam" description="Функция очистки" %>
 
 
 <style type="text/css">
@@ -44,14 +45,30 @@
 <script type='text/javascript' src='./dwr/interface/CategoryTreeService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}DirMedServiceDialogInitialized = false ;
+     var theIs${name}DirMedServiceAddParam = 0 ;
      var the${name}DirMedServiceDialog = new msh.widget.Dialog($('${name}DirMedServiceDialog')) ;
      // Показать
      function show${name}DirMedService() {
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}DirMedServiceDialogInitialized) {
+        	var idAddParam = +$('${addParam}').value ;
+        	theIs${name}DirMedServiceAddParam = idAddParam;
          	init${name}DirMedServiceDialog() ;
+          } else {
+         var idAddParam = '' ;
+			if ('${addParam}'!='') {
+				idAddParam = +$('${addParam}').value ;
+				if (theIs${name}DirMedServiceAddParam!=idAddParam) {
+					try {eval('${clearDirParam}')} catch(e){}
+					theIs${name}DirMedServiceDialogInitialized = false;
+					show${name}DirMedService() ;
+					return ;
+				}
+				
+			}
           }
          the${name}DirMedServiceDialog.show() ;
+         
 
      }
 
@@ -67,7 +84,7 @@
 
      // инициализация диалогового окна
      function init${name}DirMedServiceDialog() {
-    	 theIs${name}DirMedServiceDialogInitialized = true ;
+    	 $("${name}DirMedServiceMainMenu").innerHTML='' ;
     	 get${name}Category("${name}DirMedServiceMainMenu",0,0) ;
      	 
      }
@@ -76,9 +93,12 @@
     		${functionAdd}(aId,aName);
     	 }
      }
-     function get${name}Category(aDiv,aParent,aLevel) {
-   		if ($(aDiv).innerHTML=="") { 
-    		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', '${table}', +aParent,+aLevel, {
+     
+     function get${name}Category(aDiv,aParent,aLevel,aAddParam) {
+   		if ($(aDiv).innerHTML=="") {
+   			
+    		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', '${table}', +aParent,+aLevel
+    				 ,theIs${name}DirMedServiceAddParam , {
 	    		 callback: function(aResult) {
 	    			 //the${name}DirMedServiceDialog.hide() ;
 	    			 $(aDiv).innerHTML = aResult ; 
@@ -89,7 +109,7 @@
 	    				 the${name}DirMedServiceDialog.hide() ;
 	    				 the${name}DirMedServiceDialog.show() ;
 	    			 }
-	    			 
+	    			 theIs${name}DirMedServiceDialogInitialized = true ;
 	    			 //the${name}DirMedServiceDialog.show() ;
 	    			 
 	    		 }

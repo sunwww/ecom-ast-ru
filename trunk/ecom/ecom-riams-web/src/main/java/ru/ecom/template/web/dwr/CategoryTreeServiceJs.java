@@ -30,7 +30,7 @@ public class CategoryTreeServiceJs {
 //            return "Mkb" ;
         }
     }
-    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, HttpServletRequest aRequest) throws NamingException {
+    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String table , fldId, fldView, fldParent , fldOrderBy , fldIsChild,join="",whereAdd="" ;
     	int level=aLevel+1;
@@ -40,6 +40,9 @@ public class CategoryTreeServiceJs {
     				;fldParent="pp.parent_id";fldOrderBy="pp.code";
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
+    				
+    					whereAdd=" and pp.priceList_id='"+aAddParam+"' "+whereAdd ;
+    				
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
     		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" 

@@ -10,12 +10,12 @@
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Create" params="id" action="/entityParentPrepareCreate-contract_contractAccount" title="Договорной счет" name="Договорной счет" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Create" params="id" action="/entityParentPrepareCreate-contract_account" title="Договорной счет" name="Договорной счет" />
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="medContract"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-		<msh:table name="list" action="entityView-contract_contractAccount.do" idField="id">
+		<msh:table name="list" action="entityView-contract_account.do" idField="id">
 			<msh:tableColumn columnName="Обслуживаемая персона" property="servedPerson" />
 			<msh:tableColumn columnName="Операции по счету" property="operations" />
 			<msh:tableColumn columnName="Сумма баланса" property="balanceSum" />

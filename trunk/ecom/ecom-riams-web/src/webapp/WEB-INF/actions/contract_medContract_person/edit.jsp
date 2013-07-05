@@ -19,6 +19,23 @@
 			var count;
 			function addRowWithDir(aId,aName) {
 				//alert(aId) ;
+				var isNew = true ;
+				var cnt = +$('cnt').value ;
+			   for (var i=1; i<=cnt;i++) {
+					if ($('count'+i)) {
+						
+						if ($('service'+i).value==aId) {
+							var counti=+$('count'+i).value ;
+							$('count'+i).value=1+counti ;
+							isNew = false ;
+							checkSum() ;
+							break ;
+						}
+						
+					}
+					
+				}
+			   if (isNew) {
 			    ContractService.getCostByPriceMedService(aId, {
 		               callback: function(aResult) {
 		            	   var cnt=+$('cnt').value+1 ;
@@ -67,8 +84,9 @@
 				   			 checkSum() ;
 							}
 		                }
-		    		}
-               );
+		    		});
+				}
+			   checkSum() ;
 			}
 			function addRow() {
 			    // Считываем значения с формы
@@ -268,7 +286,7 @@
 		
 		
 
-		<tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir"/>
+		<tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
 		
 		
 		

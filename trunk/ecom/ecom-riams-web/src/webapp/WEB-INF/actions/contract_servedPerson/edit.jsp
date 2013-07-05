@@ -56,11 +56,20 @@
 		<msh:ifFormTypeIsView formName="contract_servedPersonForm">
 		<msh:section title="Счет">
 			<ecom:webQuery name="contractAccount" nativeSql="
-							select id, datefrom  from ContractAccount
+							select id, datefrom,dateto  
+							, BalanceSum 
+							, ReservationSum
+							, case when block='1' then 'ДА' else '' end as block
+							from ContractAccount
 							where servedperson_id = '${param.id}'
 			"/>
-				<msh:table name="contractAccount" action="entityParentView-contract_contractAccount.do" idField="1">
+				<msh:table name="contractAccount" action="entityParentView-contract_account.do" idField="1">
 					<msh:tableColumn columnName="Номер счета" property="1" />					
+					<msh:tableColumn columnName="Дата начала действия" property="2" />					
+					<msh:tableColumn columnName="Дата окончания" property="3" />					
+					<msh:tableColumn columnName="Сумма баланса" property="4" />					
+					<msh:tableColumn columnName="из них зарезервировано" property="5" />					
+					<msh:tableColumn columnName="Блокирован" property="6" />					
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
