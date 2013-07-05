@@ -542,6 +542,7 @@ and vrspt.id='${param.strcode}'
 and sloa.dateFinish is not null
 ${department}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
+and sls.result_id!='${result_death}'
 ${age_sql}  ${hospTypeSql}
 and vrspt1.classname='F14_DIAG' 
 group by sls.id
@@ -561,7 +562,6 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Дата выписки" property="7"/>
       <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
       <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Умер?" property="10"/>
       <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
       <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
     </msh:table>

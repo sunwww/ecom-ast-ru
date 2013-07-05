@@ -1,3 +1,4 @@
+
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
 <%@page import="java.math.BigDecimal"%>
@@ -10,7 +11,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entityParentSaveGoView-contract_contractAccount.do" defaultField="dateFrom">
+		<msh:form action="/entityParentSaveGoView-contract_account.do" defaultField="dateFrom">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="servedPerson" />
@@ -29,10 +30,47 @@
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
-		<msh:ifFormTypeIsView formName="contract_contractAccountForm">
+		<msh:ifFormTypeIsView formName="contract_accountForm">
 			<msh:section title="Операции по счету">
-			<ecom:parentEntityListAll formName="contract_contractAccountOperationForm" attribute="account" />
-				<msh:table deleteUrl="entityParentDeleteGoParentView-contract_contractAccountOperation.do" viewUrl="entityShortView-contract_contractAccountOperation.do" editUrl="entityParentEdit-contract_contractAccountOperation.do" name="account" action="entityParentView-contract_contractAccountOperation.do" idField="id">
+			<table border='0'>
+				<tr>
+					<td>
+						<msh:section title="Начисление" createRoles="" createUrl="entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}">
+							<ecom:webQuery name="operationsAccrual" nativeSql="select cao.id
+								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
+								, cao.cost, cao.discount
+								from ContractAccountOperation cao
+								left join WorkFunction wf on wf.id=cao.workFunction_id
+								left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+								left join Worker w on w.id=wf.worker_id
+								left join Patient wp on wp.id=w.person_id
+							where cao.account_id='${param.id}'
+							and cao.dtype='OperationAccrual'"/>
+							<msh:table  
+							viewUrl="entityShortView-contract_accountOperation.do" 
+							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
+								<msh:tableColumn columnName="Дата и время операции" property="2" />
+								<msh:tableColumn columnName="Стоимость" property="3" />
+								<msh:tableColumn columnName="Скидка" property="4" />
+								<msh:tableColumn columnName="Оператор" property="5" />
+							</msh:table>
+						</msh:section>
+					</td>
+					<td>
+						<msh:section title="Списание" createRoles="" createUrl="">
+						</msh:section>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+			</table>
+			<%--
+			<ecom:parentEntityListAll formName="contract_accountOperationForm" attribute="account" />
+				<msh:table deleteUrl="entityParentDeleteGoParentView-contract_accountOperation.do" viewUrl="entityShortView-contract_accountOperation.do" editUrl="entityParentEdit-contract_accountOperation.do" name="account" action="entityParentView-contract_accountOperation.do" idField="id">
 					<msh:tableColumn columnName="Тип операции" property="typeInfo" />
 					<msh:tableColumn columnName="Дата" property="operationDate" />
 					<msh:tableColumn columnName="Время операции" property="operationTime" />
@@ -42,6 +80,7 @@
 					<msh:tableColumn columnName="Оператор" property="workFunction" />
 					<msh:tableColumn columnName="Скидка" property="discount" />
 				</msh:table>
+				 --%>
 			</msh:section>
 			<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
 			<msh:section title="Медицинские услуги">
@@ -53,16 +92,20 @@
 							  ,CAMS.cost*CAMS.countMedService as totalValue
 							   from ContractAccountMedService CAMS
 							left join PriceMedService PMS ON PMS.id = CAMS.medservice_id
+							left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 							left join MedService MS ON MS.id = PMS.medService_id
 							left join PricePosition pp on pp.id=pms.pricePosition_id
 							where CAMS.account_id = '${param.id}'
+							group by CAMS.id ,pp.code,pp.name ,ms.code,ms.name 
+							  ,CAMS.cost ,CAMS.countMedService
+							  
 			"/>
 				<div id="divAllCount1"><h1>Сумма: 0 руб</h1></div>
 				<msh:table name="medicalService" 
-				deleteUrl="entityParentDeleteGoParentView-contract_contractAccountMedService.do"
-				editUrl="entityParentEdit-contract_contractAccountMedService.do"
-				viewUrl="entityShortView-contract_contractAccountMedService.do"
-				action="entityParentView-contract_contractAccountMedService.do" idField="1">
+				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
+				editUrl="entityParentEdit-contract_accountMedService.do"
+				viewUrl="entityShortView-contract_accountMedService.do"
+				action="entityParentView-contract_accountMedService.do" idField="1">
 					<msh:tableColumn columnName="Наим. услуги по прейскуранту" property="2" />
 					<msh:tableColumn columnName="Наим. услуги внутр." property="3" />
 					<msh:tableColumn columnName="Тариф" property="4" />
@@ -87,18 +130,17 @@
 		%>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_accountForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
-		<msh:ifFormTypeAreViewOrEdit formName="contract_contractAccountForm">
+		<msh:ifFormTypeAreViewOrEdit formName="contract_accountForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_contractAccount" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_contractAccount" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Delete"/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_account" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_account" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
-				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-contract_contractAccountOperation" name="Операции по счету" title="Операции по счету" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Create"/>
-				<msh:sideLink params="id" action="/contract_contractAccountMedServiciesView" name="Медицинские услуги" title="Медицинские услуги" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/Create"/>
-				<msh:sideLink params="id" action="/entityParentPrepareCreate-contract_contractAccount20MedService" name="Медицинские услуги (до 9 услуг)" title="Медицинские услуги (до 9 услуг)" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/Create"/>
+				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-contract_accountOperation" name="Операции по счету" title="Операции по счету" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Create"/>
+				<msh:sideLink params="id" action="/contract_accountMedServiciesView" name="Медицинские услуги" title="Медицинские услуги" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/Create"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Печать">
       	      <msh:sideLink params="id" name="Акт выполненных работ" action="/print-contract.do?s=CertificatePersonPrintService&m=PrinCertificate"/>

@@ -8,7 +8,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entityParentSaveGoView-contract_contractAccountOperation.do" defaultField="typeName">
+		<msh:form action="/entityParentSaveGoView-contract_accountOperation.do" defaultField="typeName">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="account" />
@@ -19,7 +19,6 @@
 			<msh:hidden property="editTime" />
 			<msh:hidden property="editUsername" />
 			<msh:hidden property="workFunction"/>
-			<msh:hidden property="medcase"/>
 			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
 					<msh:autoComplete property="type" label="Тип операции" vocName="vocAccountOperation" fieldColSpan="3" horizontalFill="true" />
@@ -40,7 +39,7 @@
 				</msh:row>
 				-->
 				<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/EditOperationInfo">
-					<msh:ifFormTypeIsNotView formName="contract_contractAccountOperationForm">
+					<msh:ifFormTypeIsNotView formName="contract_accountOperationForm">
 						<msh:row>
 							<msh:textField property="operationDate" label="Дата операции"/>
 							<msh:textField property="operationTime" label="Время"/>
@@ -51,10 +50,7 @@
 					<msh:hidden property="operationDate" />
 					<msh:hidden property="operationTime" />
 				</msh:ifNotInRole>
-				<msh:row>
-					<msh:autoComplete property="repealOperation" label="Отменившая операция" vocName="contractAccountOperation" horizontalFill="true" fieldColSpan="3"/>
-				</msh:row>
-				<msh:ifFormTypeIsView formName="contract_contractAccountOperationForm">
+				<msh:ifFormTypeIsView formName="contract_accountOperationForm">
 				<msh:row>
 					<msh:textField property="operationDate" label="Дата операции"/>
 					<msh:textField property="operationTime" label="Время"/>
@@ -87,7 +83,7 @@
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
-		<msh:ifFormTypeIsView formName="contract_contractAccountOperationForm">
+		<msh:ifFormTypeIsView formName="contract_accountOperationForm">
 		</msh:ifFormTypeIsView>
 		<% 
 		List list= (List)request.getAttribute("sumCost");
@@ -102,13 +98,13 @@
 		%>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractAccountOperationForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_accountOperationForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
-		<msh:ifFormTypeAreViewOrEdit formName="contract_contractAccountOperationForm">
+		<msh:ifFormTypeAreViewOrEdit formName="contract_accountOperationForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_contractAccountOperation" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_contractAccountOperation" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Delete"/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_accountOperation" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_accountOperation" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Delete"/>
 			</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>

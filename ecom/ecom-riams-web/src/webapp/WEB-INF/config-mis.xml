@@ -43,8 +43,12 @@
 		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
 		<form-bean name="voc_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.VocDocumentParameterForm" />
 		<!-- Договора -->
-		<form-bean name="contract_contractAccountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
-		<form-bean name="contract_contractAccountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
+		<form-bean name="contract_accountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
+		<form-bean name="contract_accountOperationWriteOffForm" type="ru.ecom.mis.ejb.form.contract.OperationWriteOffForm" />
+		<form-bean name="contract_accountOperationReturnForm" type="ru.ecom.mis.ejb.form.contract.OperationReturnForm" />
+		<form-bean name="contract_accountOperationAccrualForm" type="ru.ecom.mis.ejb.form.contract.OperationAccrualForm" />
+		<form-bean name="contract_accountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
+		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" />
 		<form-bean name="contract_contractAccountRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountRuleForm" />
 		<form-bean name="contract_contractGuaranteeForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeForm" />
 		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
@@ -67,7 +71,7 @@
 		<form-bean name="contract_priceMedServiceForm" type="ru.ecom.mis.ejb.form.contract.PriceMedServiceForm" />
 		<form-bean name="contract_pricePositionForm" type="ru.ecom.mis.ejb.form.contract.PricePositionForm" />
 		<form-bean name="contract_servedPersonForm" type="ru.ecom.mis.ejb.form.contract.ServedPersonForm" />
-		<form-bean name="contract_contractAccountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceForm" />
+		<form-bean name="contract_accountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceForm" />
 		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
 
@@ -355,7 +359,7 @@
 			validate='false'
 			scope="request">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/contract_reports/list.jsp" />
+				path="/WEB-INF/actions/contract_naturalPerson/listContractByPeriod.jsp" />
 		</action>
 		<!-- Реестры по договорам -->	
 		<action path='/contract_reports'
