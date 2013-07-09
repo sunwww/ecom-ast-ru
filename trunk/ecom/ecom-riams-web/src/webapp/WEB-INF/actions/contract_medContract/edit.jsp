@@ -68,8 +68,9 @@
 			<msh:section title="Обслуживаемые персоны">
 			<ecom:webQuery nativeSql="select sp.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			,sp.dateFrom,sp.dateTo
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			from ServedPerson sp
+			left join ContractAccount ca on ca.servedPerson_id = sp.id
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
 			where sp.contract_id='${param.id}'
 			" name="serverPerson"/>
@@ -78,6 +79,9 @@
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
+					<msh:tableColumn columnName="Счет" property="5"/>
+					<msh:tableColumn columnName="Сумма баланса" property="6"/>
+					<msh:tableColumn columnName="из них зарезервировано" property="7"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Поддоговор">
