@@ -8,6 +8,8 @@ function printNativeQuery(aCtx,aParams) {
 	if (cntBegin<1) cntBegin=1 ;
 	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
 	var ret = new java.util.ArrayList() ;
+	var retAll = new java.util.ArrayList() ;
+	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
@@ -15,13 +17,20 @@ function printNativeQuery(aCtx,aParams) {
 		par.set1(""+cntBegin) ;
 		++cntBegin ;
 		for (var j=2;j<=obj.length;j++) {
-			eval("par.set"+(j)+"(obj[j-1]);") ;
+			var val = obj[j-1] ;
+			eval("par.set"+(j)+"(val);") ;
+			if (+val>0) {
+				eval("var val=+val+(+parAll.get"+j+"())") ;
+				eval("parAll.set"+(j)+"(val);") ;
+			}
 		}
 		ret.add(par) ;
 	}
+	retAll.add(parAll) ;
 	map.put("list",ret) ;
 	map.put("sqlInfo",sqlInfo) ;
 	map.put("sqlColumn",sqlColumn) ;
+	map.put("listAll",retAll) ;
 	return map ;
 }
 function printManyNativeQuery(aCtx,aParams) {
