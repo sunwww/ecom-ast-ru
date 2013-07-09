@@ -315,26 +315,27 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
-,count(case when (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil
-,count(case when cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+,count(case when (vwpt.code='POLYCLINIC') then 1 else null end) as cntAllPoly
+,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil
+,count(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)<18 
 	then 1 else null end) as cntAll17
-,count(case when 
+,count(case when vwpt.code='POLYCLINIC' and 
 	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)>=60 then 1 else null end) as cntAll60
-,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllnessAll
-,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC'
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllnessAll
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC'
 	and (
 	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)<18
 	) then 1 else null end) as cntIllnes17
-,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC' and 
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC' and 
 	(
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -383,7 +384,6 @@ then -1 else 0 end)<18
 ,count(case when (vss.code='BUDGET') then 1 else null end) as cntBudget
 ,count(case when (vss.code='CHARGED') then 1 else null end) as cntCharged
 ,count(case when (vss.code='PRIVATEINSURANCE') then 1 else null end) as cntPrivateIns
-,count(case when vr.code='CONSULTATION' and vwpt.code='POLYCLINIC' then 1 else null end) as cntConsultationAll
 
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
@@ -418,30 +418,46 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
+  
         <msh:table
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeDtype=${typeDtype}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
+         <msh:tableNotEmpty>
+         	<tr>
+         		<th></th>
+         		<th></th>
+         		<th colspan="4">Число посещений (в поликлинику)</th>
+         		<th colspan="3">Из общего числа посещений в пол-ку сделано по поводу заболеваний</th>
+         		<th></th>
+          		<th colspan="7">Число посещений врачами на дому</th>
+         		<th colspan="4">Число посещений по видам оплаты</th>
+         	</tr>
+         </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе конс" property="22"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="16"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="19"/>
-            <msh:tableColumn isCalcAmount="true" columnName="платные" property="20"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во посещ." property="3"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего до 17 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего старше 60 лет" property="7"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="числе до 17 лет" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="числе старше 60 лет" property="10"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="11"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="по забол." property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше 60 лет" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="проф до 17 лет" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="проф 0-1(вкл) лет" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="22"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -455,46 +471,111 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
-,count(case when (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil
-,count(case when 
-	(to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) 
-	then 1 else null end) as cntAll17
-,count(case when 
-	(to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntAll60
+,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntPAll
+,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntPVil
 
-,count(case when vr.code='CONSULTATION' and vwpt.code='POLYCLINIC' then 1 else null end) as cntConsultationAll
-,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllnessAll
-,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC'
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnes17
-,count(case when vr.code='ILLNESS'  and vwpt.code='POLYCLINIC' and 
-	(to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) then 1 else null end) as cntIllnes60
-,count(case when vr.code='PROFYLACTIC' and vwpt.code='POLYCLINIC' then 1 else null end) as cntProfAll
+,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' then 1 else null end) as cntPIllnessAll
+,count(case when (vr.code='ILLNESS')  and vwpt.code='POLYCLINIC'
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end)<15
+	) then 1 else null end) as cntPIllnes14
+,count(case when (vr.code='ILLNESS')  and vwpt.code='POLYCLINIC'
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end) between 15 and 17
+	) then 1 else null end) as cntPIllnes17
+,count(case when (vr.code='ILLNESS')  and vwpt.code='POLYCLINIC' and 
+	(
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end)>17
+	) then 1 else null end) as cntPIllnes60
+
+
+
+,count(case when (vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' then 1 else null end) as cntPConsAll
+,count(case when (vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC'
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end)<15
+	) then 1 else null end) as cntPCons14
+,count(case when (vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC'
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end) between 15 and 17
+	) then 1 else null end) as cntPCons17
+,count(case when (vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC' and 
+	(
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end)>17
+	) then 1 else null end) as cntPCons60
+
+,count(case when vr.code='PROFYLACTIC' and vwpt.code='POLYCLINIC' then 1 else null end) as cntPProfAll
+
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHomeAll
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHomeAll
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnesHome17
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-2),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntIllnesHome01
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-60),'dd.mm.yyyy') >= p.birthday) 
-	then 1 else null end) as cntIllnesHome60
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-18),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntProfHome17
-,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') 
-	and (to_date(case when to_char(smo.dateStart,'dd.mm')='29.02' then '28.02' else to_char(smo.dateStart,'dd.mm') end ||'.'
-	||(cast(to_char(smo.dateStart,'yyyy') as int)-2),'dd.mm.yyyy') < p.birthday) then 1 else null end) as cntProfHome01
-,count(case when (vss.code='OBLIGATORYINSURANCE') then 1 else null end) as cntOMC
-,count(case when (vss.code='BUDGET') then 1 else null end) as cntBudget
-,count(case when (vss.code='CHARGED') then 1 else null end) as cntCharged
-,count(case when (vss.code='PRIVATEINSURANCE') then 1 else null end) as cntPrivateIns
+
+
+,count(case when (vr.code='ILLNESS') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHIllnessAll
+,count(case when (vr.code='ILLNESS')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE')
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end)<15
+	) then 1 else null end) as cntHIllnes14
+,count(case when (vr.code='ILLNESS')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE')
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end) between 15 and 17
+	) then 1 else null end) as cntHIllnes17
+,count(case when (vr.code='ILLNESS')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and 
+	(
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end)>17
+	) then 1 else null end) as cntHIllnes60
+
+
+
+,count(case when (vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHConsAll
+,count(case when (vr.code='CONSULTATION')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE')
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end)<15
+	) then 1 else null end) as cntHCons14
+,count(case when (vr.code='CONSULTATION')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE')
+	and (
+	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end) between 15 and 17
+	) then 1 else null end) as cntHCons17
+,count(case when (vr.code='CONSULTATION')  and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and 
+	(
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end)>17
+	) then 1 else null end) as cntHCons60
+
+,count(case when vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHProfAll
 
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
@@ -518,7 +599,7 @@ ${personSql}  and smo.dateStart is not null
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
     <msh:sectionTitle>
-    <form action="print-f039_cons.do" method="post" target="_blank">
+    <form action="print-f039_bis.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
@@ -531,27 +612,43 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
         <msh:table
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         <msh:tableNotEmpty>
+         	<tr>
+         		<th></th>
+         		<th></th>         		
+         		<th colspan="2">Число посещ. в пол-ку</th>		
+         		<th colspan="4">Из посещ. в пол-ку по поводу заб.</th>	
+         		<th colspan="4">Из посещ. в пол-ку по поводу конс.</th>
+         		<th></th>
+         		<th></th>
+         		<th colspan="4">Из посещ. на дому по поводу заб.</th>	
+         		<th colspan="4">Из посещ. на дому по поводу конс.</th>
+         		<th></th>
+         	</tr>
+         </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них сельс.жител." property="4"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="По поводу конс" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="По поводу забол" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Профилак." property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому по забол." property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе до 17 лет" property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="в том числе старше 60 лет" property="16"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому проф до 17 лет" property="17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="19"/>
-            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="20"/>
-            <msh:tableColumn isCalcAmount="true" columnName="платные" property="21"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">60" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">60" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">60" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">60" property="23"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="24"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -725,37 +822,53 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
-,count(*) as cntAll 
-,count(case when (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntAllV 
-,count(case when 
+,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntAllPoly
+,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntAllPolyV 
+,count(case when vwpt.code='POLYCLINIC' and
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 0 and 17
 then 1 else null end) as cntAll17
-,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllness 
-,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
+
+,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' then 1 else null end) as cntIllness 
+,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) > 17
 ) then 1 else null end) as cntIllnesOld
-,count(case when vr.code='ILLNESS' and vwpt.code='POLYCLINIC' and (
+,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 0 and 17
 ) then 1 else null end) as cntIllnes17 
+
+,count(case when (vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' then 1 else null end) as cntCons 
+,count(case when (vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' and (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) > 17
+) then 1 else null end) as cntConsOld
+,count(case when (vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' and (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) between 0 and 17
+) then 1 else null end) as cntCons17 
+
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHome 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntHomeV 
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 0 and 17
 ) then 1 else null end) as cntHome17
-,count(case when vr.code='ILLNESS' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
+,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
@@ -800,21 +913,26 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          	<tr>
          		<th></th>
          		<th colspan="3">Число посещений (в поликлинику)</th>
-         		<th colspan="2">Из общего числа посещений (из гр.5) сделано по поводу заболеваний</th>
-         		<th colspan="5">Число посещений врачами на дому</th>
+         		<th colspan="3">Из посещ. в пол-ку сделано по поводу заболеваний</th>
+         		<th colspan="3">Из посещ. в пол-ку сделано по поводу консультаций</th>
+         		<th colspan="5">Число посещ. врачами на дому</th>
          	</tr>
          </msh:tableNotEmpty>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них сел. жит." property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 лет" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="взрослыми 18 лет и старше" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="всего" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослыми 18 лет и старше" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="всего" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослыми 18 лет и старше" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="16"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -830,9 +948,12 @@ select
 
 ,count(*) as cntAll 
 ,count(distinct case when vr.code='PROFYLACTIC' then smo.id else null end) as cntProf 
-,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then smo.id else null end) as cntIllnessSmo
-,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then smo.patient_id else null end) as cntIllnessPat
-,count(distinct case when vr.code='ILLNESS' or vr.code='CONSULTATION' then spo.id else null end) as cntIllnessSpo
+,count(distinct case when vr.code='ILLNESS' then smo.id else null end) as cntIllnessSmo
+,count(distinct case when vr.code='ILLNESS' then smo.patient_id else null end) as cntIllnessPat
+,count(distinct case when vr.code='ILLNESS' then spo.id else null end) as cntIllnessSpo
+,count(distinct case when vr.code='CONSULTATION' then smo.id else null end) as cntConsSmo
+,count(distinct case when vr.code='CONSULTATION' then smo.patient_id else null end) as cntConsPat
+,count(distinct case when vr.code='CONSULTATION' then spo.id else null end) as cntConsSpo
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -873,15 +994,19 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th colspan="3">из всех посещений в связи с заболеванием</th>
+         		<th colspan="3">из всех посещ. в связи с заб.</th>
+         		<th colspan="3">из всех посещ. в связи с конс.</th>
          	</tr>
          </msh:tableNotEmpty>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Всего посещений" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с профилактической целью" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с проф. целью" property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="посещений" property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="6"/>
             <msh:tableColumn isCalcAmount="true" columnName="обращений" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="посещений" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="обращений" property="10"/>
         </msh:table>
     </msh:sectionContent>
 
