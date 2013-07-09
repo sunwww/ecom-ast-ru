@@ -4,13 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.mis.ejb.domain.contract.MedContract;
+import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
 import ru.ecom.mis.ejb.form.contract.MedContractByPersonForm;
-import ru.ecom.mis.ejb.form.contract.MedContractForm;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class MedContractByPersonPreCreateInterceptor  implements IParentFormInterceptor {
@@ -19,6 +19,8 @@ public class MedContractByPersonPreCreateInterceptor  implements IParentFormInte
     	MedContractByPersonForm form = (MedContractByPersonForm)aForm ;
     	if (aParentId!=null) {
     		NaturalPerson parent = aContext.getEntityManager().find(NaturalPerson.class, aParentId) ;
+    		String next = EjbInjection.getInstance().getLocalService(ISequenceService.class).startUseNextValue("MedContract","contractNumber");
+			form.setContractNumber(next);
     		if (parent!=null) {
         		/*if (parent.getPriceList()!=null) {
         			form.setPriceList(parent.getPriceList().getId()) ;
