@@ -1,17 +1,15 @@
 package ru.ecom.template.web.dwr;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
 
-import ru.nuzmsh.util.StringUtil;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+
 import ru.ecom.diary.ejb.service.template.ICategoryTreeService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.naming.NamingException;
+import ru.nuzmsh.util.StringUtil;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,7 +41,7 @@ public class CategoryTreeServiceJs {
     				
     					whereAdd=" and pp.priceList_id='"+aAddParam+"' "+whereAdd ;
     				
-    		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
+    		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id=pp.id)";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
     		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" 
     				;fldParent="pp.parent_id";fldOrderBy="pp.code";
@@ -84,7 +82,8 @@ public class CategoryTreeServiceJs {
 	    		}
 	    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
-	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
+	    		rs.append(wqr.get2()).append("</div>");
+	    		//rs.append("<div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
     		}
     	}
     	
