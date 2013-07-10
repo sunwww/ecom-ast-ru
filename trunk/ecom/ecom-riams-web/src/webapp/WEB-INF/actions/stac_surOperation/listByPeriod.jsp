@@ -44,8 +44,14 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="5">  свод по отделениям
         </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="6">  свод по хирургам и ур.сл.опер.
+        </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="6">  реестр
+        	<input type="radio" name="typeView" value="7">  свод по отделению и ур.сл.опер.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="8">  реестр
         </td>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
@@ -154,26 +160,33 @@
         //String department = (String)request.getAttribute("department") ;
         //String spec = (String)request.getAttribute("spec") ;
     	if (typeOrder!=null) {
+    		String group1 = "so.medservice_id,vo.name,vo.code,vo.complexity" ;
+    		String orderName = "vo.name" ;
+    		String orderId = "vo.id" ;
+    		if (view!=null &&(view.equals("6")||view.equals("7"))) {
+    			orderId="vo.complexity" ;orderName="vo.complexity" ;
+    			group1 = "vo.complexity" ;
+    		} 
     		if (typeOrder.equals("1")) {
-	    		request.setAttribute("order1", "vo.name,") ;
+	    		request.setAttribute("order1", orderName+",") ;
 	    		request.setAttribute("order2", "") ;
-	    		request.setAttribute("group1", "so.medservice_id,vo.name,vo.code,") ;
+	    		request.setAttribute("group1", group1+",") ;
 	    		request.setAttribute("group2", "") ;
 	    	} else if (typeOrder.equals("2")) {
-	    		request.setAttribute("order1", "vo.code,") ;
+	    		request.setAttribute("order1", orderId+",") ;
 	    		request.setAttribute("order2", "") ;
-	    		request.setAttribute("group1", "so.medservice_id,vo.name,vo.code,") ;
+	    		request.setAttribute("group1", group1+",") ;
 	    		request.setAttribute("group2", "") ;
 	    	} else if (typeOrder.equals("3")) {
 	    		request.setAttribute("order1", "") ;
-	    		request.setAttribute("order2", ",vo.name") ;
+	    		request.setAttribute("order2", ","+orderName) ;
 	    		request.setAttribute("group1", "") ;
-	    		request.setAttribute("group2", ",so.medservice_id,vo.name,vo.code") ;
+	    		request.setAttribute("group2", ","+group1) ;
 	    	} else if (typeOrder.equals("4")) {
 	    		request.setAttribute("order1", "") ;
-	    		request.setAttribute("order2", ",vo.code") ;
+	    		request.setAttribute("order2", ","+orderId) ;
 	    		request.setAttribute("group1", "") ;
-	    		request.setAttribute("group2", ",so.medservice_id,vo.name,vo.code") ;
+	    		request.setAttribute("group2", ","+group1) ;
 	    	}
     	}
     	if (frm!=null) {
@@ -198,7 +211,8 @@
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
-    select '${departmentSql} ${specSql}:'||to_char(so.operationDate,'dd.mm.yyyy')||':'||to_char(so.operationDate,'dd.mm.yyyy'),to_char(so.operationDate,'dd.mm.yyyy'), count(so.id)
+    select '${departmentSql} ${specSql}:'||to_char(so.operationDate,'dd.mm.yyyy')||':'||to_char(so.operationDate,'dd.mm.yyyy')
+    ,to_char(so.operationDate,'dd.mm.yyyy'), count(so.id)
      from SurgicalOperation so where 
     so.operationDate  between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
@@ -219,7 +233,7 @@
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.medservice_id as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
-    , vo.code as vocode, vo.name as voname,count(*) as cnt 
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
@@ -234,7 +248,8 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -247,7 +262,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||':'||so.medservice_id||':'||so.department_id as id
     ,dep.name as depname
-    , vo.code as vocode, vo.name as voname,count(*) as cnt 
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
@@ -259,7 +274,8 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Код" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -295,7 +311,7 @@ order by dep.name
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id as id
-    , vo.code as vocode, vo.name as voname,count(*) as cnt 
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
@@ -304,19 +320,78 @@ left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
-group by so.medservice_id, vo.code,vo.name 
+group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Код" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Уровень сложности" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
     <%
     }
     if (view!=null&&view.equals("6")) {
+    %>
+    <msh:section>
+    <msh:sectionTitle>Разбивка по хирургам и уровням сложности операций</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':' as id
+    ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
+   ,vo.complexity,count(*) as cnt 
+    from SurgicalOperation so
+left join medservice vo on vo.id=so.medService_id
+left join workfunction wf on wf.id=so.surgeon_id
+left join worker w on w.id=wf.worker_id
+left join patient p on p.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
+order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+      <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+       <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+    </msh:table>
+    </msh:sectionContent>    
+    </msh:section>
+    <%}
+    if (view!=null&&view.equals("7")) {
+    %>
+    <msh:section>
+    <msh:sectionTitle>Разбивка по отделениям и уровням сложности операций</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
+    ,dep.name as depname
+    ,vo.complexity,count(*) as cnt 
+    ,round(100*count(distinct so.id)/
+cast((select count(distinct so1.id) from SurgicalOperation so1
+where so1.operationDate between to_date('01.01.2013','dd.mm.yyyy') 
+and to_date('30.06.2013','dd.mm.yyyy')  and so.department_id=so1.department_id
+) as numeric) ,2) as srDep
+    from SurgicalOperation so
+left join medservice vo on vo.id=so.medService_id
+left join mislpu dep on dep.id=so.department_id
+where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+group by  ${group1} so.department_id,dep.name ${group2}
+order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+      <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="% от общ. числа опер. по отд." property="5"/>            
+    </msh:table>
+    </msh:sectionContent>    
+    </msh:section>
+    <%}
+
+    if (view!=null&&view.equals("8")) {
     %>
     <msh:section>
     <msh:sectionTitle>Реестр хирургических операций</msh:sectionTitle>
@@ -338,6 +413,7 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    )
 	     ,vas.name as vasname
 	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo
+	     ,vo.complexity
 	     from SurgicalOperation so
 
 	    left join WorkFunction swf on swf.id=so.surgeon_id
@@ -363,7 +439,8 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	      <msh:tableColumn columnName="Период операции" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Хирург" property="8"/>
 	      <msh:tableColumn columnName="Ассистенты" property="4"/>
-	      <msh:tableColumn columnName="Операции" property="3"/>
+	      <msh:tableColumn columnName="Операция" property="3"/>
+	      <msh:tableColumn columnName="Уровень сложности" property="9"/>
 	      <msh:tableColumn columnName="Анестезия" property="6"/>
 	    </msh:table>
     </msh:sectionContent>

@@ -93,7 +93,13 @@
         	<msh:textField property="conclusionDate" label="Продлен до"/>
         	<msh:autoComplete property="conclusion" fieldColSpan="3" label="Обоснование" horizontalFill="true" vocName="vocExpertConclusion"/>
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="conclusionSent" fieldColSpan="3" label="Заключение напр." horizontalFill="true" vocName="vocExpertConclusionSent"/> 
+        	
+        </msh:row>
+        <msh:row>
         	<msh:textField property="additionInfo" label="Доп.инфор." fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="expComposition" fieldColSpan="3" label="Состав экспертов" horizontalFill="true" vocName="vocExpertComposition"/>
         </msh:row>

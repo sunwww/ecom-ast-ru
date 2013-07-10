@@ -134,7 +134,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/report_cases_not_filled.jsp" />
         </action>
-        <action path='/stac_diagnosis_by_slo_list' type='ru.ecom.mis.web.action.medcase.GroupByBedFundListAction'
+        <action path='/stac_diagnosis_by_slo_list' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"

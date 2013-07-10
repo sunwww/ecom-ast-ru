@@ -127,6 +127,7 @@
     	String dep = (String) request.getParameter("department") ; 
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("dep", " and dmc.department_id='"+dep+"'");
+    		request.setAttribute("depOper", " and so.department_id='"+dep+"'");
     	} else{
     		request.setAttribute("dep", "") ;
     	}
@@ -220,7 +221,7 @@ order by dep.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("2")) { 
+    	if (view!=null && view.equals("2")) { 
     %>
     
     <msh:section title="Реестр хир. операций, где разные отделения выписки и где проводилась операция. ${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
@@ -305,7 +306,7 @@ order by dep.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("3")) { 
+    	if (view!=null && view.equals("3")) { 
     %>
     <msh:section title="Анализ хирургической работы учреждения">
     <msh:sectionContent>
@@ -630,7 +631,7 @@ order by dep.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("4")) { 
+    	if (view!=null && view.equals("4")) { 
     %>
     <msh:section title="Свод хир. операций по отделениям, где отличаются отд.выписки и отд, где проводилась операция">
     <msh:sectionContent>
@@ -686,7 +687,7 @@ order by operdep.name, dischdep.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("6")) { 
+    	if (view!=null && view.equals("6")) { 
     %>
     <msh:section>
     <ecom:webQuery nameFldSql="journal_list_otd_rayon_swod_sql" name="journal_list_otd_rayon_swod" nativeSql="
@@ -791,7 +792,7 @@ order by dep.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("7")) { 
+    	if (view!=null && view.equals("7")) { 
     %>
     <msh:section title="Свод по леч. врачам">
     <msh:sectionContent>
@@ -801,6 +802,7 @@ order by dep.name
 ,count(distinct hmc.id) as cntStatCard
 ,count(distinct case when hmc.emergency='1' then hmc.id else null end) cntEmerStatCard
 ,count(distinct pat.id) as cntPat
+,count()
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -841,7 +843,7 @@ order by dep.name   ,ovwf.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("8")) { 
+    	if (view!=null && view.equals("8")) { 
     %>
     <msh:section title="Сводный отчет отделений по работе хирургам">
     <msh:sectionContent>
@@ -864,6 +866,20 @@ where hmc1.DTYPE='HospitalMedCase'
 ,count(distinct case when hmc.emergency='1' then so.id else null end) as cntEmOperHosp
 ,count(distinct case when vha.code='EMERGENCY' then so.id else null end) as cntEmOperOper
 ,sum(case when vo.complexity is null then 0 else vo.complexity end)+count(so.id) as cntComp
+,
+round(100*count(distinct so.id)/
+cast((select count(so1.id) from  SurgicalOperation so1
+left join MedCase dmc1 on so1.medCase_id = dmc1.id
+left join MedCase hmc1 on dmc1.parent_id=hmc1.id
+where so.department_id=so1.department_id and
+    	 ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	and hmc1.DTYPE='HospitalMedCase' 
+     and so1.surgeon_id is not null
+    	and dmc1.dateFinish is not null)
+as numeric) ,2) 
+
+ as SpByDepartment
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
@@ -882,7 +898,7 @@ left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	${dep}
+    	${depOper}
     	and so.surgeon_id is not null
     	and dmc.dateFinish is not null
 group by so.department_id,dep.name,so.surgeon_id
@@ -904,12 +920,13 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="10"/>            
             <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11"/>            
             <msh:tableColumn columnName="Сводный коэффициент" property="12"/>            
+            <msh:tableColumn columnName="% от общ. числа опер. по отд." property="13"/>            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("9")) { 
+    	if (view!=null && view.equals("9")) { 
     %>
     <msh:section title="Свод по хирургам">
     <msh:sectionContent>
@@ -981,7 +998,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("10")) { 
+    	if (view!=null && view.equals("10")) { 
     %>
     <msh:section title="Реестр операций с 0 уровнем сложности">
     <msh:sectionContent>
@@ -1007,7 +1024,7 @@ where hmc.DTYPE='HospitalMedCase'
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	
     	and dmc.dateFinish is not null
-    	${dep}
+    	${depOper}
     	and so.surgeon_id is not null
     	and (vo.complexity is null or vo.complexity<1)
 group by vo.id,vo.code,vo.name
@@ -1026,7 +1043,7 @@ order by vo.id,vo.code,vo.name
     </msh:section>
     <%
     } 
-    	if (view==null || view.equals("5")) { 
+    	if (view!=null && view.equals("5")) { 
     %>
     <msh:section title="Свод по отделениям общий">
     <msh:sectionContent>

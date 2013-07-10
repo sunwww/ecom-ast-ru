@@ -15,8 +15,6 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
-  
-	//String typePatient =ActionUtil.updateParameter("Contract_NaturalPerson","typeEmergency","4", request) ;
 	String typeDtype =ActionUtil.updateParameter("Contract_NaturalPerson","typeView","3", request) ;
   %>
   

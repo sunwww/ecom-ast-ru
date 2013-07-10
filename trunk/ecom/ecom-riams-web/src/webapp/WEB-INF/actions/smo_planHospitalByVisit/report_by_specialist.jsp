@@ -141,6 +141,7 @@
 select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
+ ,wchb.createDate as wchbcreatedate
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -164,6 +165,7 @@ order by ${dateSql}
             <msh:tableColumn columnName="Дата рождения" property="5"/>
             <msh:tableColumn columnName="Код МКБ" property="6"/>
             <msh:tableColumn columnName="Диагноз" property="7"/>
+            <msh:tableColumn columnName="Дата создания" property="13"/>
             <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
             <msh:tableColumn columnName="Дата факт. госпитализации" property="9"/>
             <msh:tableColumn columnName="Дата выписки" property="10"/>
