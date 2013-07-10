@@ -14,6 +14,7 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertComposition;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertConclusion;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertConclusionSent;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertDeviationStandards;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertModeCase;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertOrderConclusion;
@@ -159,6 +160,14 @@ public class ClinicExpertCard extends BaseEntity {
 	public Date getPreFinishDate() {return thePreFinishDate;}
 	public void setPreFinishDate(Date aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
 
+	/** Заключение. Направляется... */
+	@Comment("Заключение. Направляется...")
+	@OneToOne
+	public VocExpertConclusionSent getConclusionSent() {return theConclusionSent;}
+	public void setConclusionSent(VocExpertConclusionSent aConclusionSent) {theConclusionSent = aConclusionSent;}
+
+	/** Заключение. Направляется... */
+	private VocExpertConclusionSent theConclusionSent;
 	/** Срок предполагаемого лечения */
 	private Date thePreFinishDate;
 	/** Лечение на момент подачи */
