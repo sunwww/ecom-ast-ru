@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.expert.ClinicExpertCard;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertConclusionSent;
 import ru.ecom.mis.ejb.form.expert.interceptor.ClinicExpertCardPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -190,8 +193,19 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 	
 	/** Дополнительная информация по МСЭ */
 	@Comment("Дополнительная информация по МСЭ")
+	@Persist
 	public String getAdditionInfoHA() {return theAdditionInfoHA;}
 	public void setAdditionInfoHA(String aAdditionInfoHA) {theAdditionInfoHA = aAdditionInfoHA;}	
 	/** Дополнительная информация по МСЭ */
 	private String theAdditionInfoHA;
+	
+	/** Заключение. Направляется... */
+	@Comment("Заключение. Направляется...")
+	@Persist
+	public Long getConclusionSent() {return theConclusionSent;}
+	public void setConclusionSent(Long aConclusionSent) {theConclusionSent = aConclusionSent;}
+
+	/** Заключение. Направляется... */
+	private Long theConclusionSent;
+	
 }
