@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -15,7 +16,18 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+  <%
+	String typePat =ActionUtil.updateParameter("GroupByBedFund","typePatient","4", request) ;
+	ActionUtil.updateParameter("GroupByBedFund","period","2", request) ;
+	String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", request) ;
+	String typeSwod = ActionUtil.updateParameter("GroupByBedFund","typeSwod","1", request) ;
+	String typeStatus = ActionUtil.updateParameter("GroupByBedFund","typeStatus","2", request) ;
+	String typeView = ActionUtil.updateParameter("GroupByBedFund","typeView","2", request) ;
+	String typeMKB = ActionUtil.updateParameter("DiagnosisBySlo","typeMKB","4", request) ;
+	String typeEmergency = ActionUtil.updateParameter("DiagnosisBySlo","typeEmergency","3", request) ;
+	String typeReestr = request.getParameter("typeReestr") ;
+  %>
+    <msh:form action="/stac_diagnosis_by_slo_list.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     	<input type="hidden" name="m" id="m" value="printDiagnosisJournal"/>
     	<input type="hidden" name="s" id="s" value="HospitalPrintReport"/>
@@ -34,6 +46,19 @@
         	<input type="radio" name="typeDate" value="3">  перевода
         </td>
         </msh:row>
+        <msh:row>
+	        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="1">  экстренные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="2"  >  плановые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="3">  все
+	        </td>
+        </msh:row>
+     
      <%-- <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -78,7 +103,7 @@
           <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет"  horizontalFill="true" />
         </msh:row>        
         <msh:row>
-        	<msh:textField property="filterAdd" label="Фильтр МКБ" fieldColSpan="2"/>
+        	<msh:textField property="filterAdd" label="Фильтр МКБ" fieldColSpan="3" horizontalFill="true"/>
         	<td><i>Пример: <b>A0</b>, <b>N</b>, <b>A00-B87</b></i></td>
         </msh:row>
         <msh:row>
@@ -86,7 +111,6 @@
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
-	            <input type="submit" onclick="print()" value="Печать" />
 	          </td>
         </msh:row>
     </msh:panel>
@@ -102,9 +126,9 @@
     		request.setAttribute("dateEnd", dateEnd) ;
     	}
     	
-    	String stat = (String)request.getParameter("typeStatus") ;
-    	String typeMKB = (String)request.getAttribute("typeMKB") ;
-    	String typeDate = (String)request.getAttribute("typeDate") ;
+    	//String typeStatus = (String)request.getParameter("typeStatus") ;
+    	//String typeMKB = (String)request.getAttribute("typeMKB") ;
+    	//String typeDate = (String)request.getAttribute("typeDate") ;
     	String mkbCode = "mkb.code" ;
     	String mkbName = "mkb.name" ;
     	String mkbLike = "0" ;
@@ -124,27 +148,27 @@
     	} 
     	request.setAttribute("fldDate",fldDate) ;
     	boolean isStat = true ;
-    	if (stat!=null && stat.equals("2")) {
+    	if (typeStatus!=null && typeStatus.equals("2")) {
     		isStat = false ;
     	}
 
     	String dep = (String)request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("dep", " and slo.department_id="+dep) ;
+    		request.setAttribute("departmentSql", " and slo.department_id="+dep) ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
     	}
     	String servStream = (String)request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
-    		request.setAttribute("servStream", " and vss.id="+servStream) ;
+    		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
     	String regType = (String)request.getParameter("registrationType") ;
     	if (regType!=null && !regType.equals("") && !regType.equals("0")) {
-    		request.setAttribute("regType", " and diag.registrationType_id="+regType) ;
+    		request.setAttribute("registrationTypeSql", " and diag.registrationType_id="+regType) ;
     	} 
     	String priority = (String)request.getParameter("priority") ;
     	if (priority!=null && !priority.equals("") && !priority.equals("0")) {
@@ -158,18 +182,112 @@
     	if (filter!=null && !filter.equals("")) {
     		filter = filter.toUpperCase() ;
     		request.setAttribute("filterAdd",filter) ;
-    		String[] fs=filter.split("-") ;
-    		if (fs.length>1) {
-    			request.setAttribute("filterSql", " and mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
-    		} else {
-    			request.setAttribute("filterSql", " and mkb.code like '"+filter.trim()+"%'") ;
+    		//filter = filter.replaceAll(" ", "") ;
+    		String[] fs1=filter.split(",") ;
+    		StringBuilder filtOr = new StringBuilder() ;
+    		
+    		for (int i=0;i<fs1.length;i++) {
+    			String filt1 = fs1[i].trim() ;
+    			String[] fs=filt1.split("-") ;
+    			if (filt1.length()>0) {
+	    			if (filtOr.length()>0) filtOr.append(" or ") ;
+		    		if (fs.length>1) {
+		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
+		    		} else {
+		    			filtOr.append(" mkb.code like '"+filt1.trim()+"%'") ;
+		    		}
+    			}
     		}
+    		request.setAttribute("filterSql", filtOr.insert(0, " and (").append(")").toString()) ;
     		
     	} 
-    	
+    	if (typeEmergency!=null && typeEmergency.equals("1")) {
+    		request.setAttribute("emergencySql", " and sls.emergency='1' ") ;
+    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+    		request.setAttribute("emergencySql", " and (sls.emergency is null or sls.emergency='0') ") ;
+    	} 
+    	if (typeReestr!=null && typeReestr.equals("1")) {
+    		String mkbCodeP = request.getParameter("mkbcode") ;
+    		String mkbCodeA = "and mkb.code = '"+mkbCodeP+"'" ;
+    		mkbCodeA=" and mkb.code = '"+mkbCodeP+"'" ;
+    		if (!typeMKB.equals("4")) {
+    			mkbCodeA=" and mkb.code like '"+mkbCodeP+"%'" ;
+    		}
+    		request.setAttribute("mkbCodeSql",mkbCodeA) ;
+    		
+    		%>
+    		
+	<ecom:webQuery name="datelist" nativeSql="
+	select slo.id,slo.dateStart,slo.dateFinish,slo.transferDate
+	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
+	,pat.birthday,sc.code,mkb.code as mkbcode,vh.name as vhname 
+	,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
+	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
+	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
+	, (cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+) as age,
+	  case 
+			when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+			else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+	 end as cntDays
+	from Diagnosis diag
+	left join medCase slo on slo.id=diag.medCase_id 
+	left join BedFund bf on bf.id=slo.bedFund_id
+	left join MedCase as sls on sls.id = slo.parent_id 
+	left join StatisticStub as sc on sc.medCase_id=sls.id 
+	left join Patient pat on slo.patient_id = pat.id 
+	left join VocIdc10 mkb on mkb.id=diag.idc10_id
+	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+	left join VocServiceStream vss on vss.id=slo.serviceStream_id
+	left join VocHospitalization vh on vh.id=sls.hospitalization_id
+	left join Address2 a on a.addressid=pat.address_addressId
+	where ${fldDate} between to_date('${param.dateBegin}','dd.mm.yyyy')
+			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
+			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationType} ${bedSubTypeSql}
+			${emergencySql}
+			${mkbCodeSql}
+			${filterSql}
+	order by pat.lastname,pat.firstname,pat.middlename
+	" 
+	/>
+	<msh:ifInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
+    <msh:table name="datelist" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Адрес" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Дата рождения" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Возраст" property="11" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Кол-во к.дней" property="12" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Госпитализация" property="9" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Диагноз" property="8" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+    </msh:table>
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
+    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Год рождения" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Госпитализация" property="9" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="МКБ" property="8" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата перевода" property="4" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    </msh:table>
+    </msh:ifNotInRole>    		
+    		
+    		<%
+    	} else {
+    		
     	%>
-		<ecom:webQuery name="diag_list" nativeSql="
-		select ${mkbCode}||':${mkbLike}:${dep}:${servStream}:${fldDate}:${param.dateBegin}:${dateEnd}:'||vpd.id||':'||vdrt.id||':${bedSubTypeSql}:${filterAdd}' as id
+		<ecom:webQuery name="diag_list" nameFldSql="diag_list_sql" nativeSql="
+		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
 		,${mkbCode} as mkb,count(distinct slo.id) as cntSlo,vpd.name as vpdname,vdrt.name as vdrtname 
 		,${mkbName} as mkbname
 		,count(distinct sls.id) as cntSls
@@ -221,12 +339,23 @@
 		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 		where ${fldDate} between to_date('${param.dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
-			${servStream} ${dep} ${prioritySql} ${regType} ${bedSubTypeSql}
+			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationType} ${bedSubTypeSql}
+			${emergencySql}
 			${filterSql}
 		group by ${mkbCode},vpd.id,vpd.name,vdrt.id,vdrt.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id,vdrt.id
 		"/>
-		<msh:table name="diag_list" idField="1" action="js-stac_diagnosis-by_slo_data.do">
+	 <form action="print-stac_journalDiag.do" method="post" target="_blank">
+    
+    <input type='hidden' name="sqlText" id="sqlText" value="${registger_visit_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${dateEnd}">
+    
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+   
+    <input type="submit" value="Печать"> 
+    </form>
+		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_slo_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&registrationType=${param.registrationType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="5" columnName="Тип регистрации"/>
 			<msh:tableColumn property="4" columnName="Приоритет"/>
@@ -240,7 +369,8 @@
 			<msh:tableColumn property="11" columnName="Средний к/день"/>
 			<msh:tableColumn property="9" isCalcAmount="true" columnName="Кол-во умерших"/>
 		</msh:table>
-    <% } else { %>
+    <% }
+    	} else { %>
     	<i>Выберите параметры и нажмите найти </i>
     <% }   %>
     
@@ -250,6 +380,7 @@
     //checkFieldUpdate('typeSwod','${typeSwod}',2,1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typeMKB','${typeMKB}',4) ;
+    checkFieldUpdate('typeEmergency','${typeEmergency}',4) ;
     //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
     //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
     
@@ -274,6 +405,55 @@
     	frm.target='_blank' ;
     	frm.action='print-stac_journalDiag.do' ;
     }
+	eventutil.addEventListener($('filterAdd'), eventutil.EVENT_KEY_UP, 
+  		  	function() {$('filterAdd').value = latRus($('filterAdd').value) ;}
+		) ;
+	function latRus(aText) {
+			aText=aText.toUpperCase() ;
+			aText=replaceAll(aText,"Й", "Q" ,1) ;
+			aText=replaceAll(aText,"Ц", "W" ,1) ;
+	    	aText=replaceAll(aText,"У","E"  ,1) ;
+	    	aText=replaceAll(aText, "К", "R" ,1) ;
+	    	aText=replaceAll(aText,"Е", "T"  ,1) ;
+	    	aText=replaceAll(aText, "Ф","A" ,1) ;
+	    	aText=replaceAll(aText, "Ы", "S",1) ;
+	    	aText=replaceAll(aText,"В", "D" ,1 ) ;
+	    	aText=replaceAll(aText,"А","F" ,1) ;
+	    	aText=replaceAll(aText,"П","G"  ,1) ;
+	    	aText=replaceAll(aText,"Я","Z" ,1 ) ;
+	    	aText=replaceAll(aText,"Ч","X"  ,1) ;
+	    	aText=replaceAll(aText,"С","C" ,1 ) ;
+	    	aText=replaceAll(aText, "М", "V" ,1) ;
+	    	aText=replaceAll(aText,"И", "B",1 ) ;
+	    	aText=replaceAll(aText,"Н", "Y" ,1 ) ;
+	    	aText=replaceAll(aText,"Г", "U" ,1 ) ;
+	    	aText=replaceAll(aText,"Ш", "I" ,1 ) ;
+	    	aText=replaceAll(aText,"Щ", "O" ,1 ) ;
+	    	aText=replaceAll(aText,"З","P",1 ) ;
+	    	aText=replaceAll(aText, "Р","H",1 ) ;
+	    	aText=replaceAll(aText,"О", "J" ,1 ) ;
+	    	aText=replaceAll(aText,"Л","K" ,1 ) ;
+	    	aText=replaceAll(aText,"Д", "L",1 ) ;
+	    	aText=replaceAll(aText,"Т","N" ,1) ;
+	    	aText=replaceAll(aText, "Ь","M",1 ) ;
+	    	aText=replaceAll(aText, "Ю",".",1 ) ;
+	    	aText=replaceAll(aText, "Б","," ,1) ;
+	    	aText=replaceAll(aText, "Х","[" ,1) ;
+	    	aText=replaceAll(aText, "Ъ","]",1 ) ;
+	    	aText=replaceAll(aText, "Ж",";",1 ) ;
+	    	aText=replaceAll(aText, "Э","'",1 ) ;
+	    	return aText ;
+		}
+		function replaceAll(aText,aSymbRep,aSymbIs,aRedict) {
+			var sym1=aSymbRep,sym2=aSymbIs;
+			if (+aRedict<1) {
+				sym2=aSymbRep,sym1=aSymbIs;
+			} 
+			while (aText.indexOf(sym1)>-1) {
+				aText = aText.replace(sym1,sym2) ;
+			}
+			return aText ;
+		}
     </script>
   </tiles:put>
 </tiles:insert>

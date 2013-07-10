@@ -48,6 +48,7 @@
 	} else if (typeDtype.equals("2")) {
 		dtypeSql="t.dtype='ShortMedCase'" ;
 	}
+	
 	String sql = "where "+dtypeSql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
 	if (form.getLpu()!=null && (form.getLpu().intValue()>0)) {
 		sql = sql + " and w.lpu_id='"+form.getLpu()+"'" ;
