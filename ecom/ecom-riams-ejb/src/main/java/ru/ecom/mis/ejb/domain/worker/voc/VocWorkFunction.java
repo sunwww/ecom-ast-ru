@@ -57,4 +57,12 @@ public class VocWorkFunction extends VocBaseEntity{
 
 	/** Короткое название */
 	private String theShortName;
+	
+	/** Не заполняется диагноз */
+	@Comment("Не заполняется диагноз")
+	public Boolean getIsNoDiagnosis() {return theIsNoDiagnosis;}
+	public void setIsNoDiagnosis(Boolean aIsNoDiagnosis) {theIsNoDiagnosis = aIsNoDiagnosis;}
+
+	/** Не заполняется диагноз */
+	private Boolean theIsNoDiagnosis;
 }
