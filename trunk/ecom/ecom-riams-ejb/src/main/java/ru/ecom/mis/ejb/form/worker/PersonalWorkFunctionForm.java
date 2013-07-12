@@ -62,11 +62,11 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
 	@Persist
-	public String getCategory() {return theCategory;}
-	public void setCategory(String aCategory) {theCategory = aCategory;}
+	public Long getDegrees() {return theDegrees;}
+	public void setDegrees(Long aDegrees) {theDegrees = aDegrees;}
 
 	/** Категория специалиста */
-	private String theCategory;
+	private Long theDegrees;
 	/** Создавать календарь */
 	private Boolean theIsCalendarCreate;
 	/** Пользователь */

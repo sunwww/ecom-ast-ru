@@ -140,6 +140,19 @@
 	    		
 			/>
 	</voc>
+	<voc id="vocExpertConclusionSent" type="NativeVocService">
+		<NativeVocService
+                from  = 'VocExpertConclusionSent vecs'
+                parent='vec.id=:parent'
+                nameId="vecs.id"
+                queryAppend=""
+                join=" left join VocExpertConclusion vec on vec.id=vecs.conclusion_id "
+                order=""
+                names   = "vecs.name "
+	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		
+			/>
+	</voc>
 	<voc id="childBirthByMedCase" type="NativeVocService">
 		<NativeVocService
                 from  = 'ChildBirth cb'
