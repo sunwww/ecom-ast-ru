@@ -80,7 +80,7 @@ public class CategoryTreeServiceJs {
 	    		for (int i=0;i<aLevel;i++) {
 	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
 	    		}
-	    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
+	    		rs.append("<input type='button' id='").append(aName).append(wqr.get1()).append("btn' name='").append(aName).append(wqr.get1()).append("btn' value='Д' onclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
 	    		rs.append(wqr.get2()).append("</div>");
 	    		//rs.append("<div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;

@@ -19,14 +19,12 @@
           <msh:textField label="Наименование" property="name" size="80" guid="7d51235b-c16b-4b60-8743-46e38c0c1ca0" />
         </msh:row>
         <msh:row>
-        	<msh:textField property="shortName" fieldColSpan="3" label="Короткое название"/>
+        	<msh:textField property="shortName"  label="Короткое название"/>
+        	<msh:checkBox property="isNoDiagnosis" label="Не заполняется диагноз"/>
         </msh:row>
         <msh:row guid="10e684ef-5a8d-45dd-ab3d-c5bae516a73e">
           <msh:autoComplete horizontalFill="true" property="vocPost" vocName="vocPost" label="Должность" fieldColSpan="3" viewAction="entityView-voc_post.do" guid="351c87de-9b9a-46ee-80c9-b65d6256fd0c" />
         </msh:row>
-          <msh:row guid="609cc05e-2317-4c15-873c-23738b8c21ed">
-            <ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Прикр. мед. услуги" property="workFunctionServices" vocName="medServiceDop" colSpan="3" guid="8bab83af-57b9-4e4e-960b-922841a1435d" />
-          </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>

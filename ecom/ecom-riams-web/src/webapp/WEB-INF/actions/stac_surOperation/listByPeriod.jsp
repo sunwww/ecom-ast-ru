@@ -371,8 +371,8 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     ,vo.complexity,count(*) as cnt 
     ,round(100*count(distinct so.id)/
 cast((select count(distinct so1.id) from SurgicalOperation so1
-where so1.operationDate between to_date('01.01.2013','dd.mm.yyyy') 
-and to_date('30.06.2013','dd.mm.yyyy')  and so.department_id=so1.department_id
+where so1.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+and to_date('${dateEnd}','dd.mm.yyyy')  and so.department_id=so1.department_id
 ) as numeric) ,2) as srDep
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id

@@ -42,15 +42,6 @@
     </msh:form>
     <tags:mis_patient_new divForButton="personButton" name='Person' title='Создание новой персоны' autoComplitePatient="person"/>
     <msh:ifFormTypeIsView formName="mis_workerForm" guid="e4c62deb-7fd7-43f2-a2a1-ba3e365bde45">
-      <!--      <msh:section title="Должности" guid="0c0dd1a6-d052-4b8a-afe0-0c273a5f4ca3">-->
-      <!--        <ecom:parentEntityListAll formName="mis_workBookForm" attribute="text" guid="2d1c932f-25b3-4b7a-8f84-3eab13c839ed" />-->
-      <!--        <msh:table name="text" action="entityParentView-mis_workBook.do" idField="id" guid="c19feeb3-5e2e-4176-b711-c9be98b7c2a5">-->
-      <!--          <msh:tableColumn columnName="Должность" property="post" guid="517ca77d-72ce-4d15-8022-805569350a0b" />-->
-      <!--          <msh:tableColumn columnName="Совместительство" property="nameCombo" guid="49580cee-7dee-4fd1-a336-d039e5bf2991" />-->
-      <!--          <msh:tableColumn columnName="Дата приёма" property="dateOn" guid="613aaf33-83d4-4331-bab5-3cf526b0bbb1" />-->
-      <!--          <msh:tableColumn columnName="Дата увольнения" property="dateOff" guid="2fe67e33-3f03-403e-9b9a-643b6884ea1d" />-->
-      <!--        </msh:table>-->
-      <!--      </msh:section>-->
       <msh:section title="Должностные обязанности" guid="fefb4ff0-0639-4962-9a9f-1e2f0b2d16df">
         <ecom:parentEntityListAll formName="work_personalWorkFunctionForm" attribute="functions" guid="10a1c98a-229b-42a0-a38f-aa07be61335f" />
         <msh:table idField="id" name="functions" action="entityParentView-work_personalWorkFunction.do" guid="f5718e90-b707-46d5-8ff6-b2d41f611134">

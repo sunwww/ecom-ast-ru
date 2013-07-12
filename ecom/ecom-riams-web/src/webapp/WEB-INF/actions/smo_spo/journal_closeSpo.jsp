@@ -71,14 +71,18 @@
     	String finishDate = (String)request.getParameter("finishDate") ;
     	if (finishDate==null||finishDate.equals("")) {
     		request.setAttribute("finishDate", date) ;
+    		finishDate = date ;
     	} else {
     		request.setAttribute("finishDate", finishDate) ;
     	}
     	request.setAttribute("beginDate", date) ;
     	
     	if (typeView!=null && typeView.equals("1")) {
-    		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id)>1") ;
+    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
+    		request.setAttribute("additionWhereSql", " and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
     	} else if (typeView!=null && typeView.equals("2")) {
+    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
+    		request.setAttribute("additionWhereSql", " and spo1.dateFinish is null and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
     		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateStart between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.dateFinish is null)>1") ;
     	} else {
     		
@@ -175,9 +179,10 @@
 	left join WorkFunction owf on owf.id=spo.ownerFunction_id
 	left join Worker ow on ow.id=owf.worker_id
 	left join MisLpu ml on ow.lpu_id=ml.id 
+	${additionJoinSql}
 	where spo.dtype='PolyclinicMedCase' 
 	and spo.dateFinish between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-	${additionSpoSql} ${serviceStreamSql}
+	${additionWhereSql} ${serviceStreamSql}
 	group by ml.id,ml.name order by ml.name" 
 	/>
     <msh:table name="datelist" 
@@ -208,10 +213,11 @@ left join WorkFunction owf on spo.ownerFunction_id=owf.id
 left join VocWorkFunction ovwf on owf.workFunction_id=ovwf.id 
 left join Worker ow on owf.worker_id=ow.id 
 left join Patient owp on ow.person_id=owp.id 
+${additionJoinSql}
 where spo.dtype='PolyclinicMedCase' 
 and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
  and ow.lpu_id='${department}'
- ${additionSpoSql} 
+ ${additionWhereSql} 
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -251,11 +257,12 @@ select spo.id,spo.dateStart,spo.dateFinish
     left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 	left join Worker ow on owf.worker_id=ow.id 
 	left join Patient owp on ow.person_id=owp.id 
+	${additionJoinSql}
     where spo.ownerFunction_id='${curator}' 
  and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
      and spo.DTYPE='PolyclinicMedCase' 
      and   ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
- ${additionSpoSql} 
+ ${additionWhereSql} 
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart
