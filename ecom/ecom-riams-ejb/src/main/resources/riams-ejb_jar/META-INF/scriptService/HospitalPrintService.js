@@ -1002,13 +1002,14 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 	map.put("sls.hospitalization",medCase.hospitalization) ;
 	map.put("sls.kinsInfo",medCase.kinsman!=null?medCase.kinsman.info:"") ;
 	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
-			+", case when dateFinish is not null then vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
+			+", case when dateFinish is not null then coalesce(vwfd.code||' ','')||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
 			+", case when dateFinish is not null then d.name else '' end as dname,d.id as did"
 			+", case when dateFinish is not null then wf.code else '' end as worker"
 			+" from MedCase dmc "
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
 			+" left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
+			+" left join VocWorkFunctionDegrees vwfd on wf.degrees_id=vwfd.id "
 			+" left join Worker w on w.id=wf.worker_id "
 			+" left join Patient p on p.id=w.person_id "
 			+" where dmc.parent_id='"+medCase.id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();

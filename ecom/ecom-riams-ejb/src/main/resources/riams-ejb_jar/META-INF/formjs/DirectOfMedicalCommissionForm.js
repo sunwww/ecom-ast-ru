@@ -7,11 +7,12 @@ function onPreSave(aForm,aEntity, aCtx) {
 	}
 	var patient = aForm.getPatient() ;
 	var orderDate = aForm.getOrderDate() ;
+	var reasonDirect = aForm.getReasonDirect() ;
 	var thisid = aForm.getId() ;
 	var list ;
     list = aCtx.manager.createQuery("from ClinicExpertCard where "
     		+" patient_id = :patient "
-    		+" and orderDate = to_date(:orderDate,'dd.mm.yyyy') "
+    		+" and orderDate = to_date(:orderDate,'dd.mm.yyyy') and reasonDirect_id='"+reasonDirect+"'"
     		+" and id != '"+thisid+"'"
        	)
        	.setParameter("patient",patient)
@@ -41,10 +42,10 @@ function onPreCreate(aForm, aContext) {
 	//Проверка на дубли
 	var patient = aForm.getPatient() ;
 	var orderDate = aForm.getOrderDate() ;
-	
+	var reasonDirect = aForm.getReasonDirect() ;
     var list = aContext.manager.createQuery("from ClinicExpertCard where "
     		+" patient_id = :patient "
-    		+" and orderDate = to_date('"+orderDate+"','dd.mm.yyyy') "
+    		+" and orderDate = to_date('"+orderDate+"','dd.mm.yyyy') and reasonDirect_id='"+reasonDirect+"'"
        	)
        	.setParameter("patient",patient)
        	.getResultList() ;

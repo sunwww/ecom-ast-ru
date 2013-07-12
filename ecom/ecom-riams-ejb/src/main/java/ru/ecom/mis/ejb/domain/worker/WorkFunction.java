@@ -17,6 +17,7 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunctionDegrees;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -58,9 +59,12 @@ abstract public class WorkFunction extends BaseEntity {
 	@Comment("Наименование")
 	@Transient
 	public String getName() {
-		return theWorkFunction!=null ? theWorkFunction.getName() : "" ;
+		StringBuilder ret = new StringBuilder() ;
+		if (theDegrees!=null) {ret.append(theDegrees.getCode()).append(" ");}
+		if (theWorkFunction!=null) ret.append(theWorkFunction.getName()) ;
+		return ret.toString() ;
 	}
-
+	
 	
 	@Transient @Comment("Информация")
 	public String getWorkFunctionInfo() {
@@ -258,4 +262,12 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Экстренность */
 	private Boolean theEmergency;
+	/** Категория специалиста */
+	@Comment("Категория специалиста")
+	@OneToOne
+	public VocWorkFunctionDegrees getDegrees() {return theDegrees;}
+	public void setDegrees(VocWorkFunctionDegrees aCategory) {theDegrees = aCategory;}
+
+	/** Категория специалиста */
+	private VocWorkFunctionDegrees theDegrees;
 }

@@ -3,6 +3,12 @@ function onView(aForm, aVisit, aCtx) {
 		aForm.addDisabledField("parent") ;
 	}
 }
+/**
+ * Перед удалением
+ */
+function onPreDelete(aEntityId, aContext) {
+	//throw "Запрет на удаление!!!"; 
+}
 
 function onCreate(aForm, aVisit, aCtx) {
 	throw "Создавать визит можно только из направления" ;

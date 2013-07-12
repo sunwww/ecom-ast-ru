@@ -148,6 +148,7 @@ function recordSloBySls(aCtx,aSlsId) {
 		+" left join WorkFunction owf on owf.id=slo.ownerFunction_id"
 		+" left join Worker ow on ow.id=owf.worker_id"
 		+" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id"
+		+" left join VocWorkFunctionDegrees ovwfd on ovwfd.id=owf.degrees_id"
 		+" left join Patient owp on owp.id=ow.person_id"
 		+" left join Omc_Standart os on os.id=slo.omcStandart_id"
 		+" left join VocServiceStream vss on vss.id=slo.serviceStream_id"
@@ -159,7 +160,7 @@ function recordSloBySls(aCtx,aSlsId) {
 		+" group by slo.id,slo.dateStart,slo.entranceTime,slo.dateFinish,slo.transferDate,slo.dischargeTime"
 		+" ,slo.transferTime,os.model,vss.name,dep.id,dep.name,vbt.name"
 		+" ,owf.code,ovwf.code"
-		+" ,ovwf.name,owp.lastname,owp.firstname,owp.middlename"
+		+" ,ovwf.name,ovwfd.name,owp.lastname,owp.firstname,owp.middlename"
 		+" order by slo.dateStart,slo.entranceTime" ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -434,13 +435,14 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 	wqr.set10(medCase.hospitalization) ;//"sls.hospitalization",
 	wqr.set11(medCase.kinsman!=null?medCase.kinsman.info:"") ;//"sls.kinsInfo",
 	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
-			+", case when dateFinish is not null then vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
+			+", case when dateFinish is not null then coalesce(vwfd.code||' ','')||' '||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
 			+", case when dateFinish is not null then d.name else '' end as dname,d.id as did"
 			+", case when dateFinish is not null then wf.code else '' end as worker"
 			+" from MedCase dmc "
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
 			+" left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
+			+" left join VocWorkFunctionDegrees vwfd on wf.degrees_id=vwfd.id "
 			+" left join Worker w on w.id=wf.worker_id "
 			+" left join Patient p on p.id=w.person_id "
 			+" where dmc.parent_id='"+medCase.id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();

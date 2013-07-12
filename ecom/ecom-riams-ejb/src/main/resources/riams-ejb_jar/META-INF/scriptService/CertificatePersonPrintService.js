@@ -2,28 +2,32 @@ var map = new java.util.HashMap() ;
 
 function PrinCertificate(aCtx, aParams){
 	var pid = aParams.get("id");
-	var sqlQuery ="select MS.name as nm, CAMS.countMedService*PP.cost as cc " 
-			+", CAMS.countMedService as cnt " 
-			+" from ContractAccountMedService CAMS "
-			+" left join PricePosition PP ON PP.id = CAMS.medservice_id"
-			+" left join PriceMedService PMS on pp.id=pms.pricePosition_id"
-			+" left join MedService MS ON MS.id = PMS.medService_id"
-			+" where CAMS.account_id = ";
-	sqlQuery=sqlQuery+pid;
+	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
+		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService" 
+		+"		from ServedPerson sp"
+		+"		left join ContractAccount ca on ca.servedPerson_id = sp.id"
+		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
+		+"		left join PriceMedService pms on pms.id=cams.medService_id"
+		+"		left join PricePosition pp on pp.id=pms.pricePosition_id"
+		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
+		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
+		+"		left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id"
+		+"		where ca.id='"+pid+"' and cao.id is null"
+		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	var allcost;
 	allcost = 1-1;
 	for (var i = 0; i<list.size(); i++) {
-		var ref = new Packages.ru.ecom.mis.ejb.form.contract.PricePositionForm() ;
-		var medserv = list.get(i)[0];
-		var cost = list.get(i)[1];
-		var count = list.get(i)[2];
-		allcost = allcost + cost*1;
-		ref.name = medserv;
-		ref.cost = cost;
-		ref.code = count;
-		servisec.add(ref);
+		var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		var obj=list.get(i) ;
+		wq.setSn(i+1) ;
+		for (var j=1;j<obj.length; j++) {
+			eval("wq.set"+j+"(obj["+(j)+"])") ;
+		}
+		servisec.add(wq);
+		var sumi = +obj[5] ;
+		allcost = allcost + sumi ;
 	}
 	map.put("serv",servisec) ;
 	var rub;
