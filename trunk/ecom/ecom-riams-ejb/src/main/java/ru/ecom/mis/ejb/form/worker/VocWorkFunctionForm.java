@@ -55,14 +55,6 @@ public class VocWorkFunctionForm extends IdEntityForm {
 	public String getCode() {return theCode;}
 	public void setCode(String aCode) {theCode = aCode;}
 
-	/** Прикрепленные рабочие функции */
-	@Comment("Прикрепленные рабочие функции")
-	@Persist @PersistManyToManyOneProperty(parentProperty="vocWorkFunction_id",tableName="WorkFunctionService", valueProperty="medService_id",collectionGenericType=MedService.class)
-	public String getWorkFunctionServices() {return theWorkFunctionServices;}
-	public void setWorkFunctionServices(String aWorkFunctionServices) {theWorkFunctionServices = aWorkFunctionServices;}
-
-	/** Прикрепленные рабочие функции */
-	private String theWorkFunctionServices;
 	/** Код */
 	private String theCode;
 	/** Наименование */
@@ -78,4 +70,13 @@ public class VocWorkFunctionForm extends IdEntityForm {
 
 	/** Короткое название */
 	private String theShortName;
+	/** Не заполняется диагноз */
+	@Comment("Не заполняется диагноз")
+	@Persist
+	public Boolean getIsNoDiagnosis() {return theIsNoDiagnosis;}
+	public void setIsNoDiagnosis(Boolean aIsNoDiagnosis) {theIsNoDiagnosis = aIsNoDiagnosis;}
+
+	/** Не заполняется диагноз */
+	private Boolean theIsNoDiagnosis;
+
 }
