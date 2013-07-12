@@ -75,12 +75,12 @@ public class CategoryTreeServiceJs {
 	    		rs.append("<span id='").append(aName).append(wqr.get1()).append("DirV'>+</span>") ;
 	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
     		} else {
-    			rs.append("<div id='").append(aName).append(wqr.get1()).append("' ondblclick='").append(aFunction)
+    			rs.append("<div id='").append(aName).append(wqr.get1()).append("m' ondblclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>") ;
 	    		for (int i=0;i<aLevel;i++) {
 	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
 	    		}
-	    		rs.append("<input type='button' id='").append(aName).append(wqr.get1()).append("btn' name='").append(aName).append(wqr.get1()).append("btn' value='Д' onclick='").append(aFunction)
+	    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
 	    		rs.append(wqr.get2()).append("</div>");
 	    		//rs.append("<div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;

@@ -91,7 +91,7 @@
      function get${name}CategoryAdd(aId,aName) {
     	 if ('${functionAdd}'!='') {
     		${functionAdd}(aId,aName);
-    		$('${name}DirMedService'+aId).style.color='blue' ;
+    		$('${name}DirMedService'+aId+'m').style.color='blue' ;
     	 }
      }
      
