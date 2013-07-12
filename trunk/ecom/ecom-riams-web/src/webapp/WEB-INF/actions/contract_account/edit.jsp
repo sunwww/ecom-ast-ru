@@ -10,6 +10,15 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+		function accrual() {
+			var ids = theTableArrow.getInsertedIdsAsParams("camsid","medicalService") ;
+			document.location (ids)
+			
+		}
+		</script>
+	</tiles:put>
 	<tiles:put name="body" type="string">
 		<msh:form action="/entityParentSaveGoView-contract_account.do" defaultField="dateFrom">
 			<msh:hidden property="id" />
@@ -35,8 +44,8 @@
 			<table border='0'>
 				<tr>
 					<td>
-						<msh:section title="Начисление" createRoles="" createUrl="entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}">
-							<ecom:webQuery name="operationsAccrual" nativeSql="select cao.id
+						<msh:section title="Начисления. Последние 10" createUrl="entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}" >
+							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
 								, cao.cost, cao.discount
 								from ContractAccountOperation cao
@@ -45,7 +54,9 @@
 								left join Worker w on w.id=wf.worker_id
 								left join Patient wp on wp.id=w.person_id
 							where cao.account_id='${param.id}'
-							and cao.dtype='OperationAccrual'"/>
+							and cao.dtype='OperationAccrual'
+							order by cao.operationDate desc,cao.operationTime desc
+							"/>
 							<msh:table  
 							viewUrl="entityShortView-contract_accountOperation.do" 
 							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
@@ -83,36 +94,38 @@
 				 --%>
 			</msh:section>
 			<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
-			<msh:section title="Медицинские услуги">
+			<msh:section >
+			<msh:sectionTitle>Медицинские услуги (неоплаченные) 
+			<a href="javascript:void(0)" onclick="accrual()"><img width="14" height="14" title="Оплата" alt="Оплата неоплаченных услуг" src="/skin/images/main/plus.png">Начисление средств по неоплаченным услугам</a>
+			</msh:sectionTitle>
+			<msh:sectionContent>
 			<ecom:webQuery name="medicalService" nativeSql="
-							select 
-							  CAMS.id as camsid
-							  ,'('||pp.code ||') '||pp.name as ppname ,'('||ms.code||') '||ms.name as msname
-							  ,CAMS.cost as camscost,CAMS.countMedService as camscountMedService
-							  ,CAMS.cost*CAMS.countMedService as totalValue
-							   from ContractAccountMedService CAMS
-							left join PriceMedService PMS ON PMS.id = CAMS.medservice_id
-							left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-							left join MedService MS ON MS.id = PMS.medService_id
-							left join PricePosition pp on pp.id=pms.pricePosition_id
-							where CAMS.account_id = '${param.id}'
-							group by CAMS.id ,pp.code,pp.name ,ms.code,ms.name 
-							  ,CAMS.cost ,CAMS.countMedService
-							  
+select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
+			, cams.countMedService*cams.cost as sumNoAccraulMedService 
+			from ServedPerson sp
+			left join ContractAccount ca on ca.servedPerson_id = sp.id
+			left join ContractAccountMedService cams on cams.account_id=ca.id
+			left join PriceMedService pms on pms.id=cams.medService_id
+			left join PricePosition pp on pp.id=pms.pricePosition_id
+			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+			where ca.id='${param.id}' and cao.id is null
+			group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
 			"/>
-				<div id="divAllCount1"><h1>Сумма: 0 руб</h1></div>
-				<msh:table name="medicalService" 
+				
+				<msh:table selection="multy" name="medicalService" 
 				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
 				editUrl="entityParentEdit-contract_accountMedService.do"
 				viewUrl="entityShortView-contract_accountMedService.do"
 				action="entityParentView-contract_accountMedService.do" idField="1">
-					<msh:tableColumn columnName="Наим. услуги по прейскуранту" property="2" />
-					<msh:tableColumn columnName="Наим. услуги внутр." property="3" />
+					<msh:tableColumn columnName="Код" property="2" />
+					<msh:tableColumn columnName="Наим." property="3" />
 					<msh:tableColumn columnName="Тариф" property="4" />
 					<msh:tableColumn columnName="Кол-во" property="5" />
-					<msh:tableColumn columnName="Стоимость" property="6" />
+					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
 				</msh:table>
-				<div id="divAllCount2"><h1>Сумма: 0 руб</h1></div>
+				</msh:sectionContent>
 			</msh:section>
 			</msh:ifInRole>
 		</msh:ifFormTypeIsView>
@@ -144,6 +157,7 @@
 			</msh:sideMenu>
 			<msh:sideMenu title="Печать">
       	      <msh:sideLink params="id" name="Акт выполненных работ" action="/print-contract.do?s=CertificatePersonPrintService&m=PrinCertificate"/>
+      	      <msh:sideLink params="id" name="Договора" action="/print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"/>
         	</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>

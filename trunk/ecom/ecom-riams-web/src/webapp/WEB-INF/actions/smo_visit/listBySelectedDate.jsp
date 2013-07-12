@@ -45,12 +45,12 @@ left join diagnosis d on d.medcase_id=v.id
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and (v.noActuality is null or v.noActuality='0')
-group by v.id,wct.timeFrom,v.dateStart,v.timeExecute
+group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
 ,pe.lastname,pe.firstname,pe.middlename
 ,vvr.name,v.visitResult_id
-having (v.dateStart is null or count(d.id)=0)
+having (v.dateStart is null or (count(d.id)=0 and (vwfe.isNoDiagnosis is null or vwfe.isNoDiagnosis='0')))
 order by wct.timeFrom"/>
 	    <msh:table name="list_no" action="entityEdit-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
@@ -104,12 +104,12 @@ left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and v.dateStart is not null
 and (v.noActuality is null or v.noActuality='0')
-group by v.id,wct.timeFrom,v.dateStart,v.timeExecute
+group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
 ,pe.lastname,pe.firstname,pe.middlename
 ,vvr.name,v.visitResult_id
-having count(d.id)>0
+having (count(d.id)>0 or vwfe.isNoDiagnosis='1')
 order by v.timeExecute"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />

@@ -59,7 +59,7 @@
 			if ('${addParam}'!='') {
 				idAddParam = +$('${addParam}').value ;
 				if (theIs${name}DirMedServiceAddParam!=idAddParam) {
-					try {eval('${clearDirParam}')} catch(e){}
+					try {eval('${clearDirParam}') ;} catch(e){}
 					theIs${name}DirMedServiceDialogInitialized = false;
 					show${name}DirMedService() ;
 					return ;
@@ -91,6 +91,7 @@
      function get${name}CategoryAdd(aId,aName) {
     	 if ('${functionAdd}'!='') {
     		${functionAdd}(aId,aName);
+    		$('${name}DirMedService'+aId).style.color='blue' ;
     	 }
      }
      

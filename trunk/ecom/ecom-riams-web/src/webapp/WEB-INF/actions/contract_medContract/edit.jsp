@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 		<msh:form action="/entitySaveGoView-contract_medContract.do" defaultField="contractNumber">
 			<msh:hidden property="id" />
@@ -24,7 +24,7 @@
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" size="100" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="customer" label="Заказчик" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete viewAction="entitySubclassView-contract_contractPerson.do" property="customer" label="Заказчик" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
@@ -65,23 +65,32 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Обслуживаемые персоны">
-			<ecom:webQuery nativeSql="select sp.id,
+			<msh:section title="Счета по обслуживаемым персонам">
+			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
+			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
+			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
 			from ServedPerson sp
 			left join ContractAccount ca on ca.servedPerson_id = sp.id
+			left join ContractAccountMedService cams on cams.account_id=ca.id
+			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
 			where sp.contract_id='${param.id}'
+			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>
-				<msh:table name="serverPerson" action="entityParentView-contract_servedPerson.do" idField="1">
+				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
 					<msh:tableColumn columnName="Счет" property="5"/>
 					<msh:tableColumn columnName="Сумма баланса" property="6"/>
-					<msh:tableColumn columnName="из них зарезервировано" property="7"/>
+					<msh:tableColumn columnName="из них зарезер." property="7"/>
+					<msh:tableColumn columnName="кол-во неопл. услуг" property="8"/>
+					<msh:tableColumn columnName="сумма к оплате" property="9"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Поддоговор">
@@ -108,6 +117,7 @@
 					<msh:tableColumn columnName="Дата окончания" property="6" />
 					<msh:tableColumn columnName="Обработка правил" property="7" />
 					<msh:tableColumn columnName="Прейскурант" property="8" />
+					
 				</msh:table>
 			</msh:section>
 			<%-- 

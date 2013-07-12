@@ -30,7 +30,7 @@ left join PriceList pl on pl.id=mc.priceList_id
 where mc.customer_id='${param.id}' 
 order by mc.dateFrom desc
       	" maxResult="10"/>
-      	<msh:table name="medContracts" viewUrl="entityView-medContract.do?short=Short" action="entityView-medContract" idField="1">
+      	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
       		<msh:tableColumn property="2" columnName="№счета по обслуживаемой персоне"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>

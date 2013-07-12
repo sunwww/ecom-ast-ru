@@ -94,7 +94,7 @@
         	<msh:autoComplete property="conclusion" fieldColSpan="3" label="Обоснование" horizontalFill="true" vocName="vocExpertConclusion"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="conclusionSent" fieldColSpan="3" label="Заключение напр." horizontalFill="true" vocName="vocExpertConclusionSent"/> 
+        	<msh:autoComplete parentAutocomplete="conclusion" property="conclusionSent" fieldColSpan="3" label="Заключение напр." horizontalFill="true" vocName="vocExpertConclusionSent"/> 
         	
         </msh:row>
         <msh:row>

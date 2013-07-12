@@ -802,7 +802,6 @@ order by dep.name
 ,count(distinct hmc.id) as cntStatCard
 ,count(distinct case when hmc.emergency='1' then hmc.id else null end) cntEmerStatCard
 ,count(distinct pat.id) as cntPat
-,count()
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
