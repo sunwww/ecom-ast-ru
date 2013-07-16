@@ -234,8 +234,8 @@ public class LoginSaveAction extends LoginExitAction {
     		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
 	    		sql.append("select")
 	    			.append(" case when wf.isAdministrator='1' then owp.lastname||' '||owp.firstname||' '||owp.middlename else '' end as lechvr")
-	    			.append(" ,count(distinct slo.id) as cntSlo, count(distinct case when (current_date - sls.dateStart)=(case when vss.code='05' or vss.code='10' then 14 else 29 end) then slo.id else null end) as cntSloOfen")
-	    			.append(" , count(distinct case when (current_date - sls.dateStart)>(case when vss.code='05' or vss.code='10' then 14 else 29 end) then slo.id else null end) as cntSloLast")
+	    			.append(" ,count(distinct slo.id) as cntSlo, count(distinct case when (current_date - sls.dateStart)=(case when vss.omcCode='05' or vss.omcCode='10' then 14 else 29 end) then slo.id else null end) as cntSloOfen")
+	    			.append(" , count(distinct case when (current_date - sls.dateStart)>(case when vss.omcCode='05' or vss.omcCode='10' then 14 else 29 end) then slo.id else null end) as cntSloLast")
 	    			.append(" from MedCase slo")
 	    			.append(" left join MedCase sls on sls.id=slo.parent_id")
 	    			.append(" left join ClinicExpertCard cec on slo.id=cec.medcase_id")
@@ -251,15 +251,15 @@ public class LoginSaveAction extends LoginExitAction {
 	    			.append(" and (wf.isAdministrator='1' or (wf.isAdministrator is null or wf.isAdministrator='0') and slo.ownerFunction_id=wf.id)")
 	    			.append(" and slo.dtype='DepartmentMedCase'")
 	    			.append(" and slo.dateFinish is null and slo.transferDate is null")
-	    			.append(" and (current_date - sls.dateStart)>(case when vss.code='05' or vss.code='10' then 12 else 27 end) ")
+	    			.append(" and (current_date - sls.dateStart)>(case when vss.omcCode='05' or vss.omcCode='10' then 12 else 27 end) ")
 	    			.append(" group by wf.isAdministrator")
 	    			.append(" ,owp.lastname,owp.middlename,owp.firstname")
 	    			.append(" order by owp.lastname,owp.middlename,owp.firstname")
     			;
     		} else {
     			sql.append("select ml.name");
-    			sql.append(" ,count(distinct slo.id) as cntSlo, count(distinct case when (current_date - sls.dateStart)=(case when vss.code='05' or vss.code='10' then 14 else 29 end) then slo.id else null end) as cntSloOfen");
-    			sql.append(" , count(distinct case when (current_date - sls.dateStart)>(case when vss.code='05' or vss.code='10' then 14 else 29 end) then slo.id else null end) as cntSloLast");
+    			sql.append(" ,count(distinct slo.id) as cntSlo, count(distinct case when (current_date - sls.dateStart)=(case when vss.omcCode='05' or vss.omcCode='10' then 14 else 29 end) then slo.id else null end) as cntSloOfen");
+    			sql.append(" , count(distinct case when (current_date - sls.dateStart)>(case when vss.omcCode='05' or vss.omcCode='10' then 14 else 29 end) then slo.id else null end) as cntSloLast");
     			sql.append(" from MedCase slo");
     			sql.append(" left join MedCase sls on sls.id=slo.parent_id") ;
     			sql.append(" left join ClinicExpertCard cec on slo.id=cec.medcase_id");
@@ -269,7 +269,7 @@ public class LoginSaveAction extends LoginExitAction {
     			sql.append(" where slo.dateFinish is null ");
     			sql.append(" and slo.dtype='DepartmentMedCase'");
     			sql.append(" and slo.transferDate is null");
-    			sql.append(" and (current_date - sls.dateStart)>(case when vss.code='05' or vss.code='10' then 13 else 28 end) ") ;
+    			sql.append(" and (current_date - sls.dateStart)>(case when vss.omcCode='05' or vss.omcCode='10' then 13 else 28 end) ") ;
     			sql.append(" group by ml.name");
     			sql.append(" order by ml.name");
     		}
@@ -277,9 +277,9 @@ public class LoginSaveAction extends LoginExitAction {
 	    	StringBuilder res1 = new StringBuilder() ;
 	    	if (list.size()>0) {
 		    	for (WebQueryResult wqr:list) {
-		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
-		    		res1.append(wqr.get1()).append(" необходимо сегодня делать направление: ").append(wqr.get3()).append("<br>") ;
-		    		res1.append(wqr.get1()).append(" просрочены сроки подачи на ВК: ").append(wqr.get4()).append("<br>") ;
+		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append(" ") ;
+		    		res1.append("; необходимо сегодня делать направление: ").append(wqr.get3()).append(" ") ;
+		    		res1.append("; просрочены сроки подачи на ВК: ").append(wqr.get4()).append("<br>") ;
 		    	}
 		    	System.out.println("get id message") ;
 		    	Long id=serviceLogin.createSystemMessage("Длительность лечения пациентов более 13 дней (для безработных 28 дн):", res1.toString(), aUsername) ;
