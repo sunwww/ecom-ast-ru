@@ -7,7 +7,9 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал СЛО (открытых) по лечащему врачу &nbsp; <a href='stac_report_cases_not_filled.do'>Не заполнялись данные по пациентам более 2х дней</a> </msh:title>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал СЛО (открытых) по лечащему врачу
+     &nbsp; <a href='stac_report_cases_not_filled.do'>Не заполнялись данные по пациентам более 2х дней</a>
+     &nbsp; <a href='stac_report_direct_medical_commission.do'>Пациентам, которым надо будет делать направления на ВК</a> </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>

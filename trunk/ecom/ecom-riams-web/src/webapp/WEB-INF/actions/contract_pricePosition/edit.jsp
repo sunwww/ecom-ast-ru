@@ -26,6 +26,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_pricePositionForm">
+		<msh:ifInRole roles="/Policy/Mis/Contract/PriceList/PricePosition/PriceMedService/View">
 			<msh:section title="Медицинские услуги">
 			<ecom:parentEntityListAll formName="contract_priceMedServiceForm" attribute="pricePosition" />
 				<msh:table name="pricePosition" action="entityParentView-contract_priceMedService.do" idField="id">
@@ -35,6 +36,7 @@
 					<msh:tableColumn columnName="Дата окончания" property="dateTo"/>
 				</msh:table>
 			</msh:section>
+		</msh:ifInRole>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">

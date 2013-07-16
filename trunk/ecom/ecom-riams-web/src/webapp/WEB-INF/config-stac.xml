@@ -54,15 +54,6 @@
 		    	path='/WEB-INF/actions/stac_criminalMessages/listByPeriod.jsp'
 		    />
 		</action>	
-		<!--        <action     path = "/mis_lpuAreaSave"
-			type = 'ru.ecom.web.actions.parententity.SaveAction'
-			scope = 'request'
-			validate = "true"
-			name = "mis_lpuAreaForm"
-			input = "/WEB-INF/actions/mis_lpuArea/edit.jsp">
-			<forward name="success" path="/entityView-mis_lpu.do" redirect="true"/>
-			</action>
-		-->
 
         <action path='/stac_resultPatient_list' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_dischargeJournalForm'
@@ -98,6 +89,13 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_diagnosis/listDeniedByPeriod.jsp" />
+        </action>
+        <action path='/stac_report_direct_medical_commission' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/report_direct_medical_commission.jsp" />
         </action>
         <action path='/stac_report_direct_in_hospital' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
