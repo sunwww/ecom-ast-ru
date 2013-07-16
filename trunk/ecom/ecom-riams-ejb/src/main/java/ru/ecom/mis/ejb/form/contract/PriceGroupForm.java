@@ -58,4 +58,13 @@ public class PriceGroupForm  extends PricePositionForm {
 	private String theName;
 	/** Прейскурант */
 	private Long thePriceList;
+	
+	/** Сразу открывать */
+	@Comment("Сразу открывать")
+	@Persist
+	public Boolean getIsOnceView() {return theIsOnceView;}
+	public void setIsOnceView(Boolean aIsOnceView) {theIsOnceView = aIsOnceView;}
+
+	/** Сразу открывать */
+	private Boolean theIsOnceView;
 }

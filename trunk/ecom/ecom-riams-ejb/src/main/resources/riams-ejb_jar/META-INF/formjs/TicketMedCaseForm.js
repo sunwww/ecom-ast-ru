@@ -82,7 +82,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
 			try {
 				
-				aCtx.serviceInvoke("SmoVisitService", "closeSpo",aEntity.parent.id) ;
+				aCtx.serviceInvoke("SmoVisitService", "closeSpoWithoutDiagnosis",aEntity.parent.id,aForm.getConcludingMkb(),"to_date('"+aForm.dateStart+"','dd.mm.yyyy')") ;
 			} catch(e) {}
 			
 		}		
