@@ -436,7 +436,7 @@ function closeSpo(aContext, aSpoId) {
 	}
 	return aSpoId;
 }
-function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId) {
+function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -444,8 +444,15 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId) {
 			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
 			+" and vis.dateStart is null"
 			).setMaxResults(1).getResultList() ;
-	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
-			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
+	var listVisLastSql="select vis.id as visid"
+			+" ,mkb.id as mkbid, " ;
+	if (aDateFinish!=null && aDateFinish!='') {
+		listVisLastSql = listVisLastSql +"case when vis.dateStart>"+aDateFinish+" then to_char(vis.dateStart,'dd.mm.yyyy') else to_char("+aDateFinish+",'dd.mm.yyyy') end " ;
+	} else {
+		listVisLastSql = listVisLastSql +"to_char(vis.dateStart,'dd.mm.yyyy')" ;
+	}
+	
+	listVisLastSql = listVisLastSql +" as dateStart, vis.workFunctionExecute_id"
 			+" from MedCase vis"
 			+"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
 			+"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
@@ -463,8 +470,8 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId) {
 			+" and (vis.noActuality='0' or vis.noActuality='1')"
 			+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 			+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
-			+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-	
+			+" order by vis.dateStart desc, vis.timeExecute desc" ;
+	var listVisLast = aContext.manager.createNativeQuery(listVisLastSql).setMaxResults(1).getResultList() ;
 	if (listOpenVis.size()==0&&listVisLast.size()>0) {
 		var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
 				+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
@@ -490,7 +497,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId) {
 		//var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 		//		, java.lang.Long.valueOf(visFirst)) ;
 		var visLast = listVisLast.get(0)[0];
-		var mkb = aMkbId;
+		var mkb = aMkbId!=null?aMkbId: listVisLast.get(0)[1];
 		var dateStart = listVisFirst.get(0)[2];
 		var dateFinish = listVisLast.get(0)[2];
 		var startWF = listVisFirst.get(0)[3];
