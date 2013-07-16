@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import ru.ecom.diary.ejb.service.template.ICategoryTreeService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 
@@ -31,15 +32,16 @@ public class CategoryTreeServiceJs {
     public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String table , fldId, fldView, fldParent , fldOrderBy , fldIsChild,join="",whereAdd="" ;
+    	String isOnceViewFld ="0>0";
     	int level=aLevel+1;
     	if (aTable.toUpperCase().equals("PRICEMEDSERVICE")) {
     		table="PricePosition pp" ;fldId="case when pp.dtype='PriceGroup' then pp.id else pms.id end";
-    				fldView="case when pp.dtype='PriceGroup' then pp.code||' '||pp.name else pp.code||' '||pp.name||' ('||pp.cost||')' end" 
-    				;fldParent="pp.parent_id";fldOrderBy="pp.code";
+    				fldView="case when pp.dtype='PriceGroup' then '<b>'||pp.code||'</b> '||pp.name else '<b>'||pp.code||'</b> '||' '||pp.name||' ('||pp.cost||')' end" 
+    				;fldParent="pp.parent_id";fldOrderBy="case when pp.dtype='PriceGroup' then 1 else 0 end,pp.code";
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
-    				
-    					whereAdd=" and pp.priceList_id='"+aAddParam+"' "+whereAdd ;
+    				isOnceViewFld=" pp.dtype='PriceGroup' and pp.isOnceView" ;
+    				whereAdd=" and pp.priceList_id='"+aAddParam+"' "+whereAdd ;
     				
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id=pp.id)";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
@@ -52,7 +54,8 @@ public class CategoryTreeServiceJs {
     	
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select ").append(fldId).append(" as fldId, ").append(fldView).append(" as fldView")
-    		.append(", case when ").append(fldIsChild).append(">0 then 1 else null end as ascntChild")
+    	.append(", case when ").append(fldIsChild).append(">0 then 1 else null end as ascntChild")
+    		.append(", case when ").append(isOnceViewFld).append(" then 1 else null end as asView")
     		.append(" from ").append(table)
     		.append(" ").append(join)
     		.append(" where ").append(fldParent) ;
@@ -67,13 +70,21 @@ public class CategoryTreeServiceJs {
     	StringBuilder rs = new StringBuilder() ;
     	for (WebQueryResult wqr : list) {
     		if (wqr.get3()!=null) {
-        		rs.append("<div id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
+        		rs.append("<div class='dir").append(aLevel).append("Div' id='").append(aName).append(wqr.get1()).append("' onclick='").append(aFunction)
     			.append("(").append("\"").append(aName).append(wqr.get1()).append("Dir\",\"").append(wqr.get1()).append("\",").append(level).append(")").append("'>") ;
 	    		for (int i=0;i<aLevel;i++) {
-	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
+	    			rs.append("<span class='dirN'>&nbsp;|&nbsp;</span>") ;
 	    		}
-	    		rs.append("<span id='").append(aName).append(wqr.get1()).append("DirV'>+</span>") ;
-	    		rs.append(wqr.get2()).append("</div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
+	    		if (wqr.get4()!=null) {
+	    			rs.append("<span class='dirN' id='").append(aName).append(wqr.get1()).append("DirV'> - </span><span class='dirV'>") ;
+		    		rs.append(wqr.get2()).append("</span></div><div id='").append(aName).append(wqr.get1()).append("Dir'>") ;
+		    		rs.append(getCategoryMedService(aName,aFunction, aTable, ConvertSql.parseLong(wqr.get1()),level, aAddParam, aRequest));
+		    		rs.append("</div>") ;
+	    		} else {
+	    			rs.append("<span class='dirN' id='").append(aName).append(wqr.get1()).append("DirV'> + </span><span class='dirV'>") ;
+		    		rs.append(wqr.get2()).append("</span></div><div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
+	    		}
+	    		
     		} else {
     			rs.append("<div id='").append(aName).append(wqr.get1()).append("m' ondblclick='").append(aFunction)
     			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>") ;

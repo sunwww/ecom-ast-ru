@@ -17,6 +17,15 @@
         display: none ;
         position: absolute ;
     }
+    .dir0Div {background-color: #ddddff; }
+    .dir1Div {background-color: #88ffaa;}
+    .dir2Div {background-color: #ffddbb;}
+    .dir3Div {background-color: #bbff55;}
+    .dir4Div {background-color: #ddff77;}
+    .dir5Div {background-color: #ffffff;}
+    .dirV {border-bottom: 1px solid; }
+    .dirN {background-color: white;border-bottom: 0;}
+    
 </style>
 
 <div id='${name}DirMedServiceDialog' class='dialog'>
@@ -117,12 +126,12 @@
 	    	 }) ;
    		} else {
    			
-   			if ($(aDiv+"V").innerHTML=="+") {
+   			if ($(aDiv+"V").innerHTML==" + ") {
    				$(aDiv+"").style.display = "inline" ;
-   				$(aDiv+"V").innerHTML="-" ;
+   				$(aDiv+"V").innerHTML=" - " ;
    			} else {
    				$(aDiv+"").style.display = "none" ;
-   				$(aDiv+"V").innerHTML="+" ;
+   				$(aDiv+"V").innerHTML=" + " ;
    			}
    			
 		}
