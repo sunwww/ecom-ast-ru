@@ -19,7 +19,7 @@
 			<msh:hidden property="editTime" />
 			<msh:hidden property="editUsername" />
 			<msh:hidden property="workFunction"/>
-			<msh:panel colsWidth="1%,1%,1%">
+			<msh:panel colsWidth="10%,10%,10%">
 				<msh:row>
 					<msh:autoComplete property="type" label="Тип операции" vocName="vocAccountOperation" fieldColSpan="3" horizontalFill="true" />
 				</msh:row>

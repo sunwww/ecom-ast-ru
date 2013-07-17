@@ -65,10 +65,10 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Счета по обслуживаемым персонам">
+			<msh:section title="Счета оплату">
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
+			,sp.dateFrom,sp.dateTo
 			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
 			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
 			from ServedPerson sp
@@ -77,20 +77,44 @@
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where sp.contract_id='${param.id}'
+			where sp.contract_id='${param.id}' and cao.id is null
+			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
+			" name="serverPerson"/>
+				<msh:table name="serverPerson" viewUrl="entityParentView-contract_account.do?short=Short" 
+				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
+				idField="1">
+					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Информация" property="2"/>
+					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
+					<msh:tableColumn columnName="Дата окончания" property="4"/>
+					<msh:tableColumn columnName="кол-во неопл. услуг" property="5"/>
+					<msh:tableColumn columnName="сумма к оплате" property="6"/>
+				</msh:table>
+			</msh:section>
+			<msh:section title="Оплаченные счета">
+			<ecom:webQuery nativeSql="select ca.id,
+			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
+			,sp.dateFrom,sp.dateTo,ca.balanceSum, ca.reservationSum
+			from ServedPerson sp
+			left join ContractAccount ca on ca.servedPerson_id = sp.id
+			left join ContractAccountMedService cams on cams.account_id=ca.id
+			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+			where sp.contract_id='${param.id}' and cao.id is not null
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>
 				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Счет" property="1"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
-					<msh:tableColumn columnName="Счет" property="5"/>
-					<msh:tableColumn columnName="Сумма баланса" property="6"/>
-					<msh:tableColumn columnName="из них зарезер." property="7"/>
-					<msh:tableColumn columnName="кол-во неопл. услуг" property="8"/>
-					<msh:tableColumn columnName="сумма к оплате" property="9"/>
+					<msh:tableColumn columnName="Сумма баланса" property="5"/>
+					<msh:tableColumn columnName="из них зарезер." property="6"/>
+					
 				</msh:table>
 			</msh:section>
 			<msh:section title="Поддоговор">

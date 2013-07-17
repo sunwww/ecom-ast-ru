@@ -9,7 +9,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="javascript" type="string">
 		<script type="text/javascript">
 		function accrual() {
@@ -44,7 +44,7 @@
 			<table border='0'>
 				<tr>
 					<td>
-						<msh:section title="Начисления. Последние 10" createUrl="entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}" >
+						<msh:section title="Начисления. Последние 10" >
 							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
 								, cao.cost, cao.discount
@@ -58,7 +58,7 @@
 							order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
-							viewUrl="entityShortView-contract_accountOperation.do" 
+							viewUrl="entityParentView-contract_accountOperationAccrual.do?short=Short" 
 							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
 								<msh:tableColumn columnName="Дата и время операции" property="2" />
 								<msh:tableColumn columnName="Стоимость" property="3" />
@@ -79,26 +79,9 @@
 					</td>
 				</tr>
 			</table>
-			<%--
-			<ecom:parentEntityListAll formName="contract_accountOperationForm" attribute="account" />
-				<msh:table deleteUrl="entityParentDeleteGoParentView-contract_accountOperation.do" viewUrl="entityShortView-contract_accountOperation.do" editUrl="entityParentEdit-contract_accountOperation.do" name="account" action="entityParentView-contract_accountOperation.do" idField="id">
-					<msh:tableColumn columnName="Тип операции" property="typeInfo" />
-					<msh:tableColumn columnName="Дата" property="operationDate" />
-					<msh:tableColumn columnName="Время операции" property="operationTime" />
-					<msh:tableColumn columnName="Стоимость" property="cost" />
-					<msh:tableColumn columnName="Случай медицинского обслуживания" property="medcaseInfo" />
-					<msh:tableColumn columnName="Отменившая операция" property="repealOperationInfo" />
-					<msh:tableColumn columnName="Оператор" property="workFunction" />
-					<msh:tableColumn columnName="Скидка" property="discount" />
-				</msh:table>
-				 --%>
 			</msh:section>
 			<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
 			<msh:section >
-			<msh:sectionTitle>Медицинские услуги (неоплаченные) 
-			<a href="javascript:void(0)" onclick="accrual()"><img width="14" height="14" title="Оплата" alt="Оплата неоплаченных услуг" src="/skin/images/main/plus.png">Начисление средств по неоплаченным услугам</a>
-			</msh:sectionTitle>
-			<msh:sectionContent>
 			<ecom:webQuery name="medicalService" nativeSql="
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 			, cams.countMedService*cams.cost as sumNoAccraulMedService 
@@ -114,6 +97,11 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
 			"/>
 				
+			<msh:sectionTitle>Медицинские услуги (неоплаченные)
+			
+			<msh:tableNotEmpty name="medicalService"><a href='entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}'>Оплатить</a></msh:tableNotEmpty>
+			</msh:sectionTitle>
+			<msh:sectionContent>
 				<msh:table selection="multy" name="medicalService" 
 				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
 				editUrl="entityParentEdit-contract_accountMedService.do"
