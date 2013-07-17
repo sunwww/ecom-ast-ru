@@ -181,4 +181,16 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	/** Дата создания */
 	private String theCreateDate;
 	
+	/** Услуги */
+	@Comment("Услуги")
+	public String getMedServicies() {
+		return theMedServicies;
+	}
+
+	public void setMedServicies(String aMedServicies) {
+		theMedServicies = aMedServicies;
+	}
+
+	/** Услуги */
+	private String theMedServicies;
 }

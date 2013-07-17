@@ -197,7 +197,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                    .setParameter("workFunction",workFunc)
                    .setParameter("date", date)
                    .getSingleResult();
-				Object planned = theManager.createNativeQuery("select count(id) from medcase"
+				Object planned = theManager.createNativeQuery("select count(id)||' из них оформлены '||count(distinct case when dateStart is not null then id else null end) from medcase"
 						+" where workfunctionplan_id =:workFunction"
 						+" and datePlan_id=:workCalendarDay"
 						)
