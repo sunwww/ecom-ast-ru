@@ -26,6 +26,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(unique= false, properties = {"servedPerson"})
+	,@AIndex(unique= false, properties = {"contract"})
 })
 public class ContractAccount extends BaseEntity{
 	/**
