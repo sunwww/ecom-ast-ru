@@ -103,7 +103,7 @@
 						<li><msh:link action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
 	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций 
 	                        </msh:link></li>
-						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
+						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report007">
 	                            007/у-02 форма
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_13.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report13">
@@ -111,6 +111,9 @@
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_14.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
 	                            14 форма
+	                        </msh:link></li>
+						<li><msh:link action="stac_report_016.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report016">
+	                            016/у-02 форма
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_direct_in_hospital.do" roles="/Policy/Mis/Journal/DirectByHospital">
 	                            Отчет по направленным
