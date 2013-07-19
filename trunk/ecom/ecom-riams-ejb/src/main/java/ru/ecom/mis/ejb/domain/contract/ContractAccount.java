@@ -33,23 +33,16 @@ public class ContractAccount extends BaseEntity{
 	 */
 	@Comment("Обслуживаемая персона")
 	@OneToOne
-	public ServedPerson getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(ServedPerson aServedPerson) {
-		theServedPerson = aServedPerson;
-	}
+	public ServedPerson getServedPerson() {return theServedPerson;}
+	public void setServedPerson(ServedPerson aServedPerson) {theServedPerson = aServedPerson;}
 	/**
 	 * Обслуживаемая персона
 	 */
 	private ServedPerson theServedPerson;
+	
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
-	public List<ContractAccountOperation> getOperations() {
-		return theOperations;
-	}
-	public void setOperations(List<ContractAccountOperation> aOperations) {
-		theOperations = aOperations;
-	}
+	public List<ContractAccountOperation> getOperations() {return theOperations;}
+	public void setOperations(List<ContractAccountOperation> aOperations) {theOperations = aOperations;}
 	/**
 	 * Операции по счету
 	 */
@@ -58,7 +51,6 @@ public class ContractAccount extends BaseEntity{
 	 * Сумма баланса
 	 */
 	@Comment("Сумма баланса")
-	
 	public BigDecimal getBalanceSum() {return theBalanceSum;}
 	public void setBalanceSum(BigDecimal aBalanceSum) {theBalanceSum = aBalanceSum;}
 	/** Сумма баланса */
@@ -91,12 +83,8 @@ public class ContractAccount extends BaseEntity{
 	
 	@Comment("Мед. услуги")
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
-	public List<ContractAccountMedService> getMedService() {
-		return theMedService;
-	}
-	public void setMedService(List<ContractAccountMedService> aMedService) {
-		theMedService = aMedService;
-	}
+	public List<ContractAccountMedService> getMedService() {return theMedService;}
+	public void setMedService(List<ContractAccountMedService> aMedService) {theMedService = aMedService;}
 	
 	/**
 	 * Мед. услуги
@@ -156,4 +144,13 @@ public class ContractAccount extends BaseEntity{
 		if (theBlock!=null && theBlock) res.append("(счет заблокирован");
 		return res.toString();
 	}
+	
+	/** Мед.договор */
+	@Comment("Мед.договор")
+	@OneToOne
+	public MedContract getContract() {return theContract;}
+	public void setContract(MedContract aContract) {theContract = aContract;}
+
+	/** Мед.договор */
+	private MedContract theContract;
 }
