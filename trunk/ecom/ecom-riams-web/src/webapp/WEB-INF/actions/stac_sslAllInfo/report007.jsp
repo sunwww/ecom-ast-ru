@@ -12,10 +12,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Форма 007у-02</msh:title>
+    <msh:title guid="helloItle-123" mainMenu="Journals">Форма 007у-02</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:stac_journal currentAction="stac_reestrByHospital"/>
+  	<tags:stac_journal currentAction="stac_report007"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   
@@ -190,7 +190,7 @@ if (date!=null && !date.equals("")) {
 	and (ad1.domen=5 or ad2.domen=5)
 	then 'Х' else null end
 	as cnt8EntranceVillagers
-	,case when slo.prevmedcase_id is null and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and (
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
@@ -199,7 +199,7 @@ if (date!=null && !date.equals("")) {
 	then 'Х' else null end
 
 	as cnt9EntranceTo17
-	,case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
@@ -352,7 +352,7 @@ if (date!=null && !date.equals("")) {
 	then slo.id else null end)
 
 	as cnt9EntranceTo17
-	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
@@ -832,7 +832,7 @@ if (date!=null && !date.equals("")) {
 	then slo.id else null end)
 
 	as cnt9EntranceTo17
-	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
