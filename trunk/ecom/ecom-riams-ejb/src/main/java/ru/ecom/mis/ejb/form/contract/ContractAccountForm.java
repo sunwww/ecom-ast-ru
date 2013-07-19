@@ -1,9 +1,8 @@
 package ru.ecom.mis.ejb.form.contract;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.mis.ejb.domain.contract.ContractAccount;
-import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -20,7 +19,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormPersistance(clazz = ContractAccount.class)
 @Comment("Договорной счет")
 @WebTrail(comment = "Договорной счет", nameProperties= "info", list="entityParentList-contract_account.do", view="entityParentView-contract_account.do")
-@Parent(property="servedPerson", parentForm=ServedPersonForm.class)
+@Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount")
 public class ContractAccountForm extends IdEntityForm{
 	/**
@@ -174,4 +173,13 @@ public class ContractAccountForm extends IdEntityForm{
 	private String theCreateTime;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Мед.договор */
+	@Comment("Мед.договор")
+	@Persist
+	public Long getContract() {return theContract;}
+	public void setContract(Long aContract) {theContract = aContract;}
+
+	/** Мед.договор */
+	private Long theContract;
 }
