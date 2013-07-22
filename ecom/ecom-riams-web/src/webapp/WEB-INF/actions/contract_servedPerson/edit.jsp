@@ -53,26 +53,7 @@
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
-		<msh:ifFormTypeIsView formName="contract_servedPersonForm">
-		<msh:section title="Счет">
-			<ecom:webQuery name="contractAccount" nativeSql="
-							select id, datefrom,dateto  
-							, BalanceSum 
-							, ReservationSum
-							, case when block='1' then 'ДА' else '' end as block
-							from ContractAccount
-							where servedperson_id = '${param.id}'
-			"/>
-				<msh:table name="contractAccount" action="entityParentView-contract_account.do" idField="1">
-					<msh:tableColumn columnName="Номер счета" property="1" />					
-					<msh:tableColumn columnName="Дата начала действия" property="2" />					
-					<msh:tableColumn columnName="Дата окончания" property="3" />					
-					<msh:tableColumn columnName="Сумма баланса" property="4" />					
-					<msh:tableColumn columnName="из них зарезервировано" property="5" />					
-					<msh:tableColumn columnName="Блокирован" property="6" />					
-				</msh:table>
-			</msh:section>
-		</msh:ifFormTypeIsView>
+
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_servedPersonForm" />
@@ -82,9 +63,6 @@
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_servedPerson" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Edit"/>
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_servedPerson" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Delete"/>
-			</msh:sideMenu>
-			<msh:sideMenu title="Добавить">
-				<msh:sideLink name="Счет" action="/entityParentPrepareCreate-contract_contractAccount" key="ALT+3" params="id" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Create" title="Добавить счет"/>
 			</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>

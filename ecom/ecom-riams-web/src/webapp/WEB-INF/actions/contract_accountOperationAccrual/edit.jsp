@@ -93,29 +93,34 @@
 			<msh:sectionContent>
 			<ecom:webQuery name="medicalService" nativeSql="
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
-			, cams.countMedService*cams.cost as sumNoAccraulMedService 
-			from ServedPerson sp
-			left join ContractAccount ca on ca.servedPerson_id = sp.id
-			left join ContractAccountMedService cams on cams.account_id=ca.id
-			left join PriceMedService pms on pms.id=cams.medService_id
-			left join PricePosition pp on pp.id=pms.pricePosition_id
+	, cams.countMedService*cams.cost as sumNoAccraulMedService 
+	, cao.discount,round(cams.countMedService*(cams.cost*(100-cao.discount)/100),2)
+			from ContractAccountMedService cams
+			left join ServedPerson sp on cams.servedPerson_id = sp.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+			left join ContractPerson cp on cp.id=sp.person_id 
+			left join patient p on p.id=cp.patient_id
+						
+			left join PriceMedService pms on pms.id=cams.medService_id
+			left join PricePosition pp on pp.id=pms.pricePosition_id
 			where cao.id='${param.id}'
-			group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
 			"/>
 				
 				<msh:table selection="multy" name="medicalService" 
 				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
 				editUrl="entityParentEdit-contract_accountMedService.do"
 				viewUrl="entityShortView-contract_accountMedService.do"
-				action="entityParentView-contract_accountMedService.do" idField="1">
+				action="entityParentView-contract_accountMedService.do"
+				
+				 idField="1">
 					<msh:tableColumn columnName="Код" property="2" />
 					<msh:tableColumn columnName="Наименование" property="3" />
 					<msh:tableColumn columnName="Тариф" property="4" />
 					<msh:tableColumn columnName="Кол-во" property="5" />
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Скидка" property="7" />
+					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="8" />
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
