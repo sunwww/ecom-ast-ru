@@ -89,6 +89,14 @@ public class TableTag extends AbstractGuidSupportTag {
 	public String getViewUrl() {return theViewUrl;}
 	public void setViewUrl(String aViewUrl) {theViewUrl = aViewUrl;}
 
+	/** Url печати 
+     * @jsp.attribute   description = "Url печати записи"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+	public String getPrintUrl() {return thePrintUrl;}
+	public void setPrintUrl(String aPrintUrl) {thePrintUrl = aPrintUrl;}
+
 	/** 
 	 * Url удаления записи
      * @jsp.attribute   description = "Url удаления записи"
@@ -331,6 +339,9 @@ public class TableTag extends AbstractGuidSupportTag {
     private synchronized void createEditFunctionName(String aAction) {
     	theFunctionEditName="goToPage('" + aAction+"','";
     }
+    private synchronized void createPrintFunctionName(String aAction) {
+    	theFunctionPrintName="goToPage('" + aAction+"','";
+    }
     private synchronized void createViewFunctionName(String aAction) {
     	if (aAction.indexOf("?")==-1) {
     		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
@@ -356,7 +367,11 @@ public class TableTag extends AbstractGuidSupportTag {
     }
     private String getEditFunctionName(String aId) {
     	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
+    	return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
+    }
+    private String getPrintFunctionName(String aId) {
+    	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
+        return new StringBuilder().append(theFunctionPrintName).append(aId).append("'); ").toString();
     }
     
     
@@ -399,6 +414,12 @@ public class TableTag extends AbstractGuidSupportTag {
                         	out.println("&nbsp;") ;
                         	out.println("</th>") ;
                         	createViewFunctionName(theViewUrl);
+                        }
+                        if (thePrintUrl!=null) {
+                        	out.println("<th  width='14px'>") ;
+                        	out.println("&nbsp;") ;
+                        	out.println("</th>") ;
+                        	createPrintFunctionName(thePrintUrl);
                         }
                         if (theEditUrl!=null) {
                         	out.println("<th  width='14px'>") ;
@@ -467,6 +488,10 @@ public class TableTag extends AbstractGuidSupportTag {
                         	//out.println() ;
                         	printCellView(out,"<img src='/skin/images/main/view1.png' alt='Просмотр записи' title='Просмотр записи' height='14' width='14'/>", goFunctionViewName) ;
                         }
+                        if (thePrintUrl!=null) {
+                        	String goFunctionPrintName=getPrintFunctionName(currentId) ;
+                        	printCellView(out,"<img src='/skin/images/main/print.png' alt='Печать записи' title='Печать записи' height='14' width='14'/>", goFunctionPrintName) ;
+                        }
                         if (theEditUrl!=null) {
                         	String goFunctionEditName=getEditFunctionName(currentId) ;
                         	printCellView(out,"<img src='/skin/images/main/edit.png' alt='Редактирование записи' title='Редактирование записи' height='14' width='14'/>", goFunctionEditName) ;
@@ -503,7 +528,10 @@ public class TableTag extends AbstractGuidSupportTag {
 	                    if(theSelection!=null) {
                             out.println("<td>&nbsp;</td>") ;
                         }
-                        if (theViewUrl!=null) {
+	                    if (theViewUrl!=null) {
+	                    	out.println("<td>&nbsp;</td>") ;
+	                    }
+                        if (thePrintUrl!=null) {
                             out.println("<td>&nbsp;</td>") ;
                         }
                         if (theEditUrl!=null) {
@@ -803,12 +831,12 @@ public class TableTag extends AbstractGuidSupportTag {
                 if (value instanceof Number) {
                 	val2 = (Number)(value!=null?value:0) ;
                 } else if (value instanceof String) {
-                	val2 = Long.valueOf((String)value) ;
+                	val2 = Double.valueOf((String)value) ;
                 } else {
-                	val2 = Long.valueOf((String)value);
+                	val2 = Double.valueOf((String)value);
                 }
                 
-                String val3 = new StringBuilder().append(val1.longValue()+val2.longValue()).toString() ;
+                String val3 = new StringBuilder().append(val1.doubleValue()+val2.doubleValue()).toString() ;
             	
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
@@ -844,7 +872,10 @@ public class TableTag extends AbstractGuidSupportTag {
     private String theSelection ;
     
 
-	/** Url удаления записи */
+
+	/** Url печати */
+	private String thePrintUrl;
+    /** Url удаления записи */
 	private String theDeleteUrl;
 	/** Url просмотра записи */
 	private String theViewUrl;
@@ -852,5 +883,6 @@ public class TableTag extends AbstractGuidSupportTag {
     private boolean theDisableKeySupport = false ;
     String theFunctionDeleteName ;
     String theFunctionEditName ;
+    String theFunctionPrintName ;
     String theFunctionViewName ;
 }
