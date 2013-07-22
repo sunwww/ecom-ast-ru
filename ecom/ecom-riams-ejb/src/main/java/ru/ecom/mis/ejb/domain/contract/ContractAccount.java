@@ -29,17 +29,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(unique= false, properties = {"contract"})
 })
 public class ContractAccount extends BaseEntity{
-	/**
-	 * Обслуживаемая персона
-	 */
-	@Comment("Обслуживаемая персона")
-	@OneToOne
-	public ServedPerson getServedPerson() {return theServedPerson;}
-	public void setServedPerson(ServedPerson aServedPerson) {theServedPerson = aServedPerson;}
-	/**
-	 * Обслуживаемая персона
-	 */
-	private ServedPerson theServedPerson;
 	
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
 	public List<ContractAccountOperation> getOperations() {return theOperations;}

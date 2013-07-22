@@ -1,10 +1,11 @@
 package ru.ecom.mis.ejb.form.contract;
 
-import java.math.BigDecimal;
+import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
+import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -20,17 +21,26 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService")
 public class ContractAccountMedServiceForm extends IdEntityForm{
+
+	/**
+	 * Обслуживаемая персона
+	 */
+	@Comment("Обслуживаемая персона")
+	@Persist
+	public Long getServedPerson() {return theServedPerson;}
+	public void setServedPerson(Long aServedPerson) {theServedPerson = aServedPerson;}
+	/**
+	 * Обслуживаемая персона
+	 */
+	private Long theServedPerson;
+	
 	/**
 	 * Договорной счет
 	 */
 	@Comment("Договорной счет")
 	@Persist
-	public Long getAccount() {
-		return theAccount;
-	}
-	public void setAccount(Long aAccount) {
-		theAccount = aAccount;
-	}
+	public Long getAccount() {return theAccount;}
+	public void setAccount(Long aAccount) {theAccount = aAccount;}
 	/**
 	 * Договорной счет
 	 */

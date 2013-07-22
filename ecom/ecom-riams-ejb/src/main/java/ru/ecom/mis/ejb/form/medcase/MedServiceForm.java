@@ -182,6 +182,7 @@ public class MedServiceForm extends IdEntityForm  {
 	private Boolean theIsDayHospital;
 	/** Уровонь сложности */
 	@Comment("Уровонь сложности")
+	@Persist
 	public Long getComplexity() {return theComplexity;}
 	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
 	/** Уровонь сложности */

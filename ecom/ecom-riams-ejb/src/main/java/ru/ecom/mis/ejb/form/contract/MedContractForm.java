@@ -22,7 +22,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = MedContract.class)
 @Comment("Мед.договор")
-@WebTrail(comment = "Мед.договор", nameProperties= "info", list="entityParentList-contract_medContract.do", view="entityParentView-contract_medContract.do", shortView="entityShortView-contract_medContract.do")
+@WebTrail(comment = "Мед.договор", nameProperties= "info", list="entityParentList-contract_medContract.do", view="entityParentView-contract_medContract.do", shortView="entityParentView-contract_medContract.do?short=Short")
 @Parent(property="parent", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract")
 @AParentPrepareCreateInterceptors(

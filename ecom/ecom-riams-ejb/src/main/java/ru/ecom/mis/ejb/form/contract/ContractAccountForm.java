@@ -22,22 +22,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount")
 public class ContractAccountForm extends IdEntityForm{
-	/**
-	 * Обслуживаемая персона
-	 */
-	@Comment("Обслуживаемая персона")
-	@Persist
-	@Required
-	public Long getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(Long aServedPerson) {
-		theServedPerson = aServedPerson;
-	}
-	/**
-	 * Обслуживаемая персона
-	 */
-	private Long theServedPerson;
+
 	/**
 	 * Сумма баланса
 	 */
