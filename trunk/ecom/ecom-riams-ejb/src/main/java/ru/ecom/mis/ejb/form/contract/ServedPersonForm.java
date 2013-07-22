@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
-import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.contract.interceptor.ServedPersonPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -23,7 +22,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormPersistance(clazz = ServedPerson.class)
 @Comment("Обслуживаемая персона")
 @WebTrail(comment = "Обс.персона", nameProperties= "info", list="entityParentList-contract_servedPerson.do", view="entityParentView-contract_servedPerson.do")
-@Parent(property="contract", parentForm=MedContractForm.class)
+@Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ServedPersonPreCreateInterceptor.class)
@@ -34,12 +33,8 @@ public class ServedPersonForm extends IdEntityForm{
 	 */
 	@Comment("Договорная персона")
 	@Persist @Required
-	public Long getPerson() {
-		return thePerson;
-	}
-	public void setPerson(Long aPerson) {
-		thePerson = aPerson;
-	}
+	public Long getPerson() {return thePerson;}
+	public void setPerson(Long aPerson) {thePerson = aPerson;}
 	/**
 	 * Договорная персона
 	 */
@@ -161,5 +156,14 @@ public class ServedPersonForm extends IdEntityForm{
 	private String theCreateTime;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Счет */
+	@Comment("Счет")
+	@Persist
+	public Long getAccount() {return theAccount;}
+	public void setAccount(Long aAccount) {theAccount = aAccount;}
+
+	/** Счет */
+	private Long theAccount;
 
 }

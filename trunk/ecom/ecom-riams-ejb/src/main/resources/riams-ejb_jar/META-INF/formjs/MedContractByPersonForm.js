@@ -5,9 +5,19 @@ function onCreate(aForm, aEntity, aCtx) {
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aForm.setCreateUsername(username) ;
 
+	var account=new Packages.ru.ecom.mis.ejb.domain.contract.ContractAccount() ;
+	//account.setServedPerson(servedPerson) ;
+	account.setContract(aEntity) ;
+	account.setDateFrom(aEntity.dateFrom) ;
+	account.setDateTo(aEntity.dateTo) ;
+	account.setCreateDate(new java.sql.Date(date.getTime())) ;
+	account.setCreateTime(new java.sql.Time(date.getTime())) ;
+	account.setCreateUsername(username) ;
+	aCtx.manager.persist(account) ;
 	var servedPerson = new Packages.ru.ecom.mis.ejb.domain.contract.ServedPerson() ;
 	var person = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractPerson,aForm.servedPerson) ;
 	servedPerson.setContract(aEntity) ;
+	servedPerson.setAccount(account) ;
 	servedPerson.setPerson(person) ;
 	servedPerson.setDateFrom(aEntity.dateFrom) ;
 	servedPerson.setDateTo(aEntity.dateTo) ;
@@ -15,14 +25,6 @@ function onCreate(aForm, aEntity, aCtx) {
 	servedPerson.setCreateTime(new java.sql.Time(date.getTime())) ;
 	servedPerson.setCreateUsername(username) ;
 	aCtx.manager.persist(servedPerson) ;
-	var account=new Packages.ru.ecom.mis.ejb.domain.contract.ContractAccount() ;
-	account.setServedPerson(servedPerson) ;
-	account.setDateFrom(aEntity.dateFrom) ;
-	account.setDateTo(aEntity.dateTo) ;
-	account.setCreateDate(new java.sql.Date(date.getTime())) ;
-	account.setCreateTime(new java.sql.Time(date.getTime())) ;
-	account.setCreateUsername(username) ;
-	aCtx.manager.persist(account) ;
 	var addMedServicies = aForm.priceMedServicies.split("#") ;
 	if (addMedServicies.length>0 && aForm.priceMedServicies!=null && aForm.priceMedServicies !="") {
 		//var id = aEntity.id ;
@@ -40,6 +42,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				adMedService.setMedService(medService) ;
 				adMedService.setCountMedService(cnt) ;
 				adMedService.setCost(medService.pricePosition.cost) ;
+				adMedService.setServedPerson(servedPerson) ;
 				aCtx.manager.persist(adMedService) ;
 			}
 		}

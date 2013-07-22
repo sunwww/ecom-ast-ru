@@ -95,4 +95,17 @@ public class ContractAccountMedService extends BaseEntity{
 	 */
 	private BigDecimal theCost;
 	
+	
+	/**
+	 * Обслуживаемая персона
+	 */
+	@Comment("Обслуживаемая персона")
+	@OneToOne
+	public ServedPerson getServedPerson() {return theServedPerson;}
+	public void setServedPerson(ServedPerson aServedPerson) {theServedPerson = aServedPerson;}
+	/**
+	 * Обслуживаемая персона
+	 */
+	private ServedPerson theServedPerson;
+
 }

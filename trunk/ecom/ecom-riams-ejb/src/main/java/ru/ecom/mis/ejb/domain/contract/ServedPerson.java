@@ -147,4 +147,12 @@ public class ServedPerson extends BaseEntity{
 	private Time theCreateTime;
 	/** Дата создания */
 	private Date theCreateDate;
+	/** Счет */
+	@Comment("Счет")
+	@OneToOne
+	public ContractAccount getAccount() {return theAccount;}
+	public void setAccount(ContractAccount aAccount) {theAccount = aAccount;}
+
+	/** Счет */
+	private ContractAccount theAccount;
 }
