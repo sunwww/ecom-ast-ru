@@ -23,7 +23,7 @@
 		<msh:form action="/entityParentSaveGoView-contract_account.do" defaultField="dateFrom">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
-			<msh:hidden property="servedPerson" />
+			<msh:hidden property="contract" />
 			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата открытия"/>
@@ -47,7 +47,7 @@
 						<msh:section title="Начисления. Последние 10" >
 							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
-								, cao.cost, cao.discount
+								, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
 								from ContractAccountOperation cao
 								left join WorkFunction wf on wf.id=cao.workFunction_id
 								left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
@@ -58,63 +58,80 @@
 							order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
+							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"
 							viewUrl="entityParentView-contract_accountOperationAccrual.do?short=Short" 
 							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
 								<msh:tableColumn columnName="Дата и время операции" property="2" />
 								<msh:tableColumn columnName="Стоимость" property="3" />
 								<msh:tableColumn columnName="Скидка" property="4" />
-								<msh:tableColumn columnName="Оператор" property="5" />
+								<msh:tableColumn columnName="Оплачено" property="5" />
+								<msh:tableColumn columnName="Оператор" property="6" />
 							</msh:table>
 						</msh:section>
 					</td>
 					<td>
-						<msh:section title="Списание" createRoles="" createUrl="">
+						<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
+						<msh:section >
+						<ecom:webQuery name="medicalService" nativeSql="
+			select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
+						, cams.countMedService*cams.cost as sumNoAccraulMedService 
+						from ServedPerson sp
+						left join ContractAccount ca on ca.servedPerson_id = sp.id
+						left join ContractAccountMedService cams on cams.account_id=ca.id
+						left join PriceMedService pms on pms.id=cams.medService_id
+						left join PricePosition pp on pp.id=pms.pricePosition_id
+						left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+						left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+						left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+						where ca.id='${param.id}' and cao.id is null
+						group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
+						"/>
+							
+						<msh:sectionTitle>Медицинские услуги (неоплаченные)
+						
+						<msh:tableNotEmpty name="medicalService"><a href='entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}'>Оплатить</a></msh:tableNotEmpty>
+						</msh:sectionTitle>
+						<msh:sectionContent>
+							<msh:table selection="multy" name="medicalService" 
+							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"
+							deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
+							editUrl="entityParentEdit-contract_accountMedService.do"
+							viewUrl="entityShortView-contract_accountMedService.do"
+							action="entityParentView-contract_accountMedService.do" idField="1">
+								<msh:tableColumn columnName="Код" property="2" />
+								<msh:tableColumn columnName="Наим." property="3" />
+								<msh:tableColumn columnName="Тариф" property="4" />
+								<msh:tableColumn columnName="Кол-во" property="5" />
+								<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
+							</msh:table>
+							</msh:sectionContent>
 						</msh:section>
+						</msh:ifInRole>
+					
 					</td>
-				</tr>
-				<tr>
-					<td>
-					</td>
-					<td>
-					</td>
+
 				</tr>
 			</table>
 			</msh:section>
-			<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
-			<msh:section >
-			<ecom:webQuery name="medicalService" nativeSql="
-select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
-			, cams.countMedService*cams.cost as sumNoAccraulMedService 
-			from ServedPerson sp
-			left join ContractAccount ca on ca.servedPerson_id = sp.id
-			left join ContractAccountMedService cams on cams.account_id=ca.id
-			left join PriceMedService pms on pms.id=cams.medService_id
-			left join PricePosition pp on pp.id=pms.pricePosition_id
-			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where ca.id='${param.id}' and cao.id is null
-			group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
-			"/>
-				
-			<msh:sectionTitle>Медицинские услуги (неоплаченные)
+			<msh:ifInRole roles="">
+<msh:section title="Обслуживаемые персоны (потребители)">
+			<ecom:webQuery nativeSql="select sp.id,
+			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			
-			<msh:tableNotEmpty name="medicalService"><a href='entityParentPrepareCreate-contract_accountOperationAccrual.do?id=${param.id}'>Оплатить</a></msh:tableNotEmpty>
-			</msh:sectionTitle>
-			<msh:sectionContent>
-				<msh:table selection="multy" name="medicalService" 
-				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
-				editUrl="entityParentEdit-contract_accountMedService.do"
-				viewUrl="entityShortView-contract_accountMedService.do"
-				action="entityParentView-contract_accountMedService.do" idField="1">
-					<msh:tableColumn columnName="Код" property="2" />
-					<msh:tableColumn columnName="Наим." property="3" />
-					<msh:tableColumn columnName="Тариф" property="4" />
-					<msh:tableColumn columnName="Кол-во" property="5" />
-					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
+			from ServedPerson sp
+			left join ContractPerson cp on cp.id=sp.person_id 
+			left join patient p on p.id=cp.patient_id
+			where sp.account_id='${param.id}'
+			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
+			
+			" name="serverPerson"/>
+				<msh:table name="serverPerson" action="entityParentView-contract_servedPerson.do" idField="1">
+					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Информация" property="2"/>
+
+					
 				</msh:table>
-				</msh:sectionContent>
-			</msh:section>
+			</msh:section>			
 			</msh:ifInRole>
 		</msh:ifFormTypeIsView>
 		<%
@@ -140,13 +157,15 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_account" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
-				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-contract_accountOperation" name="Операции по счету" title="Операции по счету" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Create"/>
+				<msh:sideLink name="Счет" action="/entityParentPrepareCreate-contract_servedPerson" params="id" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create" title="Добавить потребителя (обслуживающую персону)"/>
+				<msh:sideLink params="id" action="/entityParentPrepareCreate-contract_accountOperation" name="Операции по счету" title="Операции по счету" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Create"/>
 				<msh:sideLink params="id" action="/contract_accountMedServiciesView" name="Медицинские услуги" title="Медицинские услуги" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/Create"/>
 			</msh:sideMenu>
+			<%--
 			<msh:sideMenu title="Печать">
       	      <msh:sideLink params="id" name="Акт выполненных работ" action="/print-contract.do?s=CertificatePersonPrintService&m=PrinCertificate"/>
       	      <msh:sideLink params="id" name="Договора" action="/print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"/>
-        	</msh:sideMenu>
+        	</msh:sideMenu> --%>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>

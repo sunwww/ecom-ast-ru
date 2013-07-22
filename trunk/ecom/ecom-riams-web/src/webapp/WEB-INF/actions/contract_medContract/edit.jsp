@@ -71,13 +71,13 @@
 			,sp.dateFrom,sp.dateTo
 			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
 			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
-			from ServedPerson sp
-			left join ContractAccount ca on ca.servedPerson_id = sp.id
+			from ContractAccount ca
+			left join ServedPerson sp on ca.id = sp.contractAccount_id
 			left join ContractAccountMedService cams on cams.account_id=ca.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where sp.contract_id='${param.id}' and cao.id is null
+			where ca.contract_id='${param.id}' and cao.id is null
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>
@@ -96,13 +96,13 @@
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo,ca.balanceSum, ca.reservationSum
-			from ServedPerson sp
-			left join ContractAccount ca on ca.servedPerson_id = sp.id
+			from ContractAccount ca
+			left join ServedPerson sp on ca.id = sp.contractAccount_id
 			left join ContractAccountMedService cams on cams.account_id=ca.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where sp.contract_id='${param.id}' and cao.id is not null
+			where ca.contract_id='${param.id}' and cao.id is not null
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>
