@@ -163,8 +163,9 @@
 			
 		}
 		$('priceMedServicies').value=medServAll;
-		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
-		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
+		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
+		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
+		//$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
 		
 	}
 	$('autoAccount')
@@ -207,14 +208,19 @@
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3"  vocName="priceList" horizontalFill="true" />
+					<msh:textField property="discountDefault" label="Скидка"/>
+					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="1"  vocName="priceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>				
 				</msh:panel>
-								
+								<script type="text/javascript">
+				   			    eventutil.addEventListener($('discountDefault'),'change',function(){checkSum() ;});
+				                eventutil.addEventListener($('discountDefault'),'keyup',function(){checkSum() ;});
+
+								</script>
 		
 <fieldset>
 <legend>Добавить медицинскую услугу</legend>
