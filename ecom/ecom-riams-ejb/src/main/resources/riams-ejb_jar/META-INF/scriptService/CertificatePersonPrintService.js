@@ -16,6 +16,7 @@ function PrinCertificate(aCtx, aParams){
 		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
+	
 	var allcost;
 	allcost = 1-1;
 	for (var i = 0; i<list.size(); i++) {

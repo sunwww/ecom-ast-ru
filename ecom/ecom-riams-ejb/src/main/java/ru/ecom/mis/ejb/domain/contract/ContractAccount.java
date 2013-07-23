@@ -143,4 +143,12 @@ public class ContractAccount extends BaseEntity{
 
 	/** Мед.договор */
 	private MedContract theContract;
+	
+	/** Скидка по умолчанию */
+	@Comment("Скидка по умолчанию")
+	public BigDecimal getDiscountDefault() {return theDiscountDefault;}
+	public void setDiscountDefault(BigDecimal aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+
+	/** Скидка по умолчанию */
+	private BigDecimal theDiscountDefault;
 }

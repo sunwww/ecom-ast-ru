@@ -167,4 +167,13 @@ public class ContractAccountForm extends IdEntityForm{
 
 	/** Мед.договор */
 	private Long theContract;
+	
+	/** Скидка по умолчанию */
+	@Comment("Скидка по умолчанию")
+	@Persist
+	public String getDiscountDefault() {return theDiscountDefault;}
+	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+
+	/** Скидка по умолчанию */
+	private String theDiscountDefault;
 }

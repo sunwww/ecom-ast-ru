@@ -13,6 +13,9 @@ function onCreate(aForm, aEntity, aCtx) {
 	account.setCreateDate(new java.sql.Date(date.getTime())) ;
 	account.setCreateTime(new java.sql.Time(date.getTime())) ;
 	account.setCreateUsername(username) ;
+	if (aForm.discountDefault!=null && aForm.discountDefault!="") {
+		account.setDiscountDefault(new java.math.BigDecimal(aForm.discountDefault)) ;
+	}
 	aCtx.manager.persist(account) ;
 	var servedPerson = new Packages.ru.ecom.mis.ejb.domain.contract.ServedPerson() ;
 	var person = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractPerson,aForm.servedPerson) ;
