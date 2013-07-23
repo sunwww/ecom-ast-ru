@@ -37,9 +37,10 @@
 				</msh:row>
 				</msh:ifFormTypeIsCreate>
 				<ecom:webQuery name="sumCost" nativeSql="
-							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id) as lstid   
-							from ContractAccountMedService CAMS 
-							where CAMS.account_id= '${param.id }'
+							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id) as lstid ,min(ca.discountDefault) as discount   
+							from ContractAccountMedService CAMS
+							left join ContractAccount ca on ca.id=cams.account_id
+							where ca.id= '${param.id }'
 				"/>
 				<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/EditOperationInfo">
 					<msh:ifFormTypeIsNotView formName="contract_accountOperationAccrualForm">
@@ -137,6 +138,9 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			var discount = +$('discount').value ;
 			$('costInfo').innerHTML=cost*(100-discount)/100 ;
 		}
+		    eventutil.addEventListener($('discount'),'change',function(){getCostInfo() ;});
+            eventutil.addEventListener($('discount'),'keyup',function(){getCostInfo() ;});
+
 		
 		</script>
 		</msh:ifFormTypeIsCreate>		
@@ -149,6 +153,8 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			out.println("$('cost').value = '"+res.get1()+"';"); 
 			out.println("$('costReadOnly').value = '"+res.get1()+"';"); 
 			out.println("$('medServicies').value = '"+res.get2()+"';"); 
+			out.println("$('discount').value = +'"+res.get3()+"';getCostInfo();"); 
+			
 		}
 		out.println("}</script>");
 		

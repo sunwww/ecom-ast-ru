@@ -15,7 +15,19 @@
 	</tiles:put>
 	<tiles:put name='body' type='string' >
 
-		<%
+		
+
+			<form action="/riams/contract_reports.do" method="GET">
+			<msh:panel>
+				<msh:row>
+				<msh:textField property="dateFrom" label="c"/>
+				<msh:textField property="dateTo" label="по"/>
+				</msh:row>
+
+				<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
+			</msh:panel>
+			</form>
+<%
 		String dateFrom = request.getParameter("dateFrom") ;
 		String dFrom = "" ;
 		if (dateFrom==null ||dateFrom.equals("") ) {
@@ -39,83 +51,36 @@
 		else if (dateFrom==null ||dateFrom.equals("") ) {}
 		else FromTo="C "+dFrom+" По "+dTo;
 		%>
-
-			<form action="/riams/contract_reports.do" method="GET">
-			<msh:panel>
-				<msh:row>
-				<msh:textField property="dateFrom" label="c"/>
-				<msh:textField property="dateTo" label="по"/>
-				</msh:row>
-
-				<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
-			</msh:panel>
-			</form>
-
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
-SELECT 
-MC.id
-,CASE WHEN CA.balancesum>0 THEN CA.balancesum ELSE '0.00' END
+SELECT cao.id
+,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
 ,CCO.name) as kontragent
-,CA.id || ' '||to_char(CA.dateFrom,'dd.mm.yyyy') as dateNum
-,(select sum(CAMS.countMedService*CAMS.cost) 
-from ContractAccountMedService CAMS 
-where CAMS.account_id=CA.id)
-as koplateaccount
-,
-(select 
-CASE when sum(CAO.cost)>0 then sum(CAO.cost)  
-else 0 
-end  
-from ContractAccountOperation CAO 
-LEFT JOIN VocAccountOperation vao on vao.id = CAO.type_id 
-where CAO.account_id=CA.id and vao.code='4' and 
-CAO.operationDate ${dTo}  
-and CAO.repealOperation_id is null)  
-- 
-(select sum(CAMS.countMedService*CAMS.cost)  
-from ContractAccountMedService CAMS 
-where CAMS.account_id=CA.id) 
-as saldoend
-
-FROM 
-  contractaccount as CA
-LEFT JOIN servedPerson SP ON CA.servedperson_id=SP.id
-LEFT JOIN medcontract MC ON SP.contract_id=MC.id 
+,round(sum(case when cao.dtype='OperationAccrual' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationReturn' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
-
-WHERE	CA.dateFrom ${dFrom} AND CA.dateFrom ${dTo} 
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')
+group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 			"/>
 
-				<msh:table name="finansReport" action="entityParentView-contract_medContract.do" idField="1">
-				    <msh:tableColumn columnName="Номер договроа" property="1" />
-					<msh:tableColumn columnName="Наименование контрагента" property="3" />
-					<msh:tableColumn columnName="Входящее сальдо" property="2" />
-					<msh:tableColumn columnName="Номер и дата счета" property="4" />
-					<msh:tableColumn columnName="Сумма к оплате" property="5" />
-					<msh:tableColumn columnName="Исходящее сальдо" property="6" />
+				<msh:table name="finansReport" 
+				action="entitySubclassView-contract_accountOperation.do" 
+				idField="1">
+					<msh:tableColumn columnName="Договор" property="2" />
+					<msh:tableColumn columnName="Наименование контрагента" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
 				</msh:table>
-				<div id="divAllCount2">
-				Итого к оплате:
-				</div>
+
 			</msh:section>
-		<%
-			List list= (List)request.getAttribute("finansReport");
-			out.println("<script>");
-			out.println("var sum = 0;");
-			for (int i=0 ; i<list.size();i++) {
-				WebQueryResult res = (WebQueryResult)list.get(i) ;
-				out.println("sum = sum*1 + ("+res.get5()+")*1;" ); 
-			}	
-			out.println("$('divAllCount2').innerHTML = '<h1>Итого к оплате: '+sum+' руб.</h1>';");
-			if(request.getParameter("dateFrom")!=null) {out.println("$('dateFrom').value='"+request.getParameter("dateFrom")+"';");}
-			if(request.getParameter("dateTo")!=null) {out.println("$('dateTo').value='"+request.getParameter("dateTo")+"';");}
-			out.println("</script>");
-			
-		%>
+
 	</tiles:put>
 	<tiles:put  name='javascript' type='string'>
 	<script type="text/javascript">

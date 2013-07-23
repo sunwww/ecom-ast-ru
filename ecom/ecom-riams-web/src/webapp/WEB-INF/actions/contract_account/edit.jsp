@@ -34,6 +34,7 @@
 					<msh:textField property="reservationSum" label="Резервированная сумма"/>
 				</msh:row>
 				<msh:row>
+					<msh:textField property="discountDefault" label="Скидка"/>
 					<msh:checkBox property="block" label="Блокирован"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
@@ -75,16 +76,15 @@
 						<ecom:webQuery name="medicalService" nativeSql="
 			select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 						, cams.countMedService*cams.cost as sumNoAccraulMedService 
-						from ServedPerson sp
-						left join ContractAccount ca on ca.servedPerson_id = sp.id
+						,round(cams.countMedService*cams.cost*(100-ca.discountDefault)/100,2) as oplateWithDiscount
+						from ContractAccount ca
 						left join ContractAccountMedService cams on cams.account_id=ca.id
 						left join PriceMedService pms on pms.id=cams.medService_id
 						left join PricePosition pp on pp.id=pms.pricePosition_id
 						left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 						left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-						left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-						where ca.id='${param.id}' and cao.id is null
-						group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost							
+						where ca.id='${param.id}' and cao.id is null and caos.id is null
+						group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,ca.discountdefault						
 						"/>
 							
 						<msh:sectionTitle>Медицинские услуги (неоплаченные)
@@ -93,16 +93,16 @@
 						</msh:sectionTitle>
 						<msh:sectionContent>
 							<msh:table selection="multy" name="medicalService" 
-							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"
+							viewUrl="entityParentView-contract_accountMedService.do?short=Short"
 							deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
 							editUrl="entityParentEdit-contract_accountMedService.do"
-							viewUrl="entityShortView-contract_accountMedService.do"
 							action="entityParentView-contract_accountMedService.do" idField="1">
 								<msh:tableColumn columnName="Код" property="2" />
 								<msh:tableColumn columnName="Наим." property="3" />
 								<msh:tableColumn columnName="Тариф" property="4" />
 								<msh:tableColumn columnName="Кол-во" property="5" />
 								<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
+								<msh:tableColumn columnName="Стоимость с учетом скидки" isCalcAmount="true" property="7" />
 							</msh:table>
 							</msh:sectionContent>
 						</msh:section>
