@@ -108,20 +108,11 @@ public class ContractAccountOperation extends BaseEntity{
 	 * Оператор
 	 */
 	private WorkFunction theWorkFunction;
-	/**
-	 * Скидка
-	 */
+	/** Скидка  */
 	@Comment("Скидка")
-	
-	public BigDecimal getDiscount() {
-		return theDiscount;
-	}
-	public void setDiscount(BigDecimal aDiscount) {
-		theDiscount = aDiscount;
-	}
-	/**
-	 * Скидка
-	 */
+	public BigDecimal getDiscount() {return theDiscount;}
+	public void setDiscount(BigDecimal aDiscount) {theDiscount = aDiscount;}
+	/** Скидка */
 	private BigDecimal theDiscount;
 	/** Дата создания */
 	@Comment("Дата создания")

@@ -1,3 +1,7 @@
+function onPreCreate(aForm, aCtx) {
+	var wf=aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+
+}
 /**
  * Перед сохранением
  */
@@ -15,9 +19,12 @@ function onCreate(aForm, aEntity, aCtx) {
 	var date = new java.util.Date() ;
 	aEntity.setOperationDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setOperationTime(new java.sql.Time (date.getTime())) ;
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+	var wf=aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	aEntity.setWorkFunction(wf) ;
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	aEntity.setCreateUsername(username) ;
 	var servicies = aForm.medServicies.split(',') ;
 	for(var i=0;i<servicies.length;i++) {
 		var serv = servicies[i].trim() ;
@@ -33,12 +40,12 @@ function onCreate(aForm, aEntity, aCtx) {
 		var writeOff = new Packages.ru.ecom.mis.ejb.domain.contract.OperationWriteOff() ;
 		writeOff.setAccount(aEntity.account) ;
 		writeOff.setCost(aEntity.cost);
-		writeOff.setDiscost(aEntity.discost) ;
+		writeOff.setDiscount(aEntity.discount) ;
 		writeOff.setOperationDate(new java.sql.Date(date.getTime())) ;
 		writeOff.setOperationTime(new java.sql.Time (date.getTime())) ;
 		writeOff.setCreateDate(new java.sql.Date(date.getTime())) ;
 		writeOff.setCreateTime(new java.sql.Time (date.getTime())) ;
-		writeOff.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+		writeOff.setCreateUsername(username) ;
 		aCtx.manager.persist(writeOff) ;
 		var servicies = aForm.medServicies.split(',') ;
 		for(var i=0;i<servicies.length;i++) {

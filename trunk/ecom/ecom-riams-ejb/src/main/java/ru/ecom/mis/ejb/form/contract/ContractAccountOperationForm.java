@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.contract;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
+import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -21,6 +22,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Операция договорного счета", nameProperties= "id", list="entityParentList-contract_accountOperation.do", view="entityParentView-contract_accountOperation.do")
 @Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation")
+@Subclasses({OperationAccrualForm.class,OperationReservationForm.class
+	,OperationReturnForm.class,OperationWriteOffForm.class})
 public class ContractAccountOperationForm extends IdEntityForm{
 	/**
 	 * Договорной счет

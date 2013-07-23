@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractByPersonPreCreateInterceptor;
-import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -47,6 +46,13 @@ public class MedContractByPersonForm extends MedContractForm {
 	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
 
 	
+	/** Скидка по умолчанию */
+	@Comment("Скидка по умолчанию")
+	public String getDiscountDefault() {return theDiscountDefault;}
+	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+
+	/** Скидка по умолчанию */
+	private String theDiscountDefault;
 	/** Услуг */
 	private Long thePriceMedService;
 	/** Список услуг */
