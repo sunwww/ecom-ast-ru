@@ -49,6 +49,7 @@
 							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
 								, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
+								,vwf.name||' '||wp.lastname
 								from ContractAccountOperation cao
 								left join WorkFunction wf on wf.id=cao.workFunction_id
 								left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
@@ -59,7 +60,7 @@
 							order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
-							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"
+							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printContractByAccrual"
 							viewUrl="entityParentView-contract_accountOperationAccrual.do?short=Short" 
 							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
 								<msh:tableColumn columnName="Дата и время операции" property="2" />
