@@ -357,7 +357,7 @@
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
 			validate='false'
-			scope="request">
+			scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_naturalPerson/listContractByPeriod.jsp" />
 		</action>
@@ -366,7 +366,7 @@
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
 			validate='false'
-			scope="request">
+			scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_reports/list.jsp" />
 		</action>

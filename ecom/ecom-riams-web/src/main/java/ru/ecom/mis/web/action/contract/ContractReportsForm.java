@@ -7,27 +7,23 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 public class ContractReportsForm extends BaseValidatorForm{
 	/** dateto */
 	@DateString @DoDateString
-	public String getDateTo() {
-		return theDateTo;
-	}
+	public String getDateTo() {return theDateTo;}
+	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
 
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
-	}
-
-	/** dateto */
-	private String theDateTo;
 	
 	/** DateFrom */
 	@DateString @DoDateString
-	public String getDateFrom() {
-		return theDateFrom;
-	}
+	public String getDateFrom() {return theDateFrom;}
+	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
 
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
+	/** Оператор */
+	public Long getOperator() {return theOperator;}
+	public void setOperator(Long aOperator) {theOperator = aOperator;}
 
+	/** Оператор */
+	private Long theOperator;
+	/** dateto */
+	private String theDateTo;
 	/** DateFrom */
 	private String theDateFrom;
 }

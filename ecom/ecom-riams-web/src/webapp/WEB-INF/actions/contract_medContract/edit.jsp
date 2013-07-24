@@ -110,7 +110,8 @@
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>
-				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1">
+				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1"
+				viewUrl="entityParentView-contract_account.do?short=Short" >
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Счет" property="1"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
