@@ -50,6 +50,10 @@
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+N" action="/entityPrepareCreate-contract_priceGroup.do?priceList=${param.id}" name="Группа позиций" title="Группа позиций" roles="/Policy/Mis/Contract/PriceList/PriceGroup/Create"/>
 		</msh:sideMenu>
+		<msh:sideMenu title="Печать">
+			<msh:sideLink action="/print-contract_priceList.do?s=CertificatePersonPrintService&m=printPriceList" params="id" 
+			name="Прейскуранта" title="Печать прейскуранта" roles="/Policy/Mis/Contract/PriceList/View"/>
+		</msh:sideMenu>
 		<tags:contractMenu currentAction="price"/>
 	</tiles:put>
 </tiles:insert>

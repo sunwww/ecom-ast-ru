@@ -20,6 +20,12 @@ public class ContractReportsForm extends BaseValidatorForm{
 	public Long getOperator() {return theOperator;}
 	public void setOperator(Long aOperator) {theOperator = aOperator;}
 
+	/** Прейскурант */
+	public Long getPriceList() {return thePriceList;}
+	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
+
+	/** Прейскурант */
+	private Long thePriceList;
 	/** Оператор */
 	private Long theOperator;
 	/** dateto */
