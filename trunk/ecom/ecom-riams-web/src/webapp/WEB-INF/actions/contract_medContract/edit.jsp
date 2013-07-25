@@ -84,7 +84,7 @@
 			" name="serverPerson"/>
 				<msh:table name="serverPerson" viewUrl="entityParentView-contract_account.do?short=Short" 
 				
-				printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=PrinCertificate"
+				printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printDogovogByNoPrePaidServicesMedServise"
 				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>

@@ -353,13 +353,20 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_registerVisit_print.jsp"/>
         </action>
 		<!-- Реестры по договорам -->	
-		<action path='/contract_journal_natural_person_by period'
+		<action path='/contract_journal_natural_person_by_period'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
 			validate='false'
 			scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_naturalPerson/listContractByPeriod.jsp" />
+		</action>
+		<!-- Анализ улуг по прейскуранту и медицинских по договорам -->	
+		<action path='/contact_analisis_priceServices_and_medService'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_priceList/listAnalisis.jsp" />
 		</action>
 		<!-- Реестры по договорам -->	
 		<action path='/contract_reports'
@@ -369,6 +376,15 @@
 			scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_reports/list.jsp" />
+		</action>
+		<!-- Реестры услуг по договорам -->	
+		<action path='/contract_reports_services'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm"
+			validate='false'
+			scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list_services.jsp" />
 		</action>
 		<action path='/ecom_contract'
 			type='ru.ecom.web.actions.base.ForwardAction' validate='false'

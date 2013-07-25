@@ -10,7 +10,17 @@
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="priceList" />
+			<msh:hidden property="parent" />
 			<msh:panel>
+				<msh:ifFormTypeIsNotView formName="contract_pricePositionForm">
+					<msh:ifFormTypeAreViewOrEdit formName="contract_pricePositionForm">
+					<msh:ifNotInRole roles="/Policy/Mis/Contract/PriceList/PricePosition/EditParent">
+						<msh:row>
+							<msh:autoComplete parentId="contract_pricePositionForm.priceList" property="parent" vocName="priceGroup" horizontalFill="true" fieldColSpan="3" label="Родит.категория"/>
+						</msh:row>
+					</msh:ifNotInRole>
+					</msh:ifFormTypeAreViewOrEdit>
+				</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:textField fieldColSpan="3" property="name" label="Название" horizontalFill="true"/>
 				</msh:row>

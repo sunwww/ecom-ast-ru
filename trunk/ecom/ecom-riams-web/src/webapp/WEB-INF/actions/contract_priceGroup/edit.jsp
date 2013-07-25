@@ -12,6 +12,15 @@
 			<msh:hidden property="priceList" />
 			<msh:hidden property="parent" />
 			<msh:panel>
+			<msh:ifFormTypeIsNotView formName="contract_priceGroupForm">
+				<msh:ifFormTypeAreViewOrEdit formName="contract_priceGroupForm">
+				<msh:ifNotInRole roles="/Policy/Mis/Contract/PriceList/PriceGroup/EditParent">
+					<msh:row>
+						<msh:autoComplete parentId="contract_priceGroupForm.priceList" property="parent" vocName="priceGroup" horizontalFill="true" fieldColSpan="3" label="Родит.категория"/>
+					</msh:row>
+				</msh:ifNotInRole>
+				</msh:ifFormTypeAreViewOrEdit>
+			</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"
 						vocName="priceList" shortViewAction="entityView-contract_priceList.do?short=Short" viewAction="entityView-contract_priceList.do"/>
