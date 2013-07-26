@@ -7,11 +7,13 @@ import java.sql.Time;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 
@@ -69,5 +71,13 @@ public class Diary extends BaseEntity {
     private String theRecord ;
     /** Дата создания */
     private Date theDate ;
+	/** Тяжесть состояния */
+	@Comment("Тяжесть состояния")
+	@OneToOne
+	public VocPhoneMessageState getState() {return theState;}
+	public void setState(VocPhoneMessageState aState) {theState = aState;}
+
+	/** Тяжесть состояния */
+	private VocPhoneMessageState theState;
  
  }
