@@ -267,7 +267,7 @@ and sls.deniedHospitalizating_id is null
 			<msh:table name="list" action="javascript:void(0)" idField="1">
 				<msh:tableColumn columnName="#" property="sn" />
 				<msh:tableColumn columnName="ИД" property="1" />
-				<msh:tableColumn property="2" columnName="ФИО пациетна" cssClass="preCell"/>
+				<msh:tableColumn property="2" columnName="ФИО пациента" cssClass="preCell"/>
 				<msh:tableColumn property="5" columnName="Возможный" cssClass="preCell"/>
 				<msh:tableColumn property="3" columnName="Направление" cssClass="preCell"/>
 				<msh:tableColumn property="4" columnName="Описание" cssClass="preCell"/>

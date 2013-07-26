@@ -362,11 +362,18 @@
 				path="/WEB-INF/actions/contract_naturalPerson/listContractByPeriod.jsp" />
 		</action>
 		<!-- Анализ улуг по прейскуранту и медицинских по договорам -->	
-		<action path='/contact_analisis_priceServices_and_medService'
+		<action path='/contact_analisis_by_priceServices'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm" validate='false' scope="session">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/contract_priceList/listAnalisis.jsp" />
+				path="/WEB-INF/actions/contract_priceList/listAnalisisByPricePosition.jsp" />
+		</action>
+		<!-- Анализ улуг по прейскуранту и медицинских по договорам -->	
+		<action path='/contact_analisis_by_medService'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_priceList/listAnalisisByMedService.jsp" />
 		</action>
 		<!-- Реестры по договорам -->	
 		<action path='/contract_reports'

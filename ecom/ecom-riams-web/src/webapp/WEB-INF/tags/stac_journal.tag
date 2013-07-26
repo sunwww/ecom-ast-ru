@@ -81,7 +81,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        <msh:sideLink
 		        styleId="stac_journalCurrentByUserDepartment" 
 		         roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartment" key="ALT+5" 
-		         action="/stac_journalCurrentByUserDepartment" name="По состоящим в отделение пациентам" />
+		         action="/stac_journalCurrentByUserDepartment" name="По состоящим в отделении пациентам" />
 	        <msh:sideLink
 		        styleId="stac_journalDichargeByUserDepartment" 
 		         roles="/Policy/Mis/MedCase/Stac/Journal/DischargeByUserDepartment" 

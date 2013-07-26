@@ -49,12 +49,14 @@
                     <msh:textField label="Дата" property="dateRegistration" fieldColSpan="1" guid="b58ehb-b971-441e-9a90-58019c07" />
                     <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  guid="b3hb-b971-441e-9a90-8019c07" />
                 </msh:row >
-                <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
                 	<msh:row>
                 		<msh:autoComplete property="type" fieldColSpan="3" label="Тип протокола" horizontalFill="true"
                 		vocName="vocTypeProtocol"/>
 	                </msh:row>
-                </msh:ifInRole>
+                	<msh:row>
+                		<msh:autoComplete property="state" fieldColSpan="3" label="Состояние больного" horizontalFill="true"
+                		vocName="vocPhoneMessageState"/>
+	                </msh:row>
                 <msh:row>
                     <msh:textArea property="record" label="Текст:"
                                       size="100" rows="25" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
