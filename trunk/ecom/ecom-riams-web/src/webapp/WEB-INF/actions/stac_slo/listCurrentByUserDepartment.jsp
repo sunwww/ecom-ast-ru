@@ -40,7 +40,7 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select m.id,m.dateStart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
+    select m.id,m.dateStart||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,pat.birthday,sc.code as sccode
     	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
@@ -67,10 +67,10 @@
     left join Patient wp on wp.id=w.person_id
     left outer join Patient pat on m.patient_id = pat.id 
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}' 
-    and m.transferDate is null and m.dateFinish is null
+    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
-    ,bf.addCaseDuration
+    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -104,7 +104,7 @@
     left join SurgicalOperation so1 on so1.medCase_id =sls.id
     left join MisLpu ml on ml.id=m.department_id
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null and m.dateFinish is null
+    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>cast('09:00' as time))
     group by m.department_id,ml.name
     order by ml.name
     "

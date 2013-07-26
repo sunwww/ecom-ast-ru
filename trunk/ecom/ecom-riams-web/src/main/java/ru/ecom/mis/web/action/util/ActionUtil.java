@@ -49,6 +49,21 @@ public class ActionUtil {
     		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
     	}
 	}
+	public static void setLikeSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
+		setLikeSql(aParameter, aParameter, aFldId, aRequest) ;
+	}
+	public static void setLikeSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
+		if (aAttributeName==null) aAttributeName=aParameter ;
+		String param = (String)aRequest.getParameter(aParameter) ;
+    	if (param!=null && !param.equals("") && !param.equals("0")) {
+    		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
+    		aRequest.setAttribute(aAttributeName+"Sql", " and "+aFldId+" like '%"+param+"%'") ;
+    		aRequest.setAttribute(aAttributeName,param) ;
+    	} else {
+    		aRequest.setAttribute(aAttributeName,"0") ;
+    		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
+    	}
+	}
 	public static void setGroupSql(String aNameFld,HttpServletRequest aRequest) {
 			aRequest.setAttribute(aNameFld+"Sql", "to_char(v.dateStart,'dd.mm.yyyy')") ;
 			aRequest.setAttribute(aNameFld+"SqlId", "'&beginDate='||to_char(v.dateStart,'dd.mm.yyyy')||'&finishDate='||to_char(v.dateStart,'dd.mm.yyyy')") ;

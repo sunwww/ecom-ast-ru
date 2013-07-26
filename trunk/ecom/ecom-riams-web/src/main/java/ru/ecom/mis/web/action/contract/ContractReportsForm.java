@@ -24,6 +24,18 @@ public class ContractReportsForm extends BaseValidatorForm{
 	public Long getPriceList() {return thePriceList;}
 	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
 
+	/** Фильтр по наименованию */
+	public String getFilterByName() {return theFilterByName;}
+	public void setFilterByName(String aFilterByName) {theFilterByName = aFilterByName;}
+
+	/** Фильтр по коду */
+	public String getFilterByCode() {return theFilterByCode;}
+	public void setFilterByCode(String aFilterByCode) {theFilterByCode = aFilterByCode;}
+
+	/** Фильтр по коду */
+	private String theFilterByCode;
+	/** Фильтр по наименованию */
+	private String theFilterByName;
 	/** Прейскурант */
 	private Long thePriceList;
 	/** Оператор */
