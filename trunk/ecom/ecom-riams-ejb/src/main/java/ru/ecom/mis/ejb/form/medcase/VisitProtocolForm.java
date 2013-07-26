@@ -1,11 +1,14 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
 import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
@@ -121,4 +124,13 @@ public class VisitProtocolForm extends ProtocolForm {
 	private String theEditUsername;
 	/** Дата редактирования */
 	private String theEditDate;
+	
+	/** Тяжесть состояния */
+	@Comment("Тяжесть состояния")
+	@Persist
+	public Long getState() {return theState;}
+	public void setState(Long aState) {theState = aState;}
+
+	/** Тяжесть состояния */
+	private Long theState;
 }
