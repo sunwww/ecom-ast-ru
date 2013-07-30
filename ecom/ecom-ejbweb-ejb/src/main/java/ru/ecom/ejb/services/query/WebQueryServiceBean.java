@@ -13,7 +13,10 @@ import javax.persistence.Query;
 @Stateless
 @Remote(IWebQueryService.class)
 public class WebQueryServiceBean implements IWebQueryService {
-
+	
+	public int executeUpdateNativeSql(String aQuery) {
+		return theManager.createNativeQuery(aQuery).executeUpdate() ;
+	}
 	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {
 		return executeQuery(theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult) ;
 	}
