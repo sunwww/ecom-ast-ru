@@ -277,4 +277,19 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	private Long theCategoryDifference;
 	/** Пол */
 	private Long theSex;
+	
+	/** Отделение 1 */
+	@Comment("Отделение 1")
+	public Long getDepartment1() {return theDepartment1;}
+	public void setDepartment1(Long aDepartment1) {theDepartment1 = aDepartment1;}
+
+	/** Отделение 2 */
+	@Comment("Отделение 2")
+	public Long getDepartment2() {return theDepartment2;}
+	public void setDepartment2(Long aDepartment2) {theDepartment2 = aDepartment2;}
+
+	/** Отделение 2 */
+	private Long theDepartment2;
+	/** Отделение 1 */
+	private Long theDepartment1;
 }

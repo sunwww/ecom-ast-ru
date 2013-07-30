@@ -153,7 +153,8 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			out.println("$('cost').value = '"+res.get1()+"';"); 
 			out.println("$('costReadOnly').value = '"+res.get1()+"';"); 
 			out.println("$('medServicies').value = '"+res.get2()+"';"); 
-			out.println("$('discount').value = +'"+res.get3()+"';getCostInfo();"); 
+			out.println("if (+'"+res.get3()+"'>0) {"); 
+			out.println("$('discount').value = +'"+res.get3()+"';}getCostInfo();"); 
 			
 		}
 		out.println("}</script>");

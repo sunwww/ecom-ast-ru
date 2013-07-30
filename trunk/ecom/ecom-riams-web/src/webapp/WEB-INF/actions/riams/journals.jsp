@@ -128,8 +128,8 @@
 						<li><msh:link action="stac_analysis_department_list.do" roles="/Policy/Mis/Journal/AnalysisWorkDepartment">
 	                            Анализ работы отделений
 	                        </msh:link></li>
-						<li><msh:link action="stac_attending_doctor_list.do" roles="/Policy/Mis/Journal/AttendingDoctor">
-	                            Журнал по лечащему врачу
+						<li><msh:link action="stac_journalByCurator.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator">
+	                            Журнал по лечащему врачу (СЛО)
 	                        </msh:link></li>
 						<li><msh:link action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
 	                            Журнал диагнозов по отделениям (СЛО)
@@ -154,6 +154,9 @@
 	                        </msh:link></li>
 						<li><msh:link action="stac_journal_denied_without_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
 	                            Отказы от госпитализаций без диагнозов
+	                        </msh:link></li>
+						<li><msh:link action="stac_journal_transfer_department.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
+	                            Переводы между отделениями
 	                        </msh:link></li>
 					</ul>
 					</div>
