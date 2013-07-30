@@ -233,7 +233,7 @@ group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO
 				action="entitySubclassView-contract_accountOperation.do" 
 				idField="1">
 					<msh:tableColumn columnName="Договор" property="2" />
-					<msh:tableColumn columnName="Наименование контрагента" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Наименование контрагента" property="3" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Оператор" property="6" />
