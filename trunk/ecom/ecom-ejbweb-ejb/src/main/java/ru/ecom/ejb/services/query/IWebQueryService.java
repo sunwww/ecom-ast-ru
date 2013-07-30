@@ -8,5 +8,6 @@ public interface IWebQueryService {
 	Collection<WebQueryResult> executeNativeSql(String aQuery) ;
 	Collection<WebQueryResult> executeHql(String aQuery,Integer aMaxResult) ;
 	Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) ;
-
+	
+	public int executeUpdateNativeSql(String aQuery) ;
 }
