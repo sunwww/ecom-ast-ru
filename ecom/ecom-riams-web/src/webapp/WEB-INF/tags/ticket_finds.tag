@@ -27,7 +27,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="По специалисту" action="/smo_ticketspec.do" key="ALT+8" 
 		title="По специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketspec"/>
-	<msh:sideLink name="Открытые" action="/smo_ticketsopen.do" key="ALT+9" 
+	<msh:sideLink name="Направленные регистратурой (неоформленные)" action="/smo_ticketsopen.do" key="ALT+9" 
 		title="По специалисту" roles="/Policy/Poly/Ticket/View"
 		styleId="ticketopen"/>
 	<msh:sideLink name="Дубли" action="/smo_doubleTickets.do" 
