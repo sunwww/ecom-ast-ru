@@ -680,6 +680,7 @@ if (date!=null && !date.equals("")) {
 	    	,to_char(slo.transferdate,'dd.mm.yyyy') ||' '|| cast(slo.transfertime as varchar(5)) as slotransferdate
 	    	,to_char(slo.datefinish,'dd.mm.yyyy') ||' '|| cast(slo.dischargetime as varchar(5)) as slodatefinish
 	    	,vss.name as vssname
+	    	,vho.name as vhoname
 	from medcase slo
 	 left join VocServiceStream vss on vss.id=slo.serviceStream_id
 	left join medcase sls on sls.id=slo.parent_id
@@ -692,7 +693,7 @@ if (date!=null && !date.equals("")) {
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)
-	and vho.code!='2' and vho.code!='3' and vho.code!='4'
+	
 	and vhr.code!='11'
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -704,6 +705,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn property="5" columnName="Дата перевода"/>
 	      <msh:tableColumn property="6" columnName="Дата выписки"/>
 	      <msh:tableColumn property="7" columnName="Поток обслуживания"/>
+	      <msh:tableColumn property="8" columnName="Исход"/>
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>    
@@ -804,7 +806,7 @@ if (date!=null && !date.equals("")) {
 	    		    <msh:section>
 	    <msh:sectionTitle>007/у-02 форма. Свод по отделениям</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery name="journal_priem" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&typeView=1&department='||lpu.id,lpu.name,list(vbst.name) as vbstname,list(vss.name) as vssname
+	    <ecom:webQuery name="journal_priem" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&typeView=1&department='||lpu.id,lpu.name,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
