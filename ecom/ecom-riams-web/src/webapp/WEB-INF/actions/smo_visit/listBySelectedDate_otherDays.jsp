@@ -83,7 +83,7 @@ left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
-where  v.DTYPE='Visit' and v.dateStart != ${date_on_which_the_doctor} and wcd.id='${calenDayId}'
+where  v.DTYPE='Visit' and v.dateStart = ${date_on_which_the_doctor} and wcd.id!='${calenDayId}'
 order by v.timeExecute"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_other" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
