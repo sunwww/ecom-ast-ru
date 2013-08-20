@@ -132,7 +132,16 @@ if (date!=null && !date.equals("")) {
     cal.add(Calendar.DAY_OF_MONTH, 1) ;
     SimpleDateFormat format=new SimpleDateFormat("dd.MM.yyyy") ;
     String date1=format.format(cal.getTime()) ;
-    request.setAttribute("dateNext", date1) ;
+    request.setAttribute("dateNextBegin", date1) ;
+    cal.add(Calendar.DAY_OF_MONTH, -2) ;
+    date1=format.format(cal.getTime()) ;
+    request.setAttribute("datePrevBegin", date1) ;
+	
+    dat = DateFormat.parseDate(dateEnd) ;
+    cal.setTime(dat) ;
+    cal.add(Calendar.DAY_OF_MONTH, 1) ;
+    date1=format.format(cal.getTime()) ;
+    request.setAttribute("dateNextEnd", date1) ;    
     
 	
     String bedFund = request.getParameter("bedFund") ;
@@ -161,20 +170,20 @@ if (date!=null && !date.equals("")) {
 	 then 'Х' else null end
 	as cnt5CurrentFrom
 	,case when slo.prevmedcase_id is null and (
-	slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
 	as cnt6Entrance
 	,case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
 	as cnt7EntranceDayHosp
 	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and (ad1.domen=5 or ad2.domen=5)
 	then 'Х' else null end
 	as cnt8EntranceVillagers
 	,case when slo.prevmedcase_id is null and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and (
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
 	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
@@ -183,7 +192,7 @@ if (date!=null && !date.equals("")) {
 
 	as cnt9EntranceTo17
 	,case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
@@ -192,36 +201,36 @@ if (date!=null && !date.equals("")) {
 	then 'Х' else null end
 	as cnt10EntranceFrom60
 	,case when slo.prevmedcase_id is not null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then 'Х' else null end
 	as cnt11TransferOutOtherDepartment
 	,case when (slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
-	or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then 'Х' else null end
+	or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then 'Х' else null end
 	as cnt12TransferInOtherDepartment
 	,case when vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
 	as cnt13Finished
 	,case when vho.code='4' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
 	as cnt14FinishedOtherHospital
 	,case when vho.code='3' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
 	as cnt15FinishedHourHospital
 	,case when vho.code='2' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
 	as cnt16FinishedDayHospital
 	,case when vhr.code='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then 'Х' else null end
 	as cnt17Death
 	,
 	case when 
 			(
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			)
 		 then 'Х' else null end
 
@@ -230,12 +239,12 @@ if (date!=null && !date.equals("")) {
 	,case when
 	 sls.hotelServices='1' and (
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			)  then 'Х' else null end as cnt19CurrentMother
 
 	 from medcase slo
@@ -253,17 +262,17 @@ if (date!=null && !date.equals("")) {
 	LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId
 	where 
 	slo.dtype='DepartmentMedCase' ${department}
-	and (to_date('${dateEnd}','dd.mm.yyyy')+1>slo.datestart
-	or to_date('${dateEnd }','dd.mm.yyyy')+1=slo.dateStart and cast('09:00' as time)>slo.entrancetime
+	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
+	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('09:00' as time)>slo.entrancetime
 	)
 	and (slo.datefinish is null 
 	or
-	slo.datefinish>to_date('${dateBegin}','dd.mm.yyyy')-1
-	or to_date('${dateBegin}','dd.mm.yyyy')-1=slo.datefinish and slo.dischargetime>=cast('09:00' as time)
+	slo.datefinish>to_date('${datePrevBegin}','dd.mm.yyyy')
+	or to_date('${datePrevBegin}','dd.mm.yyyy')=slo.datefinish and slo.dischargetime>=cast('09:00' as time)
 	)
 	and (slo.transferdate is null 
-	or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy')-1
-	or to_date('${dateBegin}','dd.mm.yyyy')-1=slo.transferdate and slo.transfertime>=cast('09:00' as time)
+	or slo.transferdate > to_date('${datePrevBegin}','dd.mm.yyyy')
+	or to_date('${datePrevBegin}','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('09:00' as time)
 	)
 	and slo.bedfund_id=${param.bedFund}
 	      " />
@@ -320,22 +329,22 @@ if (date!=null && !date.equals("")) {
 	 then slo.id else null end)
 	as cnt5CurrentFrom
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt6Entrance
 	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt7EntranceDayHosp
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) 
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and (ad1.domen=5 or ad2.domen=5)
 	then slo.id else null end)
 	as cnt8EntranceVillagers
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime)
 	and (
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
 	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
@@ -344,8 +353,8 @@ if (date!=null && !date.equals("")) {
 
 	as cnt9EntranceTo17
 	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) 
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
@@ -354,37 +363,37 @@ if (date!=null && !date.equals("")) {
 	then slo.id else null end)
 	as cnt10EntranceFrom60
 	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt11TransferOutOtherDepartment
 	,count(distinct case when (slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
-	or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)
+	or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)
 	as cnt12TransferInOtherDepartment
 	,count(distinct case when vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
 	as cnt13Finished
 	,count(distinct case when vho.code='4' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
 	as cnt14FinishedOtherHospital
 	,count(distinct case when vho.code='3' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
 	as cnt15FinishedHourHospital
 	,count(distinct case when vho.code='2' and vhr.code!='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
 	as cnt16FinishedDayHospital
 	,count(distinct case when vhr.code='11' and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)
 	as cnt17Death
 	,
 
 	count(distinct case when 
 			(
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			)
 		 then slo.id else null end
 	)
@@ -393,39 +402,39 @@ if (date!=null && !date.equals("")) {
 	,count(distinct case when sls.hotelServices='1' and 
 	 (
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateNext}','dd.mm.yyyy')
-				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			)  then slo.id else null end)
 	 as cnt19CurrentMother
 	 
 	 	,sum(
 	case when 
 		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
-			or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy')+1 and slo.dischargetime>=cast('09:00:00' as time)
-			or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime		
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime		
 		then slo.dateFinish
 			-case
 				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time) then 1
-				when slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime then 2
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime then 2
 				when cast('09:00' as time)>slo.dischargetime then 2 
 				else 1 end
 		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
-		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00:00' as time)>slo.dischargetime then slo.dateFinish-2
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.dischargetime then slo.dateFinish-2
 	     when 
 		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
-			or slo.transferDate = to_date('${dateBegin}','dd.mm.yyyy')+1 and slo.transfertime>=cast('09:00:00' as time)
-			or slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.transfertime		
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime		
 		then slo.transferDate
 			-case 
 			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time) then 1
-			when slo.transferdate = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.transfertime then 2
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime then 2
 			when cast('09:00' as time)>slo.transfertime then 2 else 1 end
 		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
-		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00:00' as time)>slo.transfertime then slo.transferDate-2
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.transfertime then slo.transferDate-2
 		else to_date('${dateEnd}','dd.mm.yyyy')
 		
 		end
@@ -440,12 +449,12 @@ if (date!=null && !date.equals("")) {
 		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
 		or
 		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))
-	then to_date('${dateBegin}','dd.mm.yyyy')-1
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
 	else slo.dateStart - case 
 		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00' as time) then 1
-		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime then 2
 		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00' as time) then 1
-		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime then 2
 		when cast('09:00' as time)>slo.entrancetime then 2 else 1 end
 	end
 	) as cntDays
@@ -464,8 +473,8 @@ if (date!=null && !date.equals("")) {
 	LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId
 	where 
 	slo.dtype='DepartmentMedCase' 
-	and (to_date('${dateEnd}','dd.mm.yyyy')+1>slo.datestart
-	or to_date('${dateEnd }','dd.mm.yyyy')+1=slo.dateStart and cast('09:00' as time)>slo.entrancetime
+	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
+	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('09:00' as time)>slo.entrancetime
 	)
 	and (slo.datefinish is null 
 	or
@@ -575,15 +584,15 @@ if (date!=null && !date.equals("")) {
 	left join mislpu pdep on pdep.id=pslo.department_id
 	where  slo.dtype='DepartmentMedCase' ${department} 
 	and 
-	(slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime
-	or to_date('${dateNext}','dd.mm.yyyy')>slo.datestart)
+	(slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime
+	or to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
-	or slo.datefinish > to_date('${dateNext}','dd.mm.yyyy') 
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time))
+	or slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy') 
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time))
 	and (slo.transferdate is null 
-	or slo.transferdate > to_date('${dateNext}','dd.mm.yyyy') 
+	or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy') 
 	or
-	slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))
+	slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))
 
 
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -625,7 +634,7 @@ if (date!=null && !date.equals("")) {
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is null
 	and (vht.code is null or vht.code!='ALLTIMEHOSP')
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -662,7 +671,7 @@ if (date!=null && !date.equals("")) {
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is not null
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -698,7 +707,7 @@ if (date!=null && !date.equals("")) {
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is null  
 	and vht.code='ALLTIMEHOSP'
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -737,7 +746,7 @@ if (date!=null && !date.equals("")) {
 	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)
 	and vho.code!='2' and vho.code!='3' and vho.code!='4'
 	and vhr.code!='11'
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -777,7 +786,7 @@ if (date!=null && !date.equals("")) {
 	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
 	where  slo.dtype='DepartmentMedCase' ${department} and (slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
-	or slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)
+	or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime)
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -816,7 +825,7 @@ if (date!=null && !date.equals("")) {
 	where  slo.dtype='DepartmentMedCase' ${department}
 	
 	 and (slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
-	or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)
+	or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime)
 	and vhr.code='11'
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -852,7 +861,7 @@ if (date!=null && !date.equals("")) {
 	    		    <msh:section>
 	    <msh:sectionTitle>16/у-02 форма. Свод по отделениям</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery name="journal_priem" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeView=1&department='||lpu.id,lpu.name,list(vbst.name) as vbstname,list(vss.name) as vssname
+	    <ecom:webQuery name="journal_priem" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeView=1&department='||lpu.id,lpu.name,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
@@ -865,17 +874,17 @@ if (date!=null && !date.equals("")) {
 
 	 then slo.id else null end)
 	as cnt5CurrentFrom
-	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt6Entrance
-	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and (slo.datestart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt7EntranceDayHosp
-	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) 
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and (
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
 	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
@@ -883,9 +892,9 @@ if (date!=null && !date.equals("")) {
 	then slo.id else null end)
 
 	as cnt9EntranceTo17
-	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) 
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
 	60<=(
 	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
@@ -893,45 +902,45 @@ if (date!=null && !date.equals("")) {
 	)
 	then slo.id else null end)
 	as cnt10EntranceFrom60
-	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
-	or slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt11TransferOutOtherDepartment
-	,count(distinct case when  (slo.transferdate between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when  (slo.transferdate between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time)
-	or slo.transferdate = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.transfertime) then slo.id else null end) 
+	or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end) 
 	as cnt12TransferInOtherDepartment
-	,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
-	or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt13Finished
-	,count(distinct case when vho.code='4' and vhr.code!='11' and (slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when vho.code='4' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
-	or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt14FinishedOtherHospital
-	,count(distinct case when vho.code='3' and vhr.code!='11' and (slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when vho.code='3' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
-	or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt15FinishedHourHospital
-	,count(distinct case when vho.code='2' and vhr.code!='11' and (slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when vho.code='2' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
-	or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt16FinishedDayHospital
-	,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+1 and to_date('${dateEnd}','dd.mm.yyyy')
+	,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
-	or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt17Death
 	,
 
 	count(distinct case when 
 			(
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateEnd}','dd.mm.yyyy')+1
-				or slo.transferdate = to_date('${dateEnd}','dd.mm.yyyy')+1 and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateEnd}','dd.mm.yyyy')+1
-				or slo.datefinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			)
 		 then slo.id else null end
 	)
@@ -940,12 +949,12 @@ if (date!=null && !date.equals("")) {
 	,count(distinct case when sls.hotelServices='1' and 
 	 (
 				slo.transferdate is null
-				or slo.transferdate > to_date('${dateEnd}','dd.mm.yyyy')+1
-				or slo.transferdate = to_date('${dateEnd}','dd.mm.yyyy')+1 and slo.transfertime>=cast('09:00' as time)
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)
 			) and (
 				slo.datefinish is null or
-				slo.datefinish > to_date('${dateEnd}','dd.mm.yyyy')+1
-				or slo.datefinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and slo.dischargetime>=cast('09:00' as time)
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)
 			) then slo.id else null end)
 	 as cnt19CurrentMother
 	 
@@ -953,27 +962,27 @@ if (date!=null && !date.equals("")) {
 	 	
 	case when 
 		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
-			or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy')+1 and slo.dischargetime>=cast('09:00:00' as time)
-			or slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime		
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime		
 		then slo.dateFinish
 			-case
 				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time) then 1
-				when slo.dateFinish = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.dischargetime then 2
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime then 2
 				when cast('09:00' as time)>slo.dischargetime then 2 
 				else 1 end
 		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
-		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00:00' as time)>slo.dischargetime then slo.dateFinish-2
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.dischargetime then slo.dateFinish-2
 	     when 
 		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
-			or slo.transferDate = to_date('${dateBegin}','dd.mm.yyyy')+1 and slo.transfertime>=cast('09:00:00' as time)
-			or slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.transfertime		
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime		
 		then slo.transferDate
 			-case 
 			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time) then 1
-			when slo.transferdate = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.transfertime then 2
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime then 2
 			when cast('09:00' as time)>slo.transfertime then 2 else 1 end
 		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
-		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00:00' as time)>slo.transfertime then slo.transferDate-2
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.transfertime then slo.transferDate-2
 		else to_date('${dateEnd}','dd.mm.yyyy')
 		
 		end
@@ -988,12 +997,12 @@ if (date!=null && !date.equals("")) {
 		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
 		or
 		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))
-	then to_date('${dateBegin}','dd.mm.yyyy')-1
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
 	else slo.dateStart - case 
 		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00' as time) then 1
-		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime then 2
 		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00' as time) then 1
-		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy')+1 and cast('09:00' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime then 2
 		when cast('09:00' as time)>slo.entrancetime then 2 else 1 end
 	end
 	
@@ -1017,8 +1026,8 @@ if (date!=null && !date.equals("")) {
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	where 
 	slo.dtype='DepartmentMedCase' 
-	and (to_date('${dateEnd}','dd.mm.yyyy')+1>slo.datestart
-	or to_date('${dateEnd }','dd.mm.yyyy')+1=slo.dateStart and cast('09:00' as time)>slo.entrancetime
+	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
+	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('09:00' as time)>slo.entrancetime
 	)
 	and (slo.datefinish is null 
 	or
