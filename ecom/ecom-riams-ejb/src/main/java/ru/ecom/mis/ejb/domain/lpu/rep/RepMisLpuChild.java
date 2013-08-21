@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.domain.lpu.rep;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -18,6 +22,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties={"lpu"})
+})
 public class RepMisLpuChild implements Serializable {
 	
     /** Идентификатор */
@@ -49,6 +56,7 @@ public class RepMisLpuChild implements Serializable {
 
 	/** Название */
 	@Comment("Название")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getTrailName() {
 		return theTrailName;
 	}

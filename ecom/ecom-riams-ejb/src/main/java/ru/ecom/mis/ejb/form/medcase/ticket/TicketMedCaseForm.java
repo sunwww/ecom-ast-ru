@@ -242,6 +242,12 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** Дата направления */
 	private String theOrderDate;
-	
+	/** Внешний направитель (ЛПУ) */
+	@Comment("Внешний направитель (ЛПУ)")
+	@Persist
+	public Long getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	/** Внешний направитель (ЛПУ) */
+	private Long theOrderLpu;	
 }
 
