@@ -21,6 +21,9 @@
           <msh:autoComplete parentId="smo_short_ticketForm.medcard" vocName="workFunctionByTicket" property="workFunctionExecute" label="Специалист" fieldColSpan="3" size="100" horizontalFill="true" guid="a8404201-1bae-467e-b3e9-5cef63411d01" />
         </msh:row>
         <msh:row>
+        	<td colspan="4"><div id='infoDirect'/></td>
+        </msh:row>
+        <msh:row>
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Вид оплаты" horizontalFill="true" guid="e5ac1267-bc69-44b2-8aba-b7455ac064c4" />
         </msh:row>        
         <msh:row>
@@ -54,5 +57,36 @@
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Medcard" beginForm="smo_short_ticketForm" guid="5c4f3682-e66b-4e0d-b448-4e6a2961a943" />
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+    <msh:ifFormTypeIsNotView formName="smo_short_ticketForm">
+    <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+    <script type="text/javascript">
+    workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
+    	getInfoByWorker();
+	});
+    function getInfoByWorker() {
+    	var wf = +$("workFunctionExecute").value ;
+    	var ds = $("dateFinish").value ;
+    	
+    	if (wf>0 && ds.length==10) {
+		  	TicketService.getInfoByWorkFunctionAndDate($('medcard').value,wf,ds,{
+				callback: function(aResult) {
+					if (aResult!="") {
+			  				$('infoDirect').innerHTML = aResult;
+					} else {
+		  				$('infoDirect').innerHTML = "";
+					}
+				}
+			  	
+			}) ;
+    		
+		} else {
+			$('infoDirect').innerHTML = "Указаны не все данные";
+		}
+    }
+    </script>
+    
+    </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>

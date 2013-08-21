@@ -347,7 +347,7 @@
 		"/>
 	 <form action="print-stac_journalDiag.do" method="post" target="_blank">
     
-    <input type='hidden' name="sqlText" id="sqlText" value="${registger_visit_sql}"> 
+    <input type='hidden' name="sqlText" id="sqlText" value="${diag_list_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${dateEnd}">
     
     <input type='hidden' name="s" id="s" value="PrintService">

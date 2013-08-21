@@ -19,10 +19,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     -moz-border-radius-topleft: 4px ;
     -moz-border-radius-bottomleft: 4px ;
 }
-#side ul li a#deleteDischarge {
-	color: red ;
-	background-color: silver;
-}
 
 </style>
 <msh:sideMenu></msh:sideMenu>
@@ -57,9 +53,19 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		
 </msh:sideMenu>
 <msh:sideMenu title="Отчеты">
-	<msh:sideLink styleId="financeReport" 
-		action="/contract_reports" 
-		name="финансовый отчет" roles="/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+	<msh:sideLink styleId="controlReport" 
+		action="/contract_reports_accrual" 
+		name="Контрольный отчет" roles="/Policy/Mis/Contract/Journals/Control,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Контрольный отчет"
+		/>
+	<msh:sideLink styleId="serviciesReport" 
+		action="/contract_reports_services" 
+		name="Отчет по услугам" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Разбивка по услугам"
+		/>
+	<msh:sideLink styleId="financeReport"
+		action="/contract_reports_finance" 
+		name="финансовый отчет" roles="/Policy/Mis/Contract/Journals/Finance,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Финансовый отчет"
 		/>
 </msh:sideMenu>

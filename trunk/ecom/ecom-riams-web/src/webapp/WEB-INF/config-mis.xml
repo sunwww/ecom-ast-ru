@@ -376,7 +376,7 @@
 				path="/WEB-INF/actions/contract_priceList/listAnalisisByMedService.jsp" />
 		</action>
 		<!-- Реестры по договорам -->	
-		<action path='/contract_reports'
+		<action path='/contract_reports_finance'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
 			validate='false'
@@ -392,6 +392,15 @@
 			scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_reports/list_services.jsp" />
+		</action>
+		<!-- Реестры услуг по договорам -->	
+		<action path='/contract_reports_accrual'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm"
+			validate='false'
+			scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list_accrual.jsp" />
 		</action>
 		<action path='/ecom_contract'
 			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
