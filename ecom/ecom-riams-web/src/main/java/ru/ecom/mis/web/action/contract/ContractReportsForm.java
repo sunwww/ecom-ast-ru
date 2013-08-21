@@ -32,6 +32,12 @@ public class ContractReportsForm extends BaseValidatorForm{
 	public String getFilterByCode() {return theFilterByCode;}
 	public void setFilterByCode(String aFilterByCode) {theFilterByCode = aFilterByCode;}
 
+	/** Услуга по прейскуранту */
+	public Long getPriceMedService() {return thePriceMedService;}
+	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
+
+	/** Услуга по прейскуранту */
+	private Long thePriceMedService;
 	/** Фильтр по коду */
 	private String theFilterByCode;
 	/** Фильтр по наименованию */

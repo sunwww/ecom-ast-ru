@@ -21,6 +21,35 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
 	
+	public String getInfoByWorkFunctionAndDate(Long aPatient, Long aWorkFunction, String aDate, HttpServletRequest aRequest) throws NamingException {
+		
+		StringBuilder res = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder sql1 = new StringBuilder() ;
+		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		sql.append("    select") ; 
+		sql.append(" count(distinct case when spo.dateStart is null then spo.id else null end) as cntPatient0") ;
+		sql.append(" ,count(distinct case when spo.dateStart is not null then spo.id else null end) as cntPatient1") ;
+		sql.append(" ,count(distinct spo.id) as cntPatient2") ;
+
+		sql.append(" from MedCase spo") ;
+		sql.append(" left join Patient pat on spo.patient_id=pat.id") ; 
+		sql.append(" left join WorkFunction owf on spo.ownerFunction_id=owf.id") ; 
+		sql.append(" left join VocWorkFunction ovwf on owf.workFunction_id=ovwf.id") ; 
+		sql.append(" left join Worker ow on owf.worker_id=ow.id ") ;
+		sql.append(" left join Patient owp on ow.person_id=owp.id ");
+		sql.append(" where  spo.patient_id='").append(aPatient).append("' and ") ;
+		sql.append(" (spo.dateFinish = to_date('").append(aDate).append("','dd.mm.yyyy') or spo.dateStart = to_date('").append(aDate).append("','dd.mm.yyyy'))");
+		sql.append(" and spo.dtype='ShortMedCase'") ; 
+		sql.append(" and spo.workFunctionExecute_id='").append(aWorkFunction).append("'") ;
+		sql.append(" group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname") ; 
+		sql.append(" order by owp.lastname,owp.middlename,owp.firstname");
+		
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
+		WebQueryResult obj = list.isEmpty()?null:list.iterator().next() ;
+		return obj==null?"нет направленных пациентов":res.append("направлено: <b>").append(obj.get3()).append("</b> из них оформлено: <b>").append(obj.get2()).append("</b>").toString() ;
+	}
 	public String getOpenSpoByPatient(Long aWorkFunction, Long aPatient, HttpServletRequest aRequest) throws NamingException {
 		
 		StringBuilder res = new StringBuilder() ;
@@ -35,8 +64,9 @@ public class TicketServiceJs {
 			.append(" left join WorkFunction owf on owf.id=spo.ownerFunction_id")
 			.append(" left join Worker ow on ow.id=owf.worker_id")
 			.append(" left join Patient owp on owp.id=ow.person_id")
+			.append(" left join MedCard m on m.id=spo.person_id")
 			.append(" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id")
-			.append(" where spo.patient_id='").append(aPatient).append("'")
+			.append(" where m.id='").append(aPatient).append("'")
 			.append(" and spo.DTYPE='PolyclinicMedCase' and spo.dateFinish is null and (spo.noActuality='0' or spo.noActuality is null) and ovwf.id='")
 			.append(obj1.get1()).append("'")
 			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname,owp.firstname,owp.middlename")

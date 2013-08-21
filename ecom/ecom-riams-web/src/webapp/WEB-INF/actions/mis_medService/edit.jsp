@@ -92,9 +92,15 @@
     		title="Прикрепление к рабочим функциям по отделениям" >
     	<ecom:webQuery name="workFunc" nativeSql="
     	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
+    	,vbt.name as vbtname,vbst.name as vbstname
+    	,vrt.name as vrtname
     	from WorkFunctionService wfs 
     	left join MisLpu lpu on lpu.id=wfs.lpu_id 
     	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
+     	 left join VocBedType vbt on vbt.id=wfs.bedType_id
+     	 left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
+     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
+    	
     	where wfs.medService_id='${param.id}'
     	"/>
   		<msh:table selection="true" name="workFunc" 
@@ -103,6 +109,9 @@
   		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medService_workFunction.do">
             <msh:tableColumn property="2" columnName="Рабочая функция"  />
             <msh:tableColumn property="3" columnName="ЛПУ" />
+            <msh:tableColumn property="4" columnName="Профиль коек" />
+            <msh:tableColumn property="5" columnName="Тип коек" />
+            <msh:tableColumn property="6" columnName="Уровень палат" />
         </msh:table>
     	
     	</msh:section>
@@ -111,9 +120,17 @@
         <msh:section title="Категории" guid="e681be03-dea7-4bce-96cf-aa600185f156">
           <ecom:webQuery  name="childMedService" nativeSql="
           	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
-          	 (select list(' '||vwf.name||coalesce('-'||lpu.name,'')) from WorkFunctionService wfs left join MisLpu lpu on lpu.id=wfs.lpu_id left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id where wfs.medService_id=ms.id)
+          	 (
+          	 select list(coalesce(lpu.name,'')||' - '||coalesce(vwf.name,vbt.name||' '||vbst.name||' '||vrt.name,'')) 
+          	 from WorkFunctionService wfs left join MisLpu lpu on lpu.id=wfs.lpu_id left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 	     	 left join VocBedType vbt on vbt.id=wfs.bedType_id
+	     	 left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
+	     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
+          	 where wfs.medService_id=ms.id
+          	 )
           	 ,ms.code 
-          	 from MedService ms left join VocMedService vms on vms.id=ms.vocMedService_id where ms.parent_id='${param.id}'
+          	 from MedService ms 
+          	 left join VocMedService vms on vms.id=ms.vocMedService_id 
+          	 where ms.parent_id='${param.id}'
           	 order by ms.code
           " guid="childMedService" />
 		  	<msh:tableNotEmpty name="childMedService">
