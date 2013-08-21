@@ -108,20 +108,29 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			where cao.id='${param.id}'
 			"/>
 				
-				<msh:table selection="multy" name="medicalService" 
+				<msh:table selection="multy"  name="medicalService" 
 				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
 				editUrl="entityParentEdit-contract_accountMedService.do"
 				viewUrl="entityShortView-contract_accountMedService.do"
 				action="entityParentView-contract_accountMedService.do"
 				
 				 idField="1">
+					 <msh:tableNotEmpty>
+				 <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation">
+					 	<a href="javascript:void(0)" onclick="">Оформить возврат</a>
+				 </msh:ifInRole>
+					 </msh:tableNotEmpty>
 					<msh:tableColumn columnName="Код" property="2" />
 					<msh:tableColumn columnName="Наименование" property="3" />
 					<msh:tableColumn columnName="Тариф" property="4" />
-					<msh:tableColumn columnName="Кол-во" property="5" />
+					<msh:tableColumn columnName="Общ. кол-во" property="5" />
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Скидка" property="7" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="8" />
+					<msh:tableColumn property="Возрат, кол-во" property="9" />
+					<msh:tableColumn property="Возрат, руб" property="10" isCalcAmount="true" />
+					<msh:tableColumn property="Итог" isCalcAmount="true" property="11" />
+					
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
