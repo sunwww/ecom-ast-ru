@@ -322,7 +322,7 @@
     		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
     		if (wf>0) {
-    		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
+    		TicketService.getOpenSpoByMedcard(wf,$('medcard').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
         				var val = aResult.split("@") ;
@@ -422,7 +422,7 @@
     		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
     		 if (wf>0) {
-     		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
+     		TicketService.getOpenSpoByMedcard(wf,$('medcard').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
         				var val = aResult.split("@") ;
