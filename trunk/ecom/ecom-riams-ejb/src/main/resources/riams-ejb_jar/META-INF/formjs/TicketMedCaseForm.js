@@ -60,6 +60,12 @@ function onSave(aForm, aEntity, aCtx) {
 	
 }
 function saveAdditionData(aForm,aEntity,aCtx) {
+	if (+aForm.categoryChild>0) {
+		var sql = new java.lang.StringBuilder() ;
+		sql.append("update Patient set categoryChild_id='").append(aForm.categoryChild)
+			.append("' where id='").append(aForm.patient).append("'") ;
+		aCtx.manager.createNativeQuery(sql.toString()).executeUpdate();
+	}
 	if(aEntity.parent==null) {
 		var spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
 		var workFunction = aEntity.getWorkFunctionExecute() ; 
