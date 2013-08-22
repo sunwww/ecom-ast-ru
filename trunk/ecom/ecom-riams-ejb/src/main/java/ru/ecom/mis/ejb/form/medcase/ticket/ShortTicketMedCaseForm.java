@@ -62,4 +62,12 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
 	/** Поток обслуживания */
 	private Long theServiceStream;	
+
+	/** Категория ребенка */
+	@Comment("Категория ребенка")
+	public Long getCategoryChild() {return theCategoryChild;}
+	public void setCategoryChild(Long aCategoryChild) {theCategoryChild = aCategoryChild;}
+
+	/** Категория ребенка */
+	private Long theCategoryChild;
 }

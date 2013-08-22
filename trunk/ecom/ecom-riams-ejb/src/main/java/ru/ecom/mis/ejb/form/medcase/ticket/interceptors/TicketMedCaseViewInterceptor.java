@@ -48,6 +48,13 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		form.setMedServices(getArray(manager,"MedCase","medService_id"
 				,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
 			)) ;
+    	List<Object[]> list =aContext.getEntityManager().createNativeQuery("select pat.categoryChild_id,mc.id from medcase mc left join patient pat on pat.id=m.patient_id where mc.id='"+aIdEntity+"'")
+    				.setMaxResults(1).getResultList() ;
+    	if (list.size()>0) {
+    		Object[] row = list.get(0) ;
+    		if (row[0]!=null)form.setCategoryChild(ConvertSql.parseLong(row[0])) ;
+    	}
+
 	}
 	private String  getArray(EntityManager aManager
 			, String aTableName

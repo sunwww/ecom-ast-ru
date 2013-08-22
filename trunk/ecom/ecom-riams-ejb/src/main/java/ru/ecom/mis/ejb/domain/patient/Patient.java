@@ -31,6 +31,7 @@ import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.voc.VocAdditionStatus;
+import ru.ecom.mis.ejb.domain.patient.voc.VocCategoryChild;
 import ru.ecom.mis.ejb.domain.patient.voc.VocEthnicity;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource;
@@ -1027,4 +1028,13 @@ public class Patient extends BaseEntity{
 	private Boolean theIsCompatriot;
 	/** Единый номер застрахованного */
 	private String theCommonNumber;
+	
+	/** Категория ребенка */
+	@Comment("Категория ребенка")
+	@OneToOne
+	public VocCategoryChild getCategoryChild() {return theCategoryChild;}
+	public void setCategoryChild(VocCategoryChild aCategoryChild) {theCategoryChild = aCategoryChild;}
+
+	/** Категория ребенка */
+	private VocCategoryChild theCategoryChild;
 }
