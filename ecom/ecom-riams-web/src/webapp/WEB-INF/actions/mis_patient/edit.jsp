@@ -212,8 +212,8 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" vocName="vocOrg" guid="24e551c0-b185-4361-8364-a93210c7d39d" />
         </msh:row>
         <msh:row guid="b8dbed14-010b-44b5-93b7-3d32ccdc8b35">
-          <msh:textField property="workPost" label="Должность" fieldColSpan="3" size="30" guid="269ff932-ca36-4d49-b7e2-a088df8ea99e" horizontalFill="true" />
           <msh:autoComplete property="categoryChild" fieldColSpan="1" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
+          <msh:textField property="workPost" label="Должность" fieldColSpan="1" size="30" guid="269ff932-ca36-4d49-b7e2-a088df8ea99e" horizontalFill="true" />
         </msh:row>
         <msh:row guid="8249d4e3-205c-456c-8899-33d055fe7940">
           <msh:autoComplete property="socialStatus" fieldColSpan="1" label="Социальный статус" horizontalFill="true" vocName="vocSocialStatus" guid="016dc681-4c60-4c68-9855-7b84e62373f7" />

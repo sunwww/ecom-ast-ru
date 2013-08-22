@@ -20,6 +20,10 @@
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
      
+        <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
+           <msh:autoComplete property="categoryChild" fieldColSpan="3" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
+        </msh:row>
+     
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
           <msh:textField label="Дата приема" property="dateStart" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
           <msh:textField label="Время" property="timeExecute" fieldColSpan="1" guid="ed78c5e3-5e2c-4d8c-b64e-75767dcf0775" />
@@ -322,7 +326,7 @@
     		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
     		if (wf>0) {
-    		TicketService.getOpenSpoByMedcard(wf,$('medcard').value,{
+    		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
         				var val = aResult.split("@") ;
@@ -422,7 +426,7 @@
     		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
     		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
     		 if (wf>0) {
-     		TicketService.getOpenSpoByMedcard(wf,$('medcard').value,{
+     		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
     			callback: function(aResult) {
     				if (aResult!="") {
         				var val = aResult.split("@") ;
@@ -441,7 +445,7 @@
     		}) ;
     		 }
     		 
-   	    		//if (theOtmoa_medServices && val[3]!="") theOtmoa_medServices.setIds(val[3]) ;
+   	    		
    			}
    		}
    	});
