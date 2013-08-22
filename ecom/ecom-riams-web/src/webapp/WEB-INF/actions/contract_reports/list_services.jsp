@@ -98,14 +98,14 @@ SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${priceListSqlI
 ,${groupSql} as dateNum
 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' and cao.discount>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscount 
+, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscount 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-cao.discount)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
 
 , sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' and cao.discount>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscountRet 
+, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscountRet 
 , sum(case when cao.dtype='OperationReturn' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-cao.discount)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
 
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
