@@ -1,8 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -11,7 +9,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.voc.VocCategoryChild;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientDynamicSecurityInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
