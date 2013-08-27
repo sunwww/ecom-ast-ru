@@ -954,7 +954,7 @@ public class WorkCalendarServiceJs {
 		res.append("</tr>") ;
 		if (aVocWorkFunction!=null) {
 			res.append("<tr>") ;
-			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append("").append(aVocWorkFunction).append("' >Выберете дату</div></td>") ;
+			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append("").append(aVocWorkFunction).append("' >Выберите дату</div></td>") ;
 			res.append("</tr>") ;
 		}	
 		res.append("</table></form>") ;

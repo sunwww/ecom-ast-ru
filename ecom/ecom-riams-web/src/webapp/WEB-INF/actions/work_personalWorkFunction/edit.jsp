@@ -22,7 +22,8 @@
           <msh:autoComplete viewAction="entityView-voc_workFunction.do" vocName="vocWorkFunction" property="workFunction" guid="3a3e4d1b-8802-467d-b205-715fb379b018" fieldColSpan="3" label="Название функции" size="50" />
         </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:autoComplete vocName="vocWorkFunctionDegrees" property="degrees" fieldColSpan="3" label="Учёная степень" size="50" />
+          <msh:autoComplete vocName="vocAcademicDegree" property="degrees" fieldColSpan="1" label="Учёная степень" size="20" />
+          <msh:autoComplete vocName="vocCategory" property="category" fieldColSpan="1" label="Категория" size="20" />
         </msh:row>
         <msh:row guid="b5f4-b971-441e-9a90-5194a8019c07">
           <msh:autoComplete  vocName="groupWorkFunction" property="group" guid="3a3e4d1b-880-b205-715fb379b018" fieldColSpan="3" label="Групповая рабочая функция" size="50" viewAction="entityParentView-work_groupWorkFunction.do" />

@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_medCaseForm" guid="helloItle-123" mainMenu="Lpu" title="КЭР" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" guid="helloItle-123" mainMenu="Disability" title="КЭР" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="helloSideMenu-123">
