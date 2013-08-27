@@ -128,8 +128,8 @@ order by ${groupOrder}
 			"/>
 
 				<msh:table name="finansReport" 
-				action="/contract_reports_finance.do?typeGroup=${groupGroupNext}"
-				viewUrl="/contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_finance.do?typeGroup=${groupGroupNext}"
+				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
 					<msh:tableColumn columnName="${groupName}" property="2" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />

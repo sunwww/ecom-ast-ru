@@ -134,7 +134,7 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="expert_kerForm" />
+    <ecom:titleTrail guid="titleTrail-123" mainMenu="Disability" beginForm="expert_kerForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="expert_kerForm">
@@ -142,9 +142,14 @@
       <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-expert_ker" name="Изменить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Edit" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Delete" />
     </msh:sideMenu>
-    
-
     </msh:ifFormTypeIsView>
+    <msh:sideMenu title="Просмотр">
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-expert_ker-infoBySmo.do?id='+$('medCase').value+'&short=Short')" 
+        name='ВК по госпитализации' title="Просмотр ВК по госпитализации" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-expert_ker-infoByPatient.do?id='+$('patient').value+'&short=Short')" 
+        name='ВК по пациенту' title="Просмотр ВК по пациенту" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
+    
+    </msh:sideMenu>
 	<msh:sideMenu title="Журналы по КЭР">
 	      <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"
 	      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalByPeriod" styleId="journalKERByPeriod"

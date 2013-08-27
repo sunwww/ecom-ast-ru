@@ -214,8 +214,11 @@
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
-        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациенту"
+        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациента"
          title="Добавить талон" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Create"
+        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
+         title="Добавить талон пациента на основе текущего" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key="SHIFT+8" params="id" 
@@ -251,6 +254,7 @@
   	<msh:ifInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
   <msh:ifFormTypeIsCreate formName="smo_ticketForm">
   <script type="text/javascript">
+  
   TicketService.getWorkFunction(
     		 {
                    callback: function(aResult) {
@@ -312,6 +316,31 @@
 	      	 	}) ;
 	      	 }
 	    });
+      	function setAdditionParam() {
+      		var wf = +$("workFunctionExecute").value;
+    		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
+    		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+     		if (wf>0) {
+        		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
+        			callback: function(aResult) {
+        				if (aResult!="") {
+            				var val = aResult.split("@") ;
+            				$('parent').value = val[0];
+            				$('parentName').value= val[1];
+        				} else {
+            				$('parent').value = '';
+            				$('parentName').value= '';
+        				}
+        				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+        	      	 		callback: function(aResult) {
+        	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+        	      	 		}
+        	      	 	}) ;
+        			}}) ;
+        		} else {
+        			$('parent').value = '';$('parentName').value = '';if (theOtmoa_medServices) theOtmoa_medServices.setIds("") ;
+        		}		
+      	}
   		function setDiagnosisText(aFieldMkb,aFieldText) {
   			var val = $(aFieldMkb+'Name').value ;
   			var ind = val.indexOf(' ') ;
@@ -321,29 +350,8 @@
   			}
   		}
     	if ($('workFunctionExecuteName')) workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
-    		var wf = +$("workFunctionExecute").value;
+    		setAdditionParam() ;
     		
-    		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-    		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		if (wf>0) {
-    		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
-    			callback: function(aResult) {
-    				if (aResult!="") {
-        				var val = aResult.split("@") ;
-        				$('parent').value = val[0];
-        				$('parentName').value= val[1];
-    				} else {
-        				$('parent').value = '';
-        				$('parentName').value= '';
-    				}
-    				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-    	      	 		callback: function(aResult) {
-    	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-    	      	 		}
-    	      	 	}) ;
-    			}
-    		}) ;
-    		}else {$('parent').value = '';$('parentName').value = '';if (theOtmoa_medServices) theOtmoa_medServices.setIds("") ;}
     	});
 	    
 	      	eventutil.addEventListener($('dateStart'),'blur',function(){
@@ -410,46 +418,45 @@
   <msh:ifFormTypeIsCreate formName="smo_ticketForm">
   <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
   	<script type="text/javascript">
-   	TicketService.getSessionData( {
-   		
-   		callback: function(aResult) {
-   			//alert(aResult) ;
-   			if (aResult!=null&&aResult!=""&&(+$('workFunctionExecute').value<1)) {
-   				var val = aResult.split("@") ;
-   	   			if (val[0]!="") $('dateStart').value = val[0] ;
-   	   			if (val[1]!="") $('workFunctionExecute').value=val[1] ;
-   	   			if (val[2]!="") $('workFunctionExecuteName').value=val[2];
-   	   			if (val[4]!=""&&(+val[4]>0)) $('emergency').checked=true;
-   	   			
-   	   		var wf = +$("workFunctionExecute").value;
-   	   		
-    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 if (wf>0) {
-     		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
-    			callback: function(aResult) {
-    				if (aResult!="") {
-        				var val = aResult.split("@") ;
-        				$('parent').value = val[0];
-        				$('parentName').value= val[1];
-    				} else {
-        				$('parent').value = '';
-        				$('parentName').value= '';
-    				}
-    				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-    	      	 		callback: function(aResult) {
-    	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-    	      	 		}
-    	      	 	}) ;
-    			}
-    		}) ;
-    		 }
-    		 
-   	    		
-   			}
-   		}
-   	});
-  	
+  	if (+$('workFunctionExecute').value<1) {
+	  	if (+'${param.prevTicket}'>0) {
+	  		TicketService.getInfoByTicket('${param.prevTicket}',{callback:function(aResult){
+	  			if (aResult!=null&&aResult!="") {
+	  				var val = aResult.split("@") ;
+	   	   			if (val[0]!="") $('serviceStream').value = val[0] ;if (val[1]!="") $('serviceStreamName').value = val[1] ;
+	   	   			if (val[2]!="") $('workPlaceType').value = val[2] ;if (val[3]!="") $('workPlaceTypeName').value = val[3] ;
+	   	   			if (val[4]!="") $('visitReason').value = val[4] ;if (val[5]!="") $('visitReasonName').value = val[5] ;
+	   	   			if (val[6]!="") $('visitResult').value = val[6] ;if (val[7]!="") $('visitResultName').value = val[7] ;
+	   	   			if (val[8]!="") $('hospitalization').value = val[8] ;if (val[9]!="") $('hospitalizationName').value = val[9] ;
+	   	   			if (val[10]!="") $('dispRegistration').value = val[10] ;if (val[11]!="") $('dispRegistrationName').value = val[11] ;
+	   	   			//if (val[12]!="") $('serviceStream').value = val[12] ;if (val[13]!="") $('serviceStreamName').value = val[13] ;
+	   	   			if (val[12]!=""&&(+val[12]>0)) $('emergency').checked=true;
+	   	   			if (val[13]!="") {
+	   	   				var diag = val[13].split("##") ;
+	   	   				if (diag[0]!="") $('concludingMkb').value = diag[0] ;if (diag[1]!="") $('concludingMkbName').value = diag[1] ;
+	   	   				if (diag[2]!="") $('concludingDiagnos').value = diag[2] ;if (diag[3]!="") $('concludingActuity').value = diag[3] ;
+	   	   				if (diag[4]!="") $('concludingActuityName').value = diag[4] ;
+	   	   			}
+	   	   			if (val[14]!="") $('workFunctionExecute').value = val[14] ;if (val[15]!="") $('workFunctionExecuteName').value = val[15] ;
+	   	   			setAdditionParam();
+	  			}
+	  		}})
+	  	} else {
+		   	TicketService.getSessionData( {
+		   		callback: function(aResult) {
+		   			//alert(aResult) ;
+		   			if (aResult!=null&&aResult!="") {
+		   				var val = aResult.split("@") ;
+		   	   			if (val[0]!="") $('dateStart').value = val[0] ;
+		   	   			if (val[1]!="") $('workFunctionExecute').value=val[1] ;
+		   	   			if (val[2]!="") $('workFunctionExecuteName').value=val[2];
+		   	   			if (val[4]!=""&&(+val[4]>0)) $('emergency').checked=true;
+		   	   			setAdditionParam();
+		   	   		}
+	   			}
+	   		});
+	  	}
+  	}
   	</script>
   	</msh:ifNotInRole>
   </msh:ifFormTypeIsCreate>

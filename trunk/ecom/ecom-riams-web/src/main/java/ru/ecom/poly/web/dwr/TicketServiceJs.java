@@ -20,7 +20,48 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
-	
+	public String getInfoByTicket(Long aTicket, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(" select vss.id as vssid,vss.name as vssname,vwpt.id as vwptid") ;
+		sql.append(" ,vwpt.name as vwptname,vr.id as vrid,vr.name as vrname") ;
+		sql.append(" ,vvr.id as vvrid,vvr.name as vvrname,vh.id as vhid") ;
+		sql.append(" ,vh.name as vhname,vdr.id as vdrid,vdr.name as vdrname,case when smc.emergency='1' then '1' else '0' end as emegrency") ;
+		sql.append(" ,list(case when vpd.code='1' then mkb.id||'##'||mkb.code||' '||mkb.name||'##'||diag.name||'##'||vip.id||'##'||vip.name else null end) as diag") ;
+		sql.append(" ,wf.id as wfid, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo") ;
+		sql.append(" from medcase smc") ;
+		sql.append(" left join diagnosis diag on diag.medcase_id=smc.id") ;
+		sql.append(" left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id") ;
+		sql.append(" left join vocidc10 mkb on mkb.id=diag.idc10_id") ;
+		sql.append(" left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id") ;
+		sql.append(" left join VocServiceStream vss on vss.id=smc.serviceStream_id") ;
+		sql.append(" left join VocWorkPlaceType vwpt on vwpt.id=smc.workPlaceType_id") ;
+		sql.append(" left join VocReason vr on vr.id=smc.visitReason_id") ;
+		sql.append(" left join VocVisitResult vvr on vvr.id=smc.visitResult_id") ;
+		sql.append(" left join VocHospitalization vh on vh.id=smc.hospitalization_id") ;
+		sql.append(" left join VocDispanseryRegistration vdr on vdr.id=smc.dispRegistration_id") ;
+		sql.append(" left join WorkFunction wf on wf.id=smc.workFunctionExecute_id") ;
+		sql.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id") ;
+		sql.append(" left join Worker w on w.id=wf.worker_id") ;
+		sql.append(" left join Patient wp on wp.id=w.person_id") ;
+		
+		sql.append(" where smc.id='").append(aTicket).append("'") ;
+		sql.append(" group by vss.id,vss.name,vwpt.id,vwpt.name,vr.id,vr.name,vvr.id,vvr.name,vh.id,vh.name,vdr.id,vdr.name,smc.emergency,wf.id, vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
+		StringBuilder res = new StringBuilder() ;
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(isNull(wqr.get1())).append("@").append(isNull(wqr.get2())).append("@").append(isNull(wqr.get3())).append("@").append(isNull(wqr.get4())).append("@") ;
+			res.append(isNull(wqr.get5())).append("@").append(isNull(wqr.get6())).append("@").append(isNull(wqr.get7())).append("@").append(isNull(wqr.get8())).append("@") ;
+			res.append(isNull(wqr.get9())).append("@").append(isNull(wqr.get10())).append("@").append(isNull(wqr.get11())).append("@").append(isNull(wqr.get12())).append("@") ;
+			res.append(isNull(wqr.get13())).append("@").append(isNull(wqr.get14())).append("@") ;
+			res.append(isNull(wqr.get15())).append("@").append(isNull(wqr.get16())) ;
+		} 
+		return res.toString() ;
+	}	
+	public Object isNull(Object aObj) {
+		return aObj!=null?aObj:"" ;
+	}
 	public String getInfoByWorkFunctionAndDate(Long aMedcard, Long aWorkFunction, String aDate, HttpServletRequest aRequest) throws NamingException {
 		
 		StringBuilder res = new StringBuilder() ;
@@ -160,6 +201,7 @@ public class TicketServiceJs {
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
 		return "Поток обслуживания изменен" ;
 	}
+
 	
 	public String getSessionData(HttpServletRequest aRequest) {
 		StringBuilder res = new StringBuilder() ;
@@ -177,7 +219,9 @@ public class TicketServiceJs {
 		return aRequest.getSession(true).getAttribute(aAttribute)!=null?(String)aRequest.getSession(true).getAttribute(aAttribute):"" ;
 	}
 	public String saveSession(String aDate,String aWorkFunction
-   			, String aWorkFunctionName, String aMedServices, boolean aEmergency, HttpServletRequest aRequest) {
+   			, String aWorkFunctionName, String aMedServices, boolean aEmergency
+   			
+   			, HttpServletRequest aRequest) {
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.date", aDate) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunction", aWorkFunction) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.workFunctionName", aWorkFunctionName) ;
