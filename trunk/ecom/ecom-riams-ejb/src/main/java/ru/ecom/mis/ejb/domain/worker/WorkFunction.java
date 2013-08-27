@@ -16,8 +16,9 @@ import ru.ecom.mis.ejb.domain.lpu.CopyingEquipment;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
+import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree;
+import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunctionDegrees;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -265,9 +266,17 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
 	@OneToOne
-	public VocWorkFunctionDegrees getDegrees() {return theDegrees;}
-	public void setDegrees(VocWorkFunctionDegrees aCategory) {theDegrees = aCategory;}
+	public VocAcademicDegree getDegrees() {return theDegrees;}
+	public void setDegrees(VocAcademicDegree aCategory) {theDegrees = aCategory;}
 
 	/** Категория специалиста */
-	private VocWorkFunctionDegrees theDegrees;
+	private VocAcademicDegree theDegrees;
+	
+	/** Категория специалиста */
+	@Comment("Категория специалиста")
+	public VocCategory getCategory() {return theCategory;}
+	public void setCategory(VocCategory aCategory) {theCategory = aCategory;}
+
+	/** Категория специалиста */
+	private VocCategory theCategory;
 }

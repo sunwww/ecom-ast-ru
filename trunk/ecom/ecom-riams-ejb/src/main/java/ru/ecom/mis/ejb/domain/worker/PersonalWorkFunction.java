@@ -11,9 +11,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunctionDegrees;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.util.StringUtil;
 /**
  * Персональная рабочая функция

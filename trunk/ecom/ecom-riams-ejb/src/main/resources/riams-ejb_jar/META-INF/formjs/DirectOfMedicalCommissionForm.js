@@ -23,6 +23,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	checkOrderDate(orderDate,aEntity.createDate!=null?aEntity.createDate:new java.sql.Time (date.getTime()))
 }
 
 /**
@@ -49,7 +50,20 @@ function onPreCreate(aForm, aContext) {
        	)
        	.setParameter("patient",patient)
        	.getResultList() ;
+    
+	//throw "timeC="+timeC+"; timeO="+timeO ;
 	errorThrow(list,"В базе уже существует направление на ВК от "+orderDate+" по пациенту") ;
+	checkOrderDate(orderDate,new java.sql.Date(date.getTime()));
+}
+function checkOrderDate(aOrderDate,aCreateDate) {
+    var orderDateCal = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aOrderDate);
+    var cal = java.util.Calendar.getInstance() ;
+    cal.setTime(aCreateDate) ;
+    var timeC = cal.getTime().getTime();
+	cal.setTime(orderDateCal) ;
+	cal.add(java.util.Calendar.DAY_OF_MONTH,3) ;
+	var timeO = cal.getTime().getTime();
+	if (timeO<timeC) throw "У Вас стоит ограничение на дату направления!!!" ; 
 }
 function onPreDelete(aEntityId, aCtx) {
 	var entity = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.ClinicExpertCard,aEntityId) ;

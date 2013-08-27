@@ -148,7 +148,7 @@ function recordSloBySls(aCtx,aSlsId) {
 		+" left join WorkFunction owf on owf.id=slo.ownerFunction_id"
 		+" left join Worker ow on ow.id=owf.worker_id"
 		+" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id"
-		+" left join VocWorkFunctionDegrees ovwfd on ovwfd.id=owf.degrees_id"
+		+" left join VocAcademicDegree ovwfd on ovwfd.id=owf.degrees_id"
 		+" left join Patient owp on owp.id=ow.person_id"
 		+" left join Omc_Standart os on os.id=slo.omcStandart_id"
 		+" left join VocServiceStream vss on vss.id=slo.serviceStream_id"
@@ -442,7 +442,7 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
 			+" left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
-			+" left join VocWorkFunctionDegrees vwfd on wf.degrees_id=vwfd.id "
+			+" left join VocAcademicDegree vwfd on wf.degrees_id=vwfd.id "
 			+" left join Worker w on w.id=wf.worker_id "
 			+" left join Patient p on p.id=w.person_id "
 			+" where dmc.parent_id='"+medCase.id+"' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();
