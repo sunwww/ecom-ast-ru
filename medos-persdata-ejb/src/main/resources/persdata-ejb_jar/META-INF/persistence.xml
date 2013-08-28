@@ -1,0 +1,23 @@
+<persistence>
+	<persistence-unit name="mainManager" transaction-type="JTA">
+		<jta-data-source>java:/PersDataDS</jta-data-source>
+		<exclude-unlisted-classes />
+		
+		<!-- LIVE -->
+		<class>ru.ecom.ejb.services.live.domain.LiveTransaction</class>
+		<class>ru.ecom.ejb.services.live.domain.LiveEntity</class>
+		<class>ru.ecom.ejb.services.live.domain.LiveProperty</class>
+		<class>ru.ecom.ejb.services.live.domain.journal.DeleteJournal</class>
+
+		<!-- Hello -->
+
+		
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+
+		</properties>
+		
+		
+	</persistence-unit>
+
+</persistence>
