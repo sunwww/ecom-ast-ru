@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="asset-web" default="prepare" basedir=".">
+	<property name="appname" value="asset" />
+	<property name='dirname' value="ecom/asset" />
+
+	<import file="../../ant-support/property-skeleton.xml" />
+
+	<fileset id='compile.fileset' dir="${libdir}">
+		<include name="ecom/asset/ejb/asset-ejb-api.jar" />
+		<include name="ecom/gwt/idemode/ecom-gwt-idemode.jar" />
+		<include name="ecom/gwt/clazz/ecom-gwt-clazz.jar" />
+		<include name="gwt/gwt-servlet.jar" />
+        <include name="ecs/ecs-1.4.2.jar"/>
+	</fileset>
+
+	<target name='prepare.web'>
+		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
+			<fileset refid='asset.ejb.jar' />
+			<fileset file='${lib.dir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
+			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
+			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />
+			<fileset file='${lib.dir}/gwt/gwt-servlet.jar' />
+		</copy>
+
+		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />
+		<copy overwrite="true" todir='./target/webapp'>
+			<fileset dir='${lib.dir}/ecom/gwt/idemode/webapp' />
+		</copy>
+
+		<delete dir='./target/webapp/ru.ecom.gwt.clazz.Main' />
+		<copy overwrite="true" todir='./target/webapp'>
+			<fileset dir='${lib.dir}/ecom/gwt/clazz/webapp' />
+		</copy>
+		
+		<mkdir dir="./target/webapp/WEB-INF/classes/META-INF" />
+		<copy file="../ejb/src/main/resources/asset-ejb_jar/META-INF/mapforms.xml"
+				todir='./target/webapp/WEB-INF/classes/META-INF' overwrite="true"/>
+	</target>
+
+	<import file="../../ant-support/web-skeleton.xml" />
+
+</project>
