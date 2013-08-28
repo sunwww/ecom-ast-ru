@@ -1,8 +1,85 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <vocconfig>
-	<voc id='vocServerRole' type='EntityVocService'>
+	<voc id='vocAddress' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.amokb.asset.ejb.domain.voc.VocServerRole'
+			entity  = 'ru.medos.personaldata.voc.VocAddress'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocComingDocument' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocComingDocument'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocContactPerson' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocContactPerson'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocExternalCarrierOperation' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocExternalCarrierOperation'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocIdentificationSystem' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocIdentificationSystem'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocKladr' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocKladr'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocNationality' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocNationality'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocPersonalizationDocument' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocPersonalizationDocument'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocPhone' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocPhone'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocSex' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocSex'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocState' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocState'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='vocStateStructure' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.personaldata.voc.VocStateStructure'
 			names   = 'name'
 			queried = 'name'
 		/>
