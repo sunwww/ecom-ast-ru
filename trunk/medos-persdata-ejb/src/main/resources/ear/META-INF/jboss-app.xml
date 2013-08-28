@@ -1,0 +1,5 @@
+<jboss-app>
+    <loader-repository>persdata.ecom-ast.ru:loader=persdata-ejb.jar</loader-repository>
+</jboss-app>
+
+

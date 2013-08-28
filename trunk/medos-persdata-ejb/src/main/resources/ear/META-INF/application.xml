@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<application>
+  <display-name>Personal Data App</display-name>
+
+  <module>
+    <ejb>persdata-ejb.jar</ejb>
+  </module>
+
+
+</application>
+

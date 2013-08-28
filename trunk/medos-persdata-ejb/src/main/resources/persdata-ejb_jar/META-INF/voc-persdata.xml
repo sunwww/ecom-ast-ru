@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<vocconfig>
+	<voc id='vocServerRole' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.amokb.asset.ejb.domain.voc.VocServerRole'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+</vocconfig>
