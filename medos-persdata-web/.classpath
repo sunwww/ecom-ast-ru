@@ -30,9 +30,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-ejbweb-ejb"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-ejbweb-web"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-riams-ejb"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/ecom/gwt/idemode/ecom-gwt-idemode.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/gwt/gwt-servlet.jar"/>
-	<classpathentry kind="lib" path="/home/esinev/opt/lib/ecom/gwt/clazz/ecom-gwt-clazz.jar"/>
+	<classpathentry kind="lib" path="/opt/lib/ecom/gwt/idemode/ecom-gwt-idemode.jar"/>
+	<classpathentry kind="lib" path="/opt/lib/gwt/gwt-servlet.jar"/>
+	<classpathentry kind="lib" path="/opt/lib/ecom/gwt/clazz/ecom-gwt-clazz.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-ejb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-forms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-util"/>
