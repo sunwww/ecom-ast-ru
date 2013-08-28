@@ -34,30 +34,7 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
-    <%--  <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="1">  поступления
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="2">  выписки
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="3">  перевода
-        </td>
-        </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="1">  региональные
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  иногородные
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
-        </td>
-        </msh:row>  --%>
+    
          <msh:row>
 	        <td class="label" title="База (typeDtype)" colspan="1">
 	        <label for="typeDtypeName" id="typeDtypeLabel">Отобразить:</label></td>
@@ -210,7 +187,7 @@
 		    		if (fs.length>1) {
 		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
 		    		} else {
-		    			filtOr.append(" mkb.code like '"+filt1.trim()+"%'") ;
+		    			filtOr.append(" substring(mkb.code,1,"+filt1.length()+") = '"+filt1+"'") ;
 		    		}
     			}
     		}
@@ -285,24 +262,24 @@
 		,count(distinct case when (vip.code='2' or vip.code='3') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPatPrimary17
 
 		,count(distinct case 
-			when vs.code='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
-				or vs.code='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55
+			when vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
+				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55
 			then pat.id else null end) as cntPat55
 		,count(distinct case 
 			when (vip.code='2' or vip.code='3')
-		 and (vs.code='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
-				or vs.code='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55)
+		 and (vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
+				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55)
 			then pat.id else null end) as cntPatPrimary55
 		
 		
 		,count(distinct case 
-			when vs.code='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
-				or vs.code='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55
+			when vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
+				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55
 			then pat.id else null end) as cntPatOld
 		,count(distinct case 
 			when (vip.code='2' or vip.code='3')
-		 and (vs.code='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
-				or vs.code='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55)
+		 and (vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
+				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55)
 			then pat.id else null end) as cntPatPrimaryOld
 		from Diagnosis diag
 		left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id
@@ -340,18 +317,18 @@
 			<msh:tableColumn property="3" columnName="Приоритет"/>
 			<msh:tableColumn property="2" columnName="Код МКБ10"/>
 			<msh:tableColumn property="4" columnName="Наименование болезни"/>
-			<msh:tableColumn property="5" columnName="Кол-во общее"/>
-			<msh:tableColumn property="6" columnName="из них устан. впервые в жизни"/>
-			<msh:tableColumn property="7" columnName="Кол-во общее"/>
-			<msh:tableColumn property="9" columnName="до 14 лет"/>
-			<msh:tableColumn property="11" columnName="15-17"/>
-			<msh:tableColumn property="13" columnName="труд. возраста (от 18 до 55 жен и 60 муж)"/>
-			<msh:tableColumn property="15" columnName="старше труд. возраста"/>
-			<msh:tableColumn property="8" columnName="Кол-во общее"/>
-			<msh:tableColumn property="10" columnName="до 14 лет"/>
-			<msh:tableColumn property="12" columnName="15-17"/>
-			<msh:tableColumn property="14" columnName="труд. возраста (от 18 до 55 жен и 60 муж)"/>
-			<msh:tableColumn property="16" columnName="старше труд. возраста"/>
+			<msh:tableColumn property="5" isCalcAmount="true" columnName="Кол-во общее"/>
+			<msh:tableColumn property="6" isCalcAmount="true" columnName="из них устан. впервые в жизни"/>
+			<msh:tableColumn property="7" isCalcAmount="true" columnName="Кол-во общее"/>
+			<msh:tableColumn property="9" isCalcAmount="true" columnName="до 14 лет"/>
+			<msh:tableColumn property="11" isCalcAmount="true" columnName="15-17"/>
+			<msh:tableColumn property="13" isCalcAmount="true" columnName="труд. возраста (от 18 до 55 жен и 60 муж)"/>
+			<msh:tableColumn property="15" isCalcAmount="true" columnName="старше труд. возраста"/>
+			<msh:tableColumn property="8" isCalcAmount="true" columnName="Кол-во общее"/>
+			<msh:tableColumn property="10" isCalcAmount="true" columnName="до 14 лет"/>
+			<msh:tableColumn property="12" isCalcAmount="true" columnName="15-17"/>
+			<msh:tableColumn property="14" isCalcAmount="true" columnName="труд. возраста (от 18 до 55 жен и 60 муж)"/>
+			<msh:tableColumn property="16" isCalcAmount="true" columnName="старше труд. возраста"/>
 			
 		</msh:table>
     <% }
