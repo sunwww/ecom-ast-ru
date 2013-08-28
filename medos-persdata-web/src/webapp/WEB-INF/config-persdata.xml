@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+	<form-beans>
+	
+		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
+		<form-bean name="asset_assetForm" type="ru.amokb.asset.ejb.form.AssetForm" />
+		<form-bean name="asset_assetWorkcardForm" type="ru.amokb.asset.ejb.form.AssetWorkcardForm" />
+		<form-bean name="asset_automatedWorkplaceForm" type="ru.amokb.asset.ejb.form.AutomatedWorkplaceForm" />
+		<form-bean name="asset_buildingForm" type="ru.amokb.asset.ejb.form.BuildingForm" />
+		<form-bean name="asset_cartridgeForm" type="ru.amokb.asset.ejb.form.CartridgeForm" />
+		<form-bean name="asset_componentForm" type="ru.amokb.asset.ejb.form.ComponentForm" />
+		<form-bean name="asset_computerForm" type="ru.amokb.asset.ejb.form.ComputerForm" />
+		<form-bean name="asset_computerComponentForm" type="ru.amokb.asset.ejb.form.ComputerComponentForm" />
+		<form-bean name="asset_computerCopyingEquipmentForm" type="ru.amokb.asset.ejb.form.computerCopyingEquipmentForm" />
+		<form-bean name="asset_computerProgrammForm" type="ru.amokb.asset.ejb.form.ComputerProgrammForm" />
+		<form-bean name="asset_copyingEquipmentForm" type="ru.amokb.asset.ejb.form.CopyingEquipmentForm" />
+		<form-bean name="asset_cPUForm" type="ru.amokb.asset.ejb.form.CPUForm" />
+		<form-bean name="asset_equipmentForm" type="ru.amokb.asset.ejb.form.EquipmentForm" />
+		<form-bean name="asset_expensesMaterialForm" type="ru.amokb.asset.ejb.form.ExpensesMaterialForm" />
+		<form-bean name="asset_externalDataMediumForm" type="ru.amokb.asset.ejb.form.ExternalDataMediumForm" />
+		<form-bean name="asset_floppyDriveForm" type="ru.amokb.asset.ejb.form.FloppyDriveForm" />
+		<form-bean name="asset_hDDForm" type="ru.amokb.asset.ejb.form.HDDForm" />
+		<form-bean name="asset_informationForm" type="ru.amokb.asset.ejb.form.InformationForm" />
+		<form-bean name="asset_laserDriveForm" type="ru.amokb.asset.ejb.form.LaserDriveForm" />
+		<form-bean name="asset_mBForm" type="ru.amokb.asset.ejb.form.MBForm" />
+		<form-bean name="asset_networkForm" type="ru.amokb.asset.ejb.form.NetworkForm" />
+		<form-bean name="asset_networkCardForm" type="ru.amokb.asset.ejb.form.NetworkCardForm" />
+		<form-bean name="asset_networkEquipmentForm" type="ru.amokb.asset.ejb.form.NetworkEquipmentForm" />
+		<form-bean name="asset_networkLineForm" type="ru.amokb.asset.ejb.form.NetworkLineForm" />
+		<form-bean name="asset_networkPointForm" type="ru.amokb.asset.ejb.form.NetworkPointForm" />
+		<form-bean name="asset_networkPointLinkForm" type="ru.amokb.asset.ejb.form.NetworkPointLinkForm" />
+		<form-bean name="asset_networkPortForm" type="ru.amokb.asset.ejb.form.NetworkPortForm" />
+		<form-bean name="asset_networkPortLinkForm" type="ru.amokb.asset.ejb.form.NetworkPortLinkForm" />
+		<form-bean name="asset_otherComponentForm" type="ru.amokb.asset.ejb.form.OtherComponentForm" />
+		<form-bean name="asset_permanentAssetForm" type="ru.amokb.asset.ejb.form.PermanentAssetForm" />
+		<form-bean name="asset_personalComputerForm" type="ru.amokb.asset.ejb.form.PersonalComputerForm" />
+		<form-bean name="asset_programmForm" type="ru.amokb.asset.ejb.form.ProgrammForm" />
+		<form-bean name="asset_rAMForm" type="ru.amokb.asset.ejb.form.RAMForm" />
+		<form-bean name="asset_roomForm" type="ru.amokb.asset.ejb.form.RoomForm" />
+		<form-bean name="asset_serverForm" type="ru.amokb.asset.ejb.form.ServerForm" />
+		<form-bean name="asset_serverRoleForm" type="ru.amokb.asset.ejb.form.ServerRoleForm" />
+		<form-bean name="asset_terminalForm" type="ru.amokb.asset.ejb.form.TerminalForm" />
+		<form-bean name="asset_territoryForm" type="ru.amokb.asset.ejb.form.TerritoryForm" />
+		<form-bean name="asset_transitoryAssetForm" type="ru.amokb.asset.ejb.form.TransitoryAssetForm" />
+		<form-bean name="asset_videoCardForm" type="ru.amokb.asset.ejb.form.VideoCardForm" />
+	</form-beans>
+
+	<global-forwards />
+
+	<action-mappings>
+
+        <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/entityList-asset_asset.do" />
+        </action>
+	      
+	</action-mappings>
+</struts-config>
+
