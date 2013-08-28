@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>amokb-asset-web</name>
+	<comment>ASSET WEB</comment>
+	<projects>
+		<project>msh-commons</project>
+		<project>msh-forms</project>
+		<project>msh-util</project>
+		<project>ecom-ejbweb-ejb</project>
+		<project>ecom-ejbweb-web</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+</projectDescription>
