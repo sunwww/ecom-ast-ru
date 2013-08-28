@@ -1,4 +1,4 @@
-package ru.amokb.ant;
+package ru.medos.ant;
 
 import java.util.Set;
 
