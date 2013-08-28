@@ -25,7 +25,7 @@
 		</path>
 
 		<taskdef name="persxml"
-			classname="ru.amokb.ant.FindAndSaveEntitiesToPersistenceXmlTask"
+			classname="ru.medos.ant.FindAndSaveEntitiesToPersistenceXmlTask"
 			classpathref="lib.classpath">
 			<classpath path="./target/classes" />
 			<classpath refid="lib.classpath" />

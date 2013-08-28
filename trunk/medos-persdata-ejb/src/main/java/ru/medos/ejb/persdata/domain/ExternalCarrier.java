@@ -32,16 +32,16 @@ public class ExternalCarrier extends JournalData{
 	 */
 	private String theExternalCarrierNumber;
 	@OneToMany(mappedBy="externalCarrier", cascade=CascadeType.ALL)
-	public List<ExternalCarrierOperation> getOperations() {
+	public List<DataOperation> getOperations() {
 		return theOperations;
 	}
-	public void setOperations(List<ExternalCarrierOperation> aOperations) {
+	public void setOperations(List<DataOperation> aOperations) {
 		theOperations = aOperations;
 	}
 	/**
 	 * Операции
 	 */
-	private List<ExternalCarrierOperation> theOperations;
+	private List<DataOperation> theOperations;
 	/**
 	 * Акт уничтожения внешних носителей
 	 */
