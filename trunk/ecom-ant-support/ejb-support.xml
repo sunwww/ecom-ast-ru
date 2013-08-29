@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ejb-support" default="" basedir=".">
+
+    <fileset id="compile.thirdparty.fileset" dir="${libdir}/">
+        <include name='j2ee-api/ejb3-persistence.jar'/>
+        <include name='jboss/jboss-ejb3.jar'/>
+        <include name='jboss/jboss-ejb3x.jar'/>
+        <include name='jboss/jboss-annotations-ejb3.jar'/>
+        <include name='jboss/jboss-aop-jdk50.jar'/>
+        <include name='jboss/jboss-aspect-library-jdk50.jar'/>
+        <include name='jboss/jbossall-client.jar'/>
+        <include name='hibernate/entitymanager/hibernate3.jar'/>
+        <include name='struts/struts.jar'/>
+        <include name='servlet/servlet-api.jar'/>
+        <include name='jdom/jdom.jar'/>
+        <include name='log4j/log4j.jar'/>
+        <include name="json/json.jar"/>
+        <include name="jxl/jxl.jar"/>
+        <include name="apache-commons/commons-logging.jar"/>
+        <include name="apache-commons/commons-beanutils.jar"/>
+        <include name="hibernate/entitymanager/hibernate-entitymanager.jar"/>
+        <include name="hibernate/entitymanager/hibernate-annotations.jar"/>
+    	
+	    <include name="msh/util-voc/msh-util-voc.jar"/>
+	    <include name="rhino/js.jar"/>
+	    <include name="asm/asm-3.0.jar"/>
+    	
+    </fileset>
+
+
+    <!--
+    -   Компиляция
+    -   compile.fileset - список дополнительных библиотек
+    -->
+    <target name="compile">
+        <path id="compile.classpath">
+            <fileset refid="compile.thirdparty.fileset"/>
+            <fileset refid="ecom.lib.fileset"/>
+            <fileset refid="compile.fileset"/>
+        </path>
+
+        <fileset id="compile.junit.fileset" dir="${libdir}/">
+            <include name='junit/junit.jar'/>
+        </fileset>
+
+        <path id="compile.junit.classpath">
+            <fileset refid="compile.junit.fileset"/>
+        </path>
+
+        <mkdir dir="./target/classes"/>
+        <javac destdir="./target/classes" encoding="utf-8" debug="true">
+            <src path="./src/main/java"/>
+            <src path="./src/test/java"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="compile.junit.classpath"/>
+        </javac>
+    </target>
+
+    <!--
+    -   Сборка библиотек
+    -   compile.fileset - список дополнительных библиотек
+    -->
+    <target name="package">
+        <!--<delete file="./target/${appname}-ejb.jar" />-->
+        <delete file="./target/${appname}-app.ear" />
+
+        <ant target="ejb.jar" />
+
+        <!--
+        <jar destfile="./target/${appname}-ejb.jar">
+            <fileset dir="./target/classes">
+                <include name='ru/**/*' />
+            </fileset>
+            <fileset dir='src/main/resources/${appname}-ejb_jar' />
+
+            <fileset refid="ecom.lib.fileset" />
+            <fileset refid="package.thirdparty.fileset" />
+            <fileset refid="package.fileset" />
+        </jar>
+        -->
+
+        <delete file="./target/${appname}-ejb-api.jar" />
+        <jar destfile="./target/${appname}-ejb-api.jar" compress="false">
+            <fileset dir="./target/classes" >
+                <include name='**/*.class' />
+                <exclude name='**/*Bean.class' />
+            </fileset>
+        </jar>
+
+        <delete file="./target/${appname}-ejb-api-src.zip" />
+        <jar destfile="./target/${appname}-ejb-api-src.zip" compress="false">
+            <fileset dir="./src/main/java">
+                <include name='**/*.java' />
+            </fileset>
+        </jar>
+
+        <jar file="./target/${appname}-app.ear" compress="false">
+            <fileset file="./target/${appname}-ejb.jar"/>
+            <fileset dir='./src/main/resources/ear'>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="deploy" depends="">
+        <delete file="${jboss_deploy}/${appname}-ejb.jar" failonerror="true"/>
+        <delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/>
+        <!--<delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/> -->
+        
+        <copy overwrite="true" todir="${jboss_deploy}" file="./target/${appname}-app.ear" />
+        <!--<copy overwrite="true" todir="${jboss_deploy}" file="./target/${appname}-app.ear" />-->
+        
+    	<delete file="${jboss_postgres_deploy}/${appname}-ejb.jar" failonerror="true"/>
+        <delete file="${jboss_postgres_deploy}/${appname}-app.ear" failonerror="false"/>
+        <!--<delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/> -->
+        
+        <copy overwrite="true" todir="${jboss_postgres_deploy}" file="./target/${appname}-app.ear" />
+        <!--<copy overwrite="true" todir="${jboss_deploy}" file="./target/${appname}-app.ear" />-->
+
+
+		<delete dir='${libdir}/${dirname}/ejb' />
+	
+        <delete file="${libdir}/${dirname}/ejb/${appname}-ejb-api.jar" />
+        <copy overwrite="true" tofile="${libdir}/${dirname}/ejb/${appname}-ejb-api.jar" file="./target/${appname}-ejb-api.jar" />
+        <delete file="${libdir}/${dirname}/ejb/${appname}-ejb-api-src.zip" />
+        <copy overwrite="true" tofile="${libdir}/${dirname}/ejb/${appname}-ejb-api-src.zip" file="./target/${appname}-ejb-api-src.zip" />
+
+
+        <delete dir="${libdir}/${dirname}/ejb/services" />
+        <copy todir="${libdir}/${dirname}/ejb/services" overwrite="true">
+            <fileset dir="./target/classes" >
+                <include name='ru/**/*ServiceBean.class' />
+            </fileset>
+            <fileset dir='src/main/resources/${appname}-ejb_jar'>
+                <include name='**/voc-*.xml' />
+            </fileset>
+        </copy>
+
+    </target>
+
+
+</project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Создание библиотеки
+  - src/main/java - основной код
+  - src/test/java - тесты
+  -->
+<project name="lib-skeleton" default="" basedir=".">
+	
+	<property name="ant-support.prefix.dir" value="../.."/>
+
+
+    <target name="package">
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="package"/>
+    </target>
+
+    <target name="deploy" depends="package">
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="deploy"/>
+    </target>
+
+    <target name="compile">
+        <ant inheritrefs="true" inheritall="true" antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="compile"/>
+    </target>
+
+    <target name="clean">
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="clean"/>
+    </target>
+
+    <target name="all" depends="clean,compile,package,deploy" />
+
+</project>

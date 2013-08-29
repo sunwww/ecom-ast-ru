@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Создание библиотеки
+  - src/main/java - основной код
+  - src/test/java - тесты
+  -->
+<project name="lib-support" default="" basedir=".">
+
+    <!-- Упаковка в архивы
+      - appname - название библиотеки
+      -->
+    <target name="package">
+        <delete file="./target/${appname}.jar"/>
+        <jar destfile="./target/${appname}.jar">
+            <fileset dir="./target/classes">
+                <include name='**/*.class'/>
+                <include name='**/*.tld'/>
+                <exclude name='test/**/*.class'/>
+            </fileset>
+        </jar>
+
+        <delete file="./target/${appname}-src.zip"/>
+        <jar destfile="./target/${appname}-src.zip">
+            <fileset dir="./src/main/java">
+                <include name='**/*.java'/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!--
+      -   Копирование в общий репозиторий
+      -   appname - название библиотеки           (ecom-alg)
+      -   dirname - в каком каталоге будет лежать (ecom/alg)
+      -->
+    <target name="deploy" depends="package">
+
+        <delete     file = "${libdir}/${dirname}/${appname}.jar"/>
+
+        <copy  overwrite = "true"
+                  tofile = "${libdir}/${dirname}/${appname}.jar"
+                    file = "./target/${appname}.jar"/>
+
+        <delete     file = "${libdir}/${dirname}/${appname}-src.zip"/>
+
+        <copy overwrite  = "true"
+                  tofile = "${libdir}/${dirname}/${appname}-src.zip"
+                    file = "./target/${appname}-src.zip"/>
+    </target>
+
+    <!--
+    -   Компиляция
+    -   compile.fileset - список библиотек
+    -->
+    <target name="compile">
+        <path id="compile.classpath">
+            <fileset refid="compile.fileset"/>
+        </path>
+
+        <fileset id="compile.junit.fileset" dir="${libdir}/">
+            <include name='junit/junit.jar' />
+        </fileset>
+
+        <path id="compile.junit.classpath">
+            <fileset refid="compile.junit.fileset"/>
+        </path>
+
+        <mkdir dir="./target/classes" />
+        <javac destdir="./target/classes" encoding="utf-8" debug="true">
+            <src path="./src/main/java"/>
+            <src path="./src/test/java"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="compile.junit.classpath"/>
+        </javac>
+    </target>
+
+    <target name="clean">
+        <delete dir="./target" />
+    </target>
+    
+</project>
