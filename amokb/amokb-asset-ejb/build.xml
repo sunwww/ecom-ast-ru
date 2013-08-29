@@ -2,7 +2,7 @@
 <project name="asset-ejb" default="deploy" basedir=".">
 
 	<property name="appname" value="asset" />
-	<property name='dirname' value="ecom/asset" />
+	<property name='dirname' value="ecom/${appname}" />
 
 	<import file="../../../ecom/ant-support/property-skeleton.xml" />
 
@@ -33,7 +33,7 @@
 
 		<mkdir dir="target/classes/META-INF" />
 		<persxml
-			inputXml='src/main/resources/asset-ejb_jar/META-INF/persistence.xml'
+			inputXml='src/main/resources/${appname}-ejb_jar/META-INF/persistence.xml'
 			outputXml='target/classes/META-INF/persistence.xml'>
 		</persxml>
 	</target>
