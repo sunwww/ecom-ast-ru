@@ -2,7 +2,7 @@
 <project name="persdata-ejb" default="deploy" basedir=".">
 
 	<property name="appname" value="persdata" />
-	<property name='dirname' value="ecom/persdata" />
+	<property name='dirname' value="ecom/${appname}" />
 
 	<import file="../../../ecom/ant-support/property-skeleton.xml" />
 
@@ -33,7 +33,7 @@
 
 		<mkdir dir="target/classes/META-INF" />
 		<persxml
-			inputXml='src/main/resources/persdata-ejb_jar/META-INF/persistence.xml'
+			inputXml='src/main/resources/${appname}-ejb_jar/META-INF/persistence.xml'
 			outputXml='target/classes/META-INF/persistence.xml'>
 		</persxml>
 	</target>
