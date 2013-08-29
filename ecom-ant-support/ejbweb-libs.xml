@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+	Библиотеки EJB
+  -->
+<project name="ejb-libs" default="" basedir=".">
+
+    <!-- EJB WEB -->
+    <fileset id='ejbweb.ejb.services' dir="${libdir}/ecom/ejbweb/ejb/services">
+        <include name='**/*ServiceBean.class' />
+    </fileset>
+    <fileset id='ejbweb.ejb.jar' file='${libdir}/ecom/ejbweb/ejb/ecom-ejb-api.jar'/>
+
+    <fileset id='ejbweb.web.webapp' dir="${libdir}/ecom/ejbweb/web/webapp">
+        <include name='**/*'/>
+    </fileset>
+    <fileset id='ejbweb.web.jar' file="${libdir}/ecom/expomc/web/ecom-web.jar"/>
+
+    <!-- RIAMS -->
+    <fileset id='riams.ejb.services' dir="${libdir}/ecom/riams/ejb/services">
+        <include name='**/*ServiceBean.class' />
+        <include name='**/*.xml' />
+    </fileset>
+
+    <fileset id='riams.ejb.jar' file='${libdir}/ecom/riams/ejb/riams-ejb-api.jar'/>
+    <fileset id='asset.ejb.jar' file='${libdir}/ecom/asset/ejb/asset-ejb-api.jar'/>
+    <fileset id='riams.web.webapp' dir="${libdir}/ecom/riams/web/webapp">
+        <include name='**/*'/>
+    </fileset>
+
+    <fileset id='riams.web.jar' file="${libdir}/ecom/riams/web/riams-web.jar"/>
+
+    <!-- STAT -->
+    <fileset id='stat.ejb.services' dir="${libdir}/ecom/stat/ejb/services">
+        <include name='**/*ServiceBean.class' />
+        <include name='**/*.xml' />
+    </fileset>
+    <fileset id='stat.ejb.jar' file='${libdir}/ecom/stat/ejb/stat-ejb-api.jar'/>
+
+    <fileset id='stat.web.webapp' dir="${libdir}/ecom/stat/web/webapp">
+        <include name='**/*'/>
+    </fileset>
+
+    <fileset id='stat.web.jar' file="${libdir}/ecom/stat/web/stat-web.jar"/>
+
+</project>
