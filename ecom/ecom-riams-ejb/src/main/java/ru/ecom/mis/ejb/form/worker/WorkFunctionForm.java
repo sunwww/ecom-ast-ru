@@ -4,6 +4,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -207,5 +208,14 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** Экстренность */
 	private Boolean theEmergency;
+	
+	/** Категория специалиста */
+	@Comment("Категория специалиста")
+	@Persist
+	public Long getCategory() {return theCategory;}
+	public void setCategory(Long aCategory) {theCategory = aCategory;}
+
+	/** Категория специалиста */
+	private Long theCategory;
 }
 
