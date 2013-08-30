@@ -53,7 +53,7 @@ function onPreCreate(aForm, aContext) {
     
 	//throw "timeC="+timeC+"; timeO="+timeO ;
 	errorThrow(list,"В базе уже существует направление на ВК от "+orderDate+" по пациенту") ;
-	checkOrderDate(orderDate,new java.sql.Date(date.getTime()));
+	checkOrderDate(orderDate,new java.sql.Date(new java.util.Date().getTime()));
 }
 function checkOrderDate(aOrderDate,aCreateDate) {
     var orderDateCal = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aOrderDate);
