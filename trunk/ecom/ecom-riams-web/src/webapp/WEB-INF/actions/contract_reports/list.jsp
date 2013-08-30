@@ -25,6 +25,9 @@
 				<msh:textField property="dateTo" label="по"/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="nationality" fieldColSpan="4" label="Гражданство" vocName="omcOksm" horizontalFill="true"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="operator" fieldColSpan="4" label="Оператор" vocName="workFunction" horizontalFill="true"/>
 				</msh:row>
         <msh:row>
@@ -37,6 +40,9 @@
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="3"> реестр
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="4"> гражданству
 	        </td>
         </msh:row>				
         <msh:row>
@@ -84,6 +90,14 @@
    			request.setAttribute("groupGroup", "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
        		request.setAttribute("groupGroupNext", "3") ;
    			request.setAttribute("groupOrder", "wp.lastname") ;
+		} else if (typeGroup.equals("4")) {
+			// Группировка по гражданству
+   			request.setAttribute("groupSql", "vn.name") ;
+   			request.setAttribute("groupSqlId", "'&nationality='||vn.id") ;
+   			request.setAttribute("groupName", "Гражданство") ;
+   			request.setAttribute("groupGroup", "vn.id,vn.name") ;
+       		request.setAttribute("groupGroupNext", "3") ;
+   			request.setAttribute("groupOrder", "vn.name") ;
 		/*} else if (typeGroup.equals("3")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
@@ -102,8 +116,9 @@
 		}
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("medService","pms.id", request) ;
+		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		%>
-		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2"))) {%>
+		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4"))) {%>
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
@@ -115,6 +130,7 @@ FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -123,6 +139,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
+${nationalitySql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
@@ -152,6 +169,7 @@ FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -159,7 +177,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql}
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename
 			"/>

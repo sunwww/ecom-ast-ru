@@ -164,7 +164,7 @@ if (date!=null && !date.equals("")) {
 	    <ecom:webQuery name="journal_priem" nativeSql="select 
 	    slo.id
 	    ,ss.code as sscode
-	    ,pat.lastname||' '||pat.middlename||' '||pat.firstname||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
+	    ,pat.lastname||' '||pat.middlename||' '||coalesce(pat.firstname,'')||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
 	    ,
 	    vbst.name as vbstname,case when vss.id!=vss1.id then '<font color=red>'||vss1.name||'</font>' else vss.name end as vssname
 	,case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime

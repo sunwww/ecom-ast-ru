@@ -25,6 +25,9 @@
 				<msh:textField property="dateTo" label="по"/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="nationality" fieldColSpan="4" label="Гражданство" vocName="omcOksm" horizontalFill="true"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="operator" fieldColSpan="4" label="Оператор" vocName="workFunction" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
@@ -90,6 +93,7 @@
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
 		ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
+		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		%>
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
@@ -125,6 +129,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+${nationalitySql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
@@ -185,6 +190,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+${nationalitySql}
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename
 			"/>

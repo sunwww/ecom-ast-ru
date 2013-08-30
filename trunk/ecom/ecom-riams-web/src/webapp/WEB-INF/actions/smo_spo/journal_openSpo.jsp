@@ -188,7 +188,7 @@ select spo.id,spo.dateStart
   	function spoClosedCurrentDate() {
   		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
         if (ids) {
-            window.location = 'js-smo_spo-spoClosedCurrentDate.do?' + ids;
+            window.location = 'js-smo_spo-spoClosedCurrentDate.do?' + ids+'&curator=${curator}&department=${department}';
         } else {
             alert("Нет выделенных СПО");
         }
@@ -196,7 +196,7 @@ select spo.id,spo.dateStart
   	function sloClosedDateLastVisit() {
   		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
         if (ids) {
-            window.location = 'js-smo_spo-spoClosedDateLastVisit.do?' + ids;
+            window.location = 'js-smo_spo-spoClosedDateLastVisit.do?' + ids+'&curator=${curator}&department=${department}';
         } else {
             alert("Нет выделенных СПО");
         }

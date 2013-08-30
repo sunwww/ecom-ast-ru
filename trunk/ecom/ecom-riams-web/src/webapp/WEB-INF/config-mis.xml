@@ -5,6 +5,10 @@
 <struts-config>
 
 	<form-beans>
+		<!-- Доп.диспансеризация -->
+		<form-bean name="extDisp_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispCardForm" />
+	
+	
         <form-bean name="mis_customMessageForm" type="ru.ecom.ejb.form.message.CustomMessageForm" />
         <form-bean name="mis_helpForm" type="ru.ecom.mis.web.action.util.HelpForm" />
         <form-bean name="smo_draftProtocolForm" type="ru.ecom.mis.ejb.form.medcase.RoughDraftForm" />
