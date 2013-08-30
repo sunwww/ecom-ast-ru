@@ -20,7 +20,8 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Comment("Случай поликлинического обслуживания")
 @EntityForm
 @EntityFormPersistance(clazz= PolyclinicMedCase.class)
-@WebTrail(comment = "Случай поликлинического обслуживания", nameProperties= "id", view="entityParentView-smo_spo.do")
+@WebTrail(comment = "Случай поликлинического обслуживания", nameProperties= "id"
+, view="entityParentView-smo_spo.do",shortList="entityParentList-smo_spo.do?short=Short",list="entityParentList-smo_spo.do")
 @Parent(property="patient", parentForm= PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Spo")
 public class PolyclinicMedCaseForm extends MedCaseForm {
