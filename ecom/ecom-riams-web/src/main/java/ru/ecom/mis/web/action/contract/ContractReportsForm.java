@@ -36,6 +36,12 @@ public class ContractReportsForm extends BaseValidatorForm{
 	public Long getPriceMedService() {return thePriceMedService;}
 	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
 
+	/** Гражданство */
+	public Long getNationality() {return theNationality;}
+	public void setNationality(Long aNationality) {theNationality = aNationality;}
+
+	/** Гражданство */
+	private Long theNationality;
 	/** Услуга по прейскуранту */
 	private Long thePriceMedService;
 	/** Фильтр по коду */

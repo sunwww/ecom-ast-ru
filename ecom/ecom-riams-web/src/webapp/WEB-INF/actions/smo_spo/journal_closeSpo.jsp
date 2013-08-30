@@ -22,6 +22,7 @@
   <tiles:put name="body" type="string">
   <%
 	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","3", request) ;
+	String typeCntVisit =ActionUtil.updateParameter("Report_CloseSpo","typeCntVisit","3", request) ;
   String shortParam = request.getParameter("short") ;
   if (shortParam==null || !shortParam.equals("Short")) {
   %>
@@ -32,7 +33,7 @@
       </msh:row>
  
      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по МКБ (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">МКБ:</label></td>
+        <td class="label" title="Просмотр (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отчет:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1">  2 и более случаев
         </td>
@@ -41,6 +42,18 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="3">  реестр СПО
+        </td>
+        </msh:row>
+     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Просмотр СПО (typeCntVisit)" colspan="1"><label for="typeCntVisitName" id="typeCntVisitLabel">Кол-во посещ. в СПО:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeCntVisit" value="1">  2 и более посещ.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeCntVisit" value="2">  1 посещ.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeCntVisit" value="3">  все СПО
         </td>
         </msh:row>
         <msh:row>
@@ -133,8 +146,13 @@
         	String curator = request.getParameter("specialist") ;
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
         	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
-
- 
+        	if (typeCntVisit.equals("1")) {
+        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>1") ;
+        	} else if (typeCntVisit.equals("2")){
+        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))=1") ;
+        	} else {
+        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>0") ;
+        	}
         	int type=0 ;
         	if (curator!=null && !curator.equals("0")&& !curator.equals("")) {
         		type=3 ;
@@ -162,11 +180,6 @@
        		}
        		request.setAttribute("department", department) ;
        		request.setAttribute("curator", curator) ;
-       		//out.print("Type="+type) ;
-       		//out.print(" isViewAllDepartment="+isViewAllDepartment) ;
-       		//out.print(" isBossDepartment="+isBossDepartment) ;
-       		//out.print(" curator="+curator) ;
-       		//out.print(" department="+department) ;
        	%>
         	    
     <%if (type==1) { %>
@@ -183,6 +196,7 @@
 	where spo.dtype='PolyclinicMedCase' 
 	and spo.dateFinish between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 	${additionWhereSql} ${serviceStreamSql}
+	${typeCntVisitSql}
 	group by ml.id,ml.name order by ml.name" 
 	/>
     <msh:table name="datelist" 
@@ -217,7 +231,7 @@ ${additionJoinSql}
 where spo.dtype='PolyclinicMedCase' 
 and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
  and ow.lpu_id='${department}'
- ${additionWhereSql} 
+ ${additionWhereSql}  ${typeCntVisitSql}
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -262,7 +276,7 @@ select spo.id,spo.dateStart,spo.dateFinish
  and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
      and spo.DTYPE='PolyclinicMedCase' 
      and   ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
- ${additionWhereSql} 
+ ${additionWhereSql} ${typeCntVisitSql}
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart
@@ -300,6 +314,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     //checkFieldUpdate('typeSwod','${typeSwod}',2,1) ;
     //checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typeView','${typeView}',3) ;
+    checkFieldUpdate('typeCntVisit','${typeCntVisit}',3) ;
     //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
     //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
     
