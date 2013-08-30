@@ -147,11 +147,11 @@
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
         	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
         	if (typeCntVisit.equals("1")) {
-        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>1") ;
+        		request.setAttribute("typeCntVisitSql", " and (select count(visD.id) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>1") ;
         	} else if (typeCntVisit.equals("2")){
-        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))=1") ;
+        		request.setAttribute("typeCntVisitSql", " and (select count(visD.id) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))=1") ;
         	} else {
-        		request.setAttribute("typeCntVisitSql", " and (select count(visD) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>0") ;
+        		request.setAttribute("typeCntVisitSql", "") ;
         	}
         	int type=0 ;
         	if (curator!=null && !curator.equals("0")&& !curator.equals("")) {
