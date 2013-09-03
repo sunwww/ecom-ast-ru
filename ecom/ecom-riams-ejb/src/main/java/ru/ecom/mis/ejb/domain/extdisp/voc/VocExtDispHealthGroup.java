@@ -18,7 +18,6 @@ public class VocExtDispHealthGroup extends VocBaseEntity{
 	 * Номер строки карты дополнительной диспансеризации
 	 */
 	@Comment("Номер строки карты дополнительной диспансеризации")
-	
 	public String getCardStringNumber() {
 		return theCardStringNumber;
 	}
@@ -34,12 +33,8 @@ public class VocExtDispHealthGroup extends VocBaseEntity{
 	 */
 	@Comment("Тип дополнительной диспансеризации")
 	@OneToOne
-	public VocExtDisp getDispType() {
-		return theDispType;
-	}
-	public void setDispType(VocExtDisp aDispType) {
-		theDispType = aDispType;
-	}
+	public VocExtDisp getDispType() {return theDispType;}
+	public void setDispType(VocExtDisp aDispType) {theDispType = aDispType;}
 	/**
 	 * Тип дополнительной диспансеризации
 	 */
