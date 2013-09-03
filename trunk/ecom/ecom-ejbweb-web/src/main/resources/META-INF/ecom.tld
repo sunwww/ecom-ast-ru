@@ -10,6 +10,53 @@
     <uri>http://www.ecom-ast.ru/tags/ecom</uri>
 
     <tag>
+        <description>CheckBox Group</description>
+        <display-name>CheckBoxGroup</display-name>
+        <name>checkGroup</name>
+        <tag-class>ru.ecom.web.tags.CheckGroupTag</tag-class>
+        <body-content>scriptless</body-content>
+
+        <attribute>
+            <description>Название таблицы</description>
+            <name>tableName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Свойство формы</description>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>заголовок</description>
+            <name>label</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Query Id</description>
+            <name>tableId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Query Name</description>
+            <name>tableField</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+
+        <attribute>
+            <description>GUID</description>
+            <name>guid</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        
+    </tag>
+    <tag>
         <description>Entity Web Trail</description>
         <display-name>Entity Web Trail</display-name>
         <name>titleTrail</name>
