@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispVisit;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,9 +13,9 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExtDispVisit.class)
 @Comment("Визит по дополнительной диспансеризации")
 @WebTrail(comment = "Визит по дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispVisit.do", view="entityParentView-extdisp_extDispVisit.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ExtDispVisitForm extends IdEntityForm{
+@Parent(property="card", parentForm=ExtDispCardForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
+public class ExtDispVisitForm extends ExtDispServiceForm {
 	/**
 	 * Подозрение на ранее перенесенное нарушение мозгового кровообращения (suspicion on earlier transferred disturbance of a cerebral circulation)
 	 */

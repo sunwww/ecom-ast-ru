@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
+import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,8 +17,9 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormPersistance(clazz = ExtDispService.class)
 @Comment("Медицинская услуга по дополнительной диспансеризации")
 @WebTrail(comment = "Медицинская услуга по дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispService.do", view="entityParentView-extdisp_extDispService.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@Parent(property="card", parentForm=ExtDispCardForm.class)
+@Subclasses(value = { ExtDispVisitForm.class, ExtDispExamForm.class })
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
 public class ExtDispServiceForm extends IdEntityForm{
 	/**
 	 * Карта дополнительной диспансеризации

@@ -14,23 +14,16 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = ExtDispPlan.class)
 @Comment("План дополнительной диспансеризации")
-@WebTrail(comment = "План дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispPlan.do", view="entityParentView-extdisp_extDispPlan.do")
+@WebTrail(comment = "План дополнительной диспансеризации", nameProperties= "id"
+, list="entityParentList-extDisp_vocPlan.do", view="entityParentView-extDisp_vocPlan.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
-@EntityFormSecurityPrefix("/Policy/Mis/ExpDisp/Voc/Plan")
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/Plan")
 public class ExtDispPlanForm extends IdEntityForm{
-	/**
-	 * Тип дополнительной диспансеризации
-	 */
+	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
 	@Persist
-	public Long getDispType() {
-		return theDispType;
-	}
-	public void setDispType(Long aDispType) {
-		theDispType = aDispType;
-	}
-	/**
-	 * Тип дополнительной диспансеризации
-	 */
+	public Long getDispType() {return theDispType;}
+	public void setDispType(Long aDispType) {theDispType = aDispType;}
+	/** Тип дополнительной диспансеризации */
 	private Long theDispType;
 }

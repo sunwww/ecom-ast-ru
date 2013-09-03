@@ -14,20 +14,16 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExtDispServiceIndication.class)
 @Comment("Показание к услуге дополнительной диспансеризации")
 @WebTrail(comment = "Показание к услуге дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispServiceIndication.do", view="entityParentView-extdisp_extDispServiceIndication.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@Parent(property="visit", parentForm=ExtDispVisitForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
 public class ExtDispServiceIndicationForm extends IdEntityForm{
 	/**
 	 * Визит
 	 */
 	@Comment("Визит")
 	@Persist
-	public Long getVisit() {
-		return theVisit;
-	}
-	public void setVisit(Long aVisit) {
-		theVisit = aVisit;
-	}
+	public Long getVisit() {return theVisit;}
+	public void setVisit(Long aVisit) {theVisit = aVisit;}
 	/**
 	 * Визит
 	 */

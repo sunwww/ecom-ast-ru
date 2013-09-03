@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispExam;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,9 +13,9 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExtDispExam.class)
 @Comment("Исследование по дополнительной диспансеризации")
 @WebTrail(comment = "Исследование по дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispExam.do", view="entityParentView-extdisp_extDispExam.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ExtDispExamForm extends IdEntityForm{
+@Parent(property="card", parentForm=ExtDispCardForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
+public class ExtDispExamForm extends ExtDispServiceForm {
 	/**
 	 * Выявлена патология
 	 */
