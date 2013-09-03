@@ -11,39 +11,51 @@
 			<msh:hidden property="patient" />
 			<msh:panel>
 				<msh:row>
-					<msh:autoComplete property="lpu" label="ЛПУ" vocName="misLpu" horizontalFill="true" />
+					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" fieldColSpan="3" />
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="socilaGroup" label="Социальная группа" vocName="vocExtDispSocialGroup" horizontalFill="true" />
+					<msh:autoComplete property="socilaGroup" label="Социальная группа" vocName="vocExtDispSocialGroup" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="dispType" label="Тип дополнительной диспансеризации" vocName="vocExtDisp" horizontalFill="true" />
-				</msh:row>
-				<msh:row>
-					<msh:checkBox property="onDeparture" label="На выезде"/>
-					<msh:checkBox property="hospitalized" label="Госпитализирован"/>
+					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
 					<msh:textField property="finishDate" label="Дата окончания"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="healthGroup" label="Группа здоровья дополнительной диспансеризации" vocName="vocExtDispHealthGroup" horizontalFill="true" />
+					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:checkBox property="isSmallNation" label="Принадлежность к коренным малочисленным народам Севера, Сибири и Дальнего Востока РФ"/>
-					<msh:checkBox property="isTreatment" label="Назначено лечение"/>
+					<msh:checkBox property="onDeparture" label="На выезде"/>
+					<msh:checkBox property="hospitalized" label="Госпитализирован"/>
 				</msh:row>
 				<msh:row>
-					<msh:checkBox property="isSpecializedCare" label="Дано направление  для  получения  специализированной,  в  том  числе ВМП"/>
-					<msh:checkBox property="isObservation" label="Взят на диспансерное наблюдение"/>
+					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroup" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:checkBox property="isSanatorium" label="Дано направление на санаторно-курортное лечение"/>
-					<msh:checkBox property="isDiagnostics" label="Назначена дополнительное диагностическое исследование"/>
+					<msh:checkBox property="isServiceIndication" label="Направлен на след. этап" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" />
+					<msh:checkBox property="isSmallNation" label="Принадлежность к коренным малочисленным народам Севера, Сибири и Дальнего Востока РФ" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isTreatment" label="Назначено лечение" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isSpecializedCare" label="Дано направление  для  получения  специализированной,  в  том  числе ВМП" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isObservation" label="Взят на диспансерное наблюдение" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isSanatorium" label="Дано направление на санаторно-курортное лечение" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isDiagnostics" label="Назначена дополнительное диагностическое исследование" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<ecom:checkGroup label="Риски" tableName="VocExtDispRisk" tableField="name" tableId="id" property="risks"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
