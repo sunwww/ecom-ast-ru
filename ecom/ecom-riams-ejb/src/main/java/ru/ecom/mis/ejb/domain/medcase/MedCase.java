@@ -43,7 +43,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
     @AIndex(properties="parent"),
     @AIndex(properties="patient"),
-    @AIndex(properties={"patient","dateStart","noActuality"}),
     @AIndex(properties="dateStart")
     }) 
 @EntityListeners(DeleteListener.class)
