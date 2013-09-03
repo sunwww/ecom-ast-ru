@@ -67,12 +67,6 @@
 					<msh:tableColumn columnName="id" property="id"/>
 				</msh:table>
 			</msh:section>
-			<msh:section title="Риски здоровью">
-			<ecom:parentEntityListAll formName="extDisp_cardForm" attribute="risks" />
-				<msh:table name="risks" action="entityParentView-extdisp_extDispRisk.do" idField="id">
-					<msh:tableColumn columnName="id" property="id"/>
-				</msh:table>
-			</msh:section>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
