@@ -162,7 +162,8 @@
     , list(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else '' end) as diag
 	, count(soHosp.id)+count(soDep.id) as cntOper
 	, list(to_char(soDep.operationDate,'dd.mm.yyyy')|| '-'||voDep.code|| ' '||voDep.name) ||' ' ||list(to_char(soHosp.operationDate,'dd.mm.yyyy')|| '-'||voHosp.code|| ' '||voHosp.name)
-	, d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname  
+	, d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname
+	, coalesce(oml.name,'') as omlname1,coalesce(vof.name,'') as whomOrder1  
     from MedCase as hmc
    	left join diagnosis diag on diag.medcase_id=hmc.id
    	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
@@ -186,6 +187,10 @@
     left join SurgicalOperation soDep on soDep.medCase_id=admc.id
     left join MedService voDep on soDep.medService_id=voDep.id
     left join Omc_Oksm ok on pat.nationality_id=ok.id
+    
+    left join MisLpu oml on oml.id=hmc.orderLpu_id
+    left join Omc_Frm vof on vof.id=hmc.orderType_id
+    
     where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -199,7 +204,7 @@
     
     group by hmc.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday
     ,vpat.name,hmc.dateFinish,hmc.dateStart,hmc.emergency,vht.code,ss.code
-    ,d.name,d.isNoOmc,pd.name
+    ,d.name,d.isNoOmc,pd.name, oml.name,vof.name
     ${hav} ${addOperation}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list"
@@ -218,6 +223,8 @@
             <msh:tableColumn columnName="Диагноз" property="10"/>
             <msh:tableColumn columnName="Кол-во операций" property="11"/>
             <msh:tableColumn columnName="Операции" property="12"/>
+            <msh:tableColumn columnName="Кем направлен" property="14"/>
+            <msh:tableColumn columnName="Кем доставлен" property="15"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
