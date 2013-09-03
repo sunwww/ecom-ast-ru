@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.medos.ejb.persdata.domain.ExternalCarrier;
 import ru.medos.ejb.persdata.domain.voc.VocPersonalizationDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 

@@ -5,6 +5,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import ru.medos.ejb.persdata.domain.ComingDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**

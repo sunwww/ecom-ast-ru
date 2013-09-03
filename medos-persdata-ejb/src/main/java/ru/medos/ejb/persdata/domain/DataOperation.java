@@ -3,6 +3,8 @@ package ru.medos.ejb.persdata.domain;
 import java.sql.Date;
 import java.sql.Time;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -34,7 +36,7 @@ public class DataOperation extends BaseEntity{
 	 * Пользователь
 	 */
 	@Comment("Пользователь")
-	@OneToOne
+	@ManyToOne
 	public SecUser getUser() {
 		return theUser;
 	}
@@ -60,21 +62,6 @@ public class DataOperation extends BaseEntity{
 	 * Имя класса данных
 	 */
 	private String theClassName;
-	/**
-	 * ИД данных
-	 */
-	@Comment("ИД данных")
-	@OneToOne
-	public JournalData getDataId() {
-		return theDataId;
-	}
-	public void setDataId(JournalData aDataId) {
-		theDataId = aDataId;
-	}
-	/**
-	 * ИД данных
-	 */
-	private JournalData theDataId;
 	/**
 	 * Дата операции
 	 */
@@ -105,4 +92,19 @@ public class DataOperation extends BaseEntity{
 	 * Время операции
 	 */
 	private Time theOperationTime;
+	/**
+	 * ИД данных
+	 */
+	@Comment("ИД данных")
+	
+	public Long getDataId() {
+		return theDataId;
+	}
+	public void setDataId(Long aDataId) {
+		theDataId = aDataId;
+	}
+	/**
+	 * ИД данных
+	 */
+	private Long theDataId;
 }

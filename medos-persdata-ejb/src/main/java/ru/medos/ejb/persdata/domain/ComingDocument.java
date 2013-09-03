@@ -8,7 +8,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import ru.medos.ejb.persdata.domain.CopiesDestructionAct;
+import ru.medos.ejb.persdata.domain.CopiesTransferAct;
+import ru.medos.ejb.persdata.domain.DocumentFile;
+import ru.medos.ejb.persdata.domain.Identifier;
+import ru.medos.ejb.persdata.domain.Person;
 import ru.medos.ejb.persdata.domain.voc.VocComingDocument;
 import ru.medos.ejb.persdata.domain.voc.VocStateStructure;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -35,7 +39,7 @@ public class ComingDocument extends JournalData{
 	 * Персона
 	 */
 	private Person thePerson;
-	@OneToMany(mappedBy="comingDocument", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="document", cascade=CascadeType.ALL)
 	public List<DocumentFile> getFiles() {
 		return theFiles;
 	}

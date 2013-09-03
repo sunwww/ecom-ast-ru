@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import ru.medos.ejb.persdata.domain.CardTransferAct;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**

@@ -1,10 +1,7 @@
 package ru.medos.ejb.persdata.domain;
 
 import java.sql.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,17 +13,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class JournalData extends BaseEntity{
-	@OneToMany(mappedBy="data", cascade=CascadeType.ALL)
-	public List<DataOperation> getOperations() {
-		return theOperations;
-	}
-	public void setOperations(List<DataOperation> aOperations) {
-		theOperations = aOperations;
-	}
-	/**
-	 * Операции
-	 */
-	private List<DataOperation> theOperations;
 	/**
 	 * Дата начала актуальности
 	 */
@@ -72,4 +58,19 @@ public class JournalData extends BaseEntity{
 	 * Удалено
 	 */
 	private Boolean theIsDeleted;
+	/**
+	 * Последнее состояние
+	 */
+	@Comment("Последнее состояние")
+	
+	public Boolean getIsLast() {
+		return theIsLast;
+	}
+	public void setIsLast(Boolean aIsLast) {
+		theIsLast = aIsLast;
+	}
+	/**
+	 * Последнее состояние
+	 */
+	private Boolean theIsLast;
 }

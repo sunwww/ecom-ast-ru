@@ -5,6 +5,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import ru.medos.ejb.persdata.domain.IdentificationCard;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
@@ -14,7 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class CardTransferAct extends Act{
-	@OneToMany(mappedBy="cardTransferAct", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="act", cascade=CascadeType.ALL)
 	public List<IdentificationCard> getIdentificationCards() {
 		return theIdentificationCards;
 	}

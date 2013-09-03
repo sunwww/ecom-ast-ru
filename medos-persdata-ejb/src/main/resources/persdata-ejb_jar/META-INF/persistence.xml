@@ -1,6 +1,6 @@
 <persistence>
 	<persistence-unit name="mainManager" transaction-type="JTA">
-		<jta-data-source>java:/PersDataDS</jta-data-source>
+		<jta-data-source>java:/PersdataBaseDS</jta-data-source>
 		<exclude-unlisted-classes />
 		
 		<!-- LIVE -->
