@@ -1,5 +1,47 @@
 package ru.ecom.mis.ejb.form.extdisp.voc;
 
-public class VocExtDispAgeGroupForm {
+import ru.ecom.ejb.form.simple.IdEntityForm;
+import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Parent;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
+@EntityForm
+@EntityFormPersistance(clazz = VocExtDispAgeGroup.class)
+@Comment("Возрастные группы")
+@WebTrail(comment = "Возрастные группы", nameProperties= "id"
+, list="entityList-extDisp_vocAgeGroup.do"
+, view="entityView-extDisp_vocAgeGroup.do")
+@Parent(property="dispType", parentForm=VocExtDispForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/AgeGroup")
+public class VocExtDispAgeGroupForm extends IdEntityForm {
+	/** Вид доп. диспансеризации */
+	@Comment("Вид доп. диспансеризации")
+	@Persist
+	public Long getDispType() {return theDispType;}
+	public void setDispType(Long aDispType) {theDispType = aDispType;}
+
+	/** Наименование */
+	@Comment("Наименование")
+	@Persist
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+
+	/** Код */
+	@Comment("Код")
+	@Persist
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+
+	/** Код */
+	private String theCode;
+	/** Наименование */
+	private String theName;
+	/** Вид доп. диспансеризации */
+	private Long theDispType;
 }

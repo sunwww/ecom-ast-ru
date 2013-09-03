@@ -14,20 +14,16 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExtDispDiagnosis.class)
 @Comment("Диагноз дополнительной диспансеризации")
 @WebTrail(comment = "Диагноз дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispDiagnosis.do", view="entityParentView-extdisp_extDispDiagnosis.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@Parent(property="visit", parentForm=ExtDispVisitForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
 public class ExtDispDiagnosisForm extends IdEntityForm{
 	/**
 	 * Визит
 	 */
 	@Comment("Визит")
 	@Persist
-	public Long getVisit() {
-		return theVisit;
-	}
-	public void setVisit(Long aVisit) {
-		theVisit = aVisit;
-	}
+	public Long getVisit() {return theVisit;}
+	public void setVisit(Long aVisit) {theVisit = aVisit;}
 	/**
 	 * Визит
 	 */
@@ -37,12 +33,8 @@ public class ExtDispDiagnosisForm extends IdEntityForm{
 	 */
 	@Comment("МКБ")
 	@Persist
-	public Long getIdc() {
-		return theIdc;
-	}
-	public void setIdc(Long aIdc) {
-		theIdc = aIdc;
-	}
+	public Long getIdc() {return theIdc;}
+	public void setIdc(Long aIdc) {theIdc = aIdc;}
 	/**
 	 * МКБ
 	 */
@@ -52,12 +44,8 @@ public class ExtDispDiagnosisForm extends IdEntityForm{
 	 */
 	@Comment("Подозрение на заболевание")
 	@Persist
-	public Boolean getIsSuspicion() {
-		return theIsSuspicion;
-	}
-	public void setIsSuspicion(Boolean aIsSuspicion) {
-		theIsSuspicion = aIsSuspicion;
-	}
+	public Boolean getIsSuspicion() {return theIsSuspicion;}
+	public void setIsSuspicion(Boolean aIsSuspicion) {theIsSuspicion = aIsSuspicion;}
 	/**
 	 * Подозрение на заболевание
 	 */
@@ -67,12 +55,8 @@ public class ExtDispDiagnosisForm extends IdEntityForm{
 	 */
 	@Comment("Название")
 	@Persist
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
 	/**
 	 * Название
 	 */
