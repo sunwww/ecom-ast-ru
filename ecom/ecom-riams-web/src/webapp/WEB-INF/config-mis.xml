@@ -7,6 +7,11 @@
 	<form-beans>
 		<!-- Доп.диспансеризация -->
 		<form-bean name="extDisp_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispCardForm" />
+		<form-bean name="extDisp_vocForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispForm" />
+		<form-bean name="extDisp_vocHealthGroupForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispHealthGroupForm" />
+		<form-bean name="extDisp_vocAgeGroupForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispAgeGroupForm" />
+		<form-bean name="extDisp_vocPlanForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispPlanForm" />
+		<form-bean name="extDisp_vocPlanServiceForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispPlanServiceForm" />
 	
 	
         <form-bean name="mis_customMessageForm" type="ru.ecom.ejb.form.message.CustomMessageForm" />
