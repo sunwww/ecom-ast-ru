@@ -2,7 +2,11 @@ package ru.ecom.mis.ejb.form.extdisp;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
+import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.ticket.interceptors.TicketMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -19,6 +23,9 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)", nameProperties= "id", list="entityParentList-extDisp_card.do", view="entityParentView-extDisp_card.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card")
+@AViewInterceptors(
+        @AEntityFormInterceptor(ExtDispCardViewInterceptor.class)
+)
 public class ExtDispCardForm extends IdEntityForm{
 	/** Пациент */
 	@Comment("Пациент")
@@ -149,4 +156,21 @@ public class ExtDispCardForm extends IdEntityForm{
 	public void setIdcMain(Long aIdcMain) {theIdcMain = aIdcMain;}
 	/** МКБ основного диагноза */
 	private Long theIdcMain;
+	
+	/** Риски */
+	@Comment("Риски")
+	public String getRisks() {return theRisks;}
+	public void setRisks(String aRisks) {theRisks = aRisks;}
+
+	/** Риски */
+	private String theRisks;
+	
+	/** Направлен на след. этап */
+	@Comment("Направлен на след. этап")
+	@Persist
+	public Boolean getIsServiceIndication() {return theIsServiceIndication;}
+	public void setIsServiceIndication(Boolean aIsServiceIndication) {theIsServiceIndication = aIsServiceIndication;}
+
+	/** Направлен на след. этап */
+	private Boolean theIsServiceIndication;
 }
