@@ -7,6 +7,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import ru.medos.ejb.persdata.domain.ExternalCarrierDestructionAct;
+import ru.medos.ejb.persdata.domain.ExternalCarrierOperation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
@@ -32,16 +34,16 @@ public class ExternalCarrier extends JournalData{
 	 */
 	private String theExternalCarrierNumber;
 	@OneToMany(mappedBy="externalCarrier", cascade=CascadeType.ALL)
-	public List<DataOperation> getOperations() {
+	public List<ExternalCarrierOperation> getOperations() {
 		return theOperations;
 	}
-	public void setOperations(List<DataOperation> aOperations) {
+	public void setOperations(List<ExternalCarrierOperation> aOperations) {
 		theOperations = aOperations;
 	}
 	/**
 	 * Операции
 	 */
-	private List<DataOperation> theOperations;
+	private List<ExternalCarrierOperation> theOperations;
 	/**
 	 * Акт уничтожения внешних носителей
 	 */

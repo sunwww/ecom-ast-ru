@@ -7,7 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import ru.medos.ejb.persdata.domain.ComingDocument;
+import ru.medos.ejb.persdata.domain.ContactPerson;
+import ru.medos.ejb.persdata.domain.EmergencyIdentification;
+import ru.medos.ejb.persdata.domain.Identifier;
+import ru.medos.ejb.persdata.domain.OutgoingDocument;
+import ru.medos.ejb.persdata.domain.PersonalAddress;
+import ru.medos.ejb.persdata.domain.Phone;
 import ru.medos.ejb.persdata.domain.voc.VocNationality;
 import ru.medos.ejb.persdata.domain.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;

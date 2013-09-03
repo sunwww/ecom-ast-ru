@@ -5,6 +5,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import ru.medos.ejb.persdata.domain.ComingDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
@@ -14,7 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class CopiesTransferAct extends Act{
-	@OneToMany(mappedBy="copiesTransferAct", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="transferAct", cascade=CascadeType.ALL)
 	public List<ComingDocument> getComingDocuments() {
 		return theComingDocuments;
 	}

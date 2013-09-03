@@ -4,7 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import ru.medos.ejb.persdata.domain.Address;
+import ru.medos.ejb.persdata.domain.Person;
 import ru.medos.ejb.persdata.domain.voc.VocAddress;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
