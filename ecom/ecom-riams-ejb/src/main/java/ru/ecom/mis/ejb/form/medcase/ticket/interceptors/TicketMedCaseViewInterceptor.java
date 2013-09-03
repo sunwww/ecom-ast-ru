@@ -56,7 +56,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
     	}
 
 	}
-	private String  getArray(EntityManager aManager
+	public static String  getArray(EntityManager aManager
 			, String aTableName
 			, String aFieldChildren, String aWhere){
 		StringWriter out = new StringWriter();

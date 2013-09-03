@@ -152,4 +152,13 @@ public class ExtDispCard extends BaseEntity{
 	public void setIdcMain(VocIdc10 aIdcMain) {theIdcMain = aIdcMain;}
 	/** МКБ основного диагноза */
 	private VocIdc10 theIdcMain;
+	
+	/** Направлен на след. этап */
+	@Comment("Направлен на след. этап")
+	public Boolean getIsServiceIndication() {return theIsServiceIndication;}
+	public void setIsServiceIndication(Boolean aIsServiceIndication) {theIsServiceIndication = aIsServiceIndication;}
+
+	/** Направлен на след. этап */
+	private Boolean theIsServiceIndication;
+
 }
