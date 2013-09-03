@@ -16,34 +16,19 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ExtDispServiceIndication extends BaseEntity{
-	/**
-	 * Визит
-	 */
+	/** Визит */
 	@Comment("Визит")
 	@ManyToOne
-	public ExtDispVisit getVisit() {
-		return theVisit;
-	}
-	public void setVisit(ExtDispVisit aVisit) {
-		theVisit = aVisit;
-	}
-	/**
-	 * Визит
-	 */
+	public ExtDispVisit getVisit() {return theVisit;}
+	public void setVisit(ExtDispVisit aVisit) {theVisit = aVisit;}
+	/** Визит */
 	private ExtDispVisit theVisit;
-	/**
-	 * Тип услуги
-	 */
+	
+	/** Тип услуги */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocExtDispService getServiceType() {
-		return theServiceType;
-	}
-	public void setServiceType(VocExtDispService aServiceType) {
-		theServiceType = aServiceType;
-	}
-	/**
-	 * Тип услуги
-	 */
+	public VocExtDispService getServiceType() {return theServiceType;}
+	public void setServiceType(VocExtDispService aServiceType) {theServiceType = aServiceType;}
+	/** Тип услуги */
 	private VocExtDispService theServiceType;
 }

@@ -23,12 +23,8 @@ public class ExtDispPlanService extends BaseEntity{
 	 */
 	@Comment("План")
 	@ManyToOne
-	public ExtDispPlan getPlan() {
-		return thePlan;
-	}
-	public void setPlan(ExtDispPlan aPlan) {
-		thePlan = aPlan;
-	}
+	public ExtDispPlan getPlan() {return thePlan;}
+	public void setPlan(ExtDispPlan aPlan) {thePlan = aPlan;}
 	/**
 	 * План
 	 */
@@ -38,12 +34,8 @@ public class ExtDispPlanService extends BaseEntity{
 	 */
 	@Comment("Пол")
 	@OneToOne
-	public VocSex getSex() {
-		return theSex;
-	}
-	public void setSex(VocSex aSex) {
-		theSex = aSex;
-	}
+	public VocSex getSex() {return theSex;}
+	public void setSex(VocSex aSex) {theSex = aSex;}
 	/**
 	 * Пол
 	 */
@@ -53,12 +45,8 @@ public class ExtDispPlanService extends BaseEntity{
 	 */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocExtDispService getServiceType() {
-		return theServiceType;
-	}
-	public void setServiceType(VocExtDispService aServiceType) {
-		theServiceType = aServiceType;
-	}
+	public VocExtDispService getServiceType() {return theServiceType;}
+	public void setServiceType(VocExtDispService aServiceType) {theServiceType = aServiceType;}
 	/**
 	 * Тип услуги
 	 */
@@ -68,12 +56,8 @@ public class ExtDispPlanService extends BaseEntity{
 	 */
 	@Comment("Возрастная группа")
 	@OneToOne
-	public VocExtDispAgeGroup getAgeGroup() {
-		return theAgeGroup;
-	}
-	public void setAgeGroup(VocExtDispAgeGroup aAgeGroup) {
-		theAgeGroup = aAgeGroup;
-	}
+	public VocExtDispAgeGroup getAgeGroup() {return theAgeGroup;}
+	public void setAgeGroup(VocExtDispAgeGroup aAgeGroup) {theAgeGroup = aAgeGroup;}
 	/**
 	 * Возрастная группа
 	 */
@@ -83,12 +67,8 @@ public class ExtDispPlanService extends BaseEntity{
 	 */
 	@Comment("Визит")
 	
-	public Boolean getIsVisit() {
-		return theIsVisit;
-	}
-	public void setIsVisit(Boolean aIsVisit) {
-		theIsVisit = aIsVisit;
-	}
+	public Boolean getIsVisit() {return theIsVisit;}
+	public void setIsVisit(Boolean aIsVisit) {theIsVisit = aIsVisit;}
 	/**
 	 * Визит
 	 */
