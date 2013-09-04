@@ -13,7 +13,7 @@
 	</tiles:put>
 	<tiles:put name='body' type='string' >
 	<msh:section createRoles="/Policy/Mis/ExtDisp/Card/Create" createUrl="entityParentPrepareCreate-extDisp_card.do?id=${param.id}"
-		title="Список карта учета доп.диспансеризации (профосмотров)">
+		title="Список карт учета доп.диспансеризации (профосмотров)">
 		<ecom:webQuery name="list" nativeSql="
 		select edc.id as edcid,lpu.name as lpuname
 		,edc.hospitalized ,  vedsg.name as vedsgname

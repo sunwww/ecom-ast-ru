@@ -62,9 +62,17 @@
 		</msh:form>
 		<msh:ifFormTypeIsView formName="extDisp_cardForm">
 			<msh:section title="Услуги">
-			<ecom:parentEntityListAll formName="extDisp_cardForm" attribute="services" />
-				<msh:table name="services" action="entityParentView-extdisp_extDispService.do" idField="id">
-					<msh:tableColumn columnName="id" property="id"/>
+			<ecom:webQuery name="examQuery" nativeSql="
+select eds.card_id as adscard,veds.name as vedsname
+,eds.servicedate,eds.isPathology as edsIsPathology
+from ExtDispService eds 
+left join VocExtDispService veds on veds.id=eds.serviceType_id
+where eds.card_id=${param.id}
+			"/>
+				<msh:table name="examQuery" action="js-extDisp_service-edit.do" idField="1">
+					<msh:tableColumn columnName="Услуга" property="2"/>
+					<msh:tableColumn columnName="Дата" property="3"/>
+					<msh:tableColumn columnName="Выявлена патология" property="4"/>
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
@@ -79,8 +87,7 @@
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_card" name="Удалить" title="Удалить" roles=""/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
-				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-extDisp_service" name="Услуги" title="Услуги" roles=""/>
-				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-extDisp_risk" name="Риски здоровью" title="Риски здоровью" roles=""/>
+				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles=""/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
