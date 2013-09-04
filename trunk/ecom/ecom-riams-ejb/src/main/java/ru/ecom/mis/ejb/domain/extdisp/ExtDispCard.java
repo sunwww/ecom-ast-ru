@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -161,4 +162,12 @@ public class ExtDispCard extends BaseEntity{
 	/** Направлен на след. этап */
 	private Boolean theIsServiceIndication;
 
+	/** Возрастная категория */
+	@Comment("Возрастная категория")
+	@OneToOne
+	public VocExtDispAgeGroup getAgeGroup() {return theAgeGroup;}
+	public void setAgeGroup(VocExtDispAgeGroup aAgeGroup) {theAgeGroup = aAgeGroup;}
+
+	/** Возрастная категория */
+	private VocExtDispAgeGroup theAgeGroup;
 }

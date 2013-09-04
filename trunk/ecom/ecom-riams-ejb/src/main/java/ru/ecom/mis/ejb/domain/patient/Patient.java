@@ -194,10 +194,10 @@ public class Patient extends BaseEntity{
     public void setEducations(List<Education> aEducations) { theEducations = aEducations ; }
     
     /** Квалификации */
-    @Comment("Квалификации")
-    @OneToMany(mappedBy = "person", cascade= ALL)
-    public List<Qualification> getQualifications() { return theQualifications ; }
-    public void setQualifications(List<Qualification> aQualifications) { theQualifications = aQualifications ; }
+    //@Comment("Квалификации")
+    //@OneToMany(mappedBy = "person", cascade= ALL)
+    //public List<Qualification> getQualifications() { return theQualifications ; }
+    //public void setQualifications(List<Qualification> aQualifications) { theQualifications = aQualifications ; }
 	
 	/** Награды */
 	//@Comment("Награды")
@@ -742,8 +742,8 @@ public class Patient extends BaseEntity{
 	private List<LanguageSkill> theLanguageSkills;
 	/** Образования */
     private List<Education> theEducations ;
-    /** Квалификации */
-    private List<Qualification> theQualifications ;
+    ///** Квалификации */
+    //private List<Qualification> theQualifications ;
     /** Награды */
 	//private List<Award> theAwards;
 	/** Медицинские карты */
