@@ -43,38 +43,36 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
 	//var obj = new Packages.org.json.JSONObject(aJsonString) ;
 	//var ar = obj.getJSONArray("childs");
-	var ids = aIdString.split(",") ;
-	
-	for (var j=0;j<aMainCmd.length;j++) {
-		eval(aMainCmd[j]) ;
-	}
-	
-	
-	
-	for (var i = 0; i < ids.length; i++) {
-		var jsId = ids[i];
-		if (jsId!=null && jsId!="" || jsId=="0") {
-			//System.out.println("    id="+jsonId) ;
-			
-			var jsonId=java.lang.Long.valueOf(jsId) ;
-			
-			var sql ="select count(*) as cnt "+aTableSql+"='"+jsonId+"'" ;
-			var count = aManager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
-			if (count.isEmpty()|| (!count.isEmpty()&&(+count.get(0)<1))) {
+	if (aIdString!=null && aIdString!="") {
+		var ids = aIdString.split(",") ;
+		
+		for (var j=0;j<aMainCmd.length;j++) {
+			eval(aMainCmd[j]) ;
+		}
+		for (var i = 0; i < ids.length; i++) {
+			var jsId = ids[i];
+			if (jsId!=null && jsId!="" || jsId=="0") {
+				//System.out.println("    id="+jsonId) ;
 				
-				var objS = aManager.find(aClazz,jsonId) ;
+				var jsonId=java.lang.Long.valueOf(jsId) ;
 				
-				for (var j=0;j<aAddCmd.length;j++) {
-					eval(aAddCmd[j]) ;
-					//if (j>3)throw ""+aAddCmd[j] ;
+				var sql ="select count(*) as cnt "+aTableSql+"='"+jsonId+"'" ;
+				var count = aManager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
+				if (count.isEmpty()|| (!count.isEmpty()&&(+count.get(0)<1))) {
+					
+					var objS = aManager.find(aClazz,jsonId) ;
+					
+					for (var j=0;j<aAddCmd.length;j++) {
+						eval(aAddCmd[j]) ;
+						//if (j>3)throw ""+aAddCmd[j] ;
+					}
+					//throw ""+objS ;
+					aManager.persist(objNew) ;
+					
 				}
-				//throw ""+objS ;
-				aManager.persist(objNew) ;
-				
 			}
 		}
-	}
-	if (aIdString.length()>0) {
+		
 		sql = "delete "+aTableSql+" not in ("+aIdString+") " ;
 		aManager.createNativeQuery(sql).executeUpdate();
 	} else {

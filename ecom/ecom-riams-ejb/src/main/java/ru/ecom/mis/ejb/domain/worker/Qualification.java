@@ -115,7 +115,7 @@ public class Qualification extends BaseEntity {
     
    /** Персона */
     @Comment("Персона")
-    @ManyToOne
+    @OneToOne
     public Patient getPerson() { return thePerson ; }
     public void setPerson(Patient aPerson) { thePerson = aPerson ; }
     /** Персона */

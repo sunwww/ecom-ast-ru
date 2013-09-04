@@ -6,7 +6,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
-import ru.ecom.mis.ejb.form.medcase.ticket.interceptors.TicketMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -173,4 +172,13 @@ public class ExtDispCardForm extends IdEntityForm{
 
 	/** Направлен на след. этап */
 	private Boolean theIsServiceIndication;
+	
+	/** Возрастная категория */
+	@Comment("Возрастная категория")
+	@Persist
+	public Long getAgeGroup() {return theAgeGroup;}
+	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
+
+	/** Возрастная категория */
+	private Long theAgeGroup;
 }
