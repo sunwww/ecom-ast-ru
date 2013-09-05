@@ -17,19 +17,15 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Comment("Персона")
 @WebTrail(comment = "Персона", nameProperties= "id", list="entityParentList-personaldata_person.do", view="entityParentView-personaldata_person.do")
 //@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@EntityFormSecurityPrefix("/Policy/PersData/Person")
 public class PersonForm extends IdEntityForm{
 	/**
 	 * Фамилия
 	 */
 	@Comment("Фамилия")
 	@Persist
-	public String getLastname() {
-		return theLastname;
-	}
-	public void setLastname(String aLastname) {
-		theLastname = aLastname;
-	}
+	public String getLastname() {return theLastname;}
+	public void setLastname(String aLastname) {theLastname = aLastname;}
 	/**
 	 * Фамилия
 	 */
@@ -39,12 +35,8 @@ public class PersonForm extends IdEntityForm{
 	 */
 	@Comment("Отчество")
 	@Persist
-	public String getPatronymic() {
-		return thePatronymic;
-	}
-	public void setPatronymic(String aPatronymic) {
-		thePatronymic = aPatronymic;
-	}
+	public String getPatronymic() {return thePatronymic;}
+	public void setPatronymic(String aPatronymic) {thePatronymic = aPatronymic;}
 	/**
 	 * Отчество
 	 */
@@ -54,12 +46,8 @@ public class PersonForm extends IdEntityForm{
 	 */
 	@Comment("Имя")
 	@Persist
-	public String getFirstname() {
-		return theFirstname;
-	}
-	public void setFirstname(String aFirstname) {
-		theFirstname = aFirstname;
-	}
+	public String getFirstname() {return theFirstname;}
+	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
 	/**
 	 * Имя
 	 */
@@ -70,27 +58,19 @@ public class PersonForm extends IdEntityForm{
 	@Comment("Дата рождения")
 	@Persist
 	@DateString @DoDateString
-	public String getBirthdate() {
-		return theBirthdate;
-	}
-	public void setBirthdate(String aBirthdate) {
-		theBirthdate = aBirthdate;
-	}
+	public String getBirthday() {return theBirthday;}
+	public void setBirthday(String aBirthday) {theBirthday = aBirthday;}
 	/**
 	 * Дата рождения
 	 */
-	private String theBirthdate;
+	private String theBirthday;
 	/**
 	 * Пол
 	 */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {
-		return theSex;
-	}
-	public void setSex(Long aSex) {
-		theSex = aSex;
-	}
+	public Long getSex() {return theSex;}
+	public void setSex(Long aSex) {theSex = aSex;}
 	/**
 	 * Пол
 	 */
@@ -100,12 +80,8 @@ public class PersonForm extends IdEntityForm{
 	 */
 	@Comment("СНИЛС")
 	@Persist
-	public String getSnils() {
-		return theSnils;
-	}
-	public void setSnils(String aSnils) {
-		theSnils = aSnils;
-	}
+	public String getSnils() {return theSnils;}
+	public void setSnils(String aSnils) {theSnils = aSnils;}
 	/**
 	 * СНИЛС
 	 */
@@ -115,12 +91,8 @@ public class PersonForm extends IdEntityForm{
 	 */
 	@Comment("Национальность")
 	@Persist
-	public Long getNationality() {
-		return theNationality;
-	}
-	public void setNationality(Long aNationality) {
-		theNationality = aNationality;
-	}
+	public Long getNationality() {return theNationality;}
+	public void setNationality(Long aNationality) {theNationality = aNationality;}
 	/**
 	 * Национальность
 	 */
@@ -130,12 +102,8 @@ public class PersonForm extends IdEntityForm{
 	 */
 	@Comment("Электронная почта")
 	@Persist
-	public String getEmail() {
-		return theEmail;
-	}
-	public void setEmail(String aEmail) {
-		theEmail = aEmail;
-	}
+	public String getEmail() {return theEmail;}
+	public void setEmail(String aEmail) {theEmail = aEmail;}
 	/**
 	 * Электронная почта
 	 */

@@ -14,20 +14,16 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = Phone.class)
 @Comment("Телефон")
 @WebTrail(comment = "Телефон", nameProperties= "id", list="entityParentList-personaldata_phone.do", view="entityParentView-personaldata_phone.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@Parent(property="person", parentForm=PersonForm.class)
+@EntityFormSecurityPrefix("/Policy/PersData/Person/Phone")
 public class PhoneForm extends IdEntityForm{
 	/**
 	 * Персоны
 	 */
 	@Comment("Персоны")
 	@Persist
-	public Long getPerson() {
-		return thePerson;
-	}
-	public void setPerson(Long aPerson) {
-		thePerson = aPerson;
-	}
+	public Long getPerson() {return thePerson;}
+	public void setPerson(Long aPerson) {thePerson = aPerson;}
 	/**
 	 * Персоны
 	 */
@@ -37,12 +33,8 @@ public class PhoneForm extends IdEntityForm{
 	 */
 	@Comment("Тип телефона")
 	@Persist
-	public Long getPhoneType() {
-		return thePhoneType;
-	}
-	public void setPhoneType(Long aPhoneType) {
-		thePhoneType = aPhoneType;
-	}
+	public Long getPhoneType() {return thePhoneType;}
+	public void setPhoneType(Long aPhoneType) {thePhoneType = aPhoneType;}
 	/**
 	 * Тип телефона
 	 */
@@ -52,12 +44,8 @@ public class PhoneForm extends IdEntityForm{
 	 */
 	@Comment("Номер телефона")
 	@Persist
-	public String getPhoneNumber() {
-		return thePhoneNumber;
-	}
-	public void setPhoneNumber(String aPhoneNumber) {
-		thePhoneNumber = aPhoneNumber;
-	}
+	public String getPhoneNumber() {return thePhoneNumber;}
+	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
 	/**
 	 * Номер телефона
 	 */
@@ -67,12 +55,8 @@ public class PhoneForm extends IdEntityForm{
 	 */
 	@Comment("Основной телефон")
 	@Persist
-	public Boolean getIsPrimary() {
-		return theIsPrimary;
-	}
-	public void setIsPrimary(Boolean aIsPrimary) {
-		theIsPrimary = aIsPrimary;
-	}
+	public Boolean getIsPrimary() {return theIsPrimary;}
+	public void setIsPrimary(Boolean aIsPrimary) {theIsPrimary = aIsPrimary;}
 	/**
 	 * Основной телефон
 	 */
@@ -82,12 +66,8 @@ public class PhoneForm extends IdEntityForm{
 	 */
 	@Comment("Комментарий")
 	@Persist
-	public String getComment() {
-		return theComment;
-	}
-	public void setComment(String aComment) {
-		theComment = aComment;
-	}
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
 	/**
 	 * Комментарий
 	 */
