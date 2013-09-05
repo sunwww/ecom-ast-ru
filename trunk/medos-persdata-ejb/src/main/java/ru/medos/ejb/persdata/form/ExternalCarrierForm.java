@@ -14,7 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExternalCarrier.class)
 @Comment("Внешний электронный носитель")
 @WebTrail(comment = "Внешний электронный носитель", nameProperties= "id", list="entityParentList-personaldata_externalCarrier.do", view="entityParentView-personaldata_externalCarrier.do")
-//@Parent(property="parent", parentForm=PARENT.class)
+//@Parent(property="parent", parentForm=.class)
 @EntityFormSecurityPrefix("/Policy/Mis")
 public class ExternalCarrierForm extends IdEntityForm{
 	/**
