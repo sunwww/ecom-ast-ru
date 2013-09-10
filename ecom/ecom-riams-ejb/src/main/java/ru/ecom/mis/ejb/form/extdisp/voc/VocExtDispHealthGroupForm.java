@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.extdisp.voc;
 
-import com.sun.corba.se.spi.ior.IdentifiableBase;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
@@ -16,7 +14,6 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = VocExtDispHealthGroup.class)
 @Comment("Группы здоровья")
 @WebTrail(comment = "Группы здоровья", nameProperties= "id"
-, list="entityList-extDisp_vocHealthGroup.do"
 , view="entityView-extDisp_vocHealthGroup.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/HealthGroup")

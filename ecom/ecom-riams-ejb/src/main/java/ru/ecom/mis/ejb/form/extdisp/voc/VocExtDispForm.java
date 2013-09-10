@@ -15,8 +15,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = VocExtDisp.class)
 @Comment("Вид доп.диспансеризации")
 @WebTrail(comment = "Вид доп.диспансеризации", nameProperties= "id"
-, list="entityList-extDisp_voc.do"
-, view="entityView-extDisp_voc.do")
+, view="entityView-extDisp_voc.do", shortView="entityView-extDisp_voc.do?short=Short")
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc")
 public class VocExtDispForm extends IdEntityForm {
 	/** Наименование */

@@ -22,12 +22,8 @@ public class ExtDispService extends BaseEntity{
 	 */
 	@Comment("Карта дополнительной диспансеризации")
 	@ManyToOne
-	public ExtDispCard getCard() {
-		return theCard;
-	}
-	public void setCard(ExtDispCard aCard) {
-		theCard = aCard;
-	}
+	public ExtDispCard getCard() {return theCard;}
+	public void setCard(ExtDispCard aCard) {theCard = aCard;}
 	/**
 	 * Карта дополнительной диспансеризации
 	 */
@@ -36,13 +32,8 @@ public class ExtDispService extends BaseEntity{
 	 * Дата оказания услуги
 	 */
 	@Comment("Дата оказания услуги")
-	
-	public Date getServiceDate() {
-		return theServiceDate;
-	}
-	public void setServiceDate(Date aServiceDate) {
-		theServiceDate = aServiceDate;
-	}
+	public Date getServiceDate() {return theServiceDate;}
+	public void setServiceDate(Date aServiceDate) {theServiceDate = aServiceDate;}
 	/**
 	 * Дата оказания услуги
 	 */
@@ -52,12 +43,8 @@ public class ExtDispService extends BaseEntity{
 	 */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocExtDispService getServiceType() {
-		return theServiceType;
-	}
-	public void setServiceType(VocExtDispService aServiceType) {
-		theServiceType = aServiceType;
-	}
+	public VocExtDispService getServiceType() {return theServiceType;}
+	public void setServiceType(VocExtDispService aServiceType) {theServiceType = aServiceType;}
 	/**
 	 * Тип услуги
 	 */
