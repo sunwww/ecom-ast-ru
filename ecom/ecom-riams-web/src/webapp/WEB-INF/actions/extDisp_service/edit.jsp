@@ -28,6 +28,7 @@ where eds.card_id='${param.id}'  and eds.dtype='ExtDispExam'"/>
 from extdispservice eds
 left join VocExtDispService veds on veds.id=eds.servicetype_id
 where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
+
 	"/>
 	<%List listExam = (List)request.getAttribute("getServiceExam") ;
 	List listVisit = (List)request.getAttribute("getServiceVisit") ;
@@ -44,7 +45,9 @@ left join ExtDispPlan edp on edp.id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
+and edc.ageGroup_id=edps.ageGroup_id
 and (edps.isVisit='0' or edps.isVisit is null)
+
 group by veds.id,veds.code,veds.name,edps.isVisit
 order by veds.id,veds.name"
 />		

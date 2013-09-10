@@ -13,7 +13,7 @@
 					<msh:textField property="code" label="Код"/>
 				</msh:row>
 				<msh:row>
-					<msh:textField property="name" label="Наименование" fieldColSpan="3" horizontalFill="true"/>
+					<msh:textField property="name" label="Наименование" fieldColSpan="3" size="100" horizontalFill="true"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
@@ -36,9 +36,9 @@
 				</msh:table>
 			</msh:section>
 			<msh:section title="Группы здоровья" createRoles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocHealthGroup.do?id=${param.id}"
-			shortList="entityParentList-extDisp_vocHealthGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/HelthGroup/View">
+			shortList="entityParentList-extDisp_vocHealthGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/View">
 			<ecom:webQuery name="vocExtDispHealthGroup" nativeSql="select vedhg.id,vedhg.code,vedhg.name from VocExtDispHealthGroup vedhg where vedhg.dispType_id=${param.id}"/>
-				<msh:table name="vocExtDispHealthGroup" action="entityParentView-extDisp_voc.do" idField="1">
+				<msh:table name="vocExtDispHealthGroup" action="entityParentView-extDisp_vocHealthGroup.do" idField="1">
 					<msh:tableColumn columnName="Код" property="2"/>
 					<msh:tableColumn columnName="Наименование" property="3"/>
 				</msh:table>
