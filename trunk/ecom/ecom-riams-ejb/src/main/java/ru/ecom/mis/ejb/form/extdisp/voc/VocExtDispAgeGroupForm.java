@@ -15,7 +15,6 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = VocExtDispAgeGroup.class)
 @Comment("Возрастные группы")
 @WebTrail(comment = "Возрастные группы", nameProperties= "id"
-, list="entityList-extDisp_vocAgeGroup.do"
 , view="entityView-extDisp_vocAgeGroup.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/AgeGroup")

@@ -12,4 +12,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocExtDisp extends VocBaseEntity{
+	/** Внутренний код */
+	@Comment("Внутренний код")
+	public String getInternalCode() {return theInternalCode;}
+	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
+
+	/** Внутренний код */
+	private String theInternalCode;
 }
