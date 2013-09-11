@@ -2,6 +2,7 @@ package ru.medos.ejb.persdata.domain;
 
 import java.sql.Date;
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -12,6 +13,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Журналируемые данные")
 @Entity
 @Table(schema="SQLUser")
+@SuppressWarnings("serial")
+@MappedSuperclass
 public class JournalData extends BaseEntity{
 	/**
 	 * Дата начала актуальности
