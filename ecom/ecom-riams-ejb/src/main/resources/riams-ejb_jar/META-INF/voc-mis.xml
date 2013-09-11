@@ -1,4 +1,34 @@
 <vocconfig>
+<voc id="vocExtDispHealthGroupByDispType" type="NativeVocService">
+	<NativeVocService
+		from="VocExtDispHealthGroup vedhg"
+		parent="vedhg.dispType_id = :parent"
+		nameId="vedhg.id"
+		queryAppend="" join="" order=""
+		names="vedhg.name"
+		queried="upper(vedhg.name) like upper(:query)"
+	/>
+</voc>
+<voc id="vocExtDispAgeGroupByDispType" type="NativeVocService">
+	<NativeVocService
+		from="VocExtDispAgeGroup vedhg"
+		parent="vedhg.dispType_id = :parent"
+		nameId="vedhg.id"
+		queryAppend="" join="" order=""
+		names="vedhg.name"
+		queried="upper(vedhg.name) like upper(:query)"
+	/>
+</voc>
+<voc id="vocExtDispAgeGroupByDispPlan" type="NativeVocService">
+	<NativeVocService
+		from="VocExtDispAgeGroup vedhg"
+		parent="edp.id = :parent"
+		nameId="vedhg.id"
+		queryAppend="" join="left join ExtDispPlan edp on edp.dispType_id=vedhg.dispType_id " order=""
+		names="vedhg.name"
+		queried="upper(vedhg.name) like upper(:query)"
+	/>
+</voc>
 <voc id="copyingEquipmentByLpu" type="NativeVocService">
 	<NativeVocService
 		from="CopyingEquipment ce"
