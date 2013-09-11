@@ -11,7 +11,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes
 ({
 @AIndex(unique = false, properties = {"code"}),
-@AIndex(unique = false, properties = {"code", "name"}),
 @AIndex(unique = false, properties = {"name"})
         })
 public class VocIdCodeName extends BaseEntity {
