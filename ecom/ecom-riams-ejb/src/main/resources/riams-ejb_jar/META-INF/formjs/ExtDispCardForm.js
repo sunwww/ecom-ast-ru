@@ -43,7 +43,7 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
 	//var obj = new Packages.org.json.JSONObject(aJsonString) ;
 	//var ar = obj.getJSONArray("childs");
-	if (aIdString!=null && aIdString!="") {
+	if (aIdString!=null && aIdString!="" && aIdString!="null") {
 		var ids = aIdString.split(",") ;
 		
 		for (var j=0;j<aMainCmd.length;j++) {
