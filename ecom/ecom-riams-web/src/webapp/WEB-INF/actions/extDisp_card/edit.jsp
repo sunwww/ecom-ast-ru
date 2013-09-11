@@ -20,7 +20,7 @@
 					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroup" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
@@ -34,7 +34,7 @@
 					<msh:checkBox property="hospitalized" label="Госпитализирован"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroup" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroupByDispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:checkBox property="isServiceIndication" label="Направлен на след. этап" fieldColSpan="3"/>

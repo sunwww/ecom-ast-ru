@@ -211,7 +211,7 @@ if (date!=null && !date.equals("")) {
 	then 'X' else null end
 
 	as cnt9EntranceTo17
-	, case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	, case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
@@ -442,7 +442,7 @@ if (date!=null && !date.equals("")) {
 	then slo.id else null end)
 
 	as cnt9EntranceTo17
-	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) 
 	and 
