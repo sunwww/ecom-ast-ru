@@ -11,12 +11,12 @@
 			<msh:hidden property="plan" />
 			<msh:panel>
 				<msh:row>
-					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroup" />
+					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispPlan" parentId="extDisp_vocPlanServiceForm.plan" />
 					<msh:autoComplete property="sex" label="Пол" vocName="vocSex" />
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="serviceType" label="Услуга" 
-						vocName="vocExtDispService" horizontalFill="true" fieldColSpan="3"/>
+						vocName="vocExtDispService" horizontalFill="true" fieldColSpan="3" size="150"/>
 				</msh:row>
 				<msh:row>
 					<msh:checkBox property="isVisit" label="Посещение"/>
