@@ -165,9 +165,9 @@ public class FondWebService {
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getLastname().equals(f)?"":" bgcolor='yellow'"):"").append(">").append(f).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
-            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getMiddlename().equals(o)?"":" bgcolor='yellow'"):"").append(">").append(o).append("</td>") ;
+            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getMiddlename().equals(o!=null?o:"")?"":" bgcolor='yellow'"):"").append(">").append(o).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getBirthday().equals(dr)?"":" bgcolor='yellow'"):"").append(">").append(dr).append("</td>") ;
-            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss)?"":" bgcolor='yellow'"):"").append(">").append(ss).append("</td>") ;
+            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss).append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(upDate(e.getChildText("datadead"))).append("</td>") ;
              	sb.append("</tr>") ;
