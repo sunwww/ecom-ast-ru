@@ -15,7 +15,7 @@
 
 	<target name='prepare.web'>
 		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
-			<fileset file='${lib.dir}/ecom/${appname}/ejb/${appname}-ejb-api.jar' />
+			<fileset refid='${appname}.ejb.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
 			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />

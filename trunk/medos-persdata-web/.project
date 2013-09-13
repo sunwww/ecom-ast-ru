@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>medos-persdata-web</name>
-	<comment>PERSDATA WEB</comment>
+	<comment>PERSONAL DATA WEB</comment>
 	<projects>
-		<project>ecom-ejbweb-ejb</project>
-		<project>ecom-ejbweb-web</project>
 		<project>msh-commons</project>
 		<project>msh-forms</project>
 		<project>msh-util</project>
+		<project>ecom-ejbweb-ejb</project>
+		<project>ecom-ejbweb-web</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
