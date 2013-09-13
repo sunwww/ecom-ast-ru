@@ -5,8 +5,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-    <display-name>Персональные данные</display-name>
-    <description>Персональные данные</description>
+    <display-name>ПЕРСОНАЛЬНЫЕ ДАННЫЕ</display-name>
+    <description>ПЕРСОНАЛЬНЫЕ ДАННЫЕ</description>
 
     <filter>
         <filter-name>caching</filter-name>
@@ -75,7 +75,7 @@
         	<param-name>config-ecom</param-name>
           	<param-value>WEB-INF/dwr-ecom.xml</param-value>
         </init-param>        <init-param>
-        	<param-name>config-persdata</param-name>
+        	<param-name>config-asset</param-name>
           	<param-value>WEB-INF/dwr-persdata.xml</param-value>
         </init-param>
         
