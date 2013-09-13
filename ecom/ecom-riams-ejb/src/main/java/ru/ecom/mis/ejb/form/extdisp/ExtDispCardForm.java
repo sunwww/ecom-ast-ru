@@ -15,6 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = ExtDispCard.class)
@@ -36,7 +37,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
-	@Persist
+	@Persist @Required
 	public Long getLpu() {return theLpu;}
 	public void setLpu(Long aLpu) {theLpu = aLpu;}
 	/** ЛПУ  */
@@ -52,7 +53,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Социальная группа */
 	@Comment("Социальная группа")
-	@Persist
+	@Persist @Required
 	public Long getSocilaGroup() {return theSocilaGroup;}
 	public void setSocilaGroup(Long aSocilaGroup) {theSocilaGroup = aSocilaGroup;}
 	/** Социальная группа */
@@ -60,7 +61,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
-	@Persist
+	@Persist @Required
 	public Long getDispType() {return theDispType;}
 	public void setDispType(Long aDispType) {theDispType = aDispType;}
 	/** Тип дополнительной диспансеризации */
@@ -76,7 +77,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Дата начала */
 	@Comment("Дата начала")
-	@Persist
+	@Persist @Required
 	@DateString @DoDateString
 	public String getStartDate() {return theStartDate;}
 	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
@@ -85,7 +86,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Дата окончания */
 	@Comment("Дата окончания")
-	@Persist
+	@Persist @Required
 	@DateString @DoDateString
 	public String getFinishDate() {return theFinishDate;}
 	public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
@@ -175,7 +176,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Возрастная категория */
 	@Comment("Возрастная категория")
-	@Persist
+	@Persist @Required
 	public Long getAgeGroup() {return theAgeGroup;}
 	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
 
