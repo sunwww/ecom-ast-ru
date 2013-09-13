@@ -16,8 +16,8 @@
 		<msh:ifFormTypeIsView formName="extDisp_vocPlanForm">
 			<msh:section title="Услуги">
 			<ecom:webQuery name="services" nativeSql="
-				select edps.id,vs.name as vsname
-				,veds.name as vedsname,list(vedag.name) as vedagname
+				select ''||'&card=${param.id}&sex='||vs.id||'&service='||veds.id,vs.name as vsname
+				,coalesce(veds.code,'')||' '||coalesce(veds.name,'') as vedsname,list(vedag.name) as vedagname
 				
 				 from ExtDispPlanService edps
 				left join VocSex vs on vs.id=edps.sex_id
@@ -25,7 +25,7 @@
 				left join VocExtDispAgeGroup vedag on vedag.id=edps.ageGroup_id
 					where edps.plan_id=${param.id}
 					group by edps.id,vs.name 
-				,veds.name,veds.code 
+				,veds.name,veds.code ,vs.id,veds.id
 				order by veds.code
 			"/>
 				<msh:table name="services" action="entityParentView-extDisp_vocPlanService.do" idField="1">
