@@ -279,13 +279,15 @@
     	WorkCalendarService.getWorkFunctionByUsername($('workFunctionPlan').value,
       			{
       				callback:function(aDateDefault) {
+      					try {
     	$("workFunctionByUsername").innerHTML="<a href='javascript:hideNewTime()'>Скрыть</a><br/>"+aDateDefault ;
+      					} catch (e) {}
     				}
       			}) ;
     }
 
     function hideNewTime() {
-    	$("workFunctionByUsername").innerHTML="" ;
+    	try {$("workFunctionByUsername").innerHTML="" ;} catch (e) {}
     }
     function get10DaysByWorkFunction(aWorkFunction) {
     	WorkCalendarService.get10DaysByWorkFunction(aWorkFunction,

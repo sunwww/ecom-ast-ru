@@ -14,15 +14,33 @@ function save(aForm,aCtx) {
 	var card = aCtx.request.getParameter("card");
 	var fldExam = ["examId","examServiceType","examServiceDate","examIsPathology"] ;
 	var fldPe = "" ;
+	var fldPv = "" ;
 	var fldVisit = ["visitId","visitServiceType","visitServiceDate","visitRecommendation","visitIsEtdccSuspicion"] ;
 	//var fldPv = ["","","","",""] ;
 	for (var i=0;i<cntExam;i++) {
-		fldPe=card+":" ;
+		var fldPe=card+":" ;
 		for (var j=0; j<fldExam.length;j++) {
 			var par=(aCtx.request.getParameter(fldExam[j]+i)!=null?aCtx.request.getParameter(fldExam[j]+i):"") ;
-			fldPe=fldPe+par.trim()+":" ;
+			if (par!="") {
+				fldPe=fldPe+par.trim()+":" ;
+			} else {
+				fldPe=fldPe+":" ;
+			}
 		}
 		aCtx.invokeScript("ExpertService", "createExtDispExamService",fldPe) ;
+	}
+	//throw "fsadf"+cntVisit ;
+	for (var i=0;i<cntVisit;i++) {
+		var fldPv=card+":" ;
+		for (var j=0; j<fldVisit.length;j++) {
+			var par=(aCtx.request.getParameter(fldVisit[j]+i)!=null?aCtx.request.getParameter(fldVisit[j]+i):"") ;
+			if (par!="") {
+				fldPv=fldPv+par.trim()+":" ;
+			} else {
+				fldPv=fldPv+":" ;
+			}
+		}
+		aCtx.invokeScript("ExpertService", "createExtDispVisitService",fldPv) ;
 	}
 	return aCtx.createForward("/entityParentView-extDisp_card.do?id="+card) ;
 }
