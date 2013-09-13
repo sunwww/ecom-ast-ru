@@ -3,31 +3,9 @@
 
 <struts-config>
 	<form-beans>
-		<form-bean name="_actForm" type="ru.medos.ejb.persdata.form.ActForm" />
-		<form-bean name="_addressForm" type="ru.medos.ejb.persdata.form.AddressForm" />
-		<form-bean name="_cardTransferActForm" type="ru.medos.ejb.persdata.form.CardTransferActForm" />
-		<form-bean name="_comingDocumentForm" type="ru.medos.ejb.persdata.form.ComingDocumentForm" />
-		<form-bean name="_contactPersonForm" type="ru.medos.ejb.persdata.form.ContactPersonForm" />
-		<form-bean name="_copiesDestructionActForm" type="ru.medos.ejb.persdata.form.CopiesDestructionActForm" />
-		<form-bean name="_copiesTransferActForm" type="ru.medos.ejb.persdata.form.CopiesTransferActForm" />
-		<form-bean name="_dataOperationForm" type="ru.medos.ejb.persdata.form.DataOperationForm" />
-		<form-bean name="_documentFileForm" type="ru.medos.ejb.persdata.form.DocumentFileForm" />
-		<form-bean name="_documentPersonalizationForm" type="ru.medos.ejb.persdata.form.DocumentPersonalizationForm" />
-		<form-bean name="_emergencyIdentificationForm" type="ru.medos.ejb.persdata.form.EmergencyIdentificationForm" />
-		<form-bean name="_externalCarrierForm" type="ru.medos.ejb.persdata.form.ExternalCarrierForm" />
-		<form-bean name="_externalCarrierDestructionActForm" type="ru.medos.ejb.persdata.form.ExternalCarrierDestructionActForm" />
-		<form-bean name="_externalCarrierOperationForm" type="ru.medos.ejb.persdata.form.ExternalCarrierOperationForm" />
-		<form-bean name="_identificationCardForm" type="ru.medos.ejb.persdata.form.IdentificationCardForm" />
-		<form-bean name="_identifierForm" type="ru.medos.ejb.persdata.form.IdentifierForm" />
-		<form-bean name="_journalDataForm" type="ru.medos.ejb.persdata.form.JournalDataForm" />
-		<form-bean name="_outgoingDocumentForm" type="ru.medos.ejb.persdata.form.OutgoingDocumentForm" />
-		<form-bean name="_pdDestructionNoteForm" type="ru.medos.ejb.persdata.form.pdDestructionNoteForm" />
-		<form-bean name="_pdProcessingNoteForm" type="ru.medos.ejb.persdata.form.pdProcessingNoteForm" />
-		<form-bean name="_personForm" type="ru.medos.ejb.persdata.form.PersonForm" />
-		<form-bean name="_phoneForm" type="ru.medos.ejb.persdata.form.PhoneForm" />
-		<form-bean name="_qualityControlForm" type="ru.medos.ejb.persdata.form.QualityControlForm" />
-		<form-bean name="_secUserForm" type="ru.medos.ejb.persdata.form.SecUserForm" />
-	<form-beans>
+	
+		<form-bean name="pd_personForm" type="ru.medos.ejb.persdata.form.PersonForm" />
+	</form-beans>
 
 	<global-forwards />
 
@@ -35,7 +13,7 @@
 
         <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
             scope='request' validate="false" name="">
-            <forward name="success" path="/entityList-asset_asset.do" />
+            <forward name="success" path="/js-pd_person-findPatient.do" />
         </action>
 	      
 	</action-mappings>
