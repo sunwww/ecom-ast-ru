@@ -24,7 +24,8 @@ where eds.card_id='${param.id}'  and eds.dtype='ExtDispExam'"/>
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
 ,eds.dtype as edsdtype
 , to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
-,case when eds.isPathology='1' then 'checked' else '' end
+,eds.recommendation as edsRecommendation
+,case when eds.isEtdccSuspicion='1' then 'checked' else '' end
 from extdispservice eds
 left join VocExtDispService veds on veds.id=eds.servicetype_id
 where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
@@ -46,7 +47,7 @@ left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
-and (edps.isVisit='0' or edps.isVisit is null)
+and (veds.isVisit='0' or veds.isVisit is null)
 
 group by veds.id,veds.code,veds.name,edps.isVisit
 order by veds.id,veds.name"
@@ -67,7 +68,7 @@ left join ExtDispPlan edp on edp.id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
-and edps.isVisit='1'
+and veds.isVisit='1'
 group by veds.id,veds.code,veds.name,edps.isVisit
 order by veds.id,veds.name,edps.isVisit"
 />		
@@ -116,8 +117,8 @@ order by veds.id,veds.name,edps.isVisit"
 		out.print("<td>") ;out.println("<input type='text' size='10' name='examServiceDate"+i+"' id='examServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
 		out.print("'>") ;out.print("</td>") ;
-		out.print("<td>") ;out.println("<input type='checkbox' name='examIsPathology"+i+"' id='examIsPathology"+i+"' value='");
-		out.print(wqr.get7()!=null?wqr.get7():"");out.print("'>") ;out.print("</td>") ;
+		out.print("<td>") ;out.println("<input type='checkbox' name='examIsPathology"+i+"' id='examIsPathology"+i+"' ");
+		out.print(wqr.get7()!=null?wqr.get7():"");out.print(">") ;out.print("</td>") ;
 		out.println("</tr>") ;
 	}
 	out.println("</table>") ;
@@ -150,7 +151,7 @@ order by veds.id,veds.name,edps.isVisit"
 		out.println(i+1) ;
 		out.print("</td>") ;
 		out.print("<td>") ;
-		out.println("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.println(wqr.get3()) ;out.print("'/>") ;
+		out.println("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.println(wqr.get2()) ;out.print("'/>") ;
 		out.println(wqr.get3()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
@@ -159,8 +160,8 @@ order by veds.id,veds.name,edps.isVisit"
 		out.print("<td>") ;out.println("<input type='text' size='30' name='visitRecommendation"+i+"' id='visitRecommendation"+i+"' value='");
 		out.print(wqr.get7()!=null?wqr.get7():"");
 		out.print("'>") ;out.print("</td>") ;
-		out.print("<td>") ;out.println("<input type='checkbox' name='visitIsEtdccSuspicion"+i+"' id='visitIsEtdccSuspicion"+i+"' value='");
-		out.print(wqr.get8()!=null?wqr.get8():"");out.print("'>") ;out.print("</td>") ;
+		out.print("<td>") ;out.println("<input type='checkbox' name='visitIsEtdccSuspicion"+i+"' id='visitIsEtdccSuspicion"+i+"' ");
+		out.print(wqr.get8()!=null?wqr.get8():"");out.print(">") ;out.print("</td>") ;
 		out.println("</tr>") ;
 	}
 	out.println("</table>") ;

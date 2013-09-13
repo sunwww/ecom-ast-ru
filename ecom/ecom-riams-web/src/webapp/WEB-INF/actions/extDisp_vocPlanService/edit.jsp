@@ -18,9 +18,6 @@
 					<msh:autoComplete property="serviceType" label="Услуга" 
 						vocName="vocExtDispService" horizontalFill="true" fieldColSpan="3" size="150"/>
 				</msh:row>
-				<msh:row>
-					<msh:checkBox property="isVisit" label="Посещение"/>
-				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

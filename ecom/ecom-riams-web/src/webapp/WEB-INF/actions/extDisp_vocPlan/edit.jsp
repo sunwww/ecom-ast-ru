@@ -17,20 +17,22 @@
 			<msh:section title="Услуги">
 			<ecom:webQuery name="services" nativeSql="
 				select edps.id,vs.name as vsname
-				,veds.name as vedsname,vedag.name as vedagname
-				,edps.isVisit as edpsisVisit
+				,veds.name as vedsname,list(vedag.name) as vedagname
+				
 				 from ExtDispPlanService edps
 				left join VocSex vs on vs.id=edps.sex_id
 				left join VocExtDispService veds on veds.id=edps.serviceType_id
 				left join VocExtDispAgeGroup vedag on vedag.id=edps.ageGroup_id
 					where edps.plan_id=${param.id}
+					group by edps.id,vs.name 
+				,veds.name,veds.code 
+				order by veds.code
 			"/>
 				<msh:table name="services" action="entityParentView-extDisp_vocPlanService.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Пол" property="2"/>
 					<msh:tableColumn columnName="Услуга" property="3"/>
-					<msh:tableColumn columnName="Возрастная группа" property="4"/>
-					<msh:tableColumn columnName="Посещение" property="5"/>
+					<msh:tableColumn columnName="Возрастные группы" property="4"/>
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>

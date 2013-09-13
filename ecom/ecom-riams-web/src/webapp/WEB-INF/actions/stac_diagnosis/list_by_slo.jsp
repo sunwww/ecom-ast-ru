@@ -94,6 +94,9 @@
         	label="Отделение" horizontalFill="true" vocName="lpu"/>
         </msh:row>
         <msh:row>
+          <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="5" />
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="2"
         	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
           <msh:autoComplete vocName="vocBedSubType" property="bedSubType" label="Тип коек" horizontalFill="true" fieldColSpan="1" />
@@ -159,7 +162,9 @@
     	} else {
     		request.setAttribute("department","0") ;
     	}
+    	
     	String servStream = (String)request.getParameter("serviceStream") ;
+    	
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
@@ -178,6 +183,7 @@
     	if (bedSubType!=null && !bedSubType.equals("") && !bedSubType.equals("0")) {
     		request.setAttribute("bedSubTypeSql", " and bf.bedSubType_id="+bedSubType) ;
     	} 
+    	ActionUtil.setParameterFilterSql("bedType","bf.bedType_id", request) ;
     	String filter = (String)request.getParameter("filterAdd") ;
     	if (filter!=null && !filter.equals("")) {
     		filter = filter.toUpperCase() ;
@@ -192,9 +198,16 @@
     			if (filt1.length()>0) {
 	    			if (filtOr.length()>0) filtOr.append(" or ") ;
 		    		if (fs.length>1) {
-		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
+		    			String fsE1 = fs[1].trim() ;
+		    			int ind = fsE1.indexOf(".");
+		    			if (ind>-1) {fsE1=fsE1+"999";} else if (fsE1.length()<2) {
+		    				for (int ij=0;ij<2-fsE1.length();ij++) {fsE1=fsE1+"9" ;}
+		    				fsE1=fsE1+".999";
+		    			} else {
+		    				fsE1=fsE1+".999";}
+		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fsE1+"'") ;
 		    		} else {
-		    			filtOr.append(" mkb.code like '"+filt1.trim()+"%'") ;
+		    			filtOr.append(" substring(mkb.code,1,"+filt1.length()+")='"+filt1+"'") ;
 		    		}
     			}
     		}
@@ -246,8 +259,8 @@
 	left join Address2 a on a.addressid=pat.address_addressId
 	where ${fldDate} between to_date('${param.dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
-			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationType} ${bedSubTypeSql}
-			${emergencySql}
+			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationTypeSql} ${bedSubTypeSql}
+			${emergencySql} ${bedTypeSql}
 			${mkbCodeSql}
 			${filterSql}
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -326,6 +339,38 @@
 			/count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end),1)
 			else 0 end as cntSrDays
 		,count(distinct case when so.id is null then sls.id else null end) as cntOper
+		,round(sum(
+			distinct 
+			  cast(case
+			    when coalesce(slo.transferDate,slo.dateFinish) is null then 0 
+				when (coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart)=0 then 1 
+				when bf.addCaseDuration='1' then ((coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart)+1) 
+				else (coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart) end 
+				||'.'|| slo.id as decimal)
+					)
+			-sum(distinct 
+			  cast('0.'|| case when coalesce(slo.transferDate,slo.dateFinish) is not null then slo.id else 0 end as decimal))
+			  ,0) as cntSloDays
+		,
+		case when count(distinct case 
+		when coalesce(slo.transferDate,slo.dateFinish) is not null then slo.id 
+		else null end)>0 
+		then
+			round((
+			sum(
+			distinct 
+			  cast(case 
+				when (coalesce(slo.transferDate,slo.dateFinish) is null) then 0 
+				when (coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart)=0 then 1 
+				when bf.addCaseDuration='1' then ((coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart)+1) 
+				else (coalesce(slo.transferDate,slo.dateFinish)-slo.dateStart) end 
+				||'.'|| slo.id as decimal)
+					)
+			-sum(distinct 
+			  cast('0.'|| case when coalesce(slo.transferDate,slo.dateFinish) is not null then slo.id else 0 end as decimal))
+			 )
+			/count(distinct case when coalesce(slo.transferDate,slo.dateFinish) is not null then slo.id else null end),1)
+			else 0 end as cntSrSloDays
 		from Diagnosis diag
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join MedCase slo on slo.id=diag.medCase_id
@@ -339,8 +384,8 @@
 		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 		where ${fldDate} between to_date('${param.dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
-			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationType} ${bedSubTypeSql}
-			${emergencySql}
+			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationTypeSql} ${bedSubTypeSql}
+			${emergencySql} ${bedTypeSql}
 			${filterSql}
 		group by ${mkbCode},vpd.id,vpd.name,vdrt.id,vdrt.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id,vdrt.id
@@ -355,18 +400,20 @@
    
     <input type="submit" value="Печать"> 
     </form>
-		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_slo_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&registrationType=${param.registrationType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_slo_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&bedType=${param.bedType}&registrationType=${param.registrationType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="5" columnName="Тип регистрации"/>
 			<msh:tableColumn property="4" columnName="Приоритет"/>
 			<msh:tableColumn property="2" columnName="Код МКБ10"/>
 			<msh:tableColumn property="6" columnName="Наименование болезни"/>
 			<msh:tableColumn property="3" isCalcAmount="true" columnName="Кол-во СЛО"/>
+			<msh:tableColumn property="13" isCalcAmount="true" columnName="Кол-во к/дней СЛО"/>
+			<msh:tableColumn property="14" columnName="Средний к/день СЛО"/>
 			<msh:tableColumn property="7" isCalcAmount="true" columnName="Кол-во госпитализаций"/>
 			<msh:tableColumn property="12" isCalcAmount="true" columnName="Кол-во госпитализаций с операцией"/>
 			<msh:tableColumn property="8" isCalcAmount="true" columnName="Кол-во выписанных"/>
-			<msh:tableColumn property="10" isCalcAmount="true" columnName="Кол-во к/дней"/>
-			<msh:tableColumn property="11" columnName="Средний к/день"/>
+			<msh:tableColumn property="10" isCalcAmount="true" columnName="Кол-во к/дней госп."/>
+			<msh:tableColumn property="11" columnName="Средний к/день госп."/>
 			<msh:tableColumn property="9" isCalcAmount="true" columnName="Кол-во умерших"/>
 		</msh:table>
     <% }

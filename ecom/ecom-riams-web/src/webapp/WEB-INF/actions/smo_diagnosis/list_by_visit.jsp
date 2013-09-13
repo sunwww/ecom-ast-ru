@@ -124,12 +124,30 @@
     	if (filter!=null && !filter.equals("")) {
     		filter = filter.toUpperCase() ;
     		request.setAttribute("filterAdd",filter) ;
-    		String[] fs=filter.split("-") ;
-    		if (fs.length>1) {
-    			request.setAttribute("filterSql", " and mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
-    		} else {
-    			request.setAttribute("filterSql", " and mkb.code like '"+filter.trim()+"%'") ;
-    		}
+    		//filter = filter.replaceAll(" ", "") ;
+    		String[] fs1=filter.split(",") ;
+    		StringBuilder filtOr = new StringBuilder() ;
+    		
+    		for (int i=0;i<fs1.length;i++) {
+    			String filt1 = fs1[i].trim() ;
+    			String[] fs=filt1.split("-") ;
+    			if (filt1.length()>0) {
+	    			if (filtOr.length()>0) filtOr.append(" or ") ;
+		    		if (fs.length>1) {
+		    			String fsE1 = fs[1].trim() ;
+		    			int ind = fsE1.indexOf(".");
+		    			if (ind>-1) {fsE1=fsE1+"999";} else if (fsE1.length()<2) {
+		    				for (int ij=0;ij<2-fsE1.length();ij++) {fsE1=fsE1+"9" ;}
+		    				fsE1=fsE1+".999";
+		    			} else {
+		    				fsE1=fsE1+".999";}
+		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fsE1+"'") ;
+		    		} else {
+		    			filtOr.append(" substring(mkb.code,1,"+filt1.length()+")='"+filt1+"'") ;
+		    		}
+    			}
+     		}
+    		request.setAttribute("filterSql", filtOr.insert(0, " and (").append(")").toString()) ;
     		
     	} 
     	
