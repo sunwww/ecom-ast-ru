@@ -73,9 +73,11 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 		    String date1=format.format(cal.getTime()) ;
 		    String timeSql = null, timeInfo ="";
 		    if (typeHour!=null && typeHour.equals("1")) {
-				timeSql= "08:00" ;timeInfo="(8 часов)" ;
+				timeSql= "07:00" ;timeInfo="(7 часов)" ;
+		    } else if (typeHour!=null && typeHour.equals("2")) {
+		    	timeSql= "08:00" ;timeInfo="(8 часов)" ;
 	    	} else if (typeHour!=null && typeHour.equals("2")) {
-	    		timeSql= "08:00" ;timeInfo="(9 часов)" ;
+	    		timeSql= "09:00" ;timeInfo="(9 часов)" ;
 	    	} 
 		    if (typeDate!=null && typeDate.equals("1")) {
 	    		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
