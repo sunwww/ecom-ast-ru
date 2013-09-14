@@ -24,7 +24,7 @@
 
 	String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
 	String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
-	String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","3", request) ;
+	String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
 	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
   	%>
     <msh:form action="/stac_reestrByHospital.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -75,13 +75,16 @@
       <msh:row>
         <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="1">  8 часов
+        	<input type="radio" name="typeHour" value="1">  7 часов
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="2" >  9 часов
+        	<input type="radio" name="typeHour" value="2">  8 часов
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="3">  календар. день
+        	<input type="radio" name="typeHour" value="3" >  9 часов
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeHour" value="4">  календар. день
         </td>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
