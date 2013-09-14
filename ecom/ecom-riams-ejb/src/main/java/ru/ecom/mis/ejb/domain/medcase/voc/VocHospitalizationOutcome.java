@@ -25,6 +25,13 @@ public class VocHospitalizationOutcome extends VocBaseEntity {
 	public Boolean getIsNotViewAdmission() {return theIsNotViewAdmission;}
 	public void setIsNotViewAdmission(Boolean aIsNotViewAdmission) {theIsNotViewAdmission = aIsNotViewAdmission;}
 
+	/** Псих.код */
+	@Comment("Псих.код")
+	public String getPsychCode() {return thePsychCode;}
+	public void setPsychCode(String aPsychCode) {thePsychCode = aPsychCode;}
+
+	/** Псих.код */
+	private String thePsychCode;
 	/** Не отображать при поступлении */
 	private Boolean theIsNotViewAdmission;
 	/** Не отображать при выписке */
