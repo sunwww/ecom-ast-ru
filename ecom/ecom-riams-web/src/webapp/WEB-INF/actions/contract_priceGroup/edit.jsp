@@ -32,6 +32,24 @@
 					<msh:textField fieldColSpan="3" property="name" label="Название" horizontalFill="true" size="100"/>
 				</msh:row>
 				<msh:textArea property="comment" label="Комментарий" fieldColSpan="3"/>
+				        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
+				
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
@@ -62,6 +80,17 @@
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+	<msh:ifFormTypeIsCreate formName="contract_priceGroupForm">
+		<script type="text/javascript">
+			if (+$("parent").value>0) {} else {
+				if (+$("priceList").value>0){} else {
+					$("priceList").value='${param.priceList}' ;
+				}
+			}
+		</script>
+		</msh:ifFormTypeIsCreate>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_priceGroupForm" />

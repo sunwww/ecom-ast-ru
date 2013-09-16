@@ -8,16 +8,16 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг прейскуранта"/>
+    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
-    	<tags:contractMenu currentAction="price"/>
+    	<tags:contractMenu currentAction="analisisMedServices"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
-    String typeView =ActionUtil.updateParameter("Contract_analisis","typeView","2", request) ;
-	String typeFindMed =ActionUtil.updateParameter("Contract_analisis","typeFindMed","4", request) ;
+    String typeView =ActionUtil.updateParameter("Contract_analisis","typeView","3", request) ;
+	String typeFindMed =ActionUtil.updateParameter("Contract_analisis","typeFindMed","5", request) ;
 	
 	
   %>
