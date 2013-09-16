@@ -56,10 +56,10 @@ public class ExtDispCard extends BaseEntity{
 	/** Социальная группа */
 	@Comment("Социальная группа")
 	@OneToOne
-	public VocExtDispSocialGroup getSocilaGroup() {return theSocilaGroup;}
-	public void setSocilaGroup(VocExtDispSocialGroup aSocilaGroup) {theSocilaGroup = aSocilaGroup;}
+	public VocExtDispSocialGroup getSocialGroup() {return theSocialGroup;}
+	public void setSocialGroup(VocExtDispSocialGroup aSocialGroup) {theSocialGroup = aSocialGroup;}
 	/** Социальная группа */
-	private VocExtDispSocialGroup theSocilaGroup;
+	private VocExtDispSocialGroup theSocialGroup;
 	
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")

@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
 import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -54,10 +55,10 @@ public class ExtDispCardForm extends IdEntityForm{
 	/** Социальная группа */
 	@Comment("Социальная группа")
 	@Persist @Required
-	public Long getSocilaGroup() {return theSocilaGroup;}
-	public void setSocilaGroup(Long aSocilaGroup) {theSocilaGroup = aSocilaGroup;}
+	public Long getSocialGroup() {return theSocialGroup;}
+	public void setSocialGroup(Long aSocialGroup) {theSocialGroup = aSocialGroup;}
 	/** Социальная группа */
-	private Long theSocilaGroup;
+	private Long theSocialGroup;
 	
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
@@ -151,7 +152,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** МКБ основного диагноза */
 	@Comment("МКБ основного диагноза")
-	@Persist
+	@Persist @Required
 	public Long getIdcMain() {return theIdcMain;}
 	public void setIdcMain(Long aIdcMain) {theIdcMain = aIdcMain;}
 	/** МКБ основного диагноза */
