@@ -15,6 +15,10 @@
             scope='request' validate="false" name="">
             <forward name="success" path="/js-pd_person-findPatient.do" />
         </action>
+        <action path="/start1" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/js-pd_person-findPatient.do" />
+        </action>
 	      
 	</action-mappings>
 </struts-config>
