@@ -14,15 +14,15 @@
 			<msh:panel>
 				<msh:ifFormTypeIsNotView formName="contract_pricePositionForm">
 					<msh:ifFormTypeAreViewOrEdit formName="contract_pricePositionForm">
-					<msh:ifNotInRole roles="/Policy/Mis/Contract/PriceList/PricePosition/EditParent">
+					<msh:ifInRole roles="/Policy/Mis/Contract/PriceList/PricePosition/EditParent">
 						<msh:row>
 							<msh:autoComplete parentId="contract_pricePositionForm.priceList" property="parent" vocName="priceGroup" horizontalFill="true" fieldColSpan="3" label="Родит.категория"/>
 						</msh:row>
-					</msh:ifNotInRole>
+					</msh:ifInRole>
 					</msh:ifFormTypeAreViewOrEdit>
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
-					<msh:textField fieldColSpan="3" property="name" label="Название" horizontalFill="true"/>
+					<msh:textArea rows="3" fieldColSpan="3" property="name" label="Название" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField property="code" label="Код"/>
@@ -32,6 +32,24 @@
 					<msh:textField property="dateFrom" label="Дата начала действия"/>
 					<msh:textField property="dateTo" label="Дата окончания действия"/>
 				</msh:row>
+				        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
+				
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

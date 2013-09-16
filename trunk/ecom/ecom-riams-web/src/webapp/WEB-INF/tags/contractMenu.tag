@@ -68,4 +68,14 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="финансовый отчет" roles="/Policy/Mis/Contract/Journals/Finance,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Финансовый отчет"
 		/>
+	<msh:sideLink styleId="analisisMedServices"
+		action="/contact_analisis_by_medServices.do" 
+		name="Анализ услуг " roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"
+		title="Анализ услуг "
+		/>
+	<msh:sideLink styleId="analisisPriceServices"
+		action="/contact_analisis_by_priceServices.do" 
+		name="Анализ услуг прейскуранта" roles="/Policy/Mis/Contract/Journals/AnalisisPriceServices"
+		title="Анализ услуг прейскуранта"
+		/>
 </msh:sideMenu>
