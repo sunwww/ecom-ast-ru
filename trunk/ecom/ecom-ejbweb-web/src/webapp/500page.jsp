@@ -13,7 +13,7 @@
     <tiles:put name="side" type="string">
     <msh:sideMenu>
     	<msh:sideLink key='ALT+1' params="" action=' javascript:backException(".do")' name="Отмена"/>
-    	<msh:sideLink key='ALT+2' action=' javascript:showException(".do")' roles="/Policy/Stac/CustomizeMode/Edit" name="Ошибка" title="Показать ошибку"/>
+    	<msh:sideLink key='ALT+2' action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
     </msh:sideMenu>
     
     </tiles:put>
@@ -29,6 +29,12 @@
        </script>
        </msh:ifInIdeMode>
        </msh:ifInRole>
+       <msh:ifInRole roles="/Policy/Config/ViewError">
+       <script type="text/javascript">
+       $('type').value = "0";
+       </script>
+       </msh:ifInRole>
+       
 
         <%
             if(request.getAttribute("javax.servlet.error.message")!=null) {
