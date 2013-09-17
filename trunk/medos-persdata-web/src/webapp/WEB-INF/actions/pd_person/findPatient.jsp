@@ -27,9 +27,27 @@
         </msh:row>
       </msh:panel>
     </msh:form>
+    <%
+    	String query = request.getParameter("lastname") ;
+    
+    	if (query!=null && !query.trim().equals("") && query.length()>0) {
+    		StringBuilder querySql = new StringBuilder() ;
+    		query=query.trim() ;
+   			String[] q = query.split(" ") ;
+   			if (q.length>0) {querySql.append(" p.lastname like '").append(q[0]).append("'") ;} else {querySql.append(" p.lastname like '").append(query).append("'") ;} 
+   			if (q.length>1) {querySql.append(" and p.firstname like '").append(q[1]).append("'") ;}
+   			if (q.length>2) {querySql.append(" and p.patronymic like '").append(q[2]).append("'") ;}
+    		querySql.append(" or i.identificationNumber='").append(query).append("'") ;
+    		request.setAttribute("querySql", querySql.toString()) ;
+    	
+    %>
     <ecom:webQuery name="list" nativeSql="select p.id,p.lastname,p.firstname,p.patronymic
     	,p.birthdate  
-    from Person where ${querySql}"/>
+    from Person p
+    left join Identifier i on p.id=i.person_id 
+    where ${querySql}"
+    
+    />
       <msh:section title="Результат поиска" guid="8bc5fc1c-72bb-45c8-9eb2-58715c967b81">
         <msh:table viewUrl="entityShortView-pd_person.do" name="list" action="entityView-pd_person.do" idField="id" disableKeySupport="true" guid="7df98006-d2f7-4055-98a4-3b687377d9be" noDataMessage="Не найдено">
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -42,7 +60,7 @@
         </msh:table>
       </msh:section>
      
-    
+    <% } %>
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript"></script>
