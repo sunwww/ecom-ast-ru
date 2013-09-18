@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.medos.ejb.persdata.domain.ComingDocument;
 import ru.medos.ejb.persdata.domain.ContactPerson;
 import ru.medos.ejb.persdata.domain.EmergencyIdentification;
@@ -24,6 +27,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Персона")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { 
+		@AIndex(properties = { "lastname" }) 
+		,@AIndex(properties = { "firstname" }) 
+		,@AIndex(properties = { "patronymic" }) 
+})
+
 public class Person extends JournalData{
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
 	public List<PersonalAddress> getAddresses() {
