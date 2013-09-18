@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.medos.ejb.persdata.domain.Address;
 import ru.medos.ejb.persdata.domain.Person;
 import ru.medos.ejb.persdata.domain.voc.VocAddress;
@@ -15,6 +18,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Персональный адрес")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "person" }) })
 public class PersonalAddress extends JournalData{
 	/**
 	 * Квартира

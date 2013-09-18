@@ -35,16 +35,16 @@ public class Address extends BaseEntity{
 	 */
 	@Comment("Район")
 	
-	public String getDistrict() {
-		return theDistrict;
+	public String getRegion() {
+		return theRegion;
 	}
-	public void setDistrict(String aDistrict) {
-		theDistrict = aDistrict;
+	public void setRegion(String aRegion) {
+		theRegion = aRegion;
 	}
 	/**
 	 * Район
 	 */
-	private String theDistrict;
+	private String theRegion;
 	/**
 	 * Населенный пункт
 	 */
