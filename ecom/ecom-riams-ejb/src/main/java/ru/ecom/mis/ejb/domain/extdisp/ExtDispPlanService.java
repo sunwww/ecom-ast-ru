@@ -5,6 +5,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
@@ -17,6 +19,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Услуга плана дополнительной диспансеризации")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes({
+		@AIndex(properties="plan")
+		,@AIndex(properties="sex")
+		,@AIndex(properties="ageGroup")
+	    }) 
 public class ExtDispPlanService extends BaseEntity{
 	/**
 	 * План

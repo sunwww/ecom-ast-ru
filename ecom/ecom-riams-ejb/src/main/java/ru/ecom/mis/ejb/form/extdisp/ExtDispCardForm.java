@@ -1,11 +1,15 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
+import ru.ecom.mis.ejb.domain.patient.Kinsman;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -183,4 +187,21 @@ public class ExtDispCardForm extends IdEntityForm{
 
 	/** Возрастная категория */
 	private Long theAgeGroup;
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	@Persist @Required
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Представитель */
+	@Comment("Представитель")
+	@Persist
+	public Long getKinsman() {return theKinsman;}
+	public void setKinsman(Long aKinsman) {theKinsman = aKinsman;}
+
+	/** Представитель */
+	private Long theKinsman;
+	/** Рабочая функция */
+	private Long theWorkFunction;
+	
 }
