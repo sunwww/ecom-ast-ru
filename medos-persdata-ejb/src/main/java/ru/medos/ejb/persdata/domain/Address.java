@@ -135,4 +135,11 @@ public class Address extends BaseEntity{
 	 * Черновик
 	 */
 	private Boolean theIsDraft;
+	/** Полный адрес */
+	@Comment("Полный адрес")
+	public String getFullname() {return theFullname;}
+	public void setFullname(String aFullname) {theFullname = aFullname;}
+
+	/** Полный адрес */
+	private String theFullname;
 }
