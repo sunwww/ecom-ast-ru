@@ -8,6 +8,7 @@
 		<class>ru.ecom.ejb.services.live.domain.LiveEntity</class>
 		<class>ru.ecom.ejb.services.live.domain.LiveProperty</class>
 		<class>ru.ecom.ejb.services.live.domain.journal.DeleteJournal</class>
+		<class>ru.ecom.ejb.services.live.domain.CustomMessage</class>
 
 		<!-- Hello -->
 

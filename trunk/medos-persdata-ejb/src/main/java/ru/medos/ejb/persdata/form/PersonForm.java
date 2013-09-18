@@ -18,7 +18,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Персона", nameProperties= "id", list="entityParentList-personaldata_person.do", view="entityParentView-personaldata_person.do")
 //@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/PersData/Person")
-public class PersonForm extends IdEntityForm{
+public class PersonForm extends JournalDataForm {
 	/**
 	 * Фамилия
 	 */
@@ -58,12 +58,12 @@ public class PersonForm extends IdEntityForm{
 	@Comment("Дата рождения")
 	@Persist
 	@DateString @DoDateString
-	public String getBirthday() {return theBirthday;}
-	public void setBirthday(String aBirthday) {theBirthday = aBirthday;}
+	public String getBirthdate() {return theBirthdate;}
+	public void setBirthdate(String aBirthdate) {theBirthdate = aBirthdate;}
 	/**
 	 * Дата рождения
 	 */
-	private String theBirthday;
+	private String theBirthdate;
 	/**
 	 * Пол
 	 */
