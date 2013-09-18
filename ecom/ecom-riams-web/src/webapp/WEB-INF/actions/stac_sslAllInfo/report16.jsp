@@ -157,9 +157,9 @@ if (date!=null && !date.equals("")) {
 		timeSql="00:00";
 	}
 	request.setAttribute("timeSql", timeSql) ;
-    String periodEntrance = ReportParamUtil.getPeriodByDate(Boolean.valueOf(false),true, "slo.dateStart", "slo.entranceTime", date, dateEnd, timeSql) ;
-    String periodTransfer = ReportParamUtil.getPeriodByDate(Boolean.valueOf(false),true, "slo.transferDate", "slo.transferTime", date, dateEnd, timeSql) ;
-    String periodDischarge = ReportParamUtil.getPeriodByDate(Boolean.valueOf(false),true, "slo.dateFinish", "slo.dischargeTime", date, dateEnd, timeSql) ;
+    String periodEntrance = ReportParamUtil.getPeriodByDate(false,true, "slo.dateStart", "slo.entranceTime", date, dateEnd, timeSql) ;
+    String periodTransfer = ReportParamUtil.getPeriodByDate(false,true, "slo.transferDate", "slo.transferTime", date, dateEnd, timeSql) ;
+    String periodDischarge = ReportParamUtil.getPeriodByDate(false,true, "slo.dateFinish", "slo.dischargeTime", date, dateEnd, timeSql) ;
     String department="" ;
 	
 	/*if (dep!=null &&!dep.equals("") && !dep.equals("0")) {

@@ -22,7 +22,15 @@
 				<msh:row>
 					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
-				<msh:row>
+		        <msh:row>
+		        	<msh:autoComplete property="kinsman" label="Представитель" 
+		        		parentId="extDisp_cardForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
+		        </msh:row>				
+		        <msh:row>
+		        	<msh:autoComplete vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" 
+		          		label="Раб.функция (терапевт)" fieldColSpan="3" horizontalFill="true" size="150" />
+		        </msh:row>
+        		<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
 					<msh:textField property="finishDate" label="Дата окончания"/>
 				</msh:row>
