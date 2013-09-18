@@ -5,6 +5,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispVisit;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,6 +17,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Диагноз дополнительной диспансеризации")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="visit")
+    }) 
 public class ExtDispDiagnosis extends BaseEntity{
 	/**
 	 * Визит

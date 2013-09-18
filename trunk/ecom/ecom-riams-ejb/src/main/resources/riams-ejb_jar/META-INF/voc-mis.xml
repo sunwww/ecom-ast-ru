@@ -213,7 +213,7 @@
                 join=""
                 order=""
                 names   = "p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') "
-    		queried=" cast(p.id as varchar(20)) like :querId or p.lastname like :querId or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3))"
+    		queried=" cast(p.id as varchar(20)) = :querId or p.lastname like :querId or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3))"
     		queriedSplitCount="3"
         />
     </voc> 
@@ -1007,12 +1007,18 @@
     	<NativeVocService
     			from = 'WorkFunction as wf '
     			parent = ''
-    			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
-    			queried =" (cast(wf.id as varchar(20))= :querId or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) )"
+    			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end"
+    			queried =" (cast(wf.id as varchar(20))= :quer1 or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
     			queryAppend = " wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
+    			queriedSplitCount="3"
     			order =''
     			nameId='wf.id'
-    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
+    			join='left join Worker as w on w.id=wf.worker_id 
+    			left join MisLpu ml1 on ml1.id=wf.lpu_id
+    			left join MisLpu ml2 on ml2.id=w.lpu_id
+    			
+    			left join Patient as p on p.id=w.person_id 
+    			left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
     	/>
     </voc>      
     <voc id='workFunctionByDirect' type='NativeVocService'>

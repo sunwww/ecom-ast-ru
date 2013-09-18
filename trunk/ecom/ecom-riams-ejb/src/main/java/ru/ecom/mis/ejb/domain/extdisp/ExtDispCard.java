@@ -10,19 +10,27 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /** Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у) */
 @Comment("Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="patient"),
+	@AIndex(properties="finishDate")
+    }) 
 public class ExtDispCard extends BaseEntity{
 	/** Пациент */
 	@Comment("Пациент")
@@ -170,4 +178,21 @@ public class ExtDispCard extends BaseEntity{
 
 	/** Возрастная категория */
 	private VocExtDispAgeGroup theAgeGroup;
+	
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	@OneToOne
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Представитель */
+	@Comment("Представитель")
+	@OneToOne
+	public Kinsman getKinsman() {return theKinsman;}
+	public void setKinsman(Kinsman aKinsman) {theKinsman = aKinsman;}
+
+	/** Представитель */
+	private Kinsman theKinsman;
+	/** Рабочая функция */
+	private WorkFunction theWorkFunction;
 }
