@@ -47,50 +47,9 @@
 
         </ul>
         <ul id='mainMenu'>
-            <msh:sideLink params="" styleId="mainMenuLpu" action="//riams/entityParentList-mis_lpu.do?id=-1" name="ЛПУ"
-                          title="Список ЛПУ" roles="/Policy/MainMenu/MisLpu"/>
-
-            <msh:sideLink params="" key="SHIFT+CTRL+0" styleId="mainMenuPatient" action="//riams/mis_patientSearch.do" name="Персона"
+            <msh:sideLink params="" key="SHIFT+CTRL+0" styleId="mainMenuPatient" action="//persdata/pd_searchPerson.do" name="Персона"
                           title="Персоны" roles="/Policy/MainMenu/Patient"/>
 
-            <msh:sideLink params="" styleId="mainMenuPoly" action="//riams/js-smo_visit-findPolyAdmissions.do" name="Рабочий календарь"
-                          title="Рабочий календарь" roles="/Policy/MainMenu/WorkCalendar"/>
-
-            <msh:sideLink params="" styleId="mainMenuMedcard" action="//riams/poly_medcards.do" name="Медицинские карты"
-                                      title="Медицинские карты" roles="/Policy/MainMenu/MedCard"/>
-
-            <msh:sideLink params="" styleId="mainMenuDisability" action="/riams//dis_documents.do" name="Нетрудоспособность"
-                          title="Талоны" roles="/Policy/MainMenu/Disability"/>
-
-            <msh:sideLink params=""  styleId="mainMenuStacJournal" action="//riams/stac_findSlsByStatCard.do" name="Журнал обращений"
-                          roles="/Policy/MainMenu/AdmissionJournal" title="Журнал обращений" />
-
-            <msh:sideLink params="" styleId="mainMenuJournals"
-            			name="Журналы" roles="/Policy/MainMenu/Journals" title="Журналы" 
-            			action="//riams/riams_journals.do"/>
-            <msh:sideLink params="" styleId="mainMenuDiet" 
-            			  action="//riams/entityParentList-diet_diet.do?id=0" name="Диетпитание"
-                          roles="/Policy/MainMenu/Diet" title="Диетпитание"/>
-            <msh:sideLink params="" styleId="mainMenuContract" 
-            			  action="//riams/ecom_contract.do" name="Договора"
-                          roles="/Policy/MainMenu/Contract" title="Работа с договорами"/>
-
-            <msh:sideLink params="" styleId="mainMenuTemplate" action="//riams/entityList-diary_template.do" name="Шаблоны"
-                          title="Шаблоны" roles="/Policy/MainMenu/Template"/>
-
-            <msh:sideLink params="" styleId="mainMenuReg" action="//riams/exp_reg.do" name="Реестры"
-                          roles="/Policy/MainMenu/ExpDocument" title="Реестры"/>
-                          
-            <msh:sideLink params="" styleId="mainMenuReport" action="//birt/start.do" name="Отчеты"
-                          title="Список отчетов" roles="/Policy/MainMenu/Report"/>
-
-			<msh:sideLink params="" styleId="mainMenuVoc" action="//riams/js-ecom_vocEntity-list.do" name="Справочники"
-                          roles="/Policy/MainMenu/Voc" title="Справочники"/>
-			<msh:sideLink params="" styleId="mainMenuExpert" action="//riams/js-expert_card-list.do" name="Экспертиза"
-                          roles="/Policy/MainMenu/Expert" title="Экспертиза"/>
-           
-            <msh:sideLink params="" styleId="mainMenuConfig" action="//riams/riams_config.do" name="Настройки"
-                          roles="/Policy/MainMenu/Config" title="Настройки"/>
 	
         </ul>
 

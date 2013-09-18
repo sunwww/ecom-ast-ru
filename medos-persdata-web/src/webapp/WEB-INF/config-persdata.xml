@@ -5,6 +5,8 @@
 	<form-beans>
 	
 		<form-bean name="pd_personForm" type="ru.medos.ejb.persdata.form.PersonForm" />
+		<form-bean name="pd_addressForm" type="ru.medos.ejb.persdata.form.PersonalAddressForm" />
+		<form-bean name="pd_personSearchForm" type="ru.medos.web.persdata.PersonSearchForm" />
 	</form-beans>
 
 	<global-forwards />
@@ -13,11 +15,12 @@
 
         <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
             scope='request' validate="false" name="">
-            <forward name="success" path="/js-pd_person-findPatient.do" />
+            <forward name="success" path="/pd_searchPerson.do" />
         </action>
-        <action path="/start1" type='ru.ecom.web.actions.base.ForwardAction'
-            scope='request' validate="false" name="">
-            <forward name="success" path="/js-pd_person-findPatient.do" />
+        
+        <action path="/pd_searchPerson" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="pd_personSearchForm">
+            <forward name="success" path="/WEB-INF/actions/pd_person/findPatient.jsp" />
         </action>
 	      
 	</action-mappings>
