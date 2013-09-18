@@ -62,7 +62,7 @@ public class ReportParamUtil {
 		return period.toString() ;
 	}
 
-    public static String getPeriodByDate(Boolean aIsAnd,boolean aIsAddBetween, String aFieldDate, String aFieldTime, String aDate, String aDateNext, String aTime) {
+    public static String getPeriodByDate(boolean aIsAnd,boolean aIsAddBetween, String aFieldDate, String aFieldTime, String aDate, String aDateNext, String aTime) {
     	StringBuilder period = new StringBuilder() ;
     	if (aIsAnd) period.append(" and ") ;
     	if (aTime==null) {
