@@ -23,6 +23,7 @@
     </fileset>
 
     <fileset id='riams.ejb.jar' file='${libdir}/ecom/riams/ejb/riams-ejb-api.jar'/>
+    <fileset id='persdata.ejb.jar' file='${libdir}/ecom/persdata/ejb/persdata-ejb-api.jar'/>
     <fileset id='asset.ejb.jar' file='${libdir}/ecom/asset/ejb/asset-ejb-api.jar'/>
     <fileset id='riams.web.webapp' dir="${libdir}/ecom/riams/web/webapp">
         <include name='**/*'/>
