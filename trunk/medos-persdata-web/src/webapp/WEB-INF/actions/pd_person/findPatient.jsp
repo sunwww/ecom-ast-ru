@@ -14,7 +14,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="/searchPerson.do" defaultField="lastname" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/pd_searchPerson.do" defaultField="lastname" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
       <msh:panel colsWidth="10%, 10%, 70%" guid="354f9651-7a86-447b-9066-43af5b3bf277">
         <msh:row guid="6ebb763c-58d4-45f6-928e-2d03a5b55b5b">
           <msh:textField property="lastname" label="ФИО, полис или мед. карта" size="40" guid="56502d8a-33ae-463c-910b-59625f2d2778" />
