@@ -158,12 +158,8 @@ public class Person extends JournalData{
 	 */
 	@Comment("СНИЛС")
 	
-	public String getSnils() {
-		return theSnils;
-	}
-	public void setSnils(String aSnils) {
-		theSnils = aSnils;
-	}
+	public String getSnils() {return theSnils;}
+	public void setSnils(String aSnils) {theSnils = aSnils;}
 	/**
 	 * СНИЛС
 	 */
@@ -173,12 +169,8 @@ public class Person extends JournalData{
 	 */
 	@Comment("Национальность")
 	@OneToOne
-	public VocNationality getNationality() {
-		return theNationality;
-	}
-	public void setNationality(VocNationality aNationality) {
-		theNationality = aNationality;
-	}
+	public VocNationality getNationality() {return theNationality;}
+	public void setNationality(VocNationality aNationality) {theNationality = aNationality;}
 	/**
 	 * Национальность
 	 */
@@ -188,12 +180,8 @@ public class Person extends JournalData{
 	 */
 	@Comment("Электронная почта")
 	
-	public String getEmail() {
-		return theEmail;
-	}
-	public void setEmail(String aEmail) {
-		theEmail = aEmail;
-	}
+	public String getEmail() {return theEmail;}
+	public void setEmail(String aEmail) {theEmail = aEmail;}
 	/**
 	 * Электронная почта
 	 */
@@ -210,12 +198,8 @@ public class Person extends JournalData{
 	 */
 	private List<ComingDocument> theComingDocuments;
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	public List<EmergencyIdentification> getEmergencyIdentifications() {
-		return theEmergencyIdentifications;
-	}
-	public void setEmergencyIdentifications(List<EmergencyIdentification> aEmergencyIdentifications) {
-		theEmergencyIdentifications = aEmergencyIdentifications;
-	}
+	public List<EmergencyIdentification> getEmergencyIdentifications() {return theEmergencyIdentifications;}
+	public void setEmergencyIdentifications(List<EmergencyIdentification> aEmergencyIdentifications) {theEmergencyIdentifications = aEmergencyIdentifications;}
 	/**
 	 * Экстренные идентификации
 	 */
