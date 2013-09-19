@@ -26,10 +26,17 @@
     
     <msh:ifFormTypeIsView formName="exp_vocKindForm">
     	<msh:ifInRole roles="/Policy/Voc/VocQualityEstimationCrit/View">
-    		<ecom:webQuery name="crit" nativeSql="select id,code,name from VocQualityEstimationCrit where kind_id='${param.id}' order by code"/>
+    		<ecom:webQuery name="crit" nativeSql="select vqec.id as vqecid,vqec.code as vqeccode
+    		,vqec.name as vqecname, vqec1.code 
+    		from VocQualityEstimationCrit vqec
+    		left join VocQualityEstimationCrit vqec1 on vqec1.id=vqec.parent_id
+    		where vqec.kind_id='${param.id}' 
+    		
+    		order by vqec.code"/>
     		<msh:table name="crit" action="entityParentView-exp_vocCrit.do" idField="1">
     			<msh:tableColumn property="2" columnName="Код"/>
     			<msh:tableColumn property="3" columnName="Наименование"/>
+    			<msh:tableColumn property="4" columnName="Основ. критерий"/>
     		</msh:table>
     	</msh:ifInRole>
     </msh:ifFormTypeIsView>
@@ -42,9 +49,11 @@
       <msh:sideLink roles="/Policy/Voc/VocQualityEstimationKind/Edit" key="ALT+2" params="id" action="/entityEdit-exp_vocKind" name="Изменить" title="Изменить данные" />
       <msh:sideLink roles="/Policy/Voc/VocQualityEstimationKind/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityDelete-exp_vocKind" name="Удалить" title="Удалить данные" />
     </msh:sideMenu>
+    <msh:ifFormTypeAreViewOrEdit formName="exp_vocKindForm">
     <msh:sideMenu title="Добавить">
-    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-exp_vocCrit" name="Критерий" title="Добавить критерий"/>
+    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Create" key="ALT+3" action="/entityParentPrepareCreate-exp_vocCrit.do?kind=${param.id}" name="Критерий" title="Добавить критерий"/>
     </msh:sideMenu>
+    </msh:ifFormTypeAreViewOrEdit>
     <tags:voc_menu currentAction="exp_voc_kind"/>
   </tiles:put>
 </tiles:insert>

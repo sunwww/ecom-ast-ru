@@ -42,7 +42,7 @@ select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedsc
 ,case when edps.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
-left join ExtDispPlan edp on edp.id=edc.dispType_id
+left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
@@ -58,13 +58,13 @@ order by veds.id,veds.name"
 	if (listVisit!=null && !listVisit.isEmpty()) {
 	} else {
 		%>
-<ecom:webQuery name="servicePlanVisit"
+<ecom:webQuery name="servicePlanVisit" 
 nativeSql="
 select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
 ,case when edps.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
-left join ExtDispPlan edp on edp.id=edc.dispType_id
+left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)

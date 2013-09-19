@@ -32,7 +32,7 @@
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_vocPlanService" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/Plan/Service/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
-        <tags:voc_menu currentAction="medService"/>
+        <tags:voc_menu currentAction="extDisp"/>
 	</tiles:put>
 	
 </tiles:insert>
