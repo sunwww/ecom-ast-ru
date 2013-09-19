@@ -152,6 +152,9 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	    	if (sql.toString().indexOf("querId")>0) {
     	    		query.setParameter("querId", new StringBuilder().append("").append(aQuery).append("%").toString()) ;
     	    	}
+    	    	if (sql.toString().indexOf("querInd")>0) {
+    	    		query.setParameter("querInd", new StringBuilder().append("").append(aQuery).append("").toString()) ;
+    	    	}
         		//sql.append(" and ").append(theNameId).append("=").append(id) ;
     	    	/*
     	    	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
