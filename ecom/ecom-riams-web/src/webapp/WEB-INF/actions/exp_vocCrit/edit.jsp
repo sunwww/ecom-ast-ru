@@ -47,9 +47,11 @@
       <msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Edit" key="ALT+2" params="id" action="/entityEdit-exp_vocCrit" name="Изменить" title="Изменить данные по организации" />
       <msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityDelete-exp_vocCrit" name="Удалить" title="Удалить данные из организации" />
     </msh:sideMenu>
-    <msh:sideMenu title="Добавить">
-    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-exp_vocMark" name="Оценку" title="Добавить оценку"/>
-    </msh:sideMenu>
+    <msh:ifFormTypeAreViewOrEdit formName="exp_vocCritForm">
+	    <msh:sideMenu title="Добавить">
+	    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-exp_vocMark" name="Оценку" title="Добавить оценку"/>
+	    </msh:sideMenu>
+    </msh:ifFormTypeAreViewOrEdit>
     <tags:voc_menu currentAction="exp_voc_kind"/>
   </tiles:put>
 </tiles:insert>
