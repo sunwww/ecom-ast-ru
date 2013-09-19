@@ -56,6 +56,14 @@ public class VocQualityEstimationMarkForm extends IdEntityForm{
 			theFullname = aFullname;
 		}
 
+		 /** Не учитывать */
+		@Comment("Не учитывать")
+		@Persist
+		public Boolean getIsIgnore() {return theIsIgnore;}
+		public void setIsIgnore(Boolean aIsIgnore) {theIsIgnore = aIsIgnore;}
+
+		/** Не учитывать */
+		private Boolean theIsIgnore;
 		/** Полное название */
 		private String theFullname;
 		/** Оценочный балл*/

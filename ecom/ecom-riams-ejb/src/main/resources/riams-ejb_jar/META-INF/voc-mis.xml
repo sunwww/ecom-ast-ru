@@ -213,7 +213,7 @@
                 join=""
                 order=""
                 names   = "p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') "
-    		queried=" cast(p.id as varchar(20)) = :querId or p.lastname like :querId or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3))"
+    		queried=" cast(p.id as varchar(20)) = :querInd or p.lastname like :querId or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3))"
     		queriedSplitCount="3"
         />
     </voc> 
@@ -1008,7 +1008,7 @@
     			from = 'WorkFunction as wf '
     			parent = ''
     			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end"
-    			queried =" (cast(wf.id as varchar(20))= :quer1 or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+    			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
     			queryAppend = " wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
     			queriedSplitCount="3"
     			order =''
@@ -1026,7 +1026,7 @@
     			from = 'WorkFunction as wf '
     			parent = ''
     			names  = "vwf.name||' '||case when w.person_id is null then wf.groupName else p.lastname||' '||p.firstname||' '||p.middlename end "
-    			queried =" (cast(wf.id as varchar(20))= :querId or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
+    			queried =" (cast(wf.id as varchar(20)) = :querInd or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
     			queryAppend = 'wc.id is not null and wf.group_id is null'
     			order =''
     			nameId='wf.id'

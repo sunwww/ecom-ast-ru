@@ -52,6 +52,14 @@ public void setType(VocQualityEstimationCritType aType) {
 	theType = aType;
 }
 
+/** Родитель */
+@Comment("Родитель")
+@OneToOne
+public VocQualityEstimationCrit getParent() {return theParent;}
+public void setParent(VocQualityEstimationCrit aParent) {theParent = aParent;}
+
+/** Родитель */
+private VocQualityEstimationCrit theParent;
 /** Тип критерия */
 private VocQualityEstimationCritType theType;
  /**
