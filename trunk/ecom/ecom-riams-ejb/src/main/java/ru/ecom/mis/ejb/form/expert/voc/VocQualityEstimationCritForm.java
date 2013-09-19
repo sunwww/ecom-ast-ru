@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.expert.voc;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
@@ -19,7 +21,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Справочник видов оценок качества")
 @WebTrail(comment = "Вид оценок качества", nameProperties = "name", view = "entityParentView-exp_vocCrit.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocQualityEstimationCrit")
-@Parent(property = "kind", parentForm = VocQualityEstimationKindForm.class)
+@Parent(property = "parent", parentForm = VocQualityEstimationCritForm.class)
 public class VocQualityEstimationCritForm extends IdEntityForm {
 		/** Короткое название*/
 		 @Comment("Короткое название")
@@ -46,14 +48,18 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 		 /** Тип критерия */
 		@Comment("Тип критерия")
 		@Persist
-		public Long getType() {
-			return theType;
-		}
+		public Long getType() {return theType;}
+		public void setType(Long aType) {theType = aType;}
 
-		public void setType(Long aType) {
-			theType = aType;
-		}
+		
+		/** Родитель */
+		@Comment("Родитель")
+		@Persist
+		public Long getParent() {return theParent;}
+		public void setParent(Long aParent) {theParent = aParent;}
 
+		/** Родитель */
+		private Long theParent;
 		/** Тип критерия */
 		private Long theType;
 		/** Короткое название */

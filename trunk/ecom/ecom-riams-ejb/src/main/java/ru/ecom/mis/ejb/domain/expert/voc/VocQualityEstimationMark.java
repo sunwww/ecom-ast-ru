@@ -27,6 +27,13 @@ public class VocQualityEstimationMark extends VocBaseEntity{
  public void setMark(Double aMark) {
   theMark = aMark;
  }
+ /** Не учитывать */
+@Comment("Не учитывать")
+public Boolean getIsIgnore() {return theIsIgnore;}
+public void setIsIgnore(Boolean aIsIgnore) {theIsIgnore = aIsIgnore;}
+
+/** Не учитывать */
+private Boolean theIsIgnore;
  
  /** Полное название */
 @Comment("Полное название")
