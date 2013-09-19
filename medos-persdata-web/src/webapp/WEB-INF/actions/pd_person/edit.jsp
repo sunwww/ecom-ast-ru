@@ -20,7 +20,7 @@
 					<msh:textField property="snils" label="СНИЛС"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="nationality"/>
+					<msh:autoComplete property="nationality" vocName="vocNationality"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField property="email"/>
@@ -29,14 +29,31 @@
 			</msh:panel>
 		</msh:form>
 				<msh:ifFormTypeIsView formName="pd_personForm">
+				<msh:section createUrl="" >
+				<ecom:webQuery name="identifier" nativeSql="
+				select i.id as iid,i.IdentificationNumber as identificationNumber
+				, vis.name as visname, i.IsTransient as isTransient
+				from Identifier i
+				left join VocIdentificationSystem vis on vis.id=i.identificationSystem_id
+				where i.person_id=${param.id}
+				"/>
+				<msh:table name="identifier" action="entityParentView-pd_identifier.do" idField="1">
+					<msh:tableColumn property="2" columnName="Номер"/>
+					<msh:tableColumn property="3" columnName="Система"/>
+					<msh:tableColumn property="4" columnName="Временный?"/>
+				</msh:table>				
+				</msh:section>
 			<msh:section createUrl="entityParentPrepareCreate-pd_address.do?id=${param.id}">
 				<ecom:webQuery name="address" nativeSql="
-					select pa.id,va.name as vaname, a.Province as aaProvince
-					, a.District as aaDistrict, a.Settlement as aaSettlement
-					, a.Street as aaStreet, pa.House, pa.building, pa.flat
+					select pa.id,va.name as vaname
+					, case when vk.id is not null then vk.Province else a.Province end as aaProvince
+					, case when vk.id is not null then vk.Region else a.Region end as aaRegion
+					, case when vk.id is not null then coalesce(vk.city,'')||' '||coalesce(vk.Settlement,'') else a.Settlement end as aaSettlement
+					, case when vk.id is not null then vk.street else a.Street end as aaStreet, pa.House, pa.building, pa.flat
 					from PersonalAddress pa
 					left join VocAddress va on va.id=pa.type_id
 					left join Address a on a.id=pa.address_id
+					left join VocKladr vk on vk.id=a.kladr_id
 					where pa.person_id=${param.id}
 				"/>
 				<msh:table name="address" action="entityParentView-pd_address.do" idField="1">
