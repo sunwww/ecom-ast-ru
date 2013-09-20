@@ -1,4 +1,6 @@
 package ru.ecom.mis.ejb.domain.expert;
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -24,12 +26,8 @@ public class QualityEstimationCrit extends BaseEntity{
   */
  @Comment("Оценка качества")
  @ManyToOne
- public QualityEstimation getEstimation() {
-  return theEstimation;
- }
- public void setEstimation(QualityEstimation aEstimation) {
-  theEstimation = aEstimation;
- }
+ public QualityEstimation getEstimation() {return theEstimation;}
+ public void setEstimation(QualityEstimation aEstimation) {theEstimation = aEstimation;}
  /**
   * Оценка качества
   */
@@ -39,14 +37,18 @@ public class QualityEstimationCrit extends BaseEntity{
   */
  @Comment("Балл оценки критерия качества")
  @OneToOne
- public VocQualityEstimationMark getMark() {
-  return theMark;
- }
- public void setMark(VocQualityEstimationMark aMark) {
-  theMark = aMark;
- }
+ public VocQualityEstimationMark getMark() {return theMark;}
+ public void setMark(VocQualityEstimationMark aMark) {theMark = aMark;}
  /**
   * Балл оценки критерия качества
   */
  private VocQualityEstimationMark theMark;
+ 
+	 /** Оценка */
+	@Comment("Оценка")
+	public BigDecimal getMarkTransient() {return theMarkTransient;}
+	public void setMarkTransient(BigDecimal aMarkTransient) {theMarkTransient = aMarkTransient;}
+	
+	/** Оценка */
+	private BigDecimal theMarkTransient;
 }
