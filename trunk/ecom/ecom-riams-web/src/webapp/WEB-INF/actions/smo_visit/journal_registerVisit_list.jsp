@@ -19,6 +19,8 @@
   <tiles:put name="body" type="string">
   <%	
   String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
+  String typeIsTalk =ActionUtil.updateParameter("Form039Action","typeIsTalk","3", request) ;
+  String typeAge =ActionUtil.updateParameter("Form039Action","typeAge","2", request) ;
   JournalBySpecialistForm form = (JournalBySpecialistForm)request.getSession().getAttribute("poly_journalBySpecForm");
 	//String args =form.getBeginDate()+":"+form.getFinishDate()
 	//+":"+form.getSpecialist()+":"+form.getRayon()
@@ -69,6 +71,25 @@
 	if (form.getRayon()!=null && (form.getRayon().intValue()>0)) {
 		sql = sql+" and p.rayon_id='"+form.getRayon()+"'" ;
 	}
+	String isTalkSql = "" ;
+	if (typeIsTalk.equals("1")) {
+		isTalkSql = " and t.isTalk='1'" ;
+	} else if (typeIsTalk.equals("2")) {
+		isTalkSql = " and (t.isTalk='0' or t.isTalk is null)" ;
+	}
+	StringBuilder ageSql = new StringBuilder() ;
+	if (typeAge.equals("1")) {
+  		ageSql.append(" and cast(to_char(t.dateStart,'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(t.dateStart, 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(t.dateStart,'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 0 and 14 ") ;
+	} 
+	sql = sql+isTalkSql ;
+	sql = sql+ageSql.toString() ;
 	request.setAttribute("sql", sql) ;
 	request.setAttribute("order", order) ;
   %>
@@ -126,7 +147,32 @@
 	        	<input type="radio" name="typeDtype" value="3">  Все
 	        </td>
         </msh:row>
+      <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="1"  >  0-14 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="2"  >  все
+        </td>
+       </msh:row>        
+       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+
         
+         <msh:row>
+	        <td class="label" title="База (typeIsTalk)" colspan="1">
+	        <label for="typeDtypeName" id="typeIsTalkLabel">Беседа с родс.:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeIsTalk" value="1">  только беседы
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeIsTalk" value="2" >  основные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeIsTalk" value="3">  Все
+	        </td>
+        </msh:row>
+        </msh:ifInRole>
         <msh:row>
         <td colspan="4" class="buttons">
 			<input type="button" value="Отменить" title="Отменить изменения [SHIFT+ESC]" onclick="this.disabled=true; window.history.back()" id="cancelButton">
@@ -156,7 +202,8 @@
     	, vh.code as vhcode 
     	, (select list (mkb.code) from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.medCase_id=t.id) as diag
     	, vss.name as vssname, (select list (ms.name) from medcase ser left join medservice ms on ms.id=ser.medService_id where ser.parent_id=t.id and ser.dtype='ServiceMedCase') as usl
-    	,case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else '' end as directHosp 
+    	,case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else '' end as directHosp
+    	, oml.name as omlname 
     	from Medcase t  
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id  
     	left join workfunction wf on wf.id=t.workFunctionExecute_id  left join worker w on w.id=wf.worker_id 
@@ -168,6 +215,7 @@
     	left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id 
     	left join vochospitalization vh on vh.id=t.hospitalization_id  
     	left join VocServiceStream vss on vss.id=t.serviceStream_id
+    	left join MisLpu oml on oml.id=t.orderLpu_id
     	${sql} 
 		and (t.noActuality is null or t.noActuality='0') order by ${order}
     	
@@ -181,7 +229,8 @@
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type='hidden' name="cntBegin" id="cntBegin" value="${numberInJournal}">
-    <input type="submit" value="Печать"> 
+    <input type="submit"  onclick="this.form.action='print-journalRegistration.do'" value="Печать шаблон 1">
+     <input type="submit" onclick="this.form.action='print-journalRegistration_1.do'" value="Печать шаблон 2">
     </form>
     	
         <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" 
@@ -229,9 +278,14 @@
     <%} %>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+  	<script type="text/javascript">
+    checkFieldUpdate('typeIsTalk','${typeIsTalk}',3) ;
+  	</script>
+  	</msh:ifInRole>
   	<script type="text/javascript">
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
-    
+    checkFieldUpdate('typeAge','${typeAge}',2) ;
     
     function checkFieldUpdate(aField,aValue,aDefault) {
     	eval('var chk =  document.forms[0].'+aField) ;
