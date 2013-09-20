@@ -48,7 +48,7 @@ function onPreDelete(aEntityId, aContext) {
 			aContext.manager.createNativeQuery("update ticket set medcard_id="+newmedcard+" where medcard_id="+medcard.id).executeUpdate() ;
 		} else {
 			aContext.manager.createNativeQuery("delete from ticket where medcard_id="+medcard.id).executeUpdate() ;
-			aContext.manager.createNativeQuery("delete from medcase where medcard_id="+medcard.id+" dtype='PolyclinicMedCase'").executeUpdate() ;
+			aContext.manager.createNativeQuery("delete from medcase where medcard_id="+medcard.id+" and dtype='PolyclinicMedCase'").executeUpdate() ;
 		}
 	}
 	
