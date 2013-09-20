@@ -10,6 +10,55 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	public String updateExtDispPlanService(Long aPlan, String aAction, Long aServiceId, Long aAgeGroup, Long aSex, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String actionNext="" ;
+		Long sexOther = aSex!=null && aSex.equals(Long.valueOf(1))?Long.valueOf("2"):Long.valueOf("1") ;
+		System.out.println("action="+aAction+"=") ;
+		if (aAction!=null && aAction.equals("Д")) {
+			Collection<WebQueryResult> list = service.executeNativeSql("select edps.id,edps.sex_id "
+				+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+				+"' and edps.ageGroup_id='"+aAgeGroup+"' and (vs.omcCode='"+sexOther+"' or vs.id is null)") ;
+			if (!list.isEmpty()) {
+				list = service.executeNativeSql("select edps.id,edps.sex_id "
+						+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+						+"' and edps.ageGroup_id='"+aAgeGroup+"' and (vs.omcCode='"+sexOther+"')") ;
+				if (!list.isEmpty()) {
+					service.executeUpdateNativeSql("update "
+							+" ExtDispPlanService edps "
+							+" set sex_id=null"
+							+" where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+							+"' and edps.ageGroup_id='"+aAgeGroup+"'") ;
+				}
+			} else {
+				try {
+					service.executeUpdateNativeSql("insert into "
+						+" ExtDispPlanService "
+						+" (sex_id,plan_id,serviceType_id,ageGroup_id) values ((select min(vs.id) from vocsex vs where vs.omcCode='"+aSex+"'),'"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+						) ;
+				} catch (Exception e) {
+					service.executeUpdateNativeSql("alter table extdispplanservice alter column id set default nextval('extdispplanservice_sequence')") ;
+					service.executeUpdateNativeSql("insert into "
+							+" ExtDispPlanService "
+							+" (sex_id,plan_id,serviceType_id,ageGroup_id) values ((select min(vs.id) from vocsex vs where vs.omcCode='"+aSex+"'),'"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+							) ;
+				}
+			}
+			
+			actionNext="У" ;
+		} else if (aAction!=null && aAction.equals("У")) {
+			service.executeUpdateNativeSql("delete "
+					+" from ExtDispPlanService edps where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+					+"' and edps.ageGroup_id='"+aAgeGroup+"' and (select vs.omcCode from vocsex vs where vs.id=edps.sex_id)='"+aSex+"'") ;
+			service.executeUpdateNativeSql("update "
+					+" ExtDispPlanService edps "
+					+" set sex_id=(select min(vs.id) from vocsex vs where vs.omcCode='"+sexOther+"')"
+					+" where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+					+"' and edps.ageGroup_id='"+aAgeGroup+"' and edps.sex_id is null") ;
+			actionNext="Д" ;
+		} 
+		return actionNext ;
+	}
 	public String settingAppropriateService(String aAppropriateService, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

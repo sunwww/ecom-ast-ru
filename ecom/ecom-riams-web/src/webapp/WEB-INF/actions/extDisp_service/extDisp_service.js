@@ -1,4 +1,14 @@
 function edit(aForm,aCtx) {
+	/*
+        var col = aCtx.invokeScript("ExpertService", "findListCard"
+        	, aCtx.request.getParameter("id"), 25, aCtx.request.getParameter("next") ) ;
+        aCtx.request.setAttribute("list", col) ;
+
+	 */
+	
+	return aCtx.createForward("/WEB-INF/actions/extDisp_service/edit.jsp") ;
+}
+function editPlan(aForm,aCtx) {
 /*
         var col = aCtx.invokeScript("ExpertService", "findListCard"
         	, aCtx.request.getParameter("id"), 25, aCtx.request.getParameter("next") ) ;
@@ -6,7 +16,7 @@ function edit(aForm,aCtx) {
 
  */
 	
-	return aCtx.createForward("/WEB-INF/actions/extDisp_service/edit.jsp") ;
+	return aCtx.createForward("/WEB-INF/actions/extDisp_vocPlan/service.jsp") ;
 }
 function save(aForm,aCtx) {
 	var cntExam = +aCtx.request.getParameter("cntExam");
