@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.domain.expert;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -190,7 +191,13 @@ private Patient thePatient;
 		return theMedcase!=null?theMedcase.getInfo():"" ;
 	}
 	
+	 /** Оценка */
+	@Comment("Оценка")
+	public BigDecimal getMarkTransient() {return theMarkTransient;}
+	public void setMarkTransient(BigDecimal aMarkTransient) {theMarkTransient = aMarkTransient;}
 
+	/** Оценка */
+	private BigDecimal theMarkTransient;
 
 	/** Текст диагноза */
 	private String theDiagnosis;
