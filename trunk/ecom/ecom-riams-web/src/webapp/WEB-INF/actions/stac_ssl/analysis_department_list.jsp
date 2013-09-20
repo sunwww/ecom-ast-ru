@@ -636,7 +636,7 @@ order by dep.name
     <msh:section title="Свод хир. операций по отделениям, где отличаются отд.выписки и отд, где проводилась операция">
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_oper_otd_swod" nativeSql="
-select dmc.department_id as depid
+select ldmc.department_id as depid
 ,operdep.name as operdepname,dischdep.name as dischdepname
 ,count(distinct hmc.id) as cntDischarge
 ,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmerPat
@@ -665,7 +665,7 @@ where ldmc.DTYPE='DepartmentMedCase'
     	${dep}
     	
     
-group by dmc.department_id,operdep.name,dischdep.name 
+group by ldmc.department_id,operdep.name,dischdep.name 
 order by operdep.name, dischdep.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
