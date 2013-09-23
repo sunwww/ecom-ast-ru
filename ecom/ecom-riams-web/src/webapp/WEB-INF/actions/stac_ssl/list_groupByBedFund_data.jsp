@@ -19,7 +19,7 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_admission" nativeSql="
-    select m.id,p.lastname||' '||p.firstname||' '||p.middlename as fio
+    select m.id,p.lastname||' '||p.firstname||' '||coalesce(p.middlename,'') as fio
     ,d.name as depname,ss.code as sscode,p.birthday as birthday
     , m.dateStart as mdateStart
     ,coalesce(m.dateFinish,m.transferDate) as mdateFinish
