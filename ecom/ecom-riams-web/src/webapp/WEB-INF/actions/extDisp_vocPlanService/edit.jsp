@@ -29,7 +29,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="extDisp_vocPlanServiceForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_vocPlanService" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Voc/Plan/Service/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_vocPlanService" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/Plan/Service/Delete"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_vocPlanService" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/Plan/Service/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
         <tags:voc_menu currentAction="extDisp"/>

@@ -14,7 +14,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="extDisp_vocPlanForm">
-			<msh:section title="Услуги">
+			<msh:section title="Услуги" listUrl="js-extDisp_service-editPlan.do?id=${param.id}">
 			<ecom:webQuery name="services" nativeSql="
 				select min(edps.id),vs.name as vsname
 				,coalesce(veds.code,'')||' '||coalesce(veds.name,'') as vedsname,list(vedag.name) as vedagname

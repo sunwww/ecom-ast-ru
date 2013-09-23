@@ -15,7 +15,7 @@ public class ContractServiceJs {
 		String actionNext="" ;
 		Long sexOther = aSex!=null && aSex.equals(Long.valueOf(1))?Long.valueOf("2"):Long.valueOf("1") ;
 		System.out.println("action="+aAction+"=") ;
-		if (aAction!=null && aAction.equals("Д")) {
+		if (aAction!=null && (aAction.equals("Д") || aAction.equals("-"))) {
 			Collection<WebQueryResult> list = service.executeNativeSql("select edps.id,edps.sex_id "
 				+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
 				+"' and edps.ageGroup_id='"+aAgeGroup+"' and (vs.omcCode='"+sexOther+"' or vs.id is null)") ;
@@ -45,8 +45,8 @@ public class ContractServiceJs {
 				}
 			}
 			
-			actionNext="У" ;
-		} else if (aAction!=null && aAction.equals("У")) {
+			actionNext=aAction.equals("Д")?"У":"+" ;
+		} else if (aAction!=null && (aAction.equals("У")||aAction.equals("+"))) {
 			service.executeUpdateNativeSql("delete "
 					+" from ExtDispPlanService edps where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
 					+"' and edps.ageGroup_id='"+aAgeGroup+"' and (select vs.omcCode from vocsex vs where vs.id=edps.sex_id)='"+aSex+"'") ;
@@ -55,7 +55,7 @@ public class ContractServiceJs {
 					+" set sex_id=(select min(vs.id) from vocsex vs where vs.omcCode='"+sexOther+"')"
 					+" where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
 					+"' and edps.ageGroup_id='"+aAgeGroup+"' and edps.sex_id is null") ;
-			actionNext="Д" ;
+			actionNext=aAction.equals("У")?"Д":"-" ;
 		} 
 		return actionNext ;
 	}
