@@ -15,7 +15,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ExtDispPlan.class)
 @Comment("План дополнительной диспансеризации")
 @WebTrail(comment = "План дополнительной диспансеризации", nameProperties= "id"
-, list="entityParentList-extDisp_vocPlan.do", view="entityParentView-extDisp_vocPlan.do")
+, view="entityParentView-extDisp_vocPlan.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/Plan")
 public class ExtDispPlanForm extends IdEntityForm{
