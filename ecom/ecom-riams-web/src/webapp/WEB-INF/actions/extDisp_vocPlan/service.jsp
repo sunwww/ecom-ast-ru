@@ -41,7 +41,7 @@ ${ageGroupSex1Sql}
 from vocExtDispService veds
 left join ExtDispPlanService edps on edps.serviceType_id=veds.id
 left join VocSex vs on vs.id=edps.sex_id
-where (edps.plan_id=1 or edps.id is null)
+where (edps.plan_id=${param.id} or edps.id is null)
 group by veds.id,veds.code,veds.name
 order by veds.code,veds.name"/>
 		<ecom:webQuery name="result2" nativeSql="select veds.id,veds.code,veds.name
@@ -49,7 +49,7 @@ ${ageGroupSex2Sql}
 from vocExtDispService veds
 left join ExtDispPlanService edps on edps.serviceType_id=veds.id
 left join VocSex vs on vs.id=edps.sex_id
-where (edps.plan_id=1 or edps.id is null)
+where (edps.plan_id=${param.id} or edps.id is null)
 group by veds.id,veds.code,veds.name
 order by veds.code,veds.name"/>
 <table class='servicetbl' border="1">
