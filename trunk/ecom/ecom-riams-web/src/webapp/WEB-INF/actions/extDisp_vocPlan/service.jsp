@@ -17,6 +17,7 @@
 		"
 		/>
 		<%
+		String plan = request.getParameter("id") ;
 		List colAgeGroup = (List)request.getAttribute("ageGroup") ;
 		int cntAgeGroup = colAgeGroup.size() ;
 		StringBuilder ageSql1 = new StringBuilder() ;
@@ -24,14 +25,14 @@
 		//out.print("cntAge="+cntAgeGroup) ;
 		for (int i=0;i<cntAgeGroup && i<22;i++) {
 			WebQueryResult wqr = (WebQueryResult) colAgeGroup.get(i) ;
-			ageSql1.append(",max(case when edps.ageGroup_id='").append(wqr.get1()).append("' and (edps.sex_id is null or vs.omcCode='1') then 1 else 0 end)") ; 
-			ageSql1.append("||''||max(case when edps.ageGroup_id=").append(wqr.get1()).append(" and (edps.sex_id is null or vs.omcCode='2') then 1 else 0 end) as SA").append(wqr.get1()).append("G") ;
+			ageSql1.append(",max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id='").append(wqr.get1()).append("' and (edps.sex_id is null or vs.omcCode='1') then 1 else 0 end)") ; 
+			ageSql1.append("||''||max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id=").append(wqr.get1()).append(" and (edps.sex_id is null or vs.omcCode='2') then 1 else 0 end) as SA").append(wqr.get1()).append("G") ;
 		}
 		request.setAttribute("ageGroupSex1Sql", ageSql1.toString()) ;
 		for (int i=22;i<cntAgeGroup && i<44;i++) {
 			WebQueryResult wqr = (WebQueryResult) colAgeGroup.get(i) ;
-			ageSql2.append(",max(case when edps.ageGroup_id='").append(wqr.get1()).append("' and (edps.sex_id is null or vs.omcCode='1') then 1 else 0 end)") ; 
-			ageSql2.append("||''||max(case when edps.ageGroup_id=").append(wqr.get1()).append(" and (edps.sex_id is null or vs.omcCode='2') then 1 else 0 end) as SA").append(wqr.get1()).append("G") ;
+			ageSql2.append(",max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id='").append(wqr.get1()).append("' and (edps.sex_id is null or vs.omcCode='1') then 1 else 0 end)") ; 
+			ageSql2.append("||''||max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id=").append(wqr.get1()).append(" and (edps.sex_id is null or vs.omcCode='2') then 1 else 0 end) as SA").append(wqr.get1()).append("G") ;
 		}
 		request.setAttribute("ageGroupSex2Sql", ageSql2.toString()) ;
 		%>
@@ -41,7 +42,6 @@ ${ageGroupSex1Sql}
 from vocExtDispService veds
 left join ExtDispPlanService edps on edps.serviceType_id=veds.id
 left join VocSex vs on vs.id=edps.sex_id
-where (edps.plan_id=${param.id} or edps.id is null)
 group by veds.id,veds.code,veds.name
 order by veds.code,veds.name"/>
 		<ecom:webQuery name="result2" nativeSql="select veds.id,veds.code,veds.name
@@ -49,7 +49,6 @@ ${ageGroupSex2Sql}
 from vocExtDispService veds
 left join ExtDispPlanService edps on edps.serviceType_id=veds.id
 left join VocSex vs on vs.id=edps.sex_id
-where (edps.plan_id=${param.id} or edps.id is null)
 group by veds.id,veds.code,veds.name
 order by veds.code,veds.name"/>
 <table class='servicetbl' border="1">
@@ -138,7 +137,7 @@ for (int i=0;i<cntResult;i++) {
 <a href="javascript:void(0)" class="adivs" title="22">-</a> - услуга не добавлена в план
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Voc" beginForm="extDisp_vocPlanForm" />
+		<ecom:titleTrail mainMenu="Voc" beginForm="extDisp_vocPlanForm" title="Настройка услуг по плану"/>
 	</tiles:put>
 	<tiles:put name="side" type="string">
 
