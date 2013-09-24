@@ -14,9 +14,9 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="extDisp_vocPlanForm">
-			<msh:section title="Услуги" listUrl="js-extDisp_service-editPlan.do?id=${param.id}">
+			<msh:section title="Услуги" listUrl="js-extDisp_service-editPlan1.do?id=${param.id}">
 			<ecom:webQuery name="services" nativeSql="
-				select min(edps.id),vs.name as vsname
+				select min(edps.plan_id),vs.name as vsname
 				,coalesce(veds.code,'')||' '||coalesce(veds.name,'') as vedsname,list(vedag.name) as vedagname
 				
 				 from ExtDispPlanService edps
@@ -24,14 +24,14 @@
 				left join VocExtDispService veds on veds.id=edps.serviceType_id
 				left join VocExtDispAgeGroup vedag on vedag.id=edps.ageGroup_id
 					where edps.plan_id=${param.id}
-					group by edps.id,vs.name 
+					group by vs.name 
 				,veds.name,veds.code ,vs.id,veds.id
 				order by veds.code
 			"/>
-				<msh:table name="services" action="entityParentView-extDisp_vocPlanService.do" idField="1">
+				<msh:table name="services" action="js-extDisp_service-editPlan.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Пол" property="2"/>
 					<msh:tableColumn columnName="Услуга" property="3"/>
+					<msh:tableColumn columnName="Огр. по полу" property="2"/>
 					<msh:tableColumn columnName="Возрастные группы" property="4"/>
 				</msh:table>
 			</msh:section>

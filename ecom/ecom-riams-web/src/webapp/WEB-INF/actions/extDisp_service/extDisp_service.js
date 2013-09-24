@@ -8,6 +8,16 @@ function edit(aForm,aCtx) {
 	
 	return aCtx.createForward("/WEB-INF/actions/extDisp_service/edit.jsp") ;
 }
+function editPlan1(aForm,aCtx) {
+	/*
+        var col = aCtx.invokeScript("ExpertService", "findListCard"
+        	, aCtx.request.getParameter("id"), 25, aCtx.request.getParameter("next") ) ;
+        aCtx.request.setAttribute("list", col) ;
+
+	 */
+	
+	return aCtx.createForward("/WEB-INF/actions/extDisp_vocPlan/service1.jsp") ;
+}
 function editPlan(aForm,aCtx) {
 /*
         var col = aCtx.invokeScript("ExpertService", "findListCard"
