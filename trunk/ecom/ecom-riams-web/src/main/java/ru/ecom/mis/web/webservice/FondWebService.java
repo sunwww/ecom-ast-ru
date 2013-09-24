@@ -60,8 +60,8 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_POLIS(aSeries, aNumber, theLpu);
-        //System.out.println("result rz:") ;
-        //System.out.println(result) ;
+        System.out.println("result rz:") ;
+        System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -167,7 +167,7 @@ public class FondWebService {
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getMiddlename().equals(o!=null?o:"")?"":" bgcolor='yellow'"):"").append(">").append(o).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getBirthday().equals(dr)?"":" bgcolor='yellow'"):"").append(">").append(dr).append("</td>") ;
-            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss).append("</td>") ;
+            	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(upDate(e.getChildText("datadead"))).append("</td>") ;
              	sb.append("</tr>") ;
@@ -182,7 +182,7 @@ public class FondWebService {
         	result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
         	
             //System.out.println("result policy:") ;
-            //System.out.println(result) ;
+            System.out.println(result) ;
         	
         	result = updateXml(result) ;
         	//System.out.println(result);
@@ -206,6 +206,7 @@ public class FondWebService {
         	sb.append("<th>").append("Дата оконч. посл. продления").append("</th>") ;
         	sb.append("<th>").append("Дата оконч. действия (досрочно)").append("</th>") ;
         	sb.append("</tr>") ;
+        	try {
         	for (Element el:list_cur) {
         		//System.out.println(result);
         		sb.append("<tr>") ;
@@ -220,15 +221,23 @@ public class FondWebService {
         		if (pol.length>2) {
         			serPol = pol[0]+" "+pol[1] ;
         			numPol = pol[2] ;
-        		} else {
+        		} else if (pol.length>1){
         			serPol = pol[0] ;
         			numPol = pol[1] ;
+        		} else {
+        			if (pol[0].length()>10) {
+        				serPol = pol[0].substring(0,2)+" "+pol[0].substring(2,4) ;
+        				numPol = pol[0].substring(4) ;
+        			} else {
+        				serPol = pol[0].substring(0,3) ;
+        				numPol = pol[0].substring(3) ;
+        			}
         		}
         		String current = el.getChildText("pz_actual") ;
         		String ac = "" ;
 
             	sb.append("<td>").append("<input type='checkbox'  onclick=\"patientcheck('policy')\" name='fondPolicy' id='fondPolicy' ");
-    				
+            	
             	if (current.equals("1")) {
             		String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
             		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
@@ -269,8 +278,10 @@ public class FondWebService {
         	}
         	sb.append("</table>") ;
         	in.close() ;
-        	
-        	
+        	}catch(Exception e) {
+        		e.printStackTrace() ;
+        	}
+        	System.out.println(sb) ;
         	result = (String)aSoap.get_DOCS_from_RZ(aRz, theLpu) ;
             //System.out.println("result document:") ;
             //System.out.println(result) ;

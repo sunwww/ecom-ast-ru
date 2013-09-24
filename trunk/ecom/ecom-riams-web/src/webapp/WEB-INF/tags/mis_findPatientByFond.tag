@@ -63,6 +63,9 @@
          	init${name}FindPatientByFond() ;
           }
          if (aError) {
+        	 if (aText.indexOf("null")!=-1) {aText="НЕТ ДАННЫХ В БАЗЕ ФОНДА";}
+        	 else {if (aText.indexOf("java.net.SocketException")!=-1) {aText="НЕТ СВЯЗИ С БАЗОЙ ФОНДА!!!";}}
+        	 
              $('${name}FindPatientByFondText').innerHTML = "<b color='red'>ОШИБКА:"+aText+"</b>" ;
          } else {
              if (aText!=null) {

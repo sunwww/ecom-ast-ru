@@ -56,12 +56,15 @@ order by veds.code,veds.name"/>
 	<th rowspan="2">ИД</th>
 	<th rowspan="2">Код</th>
 	<th rowspan="2">Наименование услуги</th>
+	<th rowspan="2">Пол</th>
+	
 	<% 
 	StringBuilder ageSB = new StringBuilder() ;
 	StringBuilder ageNameSB = new StringBuilder() ;
+	out.print("<th colspan='"+cntAgeGroup+"'>Возрастные группы</th></tr><tr>") ;
 	for (int i=0;i<cntAgeGroup;i++) {
 		WebQueryResult wqr = (WebQueryResult) colAgeGroup.get(i) ;
-		out.print("<th colspan='2'>");out.print(wqr.get2());out.println("</th>") ;
+		out.print("<th colspan='1'>");out.print(wqr.get2());out.println("</th>") ;
 		ageSB.append(wqr.get1()).append(",") ;
 		ageNameSB.append(wqr.get2()).append("###") ;
 		
@@ -70,13 +73,11 @@ order by veds.code,veds.name"/>
 	String[] ageNameList = ageNameSB.toString().split("###" ) ;
 	%>
 </tr>
-<tr>
 	<% 
-	for (int i=0;i<cntAgeGroup;i++) {
+	/*for (int i=0;i<cntAgeGroup;i++) {
 		out.print("<th class='manTd'>М</th>") ;
 		out.print("<th>Ж</th>") ;
-	}	%>
-</tr>
+	}*/	%>
 <%
 List result1 = (List) request.getAttribute("result1") ;
 List result2 = (List) request.getAttribute("result2") ;
@@ -87,9 +88,13 @@ for (int i=0;i<cntResult;i++) {
 	%>
 	<tr class='dataTr'>
 	<%
-		out.print("<td>");out.print(wqr1.get1()) ;out.println("</td>");
-		out.print("<td>");out.print(wqr1.get2()) ;out.println("</td>");
-		out.print("<td style='text-align: left;'>");out.print(wqr1.get3()) ;out.println("</td>");
+		out.print("<td rowspan='2'>");out.print(wqr1.get1()) ;out.println("</td>");
+		out.print("<td rowspan='2'>");out.print(wqr1.get2()) ;out.println("</td>");
+		out.print("<td rowspan='2' style='text-align: left;'>");out.print(wqr1.get3()) ;out.println("</td>");
+		StringBuilder strM = new StringBuilder() ;
+		StringBuilder strW = new StringBuilder() ;
+		strM.append("<th>М</th>") ;
+		strW.append("<th>Ж</th>") ;
 		for (int ai=0;ai<cntAgeGroup ;ai++) {
 			String obj = "" ;
 			if (ai<22) {
@@ -99,32 +104,41 @@ for (int i=0;i<cntResult;i++) {
 			}
 			String age = ageList[ai] ;
 			if (obj!=null&&obj.length()==2) {
-				out.print("<td class='manTd'>") ;
+				strW.append("<td class='womenTd'>") ;
+				strM.append("<td class='manTd'>") ;
 				//out.println(obj.substring(0,1)) ;
 				if (obj.substring(0,1).equals("1")) {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");out.print(wqr1.get1()) ;
-					out.print("_"+age+"_1' onclick=\"updatePlanService('");out.print(wqr1.get1());out.print("','"+age+"','1')\">+</a>");
+					strM.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");
+					strM.append(wqr1.get1()) ;
+					strM.append("_"+age+"_1' onclick=\"updatePlanService('");
+					strM.append(wqr1.get1());
+					strM.append("','"+age+"','1')\">+</a>");
 				} else {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");out.print(wqr1.get1());
-					out.print("_"+age+"_1' onclick=\"updatePlanService('");out.print(wqr1.get1());out.print("','"+age+"','1')\">-</a>");
+					strM.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");
+					strM.append(wqr1.get1());
+					strM.append("_"+age+"_1' onclick=\"updatePlanService('");
+					strM.append(wqr1.get1());
+					strM.append("','"+age+"','1')\">-</a>");
 				}
-				out.print("</td>") ;
-				out.print("<td>") ;
+				//strW.append("</td><td>") ;
 				//out.println(obj.substring(1,2)) ;
 				if (obj.substring(1,2).equals("1")) {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
+					strW.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
 				} else {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
+					strW.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
 				}
-				out.print("</td>") ;
+				strW.append("</td>") ;
+				strM.append("</td>") ;
 			} else {
-				out.println("<td>Д</td>") ;
-				out.println("<td>Д</td>") ;
+				strM.append("<td>Д</td>") ;
+				strW.append("<td>Д</td>") ;
 			}
 			
 			
-			
 		}
+		out.print(strW.toString()) ;
+		out.print("</tr><tr>");
+		out.print(strM.toString()) ;
 		%>
 	
 	</tr>
@@ -141,7 +155,7 @@ for (int i=0;i<cntResult;i++) {
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:sideMenu title="Вид плана">
-			<msh:sideLink name="МЖ" action="js-extDisp_service-editPlan1.do" params="id"/>
+			<msh:sideLink name="МЖ" action="js-extDisp_service-editPlan.do" params="id"/>
 		</msh:sideMenu>
         <tags:voc_menu currentAction="extDisp"/>
 	</tiles:put>
