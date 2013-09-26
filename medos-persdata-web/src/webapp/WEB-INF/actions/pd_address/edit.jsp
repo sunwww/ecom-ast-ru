@@ -8,6 +8,7 @@
 		<msh:form action="/entityParentSaveGoParentView-pd_address.do" defaultField="typeName">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
+			<msh:hidden property="person" />
 			<msh:panel>
 				<msh:row>
 					<msh:autoComplete property="type" vocName="vocAddress" fieldColSpan="5" horizontalFill="true"/>
@@ -32,7 +33,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="pd_addressForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_address" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-pd_address" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-pd_address" name="Удалить" title="Удалить" roles=""/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>

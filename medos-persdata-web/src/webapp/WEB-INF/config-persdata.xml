@@ -7,6 +7,9 @@
 		<form-bean name="pd_personForm" type="ru.medos.ejb.persdata.form.PersonForm" />
 		<form-bean name="pd_addressForm" type="ru.medos.ejb.persdata.form.PersonalAddressForm" />
 		<form-bean name="pd_personSearchForm" type="ru.medos.web.persdata.PersonSearchForm" />
+		<form-bean name="pd_identifierForm" type="ru.medos.ejb.persdata.form.IdentifierForm" />
+		<form-bean name="pd_phoneForm" type="ru.medos.ejb.persdata.form.PhoneForm" />
+		<form-bean name="pd_comingDocumentForm" type="ru.medos.ejb.persdata.form.ComingDocumentForm" />
 	</form-beans>
 
 	<global-forwards />
