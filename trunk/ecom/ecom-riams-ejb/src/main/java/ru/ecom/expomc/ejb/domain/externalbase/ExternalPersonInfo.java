@@ -16,10 +16,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @AIndexes({
-	@AIndex(properties={"lastname","firstname","middlename","birthdate"})		
-	,@AIndex(properties={"insuranceCompany","policySeries","policyNumber"})		
-	,@AIndex(properties={"insuranceCompany","policySeries","policyNumber","bindingLpu"})		
-	,@AIndex(properties={"lastname","firstname","middlename"})		
+	@AIndex(properties={"lastname"})
+	,@AIndex(properties={"firstname"})
+	,@AIndex(properties={"middlename"})
+	,@AIndex(properties={"birthdate"})		
+	,@AIndex(properties={"insuranceCompany"})
+	,@AIndex(properties={"policySeries"})
+	,@AIndex(properties={"policyNumber"})		
 })
 @NamedQueries({
 @NamedQuery(name="externalPersonInfo.findByFiod"
