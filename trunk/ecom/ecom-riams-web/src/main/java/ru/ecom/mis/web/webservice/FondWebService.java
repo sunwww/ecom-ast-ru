@@ -93,19 +93,36 @@ public class FondWebService {
 	public static Object checkPatientByDocument(HttpServletRequest aRequest, PatientForm aPatFrm, String aType, String aSeries,String aNumber) throws Exception  {
 		String result = null ;
 		WSLocator service = new WSLocator() ;
+		service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
+		WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
+		result = (String)soap.get_RZ_from_DOCS(aType, aSeries, aNumber, theLpu);
+		//System.out.println("result rz:") ;
+		//System.out.println(result) ;
+		InputStream in = new ByteArrayInputStream(result.getBytes());
+		Document doc = new SAXBuilder().build(in);
+		Element root = doc.getRootElement();
+		Element cur1 = root.getChild("cur1") ;
+		Element rze = cur1.getChild("rz") ;
+		String rz = rze.getText() ;
+		in.close() ;
+		return getInfoByPatient(aRequest, aPatFrm,soap,rz);
+	}
+	public static Object checkPatientByCommonNumber(HttpServletRequest aRequest, PatientForm aPatFrm, String aCommonNumber) throws Exception  {
+		String result = null ;
+		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
-        result = (String)soap.get_RZ_from_DOCS(aType, aSeries, aNumber, theLpu);
+        //result = (String)soap.get_RZ_from_DOCS(aType, aSeries, aNumber, theLpu);
         //System.out.println("result rz:") ;
         //System.out.println(result) ;
-        InputStream in = new ByteArrayInputStream(result.getBytes());
-        Document doc = new SAXBuilder().build(in);
-        Element root = doc.getRootElement();
+        //InputStream in = new ByteArrayInputStream(result.getBytes());
+        //Document doc = new SAXBuilder().build(in);
+       /*Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
         Element rze = cur1.getChild("rz") ;
-        String rz = rze.getText() ;
-        in.close() ;
-        return getInfoByPatient(aRequest, aPatFrm,soap,rz);
+        String rz = rze.getText() ;*/
+        //in.close() ;
+        return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber);
     }
 	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException, NamingException, ParseException {
 		if (!aRz.equals("")) {

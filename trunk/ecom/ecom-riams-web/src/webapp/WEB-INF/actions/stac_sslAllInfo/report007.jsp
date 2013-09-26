@@ -828,9 +828,8 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		
 	    		    <msh:section>
-	    <msh:sectionTitle>007/у-02 форма. Свод по отделениям</msh:sectionTitle>
-	    <msh:sectionContent>
-	    <ecom:webQuery name="journal_priem" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&typeView=1&department='||lpu.id,lpu.name,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
+	    <msh:sectionTitle>
+	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select '${dateBegin}:'||lpu.id||'&dateBegin=${dateBegin}&typeView=1&department='||lpu.id,lpu.name,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
@@ -939,6 +938,17 @@ if (date!=null && !date.equals("")) {
 	${department}
 	group by lpu.id,lpu.name
 	      " />
+	    <form action="print-stac_report007_swod.do" method="post" target="_blank">
+	    007/у-02 форма. Свод по отделениям
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по отделениям 007 формы за ${param.dateBegin}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+	    </msh:sectionTitle>
+	    <msh:sectionContent>
 	    <msh:table name="journal_priem" 
 	    viewUrl="stac_report_007.do?short=Short" 
 	    action="stac_report_007.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -949,7 +959,6 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="7" />
-	      
 	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
@@ -964,16 +973,6 @@ if (date!=null && !date.equals("")) {
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
-	    		
-	    		
-	    		
-	    		
-	    		
-	    		
-	    		
-	    		
-	    		
-	    		
 	    		
 	    		<%
 	    	}

@@ -14,6 +14,7 @@
     	<msh:link action="javascript:checkPatientBySnils()">Проверка по СНИЛСу</msh:link>
     	<msh:link action="javascript:checkPatientByFioDr()">Проверка по ФИО+ДР</msh:link>
     	<msh:link action="javascript:checkPatientByDocument()">Проверка по документам</msh:link>
+    	<msh:link action="javascript:checkPatientByCommonNumber()">Проверка по RZ</msh:link>
     </msh:ifInRole>	
     
               <table>
@@ -812,6 +813,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     		 roles="/Policy/Mis/Patient/CheckByFond"/>
     		<msh:sideLink name="Добавить данные из базы фонда по документам" action="/javascript:checkPatientByDocument('.do')"
     		 roles="/Policy/Mis/Patient/CheckByFond"/>
+    		<msh:sideLink name="Добавить данные из базы фонда по RZ" action="/javascript:checkPatientByCommonNumber('.do')"
+    		 roles="/Policy/Mis/Patient/CheckByFond"/>
     	</msh:sideMenu>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="82ccfbf3-9c28-4416-ba41-529f2cea7691">
@@ -893,6 +896,21 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
+    	function checkPatientByCommonNumber(a) {
+    		showPatientFindPatientByFond("Подождите идет поиск...") ;
+    		PatientButtonView(0) ;
+    		PatientService.checkPatientByCommonNumber($('id').value,$('commonNumber').value, {
+                   callback: function(aResult) {
+                	  cancelPatientFindPatientByFond() ;
+                      if (aResult) {
+                    	  showPatientFindPatientByFond(aResult) ;
+                       }
+                   }, errorHandler:function(message) {
+                	   cancelPatientFindPatientByFond() ;
+                	   showPatientFindPatientByFond(message,1) ;
+                   }
+	        	});
+		}
     	function checkPatientBySnils(a) {
     		showPatientFindPatientByFond("Подождите идет поиск...") ;
     		PatientButtonView(0) ;

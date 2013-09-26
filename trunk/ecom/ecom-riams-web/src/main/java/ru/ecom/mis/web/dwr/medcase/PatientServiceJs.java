@@ -112,6 +112,16 @@ public class PatientServiceJs {
 		
 		return res ;
 	}
+	public Object checkPatientByCommonNumber(Long aPatientId, String aCommonNumber,HttpServletRequest aRequest) throws Exception {
+		Object res = null;
+		//System.out.println("checking snils...") ;
+		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
+		//System.out.println(new Date()) ;
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		res = FondWebService.checkPatientByCommonNumber(aRequest, getPatientInfo(aPatientId, service),aCommonNumber) ;
+		
+		return res ;
+	}
 	public Object checkPatientBySnils(Long aPatientId, String aSnils,HttpServletRequest aRequest) throws Exception {
 		Object res = null;
 		//System.out.println("checking snils...") ;
