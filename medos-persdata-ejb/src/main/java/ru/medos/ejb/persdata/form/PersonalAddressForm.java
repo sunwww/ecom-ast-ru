@@ -12,7 +12,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = PersonalAddress.class)
 @Comment("Персона")
-@WebTrail(comment = "Персона", nameProperties= "id", list="entityParentList-pd_address.do"
+@WebTrail(comment = "Персона", nameProperties= "id"
 , view="entityParentView-pd_address.do")
 @Parent(property="person", parentForm=PersonForm.class)
 @EntityFormSecurityPrefix("/Policy/PersData/Person")

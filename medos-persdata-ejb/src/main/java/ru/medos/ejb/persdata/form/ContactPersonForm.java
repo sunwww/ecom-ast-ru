@@ -14,9 +14,9 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = ContactPerson.class)
 @Comment("Контактная персона")
 @WebTrail(comment = "Контактная персона", nameProperties= "id", list="entityParentList-personaldata_contactPerson.do", view="entityParentView-personaldata_contactPerson.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ContactPersonForm extends IdEntityForm{
+@Parent(property="person", parentForm=PersonForm.class)
+@EntityFormSecurityPrefix("/Policy/PersData/Person")
+public class ContactPersonForm extends JournalDataForm{
 	/**
 	 * Контактная персона
 	 */

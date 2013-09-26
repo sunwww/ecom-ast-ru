@@ -15,10 +15,11 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz = ComingDocument.class)
 @Comment("Входящий документ")
-@WebTrail(comment = "Входящий документ", nameProperties= "id", list="entityParentList-personaldata_comingDocument.do", view="entityParentView-personaldata_comingDocument.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ComingDocumentForm extends IdEntityForm{
+@WebTrail(comment = "Входящий документ", nameProperties= "id"
+, view="entityParentView-pd_comingDocument.do")
+@Parent(property="person", parentForm=PersonForm.class)
+@EntityFormSecurityPrefix("/Policy/PersData/Person")
+public class ComingDocumentForm extends JournalDataForm{
 	/**
 	 * Персона
 	 */

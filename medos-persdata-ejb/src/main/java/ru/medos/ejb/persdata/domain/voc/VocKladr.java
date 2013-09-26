@@ -177,4 +177,25 @@ public class VocKladr extends VocBaseEntity{
 		 * Улица
 		 */
 		private String theStreet;
+		
+		/** Домен */
+		@Comment("Домен")
+		public int getDomen() {return theDomen;}
+		public void setDomen(int aDomen) {theDomen = aDomen;}
+
+		/** Домен */
+		private int theDomen;
+		
+		/** Полное имя */
+		@Comment("Полное имя")
+		public String getFullname() {
+			return theFullname;
+		}
+
+		public void setFullname(String aFullname) {
+			theFullname = aFullname;
+		}
+
+		/** Полное имя */
+		private String theFullname;
 }

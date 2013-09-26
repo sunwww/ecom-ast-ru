@@ -18,7 +18,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Исходящий документ", nameProperties= "id", list="entityParentList-personaldata_outgoingDocument.do", view="entityParentView-personaldata_outgoingDocument.do")
 //@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/Mis")
-public class OutgoingDocumentForm extends IdEntityForm{
+public class OutgoingDocumentForm extends JournalDataForm{
 	/**
 	 * Дата изготовления
 	 */

@@ -1,87 +1,146 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <vocconfig>
-	<voc id='vocAddress' type='EntityVocService'>
-		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocAddress'
-			names   = 'name'
-			queried = 'name'
-		/>
-	</voc>
+
 	<voc id='vocComingDocument' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocComingDocument'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocComingDocument'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocContactPerson' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocContactPerson'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocContactPerson'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocExternalCarrierOperation' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocExternalCarrierOperation'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocExternalCarrierOperation'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocIdentificationSystem' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocIdentificationSystem'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocIdentificationSystem'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocKladr' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocKladr'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocNationality' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocNationality'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocNationality'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocPersonalizationDocument' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocPersonalizationDocument'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocPersonalizationDocument'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocPhone' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocPhone'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocPhone'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocSex' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocSex'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocSex'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocState' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocState'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocState'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocStateStructure' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.medos.personaldata.voc.VocStateStructure'
+			entity  = 'ru.medos.ejb.persdata.domain.voc.VocStateStructure'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
+    <voc id='Address-1' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name'
+                queried = 'name'
+                queryAppend = 'domen = 1'
+       queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='Address-2' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name,typeName'
+                queried = 'name'
+                parent  = 'parent'
+                queryAppend = 'domen = 2'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='Address-3' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name,typeName'
+                queried = 'name'
+                parent  = 'parent'
+                queryAppend = 'domen = 3'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='Address-4' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name,typeName'
+                queried = 'name'
+                parent  = 'parent'
+                queryAppend = 'domen = 4'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='Address-5' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name,typeName'
+                queried = 'name'
+                parent  = 'parent'
+                queryAppend = 'domen = 5'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+
+    <voc id='Address-6' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                names   = 'name,typeName,postIndex'
+                queried = 'name'
+                parent  = 'parent'
+                queryAppend = 'domen = 6'
+                queryConvertType = 'FIRST_UPPER'
+                />
+    </voc>
+	
 </vocconfig>

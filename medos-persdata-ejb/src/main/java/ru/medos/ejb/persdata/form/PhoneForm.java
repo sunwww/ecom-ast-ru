@@ -13,10 +13,10 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = Phone.class)
 @Comment("Телефон")
-@WebTrail(comment = "Телефон", nameProperties= "id", list="entityParentList-personaldata_phone.do", view="entityParentView-personaldata_phone.do")
+@WebTrail(comment = "Телефон", nameProperties= "id", view="entityParentView-pd_phone.do")
 @Parent(property="person", parentForm=PersonForm.class)
-@EntityFormSecurityPrefix("/Policy/PersData/Person/Phone")
-public class PhoneForm extends IdEntityForm{
+@EntityFormSecurityPrefix("/Policy/PersData/Person")
+public class PhoneForm extends JournalDataForm{
 	/**
 	 * Персоны
 	 */
