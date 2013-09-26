@@ -24,6 +24,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ComingDocument extends JournalData{
+
 	/**
 	 * Персона
 	 */

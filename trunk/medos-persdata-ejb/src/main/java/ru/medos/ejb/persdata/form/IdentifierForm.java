@@ -15,8 +15,8 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Идентификатор")
 @WebTrail(comment = "Идентификатор", nameProperties= "id", list="entityParentList-persData_identifier.do", view="entityParentView-personaldata_identifier.do")
 @Parent(property="person", parentForm=PersonForm.class)
-@EntityFormSecurityPrefix("/Policy/PersData/Person/Identifier")
-public class IdentifierForm extends IdEntityForm {
+@EntityFormSecurityPrefix("/Policy/PersData/Person")
+public class IdentifierForm extends JournalDataForm {
 	/**
 	 * Персона
 	 */

@@ -15,8 +15,8 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz = Person.class)
 @Comment("Персона")
-@WebTrail(comment = "Персона", nameProperties= "id", list="entityParentList-personaldata_person.do", view="entityParentView-personaldata_person.do")
-//@Parent(property="parent", parentForm=PARENT.class)
+@WebTrail(comment = "Персона", nameProperties= "id", view="entityParentView-pd_person.do"
+,shortView="entityParentView-pd_person.do?short=Short")
 @EntityFormSecurityPrefix("/Policy/PersData/Person")
 public class PersonForm extends JournalDataForm {
 	/**
