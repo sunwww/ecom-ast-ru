@@ -80,11 +80,13 @@ import ru.nuzmsh.util.format.DateFormat;
       , @AIndex(unique = false, properties= ("lpu"))
       , @AIndex(unique = false, properties= ("address"))
       // используется при прикреплении при изменении LpuAreaText в AddressPointServiceBean
+   	    /*
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","birthday"})
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","birthday"})
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","flatNumber","birthday"})
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","birthday"})
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","flatNumber","birthday"})
+      */
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")

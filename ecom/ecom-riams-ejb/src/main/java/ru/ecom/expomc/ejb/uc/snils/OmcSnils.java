@@ -13,11 +13,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @AIndexes ({
-	@AIndex(properties={"policyNumber","policySeries","insuranceCompany"
-			,"lastname1", "firstname1", "middlename1","birthYear"})
-	,@AIndex(properties={"insuranceCompany","policySeries","policyNumber"})		
-	,@AIndex(properties={"lastname1","firstname1","middlename1","birthYear"})		
-	,@AIndex(properties={"lastname1","firstname1","middlename1"})		
+	@AIndex(properties={"policyNumber"})
+	,@AIndex(properties={"policySeries"})
+	,@AIndex(properties={"insuranceCompany"})	
+	,@AIndex(properties={"lastname1"})
+	,@AIndex(properties={"firstname1"})
+	,@AIndex(properties={"middlename1"})		
 	,@AIndex(properties={"snils"})		
 			
 })
