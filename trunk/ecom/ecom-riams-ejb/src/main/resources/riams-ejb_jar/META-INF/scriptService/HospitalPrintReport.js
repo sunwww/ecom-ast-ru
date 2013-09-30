@@ -460,7 +460,7 @@ function printJournalByDay(aCtx,aParams) {
 			+"||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end"
 			+"   else '' "
 			+"  end as address"
-			+" ,coalesce(oml.name,of.name,'') as omlname"
+			+" ,coalesce(oml.name,of1.name,'') as omlname"
 			+" ,case when m.deniedHospitalizating_id is null then ml.name else '' end as mlname"
 		    +" ,sc.code as sccode"
 		    +" , list(case when vdrt.code='1' then diag.name else '' end) as diag"
@@ -477,7 +477,7 @@ function printJournalByDay(aCtx,aParams) {
 		    +" left join VocDiagnosisRegistrationType vdrt on diag.registrationType_id=vdrt.id"
 		    +" left join MisLpu as oml on oml.id=m.orderLpu_id "
 		    +" left join MisLpu as tml on tml.id=m.moveToAnotherLpu_id "
-		    +" left join OMC_FRM of on m.orderType_id=of.id"
+		    +" left join OMC_FRM of1 on m.orderType_id=of1.id"
 		    +" left join VocServiceStream vss on vss.id=m.serviceStream_id"
 		    +" left join Omc_Oksm ok on pat.nationality_id=ok.id"
 			+" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id"
@@ -497,7 +497,7 @@ function printJournalByDay(aCtx,aParams) {
 		    +" ,pat.housebuilding,pat.flatnumber,pat.territoryregistrationnonresident_id,okt.name"
 		    +" ,pat.regionregistrationnonresident,oq.name,pat.settlementnonresident,ost.name,pat.streetnonresident"
 		    +" ,pat.housenonresident,pat.buildinghousesnonresident,pat.apartmentnonresident,oml.name"
-		    +" ,of.name,m.deniedhospitalizating_id,ml.name,sc.code,m.emergency,pat.id,pat.patientsync"
+		    +" ,of1.name,m.deniedhospitalizating_id,ml.name,sc.code,m.emergency,pat.id,pat.patientsync"
 		    +" ,ok.voc_code,pvss.omccode,adr.kladr,vdh.name,vho.name,tml.name,m.relativeMessage,vh.name"
 		    +" order by m.dateStart,m.entranceTime";
 			
