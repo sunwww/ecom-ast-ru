@@ -44,6 +44,8 @@
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="exp_vocKindForm" />
   </tiles:put>
+
+  
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Вид оценки качества">
       <msh:sideLink roles="/Policy/Voc/VocQualityEstimationKind/Edit" key="ALT+2" params="id" action="/entityEdit-exp_vocKind" name="Изменить" title="Изменить данные" />
@@ -51,7 +53,7 @@
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="exp_vocKindForm">
     <msh:sideMenu title="Добавить">
-    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Create" key="ALT+3" action="/entityParentPrepareCreate-exp_vocCrit.do?kind=${param.id}" name="Критерий" title="Добавить критерий"/>
+    	<msh:sideLink roles="/Policy/Voc/VocQualityEstimationCrit/Create" key="ALT+3" action="/entityPrepareCreate-exp_vocCrit.do?kind=${param.id}" name="Критерий" title="Добавить критерий"/>
     </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
     <tags:voc_menu currentAction="exp_voc_kind"/>

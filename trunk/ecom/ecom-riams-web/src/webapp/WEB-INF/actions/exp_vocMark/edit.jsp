@@ -10,7 +10,7 @@
     <!-- 
     	  - Справочник баллов критериев оценки качества
     	  -->
-    <msh:form  action="/entityParentSaveGoView-exp_vocMark.do" defaultField="name">
+    <msh:form  action="/entityParentSaveGoParentView-exp_vocMark.do" defaultField="name">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenCriterion" property="criterion" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
@@ -37,8 +37,8 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Балл критерия оценки качества">
-      <msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Edit" key="ALT+2" params="id" action="/entityEdit-exp_vocMark" name="Изменить" title="Изменить данные" />
-      <msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityDelete-exp_vocMark" name="Удалить" title="Удалить данные" />
+      <msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Edit" key="ALT+2" params="id" action="/entityParentEdit-exp_vocMark" name="Изменить" title="Изменить данные" />
+      <msh:sideLink roles="/Policy/Voc/VocQualityEstimationMark/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-exp_vocMark" name="Удалить" title="Удалить данные" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="exp_voc_kind"/>
   </tiles:put>
