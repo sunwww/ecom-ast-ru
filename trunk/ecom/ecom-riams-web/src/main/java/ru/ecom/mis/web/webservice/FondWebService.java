@@ -176,7 +176,7 @@ public class FondWebService {
             	.append(" name='fondFiodr' id='fondFiodr' value='")
     			.append(f).append("#").append(i).append("#")
     			.append(o).append("#").append(dr).append("#")
-    			.append(ss).append("#").append(aRz).append("#")
+    			.append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("#").append(aRz).append("#")
     			.append("'/>").append("</td>") ;
            	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;

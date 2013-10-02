@@ -24,6 +24,7 @@
         <form-bean name="poly_groupDateForm"      type="ru.ecom.poly.ejb.services.GroupByDate" />
         <form-bean name="poly_protocolForm"      type="ru.ecom.poly.ejb.form.protocol.ProtocolForm" />
         <form-bean name="poly_journalBySpecForm"      type="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm" />
+        <form-bean name="extDisp_journalForm"      type="ru.ecom.mis.web.action.patient.ExtDispJournalForm" />
     </form-beans>
 
     <global-forwards>
@@ -32,7 +33,7 @@
     <action-mappings>
     
         <action path='/extDisp_journal_card' type='ru.ecom.web.actions.base.ForwardAction'               
-        		name='poly_journalBySpecForm'
+        		name='extDisp_journalForm'
                 validate='true'
                 scope='session'
                 input='/WEB-INF/actions/extDisp_card/list_by_period.jsp'
