@@ -23,6 +23,15 @@
 					<msh:textField property="series" label="Серия"/>
 					<msh:textField property="documentNumber" label="Номер"/>
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete parentId="pd_comingDocumentForm.person" property="identifier" vocName="identifier" label="Идентификатор"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="transferAct" vocName="cardTransferAct" label="Акт передачи копий"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="copiesDestructionAct" vocName="copiesDestructionAct" label="Акт уничтожения копий"/>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

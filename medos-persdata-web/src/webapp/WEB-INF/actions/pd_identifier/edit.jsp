@@ -16,7 +16,10 @@
 				<msh:row>
 					<msh:textField property="identificationNumber" label="Номер"/>
 					<msh:checkBox property="isTransient" label="Временный"/>
-					
+				</msh:row>
+				<msh:row>
+					<msh:textField property="urgencyStartDate" label="Дата начала"/>
+					<msh:textField property="urgencyExpiryDate" label="Дата окончания"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>

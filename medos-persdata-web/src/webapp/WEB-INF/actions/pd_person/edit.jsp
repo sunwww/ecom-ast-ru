@@ -82,6 +82,21 @@
 					<msh:tableColumn property="4" columnName="Номер"/>
 				</msh:table>
 			</msh:section>
+			<msh:section title="Экстренная идентификация" createUrl="entityParentPrepareCreate-pd_emergencyIdentification.do?id=${param.id}">
+				<ecom:webQuery name="emergencyIdentification" nativeSql="
+					select ei.id as eiid
+					,vis.name as visname
+					,ei.callerFullname as CallerFullname
+					, ei.callerPost as CallerPost
+					from EmergencyIdentification ei
+					left join VocIdentificationSystem vis on vis.id=ei.callerSystem_id
+					where p.person_id=${param.id}
+				"/>			
+				<msh:table name="emergencyIdentification" action="entityParentView-pd_emergencyIdentification.do" idField="1">
+					<msh:tableColumn property="2" columnName="Тип"/>
+					<msh:tableColumn property="3" columnName="Номер"/>
+				</msh:table>
+			</msh:section>
 			<msh:section title="Телефон" createUrl="entityParentPrepareCreate-pd_phone.do?id=${param.id}">
 				<ecom:webQuery name="phone" nativeSql="
 					select p.id,vp.name as vaname
