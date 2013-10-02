@@ -10,6 +10,8 @@
 		<form-bean name="pd_identifierForm" type="ru.medos.ejb.persdata.form.IdentifierForm" />
 		<form-bean name="pd_phoneForm" type="ru.medos.ejb.persdata.form.PhoneForm" />
 		<form-bean name="pd_comingDocumentForm" type="ru.medos.ejb.persdata.form.ComingDocumentForm" />
+		<form-bean name="pd_emergencyIdentificationForm" type="ru.medos.ejb.persdata.form.EmergencyIdentificationForm" />
+		<form-bean name="pd_cardTransferActForm" type="ru.medos.ejb.persdata.form.CardTransferActForm" />
 	</form-beans>
 
 	<global-forwards />
