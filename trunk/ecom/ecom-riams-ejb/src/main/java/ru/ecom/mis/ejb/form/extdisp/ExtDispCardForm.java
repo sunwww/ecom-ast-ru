@@ -26,7 +26,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = ExtDispCard.class)
 @Comment("Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)")
 @WebTrail(comment = "Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)"
-, nameProperties= "name", list="entityParentList-extDisp_card.do", view="entityParentView-extDisp_card.do")
+, nameProperties= "id", list="entityParentList-extDisp_card.do", view="entityParentView-extDisp_card.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card")
 @AViewInterceptors(

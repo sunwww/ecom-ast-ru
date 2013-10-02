@@ -45,17 +45,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
 	
-	if (bedFund!=null && bedFund.bedSubType!=null) {
-		var bedSubType = bedFund.bedSubType.code ;
-		if (hosp.hospType!=null) {
-			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2) 
-				|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
-			} else {
-				throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
-			}
-		}
-		
-	}
+
 	if (prev!=null) {
 		var dateTransfer ;
 		
@@ -110,7 +100,29 @@ function onPreSave(aForm,aEntity, aContext) {
 	if (isDoc && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
 		throw "При госпитализации в отделение необходимо указывать палату и койку" ;
 	}
-
+	if (bedFund!=null && bedFund.bedSubType!=null) {
+		var bedSubType = bedFund.bedSubType.code ;
+		if (hosp.hospType!=null) {
+			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2) 
+				|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
+			} else {
+				if (prev!=null || +bedSubType>2) {
+					throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
+				} else {
+					//ru.ecom.mis.ejb.domain.medcase.voc.VocHospType
+					var otherHospTypeCode = (+bedSubType==2)?"DAYTIMEHOSP":"ALLTIMEHOSP" ;
+					var hospTypeList = aContext.manager.createQuery("from VocHospType where code=:code")
+					.setParameter("code",otherHospTypeCode).setMaxResults(1).getResultList() ;
+					if (hospTypeList.size()>0) {
+						hosp.setHospType(hospTypeList.get(0)) ;
+					} else {
+						throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
+					}
+				}
+			}
+		}
+		
+	}
 }
 
 //При сохранении
