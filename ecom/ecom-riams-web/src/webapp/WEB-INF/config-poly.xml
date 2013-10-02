@@ -30,6 +30,16 @@
     </global-forwards>
 
     <action-mappings>
+    
+        <action path='/extDisp_journal_card' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/extDisp_card/list_by_period.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_period.jsp"/>
+        </action>
+    
         <action path='/smo_ticketsByUser' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
