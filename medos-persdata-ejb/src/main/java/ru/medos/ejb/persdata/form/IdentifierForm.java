@@ -1,6 +1,5 @@
 package ru.medos.ejb.persdata.form;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.medos.ejb.persdata.domain.Identifier;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;

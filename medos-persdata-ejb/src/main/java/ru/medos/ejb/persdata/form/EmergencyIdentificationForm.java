@@ -13,9 +13,10 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = EmergencyIdentification.class)
 @Comment("Экстренная идентификация")
-@WebTrail(comment = "Экстренная идентификация", nameProperties= "id", list="entityParentList-personaldata_emergencyIdentification.do", view="entityParentView-personaldata_emergencyIdentification.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@WebTrail(comment = "Экстренная идентификация", nameProperties= "id"
+, view="entityParentView-pd_emergencyIdentification.do")
+@Parent(property="person", parentForm=PersonForm.class)
+@EntityFormSecurityPrefix("/Policy/PersData/EmergencyIdentification")
 public class EmergencyIdentificationForm extends IdEntityForm{
 	/**
 	 * Персона

@@ -13,8 +13,9 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = ExternalCarrierDestructionAct.class)
 @Comment("Акт уничтожения внешних носителей")
-@WebTrail(comment = "Акт уничтожения внешних носителей", nameProperties= "id", list="entityParentList-personaldata_externalCarrierDestructionAct.do", view="entityParentView-personaldata_externalCarrierDestructionAct.do")
+@WebTrail(comment = "Акт уничтожения внешних носителей", nameProperties= "id"
+, view="entityParentView-pd_externalCarrierDestructionAct.do")
 //@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
-public class ExternalCarrierDestructionActForm extends IdEntityForm{
+@EntityFormSecurityPrefix("/Policy/PersData")
+public class ExternalCarrierDestructionActForm extends ActForm{
 }

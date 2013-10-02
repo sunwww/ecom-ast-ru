@@ -14,7 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = IdentificationCard.class)
 @Comment("Идентификационная карта")
 @WebTrail(comment = "Идентификационная карта", nameProperties= "id", list="entityParentList-personaldata_identificationCard.do", view="entityParentView-personaldata_identificationCard.do")
-//@Parent(property="parent", parentForm=PARENT.class)
+@Parent(property="parent", parentForm=ActForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis")
 public class IdentificationCardForm extends IdEntityForm{
 	/**
