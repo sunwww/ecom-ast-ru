@@ -76,7 +76,7 @@ public class RtfPrintServiceHelper {
              
              //driver.print(templateFile, outFile, valueGetter, driver.getEncoding()) ;
              driver.print(theReplaceHelper, valueGetter) ;
-             driver.buildFile() ;
+             driver.buildFile(getRemovedTempFile()) ;
              //log("BuildFile") ;
              
              //log("result file = "+driver.getResultFilename()) ;
