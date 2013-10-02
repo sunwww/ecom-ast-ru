@@ -9,6 +9,16 @@
 		queried="upper(vedhg.name) like upper(:query)"
 	/>
 </voc>
+<voc id="vocQualityEstimationCritByKind" type="NativeVocService">
+	<NativeVocService
+		from="VocQualityEstimationCrit vqec"
+		parent="vqec.kind_id = :parent"
+		nameId="vqec.id"
+		queryAppend="" join="" order=""
+		names="vqec.code||' '||vedhg.name"
+		queried="upper(vedhg.name) like upper(:query) or upper(vedhg.code) like upper(:query)"
+	/>
+</voc>
 <voc id="vocExtDispAgeGroupByDispType" type="NativeVocService">
 	<NativeVocService
 		from="VocExtDispAgeGroup vedhg"

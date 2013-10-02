@@ -13,7 +13,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	 @AIndex(properties="kind")
+	@AIndex(properties="kind")
+	, @AIndex(properties="parent")
  })
 public class VocQualityEstimationCrit extends VocBaseEntity{
  /**

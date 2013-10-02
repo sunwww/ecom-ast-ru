@@ -23,7 +23,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class VocQualityEstimationMarkForm extends IdEntityForm{
 		 /** Оценочный балл*/
 		 @Comment("Оценочный балл")
-		 @Persist @Required
+		 @Persist 
 		 public Double getMark() {return theMark;}
 		 public void setMark(Double aMark) {theMark = aMark;}
 		 
