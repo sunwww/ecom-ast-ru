@@ -16,5 +16,5 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Акт уничтожения копий", nameProperties= "id", list="entityParentList-personaldata_copiesDestructionAct.do", view="entityParentView-personaldata_copiesDestructionAct.do")
 //@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/Mis")
-public class CopiesDestructionActForm extends IdEntityForm{
+public class CopiesDestructionActForm extends ActForm{
 }

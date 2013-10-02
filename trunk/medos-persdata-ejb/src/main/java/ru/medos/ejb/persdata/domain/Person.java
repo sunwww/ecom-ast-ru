@@ -186,6 +186,7 @@ public class Person extends JournalData{
 	 * Электронная почта
 	 */
 	private String theEmail;
+	
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
 	public List<ComingDocument> getComingDocuments() {
 		return theComingDocuments;

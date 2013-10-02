@@ -1,6 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <vocconfig>
 
+	<voc id='copiesDestructionAct' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.ejb.persdata.domain.CopiesDestructionAct'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
+	<voc id='cardTransferAct' type='EntityVocService'>
+		<EntityVocService
+			entity  = 'ru.medos.ejb.persdata.domain.CardTransferAct'
+			names   = 'name'
+			queried = 'name'
+		/>
+	</voc>
 	<voc id='vocComingDocument' type='EntityVocService'>
 		<EntityVocService
 			entity  = 'ru.medos.ejb.persdata.domain.voc.VocComingDocument'
