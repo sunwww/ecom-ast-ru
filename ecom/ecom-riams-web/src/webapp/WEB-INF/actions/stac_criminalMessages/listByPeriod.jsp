@@ -80,6 +80,12 @@
 	        	<input type="radio" name="typeView1" value="6"  >  общий свод по обращениям
 	        </td>
         </msh:row>
+        <msh:row>
+            <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeView1" value="7">  реестр МДГП-ЦП 
+	        </td>            
+        </msh:row>
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -481,7 +487,86 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%} %>
+    <%} 
+    if (view!=null && (view.equals("7"))) {%>
+    
+    <msh:section >
+    <ecom:webQuery nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
+    select pm.id, ss.code as sscode,
+    p.lastname||' '||p.firstname||' '||p.middlename ||' '|| to_char(p.birthday,'dd.mm.yyyy') as pbirthday
+    ,to_char(m.dateStart,'dd.mm.yyyy') ||' '||cast(m.entranceTime as varchar(5)) as mdateStart
+    ,pm.diagnosis as pmdiagnosis
+    ,case when m.dateFinish is null then (select list(distinct mkb.code) from Diagnosis diag
+    left join medcase slo on slo.id=diag.medCase_id
+		left join VocIdc10 mkb on mkb.id=diag.idc10_id
+		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+where m.id=slo.parent_id and vdrt.code='4' and vpd.code='1' ) else (select list(distinct mkb.code) 
+from Diagnosis diag
+
+		left join VocIdc10 mkb on mkb.id=diag.idc10_id
+		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+where m.id=diag.medcase_id and vdrt.code='4' and vpd.code='1' ) end as mkbBefore
+    ,case when m.dateFinish is not null then (select list(distinct mkb.code) from Diagnosis diag
+		left join VocIdc10 mkb on mkb.id=diag.idc10_id
+		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as mkbAfter
+    ,vpms.name as vpmsname
+    ,case when m.dateFinish null then 'На лечении' else coalesce(to_char(m.dateFinish,'dd.mm.yyyy'),'')||' '||vho.name end as vphoname
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+    left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+    left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+    left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+    left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+    left join VocPhoneMessageState vpms on vpms.id=pm.state_id
+    left join WorkFunction wf on wf.id=pm.workFunction_id
+    
+    left join medcase m on m.id=pm.medCase_id
+    left join StatisticStub ss on ss.id=m.statisticStub_id
+    left join VocHospitalizationOutcome vho on vho.id=m.outcome_id
+    left join Patient p on p.id=m.patient_id
+    left join VocSex vs on vs.id=p.sex_id
+    left join MisLpu as ml on ml.id=m.department_id
+     
+    where pm.dtype='CriminalPhoneMessage'
+    and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
+and m.deniedHospitalizating_id is null and ( m.noActuality is null or m.noActuality='0')
+${period}
+${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+    order by ${paramDate}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    
+    <form action="print-stac_criminalMessage_pr_mdgp.do" method="post" target="_blank">
+    Информация о пострадавших в результате ДТП, получивших медицинскую помощь в учреждении здравоохранения с ${param.dateBegin} по ${param.dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <msh:table name="journal_militia"
+    viewUrl="entityShortView-stac_criminalMessages.do" 
+     action="entityParentView-stac_criminalMessages.do" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№стат.карты" property="2" />
+      <msh:tableColumn columnName="ФИО пациента" property="3" />
+      <msh:tableColumn columnName="Дата и время поступления" property="4" />
+      <msh:tableColumn columnName="Диагноз" property="5" />
+      <msh:tableColumn columnName="Код диагноза по МКБ при поступлении" property="6" />
+      <msh:tableColumn columnName="Код диагноза по МКБ при выписке (переводе, смерти)" property="7" />
+      <msh:tableColumn columnName="Тяжесть состояния" property="8" />
+      <msh:tableColumn columnName="Исход" property="9" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+     <%} %>
     <% 
     } else {%>
     	<i>Нет данных </i>
