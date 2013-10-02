@@ -19,7 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = VocQualityEstimationCrit.class)
 @Comment("Справочник видов оценок качества")
-@WebTrail(comment = "Вид оценок качества", nameProperties = "name", view = "entityParentView-exp_vocCrit.do")
+@WebTrail(comment = "Вид оценок качества", nameProperties = {"code","name"}, view = "entityParentView-exp_vocCrit.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocQualityEstimationCrit")
 @Parent(property = "parent", parentForm = VocQualityEstimationCritForm.class)
 public class VocQualityEstimationCritForm extends IdEntityForm {
