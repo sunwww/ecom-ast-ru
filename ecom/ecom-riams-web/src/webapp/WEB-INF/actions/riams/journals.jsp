@@ -84,6 +84,9 @@
 						<li><msh:link action="journal_visit_diagnosis.do" roles="/Policy/Mis/MedCase/Visit/ReportDiagnosis">
 	                            Журнал диагнозов по визитам
 	                        </msh:link></li>
+						<li><msh:link action="extDisp_journal_card.do" roles="/Policy/Mis/ExtDisp/Card/View">
+	                            Реестр по диспансеризации
+	                        </msh:link></li>
 					</ul>
 					</div>
 				<div class='menu'>

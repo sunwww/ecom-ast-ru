@@ -34,20 +34,23 @@ public class ActionUtil {
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
 		aRequest.setAttribute(aNameSet,col.isEmpty()?"0":""+col.iterator().next().get1()) ;
 	}
-	public static void setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
-		setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
+	public static String setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
+		return setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
 	}
-	public static void setParameterFilterSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
+	public static String setParameterFilterSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
 		if (aAttributeName==null) aAttributeName=aParameter ;
 		String param = (String)aRequest.getParameter(aParameter) ;
+		String sql ="" ;
     	if (param!=null && !param.equals("") && !param.equals("0")) {
     		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
-    		aRequest.setAttribute(aAttributeName+"Sql", " and "+aFldId+"="+param) ;
+    		sql=" and "+aFldId+"="+param;
+    		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
     		aRequest.setAttribute(aAttributeName,param) ;
     	} else {
     		aRequest.setAttribute(aAttributeName,"0") ;
     		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
     	}
+    	return sql ;
 	}
 	public static void setLikeSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
 		setLikeSql(aParameter, aParameter, aFldId, aRequest) ;
