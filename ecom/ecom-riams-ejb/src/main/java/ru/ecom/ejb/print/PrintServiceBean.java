@@ -44,7 +44,7 @@ public class PrintServiceBean implements IPrintService {
             service.setWorkDir(config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf"));
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
             //service.set
-            System.out.println("removedTemp = "+removedTemp) ;
+            //System.out.println("removedTemp = "+removedTemp) ;
             service.setRemovedTempFile(removedTemp);
             service.setLogin(aLogin) ;
             return service.print(aKey, new ValueInit(values), new HashMap<String, String>()) ;
