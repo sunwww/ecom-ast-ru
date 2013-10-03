@@ -19,6 +19,13 @@ public class VocExtDispAgeGroup extends VocBaseEntity{
 	public VocExtDisp getDispType() {return theDispType;}
 	public void setDispType(VocExtDisp aDispType) {theDispType = aDispType;}
 
+	/** Возрастная группа для отчета */
+	@Comment("Возрастная группа для отчета")
+	public VocExtDispAgeReportGroup getReportGroup() {return theReportGroup;}
+	public void setReportGroup(VocExtDispAgeReportGroup aReportGroup) {theReportGroup = aReportGroup;}
+
+	/** Возрастная группа для отчета */
+	private VocExtDispAgeReportGroup theReportGroup;
 	/** Вид диспансеризации */
 	private VocExtDisp theDispType;
 }
