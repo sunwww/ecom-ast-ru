@@ -4,6 +4,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeReportGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -37,6 +38,13 @@ public class VocExtDispAgeGroupForm extends IdEntityForm {
 	public String getCode() {return theCode;}
 	public void setCode(String aCode) {theCode = aCode;}
 
+	/** Возрастная группа для отчета */
+	@Comment("Возрастная группа для отчета")
+	public Long getReportGroup() {return theReportGroup;}
+	public void setReportGroup(Long aReportGroup) {theReportGroup = aReportGroup;}
+
+	/** Возрастная группа для отчета */
+	private Long theReportGroup;
 	/** Код */
 	private String theCode;
 	/** Наименование */
