@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Expert" beginForm="mis_medCaseForm" guid="a79e22af-e87a-45dd-9743-59a1f8f3d66a" title="Экспертные карты"/>
@@ -19,13 +19,15 @@
         <tags:expert_menu currentAction="expert_card_smo"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:section title="Список экспертных карт">
-  			<ecom:webQuery name="Expert" nativeSql="
+    <msh:section title="Список экспертных карт" createRoles="/Policy/Mis/MedCase/QualityEstimationCard/Create" createUrl="entityParentPrepareCreate-expert_card.do?id=${param.id}">
+  			<ecom:webQuery  name="Expert" nativeSql="
   			
 select card.id,vek.name,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename,d.name,p.lastname||' '||p.firstname||' '||p.middlename
  ,case when md.DTYPE='HospitalMedCase' then 'СЛС №'||ss1.code  when md.DTYPE='DepartmentMedCase' then 'СЛО '||md.id||' СЛС №'||ss2.code  when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id else 'СМО №'||md.id end 
  ,mkb.code,card.createDate,card.createUsername 
- ,(select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeB.id), (select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeE.id), (select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeC.id)
+ ,(select avg(vqem.mark) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeB.id)
+ , (select avg(vqem.mark) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeE.id)
+ , (select avg(vqem.mark) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeC.id)
  from QualityEstimationCard card
  left join VocQualityEstimationKind vek on vek.id=card.kind_id
  left join WorkFunction wf on wf.id=card.doctorCase_id
@@ -41,7 +43,7 @@ select card.id,vek.name,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.m
  left join StatisticStub ss2 on ss2.id=mh.statisticStub_id
  left join qualityestimation qeB on card.id=qeB.card_id and qeB.expertType='BranchManager'  left join qualityestimation qeE on card.id=qeE.card_id and qeE.expertType='Expert'  left join qualityestimation qeC on card.id=qeC.card_id and qeC.expertType='Coeur'
 where card.medcase_id='${param.id}'"/>
-  			<msh:table name="Expert" action="entityParentView-expert_card.do" idField="1">
+  			<msh:table name="Expert"  action="entityParentView-expert_card.do" idField="1">
       <msh:tableColumn columnName="Тип экспертизы" property="2" guid="69-8a75-e825fd37e296" />
       <msh:tableColumn columnName="Леч.врач" property="3" guid="69-8a75-e825fd37e296" />
       <msh:tableColumn columnName="Отделение" property="4" guid="81b717f5-f9db-4033-aa22-c680b21" />
