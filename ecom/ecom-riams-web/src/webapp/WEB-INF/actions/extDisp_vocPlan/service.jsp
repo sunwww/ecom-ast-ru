@@ -141,7 +141,7 @@ for (int i=0;i<cntResult;i++) {
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:sideMenu title="Вид плана">
-			<msh:sideLink name="МЖ" action="js-extDisp_service-editPlan1.do" params="id"/>
+			<msh:sideLink name="МЖ" action="/js-extDisp_service-editPlan1.do" params="id"/>
 		</msh:sideMenu>
         <tags:voc_menu currentAction="extDisp"/>
 	</tiles:put>

@@ -35,6 +35,14 @@
 					<msh:tableColumn columnName="Наименование" property="3"/>
 				</msh:table>
 			</msh:section>
+			<msh:section title="Возрастные группы для отчета" createRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocAgeReportGroup.do?id=${param.id}"
+			shortList="entityParentList-extDisp_vocAgeReportGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/View">
+			<ecom:webQuery name="vocExtDispAgeReportGroup" nativeSql="select vedag.id,vedag.code,vedag.name from VocExtDispAgeReportGroup vedag where vedag.dispType_id=${param.id}"/>
+				<msh:table name="vocExtDispAgeReportGroup" action="entityParentView-extDisp_vocAgeGroup.do" idField="1">
+					<msh:tableColumn columnName="Код" property="2"/>
+					<msh:tableColumn columnName="Наименование" property="3"/>
+				</msh:table>
+			</msh:section>
 			<msh:section title="Группы здоровья" createRoles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocHealthGroup.do?id=${param.id}"
 			shortList="entityParentList-extDisp_vocHealthGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/View">
 			<ecom:webQuery name="vocExtDispHealthGroup" nativeSql="select vedhg.id,vedhg.code,vedhg.name from VocExtDispHealthGroup vedhg where vedhg.dispType_id=${param.id}"/>
