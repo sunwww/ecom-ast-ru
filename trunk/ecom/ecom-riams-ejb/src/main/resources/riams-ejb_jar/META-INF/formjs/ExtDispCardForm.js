@@ -20,8 +20,6 @@ function onSave(aForm, aEntity, aCtx) {
 	
 }
 function saveAdditionData(aForm,aEntity,aCtx) {
-
-	
 	// Медицинские услуги
 	saveArray(aEntity, aCtx.manager,aForm.getRisks()
 			,Packages.ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispRisk
@@ -50,7 +48,7 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 			eval(aMainCmd[j]) ;
 		}
 		for (var i = 0; i < ids.length; i++) {
-			var jsId = ids[i];
+			var jsId = ids[i].trim();
 			if (jsId!=null && jsId!="" || jsId=="0") {
 				//System.out.println("    id="+jsonId) ;
 				
@@ -74,6 +72,7 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		}
 		
 		sql = "delete "+aTableSql+" not in ("+aIdString+") " ;
+		//throw sql ;
 		aManager.createNativeQuery(sql).executeUpdate();
 	} else {
 		sql = "delete "+aTableSql+" !='0' " ;
