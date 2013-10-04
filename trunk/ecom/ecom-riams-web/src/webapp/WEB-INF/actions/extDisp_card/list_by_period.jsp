@@ -9,10 +9,9 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<msh:title mainMenu="Contract" >Контрольный отчет по оформленным договорам</msh:title>
+		<msh:title mainMenu="Journals" >Диспансеризация</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
-	<tags:contractMenu currentAction="controlReport"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
   <%
@@ -36,6 +35,9 @@
 			<msh:row>
 				<msh:autoComplete property="risk" label="Риск" vocName="vocExtDispRisk" fieldColSpan="3" horizontalFill="true"/>
 			</msh:row>
+			<msh:row>
+				<msh:autoComplete property="workFunction" label="Рабочая функция" vocName="workFunction" fieldColSpan="3" horizontalFill="true"/>
+			</msh:row>
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -47,13 +49,29 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="3"> свод по возрастной категории
 	        </td>
+        </msh:row>
+        <msh:row>
+        	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="4"> свод по факторам риска
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="5"> свод по группам здоровья
 	        </td>
-        </msh:row>				
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="6"> свод по услугам
+	        </td>
+
+        </msh:row>			
+        <msh:row>
+        	<td></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="7"> свод по заболевание
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="8"> свод по раб.функции
+	        </td>        
+        </msh:row>	
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
@@ -110,6 +128,7 @@
 		*/
 		StringBuilder sqlAdd = new StringBuilder() ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("dispType","edc.dispType_id", request)) ;
+		sqlAdd.append(ActionUtil.setParameterFilterSql("workFunction","edc.workFunction_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("ageGroup","edc.ageGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("healthGroup","edc.healthGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("socialGroup","edc.socialGroup_id", request)) ;
@@ -133,6 +152,7 @@ p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,edc.isSanatorium as cntSanatM
 
 from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Patient p on p.id=edc.patient_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
@@ -170,6 +190,7 @@ p.middlename,p.birthday,edc.startDate ,edc.finishDate
 			<msh:section title="Свод за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id,ved.name,ved.code,count(distinct edc.id) from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
@@ -203,6 +224,7 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id as id
 ,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -238,6 +260,7 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&dispRisk='||vedr.id as id
 ,count(distinct edc.id) as cntAll
 from ExtDispRisk edr
 left join ExtDispCard edc on edr.card_id=edc.id
+left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -246,7 +269,7 @@ left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-${sqlAppend} 
+${sqlAppend} and vedr.id is not null
 group by ved.id,ved.name,ved.code,vedag.id,vedag.name,vedr.id,vedr.name
 order by vedr.id,vedag.name
 			"/>
@@ -254,7 +277,7 @@ order by vedr.id,vedag.name
 				<msh:table name="extDispSwod" 
 				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
 				idField="1">
-					<msh:tableColumn columnName="Фактор риска" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Фактор риска" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
 					<msh:tableColumn columnName="Выявлено у мужчин" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Выявлено у женщин" isCalcAmount="true" property="7" />
@@ -283,6 +306,7 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&healthGroup='||coalesce(v
 ,count(distinct case when vs.omcCode='2' and edc.isSanatorium='1' then edc.id else null end) as cntSanatW
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
@@ -309,7 +333,7 @@ order by vedhg.name,vedag.name
 						<th></th>
 					</tr>
 				</msh:tableNotEmpty>
-					<msh:tableColumn columnName="Группа здоровья" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Группа здоровья" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Установлено дисп.наблюдение" isCalcAmount="true" property="7" />
@@ -329,7 +353,135 @@ order by vedhg.name,vedag.name
 				</msh:table>
 
 			</msh:section>
+	<%} else if (typeGroup!=null&& typeGroup.equals("6")) {%>
+			<msh:section title="Свод по услугам за ${beginDate}-${finishDate} ">
+			<ecom:webQuery name="extDispSwod" nativeSql="
+select '&dispType='||ved.id as id
+,ved.name as vedname
+,ved.code as vedcode
+,veds.name as vedrname
+,count(distinct case when vs.omcCode='1' then edc.id else null end) as cntM1
+,count(distinct case when vs.omcCode='1' and (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntM2
+,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW1
+,count(distinct case when vs.omcCode='1' and (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntW2
+,count(distinct edc.id) as cntAll1
+,count(distinct case when (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntAll2
+from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
+left join ExtDispService eds on eds.card_id=edc.id
+left join VocExtDispService veds on eds.serviceType_id=veds.id
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join Patient p on p.id=edc.patient_id
+left join VocSex vs on vs.id=p.sex_id
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend}  and eds.serviceDate is not null
+group by ved.id,ved.name,ved.code,veds.id,veds.name,veds.code
+order by veds.id
+			"/>
 
+				<msh:table name="extDispSwod" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				idField="1">
+				<msh:tableNotEmpty>
+					<tr>
+						<th></th>
+						<th colspan="2">Мужчины</th>
+						<th colspan="2">Женщины</th>
+						<th colspan="2">Всего</th>
+						<th></th>
+					</tr>
+				</msh:tableNotEmpty>
+					<msh:tableColumn columnName="Услуга" property="4" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="8" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="9" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="10" />
+				</msh:table>
+
+			</msh:section>
+	<%} else if (typeGroup!=null&& typeGroup.equals("7")) {%>
+			<msh:section title="Свод по заболеваниям за ${beginDate}-${finishDate} ">
+			<ecom:webQuery name="extDispSwod" nativeSql="
+select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&mkb='||substring(mkb.code,1,3) as id,ved.name as vedname
+,ved.code as vedcode,vedag.name as vedagname
+,substring(mkb.code,1,3) as vedrname
+,count(distinct case when vs.omcCode='1' then edc.id else null end) as cntM
+,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW
+,count(distinct edc.id) as cntAll
+from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join Patient p on p.id=edc.patient_id
+left join VocSex vs on vs.id=p.sex_id
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend} 
+group by ved.id,ved.name,ved.code,vedag.id,vedag.name,substring(mkb.code,1,3)
+order by substring(mkb.code,1,3),vedag.name
+			"/>
+
+				<msh:table name="extDispSwod" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				idField="1">
+					<msh:tableColumn columnName="Класс МКБ" property="5" />
+					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Мужчины" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Женщины" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="8" />
+				</msh:table>
+
+			</msh:section>
+
+	<%} else if (typeGroup!=null&& typeGroup.equals("8")) {%>
+			<msh:section title="Свод по раб.функциям за ${beginDate}-${finishDate} ">
+			<ecom:webQuery name="extDispSwod" nativeSql="
+select '&dispType='||ved.id||'&workFunction='||wf.id as id
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||coalesce(wp.middlename) as vedrname
+,count(distinct case when vs.omcCode='1' then edc.id else null end) as cntM
+,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW
+,count(distinct edc.id) as cntAll
+from ExtDispCard edc
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join Patient p on p.id=edc.patient_id
+left join VocSex vs on vs.id=p.sex_id
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend}
+group by ved.id,wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename
+order by wp.lastname
+			"/>
+
+				<msh:table name="extDispSwod" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				idField="1">
+					<msh:tableColumn columnName="Раб.функция" property="2" />
+					<msh:tableColumn columnName="Кол-во мужчин" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Кол-во женщин" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="5" />
+				</msh:table>
+
+			</msh:section>
 
 	<%} %>
 	<%} %>

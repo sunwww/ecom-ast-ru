@@ -41,7 +41,19 @@
                     </msh:row>
                 </msh:panel>
             </msh:form>
-            
+           <msh:form action="/smo_goingToSmo.do" defaultField="number" >
+                <msh:panel>
+                    <msh:row>
+                    <msh:hidden property="id"/>
+                        <msh:textField property="number" label="Номер СМО" size="30"/>
+                        <td>        
+							<input type="button" title="Поиск [CTRL+ENTER]" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;entityView-smo_ticket.do&quot; ;this.form.id.value=this.form.number.value ; this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Перейти" class="default" id="submitButton" autocomplete="off">
+							<input type="button" value="Отменить" title="Отменить изменения [SHIFT+ESC]" onclick="this.disabled=true; window.history.back()" id="cancelButton">
+						</td>
+                    </msh:row>
+                </msh:panel>
+            </msh:form>
+          
         <msh:hideException>
             <msh:section title='Результат поиска'>
                 <msh:table 

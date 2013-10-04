@@ -16,7 +16,7 @@
 				</msh:row>
 				<msh:row>
 					<msh:row>
-						<msh:autoComplete property="reportGroup" vocName="vocExtDispAgeReportGroup"
+						<msh:autoComplete property="reportGroup" parentId="extDisp_vocAgeGroupForm.dispType" vocName="vocExtDispAgeReportGroupByDispType"
 							horizontalFill="true" fieldColSpan="3" label="Группировка для отчета"/>
 					</msh:row>
 				</msh:row>
