@@ -20,7 +20,7 @@ import ru.ecom.ejb.services.util.ConvertSql;
 public class QualityEstimationServiceBean implements IQualityEstimationService {
 	public String getInfoBySlo(Long aSmo, Long aSlo)  {
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("'") ;
+		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("' group by smo.dtype") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		if (list.size()>0) {
 			String dtype=list.get(0)[0].toString() ;
@@ -36,10 +36,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					.append(" left join diagnosis diag1 on diag1.medcase_id=smoM.id")		
 					.append(" left join MisLpu dep on dep.id = smoD.department_id")
 					.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code=1")
+					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code='1'")
 					.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id")
 					.append(" left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code=1")
+					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code='1'")
 					.append(" left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id")
 					.append(" left join workfunction wf on wf.id=smoD.ownerFunction_id")
 					.append(" left join vocworkFunction vwf on vwf.id=wf.workFunction_id")
@@ -80,10 +80,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					.append(" left join diagnosis diag1 on diag1.medcase_id=smoM.id")		
 					.append(" left join MisLpu dep on dep.id = smoD.department_id")
 					.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code=1")
+					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code='1'")
 					.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id")
 					.append(" left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code=1")
+					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code='1'")
 					.append(" left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id")
 					.append(" left join workfunction wf on wf.id=smoD.ownerFunction_id")
 					.append(" left join vocworkFunction vwf on vwf.id=wf.workFunction_id")
@@ -138,10 +138,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					.append(" left join diagnosis diag on diag.medcase_id=smoD.id")
 					.append(" left join diagnosis diag1 on diag1.medcase_id=smoM.id")					
 					.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code=1")
+					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code='1'")
 					.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id")
 					.append(" left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'")
-					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code=1")
+					.append(" left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id and vpd1.code='1'")
 					.append(" left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id")
 					.append(" left join workfunction wf on wf.id=smoD.ownerFunction_id")
 					.append(" left join vocworkFunction vwf on vwf.id=wf.workFunction_id")
@@ -175,10 +175,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		StringBuilder ret = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select p.id,p.lastname||' '||p.firstname||' '||p.middlename,")
-			.append("case when smo.dtype='POLYCLINICMEDCASE' then smo.id ")
-			.append("when smo.dtype='DEPARTMENTMEDCASE' then ifnull(psmo.statisticstub_id,'нет №стат.карты',ss1.code) ")
-			.append("when smo.dtype='HOSPITALMEDCASE' then ifnull(smo.statisticstub_id,'нет №стат.карты',ss.code) ");
-		sql.append("else smo.id end")  
+			.append(" case  ")
+			.append(" when smo.dtype='DepartmentMedCase' then case when psmo.statisticstub_id is null then 'нет №стат.карты' else ss1.code end ")
+			.append(" when smo.dtype='HospitalMedCase' then case when smo.statisticstub_id is null then 'нет №стат.карты' else ss.code end");
+		sql.append(" else ''||smo.id end")  
 			.append(" from medcase smo ")
 			.append(" left join statisticstub ss on smo.statisticstub_id=ss.id  ")
 			.append(" left join medcase psmo on psmo.id=smo.parent_id  ")
@@ -201,22 +201,20 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		
 		//sql1.append("select count(*),vqec.id from VocQualityEstimationCrit vqec")
 		//	.append(" where (select qec.kind_id from qualityestimationcard qec where qec.id='").append(aCardId).append("')=vqec.kind_id")			;
-		sql1.append("select count(*),vqec.id from VocQualityEstimationCrit vqec")
-			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("'")			;
+		sql1.append("select vqec.id as vqecid from VocQualityEstimationCrit vqec")
+			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.id")			;
 		//log(sql1) ;
-		List<Object[]> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
+		List<Object> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
 		Long cntSection ;
 		//Long kind ;
 		if (list1.size()>0) {
 			StringBuilder result = new StringBuilder() ;
-			Object[] row = list1.get(0) ;
-			cntSection = ConvertSql.parseLong(row[0]) ;
+			
+			cntSection = Long.valueOf(list1.size()) ;
 			result.append(cntSection) ;
 			for (int i =0 ; i<list1.size();i++) {
-				result.append("#").append(list1.get(i)[1]);
+				result.append("#").append(list1.get(i));
 			}
-			
-			//kind = ConvertSql.parseLong(row[1]) ;
 			return result.toString() ;
 		} else {
 			log("row null") ;
@@ -264,8 +262,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			return getRowShort(replaceValue,val,kind, aCardId, aTypeSpecialist, cntSection, aView) ;
 		}
 		
-		 sql.append("select vqec.id as vqecid,vqec.code as vqeccode,vqec.name as vqecname,vqec.shortname as vqecshortname")
-			.append(" ,(select count(*) from VocQualityEstimationMark vocmark where vocmark.criterion_id=vqec.id),vqem.id as vqemid,vqem.code as vqemcode,vqem.name as vqemname,vqem.mark as vqemmark")
+		 sql.append("select vqec.id as vqecid,vqec.code as vqeccode,UPPER(vqec.name) as vqecname,vqec.shortname as vqecshortname")
+			.append(" ,(select count(*) from VocQualityEstimationMark vocmark where vocmark.criterion_id=vqec.id),vqem.id as vqemid,vqem.code as vqemcode,vqem.name as vqemname,coalesce(''||vqem.mark,'-') as vqemmark")
 			.append(",")
 			.append(" (select qeBM.expertType from qualityestimationcrit qecBM")  
 			.append("	left join qualityestimation qeBM on qeBM.card_id='").append(aCardId).append("'  and qecBM.estimation_id=qeBM.id") 
@@ -307,11 +305,12 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			//.append(" left join qualityestimationcrit qecC on qecC.mark_id=vqem.id")
 			//.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qeC.expertType='Coeur' and qecC.estimation_id=qeC.id")
 			.append(" where vqec.kind_id='").append(kind).append("'")			
-			.append(" group by vqem.id")			;
+			.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark") 
+		 	.append(" order by vqec.code")			;
 		 //log(sql) ;
 		 StringBuilder table = new StringBuilder() ;
 		 StringBuilder javaScript = new StringBuilder() ;
-		 table.append("<table border=1 width=90%>")  ;
+		 table.append("<table border='1' width=90%>")  ;
 		 table.append("<tr>") ;
 		 table.append("<th rowspan=2>№№п/п</th>") ;
 		 table.append("<th rowspan=2 colspan=2>Критерии качества медицинской помощи</th>") ;
@@ -333,39 +332,44 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 for (int i=0;i<list.size();i++) {
 				 Object[] row = list.get(i) ;
 				 table.append("<tr>") ;
-				 if (cntSubsection==0)  {
+				 if (cntSubsection<1)  {
 					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
-					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'>").append(cntPart++).append(".</td>") ;
-					 table.append("<td colspan=5 align='center'><b><i>").append(row[3]).append("-").append(row[2]).append("</i></b></td>") ;
-					 table.append("</tr><tr>") ;
+					 cntPart++;
+					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append("-").append(cntSubsection).append(".</i></b></td>") ;
+					 table.append("<td colspan=5 align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
+					 table.append("</tr>") ;
+					 table.append("<tr>") ;
 					 firststr = true ;
 				 }
 				 cntSubsection--;
-				 table.append("<td>").append(row[7]).append("</td>") ;
-				 table.append("<td>").append(row[8]).append("</td>") ;
-				 //BranchManager - зав.отделением
-				 //Expert - эксперт
-				 //Coeur - КЭР
-				 Object valMarkId =  row[12];
-				 log(aTypeSpecialist) ;
-				 if (replaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
-					 valMarkId=val.get(String.valueOf(cntPart-1)) ;
-					 log(String.valueOf(cntPart-1)+":"+valMarkId) ;
+				 if (row[5]!=null) {
+					
+					 table.append("<td>").append(row[7]).append("</td>") ;
+					 table.append("<td>").append(row[8]).append("</td>") ;
+				 
+					 //BranchManager - зав.отделением
+					 //Expert - эксперт
+					 //Coeur - КЭР
+					 Object valMarkId =  row[12];
+					 log(aTypeSpecialist) ;
+					 if (replaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
+						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
+						 log(String.valueOf(cntPart-1)+":"+valMarkId) ;
+					 }
+					 table.append(recordExpert(row[8], valMarkId,row[9],cntPart, cntSection,cntSubsection, "BranchManager", aTypeSpecialist, firststr, aView) );
+					 valMarkId =  row[14];
+					 if (replaceValue &&!aView&& aTypeSpecialist.equals("Expert")) {
+						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
+					 }				 
+					 table.append(recordExpert(row[8], valMarkId, row[10],cntPart, cntSection, cntSubsection, "Expert", aTypeSpecialist, firststr, aView)) ;
+					 valMarkId =  row[14];
+					 if (replaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
+						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
+					 }				 
+					 table.append(recordExpert(row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView) );
+					 
+					 
 				 }
-				 table.append(recordExpert(row[8], valMarkId,row[9],cntPart, cntSection,cntSubsection, "BranchManager", aTypeSpecialist, firststr, aView) );
-				 valMarkId =  row[14];
-				 if (replaceValue &&!aView&& aTypeSpecialist.equals("Expert")) {
-					 valMarkId=val.get(String.valueOf(cntPart-1)) ;
-				 }				 
-				 table.append(recordExpert(row[8], valMarkId, row[10],cntPart, cntSection, cntSubsection, "Expert", aTypeSpecialist, firststr, aView)) ;
-				 valMarkId =  row[14];
-				 if (replaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
-					 valMarkId=val.get(String.valueOf(cntPart-1)) ;
-				 }				 
-				 table.append(recordExpert(row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView) );
-				 
-				 
-				 
 				 table.append("</tr>") ;
 				 firststr =false ;
 				 
@@ -389,7 +393,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder table = new StringBuilder() ;
 		StringBuilder javaScript = new StringBuilder() ;
-		sql.append("select vqec.id,vqec.shortname,vqec.name") 
+		sql.append("select vqec.id as vqecid,vqec.code as vqeccode,vqec.name as vqecname ") 
 				.append(",")
 		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
