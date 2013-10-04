@@ -101,7 +101,7 @@ public class ExtDispCardForm extends IdEntityForm{
 	
 	/** Группа здоровья дополнительной диспансеризации */
 	@Comment("Группа здоровья дополнительной диспансеризации")
-	@Persist
+	@Persist @Required
 	public Long getHealthGroup() {return theHealthGroup;}
 	public void setHealthGroup(Long aHealthGroup) {theHealthGroup = aHealthGroup;}
 	/** Группа здоровья дополнительной диспансеризации */

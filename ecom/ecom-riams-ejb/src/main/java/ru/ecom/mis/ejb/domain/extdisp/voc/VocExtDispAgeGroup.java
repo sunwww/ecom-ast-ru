@@ -21,6 +21,7 @@ public class VocExtDispAgeGroup extends VocBaseEntity{
 
 	/** Возрастная группа для отчета */
 	@Comment("Возрастная группа для отчета")
+	@OneToOne
 	public VocExtDispAgeReportGroup getReportGroup() {return theReportGroup;}
 	public void setReportGroup(VocExtDispAgeReportGroup aReportGroup) {theReportGroup = aReportGroup;}
 
