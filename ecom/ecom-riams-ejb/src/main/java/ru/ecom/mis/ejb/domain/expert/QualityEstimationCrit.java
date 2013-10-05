@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
@@ -43,6 +44,15 @@ public class QualityEstimationCrit extends BaseEntity{
   * Балл оценки критерия качества
   */
  private VocQualityEstimationMark theMark;
+ 
+	 /** Критерий оценки качества */
+	@Comment("Критерий оценки качества")
+	@OneToOne
+	public VocQualityEstimationCrit getCriterion() {return theCriterion;}
+	public void setCriterion(VocQualityEstimationCrit aCriterion) {theCriterion = aCriterion;}
+	
+	/** Критерий оценки качества */
+	private VocQualityEstimationCrit theCriterion;
  
 	 /** Оценка */
 	@Comment("Оценка")

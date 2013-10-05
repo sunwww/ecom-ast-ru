@@ -17,6 +17,7 @@ import ru.ecom.ejb.services.util.ConvertSql;
 
 @Stateless
 @Remote(IQualityEstimationService.class)
+@SuppressWarnings("unchecked")
 public class QualityEstimationServiceBean implements IQualityEstimationService {
 	public String getInfoBySlo(Long aSmo, Long aSlo)  {
 		StringBuilder sql = new StringBuilder() ;
@@ -202,7 +203,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		//sql1.append("select count(*),vqec.id from VocQualityEstimationCrit vqec")
 		//	.append(" where (select qec.kind_id from qualityestimationcard qec where qec.id='").append(aCardId).append("')=vqec.kind_id")			;
 		sql1.append("select vqec.id as vqecid from VocQualityEstimationCrit vqec")
-			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.id")			;
+			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.id,vqec.code  order by vqec.code")			;
 		//log(sql1) ;
 		List<Object> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
 		Long cntSection ;
@@ -335,7 +336,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 if (cntSubsection<1)  {
 					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
 					 cntPart++;
-					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append("-").append(cntSubsection).append(".</i></b></td>") ;
+					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append(".</i></b></td>") ;
 					 table.append("<td colspan=5 align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr>") ;
 					 table.append("<tr>") ;
@@ -351,22 +352,22 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 //Expert - эксперт
 					 //Coeur - КЭР
 					 Object valMarkId =  row[12];
-					 log(aTypeSpecialist) ;
+					 //log(aTypeSpecialist) ;
 					 if (replaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
-						 log(String.valueOf(cntPart-1)+":"+valMarkId) ;
+						 //log(String.valueOf(cntPart-1)+":"+valMarkId) ;
 					 }
-					 table.append(recordExpert(row[8], valMarkId,row[9],cntPart, cntSection,cntSubsection, "BranchManager", aTypeSpecialist, firststr, aView) );
+					 table.append(recordExpert(row[0],row[8], valMarkId,row[9],cntPart, cntSection,cntSubsection, "BranchManager", aTypeSpecialist, firststr, aView) );
 					 valMarkId =  row[14];
 					 if (replaceValue &&!aView&& aTypeSpecialist.equals("Expert")) {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
 					 }				 
-					 table.append(recordExpert(row[8], valMarkId, row[10],cntPart, cntSection, cntSubsection, "Expert", aTypeSpecialist, firststr, aView)) ;
+					 table.append(recordExpert(row[0],row[8], valMarkId, row[10],cntPart, cntSection, cntSubsection, "Expert", aTypeSpecialist, firststr, aView)) ;
 					 valMarkId =  row[14];
 					 if (replaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
 					 }				 
-					 table.append(recordExpert(row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView) );
+					 table.append(recordExpert(row[0],row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView) );
 					 
 					 
 				 }
@@ -376,6 +377,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 }
 		 }
 		 table.append("</table>") ;
+		 table.append("<input type='hidden' value='"+list.size()+"' name='criterionSize' id='criterionSize'>") ;
 		 QualityEstimationRow row = new QualityEstimationRow() ;
 		 row.setJavaScriptText(javaScript.toString()) ;
 		 row.setTableColumn(table.toString()) ;
@@ -426,7 +428,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMark")
 
 		.append(" from VocQualityEstimationCrit vqec")
-		.append(" where vqec.kind_id='").append(aKind).append("'") ;
+		.append(" where vqec.kind_id='").append(aKind).append("'  order by vqec.code") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
 			 table.append("<table border=1 width=90%>")  ;
@@ -461,37 +463,35 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 					 //log(String.valueOf(cntPart-1)+":"+valMark) ;
 				 }
-				 table.append(recordExpertShort(row[4], valMark, cntPart, aCntSection, "BranchManager", aTypeSpecialist, aView) );
+				 table.append(recordExpertShort(row[0],row[4], valMark, cntPart, aCntSection, "BranchManager", aTypeSpecialist, aView) );
 				 valMark =  row[5];
 				 if (aReplaceValue &&!aView&& aTypeSpecialist.equals("Expert")) {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 				 }				 
-				 table.append(recordExpertShort(row[6], valMark, cntPart, aCntSection, "Expert", aTypeSpecialist, aView)) ;
+				 table.append(recordExpertShort(row[0],row[6], valMark, cntPart, aCntSection, "Expert", aTypeSpecialist, aView)) ;
 				 valMark =  row[7];
 				 if (aReplaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 				 }
-				 table.append(recordExpertShort(row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView) );
-				 
-				 
+				 table.append(recordExpertShort(row[0],row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView) );
 				 table.append("</tr>") ;
-				 
 			 }
 		 }
 		 table.append("</table>") ;
+		 table.append("<input type='hidden' value='"+list.size()+"' name='criterionSize' id='criterionSize'>") ;
 		 QualityEstimationRow row = new QualityEstimationRow() ;
 		 row.setJavaScriptText(javaScript.toString()) ;
 		 row.setTableColumn(table.toString()) ;
 		return row;
 	}
 	
-	private StringBuilder recordExpertShort(Object aValueMark, Object aValueMarkId,  int aCntPart,int aCntSection, String aSpecActual, String aTypeSpecialist, boolean aView) {
+	private StringBuilder recordExpertShort(Object aCriterionId, Object aValueMark, Object aValueMarkId,  int aCntPart,int aCntSection, String aSpecActual, String aTypeSpecialist, boolean aView) {
 		StringBuilder ret = new StringBuilder() ;
 		if (!aView && aTypeSpecialist.equals(aSpecActual)) {
 			 
 			 String property = "criterion"+(aCntPart-1) ;
-			 String propertyNext = "criterion"+aCntPart +"Name";
-			 if (aCntPart==aCntSection)  propertyNext = "submitButton" ;
+			 //String propertyNext = "criterion"+aCntPart +"Name";
+			 //if (aCntPart==aCntSection)  propertyNext = "submitButton" ;
 			 String label ="Оценка зав.отд." ;
 			 String value = aValueMarkId!=null?String.valueOf(aValueMarkId):"" ;
 			 String size = "10" ;
@@ -500,7 +500,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 String fieldColSpan = "1" ;
 			 //table.append(LabelField.getField(false, false, property, label, labelColSpan, hideLabel,errors));
 			 String vocName = "vocQualityEstimationMark" ;
-			 String parentId =  "" ;
+			 String parentId =  ""+aCriterionId ;
 			 ret.append(AutoCompleteField.getField(vocName,property, label, value,parentId, fieldColSpan, size
 					 , horizontalFill, required, Boolean.FALSE,null,String.valueOf(1)));
 			 //javaScript.append(AutoCompleteField.getJavaScript(false,vocName, property,propertyNext,label)) ;
@@ -517,13 +517,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		return ret ;
 	}
 	
-	private StringBuilder recordExpert(Object aValueMark, Object aValueMarkId, Object aValue, int aCntPart, int aCntSection,int aCntSubSection, String aSpecActual, String aTypeSpecialist, boolean aFirstStr, boolean aView) {
+	private StringBuilder recordExpert(Object aCriterionId, Object aValueMark, Object aValueMarkId, Object aValue, int aCntPart, int aCntSection,int aCntSubSection, String aSpecActual, String aTypeSpecialist, boolean aFirstStr, boolean aView) {
 		StringBuilder ret = new StringBuilder() ;
 		if (!aView && aTypeSpecialist.equals(aSpecActual)) {
 			 if (aFirstStr) {
 			 String property = "criterion"+(aCntPart-1) ;
-			 String propertyNext = "criterion"+aCntPart +"Name";
-			 if (aCntPart==aCntSection)  propertyNext = "submitButton" ;
+			 //String propertyNext = "criterion"+aCntPart +"Name";
+			 //if (aCntPart==aCntSection)  propertyNext = "submitButton" ;
 			 String label ="Оценка зав.отд." ;
 			 String value = aValueMarkId!=null?String.valueOf(aValueMarkId):"" ;
 			 String size = "15" ;
@@ -532,7 +532,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 String fieldColSpan = "1" ;
 			 //table.append(LabelField.getField(false, false, property, label, labelColSpan, hideLabel,errors));
 			 String vocName = "vocQualityEstimationMark" ;
-			 String parentId =  "" ;
+			 String parentId =  ""+aCriterionId ;
 			 ret.append(AutoCompleteField.getField(vocName,property, label, value,parentId, fieldColSpan, size
 					 , horizontalFill, required, Boolean.FALSE,null,String.valueOf((aCntSubSection+1))));
 			 //javaScript.append(AutoCompleteField.getJavaScript(false,vocName, property,propertyNext,label)) ;
