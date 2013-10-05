@@ -68,7 +68,7 @@
   		</script>
   </msh:ifFormTypeIsCreate>
   		<script type="text/javascript">
-  		var crits ;
+  		var cntCrit = 0;
   			function loadDataCriterion() {
   				//alert($('criterions').value) ;
 	  			QualityEstimationService.getRowEdit($('criterions').value,$('card').value,$('expertType').value,false
@@ -77,16 +77,10 @@
 						     	//alert(aRow) ;
 						     	if (aRow!=null) {
 						     		$('loadCriterion').innerHTML = aRow ;
-						     		QualityEstimationService.getCountRow($('card').value,
-						     		{
-						     			callback: function(aCount) {
-						     					 crits = aCount.split('#') ;
-						     					updateVoc(crits);
-						     					updateCriterions() ;
+						     		cntCrit=+$('criterionSize').value ;
+			     					updateVoc();
+			     					updateCriterions() ;
 						     				
-						     			}
-						     		}
-						     		)
 						     		
 						     	}
 						  	}
@@ -94,42 +88,50 @@
 	  				
 	  			);}
 	  			loadDataCriterion() ;
-	  			function updateVoc(aStr) {
-	  				for (var i=0;i<aStr[0];i++) {
-						//		 class ru.nuzmsh.web.tags.AutoCompleteTag
-						var ii=i+1;
-						//if (ii==1) {
-						//	eventutil.addEnterSupport('workFunctionName','criterion'+ii+'Name');
-						//}
-						if (ii==+aStr[0]) {
-							eventutil.addEnterSupport('criterion'+ii+'Name', 'expertName');
-						} else {
-							eventutil.addEnterSupport('criterion'+ii+'Name', 'criterion'+(ii+1)+'Name');
-						}
-						//		 class ru.nuzmsh.web.tags.AutoCompleteTag
-						eval("var criterion"+ii+"Autocomplete = new msh_autocomplete.Autocomplete()") ;
-						eval("criterion"+ii+"Autocomplete.setUrl('simpleVocAutocomplete/vocQualityEstimationMark') ");
-						eval("criterion"+ii+"Autocomplete.setIdFieldId('criterion"+ii+"') ");
-						eval("criterion"+ii+"Autocomplete.setNameFieldId('criterion"+ii+"Name') ");
-						eval("criterion"+ii+"Autocomplete.setDivId('criterion"+ii+"Div') ");
-						eval("criterion"+ii+"Autocomplete.setVocKey('vocQualityEstimationMark') ");
-						eval("criterion"+ii+"Autocomplete.setVocTitle('Оценка зав.отд.')") ;
-						eval("criterion"+ii+"Autocomplete.build() ");
-						eval("criterion"+ii+"Autocomplete.setParentId('"+aStr[ii]+"')") ;
-						eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() {updateCriterions()  })") ;
+	  			function updateVoc() {
+	  				firstFld = "" ;
+	  				for (var i=0;i<cntCrit;i++) {
+	  					var ii=i+1;
+	  					if ($('criterion'+ii+'Name')) {
+	  						
+	  						if (firstFld="") firstFld='criterion'+ii+'Name';
+	  							
+							//		 class ru.nuzmsh.web.tags.AutoCompleteTag
+							
+							//if (ii==1) {
+							//	eventutil.addEnterSupport('workFunctionName','criterion'+ii+'Name');
+							//}
+							if (ii==cntCrit) {
+								eventutil.addEnterSupport('criterion'+ii+'Name', 'expertName');
+							} else {
+								eventutil.addEnterSupport('criterion'+ii+'Name', 'criterion'+(ii+1)+'Name');
+							}
+							//		 class ru.nuzmsh.web.tags.AutoCompleteTag
+							eval("var criterion"+ii+"Autocomplete = new msh_autocomplete.Autocomplete()") ;
+							eval("criterion"+ii+"Autocomplete.setUrl('simpleVocAutocomplete/vocQualityEstimationMark') ");
+							eval("criterion"+ii+"Autocomplete.setIdFieldId('criterion"+ii+"') ");
+							eval("criterion"+ii+"Autocomplete.setNameFieldId('criterion"+ii+"Name') ");
+							eval("criterion"+ii+"Autocomplete.setDivId('criterion"+ii+"Div') ");
+							eval("criterion"+ii+"Autocomplete.setVocKey('vocQualityEstimationMark') ");
+							eval("criterion"+ii+"Autocomplete.setVocTitle('Оценка зав.отд.')") ;
+							eval("criterion"+ii+"Autocomplete.build() ");
+							eval("criterion"+ii+"Autocomplete.setParentId('"+$('criterion'+ii+'P').value+"')") ;
+							eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() {updateCriterions()  })") ;
+	  					}
 					}
-					if (+aStr[0]>0) {
+					if (firstFld!="") {
 						
-						$('criterion1Name').select() ;
-						$('criterion1Name').focus() ;
+						$(firstFld).select() ;
+						$(firstFld).focus() ;
 						
 					}
 					
 	  			}
 	  			function updateCriterions() {
 	  				var rez ="" ;
-	  				for (var i=0;i<crits[0]; i++) {
-	  					if ($("criterion"+(i+1)).value!="") rez=rez+"#"+crits[i+1]+":"+$("criterion"+(i+1)).value ;
+	  				
+	  				for (var i=0;i<cntCrit; i++) {
+	  					if ($("criterion"+(i+1)) && $("criterion"+(i+1)).value!="") rez=rez+"#"+$("criterion"+(i+1)+"P").value+":"+$("criterion"+(i+1)).value ;
 	  				}
 	  				$('criterions').value=rez.length>0?rez.substring(1) :"";
 	  			}
