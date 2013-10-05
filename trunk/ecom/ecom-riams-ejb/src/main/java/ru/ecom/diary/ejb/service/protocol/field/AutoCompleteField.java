@@ -65,6 +65,7 @@ public class AutoCompleteField {
 			field.append("<div>") ;
 		}
 		field.append("<input name=\"").append(aProperty).append("\" value=\"").append(aValue).append("\" id=\"").append(aProperty).append(	"\" type=\"hidden\">");
+		field.append("<input name=\"").append(aProperty).append("P\" value=\"").append(!StringUtil.isNullOrEmpty(aParentId)?aParentId:"0").append("\" id=\"").append(aProperty).append(	"P\" type=\"hidden\">");
 		field.append("<input");
 		if (aViewOnly) {
 			field.append(" autocomplete=\"off\"");
