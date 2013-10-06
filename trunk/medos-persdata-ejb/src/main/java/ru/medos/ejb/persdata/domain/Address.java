@@ -142,4 +142,28 @@ public class Address extends BaseEntity{
 
 	/** Полный адрес */
 	private String theFullname;
+	/** Домен */
+	@Comment("Домен")
+	public int getDomen() {return theDomen;}
+	public void setDomen(int aDomen) {theDomen = aDomen;}
+
+	/** Домен */
+	private int theDomen;
+	
+	/** Наименование */
+	@Comment("Наименование")
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+
+	/** Наименование */
+	private String theName;
+	
+	/** Родитель */
+	@Comment("Родитель")
+	@OneToOne
+	public Address getParent() {return theParent;}
+	public void setParent(Address aParent) {theParent = aParent;}
+
+	/** Родитель */
+	private Address theParent;
 }
