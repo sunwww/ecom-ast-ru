@@ -15,11 +15,11 @@
   <tiles:put name="body" type="string">
   	<msh:ifInRole roles="/Policy/Mis/Journal/QualityEstimationCard/CardIncompletely/Expert">
 	  	<msh:section title="Нет данных об оценках эксперта по экспертных картам">
-  			<ecom:webQuery name="Expert" nativeSql="select 'Expert:'||d.id,d.name as dname,count(*) from QualityEstimationCard card
+  			<ecom:webQuery name="Expert" nativeSql="select 'Expert:'||d.id as id,d.name as dname,count(*) as cnt from QualityEstimationCard card
 left join QualityEstimation qe on qe.card_id=card.id and qe.expertType='Expert'
 left join mislpu d on d.id=card.department_id
 where qe.id is null
-group by card.department_id"/>
+group by card.department_id,d.id,d.name"/>
   			<msh:table name="Expert" action="js-expert_card-listIncompletelyByDepartment.do" idField="1">
   				<msh:tableColumn property="sn" columnName="#"/>
   				<msh:tableColumn property="2" columnName="Отделение"/>
@@ -29,11 +29,11 @@ group by card.department_id"/>
   	</msh:ifInRole>
   	<msh:ifInRole roles="/Policy/Mis/Journal/QualityEstimationCard/CardIncompletely/BranchManager">
   		<msh:section title="Нет данных об оценках заведующего по экспертных картам">
-  		  	<ecom:webQuery name="BranchManager" nativeSql="select 'BranchManager:'||d.id,d.name as dname,count(*) from QualityEstimationCard card
+  		  	<ecom:webQuery name="BranchManager" nativeSql="select 'BranchManager:'||d.id as id,d.name as dname ,count(*) as cnt from QualityEstimationCard card
 left join QualityEstimation qe on qe.card_id=card.id and qe.expertType='BranchManager'
 left join mislpu d on d.id=card.department_id
 where qe.id is null
-group by card.department_id"/>
+group by card.department_id,d.id,d.name"/>
   			<msh:table name="BranchManager" action="js-expert_card-listIncompletelyByDepartment.do" idField="1">
   				<msh:tableColumn property="sn" columnName="#"/>
   				<msh:tableColumn property="2" columnName="Отделение"/>
@@ -43,11 +43,11 @@ group by card.department_id"/>
   	</msh:ifInRole>
   	<msh:ifInRole roles="/Policy/Mis/Journal/QualityEstimationCard/CardIncompletely/Coeur">
   		<msh:section title="Нет данных об оценках КЭРа по экспертных картам">
-  		  	<ecom:webQuery name="Coeur" nativeSql="select 'Coeur:'||d.id,d.name as dname,count(*) from QualityEstimationCard card
+  		  	<ecom:webQuery name="Coeur" nativeSql="select 'Coeur:'||d.id as did,d.name as dname,count(*) as cnt from QualityEstimationCard card
 left join QualityEstimation qe on qe.card_id=card.id and qe.expertType='Coeur'
 left join mislpu d on d.id=card.department_id
 where qe.id is null
-group by card.department_id"/>
+group by card.department_id,d.id,d.name"/>
   			<msh:table name="Coeur" action="js-expert_card-listIncompletelyByDepartment.do" idField="1">
   				<msh:tableColumn property="sn" columnName="#"/>
   				<msh:tableColumn property="2" columnName="Отделение"/>

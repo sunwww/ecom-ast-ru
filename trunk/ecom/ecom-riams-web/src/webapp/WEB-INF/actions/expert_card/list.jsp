@@ -22,12 +22,17 @@
     <msh:section title="Список экспертных карт" createRoles="/Policy/Mis/MedCase/QualityEstimationCard/Create" createUrl="entityParentPrepareCreate-expert_card.do?id=${param.id}">
   			<ecom:webQuery  name="Expert" nativeSql="
   			
-select card.id,vek.name,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename,d.name,p.lastname||' '||p.firstname||' '||p.middlename
- ,case when md.DTYPE='HospitalMedCase' then 'СЛС №'||ss1.code  when md.DTYPE='DepartmentMedCase' then 'СЛО '||md.id||' СЛС №'||ss2.code  when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id else 'СМО №'||md.id end 
- ,mkb.code,card.createDate,card.createUsername 
- ,(select avg(vqem.mark) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeB.id)
- , (select avg(vqem.mark) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeE.id)
- , (select avg(vqem.mark) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeC.id)
+select card.id as cardid,vek.name as vekname
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+,d.name as dname,p.lastname||' '||p.firstname||' '||p.middlename as pat
+ ,case when md.DTYPE='HospitalMedCase' then 'СЛС №'||ss1.code  
+ 	when md.DTYPE='DepartmentMedCase' then 'СЛО '||md.id||' СЛС №'||ss2.code  
+ 	when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id 
+ 	else 'СМО №'||md.id end as dtype 
+ ,mkb.code as mkbcode,card.createDate,card.createUsername 
+ ,(select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeB.id and vqec.parent_id is null) as mark1
+ , (select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeE.id and vqec.parent_id is null) as mark2
+ , (select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeC.id and vqec.parent_id is null) as mark3
  from QualityEstimationCard card
  left join VocQualityEstimationKind vek on vek.id=card.kind_id
  left join WorkFunction wf on wf.id=card.doctorCase_id
@@ -41,7 +46,9 @@ select card.id,vek.name,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.m
  left join MedCase mh on mh.id=md.parent_id
  left join StatisticStub ss1 on ss1.id=md.statisticStub_id
  left join StatisticStub ss2 on ss2.id=mh.statisticStub_id
- left join qualityestimation qeB on card.id=qeB.card_id and qeB.expertType='BranchManager'  left join qualityestimation qeE on card.id=qeE.card_id and qeE.expertType='Expert'  left join qualityestimation qeC on card.id=qeC.card_id and qeC.expertType='Coeur'
+ left join qualityestimation qeB on card.id=qeB.card_id and qeB.expertType='BranchManager'  
+ left join qualityestimation qeE on card.id=qeE.card_id and qeE.expertType='Expert'  
+ left join qualityestimation qeC on card.id=qeC.card_id and qeC.expertType='Coeur'
 where card.medcase_id='${param.id}'"/>
   			<msh:table name="Expert"  action="entityParentView-expert_card.do" idField="1">
       <msh:tableColumn columnName="Тип экспертизы" property="2" guid="69-8a75-e825fd37e296" />
