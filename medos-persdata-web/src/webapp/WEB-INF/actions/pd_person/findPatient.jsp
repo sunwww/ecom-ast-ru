@@ -51,7 +51,7 @@
     "
     />
       <msh:section title="Результат поиска" guid="8bc5fc1c-72bb-45c8-9eb2-58715c967b81">
-        <msh:table viewUrl="entityShortView-pd_person.do" name="list" action="entityView-pd_person.do" idField="1" disableKeySupport="true" guid="7df98006-d2f7-4055-98a4-3b687377d9be" noDataMessage="Не найдено">
+        <msh:table viewUrl="entityView-pd_person.do?short=Short" name="list" action="entityView-pd_person.do" idField="1" disableKeySupport="true" guid="7df98006-d2f7-4055-98a4-3b687377d9be" noDataMessage="Не найдено">
           <msh:tableColumn columnName="Фамилия" property="2" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Имя" property="3" guid="88842354-b7d1-4c67-a43e-9837c179d5d1" />
           <msh:tableColumn columnName="Отчество" property="4" guid="4b8cb842-fcfb-4e91-b57f-ed881a1881c5" />
