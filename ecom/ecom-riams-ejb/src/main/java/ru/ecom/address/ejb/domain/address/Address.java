@@ -70,13 +70,13 @@ public class Address extends BaseEntity {
     public void setParent(Address aParent) {
         theParent = aParent;
     }
-    
+    /*
     @Transient
     @Comment("Родитель (идентификатор)")
     public Long getParentId() {
     	return theParent!=null ? theParent.getId() : null ;
     }
-
+*/
     /**
      * Название
      */
@@ -124,22 +124,21 @@ public class Address extends BaseEntity {
     public AddressType getType() {
         return theType;
     }
-
+    public void setType(AddressType aType) {
+        theType = aType;
+    }
+    /*
     @Transient
     @Comment("Тип (идентификатор")
     public Long getTypeId() {
     	return theType!=null ? theType.getId() : null ;
     }
     
-    public void setType(AddressType aType) {
-        theType = aType;
-    }
 
     @Transient
     public String getTypeName() {
         return theType != null ? theType.getShortName() : "";
-    }
-
+    }*/
     @Transient
     public String getAddressInfo() {
         /*StringBuilder sb = new StringBuilder();
@@ -178,7 +177,7 @@ public class Address extends BaseEntity {
         }
         return sb.toString() ;
     }
-    
+    /*
     //Край (область) регион
     @Transient
     public String getAddressRegion() {
@@ -188,8 +187,9 @@ public class Address extends BaseEntity {
     		adr = adr.getParent() ;
     	}
     	return "" ;
-    }
-    
+    }\
+    */
+    /*
     //Город или село инфо
     @Transient
     public String getAddressCity() {
@@ -200,6 +200,8 @@ public class Address extends BaseEntity {
     	}
     	return "" ;
     }
+    */
+    /*
     //Район области
     @Transient
     public String getAddressArea() {
@@ -211,7 +213,7 @@ public class Address extends BaseEntity {
     	}
     	return "" ;
     }
-    
+    */
     //Город?
     @Transient
     public Boolean getAddressIsCity() {
@@ -234,7 +236,7 @@ public class Address extends BaseEntity {
     	}
     	return false ;//return theDomen==5?true:false ;
     }
-    
+    /*
     // Улица
     @Transient
     public String getAddressStreet() {
@@ -245,7 +247,7 @@ public class Address extends BaseEntity {
     	}
     	return "" ;
     }
-    
+    */
     /** Полный адрес */
 	@Comment("Полный адрес")
 	public String getFullname() {return theFullname;}
