@@ -23,18 +23,25 @@
 					<msh:textField property="series" label="Серия"/>
 					<msh:textField property="documentNumber" label="Номер"/>
 				</msh:row>
-				<msh:row>
-					<msh:autoComplete parentId="pd_comingDocumentForm.person" property="identifier" vocName="identifier" label="Идентификатор"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete property="transferAct" vocName="cardTransferAct" label="Акт передачи копий"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete property="copiesDestructionAct" vocName="copiesDestructionAct" label="Акт уничтожения копий"/>
-				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
+				<msh:ifInRole roles="/Policy/PersData/Person/Identifier/View">
+				<msh:section createUrl="javascript:window.location='entityParentPrepareCreate-pd_identifier.do?comingDocument=${param.id}&id='+$('person').value" title="Идентификаторы" createRoles="/Policy/PersData/Person/Identifier/Create">
+				<ecom:webQuery name="identifier" nativeSql="
+				select i.id as iid,i.IdentificationNumber as identificationNumber
+				, vis.name as visname, i.IsTransient as isTransient
+				from Identifier i
+				left join VocIdentificationSystem vis on vis.id=i.identificationSystem_id
+				where i.comingDocument_id=${param.id}
+				"/>
+				<msh:table name="identifier" action="entityParentView-pd_identifier.do" idField="1">
+					<msh:tableColumn property="2" columnName="Номер"/>
+					<msh:tableColumn property="3" columnName="Система"/>
+					<msh:tableColumn property="4" columnName="Временный?"/>
+				</msh:table>				
+				</msh:section>
+				</msh:ifInRole>
 
 	</tiles:put>
 	<tiles:put name="title" type="string">

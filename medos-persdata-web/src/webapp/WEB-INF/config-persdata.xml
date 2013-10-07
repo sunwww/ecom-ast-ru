@@ -12,6 +12,8 @@
 		<form-bean name="pd_comingDocumentForm" type="ru.medos.ejb.persdata.form.ComingDocumentForm" />
 		<form-bean name="pd_emergencyIdentificationForm" type="ru.medos.ejb.persdata.form.EmergencyIdentificationForm" />
 		<form-bean name="pd_cardTransferActForm" type="ru.medos.ejb.persdata.form.CardTransferActForm" />
+		<form-bean name="pd_copiesTransferActForm" type="ru.medos.ejb.persdata.form.CopiesTransferActForm" />
+		<form-bean name="pd_identifierForm" type="ru.medos.ejb.persdata.form.IdentifierForm" />
 	</form-beans>
 
 	<global-forwards />

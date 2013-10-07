@@ -29,7 +29,8 @@
 			</msh:panel>
 		</msh:form>
 				<msh:ifFormTypeIsView formName="pd_personForm">
-				<msh:section createUrl="entityParentPrepareCreate-pd_identifier.do?id=${param.id}" title="Идентификаторы">
+				<msh:ifInRole roles="/Policy/PersData/Person/Identifier/View">
+				<msh:section createUrl="entityParentPrepareCreate-pd_identifier.do?id=${param.id}" title="Идентификаторы" createRoles="/Policy/PersData/Person/Identifier/Create">
 				<ecom:webQuery name="identifier" nativeSql="
 				select i.id as iid,i.IdentificationNumber as identificationNumber
 				, vis.name as visname, i.IsTransient as isTransient
@@ -43,6 +44,7 @@
 					<msh:tableColumn property="4" columnName="Временный?"/>
 				</msh:table>				
 				</msh:section>
+				</msh:ifInRole>
 			<msh:section createUrl="entityParentPrepareCreate-pd_address.do?id=${param.id}" title="Адреса">
 				<ecom:webQuery name="address" nativeSql="
 					select pa.id,va.name as vaname
@@ -82,21 +84,23 @@
 					<msh:tableColumn property="4" columnName="Номер"/>
 				</msh:table>
 			</msh:section>
-			<msh:section title="Экстренная идентификация" createUrl="entityParentPrepareCreate-pd_emergencyIdentification.do?id=${param.id}">
-				<ecom:webQuery name="emergencyIdentification" nativeSql="
-					select ei.id as eiid
-					,vis.name as visname
-					,ei.callerFullname as CallerFullname
-					, ei.callerPost as CallerPost
-					from EmergencyIdentification ei
-					left join VocIdentificationSystem vis on vis.id=ei.callerSystem_id
-					where p.person_id=${param.id}
-				"/>			
-				<msh:table name="emergencyIdentification" action="entityParentView-pd_emergencyIdentification.do" idField="1">
-					<msh:tableColumn property="2" columnName="Тип"/>
-					<msh:tableColumn property="3" columnName="Номер"/>
-				</msh:table>
-			</msh:section>
+			<msh:ifInRole roles="/Policy/PersData/EmergencyIdentification/View">
+				<msh:section title="Экстренная идентификация" createRoles="/Policy/PersData/EmergencyIdentification/Create" createUrl="entityParentPrepareCreate-pd_emergencyIdentification.do?id=${param.id}">
+					<ecom:webQuery name="emergencyIdentification" nativeSql="
+						select ei.id as eiid
+						,vis.name as visname
+						,ei.callerFullname as CallerFullname
+						, ei.callerPost as CallerPost
+						from EmergencyIdentification ei
+						left join VocIdentificationSystem vis on vis.id=ei.callerSystem_id
+						where ei.person_id=${param.id}
+					"/>			
+					<msh:table name="emergencyIdentification" action="entityParentView-pd_emergencyIdentification.do" idField="1">
+						<msh:tableColumn property="2" columnName="Тип"/>
+						<msh:tableColumn property="3" columnName="Номер"/>
+					</msh:table>
+				</msh:section>
+			</msh:ifInRole>
 			<msh:section title="Телефон" createUrl="entityParentPrepareCreate-pd_phone.do?id=${param.id}">
 				<ecom:webQuery name="phone" nativeSql="
 					select p.id,vp.name as vaname
@@ -118,8 +122,8 @@
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="pd_personForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_person" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-pd_person" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_person" name="Изменить" title="Изменить" roles="/Policy/PersData/Person/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-pd_person" name="Удалить" title="Удалить" roles="/Policy/PersData/Person/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>

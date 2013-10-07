@@ -10,7 +10,8 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="5120ac2f-43a7-4204-a2e7-187cf4969bcc">
-      <msh:sideLink roles="/Policy/Mis/Patient/Create" key="ALT+N" params="lastname" action="/entityPrepareCreate-pd_person" name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+      <msh:sideLink roles="/Policy/PersData/Person/Create" key="ALT+N" params="lastname" action="/entityPrepareCreate-pd_person" name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+      <msh:sideLink roles="/Policy/PersData/Act/CopiesTransfer/View" action="/entityList-pd_copiesTransferAct" name="Список актов передачи копий" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
