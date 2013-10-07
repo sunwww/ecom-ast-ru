@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.medos.ejb.persdata.domain.Person;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,6 +17,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Исходящий документ")
 @Entity
 @Table(schema="SQLUser")
+	@AIndexes(value = { 
+			@AIndex(properties = { "person" }) }
+	)
+
 public class OutgoingDocument extends JournalData{
 	/**
 	 * Дата изготовления

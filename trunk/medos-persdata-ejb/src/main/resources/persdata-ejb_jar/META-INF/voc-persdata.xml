@@ -1,6 +1,41 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <vocconfig>
-
+	<voc id="copiesTransferAct" type="NativeVocService">
+		<NativeVocService
+		    	from="Act as act "
+		    	parent=''
+		    	nameId="act.id"
+		    	join=""
+		    	queryAppend="act.dtype='CopiesTransferAct'"
+		    	order=""
+		    	queried=" act.actNumber like upper(:query) "
+		    	names = "act.actNumber||coalesce(' от '||to_char(act.urgencyStartDate,'dd.mm.yyyy'))"
+		/>
+	</voc>
+	<voc id="copiesDestructionAct" type="NativeVocService">
+		<NativeVocService
+		    	from="Act as act "
+		    	parent=''
+		    	nameId="act.id"
+		    	join=""
+		    	queryAppend="act.dtype='CopiesDestructionAct'"
+		    	order=""
+		    	queried=" act.actNumber like upper(:query) "
+		    	names = "act.actNumber||coalesce(' от '||to_char(act.urgencyStartDate,'dd.mm.yyyy'))"
+		/>
+	</voc>
+	<voc id="comingDocumentByPerson" type="NativeVocService">
+		<NativeVocService
+		    	from="ComingDocument as cd "
+		    	parent='cd.person_id=:parent'
+		    	nameId="cd.id"
+		    	join=" left join VocComingDocument vcd on vcd.id=cd.type_id"
+		    	queryAppend=""
+		    	order=""
+		    	queried=" cd.documentNumber like upper(:query) "
+		    	names = "coalesce(vcd.name||' ','')||coalesce(cd.series||' ','')||coalesce(cd.documentNumber,'')"
+		/>
+	</voc>
 	<voc id='copiesDestructionAct' type='EntityVocService'>
 		<EntityVocService
 			entity  = 'ru.medos.ejb.persdata.domain.CopiesDestructionAct'
@@ -94,7 +129,7 @@
 	</voc>
     <voc id='Address-1' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name'
                 queried = 'name'
                 queryAppend = 'domen = 1'
@@ -104,7 +139,7 @@
 
     <voc id='Address-2' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -115,7 +150,7 @@
 
     <voc id='Address-3' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -126,7 +161,7 @@
 
     <voc id='Address-4' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -137,7 +172,7 @@
 
     <voc id='Address-5' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -148,7 +183,7 @@
 
     <voc id='Address-6' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.medos.ejb.persdata.domain.voc.VocKladr'
+                entity  = 'ru.medos.ejb.persdata.domain.voc.Address'
                 names   = 'name,typeName,postIndex'
                 queried = 'name'
                 parent  = 'parent'

@@ -10,7 +10,8 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = CardTransferAct.class)
 @Comment("Акт передачи идентификационных карт")
-@WebTrail(comment = "Акт передачи идентификационных карт", nameProperties= "id", list="entityParentList-pd_cardTransferAct.do", view="entityParentView-pd_cardTransferAct.do")
-@EntityFormSecurityPrefix("/Policy/PersData/Act/CardTransferAct")
-public class CardTransferActForm extends ActForm{
+@WebTrail(comment = "Акт передачи идентификационных карт", nameProperties= "id"
+, list="entityList-pd_cardTransferAct.do", view="entityView-pd_cardTransferAct.do")
+@EntityFormSecurityPrefix("/Policy/PersData/Act/CardTransfer")
+public class CardTransferActForm extends ActForm {
 }

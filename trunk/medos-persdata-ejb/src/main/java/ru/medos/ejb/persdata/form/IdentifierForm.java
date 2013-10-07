@@ -12,9 +12,9 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = Identifier.class)
 @Comment("Идентификатор")
-@WebTrail(comment = "Идентификатор", nameProperties= "id", list="entityParentList-persData_identifier.do", view="entityParentView-personaldata_identifier.do")
+@WebTrail(comment = "Идентификатор", nameProperties= "id", view="entityParentView-personaldata_identifier.do")
 @Parent(property="person", parentForm=PersonForm.class)
-@EntityFormSecurityPrefix("/Policy/PersData/Person")
+@EntityFormSecurityPrefix("/Policy/PersData/Person/Identifier")
 public class IdentifierForm extends JournalDataForm {
 	/**
 	 * Персона
@@ -60,4 +60,28 @@ public class IdentifierForm extends JournalDataForm {
 	 * Идентификационный номер
 	 */
 	private String theIdentificationNumber;
+	/** Входящий документ */
+	@Comment("Входящий документ")
+	@Persist
+	public Long getComingDocument() {return theComingDocument;}
+	public void setComingDocument(Long aComingDocument) {theComingDocument = aComingDocument;}
+
+	/** Входящий документ */
+	private Long theComingDocument;
+	
+	/** Акт передачи копий */
+	@Comment("Акт передачи копий")
+	@Persist
+	public Long getTransferAct() {return theTransferAct;}
+	public void setTransferAct(Long aTransferAct) {theTransferAct = aTransferAct;}
+	/** Акт передачи копий */
+	private Long theTransferAct;
+	
+	/** Акт уничтожения копий */
+	@Comment("Акт уничтожения копий")
+	@Persist
+	public Long getCopiesDestructionAct() {return theCopiesDestructionAct;}
+	public void setCopiesDestructionAct(Long aCopiesDestructionAct) {theCopiesDestructionAct = aCopiesDestructionAct;}
+	/** Акт уничтожения копий */
+	private Long theCopiesDestructionAct;
 }

@@ -16,14 +16,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class CopiesTransferAct extends Act{
 	@OneToMany(mappedBy="transferAct", cascade=CascadeType.ALL)
-	public List<ComingDocument> getComingDocuments() {
-		return theComingDocuments;
+	public List<Identifier> getIdentifiers() {
+		return theIdentifiers;
 	}
-	public void setComingDocuments(List<ComingDocument> aComingDocuments) {
-		theComingDocuments = aComingDocuments;
+	public void setIdentifiers(List<Identifier> aIdentifiers) {
+		theIdentifiers = aIdentifiers;
 	}
 	/**
 	 * Входящие документы
 	 */
-	private List<ComingDocument> theComingDocuments;
+	private List<Identifier> theIdentifiers;
 }
