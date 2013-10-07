@@ -21,6 +21,15 @@
 					<msh:textField property="urgencyStartDate" label="Дата начала"/>
 					<msh:textField property="urgencyExpiryDate" label="Дата окончания"/>
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete viewAction="entityParentView-pd_comingDocument.do" shortViewAction="entityParentView-pd_comingDocument.do?short=Short" fieldColSpan="3" horizontalFill="true" parentId="pd_identifierForm.person" property="comingDocument" vocName="comingDocumentByPerson" label="Входящий документ"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete viewAction="entityView-pd_copiesTransferAct.do" shortViewAction="entityView-pd_copiesTransferAct.do?short=Short" fieldColSpan="3" horizontalFill="true" property="transferAct" vocName="copiesTransferAct" label="Акт передачи копий"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete fieldColSpan="3" horizontalFill="true" property="copiesDestructionAct" vocName="copiesDestructionAct" label="Акт уничтожения копий"/>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
@@ -32,8 +41,8 @@
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="pd_identifierForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_identifier" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-pd_identifier" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_identifier" name="Изменить" title="Изменить" roles="/Policy/PersData/Person/Identifier/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-pd_identifier" name="Удалить" title="Удалить" roles="/Policy/PersData/Person/Identifier/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
