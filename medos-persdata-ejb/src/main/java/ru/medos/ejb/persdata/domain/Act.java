@@ -11,19 +11,18 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class Act extends JournalData{
-	/**
-	 * Номер акта
-	 */
+	/** Номер акта */
 	@Comment("Номер акта")
-	
-	public String getActNumber() {
-		return theActNumber;
-	}
-	public void setActNumber(String aActNumber) {
-		theActNumber = aActNumber;
-	}
-	/**
-	 * Номер акта
-	 */
+	public String getActNumber() {return theActNumber;}
+	public void setActNumber(String aActNumber) {theActNumber = aActNumber;}
+	/** Номер акта */
 	private String theActNumber;
+	
+	/** Количество копий */
+	@Comment("Количество копий")
+	public Long getCopiesAmount() {return theCopiesAmount;}
+	public void setCopiesAmount(Long aCopiesAmount) {theCopiesAmount = aCopiesAmount;}
+
+	/** Количество копий */
+	private Long theCopiesAmount;	
 }

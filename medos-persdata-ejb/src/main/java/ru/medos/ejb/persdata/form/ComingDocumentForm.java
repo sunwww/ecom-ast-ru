@@ -170,49 +170,6 @@ public class ComingDocumentForm extends JournalDataForm{
 	 * Комментарий
 	 */
 	private String theComment;
-	/**
-	 * Идентификатор
-	 */
-	@Comment("Идентификатор")
-	@Persist
-	public Long getIdentifier() {
-		return theIdentifier;
-	}
-	public void setIdentifier(Long aIdentifier) {
-		theIdentifier = aIdentifier;
-	}
-	/**
-	 * Идентификатор
-	 */
-	private Long theIdentifier;
-	/**
-	 * Акт передачи копий
-	 */
-	@Comment("Акт передачи копий")
-	@Persist
-	public Long getTransferAct() {
-		return theTransferAct;
-	}
-	public void setTransferAct(Long aTransferAct) {
-		theTransferAct = aTransferAct;
-	}
-	/**
-	 * Акт передачи копий
-	 */
-	private Long theTransferAct;
-	/**
-	 * Акт уничтожения копий
-	 */
-	@Comment("Акт уничтожения копий")
-	@Persist
-	public Long getCopiesDestructionAct() {
-		return theCopiesDestructionAct;
-	}
-	public void setCopiesDestructionAct(Long aCopiesDestructionAct) {
-		theCopiesDestructionAct = aCopiesDestructionAct;
-	}
-	/**
-	 * Акт уничтожения копий
-	 */
-	private Long theCopiesDestructionAct;
+
+
 }

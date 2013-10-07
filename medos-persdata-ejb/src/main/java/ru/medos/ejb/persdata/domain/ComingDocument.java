@@ -23,8 +23,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Входящий документ")
 @Entity
 @Table(schema="SQLUser")
-public class ComingDocument extends JournalData{
-
+public class ComingDocument extends JournalData {
 	/**
 	 * Персона
 	 */
@@ -186,49 +185,5 @@ public class ComingDocument extends JournalData{
 	 * Комментарий
 	 */
 	private String theComment;
-	/**
-	 * Идентификатор
-	 */
-	@Comment("Идентификатор")
-	@OneToOne
-	public Identifier getIdentifier() {
-		return theIdentifier;
-	}
-	public void setIdentifier(Identifier aIdentifier) {
-		theIdentifier = aIdentifier;
-	}
-	/**
-	 * Идентификатор
-	 */
-	private Identifier theIdentifier;
-	/**
-	 * Акт передачи копий
-	 */
-	@Comment("Акт передачи копий")
-	@ManyToOne
-	public CopiesTransferAct getTransferAct() {
-		return theTransferAct;
-	}
-	public void setTransferAct(CopiesTransferAct aTransferAct) {
-		theTransferAct = aTransferAct;
-	}
-	/**
-	 * Акт передачи копий
-	 */
-	private CopiesTransferAct theTransferAct;
-	/**
-	 * Акт уничтожения копий
-	 */
-	@Comment("Акт уничтожения копий")
-	@ManyToOne
-	public CopiesDestructionAct getCopiesDestructionAct() {
-		return theCopiesDestructionAct;
-	}
-	public void setCopiesDestructionAct(CopiesDestructionAct aCopiesDestructionAct) {
-		theCopiesDestructionAct = aCopiesDestructionAct;
-	}
-	/**
-	 * Акт уничтожения копий
-	 */
-	private CopiesDestructionAct theCopiesDestructionAct;
+
 }
