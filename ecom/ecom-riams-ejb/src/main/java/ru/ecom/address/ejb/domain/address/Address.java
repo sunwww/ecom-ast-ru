@@ -127,7 +127,10 @@ public class Address extends BaseEntity {
     public void setType(AddressType aType) {
         theType = aType;
     }
-    /*
+    @Transient
+    public String getTypeName() {
+        return theType != null ? theType.getShortName() : "";
+    }/*
     @Transient
     @Comment("Тип (идентификатор")
     public Long getTypeId() {
@@ -135,10 +138,7 @@ public class Address extends BaseEntity {
     }
     
 
-    @Transient
-    public String getTypeName() {
-        return theType != null ? theType.getShortName() : "";
-    }*/
+    */
     @Transient
     public String getAddressInfo() {
         /*StringBuilder sb = new StringBuilder();
