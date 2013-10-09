@@ -18,7 +18,7 @@
 		        </msh:row>
 		        <msh:row styleId='rowLpuArea'>
 		            <msh:autoComplete fieldColSpan="3" property="area" label="Участок" horizontalFill="true"
-		                              vocName="lpuAreaWithParent"/>
+		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>		
 
                 <msh:submitCancelButtonsRow colSpan="2"/>
