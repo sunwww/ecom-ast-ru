@@ -6,6 +6,7 @@
 
 	<form-beans>
 		<!-- Доп.диспансеризация -->
+		<form-bean name="mis_attachmentForm" type="ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm" />
 		<form-bean name="extDisp_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispCardForm" />
 		<form-bean name="extDisp_vocForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispForm" />
 		<form-bean name="extDisp_vocHealthGroupForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispHealthGroupForm" />
@@ -267,6 +268,13 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_case/report_16vn.jsp" />
+        </action>
+        <action path='/mis_attachment' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
+                name='mis_attachmentForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_attachment.jsp" />
         </action>
         <action path='/smo_report_plan_hospital_by_visit' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
