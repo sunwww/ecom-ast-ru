@@ -8,7 +8,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = Person.class)
@@ -21,7 +23,7 @@ public class PersonForm extends JournalDataForm {
 	 * Фамилия
 	 */
 	@Comment("Фамилия")
-	@Persist
+	@Persist @Required @DoUpperCase
 	public String getLastname() {return theLastname;}
 	public void setLastname(String aLastname) {theLastname = aLastname;}
 	/**
@@ -32,7 +34,7 @@ public class PersonForm extends JournalDataForm {
 	 * Отчество
 	 */
 	@Comment("Отчество")
-	@Persist
+	@Persist @DoUpperCase
 	public String getPatronymic() {return thePatronymic;}
 	public void setPatronymic(String aPatronymic) {thePatronymic = aPatronymic;}
 	/**
@@ -43,7 +45,7 @@ public class PersonForm extends JournalDataForm {
 	 * Имя
 	 */
 	@Comment("Имя")
-	@Persist
+	@Persist @Required @DoUpperCase
 	public String getFirstname() {return theFirstname;}
 	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
 	/**
@@ -54,7 +56,7 @@ public class PersonForm extends JournalDataForm {
 	 * Дата рождения
 	 */
 	@Comment("Дата рождения")
-	@Persist
+	@Persist @Required
 	@DateString @DoDateString
 	public String getBirthdate() {return theBirthdate;}
 	public void setBirthdate(String aBirthdate) {theBirthdate = aBirthdate;}
@@ -66,7 +68,7 @@ public class PersonForm extends JournalDataForm {
 	 * Пол
 	 */
 	@Comment("Пол")
-	@Persist
+	@Persist @Required
 	public Long getSex() {return theSex;}
 	public void setSex(Long aSex) {theSex = aSex;}
 	/**

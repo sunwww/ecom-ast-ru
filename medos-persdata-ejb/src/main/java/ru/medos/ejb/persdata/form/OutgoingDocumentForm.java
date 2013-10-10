@@ -1,6 +1,6 @@
 package ru.medos.ejb.persdata.form;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
+import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.medos.ejb.persdata.domain.OutgoingDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,9 +15,11 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz = OutgoingDocument.class)
 @Comment("Исходящий документ")
-@WebTrail(comment = "Исходящий документ", nameProperties= "id", list="entityParentList-personaldata_outgoingDocument.do", view="entityParentView-personaldata_outgoingDocument.do")
-//@Parent(property="parent", parentForm=PARENT.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@WebTrail(comment = "Исходящий документ", nameProperties= "id"
+, view="entityParentView-pd_outgoingDocument.do")
+@Subclasses(value={pdDestructionNoteForm.class,pdProcessingNoteForm.class})
+@Parent(property="person", parentForm=PersonForm.class)
+@EntityFormSecurityPrefix("/Policy/PersData/OutgoingDocument")
 public class OutgoingDocumentForm extends JournalDataForm{
 	/**
 	 * Дата изготовления
