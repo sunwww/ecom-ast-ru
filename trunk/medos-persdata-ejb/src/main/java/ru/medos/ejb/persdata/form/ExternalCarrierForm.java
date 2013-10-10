@@ -15,19 +15,15 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Внешний электронный носитель")
 @WebTrail(comment = "Внешний электронный носитель", nameProperties= "id", list="entityParentList-personaldata_externalCarrier.do", view="entityParentView-personaldata_externalCarrier.do")
 //@Parent(property="parent", parentForm=.class)
-@EntityFormSecurityPrefix("/Policy/Mis")
+@EntityFormSecurityPrefix("/Policy/PersData/ExternalCarrier")
 public class ExternalCarrierForm extends IdEntityForm{
 	/**
 	 * Номер носителя
 	 */
 	@Comment("Номер носителя")
 	@Persist
-	public String getExternalCarrierNumber() {
-		return theExternalCarrierNumber;
-	}
-	public void setExternalCarrierNumber(String aExternalCarrierNumber) {
-		theExternalCarrierNumber = aExternalCarrierNumber;
-	}
+	public String getExternalCarrierNumber() {return theExternalCarrierNumber;}
+	public void setExternalCarrierNumber(String aExternalCarrierNumber) {theExternalCarrierNumber = aExternalCarrierNumber;}
 	/**
 	 * Номер носителя
 	 */
@@ -37,14 +33,8 @@ public class ExternalCarrierForm extends IdEntityForm{
 	 */
 	@Comment("Акт уничтожения внешних носителей")
 	@Persist
-	public Long getDestructionAct() {
-		return theDestructionAct;
-	}
-	public void setDestructionAct(Long aDestructionAct) {
-		theDestructionAct = aDestructionAct;
-	}
-	/**
-	 * Акт уничтожения внешних носителей
-	 */
+	public Long getDestructionAct() {return theDestructionAct;}
+	public void setDestructionAct(Long aDestructionAct) {theDestructionAct = aDestructionAct;}
+	/** Акт уничтожения внешних носителей */
 	private Long theDestructionAct;
 }
