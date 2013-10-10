@@ -127,4 +127,27 @@
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
+	  <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsCreate formName="pd_personForm">
+  <script type="text/javascript">
+  	if ('${param.lastname}'!="") {
+  		var lfm='${param.lastname}' ;
+  		var lfm = subvalue(lfm,' ','lastname');
+  		var lfm = subvalue(lfm,' ','firstname');
+  		var lfm = subvalue(lfm,' ','patrony');
+  		
+  	}
+  	function subvalue(aValue,aDel,aField) {
+  		var ind = lfm.indexOf(aDel) ;
+  		if (ind==-1) {
+  			if ($(aField).value=="") $(aField).value=aValue ;
+  			return "" ;
+  		} else {
+  			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
+  			return lfm.substring(ind+1) ;
+  		}
+  	}
+  </script>
+  </msh:ifFormTypeIsCreate>
+	</tiles:put>
 </tiles:insert>
