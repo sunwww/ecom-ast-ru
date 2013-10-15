@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://wtp" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://wtp" xmlns:intf="http://wtp" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://wtp" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="getFile">
+    <complexType>
+     <sequence>
+      <element name="aFileName" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getFileResponse">
+    <complexType>
+     <sequence>
+      <element name="getFileReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getExpIteratorXmlFile">
+    <complexType>
+     <sequence>
+      <element name="aIterationType" type="xsd:string"/>
+      <element name="aXmlFileName" type="xsd:string"/>
+      <element name="aDateStartE" type="xsd:string"/>
+      <element name="aDateEndE" type="xsd:string"/>
+      <element name="aLpu" type="xsd:string"/>
+      <element name="aCasesFromSPO" type="xsd:int"/>
+      <element name="aCasesFromSLS" type="xsd:int"/>
+      <element name="aAllLpu" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getExpIteratorXmlFileResponse">
+    <complexType>
+     <sequence>
+      <element name="getExpIteratorXmlFileReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getExpIteratorXmlFileRequest">
+
+      <wsdl:part element="impl:getExpIteratorXmlFile" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getExpIteratorXmlFileResponse">
+
+      <wsdl:part element="impl:getExpIteratorXmlFileResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getFileRequest">
+
+      <wsdl:part element="impl:getFile" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getFileResponse">
+
+      <wsdl:part element="impl:getFileResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:portType name="MainServices">
+
+      <wsdl:operation name="getFile">
+
+         <wsdl:input message="impl:getFileRequest" name="getFileRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:getFileResponse" name="getFileResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getExpIteratorXmlFile">
+
+         <wsdl:input message="impl:getExpIteratorXmlFileRequest" name="getExpIteratorXmlFileRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:getExpIteratorXmlFileResponse" name="getExpIteratorXmlFileResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="MainServicesSoapBinding" type="impl:MainServices">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getFile">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getFileRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getFileResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getExpIteratorXmlFile">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getExpIteratorXmlFileRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getExpIteratorXmlFileResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="MainServicesService">
+
+      <wsdl:port binding="impl:MainServicesSoapBinding" name="MainServices">
+
+         <wsdlsoap:address location="http://localhost:8080/WebService/services/MainServices"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
