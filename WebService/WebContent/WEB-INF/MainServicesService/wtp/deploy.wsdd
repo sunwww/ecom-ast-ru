@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from MainServicesService WSDL service -->
+
+  <service name="MainServices" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://wtp"/>
+      <parameter name="wsdlServiceElement" value="MainServicesService"/>
+      <parameter name="schemaQualified" value="http://wtp"/>
+      <parameter name="wsdlServicePort" value="MainServices"/>
+      <parameter name="className" value="wtp.MainServices"/>
+      <parameter name="wsdlPortType" value="MainServices"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://wtp" xmlns:retNS="http://wtp" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="getFile" qname="operNS:getFile" returnQName="retNS:getFileReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aFileName" type="tns:string"/>
+      </operation>
+      <operation xmlns:operNS="http://wtp" xmlns:retNS="http://wtp" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="getExpIteratorXmlFile" qname="operNS:getExpIteratorXmlFile" returnQName="retNS:getExpIteratorXmlFileReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aIterationType" type="tns:string"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aXmlFileName" type="tns:string"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aDateStartE" type="tns:string"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aDateEndE" type="tns:string"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aLpu" type="tns:string"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aCasesFromSPO" type="tns:int"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aCasesFromSLS" type="tns:int"/>
+        <parameter xmlns:pns="http://wtp" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:aAllLpu" type="tns:int"/>
+      </operation>
+      <parameter name="allowedMethods" value="getFile getExpIteratorXmlFile"/>
+
+  </service>
+</deployment>
