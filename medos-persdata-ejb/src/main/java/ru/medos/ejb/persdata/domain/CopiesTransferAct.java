@@ -26,4 +26,5 @@ public class CopiesTransferAct extends Act{
 	 * Входящие документы
 	 */
 	private List<Identifier> theIdentifiers;
+	
 }

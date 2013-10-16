@@ -25,4 +25,12 @@ public class Act extends JournalData{
 
 	/** Количество копий */
 	private Long theCopiesAmount;	
+	
+	/** Файл выгрузки */
+	@Comment("Файл выгрузки")
+	public String getFilenameExport() {return theFilenameExport;}
+	public void setFilenameExport(String aFilenameExport) {theFilenameExport = aFilenameExport;}
+
+	/** Файл выгрузки */
+	private String theFilenameExport;
 }

@@ -58,4 +58,12 @@ public class ActForm extends JournalDataForm{
 	 * Дата начала актуальности
 	 */
 	private String theUrgencyStartDate;
+	/** Файл выгрузки */
+	@Comment("Файл выгрузки")
+	@Persist
+	public String getFilenameExport() {return theFilenameExport;}
+	public void setFilenameExport(String aFilenameExport) {theFilenameExport = aFilenameExport;}
+
+	/** Файл выгрузки */
+	private String theFilenameExport;
 }

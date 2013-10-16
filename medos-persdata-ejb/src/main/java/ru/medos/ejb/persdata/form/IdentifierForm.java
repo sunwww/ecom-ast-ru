@@ -8,6 +8,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 
 @EntityForm
 @EntityFormPersistance(clazz = Identifier.class)
@@ -53,7 +54,7 @@ public class IdentifierForm extends JournalDataForm {
 	 * Идентификационный номер
 	 */
 	@Comment("Идентификационный номер")
-	@Persist
+	@Persist @DoUpperCase
 	public String getIdentificationNumber() {return theIdentificationNumber;}
 	public void setIdentificationNumber(String aIdentificationNumber) {theIdentificationNumber = aIdentificationNumber;}
 	/**
