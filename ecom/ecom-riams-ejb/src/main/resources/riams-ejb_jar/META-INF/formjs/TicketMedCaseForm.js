@@ -1,21 +1,22 @@
 function onPreCreate(aForm, aCtx) {
 	var param = new java.util.HashMap() ;
-				param.put("obj","Ticket") ;
+				param.put("obj","ShortMedCase") ;
 				param.put("permission" ,"dateClosePeriod") ;
 				param.put("date",
-					Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(aForm.dateStart)) ;
-				param.put("id", aForm.id) ;
+					aForm.dateStart) ;
+				param.put("id", 0) ;
 	var isClosedPeriod=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 	if (+isClosedPeriod==1) {
 		var param1 = new java.util.HashMap() ;
-		param1.put("obj","Ticket") ;
+		param1.put("obj","ShortMedCase") ;
 		param1.put("permission" ,"createDataInClosePeriod") ;
-		param1.put("id", aForm.id) ;
+		param1.put("id", 0) ;
+		param1.put("date",
+				aForm.dateStart) ;
 		var isCreateClose = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
 		//throw isDeleteClose ;
 		if (+isCreateClose!=1) throw "У вас стоит запрет на создание данных в закрытом периоде";
 	}
-	var date = new java.util.Date() ;
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
@@ -24,7 +25,7 @@ function onPreCreate(aForm, aCtx) {
 }
 function onPreDelete(aId, aCtx) {
 	var param = new java.util.HashMap() ;
-				param.put("obj","Ticket") ;
+				param.put("obj","ShortMedCase") ;
 				param.put("permission" ,"dateClosePeriod") ;
 				param.put("id", aId) ;
 	var isClosedPeriod=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
@@ -47,15 +48,39 @@ function onCreate(aForm, aEntity, aContext) {
 	saveAdditionData(aForm,aEntity,aContext) ;
 }
 
+/** Перед сохранением */
+function onPreSave(aForm,aEntity, aCtx) {
+	var param = new java.util.HashMap() ;
+				param.put("obj","ShortMedCase") ;
+				param.put("permission" ,"dateClosePeriod") ;
+				param.put("date",
+					aForm.dateStart) ;
+				param.put("id", aForm.id) ;
+	var isClosedPeriod=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
+	//throw +isClosedPeriod +" date="+aForm.dateStart;
+	if (+isClosedPeriod==1) {
+		var param1 = new java.util.HashMap() ;
+		param1.put("obj","ShortMedCase") ;
+		param1.put("permission" ,"editDataClosePeriod") ;
+		param1.put("id", aForm.id) ;
+		param1.put("date",
+				aForm.dateStart) ;
+		var isCreateClose = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
+		//throw isDeleteClose ;
+		if (+isCreateClose!=1) throw "У вас стоит запрет на создание данных в закрытом периоде";
+	}
+	var date = new java.util.Date() ;
+	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	//aCtx.getSessionContext().set("dCreate","123");
+}
 /**
  * При сохранении
  */
 function onSave(aForm, aEntity, aCtx) {
 	aCtx.manager.persist(aEntity) ;
 	var date = new java.util.Date() ;
-	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
-	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	saveAdditionData(aForm,aEntity,aCtx) ;
 	
 }

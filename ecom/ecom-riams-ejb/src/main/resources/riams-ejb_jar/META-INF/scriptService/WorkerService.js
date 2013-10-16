@@ -33,17 +33,41 @@ function checkPermission(aCtx,  aParam) {
 	var permission = aParam.get("permission");
 	var id=+aParam.get("id");
 	var username=aCtx.sessionContext.callerPrincipal.name ;
-	var sql_obj="select count(*) from VocObjectPermission vop where vop.code='"+obj+"' " ;
+	var dat = aParam.get("date");
+	var sql_obj="select count(*) from VocObjectPermission vop where vop.code='"+obj+"'" ;
 	//throw sql_obj ;
 	var vop = aCtx.manager.createNativeQuery(sql_obj).getSingleResult();
 	if (vop==null||+vop==0) {
 		// Нет существует ограничение
 		return 0 ;
 	} else {
-		var sql_obj="select vop.id from VocObjectPermission vop where vop.code='"+obj+"' " ;
+		var sql_obj="select vop.id,vop.namePermissionTable,vop.namePermissionDate from VocObjectPermission vop where vop.code='"+obj+"' " ;
 		var vop = aCtx.manager.createNativeQuery(sql_obj).setMaxResults(1).getSingleResult();
 	}
-	var sql ="select count(*),cast(p.editPeriodFrom as integer),cast(p.editPeriodTo as integer),to_char(p.editPeriodFrom,'dd.mm.yyyy'),to_char(p.editPeriodTo,'dd.mm.yyyy')" ;
+	
+	
+	var checkDate ;
+	
+	if (dat!=null && dat!="" &&dat!="null") {
+		
+		//var sql_check ="select vocsex.code,cast(cast('"+dat+"' as date) as integer) as dat from vocsex" ;
+		checkDate = "to_date('"+dat+"','dd.mm.yyyy')";
+	} else if (+id>0){
+		var sql_check = "select to_char("+vop[2]+",'dd.mm.yyyy') from "+vop[1]+" where id="+id+" and "+vop[2]+" is not null" ;
+		//throw sql_check ;
+		
+		lcheck = aCtx.manager.createNativeQuery(sql_check).setMaxResults(1).getResultList();
+		if (lcheck.size()>0) {
+			checkDate="to_date('"+lcheck.get(0)+"','dd.mm.yyyy')" ;
+		} else {
+			checkDate="CURRENT_DATE" ;
+		}
+		
+	} else {
+		checkDate="CURRENT_DATE" ;
+	}
+	//throw checkDate+"   "+dat;
+	var sql ="select p.editPeriodFrom,p.editPeriodTo" ;
 	//throw vop[1] ;
 	sql=sql+" from Permission p"
 	+" left join vocObjectPermission vop on vop.id=p.object_id"
@@ -51,52 +75,25 @@ function checkPermission(aCtx,  aParam) {
 	+" left join SecUser su on su.id=p.username_id"
 	+" where p.dtype='UserPermission'"
 	+" and CURRENT_DATE between coalesce(p.dateFrom,CURRENT_DATE) and coalesce(p.dateTo,CURRENT_DATE) "
+	+" and "+checkDate+" between coalesce(p.editPeriodFrom,CURRENT_DATE) and coalesce(p.editPeriodTo,CURRENT_DATE) "
 	+" and (su.login='"+username+"' or p.username_id is null)"
-	+" and p.object_id='"+vop+"' "
+	+" and p.object_id='"+vop[0]+"' "
 	+" and vp.code='"+permission+"' " 
 	;
-	if (id>0) sql=sql+" and (p.idObject='"+id+"' or p.idObject ='' or p.idObject is null) " ;
-	var list = aCtx.manager.createNativeQuery(sql)
-	.getResultList();
-	//throw sql ;
-	if (+list.size()==0) {
-		// Нет существует ограничение
-		return 0 ;
-	}
-	var check ;
-	if (id>0) {
-		var sql_check = "select count(*), cast("+vop[3]+" as integer) from "+vop[2]
-		+" where id="+id ;
-		//throw sql_check ;
-		
-		check = aCtx.manager.createNativeQuery(sql_check).getResultList().get(0);
+	if (+id>0) {
+		sql=sql+" and (p.idObject='"+id+"' or p.idObject ='' or p.idObject is null) " ;
 	} else {
-		var dat = aParam.get("date");
-		var sql_check ="select vocsex.code,cast(cast('"+dat+"' as date) as integer) as dat from vocsex" ;
-		check = aCtx.manager.createNativeQuery(sql_check).getResultList().get(0);
-		//throw "check="+check[1] + ' sql='+sql_check ;
+		sql=sql+" and (p.idObject ='' or p.idObject is null) " ;
 	}
-	for (var i=0;i<list.size();i++) {
-		var perm = list.get(i) ;
-		//if (id==0) throw "perm1="+perm[1] +"perm2="+perm[2] +" check="+ check[1] +"sql"+sql_check;
-		var c =0;
-		if (+perm[1]>0 && +check[1]>0 && +perm[1]>check[1]) {
-			//throw "perm1="+perm[1] +" check="+ check[1] ;
-		} else {
-			//throw "perm1e="+perm[1] +" check="+ check[1] ;
-			c=1 ;
-		}
-		if (+check[1]>0 && +perm[2]>0 && +perm[2]<check[1]) {
-			//throw "perm2="+perm[2] +" check="+ check[1] ;
-		} else {
-			//throw "perm2="+perm[2] +" check="+ check[1] ;
-			if (c==1) {
-				return 1 ; 
-			}
-		}
-	} 
+	//throw sql ;
+	var list = aCtx.manager.createNativeQuery(sql).getResultList();
 	
-	return 0 ;
+	if (+list.size()==0) {
+		// Не существует ограничения
+		return 0 ;
+	} else {
+		return 1 ;
+	}
 }
 function findLogginedSecUserId(aCtx) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
@@ -143,7 +140,7 @@ function getWorkCalendarDayCalendarDate(aCtx, aCalDayId) {
  * Поиск текущей функции
  * @return WorkFunction
  */
-function findLogginedWorkFunctionList(aCtx) {
+function findLogginedWorkFunctionList(aC else {tx) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
 	var list = aCtx.manager.createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username) 
