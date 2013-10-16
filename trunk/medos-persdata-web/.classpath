@@ -39,5 +39,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msh-web"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecs"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/imageio"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/medos-persdata-ejb"/>
 	<classpathentry kind="output" path="target/webapp/WEB-INF/classes"/>
 </classpath>
