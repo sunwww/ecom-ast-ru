@@ -16,8 +16,8 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormPersistance(clazz = OutgoingDocument.class)
 @Comment("Исходящий документ")
 @WebTrail(comment = "Исходящий документ", nameProperties= "id"
-, view="entityParentView-pd_outgoingDocument.do")
-@Subclasses(value={pdDestructionNoteForm.class,pdProcessingNoteForm.class})
+, view="entitySubclassView-pd_outgoingDocument.do")
+@Subclasses(value={pdDestructionNoteForm.class,pdProcessingNoteForm.class,IdentificationCardForm.class})
 @Parent(property="person", parentForm=PersonForm.class)
 @EntityFormSecurityPrefix("/Policy/PersData/OutgoingDocument")
 public class OutgoingDocumentForm extends JournalDataForm{

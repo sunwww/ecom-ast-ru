@@ -107,16 +107,16 @@ public class VocKladr extends VocBaseEntity{
 		 */
 		@Comment("Территория")
 		
-		public String getProvice() {
-			return theProvice;
+		public String getProvince() {
+			return theProvince;
 		}
-		public void setProvice(String aProvice) {
-			theProvice = aProvice;
+		public void setProvince(String aProvince) {
+			theProvince = aProvince;
 		}
 		/**
 		 * Территория
 		 */
-		private String theProvice;
+		private String theProvince;
 		/**
 		 * Район
 		 */

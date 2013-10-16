@@ -14,12 +14,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Файл документа")
 @Entity
 @Table(schema="SQLUser")
-public class DocumentFile extends BaseEntity{
+public class DocumentFile extends JournalData{
 	/**
 	 * Ссылка
 	 */
 	@Comment("Ссылка")
-	
 	public String getUrl() {
 		return theUrl;
 	}
@@ -60,4 +59,22 @@ public class DocumentFile extends BaseEntity{
 	 * Комментарии
 	 */
 	private String theComment;
+
+	/** Ссылка на файл */
+	@Comment("Ссылка на файл")
+	public String getReferenceTo() {return theReferenceTo;}
+	public void setReferenceTo(String aLinkFile) {	theReferenceTo = aLinkFile;}
+
+	@Comment("Ссылка на сжатый файл")
+	public String getReferenceCompTo() {
+		return theReferenceCompTo;
+	}
+
+	public void setReferenceCompTo(String aReferenceCompTo) {
+		theReferenceCompTo = aReferenceCompTo;
+	}
+	/** Ссылка на сжатый файл */
+	private String theReferenceCompTo;
+	/** Ссылка на файл */
+	private String theReferenceTo;
 }
