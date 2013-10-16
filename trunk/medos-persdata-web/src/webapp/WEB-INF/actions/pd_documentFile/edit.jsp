@@ -39,7 +39,7 @@
         </msh:row>
         <msh:row>
         	<td colspan="6">
-        	<img alt="Загрузка изображения" src="/persdoc/${referenceCompTo}" id="imgDocument" width="100%" ondblclick="this.src='/docmis/${referenceTo}'">
+        	<img alt="Загрузка изображения" src="/persdoc/${referenceCompTo}" id="imgDocument" width="100%" ondblclick="this.src='/persdoc/${referenceTo}'">
         	</td>
         	
         </msh:row>

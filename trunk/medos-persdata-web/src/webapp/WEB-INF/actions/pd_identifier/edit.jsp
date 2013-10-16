@@ -46,4 +46,19 @@
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
+	<tiles:put name="javascript" type="string">
+		<msh:ifFormTypeIsCreate formName="pd_identifierForm">
+			<script type="text/javascript">
+				$('isTransient').checked = true ;
+			</script>
+		</msh:ifFormTypeIsCreate>
+		<msh:ifFormTypeIsNotView formName="pd_identirierForm">
+			<script type="text/javascript">
+				transferActAutocomplete.addOnChangeCallback(function() {
+					var sp=$('trnasferActName').value.split(" от ") ;
+					if (sp.length>0) $("urgencyStartDate").value=sp[1] ;
+				}) ;
+			</script>
+		</msh:ifFormTypeIsNotView>
+	</tiles:put>
 </tiles:insert>

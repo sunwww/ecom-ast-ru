@@ -63,7 +63,9 @@
 				<msh:sideLink key="ALT+2" params="id" action="/entityEdit-pd_copiesTransferAct" name="Изменить" title="Изменить" roles="/Policy/PersData/Act/CopiesTransfer/Edit"/>
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityDelete-pd_copiesTransferAct" name="Удалить" title="Удалить" roles="/Policy/PersData/Act/CopiesTransfer/Delete"/>
 			</msh:sideMenu>
-
+			<msh:sideMenu title="Выгрузка">
+				<msh:sideLink params="id" action="exportIdentifierByCopiesTransferAct" roles="/Policy/PersData/Act/CopiesTransfer/ExportIdentifier"/>
+			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
 </tiles:insert>
