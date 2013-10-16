@@ -38,7 +38,7 @@ try {
     <input type="hidden" name="objectId" id="objectId" value="${objectId}"/>
     <input type="hidden" name="objectType" id="objectType" value="${objectType}"/>
     <div id='divImport' style="display:none;">
-    /docmis/${url_image} <input type="button" name="run_import" value="Импорт документов"  onclick="getRunImport('${url_image_full}')" />
+    /persdoc/${url_image} <input type="button" name="run_import" value="Импорт документов"  onclick="getRunImport('${url_image_full}')" />
     </div>
     </form>
     <br><img  src='/persdoc/${url_image}' width="100%" />

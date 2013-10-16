@@ -24,6 +24,12 @@
             scope='request' validate="false" name="">
             <forward name="success" path="/pd_searchPerson.do" />
         </action>
+        <action path="/exportIdentifierByCopiesTransferAct" type='ru.ecom.web.actions.base.ForwardAction'
+        	name="pd_copiesTransferActForm"
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="entityView-pd_copiesTransferAct.do" />
+        </action>
         
         <action path="/pd_searchPerson" type='ru.ecom.web.actions.base.ForwardAction'
             scope='request' validate="false" name="pd_personSearchForm">
