@@ -251,6 +251,7 @@
             <msh:tableColumn columnName="Поток обслуживания" property="12"/>
             <msh:tableColumn columnName="Услуги" property="13"/>
             <msh:tableColumn columnName="Напр. на стац. лечение" property="14"/>
+            <msh:tableColumn columnName="ЛПУ направитель" property="15"/>
         </msh:table>
         
         <ecom:webQuery name="listCount" nativeSql="

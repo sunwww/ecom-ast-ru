@@ -331,10 +331,10 @@ public class TicketServiceJs {
 		
 		System.out.println("isEditUser="+isEditUser) ;
 		if (isEditUser) {
-			boolean isClosedPeriod = checkPermission(service, "Ticket", "dateClosePeriod", aIdTicket, aRequest) ;
+			boolean isClosedPeriod = checkPermission(service, "ShortMedCase", "dateClosePeriod", aIdTicket, aRequest) ;
 			System.out.println("isClosedPeriod="+isClosedPeriod) ;
 			if (isClosedPeriod) {
-				boolean isEditClose = checkPermission(service, "Ticket", "editDataClosePeriod", aIdTicket, aRequest); 
+				boolean isEditClose = checkPermission(service, "ShortMedCase", "editDataClosePeriod", aIdTicket, aRequest); 
 				System.out.println("isEditClose="+isEditClose) ;
 				return  isEditClose?"1":"0#Период закрыт на редактирование";
 			} else {

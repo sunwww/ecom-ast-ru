@@ -217,7 +217,7 @@
         params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациента"
          title="Добавить талон" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create"
-        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
+         action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
          title="Добавить талон пациента на основе текущего" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
@@ -261,7 +261,7 @@
                       //$('workFunction').value=aResult ;
                       workFunctionExecuteAutocomplete.setParentId(aResult) ;
                       //workFunctionExecuteAutocomplete.setVocId(aResult) ;                   }
-	        	}
+	        	}}
 	        	);
   </script>
   </msh:ifFormTypeIsCreate>
@@ -416,6 +416,34 @@
     	
   </msh:ifFormTypeIsNotView>
   <msh:ifFormTypeIsCreate formName="smo_ticketForm">
+  <msh:ifInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
+  	<script type="text/javascript">
+  	if (+$('workFunctionExecute').value<1) {
+	  	if (+'${param.prevTicket}'>0) {
+	  		TicketService.getInfoByTicket('${param.prevTicket}',{callback:function(aResult){
+	  			if (aResult!=null&&aResult!="") {
+	  				var val = aResult.split("@") ;
+	   	   			if (val[0]!="") $('serviceStream').value = val[0] ;if (val[1]!="") $('serviceStreamName').value = val[1] ;
+	   	   			if (val[2]!="") $('workPlaceType').value = val[2] ;if (val[3]!="") $('workPlaceTypeName').value = val[3] ;
+	   	   			if (val[4]!="") $('visitReason').value = val[4] ;if (val[5]!="") $('visitReasonName').value = val[5] ;
+	   	   			if (val[6]!="") $('visitResult').value = val[6] ;if (val[7]!="") $('visitResultName').value = val[7] ;
+	   	   			if (val[8]!="") $('hospitalization').value = val[8] ;if (val[9]!="") $('hospitalizationName').value = val[9] ;
+	   	   			if (val[10]!="") $('dispRegistration').value = val[10] ;if (val[11]!="") $('dispRegistrationName').value = val[11] ;
+	   	   			//if (val[12]!="") $('serviceStream').value = val[12] ;if (val[13]!="") $('serviceStreamName').value = val[13] ;
+	   	   			if (val[12]!=""&&(+val[12]>0)) $('emergency').checked=true;
+	   	   			if (val[13]!="") {
+	   	   				var diag = val[13].split("##") ;
+	   	   				if (diag[0]!="") $('concludingMkb').value = diag[0] ;if (diag[1]!="") $('concludingMkbName').value = diag[1] ;
+	   	   				if (diag[2]!="") $('concludingDiagnos').value = diag[2] ;if (diag[3]!="") $('concludingActuity').value = diag[3] ;
+	   	   				if (diag[4]!="") $('concludingActuityName').value = diag[4] ;
+	   	   			}
+	   	   			//if (val[14]!="") $('workFunctionExecute').value = val[14] ;if (val[15]!="") $('workFunctionExecuteName').value = val[15] ;
+	   	   			setAdditionParam();
+	  			}
+	  		}})
+	  	}
+</script>
+</msh:ifInRole>  
   <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
   	<script type="text/javascript">
   	if (+$('workFunctionExecute').value<1) {
