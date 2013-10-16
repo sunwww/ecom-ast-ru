@@ -11,15 +11,25 @@
 		<include name="ecom/gwt/clazz/ecom-gwt-clazz.jar" />
 		<include name="gwt/gwt-servlet.jar" />
         <include name="ecs/ecs-1.4.2.jar"/>
+		<include name="image/jai_imageio.jar"/>
+		<include name="image/imgscalr-lib-3.2.jar"/>
+		<include name="image/jai_codec.jar"/>
+		<include name="axis/axis.jar"/>
 	</fileset>
 
 	<target name='prepare.web'>
 		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
+			<fileset file='${lib.dir}/image/jai_codec.jar' />
+			<fileset file='${lib.dir}/image/imgscalr-lib-3.2.jar' />
+			<fileset file='${lib.dir}/image/jai_imageio.jar' />
 			<fileset file='${lib.dir}ecom/${appname}/ejb/${appname}-ejb-api.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
 			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
 			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />
 			<fileset file='${lib.dir}/gwt/gwt-servlet.jar' />
+			<fileset file='${lib.dir}/axis/axis.jar' />
+			<fileset file='${lib.dir}/axis/commons-discovery-0.2.jar' />
+			<fileset file='${lib.dir}/axis/commons-logging-1.0.4.jar' />
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />
