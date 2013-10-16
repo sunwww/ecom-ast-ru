@@ -24,6 +24,12 @@
     <%
         	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
         	request.setAttribute("login", login) ;
+        	boolean isNotViewPD = RolesHelper.checkRoles("/Policy/Jaas/SecUser/PersonalData/NotView", request) ;
+        	if (isNotViewPD) {
+        		request.setAttribute("lastnameSql", "p.patientSync||' '||substring(p.lastname,1,1)") ;
+        	} else {
+        		request.setAttribute("lastnameSql", "p.lastname") ;
+        	}
         %>
         <ecom:webQuery name="infoByLogin"
         maxResult="1" nativeSql="
@@ -86,7 +92,7 @@
             <msh:section title="Направленные пациенты">
             <ecom:webQuery name="listDirect" 
             nativeSql="select smc.id as smcid, smc.dateFinish as smcorderDate
-            ,p.lastname||' '||p.firstname||' '||p.middlename as patientName
+            ,${lastnameSql}||' '||p.firstname||' '||p.middlename as patientName
             ,vwf.name||' '||wp.lastname
              from MedCase smc 
              left join Patient p on p.id=smc.patient_id
@@ -112,7 +118,7 @@
             <ecom:webQuery name="listAccepted" 
 	            nativeSql="select smc.id as smcid, smc.dateStart as smcorderDate
 	            ,cast(smc.timeExecute as varchar(5))
-	            ,p.lastname||' '||p.firstname||' '||p.middlename as patientName
+	            ,${lastnameSql}||' '||p.firstname||' '||p.middlename as patientName
 	            ,vwf.name||' '||wp.lastname
 	             from MedCase smc 
 	             left join Patient p on p.id=smc.patient_id

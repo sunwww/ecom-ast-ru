@@ -71,7 +71,10 @@
         	<input type="radio" name="typePatient" value="1">  иностранцы
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  все
+        	<input type="radio" name="typePatient" value="2">  соотечественники
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="3">  все
         </td>
       </msh:row>
        <msh:row>
@@ -114,10 +117,14 @@
         		request.setAttribute("emergencyInfo", ", поступивших по плановым показаниям") ;
         		request.setAttribute("emergencyTicketSql", " and (t.emergency is null or t.emergency='0') ") ;
         	} 
-        	if (typePatient.equals("1")){
+        	if (typePatient.equals("1")) {
     			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
     			request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "vn")) ;
     			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
+        	} else if (typePatient.equals("2")) {
+    			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+    			request.setAttribute("patientSql", " and p.isCompatriot='1' ") ;
+    			request.setAttribute("infoTypePat", "Поиск по соотечественникам") ;
     		} else {
     			request.setAttribute("patientSql", "") ;
     			request.setAttribute("infoTypePat", "Поиск по всем") ;
