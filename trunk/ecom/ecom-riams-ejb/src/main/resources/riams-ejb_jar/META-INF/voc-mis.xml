@@ -309,11 +309,11 @@
     <voc id='vocPermission' type='NativeVocService'>
     	<NativeVocService
     			from = 'vocPermission vp'
-    			parent=" (vp.object_id=:parent or (vp.object_id is null and vp.objectCode=vop.code))"
+    			parent=" (vp.object_id=:parent or (vop1.id=:parent and vp.object_id is null))"
     			names = "vp.name"
     			nameId="vp.id"
     			queryAppend=''
-    			join=' left join VocObjectPermission vop on vop.id=vp.object_id'
+    			join=' left join VocObjectPermission vop on vop.id=vp.object_id left join VocObjectPermission vop1 on vop1.code=vp.objectCode'
     			order=''
     			queried = "(cast(vp.id as varchar(20)) like :querId or vp.name like UPPER(:query))"
     			 			
