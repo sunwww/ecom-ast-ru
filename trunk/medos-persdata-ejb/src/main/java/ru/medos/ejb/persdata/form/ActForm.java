@@ -1,7 +1,5 @@
 package ru.medos.ejb.persdata.form;
 
-import org.jboss.annotation.ejb.CurrentMessage;
-
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.medos.ejb.persdata.domain.Act;
@@ -18,9 +16,10 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = Act.class)
 @Comment("Акт")
-@WebTrail(comment = "Акт", nameProperties= "id", list="entityParentList-personaldata_act.do", view="entityParentView-personaldata_act.do")
+@WebTrail(comment = "Акт", nameProperties= "id", view="entitySubclassView-pd_act.do")
 @Subclasses(value = { CopiesTransferActForm.class, CardTransferActForm.class
-		, ExternalCarrierDestructionActForm.class })
+		, ExternalCarrierDestructionActForm.class, CopiesDestructionActForm.class,
+		})
 @EntityFormSecurityPrefix("/Policy/PersData/Act")
 public class ActForm extends JournalDataForm{
 	/**

@@ -19,7 +19,6 @@ public class Address extends BaseEntity{
 	 * Регион
 	 */
 	@Comment("Регион")
-	
 	public String getProvince() {
 		return theProvince;
 	}

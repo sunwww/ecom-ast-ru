@@ -1,6 +1,5 @@
 package ru.medos.ejb.persdata.form;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.medos.ejb.persdata.domain.IdentificationCard;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,7 +15,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Идентификационная карта", nameProperties= "id", list="entityParentList-personaldata_identificationCard.do", view="entityParentView-personaldata_identificationCard.do")
 @Parent(property="parent", parentForm=ActForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis")
-public class IdentificationCardForm extends IdEntityForm{
+public class IdentificationCardForm extends OutgoingDocumentForm{
 	/**
 	 * Акт передачи
 	 */
