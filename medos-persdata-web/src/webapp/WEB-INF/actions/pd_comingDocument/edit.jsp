@@ -26,6 +26,7 @@
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
+		<msh:ifFormTypeIsView formName="pd_comingDocumentForm">
 				<msh:ifInRole roles="/Policy/PersData/Person/Identifier/View">
 				<msh:section createUrl="javascript:window.location='entityParentPrepareCreate-pd_identifier.do?comingDocument=${param.id}&id='+$('person').value" title="Идентификаторы" createRoles="/Policy/PersData/Person/Identifier/Create">
 				<ecom:webQuery name="identifier" nativeSql="
@@ -42,7 +43,24 @@
 				</msh:table>				
 				</msh:section>
 				</msh:ifInRole>
-
+      <msh:ifInRole roles="/Policy/PersData/ComingDocument/DocumentFile/View">
+      <msh:section createRoles="/Policy/PersData/ComingDocument/DocumentFile/Create"
+      createUrl="documentFile-preView.do?id=${param.id}" title="Прикрепленные файлы">
+      <ecom:webQuery name="extDocument" nativeSql="
+      	select d.id,to_char(d.createDate,'dd.mm.yyyy')
+      	||coalesce(' '||cast(d.createTime as varchar(5)),''),d.referenceTo 
+      	from DocumentFile d
+      	where d.document_id='${param.id}'
+      "/>
+      	<msh:table name="extDocument"
+      	viewUrl="entityParentView-pd_documentFile.do?short=Short" 
+      	action="entityParentView-pd_documentFile.do" idField="1">
+      		<msh:tableColumn property="2" columnName="Дата и время создания"/>
+      		<msh:tableColumn property="3" columnName="Ссылка"/>
+      	</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+	</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="pd_comingDocumentForm" />
@@ -50,8 +68,12 @@
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="pd_comingDocumentForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_comingDocument" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-pd_comingDocument" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pd_comingDocument" name="Изменить" title="Изменить" roles="/Policy/PersData/ComingDocument/Edit"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-pd_comingDocument" name="Удалить" title="Удалить" roles="/Policy/PersData/ComingDocument/Delete"/>
+			</msh:sideMenu>
+			<msh:sideMenu title="Добавить">
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-pd_documentFile" 
+				name="Файл" title="Файл" roles="/Policy/PersData/ComingDocument/DocumentFile/Create"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
