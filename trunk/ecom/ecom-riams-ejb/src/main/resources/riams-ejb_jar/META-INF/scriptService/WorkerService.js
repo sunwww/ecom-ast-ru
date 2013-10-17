@@ -140,7 +140,7 @@ function getWorkCalendarDayCalendarDate(aCtx, aCalDayId) {
  * Поиск текущей функции
  * @return WorkFunction
  */
-function findLogginedWorkFunctionList(aC else {tx) {
+function findLogginedWorkFunctionList(aCtx) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
 	var list = aCtx.manager.createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username) 
