@@ -134,7 +134,7 @@
   		var lfm='${param.lastname}' ;
   		var lfm = subvalue(lfm,' ','lastname');
   		var lfm = subvalue(lfm,' ','firstname');
-  		var lfm = subvalue(lfm,' ','patrony');
+  		var lfm = subvalue(lfm,' ','patronymic');
   		
   	}
   	function subvalue(aValue,aDel,aField) {
