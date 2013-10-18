@@ -39,4 +39,11 @@ public class VocExtDispHealthGroup extends VocBaseEntity{
 	 * Тип дополнительной диспансеризации
 	 */
 	private VocExtDisp theDispType;
+	/** Код диспансеризации */
+	@Comment("Код диспансеризации")
+	public String getDispCode() {return theDispCode;}
+	public void setDispCode(String aDispCode) {theDispCode = aDispCode;}
+
+	/** Код диспансеризации */
+	private String theDispCode;
 }

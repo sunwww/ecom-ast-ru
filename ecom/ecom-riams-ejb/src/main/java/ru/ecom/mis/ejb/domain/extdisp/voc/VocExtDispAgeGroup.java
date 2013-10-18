@@ -25,6 +25,13 @@ public class VocExtDispAgeGroup extends VocBaseEntity{
 	public VocExtDispAgeReportGroup getReportGroup() {return theReportGroup;}
 	public void setReportGroup(VocExtDispAgeReportGroup aReportGroup) {theReportGroup = aReportGroup;}
 
+	/** Код диспансеризации */
+	@Comment("Код диспансеризации")
+	public String getDispCode() {return theDispCode;}
+	public void setDispCode(String aDispCode) {theDispCode = aDispCode;}
+
+	/** Код диспансеризации */
+	private String theDispCode;
 	/** Возрастная группа для отчета */
 	private VocExtDispAgeReportGroup theReportGroup;
 	/** Вид диспансеризации */
