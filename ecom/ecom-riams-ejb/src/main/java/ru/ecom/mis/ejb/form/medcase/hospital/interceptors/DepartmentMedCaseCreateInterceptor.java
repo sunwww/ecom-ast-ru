@@ -197,11 +197,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select bf.id,vbst.id from BedFund bf ") ;
 		sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
-		sql.append(" where bf.lpu_id='").append(aDepartment)
-			.append("' and bf.serviceStream_id='").append(aServiceStream)
+		sql.append(" where bf.lpu_id='").append(aDepartment!=null?aDepartment:"0")
+			.append("' and bf.serviceStream_id='").append(aServiceStream!=null?aServiceStream:"0")
 			.append("' and to_date('").append(aDateFrom)
 			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-		sql.append(" and vbst.code='").append(bedSubType).append("'");
+		sql.append(" and vbst.code='").append(bedSubType!=null?bedSubType:"1").append("'");
 		List<Object[]> idT = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (idT.size()==1) {
 			return ConvertSql.parseLong(idT.get(0)[0]) ;
