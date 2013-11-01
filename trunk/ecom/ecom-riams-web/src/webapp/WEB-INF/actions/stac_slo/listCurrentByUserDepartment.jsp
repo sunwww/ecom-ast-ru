@@ -104,7 +104,7 @@
     left join SurgicalOperation so1 on so1.medCase_id =sls.id
     left join MisLpu ml on ml.id=m.department_id
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>cast('09:00' as time))
+    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     group by m.department_id,ml.name
     order by ml.name
     "
