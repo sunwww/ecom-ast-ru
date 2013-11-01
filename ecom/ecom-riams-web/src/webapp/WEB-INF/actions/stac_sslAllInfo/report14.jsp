@@ -109,15 +109,16 @@
   	//request.setAttribute("orderType_amb", "3") ;
   	ActionUtil.getValueByList("result_death_sql", "result_death", request) ;
   	ActionUtil.getValueByList("orderType_amb_sql", "orderType_amb", request) ;
-
-  	String dep = request.getParameter("department") ; 
-  	if (dep!=null&&!dep.equals("")&&!dep.equals("0")) {
-  		request.setAttribute("department", " and sloa.department_id='"+dep+"'") ;
-  	}
-  	String hospType = request.getParameter("hospType") ; 
-  	if (hospType!=null&&!hospType.equals("")&&!hospType.equals("0")) {
-  		request.setAttribute("hospTypeSql", " and sls.hospType_id='"+hospType+"'") ;
-  	}
+  	StringBuilder paramSql= new StringBuilder() ;
+  	StringBuilder paramHref= new StringBuilder() ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "sex", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "department", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "hospType", request)) ;
+  	paramHref.append("&sex=").append(request.getAttribute("sex")) ;
+  	paramHref.append("&department=").append(request.getAttribute("department")) ;
+  	paramHref.append("&hospType=").append(request.getAttribute("hospType")) ;
+  	request.setAttribute("paramSql", paramSql.toString()) ;
+  	request.setAttribute("paramHref", paramHref.toString()) ;
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
   	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
   	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
@@ -195,6 +196,9 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип стационара" vocName="vocHospType"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
         </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
