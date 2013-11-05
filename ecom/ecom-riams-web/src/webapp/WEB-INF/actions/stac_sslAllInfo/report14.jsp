@@ -68,6 +68,19 @@
   		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А. Взрослые") ;
+  	} else if (typeAge!=null &&typeAge.equals("7")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+  			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
+  			.append(sexWoman).append("' then 55 else 60 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста") ;
   	} else if (typeAge!=null &&typeAge.equals("4")) {
   		StringBuilder age = new StringBuilder() ;
   		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
@@ -111,12 +124,21 @@
   	ActionUtil.getValueByList("orderType_amb_sql", "orderType_amb", request) ;
   	StringBuilder paramSql= new StringBuilder() ;
   	StringBuilder paramHref= new StringBuilder() ;
-  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "sex", request)) ;
-  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "department", request)) ;
-  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "hospType", request)) ;
-  	paramHref.append("&sex=").append(request.getAttribute("sex")) ;
-  	paramHref.append("&department=").append(request.getAttribute("department")) ;
-  	paramHref.append("&hospType=").append(request.getAttribute("hospType")) ;
+  	
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
+  	/*
+  	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
+  	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
+  	ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request) ;
+  	
+  	paramSql.append(" ").append(request.getAttribute("departmentSql")!=null?request.getAttribute("departmentSql"):"") ;
+  	paramSql.append(" ").append(request.getAttribute("hospTypeSql")!=null?request.getAttribute("hospTypeSql"):"") ;
+  	paramSql.append(" ").append(request.getAttribute("sexSql")!=null?request.getAttribute("sexSql"):"") ;
+  	*/
+  	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
+  	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
@@ -169,8 +191,14 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeAge" value="6"  >  15-17 лет
         </td>
+        </msh:row>
+        <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
+         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeAge" value="7"  >  взрослые труд. возраста
+        </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="7"  >  все
+        	<input type="radio" name="typeAge" value="8"  >  все
         </td>
        </msh:row>
       <msh:row>
@@ -308,14 +336,14 @@ left join BedFund bf on bf.id=sloa.bedFund_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-${department} and sloa.dateFinish is not null
-${age_sql} ${hospTypeSql}
+${paramSql} and sloa.dateFinish is not null
+${age_sql}
 group by sloa.department_id,ml.name
 order by ml.name
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
       <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
@@ -389,9 +417,9 @@ and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')
     and to_date('${dateEnd}','dd.mm.yyyy')
 
 and sloa.dateFinish is not null
-${department}
+${paramSql}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-${age_sql}  ${hospTypeSql}
+${age_sql}  
 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -459,17 +487,17 @@ where
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
-${department} and sloa.dateFinish is not null
+${paramSql} and sloa.dateFinish is not null
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
-${age_sql}  ${hospTypeSql}
+${age_sql} 
  
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -544,10 +572,10 @@ where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegi
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
 and sloa.dateFinish is not null
-${department}
+${paramSql}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
-${age_sql}  ${hospTypeSql}
+${age_sql}  
 and vrspt1.classname='F14_DIAG' 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -611,7 +639,7 @@ order by p.lastname,p.firstname,p.middlename " />
     sls.dtype='HospitalMedCase' and sls.dateFinish 
     between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
      
-    ${department} and sloa.dateFinish is not null
+    ${paramSql} and sloa.dateFinish is not null
     and sls.result_id='${result_death}'
     and coalesce(
     (select mkb.code from Diagnosis diag 
@@ -632,14 +660,14 @@ order by p.lastname,p.firstname,p.middlename " />
     and vpd.id='${diag_priority_m}'
     )
     ) between rspt.codefrom and rspt.codeto
-    ${age_sql}  ${hospTypeSql}
+    ${age_sql}  
      
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />
         <msh:table name="report14swod" 
-        viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -722,9 +750,9 @@ order by p.lastname,p.firstname,p.middlename " />
         and to_date('${dateEnd}','dd.mm.yyyy')
     and vrspt.id='${param.strcode}'
     and sloa.dateFinish is not null
-    ${department}
+    ${paramSql}
     and sls.result_id='${result_death}'
-    ${age_sql}  ${hospTypeSql}
+    ${age_sql}  
     and 
     coalesce(
     (select mkb.code from Diagnosis diag 
@@ -809,15 +837,15 @@ where
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and sloa.dateFinish is not null
-${department}
+${paramSql}
 and  ms.additioncode between rspt.codefrom and rspt.codeto
-${age_sql}  ${hospTypeSql}
+${age_sql}  
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?typeAge=${typeAge}&typeView=${typeView}&hospType=${param.hospType}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
@@ -880,7 +908,7 @@ where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegi
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
 and vrspt1.classname='F14_OPER'
-${age_sql}  ${hospTypeSql}
+${paramSql} ${age_sql} 
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.code ,ms.name,ms.additioncode
