@@ -139,6 +139,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/report_cases_not_filled.jsp" />
         </action>
+        <action path='/stac_report_cases_short_protocol' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/report_cases_short_protocol.jsp" />
+        </action>
         <action path='/stac_journal_transfer_department' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
