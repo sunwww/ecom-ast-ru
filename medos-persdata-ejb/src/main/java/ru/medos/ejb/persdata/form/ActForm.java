@@ -64,6 +64,14 @@ public class ActForm extends JournalDataForm{
 	public String getFilenameExport() {return theFilenameExport;}
 	public void setFilenameExport(String aFilenameExport) {theFilenameExport = aFilenameExport;}
 
+	
+	/** Filename info */
+	@Comment("Filename info")
+	public String getFilenameInfo() {return theFilenameInfo;}
+	public void setFilenameInfo(String aFilenameInfo) {theFilenameInfo = aFilenameInfo;}
+
+	/** Filename info */
+	private String theFilenameInfo;
 	/** Файл выгрузки */
 	private String theFilenameExport;
 }

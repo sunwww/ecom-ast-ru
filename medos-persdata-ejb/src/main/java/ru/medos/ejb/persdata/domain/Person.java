@@ -216,4 +216,19 @@ public class Person extends JournalData{
 	 * Исходящие документы
 	 */
 	private List<OutgoingDocument> theOutgoingDocuments;
+	
+	/** Наименование подразделения */
+	@Comment("Наименование подразделения")
+	public String getStateStructureName() {return theStateStructureName;}
+	public void setStateStructureName(String aStateStructureName) {theStateStructureName = aStateStructureName;}
+
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	public String getStateStructureCode() {return theStateStructureCode;}
+	public void setStateStructureCode(String aStateStructureCode) {theStateStructureCode = aStateStructureCode;}
+
+	/** Код подразделения */
+	private String theStateStructureCode;
+	/** Наименование подразделения */
+	private String theStateStructureName;
 }
