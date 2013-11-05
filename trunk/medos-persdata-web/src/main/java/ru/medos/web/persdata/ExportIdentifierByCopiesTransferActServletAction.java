@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
-import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
 import ru.ecom.web.util.Injection;
 import ru.medos.ejb.persdata.form.CopiesTransferActForm;
 import ru.medos.ejb.persdata.service.IDefaultService;
@@ -32,7 +31,7 @@ public class ExportIdentifierByCopiesTransferActServletAction extends BaseAction
         	cal.setTime(cur) ;
         	
 	    	SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd") ;
-	        String filename = service.exportIdentifierByCopiesTransferActServlet(form.getId());
+	        String filename = service.exportIdentifierByCopiesTransferActServlet(form.getId(),"admin");
 	        form.setFilenameInfo("<a href='../persdoc/export/identifier/"+filename+"'>"+filename+"</a>") ;
         }
         return aMapping.findForward("success") ;
