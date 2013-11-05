@@ -108,4 +108,20 @@ public class PersonForm extends JournalDataForm {
 	 * Электронная почта
 	 */
 	private String theEmail;
+	/** Наименование подразделения */
+	@Comment("Наименование подразделения")
+	@Persist
+	public String getStateStructureName() {return theStateStructureName;}
+	public void setStateStructureName(String aStateStructureName) {theStateStructureName = aStateStructureName;}
+
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	@Persist
+	public String getStateStructureCode() {return theStateStructureCode;}
+	public void setStateStructureCode(String aStateStructureCode) {theStateStructureCode = aStateStructureCode;}
+
+	/** Код подразделения */
+	private String theStateStructureCode;
+	/** Наименование подразделения */
+	private String theStateStructureName;
 }
