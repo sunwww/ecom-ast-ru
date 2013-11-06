@@ -44,13 +44,8 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	
 	/** 8 часов */
 	@Comment("8 часов")
-	public Boolean getHour8() {
-		return theHour8;
-	}
-
-	public void setHour8(Boolean aHour8Is) {
-		theHour8 = aHour8Is;
-	}
+	public Boolean getHour8() {return theHour8;}
+	public void setHour8(Boolean aHour8Is) {theHour8 = aHour8Is;}
 
 	/** 8 часов */
 	private Boolean theHour8;
@@ -62,23 +57,13 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Тип стациионара */
 	@Comment("Тип стациионара")
-	public Long getHospType() {
-		return theHospType;
-	}
-
-	public void setHospType(Long aHospType) {
-		theHospType = aHospType;
-	}
+	public Long getHospType() {return theHospType;}
+	public void setHospType(Long aHospType) {theHospType = aHospType;}
 	
 	/** Специалист */
 	@Comment("Специалист")
-	public Long getSpec() {
-		return theSpec;
-	}
-
-	public void setSpec(Long aSpec) {
-		theSpec = aSpec;
-	}
+	public Long getSpec() {return theSpec;}
+	public void setSpec(Long aSpec) {theSpec = aSpec;}
 
 	/** Специалист */
 	private Long theSpec;
@@ -292,4 +277,12 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	private Long theDepartment2;
 	/** Отделение 1 */
 	private Long theDepartment1;
+	
+	/** Кол-во символов */
+	@Comment("Кол-во символов")
+	public Long getCntSymbols() {return theCntSymbols;}
+	public void setCntSymbols(Long aCntSymbols) {theCntSymbols = aCntSymbols;}
+
+	/** Кол-во символов */
+	private Long theCntSymbols;
 }
