@@ -41,16 +41,19 @@
         	if (department==null || department.equals("")) {
         		department = "0" ;
         	}
-        	String curator = request.getParameter("curator") ;
+        	String spec = request.getParameter("spec") ;
+        	if (spec==null || spec.equals("")) {
+        		spec = "0" ;
+        	}
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
         	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
 
  
         	int type=0 ;
-        	if (curator!=null && !curator.equals("0")) {
+        	if (spec!=null && !spec.equals("0")) {
         		type=3 ;
-        		if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
-        			curator=workFunc ;
+        		if (!isViewAllDepartment&&!isBossDepartment&&!spec.equals(workFunc)) {
+        			spec=workFunc ;
         		}
         	} else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
         		type=2 ;
@@ -62,25 +65,32 @@
        				department=""+wqr.get2() ;
        			} else {
        				type=3 ;
-       				curator=workFunc ;
+       				spec=workFunc ;
        			}
        		}
        		request.setAttribute("department", department) ;
-       		request.setAttribute("curator", curator) ;        	
+       		request.setAttribute("spec", spec) ;        	
        	%>
         	    <msh:form action="/stac_report_cases_short_protocol.do" method="GET" defaultField="dateBegin">
     <msh:panel>
       <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
+
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-	      <msh:row>
-	      	<msh:autoComplete property="department" vocName="lpu" label="Отделение" fieldColSpan="6" horizontalFill="true"/>
-	      </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="department" vocName="lpu" label="Отделение" fieldColSpan="6" horizontalFill="true" size="70"/>
+      </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="spec" vocName="workFunction" label="Специалист" fieldColSpan="6" horizontalFill="true" size="70"/>
+      </msh:row>
       </msh:ifInRole>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+     </msh:row>
+     <msh:row>
+     	<msh:textField property="cntSymbols"/>
      </msh:row>
      <msh:row>
         <msh:submitCancelButtonsRow colSpan="4"/>
@@ -90,32 +100,48 @@
     String dateBegin = request.getParameter("dateBegin") ;
     if (dateBegin!=null && !dateBegin.equals("")) {
     	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String cntSymbols = request.getParameter("cntSymbols") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("finishDate", dateBegin) ;
     	} else {
     		request.setAttribute("finishDate", dateEnd) ;
     	}
     	request.setAttribute("beginDate", dateBegin) ;
-    	
-    if (type==1) { 
+	    StringBuilder paramHref = new StringBuilder() ;
+	    paramHref.append("dateBegin=").append(dateBegin).append("&dateEnd=").append(dateEnd) ;
+	    if (cntSymbols==null||cntSymbols.equals("")||
+	    		!cntSymbols.matches("^-?\\d+$")) {
+	    	cntSymbols="30" ;
+	    }
+	    paramHref.append("&cntSymbols=").append(cntSymbols) ;
+    	StringBuilder paramSql = new StringBuilder() ;
+    	paramSql.append("pr.dateRegistration between to_date('").append(dateBegin)
+    			.append("','dd.mm.yyyy') and to_date('").append(dateEnd)
+    			.append("','dd.mm.yyyy')") 
+    			.append(" and pr.dtype='Protocol'")
+    			.append(" and length(pr.record)<").append(cntSymbols)
+    			.append(" and slo.dtype='DepartmentMedCase'") ;
+    	request.setAttribute("paramSql", paramSql.toString()) ;
+	    request.setAttribute("paramHref", paramHref.toString()) ;
+	    if (type==1) { 
     
     %>
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select ml.id||'&department='||ml.id,ml.name ,count(distinct slo.id) 
+    select ml.id||'&department='||ml.id,ml.name ,count(distinct pr.id) 
 	from Diary pr
-	left join MedCase slo on slo.id=pr.medcase_id and pr.dtype='Protocol' 
-	left join MisLpu ml on slo.department_id=ml.id 
-	where pr.date between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy') 
-	and pr.dtype='Protocol'
-	and slo.dtype='DepartmentMedCase'
+	left join MedCase slo on slo.id=pr.medcase_id and pr.dtype='Protocol'
+	left join WorkFunction wf on wf.id=pr.specialist_id
+	left join Worker w on w.id=wf.worker_id 
+	left join MisLpu ml on w.lpu_id=ml.id 
+	where ${paramSql}
 	group by ml.id,ml.name order by ml.name
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
-    viewUrl="stac_report_cases_short_protocol.do?short=Short"
-    action="stac_report_cases_short_protocol.do" idField="1">
+    viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
+    action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во" property="3" />
@@ -129,24 +155,22 @@
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
     select 
-owf.id||'&department=${department}&curator='||owf.id as id,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
-,count(distinct slo.id) as cntSlo 
+wf.id||'&department=${department}&spec='||wf.id as id
+,wp.lastname||' '||wp.firstname||' '||wp.middlename as lechVr
+,count(distinct pr.id) as cntSlo 
 from Diary pr
 left join MedCase slo on slo.id=pr.medCase_id 
 left join Patient pat on slo.patient_id=pat.id 
-left join WorkFunction owf on slo.ownerFunction_id=owf.id 
-left join Worker ow on owf.worker_id=ow.id 
-left join Patient owp on ow.person_id=owp.id 
-where pr.date between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy') 
-	and pr.dtype='Protocol'
-	and slo.department_id='${department}' 
-	and slo.dtype='DepartmentMedCase'
-group by owf.id,owp.lastname,owp.middlename,owp.firstname 
-order by owp.lastname,owp.middlename,owp.firstname
+left join WorkFunction wf on pr.specialist_id=wf.id 
+left join Worker w on wf.worker_id=w.id 
+left join Patient wp on w.person_id=wp.id 
+where ${paramSql} and w.lpu_id=${department}
+group by wf.id,wp.lastname,wp.middlename,wp.firstname 
+order by wp.lastname,wp.middlename,wp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
-    viewUrl="stac_report_cases_short_protocol.do?short=Short"
-    action="stac_report_cases_short_protocol.do" idField="1">
+    viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
+    action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Лечащий врач" property="2" />
       <msh:tableColumn columnName="Кол-во пациентов" property="3" />
@@ -159,41 +183,32 @@ order by owp.lastname,owp.middlename,owp.firstname
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-select slo.id,slo.dateStart
-    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
-    ,pat.birthday,sc.code
+select pr.id,to_char(pr.dateRegistration,'dd.mm.yyyy')||' '||cast(pr.timeRegistration as varchar(5)) as dattim
+    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename ||' '||
+    to_char(pat.birthday,'dd.mm.yyyy') as fio,sc.code
     ,pr.record as prrecord
     from Diary pr 
+    left join medCase slo on slo.id=pr.medcase_id  
     left join MedCase as sls on sls.id = slo.parent_id 
     left join bedfund as bf on bf.id=slo.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left join Patient pat on slo.patient_id = pat.id 
-    left join medCase slo on slo.id=pr.medcase_id  
-    left join Diagnosis diag on diag.medcase_id=slo.id 
-    left join SurgicalOperation so on so.medCase_id in (slo.id,sls.id)
-    left join medservice ms on ms.id=so.medService_id
     where 
-    pr.date between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy') 
-	and pr.dtype='Protocol'
-    and slo.DTYPE='DepartmentMedCase' and slo.ownerFunction_id='${curator}' 
-    group by  slo.id,slo.dateStart,pat.lastname,pat.firstname
+    ${paramSql} and pr.specialist_id='${spec}' 
+    group by  pr.id,pr.dateRegistration,pr.timeRegistration,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
     ,pr.record
     order by pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
-    viewUrl="entityShortView-stac_slo.do"
-    action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    viewUrl="entityShortView-smo_visitProtocol.do"
+    action="entityParentView-smo_visitProtocol.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
-      <msh:tableColumn columnName="Операции" property="6"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>
-      <msh:tableColumn columnName="Дата посл. заполнения" property="9" />
+      <msh:tableColumn columnName="Дата и время протокола" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Протокол" property="5"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
