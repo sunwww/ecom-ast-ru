@@ -214,7 +214,7 @@
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
-        params="id" action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациента"
+         action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value" name="Талон на пациента"
          title="Добавить талон" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create"
          action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
@@ -441,7 +441,7 @@
 	   	   			setAdditionParam();
 	  			}
 	  		}})
-	  	}
+	  	}}
 </script>
 </msh:ifInRole>  
   <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
