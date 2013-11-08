@@ -278,7 +278,7 @@ if (date!=null && !date.equals("")) {
 				slo.datefinish > to_date('${dateNext}','dd.mm.yyyy')
 				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
 			)  then 'Х' else null end as cnt19CurrentMother
-
+	
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
 	 left join medcase sls on sls.id=slo.parent_id
@@ -433,7 +433,7 @@ if (date!=null && !date.equals("")) {
 				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
 			)  then slo.id else null end)
 	 as cnt19CurrentMother
-	,count(distinct slo.id) as cntAll
+	,bf.amount as BfAmount20
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
 	 left join medcase sls on sls.id=slo.parent_id
@@ -457,7 +457,7 @@ if (date!=null && !date.equals("")) {
 	slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time) or
 	slo.transferdate = to_date('${dateNext}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime)
 	${department}
-	group by slo.bedfund_id,bf.bedsubtype_id,vbst.name,vbt.name,bf.serviceStream_id,vss.name
+	group by slo.bedfund_id,bf.bedsubtype_id,vbst.name,vbt.name,bf.serviceStream_id,vss.name,bf.amount
 	      " />
 	    <msh:table name="journal_priem" 
 	    viewUrl="stac_report_007.do?short=Short" 
@@ -914,7 +914,8 @@ if (date!=null && !date.equals("")) {
 				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
 			) then slo.id else null end)
 	 as cnt19CurrentMother
-	,count(distinct slo.id) as cntAll
+	,cast((select sum(bf.amount) from BedFund bf1 where bf1.lpu_id=lpu.id and bf1.dateStart<=to_date('${dateNext}','dd.mm.yyyy')
+	and (bf1.dateFinish is null or bf1.dateFinish>=to_date('${dateNext}','dd.mm.yyyy')) ) as int) as cnt20BedFund
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
 	 left join mislpu lpu on lpu.id=slo.department_id
@@ -956,6 +957,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="отделение" property="2" />
 	      <msh:tableColumn columnName="профили коек" property="3" />
 	      <msh:tableColumn columnName="потоки обслуживания" property="4" />
+	      <msh:tableColumn columnName="число коек" property="19" />
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="7" />
