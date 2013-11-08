@@ -214,7 +214,7 @@ public class Address extends BaseEntity {
     	return "" ;
     }
     */
-    //Город?
+    /*Город?
     @Transient
     public Boolean getAddressIsCity() {
     	Address adr = this ;
@@ -224,10 +224,18 @@ public class Address extends BaseEntity {
     		adr = adr.getParent() ;
     	}
     	return false ;    	//return theDomen==4?true:false ;
-    }
-    //Село?
+    }*/
+    /** Город? */
+	@Comment("Город?")
+	public Boolean getAddressIsCity() {return theAddressIsCity;}
+	public void setAddressIsCity(Boolean aAddressIsCity) {theAddressIsCity = aAddressIsCity;}
+
+	/** Город? */
+	private Boolean theAddressIsCity;
+    /*Село?
     @Transient
     public Boolean getAddressIsVillage() {
+    	
     	Address adr = this ;
     	while (adr!=null && adr.getDomen()>4) {
     		
@@ -236,6 +244,15 @@ public class Address extends BaseEntity {
     	}
     	return false ;//return theDomen==5?true:false ;
     }
+    */
+    /** Село? */
+	@Comment("Село?")
+	public Boolean getAddressIsVillage() {return theAddressIsVillage;}
+	public void setAddressIsVillage(Boolean aAddressIsVillage) {theAddressIsVillage = aAddressIsVillage;}
+
+	/** Село? */
+	private Boolean theAddressIsVillage;
+    
     /*
     // Улица
     @Transient
