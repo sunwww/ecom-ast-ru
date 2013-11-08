@@ -106,6 +106,17 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			</msh:section>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+    	function updateAge() {
+    		PatientService.getAgeByPatient($('patient').value, $('finishDate').value, {
+        		callback: function(aResult) {
+       				$('ageReadOnly').value = aResult ;
+        		}
+        	});
+    	}
+		</script>
+	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="extDisp_cardForm" />
 	</tiles:put>
