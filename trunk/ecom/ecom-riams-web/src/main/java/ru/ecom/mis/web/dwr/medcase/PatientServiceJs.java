@@ -19,6 +19,52 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String getAgeForDisp(Long aPatient, String aFinishDate, HttpServletRequest aRequest) throws NamingException {
+		try {
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> list = service.executeNativeSql("select id,to_char(birthday,'dd.mm.yyyy') from patient where id='"+aPatient+"'",1) ;
+			WebQueryResult wqr = list.iterator().next() ;
+			
+			String birthDayS = wqr.get2()!=null?""+wqr.get2():"" ;
+			//String birthDayYear = birthDayS.substring(5) ;
+			java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS) ;
+			java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate) ;
+			String age=AgeUtil.getAgeCache(finishDate, birthday, 1);
+			System.out.println("age:"+age) ;
+			int sb1 = age.indexOf(".") ;
+			int sb2 = age.indexOf(".",sb1+1) ;
+			int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
+			System.out.println("yearDif:"+yearDif) ;
+			int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue() ;
+			System.out.println("monthDif:"+monthDif) ;
+			if (yearDif==2){
+				if (monthDif>6) {
+					return "2.6" ;
+				} else {
+					return "2" ;
+				}
+			} else if (yearDif==1){
+				if (monthDif<3) return "1" ;
+				else if (monthDif<6) return "1.3" ;
+				else if (monthDif<9) return "1.6" ;
+				return "1.9" ;
+			} else if (yearDif==0){
+				return ""+yearDif+"."+monthDif ;
+			} else {
+				int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
+				int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
+				System.out.println("year1="+year1) ;
+				System.out.println("year2="+year2) ;
+				return ""+(year2-year1) ;
+			}
+			
+		} catch(Exception e) {
+			System.out.println(e) ;
+			return "" ;
+		}
+		
+	}
+	
 	public String checkPolicy(String aRoles,HttpServletRequest aRequest) throws JspException {
 		if (RolesHelper.checkRoles(aRoles, aRequest)) {
 			return "1" ;
