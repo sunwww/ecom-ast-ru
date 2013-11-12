@@ -154,11 +154,12 @@
 		request.setAttribute("sqlAppend", sqlAdd.toString()) ;
 		%>
 		<% if (typeGroup!=null && typeGroup.equals("1") ) {%>
-			<msh:section title="Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate} ">
-			<ecom:webQuery name="reestrExtDispCard" nativeSql="
+			<msh:section>
+			<ecom:webQuery name="reestrExtDispCard" nameFldSql="reestrExtDispCard_sql" nativeSql="
 select edc.id,p.lastname||' '||p.firstname||' '||
 p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') as birthday
-,edc.startDate as edcBeginDate,edc.finishDate as edcFinishDate
+,to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate,to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate
+,mkb.code as mkbcode
 ,vedag.name as vedagname
 ,vedsg.name as vedsgname
 ,vedhg.name as vedhgname
@@ -168,7 +169,6 @@ p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,edc.isDiagnostics as cntDiagM
 ,edc.isSpecializedCare as cntSpecCareM
 ,edc.isSanatorium as cntSanatM
-
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Patient p on p.id=edc.patient_id
@@ -178,31 +178,47 @@ left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by edc.id,p.lastname,p.firstname,
 p.middlename,p.birthday,edc.startDate ,edc.finishDate 
 ,vedag.name,vedhg.name,vedsg.name
 , edc.isObservation ,edc.isTreatment ,edc.isDiagnostics ,edc.isSpecializedCare,edc.isSanatorium 
-
+,mkb.code
+order by p.lastname,p.firstname,p.middlename
 			"/>
+<msh:sectionTitle>
+    <form action="print-extDisp_journal_period_reestr.do" method="post" target="_blank">
+Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
+    <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
 
+</msh:sectionTitle>
+<msh:sectionContent>
 				<msh:table name="reestrExtDispCard" 
 				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
 				idField="1">
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
 					<msh:tableColumn columnName="Дата начала" property="3" />
 					<msh:tableColumn columnName="Дата окончания" property="4" />
-					<msh:tableColumn columnName="Возрасная категория" property="5" />
-					<msh:tableColumn columnName="Социальная группа" property="6" />
-					<msh:tableColumn columnName="Группа здоровья" property="7" />
-					<msh:tableColumn columnName="Факторы риска" property="8" />
-					<msh:tableColumn columnName="Установлено дисп.наблюдение" property="9" />
-					<msh:tableColumn columnName="Назначено лечение"  property="10" />
-					<msh:tableColumn columnName="Направлено доп. диаг. исследование"  property="11" />
-					<msh:tableColumn columnName="Направлено доп. спец., в том числе ВПМ"  property="12" />
-					<msh:tableColumn columnName="Направлено на сан-кур лечение" property="13" />
+					<msh:tableColumn columnName="Код МКБ" property="5" />
+					<msh:tableColumn columnName="Возрасная категория" property="6" />
+					<msh:tableColumn columnName="Социальная группа" property="7" />
+					<msh:tableColumn columnName="Группа здоровья" property="8" />
+					<msh:tableColumn columnName="Факторы риска" property="9" />
+					<msh:tableColumn columnName="Установлено дисп.наблюдение" property="10" />
+					<msh:tableColumn columnName="Назначено лечение"  property="11" />
+					<msh:tableColumn columnName="Направлено доп. диаг. исследование"  property="12" />
+					<msh:tableColumn columnName="Направлено доп. спец., в том числе ВПМ"  property="13" />
+					<msh:tableColumn columnName="Направлено на сан-кур лечение" property="14" />
 				</msh:table>
+				</msh:sectionContent>
 			</msh:section>
 	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
 			<msh:section title="Свод за ${beginDate}-${finishDate} ">
@@ -425,7 +441,8 @@ order by veds.id
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("7")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("7")) {
+	%>
 			<msh:section title="Свод по заболеваниям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&mkb='||substring(mkb.code,1,3) as id,ved.name as vedname

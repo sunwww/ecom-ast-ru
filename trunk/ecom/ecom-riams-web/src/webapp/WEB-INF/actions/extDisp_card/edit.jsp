@@ -19,6 +19,13 @@
 				<msh:row>
 					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
+        		<msh:row>
+					<msh:textField property="startDate" label="Дата начала"/>
+					<msh:textField property="finishDate" label="окончания"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="age" label="Возраст" horizontalFill="true" viewOnlyField="true"  />
+				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
@@ -30,10 +37,6 @@
 		        	<msh:autoComplete vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" 
 		          		label="Раб.функция (терапевт)" fieldColSpan="3" horizontalFill="true" size="150" />
 		        </msh:row>
-        		<msh:row>
-					<msh:textField property="startDate" label="Дата начала"/>
-					<msh:textField property="finishDate" label="Дата окончания"/>
-				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
@@ -107,11 +110,13 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
+    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 		<script type="text/javascript">
+		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
     	function updateAge() {
-    		PatientService.getAgeByPatient($('patient').value, $('finishDate').value, {
+    		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
         		callback: function(aResult) {
-       				$('ageReadOnly').value = aResult ;
+       				$('ageReadOnly').value=aResult ;
         		}
         	});
     	}

@@ -53,6 +53,8 @@ public class PatientServiceJs {
 			} else {
 				int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
 				int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
+				if (year2<20) year2=year2+2000 ;
+				if (year2<100) year2=year2+1900 ;
 				System.out.println("year1="+year1) ;
 				System.out.println("year2="+year2) ;
 				return ""+(year2-year1) ;
