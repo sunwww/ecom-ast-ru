@@ -114,6 +114,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	
 	
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
+		+",mc.dateFrom as mcdateFrom"
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
