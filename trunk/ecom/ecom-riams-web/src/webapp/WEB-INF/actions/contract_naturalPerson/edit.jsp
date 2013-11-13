@@ -12,7 +12,9 @@
       <msh:hidden property="saveType" guid="81d410cd-ac37-4309-9fe7-a8d0943c5ae1" />
       <msh:panel guid="41b857b2-e843-401e-8a0f-33f2fbd66417">
         <msh:row guid="b18bbff8-d1ea-4681-bd11-5a712a9fac54">
-          <msh:autoComplete property="patient" label="Пациент" vocName="patient" horizontalFill="true" size="150" />
+          <msh:autoComplete property="patient" 
+          viewAction="entityView-mis_patient.do" shortViewAction="entityShortView-mis_patient.do"
+          label="Пациент" vocName="patient" horizontalFill="true" size="150" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
@@ -20,9 +22,12 @@
       <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
       	shortList="js-contract_medContract-list_by_customer.do?short=Short&id=${param.id}" title="Список последних 10 договоров заказчика">
       	<ecom:webQuery name="medContracts" nativeSql="
-      	select mc.id as mcid ,ca.id||' '||case when sp.id=mc.customer_id then '' else cp.id||coalesce(cpp.lastname,'')  end
+      	select mc.id as mcid ,mc.contractNumber as mccontractNumber
 ,mc.dateFrom as mcdateFrom 
 ,mc.dateTo as mcdateTo,pl.name as plname 
+,(select sum(ca.balanceSum)
+			from ContractAccount ca
+			where ca.contract_id=mc.id) as sumbalance
 from MedContract mc 
 left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
 left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
@@ -31,10 +36,10 @@ where mc.customer_id='${param.id}'
 order by mc.dateFrom desc
       	" maxResult="10"/>
       	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
-      		<msh:tableColumn property="2" columnName="№счета по обслуживаемой персоне"/>
+      		<msh:tableColumn property="2" columnName="№ договора"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>
-      		<msh:tableColumn property="5" columnName="Прейкурант"/>
+      		<msh:tableColumn property="6" columnName="Оплачено по договору"/>
       		<msh:tableColumn property="5" columnName="Прейкурант"/>
       	</msh:table>
       </msh:section>
