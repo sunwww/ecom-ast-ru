@@ -205,4 +205,11 @@ public class ExtDispCardForm extends IdEntityForm{
 	/** Рабочая функция */
 	private Long theWorkFunction;
 	
+	/** Возраст вычисляемый */
+	@Comment("Возраст вычисляемый")
+	public String getAge() {return theAge;}
+	public void setAge(String aAge) {theAge = aAge;}
+
+	/** Возраст вычисляемый */
+	private String theAge;
 }
