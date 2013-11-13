@@ -29,7 +29,7 @@
 </style>
 
 <div id='${name}DirMedServiceDialog' class='dialog'>
-    <h2>${title}</h2>
+    <h2>${title}. <a href='javascript:void(0)' onclick='save${name}DirMedService()'>Закрыть</a></h2>
     <div class='rootPane'>
     
 <form action="javascript:void(0)">
@@ -42,8 +42,7 @@
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" value='OK'  onclick="javascript:save${name}DirMedService()"/>
-                <input type="button" value='Отменить' onclick='javascript:cancel${name}DirMedService()'/>
+                <input type="button" value='ОК'  onclick="javascript:save${name}DirMedService()"/>
             </td>
         </msh:row>
 </form>
