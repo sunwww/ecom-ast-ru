@@ -45,8 +45,8 @@ function onCreate(aForm, aEntity, aContext) {
 				exam.setDayPattern(aEntity.dayPattern) ;
 				aContext.manager.persist(exam) ;
 				if (dop>0) {
-					dop-- ;
-					cal1.add(Calendar.MINUTE, 1) ;
+					--dop;
+					cal1.add(java.util.Calendar.MINUTE, 1) ;
 				}
 			}			
 		}

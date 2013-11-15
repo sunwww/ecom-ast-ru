@@ -80,7 +80,7 @@
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
-	    		queried=" (upper(PP.code) like upper(:query) or (upper(replace(PP.code,'.','')) like upper(:query) or upper(PP.name) like upper(:query)) "
+	    		queried=" (upper(PP.code) like upper(:query) or upper(replace(PP.code,'.','')) like upper(:query) or upper(PP.name) like upper(:query)) "
 			/>
 	</voc>
 <voc id="priceMedServiceByContractAccout" type="NativeVocService">
