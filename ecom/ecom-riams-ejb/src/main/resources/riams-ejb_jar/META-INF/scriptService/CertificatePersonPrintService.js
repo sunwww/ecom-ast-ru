@@ -114,7 +114,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	
 	
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
-		+",mc.dateFrom as mcdateFrom"
+		+",mc.id as mcid"
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -128,9 +128,11 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null group by mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
 	var obj = list1.size()>0?list1.get(0):null ;
-	
+	//map.put("contract","jkljlkj") ;
 	if (obj!=null) {
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
+		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[4])) ;
+		map.put("contract",contract) ;
 		if (+obj[3]==(+obj[4])) {
 			map.put("customer1.fio",obj[1]) ;
 			map.put("customer2.fio",null) ;
@@ -213,7 +215,7 @@ function printContractByAccrual(aCtx, aParams) {
 	map.put("login",list.size()>0?list.get(0):login) ;
 	
 	
-	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
+	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id,mc.id as mcid" 
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -224,11 +226,13 @@ function printContractByAccrual(aCtx, aParams) {
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id"
 		+"		left join ContractPerson cp1 on cp1.id=mc.customer_id left join patient cpp1 on cpp1.id=cp1.patient_id"
-		+"		where cao.id='"+pid+"' group by mc.contractnumber" ;
+		+"		where cao.id='"+pid+"' group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
 	var obj = list1.size()>0?list1.get(0):null ;
 	
 	if (obj!=null) {
+		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
+		map.put("contract",contract) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
 		if (+obj[3]==(+obj[4])) {
 			map.put("customer1.fio",obj[1]) ;
