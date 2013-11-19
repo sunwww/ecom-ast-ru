@@ -133,6 +133,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
 		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[4])) ;
 		map.put("contract",contract) ;
+		var servedPerson = null,customerPerson=null; 
 		if (+obj[3]==(+obj[4])) {
 			map.put("customer1.fio",obj[1]) ;
 			map.put("customer2.fio",null) ;
@@ -141,9 +142,11 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 			map.put("customer1.fio",null) ;
 			map.put("customer2.fio",obj[1]) ;
 			map.put("served.fio",obj[2]) ;
+			servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
 		}
-		var customer = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
-		map.put("customerPerson",customer) ;
+		customerPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
+		map.put("customerPerson",customerPerson) ;
+		map.put("servedPerson",servedPerson) ;
 		//throw ""+obj[4] ;
 		map.put("customer.addressRegistration",customer.addressRegistration) ;
 		var passport = "" ; 
@@ -234,6 +237,7 @@ function printContractByAccrual(aCtx, aParams) {
 		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
 		map.put("contract",contract) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
+		var servedPerson = null,customerPerson=null; 
 		if (+obj[3]==(+obj[4])) {
 			map.put("customer1.fio",obj[1]) ;
 			map.put("customer2.fio",null) ;
@@ -242,24 +246,16 @@ function printContractByAccrual(aCtx, aParams) {
 			map.put("customer1.fio",null) ;
 			map.put("customer2.fio",obj[1]) ;
 			map.put("served.fio",obj[2]) ;
+			servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
 		}
-		var customer = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
-		map.put("customerPerson",customer) ;
+		customerPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
+		map.put("customerPerson",customerPerson) ;
+		map.put("servedPerson",servedPerson) ;
+		
 		//throw ""+obj[4] ;
-		map.put("customer.addressRegistration",customer.addressRegistration) ;
-		var passport = "" ; 
-		if (customer.passportType!=null) {
-			passport=customer.passportType.name ;
-		}
-		passport=passport+" серия " ;
-		if (customer.passportSeries!=null) {passport=passport+customer.passportSeries ;} else {	passport=passport+"____________" ;}
-		passport=passport+" номер " ;
-		if (customer.passportNumber!=null) {passport=passport+customer.passportNumber ;} else {	passport=passport+"____________" ;}
-		passport=passport+" выдан " ;
-		if (customer.passportDateIssue!=null) {passport=passport+customer.passportDateIssue ;} else {	passport=passport+"____________" ;}
-		passport=passport+" " ;
-		if (customer.passportWhomIssued!=null) {passport=passport+customer.passportWhomIssued ;} else {	passport=passport+"______________________________" ;}
-		map.put("customer.passportInfo",passport) ;
+		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
+				,customerPerson.passportSeries,customerPerson.passportNumber
+				,customerPerson.passportDateIssue,customerPerson.passportWhomIssued)) ;
 	} else {
 		map.put("contractNumber","________") ;
 		map.put("customer1.fio",null) ;
@@ -271,4 +267,19 @@ function printContractByAccrual(aCtx, aParams) {
 	
 	
 	return map;
+}
+function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassportDateIssue,aPassportWhomIssued) {
+	var passport = "" ; 
+	if (aPassportType!=null) {
+		passport=aPassportType.name ;
+	}
+	passport=passport+" серия " ;
+	if (aPassportSeries!=null) {passport=passport+aPassportSeries ;} else {	passport=passport+"____________" ;}
+	passport=passport+" номер " ;
+	if (aPassportNumber!=null) {passport=passport+aPassportNumber ;} else {	passport=passport+"____________" ;}
+	passport=passport+" выдан " ;
+	if (aPassportDateIssue!=null) {passport=passport+aPassportDateIssue ;} else {	passport=passport+"____________" ;}
+	passport=passport+" " ;
+	if (aPassportWhomIssued!=null) {passport=passport+aPassportWhomIssued ;} else {	passport=passport+"______________________________" ;}
+	return passport ;
 }
