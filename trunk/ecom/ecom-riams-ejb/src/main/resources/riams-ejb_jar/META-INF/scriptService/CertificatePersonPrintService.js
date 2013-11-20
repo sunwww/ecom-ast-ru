@@ -98,9 +98,9 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		allcost = allcost + sumi ;
 	}
 	map.put("serv",servisec) ;
-	var rub;
 	
 	map.put("allcost", parseInt(allcost));
+	map.put("allcostS", parseSymRub(allcost));
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
@@ -203,10 +203,8 @@ function printContractByAccrual(aCtx, aParams) {
 		allcost = allcost + sumi ;
 	}
 	map.put("serv",servisec) ;
-	var rub;
-	
 	map.put("allcost", parseInt(allcost));
-	
+	map.put("allcostS", parseSymRub(allcost));
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
@@ -267,6 +265,12 @@ function printContractByAccrual(aCtx, aParams) {
 	
 	
 	return map;
+}
+function parseInt(aNumeric) {
+	return aNumeric ;
+}
+function parseSymRub(aNumeric) {
+	return aNumeric ;
 }
 function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassportDateIssue,aPassportWhomIssued) {
 	var passport = "" ; 
