@@ -914,7 +914,7 @@ if (date!=null && !date.equals("")) {
 				or slo.datefinish = to_date('${dateNext}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
 			) then slo.id else null end)
 	 as cnt19CurrentMother
-	,cast((select sum(bf.amount) from BedFund bf1 where bf1.lpu_id=lpu.id and bf1.dateStart<=to_date('${dateNext}','dd.mm.yyyy')
+	,cast((select sum(bf1.amount) from BedFund bf1 where bf1.lpu_id=lpu.id and bf1.dateStart<=to_date('${dateNext}','dd.mm.yyyy')
 	and (bf1.dateFinish is null or bf1.dateFinish>=to_date('${dateNext}','dd.mm.yyyy')) ) as int) as cnt20BedFund
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
