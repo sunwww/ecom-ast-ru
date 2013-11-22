@@ -73,6 +73,8 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
 	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
 		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService" 
+		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
+		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc" 
 		+"		from ContractAccount ca"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
 		+"		left join PriceMedService pms on pms.id=cams.medService_id"
@@ -80,12 +82,12 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null"
-		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost";
+		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,cao.discount";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
-	var allcost;
-	allcost = 1-1;
+	var allcost1=0;
+	var allcost=0;
 	for (var i = 0; i<list.size(); i++) {
 		var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		var obj=list.get(i) ;
@@ -95,10 +97,13 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		}
 		servisec.add(wq);
 		var sumi = +obj[5] ;
+		allcost1 = allcost1 + sumi ;
+		sumi = +obj[7] ;
 		allcost = allcost + sumi ;
 	}
 	map.put("serv",servisec) ;
 	
+	map.put("allcostNoDiscount", parseInt(allcost1));
 	map.put("allcost", parseInt(allcost));
 	map.put("allcostS", parseSymRub(allcost));
 	var currentDate = new Date() ;
@@ -114,7 +119,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	
 	
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
-		+",mc.id as mcid"
+		+",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault"
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -130,8 +135,9 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var obj = list1.size()>0?list1.get(0):null ;
 	//map.put("contract","jkljlkj") ;
 	if (obj!=null) {
+		map.put("discount",+obj[6]>0?+obj[6]:null) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
-		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[4])) ;
+		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
 		map.put("contract",contract) ;
 		var servedPerson = null,customerPerson=null; 
 		if (+obj[3]==(+obj[4])) {
@@ -176,7 +182,10 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
 	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
-		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService" 
+		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
+		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
+		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc"
+		
 		+"		from MedContract mc "
 		+"		left join ContractAccount ca on ca.contract_id = mc.id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -185,12 +194,12 @@ function printContractByAccrual(aCtx, aParams) {
 		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		where cao.id='"+pid+"'"
-		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost";
+		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,cao.discount";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
-	var allcost;
-	allcost = 1-1;
+	var allcost1=0;
+	var allcost=0;
 	for (var i = 0; i<list.size(); i++) {
 		var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		var obj=list.get(i) ;
@@ -200,8 +209,11 @@ function printContractByAccrual(aCtx, aParams) {
 		}
 		servisec.add(wq);
 		var sumi = +obj[5] ;
+		allcost1 = allcost1 + sumi ;
+		sumi = +obj[7] ;
 		allcost = allcost + sumi ;
 	}
+	map.put("allcostNoDiscount", parseInt(allcost1));
 	map.put("serv",servisec) ;
 	map.put("allcost", parseInt(allcost));
 	map.put("allcostS", parseSymRub(allcost));
@@ -216,7 +228,8 @@ function printContractByAccrual(aCtx, aParams) {
 	map.put("login",list.size()>0?list.get(0):login) ;
 	
 	
-	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id,mc.id as mcid" 
+	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id"+
+	",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault" 
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -230,8 +243,8 @@ function printContractByAccrual(aCtx, aParams) {
 		+"		where cao.id='"+pid+"' group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
 	var obj = list1.size()>0?list1.get(0):null ;
-	
 	if (obj!=null) {
+		map.put("discount",+obj[6]>0?+obj[6]:null) ;
 		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
 		map.put("contract",contract) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
@@ -267,10 +280,16 @@ function printContractByAccrual(aCtx, aParams) {
 	return map;
 }
 function parseInt(aNumeric) {
-	return aNumeric ;
+	var value = new java.math.BigDecimal(aNumeric) ;
+	var kop =(value.doubleValue()-value.intValue())*100 ;
+	if (kop<10) kop="0"+kop ;
+	return value.intValue()+" руб. "+kop+" коп." ;
 }
 function parseSymRub(aNumeric) {
-	return aNumeric ;
+	var value = new java.math.BigDecimal(aNumeric) ;
+	var kop=(value.doubleValue()-value.intValue())*100 ;
+	if (kop<10) kop="0"+kop ;
+	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
 }
 function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassportDateIssue,aPassportWhomIssued) {
 	var passport = "" ; 
