@@ -36,7 +36,7 @@ public class CategoryTreeServiceJs {
     	int level=aLevel+1;
     	if (aTable.toUpperCase().equals("PRICEMEDSERVICE")) {
     		table="PricePosition pp" ;fldId="case when pp.dtype='PriceGroup' then pp.id else pms.id end";
-    				fldView="case when pp.dtype='PriceGroup' then '<b>'||pp.code||'</b> '||pp.name else '<b>'||pp.code||'</b> '||' '||pp.name||' ('||pp.cost||')' end" 
+    				fldView="case when pp.dtype='PriceGroup' then '<b>'||pp.code||'</b> '||replace(pp.name,'\"','&quot;') else '<b>'||pp.code||'</b> '||' '||replace(pp.name,'\"','&quot;')||' ('||pp.cost||')' end" 
     				;fldParent="pp.parent_id";fldOrderBy="case when pp.dtype='PriceGroup' then 1 else 0 end,pp.code";
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
