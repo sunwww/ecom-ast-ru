@@ -21,12 +21,12 @@ public class TestSubString {
 	          1001,
 	          MILLION + 298,
 	          2*MILLIARD + 56*MILLION + 3200,
-	          2000*MILLIARD,
+	          2*MILLIARD,
 	      };
 	      
 	      for (long value : values) {
 	        System.out.println(toWords(new BigDecimal(value)));
-	      }
+	      }/*
 	      System.out.println(toWords(new BigDecimal(938000)));
 	    	
 	      System.out.println(toWords(new BigDecimal(99999999)));
