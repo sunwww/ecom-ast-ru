@@ -20,7 +20,7 @@
 		</script>
 	</tiles:put>
 	<tiles:put name="body" type="string">
-		<msh:form action="/entityParentSaveGoView-contract_account.do" defaultField="dateFrom">
+		<msh:form action="/entityParentSaveGoView-contract_account.do" defaultField="dateFrom" title="<a href='entityParentView-contract_account.do?id=${param.id}'>Счет</a>" >
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="contract" />
