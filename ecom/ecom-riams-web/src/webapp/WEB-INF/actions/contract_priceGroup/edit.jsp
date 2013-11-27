@@ -55,7 +55,7 @@
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_priceGroupForm">
 			<msh:section title="Группы прейскуранта" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
-				createUrl="entityParentPrepareCreate-contract_priceGroup.do?id=${param.id}">
+				createUrl="javascript:window.location=&quot;entityParentPrepareCreate-contract_priceGroup.do?id=${param.id}&priceList=&quot+$(&quot;priceList&quot;).value">
 			<ecom:webQuery name="priceGroup" nativeSql="
 							select pg.id,pg.code,pg.name from PricePosition pg 
 							where pg.parent_id = '${param.id}' and pg.dtype='PriceGroup' order by pg.code" />
@@ -84,7 +84,7 @@
 	<tiles:put name="javascript" type="string">
 	<msh:ifFormTypeIsCreate formName="contract_priceGroupForm">
 		<script type="text/javascript">
-			if (+$("parent").value>0) {} else {
+			if (+$("priceList").value>0) {} else {
 				if (+$("priceList").value>0){} else {
 					$("priceList").value='${param.priceList}' ;
 				}
@@ -98,10 +98,11 @@
 	<tiles:put name="side" type="string">
 		<msh:sideMenu>
 			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_priceGroup" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/PriceList/PriceGroup/Edit"/>
-			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_priceGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/PriceList/PricePGroup/Delete"/>
+			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_priceGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/PriceList/PriceGroup/Delete"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-contract_pricePosition" name="Позицию" title="Позицию" roles="/Policy/Mis/Contract/PriceList/PricePosition/Create"/>
+			<msh:sideLink params="id" action="/javascript:window.location='entityParentPrepareCreate-contract_priceGroup.do?id=${param.id}&priceList='+$('priceList').value" name="Вложенную группу" title="Вложенную группу" roles="/Policy/Mis/Contract/PriceList/PriceGroup/Create"/>
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="price"/>
 	</tiles:put>
