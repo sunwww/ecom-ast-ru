@@ -17,10 +17,14 @@ public class ContractAccountPreCreateInterceptor implements IParentFormIntercept
     	
     	ContractAccountForm form = (ContractAccountForm)aForm ;
     	if (aParentId!=null) {
-    		ServedPerson parent = aContext.getEntityManager().find(ServedPerson.class, aParentId) ;
+    		MedContract parent = aContext.getEntityManager().find(MedContract.class, aParentId) ;
     		if (parent!=null) {
     			if (parent.getDateFrom()!=null) form.setDateFrom(DateFormat.formatToDate(parent.getDateFrom()) );
-    			if (parent.getDateTo()!=null) form.setDateTo(DateFormat.formatToDate(parent.getDateTo()) );    			
+    			if (parent.getDateTo()!=null) form.setDateTo(DateFormat.formatToDate(parent.getDateTo()) );
+    			if (parent.getPriceList()!=null) form.setPriceList(parent.getPriceList().getId()) ;
+    			if (parent.getCustomer()!=null) form.setServedPerson(parent.getCustomer().getId()) ;
+    			
+    			
     		}
     		
     	}

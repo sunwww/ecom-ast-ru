@@ -66,3 +66,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		aEntity.account.setReservationSum(new java.math.BigDecimal(balSum)) ;		
 	}
 }
+function onPreDelete(aId, aCtx) {
+	aCtx.manager.createNativeQuery("﻿delete from contractaccountoperationbyservice where AccountOperation_id='"+aId+"'").executeUpdate() ;
+}
+

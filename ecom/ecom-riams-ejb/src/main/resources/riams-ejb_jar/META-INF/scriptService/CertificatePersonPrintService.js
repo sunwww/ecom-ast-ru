@@ -130,7 +130,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id"
 		+"		left join ContractPerson cp1 on cp1.id=mc.customer_id left join patient cpp1 on cpp1.id=cp1.patient_id"
-		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null group by mc.contractnumber" ;
+		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
 	var obj = list1.size()>0?list1.get(0):null ;
 	//map.put("contract","jkljlkj") ;
@@ -154,20 +154,10 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("customerPerson",customerPerson) ;
 		map.put("servedPerson",servedPerson) ;
 		//throw ""+obj[4] ;
-		map.put("customer.addressRegistration",customer.addressRegistration) ;
-		var passport = "" ; 
-		if (customer.passportType!=null) {
-			passport=customer.passportType.name ;
-		}
-		passport=passport+" серия " ;
-		if (customer.passportSeries!=null) {passport=passport+customer.passportSeries ;} else {	passport=passport+"____________" ;}
-		passport=passport+" номер " ;
-		if (customer.passportNumber!=null) {passport=passport+customer.passportNumber ;} else {	passport=passport+"____________" ;}
-		passport=passport+" выдан " ;
-		if (customer.passportDateIssue!=null) {passport=passport+customer.passportDateIssue ;} else {	passport=passport+"____________" ;}
-		passport=passport+" " ;
-		if (customer.passportWhomIssued!=null) {passport=passport+customer.passportWhomIssued ;} else {	passport=passport+"______________________________" ;}
-		map.put("customer.passportInfo",passport) ;
+		map.put("customer.addressRegistration",customerPerson.addressRegistration) ;
+		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
+				,customerPerson.passportSeries,customerPerson.passportNumber
+				,customerPerson.passportDateIssue,customerPerson.passportWhomIssued)) ;
 	} else {
 		map.put("contractNumber","________") ;
 		map.put("customer1.fio",null) ;

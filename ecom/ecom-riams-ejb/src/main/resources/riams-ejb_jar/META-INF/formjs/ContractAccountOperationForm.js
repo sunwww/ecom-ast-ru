@@ -20,3 +20,6 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setWorkFunction(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction")
 			.id) ;
 }
+function onPreDelete(aId, aCtx) {
+	aCtx.manager.createNativeQuery("﻿delete from contractaccountoperationbyservice where AccountOperation_id='"+aId+"'").executeUpdate() ;
+}
