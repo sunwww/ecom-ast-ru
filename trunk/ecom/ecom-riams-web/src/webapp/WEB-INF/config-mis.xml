@@ -54,6 +54,7 @@
 		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
 		<form-bean name="voc_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.VocDocumentParameterForm" />
 		<!-- Договора -->
+		<form-bean name="contract_account_contractForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
 		<form-bean name="contract_accountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
 		<form-bean name="contract_accountOperationWriteOffForm" type="ru.ecom.mis.ejb.form.contract.OperationWriteOffForm" />
 		<form-bean name="contract_accountOperationReturnForm" type="ru.ecom.mis.ejb.form.contract.OperationReturnForm" />

@@ -74,7 +74,7 @@
 					<td>
 						<msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService/View">
 						<msh:section >
-						<ecom:webQuery name="medicalService" nativeSql="
+	<ecom:webQuery name="medicalService" nativeSql="
 			select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 						, cams.countMedService*cams.cost as sumNoAccraulMedService 
 						,round(cams.countMedService*cams.cost*(100-ca.discountDefault)/100,2) as oplateWithDiscount
@@ -155,7 +155,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="contract_accountForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_account" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_account" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Delete"/>
+				<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить счет?" params="id" action="/entityParentDeleteGoParentView-contract_account" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink name="Счет" action="/entityParentPrepareCreate-contract_servedPerson" params="id" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create" title="Добавить потребителя (обслуживающую персону)"/>

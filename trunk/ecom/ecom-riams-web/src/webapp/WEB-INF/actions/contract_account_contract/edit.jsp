@@ -173,15 +173,15 @@
 	</tiles:put>
 	
 	<tiles:put name="body" type="string">
-  <msh:ifFormTypeIsView formName="contract_account_personForm">
-  <script type="text/javascript">
-  	window.location.href='entityView-contract_medContract.do?id='+${param.id} ;
-  </script>
-  </msh:ifFormTypeIsView>	
-		<msh:form action="/entityParentSaveGoView-contract_account_person.do" defaultField="contractNumber">
+		<msh:form action="/entityParentSaveGoView-contract_account_contract.do" defaultField="servedPerson">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
-			<msh:hidden property="parent" />
+			<msh:hidden property="contract" />
+  <msh:ifFormTypeIsView formName="contract_account_contractForm">
+  <script type="text/javascript">
+  	window.location.href='entityView-contract_medContract.do?id='+$('contract').value ;
+  </script>
+  </msh:ifFormTypeIsView>	
 			<msh:hidden property="createDate" />
 			<msh:hidden property="createTime" />
 			<msh:hidden property="createUsername" />
@@ -189,19 +189,14 @@
 			<msh:hidden property="editTime" />
 			<msh:hidden property="editUsername" />
 			<msh:hidden property="editUsername" />
-			<msh:hidden property="customer" />
-			<msh:hidden property="priceMedServicies" />
+			<msh:hidden property="priceList" />
 			<msh:hidden property="priceMedServicies" />
 			<msh:panel>
 				<msh:row>
 					<msh:autoComplete property="servedPerson" label="Обс.персона" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
-				</msh:row>
-				<msh:row>
 					<msh:textField property="discountDefault" label="Скидка"/>
-					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="1"  vocName="priceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
@@ -219,7 +214,7 @@
     		<table>
     		<tr>
     		<td>
-			<msh:autoComplete property="priceMedService" parentAutocomplete="priceList" label="Медицинская услуга" vocName="priceMedServiceByPriceList" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="priceMedService" parentId="contract_account_contractForm.priceList" label="Медицинская услуга" vocName="priceMedServiceByPriceList" horizontalFill="true" size="90"/>
 			</td>
 			<td colspan='1' title='кол-во' class='label'>
 				<label id='CountName' for='Count'>Кол-во:</label>
@@ -255,7 +250,7 @@
     </tbody>
 </table>
 <div id="divAllCount2"><h1>Сумма: 0 руб</h1></div>
-				<msh:ifFormTypeIsView formName="contract_account_personForm">
+				<msh:ifFormTypeIsView formName="contract_account_contractForm">
 				<msh:panel>
 				<msh:row>
 					<msh:separator label="Информация о создании" colSpan="4"/>
@@ -282,7 +277,7 @@
 		<tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_account_personForm" />
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_account_contractForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<tags:contractMenu currentAction="medContract"/>		

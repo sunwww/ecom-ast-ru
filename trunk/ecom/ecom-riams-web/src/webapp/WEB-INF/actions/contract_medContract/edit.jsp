@@ -65,7 +65,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Счета оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_person.do?id=${param.id}">
+			<msh:section title="Счета оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo
@@ -97,7 +97,11 @@
 					<msh:tableColumn columnName="сумма к оплате с учетом скидки" property="7"/>
 				</msh:table>
 			</msh:section>
-			<msh:section title="Оплаченные счета">
+			<msh:section>
+			<msh:sectionTitle>Оплаченные счета 
+			<a onclick="getDefinition(&quot;js-contract_medContract-list_accrual_service.do?short=Short&amp;id=${param.id}&quot;,event); " href="javascript:void(0);"><img width="14" height="14" title="Просмотр списка оплаченных учлуг" alt="Просмотр списка" src="/skin/images/main/view1.png">Просмотр списка оплаченных услуг</a>
+			</msh:sectionTitle>
+			<msh:sectionContent>
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo,ca.balanceSum, ca.reservationSum
@@ -122,6 +126,7 @@
 					<msh:tableColumn columnName="из них зарезер." property="6"/>
 					
 				</msh:table>
+				</msh:sectionContent>
 			</msh:section>
 			<msh:section title="Поддоговор">
 			<ecom:webQuery name="childContract" nativeSql="
@@ -198,11 +203,15 @@
 	<tiles:put name="side" type="string">
 		<msh:sideMenu>
 			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_medContract" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/Edit"/>
-			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_medContract" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
+			<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить контракт?" params="id" action="/entityParentDeleteGoSubclassView-contract_medContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
-			<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-contract_medContract" name="Поддоговор" title="Поддоговор" roles="/Policy/Mis/Contract/MedContract/Create"/>
+			
+			<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-contract_account_person" name="Счет (услуги)" title="Счет" roles="/Policy/Mis/Contract/MedContract/Create"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-contract_medContract" name="Поддоговор" title="Поддоговор" roles="/Policy/Mis/Contract/MedContract/Create"/>
+			
+			
 			<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-contract_contractRule" name="Договорные правила" title="Добавить договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/Create"/>
 
 			<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-contract_contractGuaranteeLetter" name="Гарантийное письмо" title="Гарантийное письмо" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create"/>

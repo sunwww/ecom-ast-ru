@@ -95,7 +95,7 @@
 			<ecom:webQuery name="medicalService" nativeSql="
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 	, cams.countMedService*cams.cost as sumNoAccraulMedService 
-	, cao.discount,round(cams.countMedService*(cams.cost*(100-cao.discount)/100),2)
+	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
@@ -127,9 +127,9 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Скидка" property="7" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="8" />
-					<msh:tableColumn property="Возрат, кол-во" property="9" />
-					<msh:tableColumn property="Возрат, руб" property="10" isCalcAmount="true" />
-					<msh:tableColumn property="Итог" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="Возрат, кол-во" property="9" />
+					<msh:tableColumn columnName="Возрат, руб" property="10" isCalcAmount="true" />
+					<msh:tableColumn columnName="Итог" isCalcAmount="true" property="11" />
 					
 				</msh:table>
 				</msh:sectionContent>
@@ -179,7 +179,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 		<msh:ifFormTypeAreViewOrEdit formName="contract_accountOperationAccrualForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_accountOperation" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_accountOperation" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Delete"/>
+				<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить начисление?" params="id" action="/entityParentDeleteGoParentView-contract_accountOperation" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Delete"/>
 			</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>
