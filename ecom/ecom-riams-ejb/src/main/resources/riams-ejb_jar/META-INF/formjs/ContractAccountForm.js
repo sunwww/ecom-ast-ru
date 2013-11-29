@@ -51,7 +51,8 @@ function onPreSave(aForm, aEntity, aCtx) {
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 function onPreDelete(aId, aCtx) {
-	
+	var obj=aCtx.manager.createNativeQuery("select count(*) from contractaccountoperation where account_id='"+aId+"'").getSingleResult() ;
+	if (+obj>0) throw "Сначала нужно аннулировать операции по счету!!!" ;
 	aCtx.manager.createNativeQuery("﻿delete from contractaccountmedservice where account_id='"+aId+"'").executeUpdate() ;
 	aCtx.manager.createNativeQuery("delete from servedperson where account_id='"+aId+"'").executeUpdate() ;
 }

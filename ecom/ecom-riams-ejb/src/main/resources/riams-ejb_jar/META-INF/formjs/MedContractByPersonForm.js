@@ -51,3 +51,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		}
 	}
 }
+function onPreDelete(aId, aCtx) {
+	var obj=aCtx.manager.createNativeQuery("select count(*) from contractaccount where contract_id='"+aId+"'").getSingleResult() ;
+	if (+obj>0) throw "Сначала нужно аннулировать счета!!!" ;
+}

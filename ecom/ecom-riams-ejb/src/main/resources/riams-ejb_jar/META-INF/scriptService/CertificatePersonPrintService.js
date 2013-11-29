@@ -1,5 +1,40 @@
 var map = new java.util.HashMap() ;
 
+function issueRefund(aCtx, aId) {
+	var operationAccrual = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.OperationAccrual,java.lang.Long.valueOf(aId)) ;
+	if (operationAccrual.getRepealOperation()!=null) throw "Возврат уже осуществлен" ;
+	var operReturn = new Packages.ru.ecom.mis.ejb.domain.contract.OperationReturn() ;
+	var date = new java.util.Date() ;
+	var dateS = new java.sql.Date(date.getTime());
+	var timeS = new java.sql.Time (date.getTime())
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+	operReturn.setAccount(operationAccrual.account) ;
+	operReturn.setCost(operationAccrual.cost);
+	operReturn.setDiscount(operationAccrual.discount) ;
+	operReturn.setOperationDate(dateS) ;
+	operReturn.setOperationTime(timeS) ;
+	operReturn.setCreateDate(dateS) ;
+	operReturn.setCreateTime(timeS) ;
+	operReturn.setCreateUsername(username) ;
+	var wf= aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionList").iterator().next() ;
+	operReturn.setWorkFunction(wf) ;
+	operReturn.setOperationDate(dateS);
+	operReturn.setOperationTime(timeS);
+	aCtx.manager.persist(operReturn) ;
+	operationAccrual.setRepealOperation(operReturn);
+	aCtx.manager.persist(operationAccrual) ;
+	var servicies = aCtx.manager.createNativeQuery("select list(''||accountMedService_id) from ContractAccountOperationByService where accountOperation_id="+aId).getSingleResult() ;
+	var servicies = (''+servicies).split(',') ;
+	for(var i=0;i<servicies.length;i++) {
+		var serv = +servicies[i] ;
+		var cams = new Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService() ;
+		var ams = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountMedService,java.lang.Long.valueOf(serv)) ;
+		cams.setAccountOperation(operReturn) ;
+		cams.setAccountMedService(ams) ;
+		aCtx.manager.persist(cams) ;
+	}
+}
+
 function printPriceList(aCtx,aParams) {
 	var priceList = aParams.get("id") ;
 	var mainGroupSql = "select pg.id,pg.code,pg.name from PricePosition pg" 
