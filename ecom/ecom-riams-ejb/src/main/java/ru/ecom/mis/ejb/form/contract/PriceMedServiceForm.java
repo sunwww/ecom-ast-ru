@@ -36,7 +36,6 @@ public class PriceMedServiceForm extends IdEntityForm{
 	 * Медицинская услуга
 	 */
 	@Comment("Медицинская услуга")
-	@Persist
 	public Long getMedService() {
 		return theMedService;
 	}
