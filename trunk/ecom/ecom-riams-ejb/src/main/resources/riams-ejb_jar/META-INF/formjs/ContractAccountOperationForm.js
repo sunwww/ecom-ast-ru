@@ -21,5 +21,6 @@ function onPreCreate(aForm, aCtx) {
 			.id) ;
 }
 function onPreDelete(aId, aCtx) {
+	aCtx.manager.createNativeQuery("update contractaccountoperation set repealOperation_id=null where repealOperation_id='"+aId+"'").executeUpdate() ;
 	aCtx.manager.createNativeQuery("﻿delete from contractaccountoperationbyservice where AccountOperation_id='"+aId+"'").executeUpdate() ;
 }
