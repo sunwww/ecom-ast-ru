@@ -46,7 +46,36 @@
 				<tr>
 					<td>
 						<msh:section title="Начисления. Последние 10" >
-							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="select cao.id
+							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="
+select cao.id
+, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
+, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
+,vwf.name||' '||wp.lastname,case when cao.repealOperation_id is not null then 'Был осуществлен возврат' else '' end
+from ContractAccountOperation cao
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+where cao.account_id='${param.id}'
+and cao.dtype='OperationAccrual'
+order by cao.operationDate desc,cao.operationTime desc
+							"/>
+							<msh:table  
+							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printContractByAccrual"
+							viewUrl="entityParentView-contract_accountOperationAccrual.do?short=Short" 
+							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
+								<msh:tableColumn columnName="Дата и время операции" property="2" />
+								<msh:tableColumn columnName="Стоимость" property="3" />
+								<msh:tableColumn columnName="Скидка" property="4" />
+								<msh:tableColumn columnName="Оплачено" property="5" />
+								<msh:tableColumn columnName="Оператор" property="6" />
+								<msh:tableColumn columnName="Доп. инф." property="7" />
+							</msh:table>
+						</msh:section>
+					</td>
+					<td>
+						<msh:section title="Возвраты. Последние 10" >
+							<ecom:webQuery name="operationsReturn" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
 								, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
 								,vwf.name||' '||wp.lastname
@@ -56,13 +85,12 @@
 								left join Worker w on w.id=wf.worker_id
 								left join Patient wp on wp.id=w.person_id
 							where cao.account_id='${param.id}'
-							and cao.dtype='OperationAccrual'
+							and cao.dtype='OperationReturn'
 							order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
-							printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printContractByAccrual"
-							viewUrl="entityParentView-contract_accountOperationAccrual.do?short=Short" 
-							 name="operationsAccrual" action="entityParentView-contract_accountOperationAccrual.do" idField="1">
+							viewUrl="entityParentView-contract_accountOperationReturn.do?short=Short" 
+							 name="operationsReturn" action="entityParentView-contract_accountOperationReturn.do" idField="1">
 								<msh:tableColumn columnName="Дата и время операции" property="2" />
 								<msh:tableColumn columnName="Стоимость" property="3" />
 								<msh:tableColumn columnName="Скидка" property="4" />

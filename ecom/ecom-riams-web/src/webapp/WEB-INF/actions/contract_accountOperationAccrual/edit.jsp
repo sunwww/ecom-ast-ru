@@ -95,7 +95,7 @@
 			<ecom:webQuery name="medicalService" nativeSql="
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 	, cams.countMedService*cams.cost as sumNoAccraulMedService 
-	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)
+	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2),case when cao.repealOperation_id is not null then 'Возврат' else null end as commentReturn
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
@@ -108,16 +108,13 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			where cao.id='${param.id}'
 			"/>
 				
-				<msh:table selection="multy"  name="medicalService" 
-				deleteUrl="entityParentDeleteGoParentView-contract_accountMedService.do"
-				editUrl="entityParentEdit-contract_accountMedService.do"
-				viewUrl="entityShortView-contract_accountMedService.do"
+				<msh:table name="medicalService" 
 				action="entityParentView-contract_accountMedService.do"
 				
 				 idField="1">
 					 <msh:tableNotEmpty>
 				 <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation">
-					 	<a href="javascript:void(0)" onclick="">Оформить возврат</a>
+					 	<a href="js-contract_medContract-issueRefund.do?id=${param.id}">Оформить возврат всей суммы</a>
 				 </msh:ifInRole>
 					 </msh:tableNotEmpty>
 					<msh:tableColumn columnName="Код" property="2" />
@@ -127,9 +124,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Скидка" property="7" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="8" />
-					<msh:tableColumn columnName="Возрат, кол-во" property="9" />
-					<msh:tableColumn columnName="Возрат, руб" property="10" isCalcAmount="true" />
-					<msh:tableColumn columnName="Итог" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="Комментарий" property="9" />
 					
 				</msh:table>
 				</msh:sectionContent>
