@@ -9,7 +9,7 @@
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="patient" />
-			<msh:panel>
+			<msh:panel colsWidth="1%,1%,1%,97%">
 				<msh:row>
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" fieldColSpan="3" />
 				</msh:row>
@@ -25,9 +25,7 @@
 				</msh:row>
 				<msh:row>
 					<msh:textField property="age" label="Возраст" horizontalFill="true" viewOnlyField="true"  />
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="1"/>
 				</msh:row>
 		        <msh:row>
 		        	<msh:autoComplete property="kinsman" label="Представитель" 
@@ -68,6 +66,8 @@
 				<msh:row>
 					<msh:checkBox property="isDiagnostics" label="Назначена дополнительное диагностическое исследование" fieldColSpan="3"/>
 				</msh:row>
+			</msh:panel>
+			<msh:panel>
 				<msh:row>
 					<ecom:checkGroup label="Риски" tableName="VocExtDispRisk" tableField="name" tableId="id" property="risks"/>
 				</msh:row>
@@ -75,7 +75,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="extDisp_cardForm">
-			<msh:section title="Обследования">
+			<msh:section title="Обследования" >
 			<ecom:webQuery name="examQuery" nativeSql="
 select eds.card_id as adscard,coalesce(veds.code,'') ||' '||coalesce(veds.name,'') as vedsname
 ,eds.servicedate,eds.isPathology as edsIsPathology
@@ -83,6 +83,7 @@ from ExtDispService eds
 left join VocExtDispService veds on veds.id=eds.serviceType_id
 where eds.card_id=${param.id} and eds.dtype='ExtDispExam'
 			"/>
+			
 				<msh:table name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
 					<msh:tableColumn columnName="Дата" property="3"/>
@@ -120,6 +121,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
         		}
         	});
     	}
+    	updateAge() ;
 		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
