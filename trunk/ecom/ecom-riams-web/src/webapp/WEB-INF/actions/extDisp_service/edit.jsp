@@ -16,9 +16,22 @@
 ,eds.dtype as edsdtype
 , to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
 ,case when eds.isPathology='1' then 'checked' else '' end
-from extdispservice eds
-left join VocExtDispService veds on veds.id=eds.servicetype_id
-where eds.card_id='${param.id}'  and eds.dtype='ExtDispExam'"/>
+ from ExtDispCard edc
+left join Patient pat on pat.id=edc.patient_id
+left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
+left join ExtDispPlanService edps on edps.plan_id=edp.id
+left join extdispservice eds on eds.serviceType_id=edps.serviceType_id
+left join VocExtDispService veds on veds.id=edps.servicetype_id
+where edc.id='${param.id}' 
+and (edps.sex_id=pat.sex_id or edps.sex_id is null)
+and edc.ageGroup_id=edps.ageGroup_id
+and 
+(eds.card_id=edc.id and eds.dtype='ExtDispExam' or 
+(eds.card_id is null and (veds.isVisit='0' or veds.isVisit is null)
+))
+and veds.id is not null
+group by eds.id,eds.dtype,eds.serviceDate,eds.isPathology,veds.id,veds.code,veds.name,veds.isVisit
+order by veds.id,veds.name"/>
 	<ecom:webQuery name="getServiceVisit" nativeSql="
 	select eds.id as edsid
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
@@ -26,9 +39,23 @@ where eds.card_id='${param.id}'  and eds.dtype='ExtDispExam'"/>
 , to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
 ,eds.recommendation as edsRecommendation
 ,case when eds.isEtdccSuspicion='1' then 'checked' else '' end
-from extdispservice eds
-left join VocExtDispService veds on veds.id=eds.servicetype_id
-where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
+from ExtDispCard edc
+left join Patient pat on pat.id=edc.patient_id
+left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
+left join ExtDispPlanService edps on edps.plan_id=edp.id
+left join extdispservice eds on eds.serviceType_id=edps.serviceType_id
+left join VocExtDispService veds on veds.id=edps.servicetype_id
+where edc.id='${param.id}' 
+and (edps.sex_id=pat.sex_id or edps.sex_id is null)
+and edc.ageGroup_id=edps.ageGroup_id
+and 
+(eds.card_id=edc.id and eds.dtype='ExtDispVisit' or 
+(eds.card_id is null and (veds.isVisit='1')
+))
+and veds.id is not null
+group by eds.id,eds.dtype,eds.serviceDate,eds.isPathology,veds.id,veds.code,veds.name
+,veds.isVisit,eds.recommendation,eds.isEtdccSuspicion
+order by veds.id,veds.name
 
 	"/>
 	<%List listExam = (List)request.getAttribute("getServiceExam") ;
@@ -39,7 +66,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 <ecom:webQuery name="servicePlanExam"
 nativeSql="
 select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,case when edps.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
+,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -49,7 +76,7 @@ where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='0' or veds.isVisit is null)
 
-group by veds.id,veds.code,veds.name,edps.isVisit
+group by veds.id,veds.code,veds.name,veds.isVisit
 order by veds.id,veds.name"
 />		
 		<%
@@ -61,7 +88,7 @@ order by veds.id,veds.name"
 <ecom:webQuery name="servicePlanVisit" 
 nativeSql="
 select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,case when edps.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
+,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -71,7 +98,7 @@ where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
 group by veds.id,veds.code,veds.name,edps.isVisit
-order by veds.id,veds.name,edps.isVisit"
+order by veds.id,veds.name,veds.isVisit"
 />		
 		<%
 		listVisit = (List)request.getAttribute("servicePlanVisit") ;

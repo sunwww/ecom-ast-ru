@@ -514,7 +514,7 @@ where m.id=diag.medcase_id and vdrt.code='4' and vpd.code='1' ) end as mkbBefore
 		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as mkbAfter
     ,vpms.name as vpmsname
-    ,case when m.dateFinish null then 'На лечении' else coalesce(to_char(m.dateFinish,'dd.mm.yyyy'),'')||' '||vho.name end as vphoname
+    ,case when m.dateFinish is null then 'На лечении' else coalesce(to_char(m.dateFinish,'dd.mm.yyyy'),'')||' '||vho.name end as vphoname
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id

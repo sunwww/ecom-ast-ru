@@ -32,6 +32,9 @@
 					<msh:textField property="dateFrom" label="Дата начала действия"/>
 					<msh:textField property="dateTo" label="Дата окончания действия"/>
 				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isVat" label="учитывается НДС по услуге" fieldColSpan="3"/>
+				</msh:row>
 				        <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
