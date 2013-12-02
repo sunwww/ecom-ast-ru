@@ -149,4 +149,12 @@ public class PricePositionForm extends IdEntityForm{
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	/** С НДС */
+	@Comment("С НДС")
+	@Persist
+	public Boolean getIsVat() {return theIsVat;}
+	public void setIsVat(Boolean aIsVat) {theIsVat = aIsVat;}
+
+	/** С НДС */
+	private Boolean theIsVat;
 }

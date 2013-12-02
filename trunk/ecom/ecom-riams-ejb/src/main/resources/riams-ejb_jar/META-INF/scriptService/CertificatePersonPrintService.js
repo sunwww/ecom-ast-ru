@@ -107,9 +107,10 @@ function getGroup(aCtx,aPriceList,aParent) {
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
 	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
-		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService" 
-		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
-		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc" 
+		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
+		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
+		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc"
+		+" ,ca.discountDefault as cadiscountDefault"
 		+"		from ContractAccount ca"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
 		+"		left join PriceMedService pms on pms.id=cams.medService_id"
@@ -117,12 +118,10 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null"
-		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,cao.discount";
+		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,ca.discountDefault";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
-	
-	var allcost1=0;
-	var allcost=0;
+	var discount = 0, allcost1=0, allcost=0 ;
 	for (var i = 0; i<list.size(); i++) {
 		var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		var obj=list.get(i) ;
@@ -135,11 +134,12 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		allcost1 = allcost1 + sumi ;
 		sumi = +obj[7] ;
 		allcost = allcost + sumi ;
+		discount = +obj[8] ;
 	}
-	map.put("serv",servisec) ;
-	
 	map.put("allcostNoDiscount", parseInt(allcost1));
-	map.put("allcost", parseInt(allcost));
+	map.put("allcostNoDiscountS", parseSymRub(allcost1));
+	map.put("serv",servisec) ;
+	map.put("allcost", parseInt(allcost1,discount,allcost));
 	map.put("allcostS", parseSymRub(allcost));
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
@@ -210,7 +210,7 @@ function printContractByAccrual(aCtx, aParams) {
 		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
 		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc"
-		
+		+", cao.discount"
 		+"		from MedContract mc "
 		+"		left join ContractAccount ca on ca.contract_id = mc.id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
@@ -223,8 +223,7 @@ function printContractByAccrual(aCtx, aParams) {
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
-	var allcost1=0;
-	var allcost=0;
+	var discount = 0, allcost1=0, allcost=0 ;
 	for (var i = 0; i<list.size(); i++) {
 		var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		var obj=list.get(i) ;
@@ -237,10 +236,12 @@ function printContractByAccrual(aCtx, aParams) {
 		allcost1 = allcost1 + sumi ;
 		sumi = +obj[7] ;
 		allcost = allcost + sumi ;
+		discount = +obj[8] ;
 	}
 	map.put("allcostNoDiscount", parseInt(allcost1));
+	map.put("allcostNoDiscountS", parseSymRub(allcost1));
 	map.put("serv",servisec) ;
-	map.put("allcost", parseInt(allcost));
+	map.put("allcost", parseInt(allcost1,discount,allcost));
 	map.put("allcostS", parseSymRub(allcost));
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
@@ -304,16 +305,28 @@ function printContractByAccrual(aCtx, aParams) {
 	
 	return map;
 }
-function parseInt(aNumeric) {
-	var value = new java.math.BigDecimal(aNumeric) ;
-	var kop =(value.doubleValue()-value.intValue())*100 ;
-	if (kop<10) kop="0"+kop ;
-	return value.intValue()+" руб. "+kop+" коп." ;
+function parseInt(aValue1,aDiscount,aValue2) {
+	//if (+aR>0) return aNumeric ;
+	var ret = "" ;
+	var value = new java.math.BigDecimal(aValue1) ;
+	var kop =(+aValue1 % 1).toFixed(2).slice(2) ;
+	var rub = value.intValue();
+	ret = ""+rub+" руб. "+kop+" коп." ;
+	if (+aDiscount>0) {
+		ret= ret+" СКИДКА: "+aDiscount+"%";
+		ret =ret+". ИТОГО с учетом скидки:" ;
+		value = new java.math.BigDecimal(aValue2) ;
+		kop =(+aValue2 % 1).toFixed(2).slice(2) ;
+		rub = value.intValue();
+		ret = ret+" "+rub+" руб. "+kop+" коп." ;
+	}
+	return ret ;
 }
 function parseSymRub(aNumeric) {
 	var value = new java.math.BigDecimal(aNumeric) ;
-	var kop=(value.doubleValue()-value.intValue())*100 ;
-	if (kop<10) kop="0"+kop ;
+	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
+	//if (kop<10) kop="0"+kop ;
+	 
 	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
 }
 function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassportDateIssue,aPassportWhomIssued) {
