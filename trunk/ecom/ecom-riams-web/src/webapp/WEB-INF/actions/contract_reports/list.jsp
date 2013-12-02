@@ -119,20 +119,23 @@
 		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		%>
 		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4"))) {%>
-			<msh:section title="Финасовый отчет за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
-,${groupSql} as dateNum
-,round(sum(case when cao.dtype='OperationAccrual' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
-,round(sum(case when cao.dtype='OperationReturn' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
-,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename)
+			<msh:section>
+			<ecom:webQuery name="finansReport_operators" nameFldSql="finansReport_operators_sql" nativeSql="
+SELECT wp.lastname as sqlId
+,wp.lastname||' '||substring(wp.firstname,1,1)||substring(wp.middlename,1,1) as wpfio
 FROM medcontract MC
-LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+ 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
 left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
-left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
@@ -140,11 +143,90 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
 ${nationalitySql}
+group by wp.lastname,wp.firstname,wp.middlename
+order by wp.lastname
+			"/>
+
+			<ecom:webQuery name="finansReport_without_vat" nameFldSql="finansReport_without_vat_sql" nativeSql="
+SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql} as dateNum
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
+${nationalitySql}
+and (pp.isVat='0' or pp.isVat is null)
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
 
-				<msh:table name="finansReport" 
+			<ecom:webQuery name="finansReport_with_vat" nameFldSql="finansReport_with_vat_sql" nativeSql="
+SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql} as dateNum
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*0.13*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*0.13*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
+,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+ 
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
+${nationalitySql}
+and pp.isVat='1'
+group by ${groupGroup}
+order by ${groupOrder}
+			"/>
+
+			<msh:sectionTitle> 
+    <form action="print-contract_finance_group_operator.do" method="post" target="_blank">
+    Финасовый отчет за период ${FromTo}
+    <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
+    <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
+    <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
+    <input type='hidden' name="sqlCount" id="sqlCount" value="3">
+    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
+    <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
+    <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printManyNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+			</msh:sectionTitle>
+			<msh:sectionTitle>Услуги без НДС</msh:sectionTitle>
+
+				<msh:table name="finansReport_without_vat" 
 				action="contract_reports_finance.do?typeGroup=${groupGroupNext}"
 				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -153,36 +235,129 @@ order by ${groupOrder}
 					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Оператор(ы)" property="5" />
 				</msh:table>
+</msh:section>
+<msh:section title="Услуги с НДС">
+
+				<msh:table name="finansReport_with_vat" 
+				action="contract_reports_finance.do?typeGroup=${groupGroupNext}"
+				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
+				idField="1">
+					<msh:tableColumn columnName="${groupName}" property="2" />
+					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="НДС" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="НДС" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Оператор(ы)" property="7" />
+				</msh:table>
 
 			</msh:section>
 	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
-			<msh:section title="Финасовый отчет за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
-SELECT cao.id
-,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
-,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
-,CCO.name) as kontragent
-,round(sum(case when cao.dtype='OperationAccrual' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
-,round(sum(case when cao.dtype='OperationReturn' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
-,wp.lastname||' '||wp.firstname||' '||wp.middlename
+			<msh:section>
+			<msh:sectionTitle> 
+			<ecom:webQuery name="finansReport_operators" nameFldSql="finansReport_operators_sql" nativeSql="
+SELECT wp.lastname as sqlId
+,wp.lastname||' '||substring(wp.firstname,1,1)||substring(wp.middlename,1,1) as wpfio
 FROM medcontract MC
-LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+ 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
 left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
+${nationalitySql}
+group by wp.lastname,wp.firstname,wp.middlename
+order by wp.lastname
+			"/>
+
+			<ecom:webQuery name="finansReport_without_vat" nameFldSql="finansReport_without_vat_sql" nativeSql="
+SELECT cao.id as caoid
+,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
+,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy'),CCO.name) as kontragent
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,wp.lastname||' '||wp.firstname||' '||wp.middlename as wpfio
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql}
+and (pp.isVat='0' or pp.isVat is null)
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
-,wp.lastname,wp.firstname,wp.middlename
+,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
+order by cao.operationDate,cao.operationTime
 			"/>
+			<ecom:webQuery name="finansReport_with_vat" nameFldSql="finansReport_with_vat_sql" nativeSql="
+SELECT cao.id as caoid
+,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
+,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy'),CCO.name) as kontragent
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*0.13*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*0.13*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
+,wp.lastname||' '||wp.firstname||' '||wp.middlename as wpfio
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join Omc_Oksm vn on vn.id=ccp.nationality_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql}
+and (pp.isVat='1')
+group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
+,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
+order by cao.operationDate,cao.operationTime
+			"/>
+    <form action="print-contract_finance_reestr_operator.do" method="post" target="_blank">
+    Финасовый отчет за период ${FromTo}
+    <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
+    <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
+    <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
+    <input type='hidden' name="sqlCount" id="sqlCount" value="3">
+    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
+    <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
+    <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printManyNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+			</msh:sectionTitle>
+			<msh:sectionTitle>Услуги без НДС</msh:sectionTitle>
 
-				<msh:table name="finansReport" 
+				<msh:table name="finansReport_without_vat" 
 				action="entitySubclassView-contract_accountOperation.do" 
 				idField="1">
 					<msh:tableColumn columnName="Договор" property="2" />
@@ -190,6 +365,22 @@ group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Оператор" property="6" />
+				</msh:table>
+
+			</msh:section>
+			<msh:section>
+			<msh:sectionTitle>Услуги с НДС</msh:sectionTitle>
+
+				<msh:table name="finansReport_with_vat" 
+				action="entitySubclassView-contract_accountOperation.do" 
+				idField="1">
+					<msh:tableColumn columnName="Договор" property="2" />
+					<msh:tableColumn columnName="Наименование контрагента" property="3" />
+					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="НДС" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="НДС" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Оператор(ы)" property="8" />
 				</msh:table>
 
 			</msh:section>
