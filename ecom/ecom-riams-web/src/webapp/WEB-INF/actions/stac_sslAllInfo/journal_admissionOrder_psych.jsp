@@ -149,7 +149,7 @@ select
 cec.id,to_char(expertDate,'dd.mm.yyyy')
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename as workfunction
 ,p.lastname||' '||p.firstname||' '||p.middlename as patient
-, case when p.address_addressId is not null 
+,case when p.address_addressId is not null 
           then coalesce(a.fullname,a.name) 
                ||case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end
                ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end
@@ -165,14 +165,13 @@ cec.id,to_char(expertDate,'dd.mm.yyyy')
 ,vs.name as vsname,veps.code||', '||cec.profession as job
 ,mkb.code as mkbcode
 ,vepc.code as vepccode
-,vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
 ,vec.code||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||' '||coalesce(cec.additionInfo,'') as conclusion
 ,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
 ,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
-from ClinicExpertCard cec
-left join MedCase slo on slo.id=cec.medCase_id
+from MedCase sls 
+left join MedCase slo on slo.id=sls.parent_id
 left join MisLpu ml on ml.id=slo.department_id
 left join WorkFunction owf on owf.id=cec.orderFunction_id
 left join Worker ow on ow.id=owf.worker_id
@@ -243,30 +242,6 @@ ${emergencySql} ${departmentSql}
     <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-   select 
-'&department='||ml.id as id,ml.name as mlname,count(*)
-,count(case when veds.code='1' then cec.id else null end) as cntVeds1
-from ClinicExpertCard cec
-left join MedCase slo on slo.id=cec.medCase_id
-left join MisLpu ml on ml.id=slo.department_id
-left join WorkFunction owf on owf.id=cec.orderFunction_id
-left join Worker ow on ow.id=owf.worker_id
-left join Patient owp on owp.id=ow.person_id
-left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
-left join Patient p on p.id=cec.patient_id
-left join VocSex vs on vs.id=p.sex_id
-left join VocExpertPatientStatus veps on veps.id=cec.patientStatus_id
-left join VocIdc10 mkb on mkb.id=cec.mainDiagnosis_id
-left join VocExpertPatternCase vepc on vepc.id=cec.patternCase_id
-left join DisabilityDocument dd on dd.id=cec.disabilityDocument_id
-left join VocExpertModeCase vemc on vemc.id=cec.modeCase_id
-left join VocExpertSubject ves on ves.id=cec.subjectCase_id
-left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
-
-    where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
-${emergencySql} ${departmentSql}
-	group by ml.id,ml.name
-    order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
     viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
