@@ -42,7 +42,10 @@
 	        	<input type="radio" name="typeGroup" value="1"> услугам
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="2"> реестр
+	        	<input type="radio" name="typeGroup" value="2"> услугам итог
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="3"> реестр
 	        </td>
         </msh:row>				
         <msh:row>
@@ -74,12 +77,12 @@
 		else if (dateFrom==null ||dateFrom.equals("") ) {}
 		else FromTo="C "+dFrom+" По "+dTo;
 		
-		if (typeGroup.equals("1")) {
+		if (typeGroup.equals("1")||typeGroup.equals("2")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
    			request.setAttribute("groupName", "Услуга") ;
-       		request.setAttribute("groupGroupNext", "2") ;
+       		request.setAttribute("groupGroupNext", "3") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name") ;
    			request.setAttribute("groupOrder", "pp.code") ;
 		} else {
@@ -144,6 +147,7 @@ order by ${groupOrder}
 							<th></th>
 							<th colspan="4">Оплата</th>
 							<th colspan="4">Возврат</th>
+							<th></th>
 						</tr>
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="${groupName}" property="2" />
@@ -159,14 +163,74 @@ order by ${groupOrder}
 
 			</msh:section>	
 	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
+			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+			<ecom:webQuery name="finansReport" nativeSql="
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql} as dateNum
+
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
+
+, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
+
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+-
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+as sumItog
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+${nationalitySql}
+group by ${groupGroup}
+order by ${groupOrder}
+			"/>
+
+				<msh:table name="finansReport" 
+				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
+				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
+				idField="1">
+					<msh:tableNotEmpty>
+						<tr>
+							<th></th>
+							<th></th>
+							<th colspan="2">Оплата</th>
+							<th colspan="2">Возврат</th>
+						</tr>
+					</msh:tableNotEmpty>
+					<msh:tableColumn columnName="${groupName}" property="2" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Итог" isCalcAmount="true" property="7" />
+				</msh:table>
+
+			</msh:section>	
+	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 SELECT cao.id
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
 ,CCO.name) as kontragent
-,round(sum(case when cao.dtype='OperationAccrual' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
-,round(sum(case when cao.dtype='OperationReturn' then cao.cost*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
 ,wp.lastname||' '||wp.firstname||' '||wp.middlename
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
 
