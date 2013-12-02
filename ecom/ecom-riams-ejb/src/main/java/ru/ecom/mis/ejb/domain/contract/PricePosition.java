@@ -167,4 +167,12 @@ public class PricePosition extends BaseEntity{
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** С НДС */
+	@Comment("С НДС")
+	public Boolean getIsVat() {return theIsVat;}
+	public void setIsVat(Boolean aIsVat) {theIsVat = aIsVat;}
+
+	/** С НДС */
+	private Boolean theIsVat;
 }
