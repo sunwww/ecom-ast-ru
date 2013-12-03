@@ -151,7 +151,9 @@ order by wp.lastname
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,1 as cnt1
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,1 as cnt2
 ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
@@ -216,6 +218,8 @@ order by ${groupOrder}
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
     <input type='hidden' name="sqlCount" id="sqlCount" value="3">
+    <input type='hidden' name="totalCount" id="totalCount" value="1">
+    <input type='hidden' name="totalList1" id="totalList1" value="1,2">
     <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
     <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
@@ -232,8 +236,8 @@ order by ${groupOrder}
 				idField="1">
 					<msh:tableColumn columnName="${groupName}" property="2" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />
-					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="4" />
-					<msh:tableColumn columnName="Оператор(ы)" property="5" />
+					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Оператор(ы)" property="7" />
 				</msh:table>
 </msh:section>
 <msh:section title="Услуги с НДС">
@@ -286,7 +290,9 @@ SELECT cao.id as caoid
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy'),CCO.name) as kontragent
 ,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
+,1 as cnt1
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
+,1 as cnt2
 ,wp.lastname||' '||wp.firstname||' '||wp.middlename as wpfio
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
@@ -347,6 +353,8 @@ order by cao.operationDate,cao.operationTime
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
     <input type='hidden' name="sqlCount" id="sqlCount" value="3">
+    <input type='hidden' name="totalCount" id="totalCount" value="1">
+    <input type='hidden' name="totalList1" id="totalList1" value="1,2">
     <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
     <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
@@ -363,8 +371,8 @@ order by cao.operationDate,cao.operationTime
 					<msh:tableColumn columnName="Договор" property="2" />
 					<msh:tableColumn columnName="Наименование контрагента" property="3" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="4" />
-					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
-					<msh:tableColumn columnName="Оператор" property="6" />
+					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Оператор(ы)" property="8" />
 				</msh:table>
 
 			</msh:section>
