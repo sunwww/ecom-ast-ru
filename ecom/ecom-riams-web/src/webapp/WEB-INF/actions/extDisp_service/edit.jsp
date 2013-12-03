@@ -97,8 +97,8 @@ left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
-group by veds.id,veds.code,veds.name,edps.isVisit
-order by veds.id,veds.name,veds.isVisit"
+group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit
+order by veds.id,veds.name"
 />		
 		<%
 		listVisit = (List)request.getAttribute("servicePlanVisit") ;

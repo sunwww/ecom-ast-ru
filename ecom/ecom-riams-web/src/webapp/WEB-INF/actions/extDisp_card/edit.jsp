@@ -114,6 +114,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 		<script type="text/javascript">
 		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
+		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
     	function updateAge() {
     		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
         		callback: function(aResult) {
