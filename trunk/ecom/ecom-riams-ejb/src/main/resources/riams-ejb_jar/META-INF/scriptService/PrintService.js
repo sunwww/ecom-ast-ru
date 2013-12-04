@@ -60,7 +60,7 @@ function printManyNativeQuery(aCtx,aParams) {
 				eval("par.set"+(j)+"(val);") ;
 				if (+val>0) {
 					eval("var val=+val+(+listAll"+jj+".get"+j+"())") ;
-					eval("listAll"+jj+".set"+(j)+"(val);") ;
+					eval("listAll"+jj+".set"+(j)+"(''+val);") ;
 				}
 			}
 			ret.add(par) ;
