@@ -3,6 +3,7 @@ package ru.nuzmsh.web.tags;
 import java.awt.font.NumericShaper;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -825,18 +826,18 @@ public class TableTag extends AbstractGuidSupportTag {
         private Object amountCell(JspWriter aOut, Object aObject, Object aValue) throws IOException {
             Object value;
             try {
-            	Number val1 = (Number)(aValue!=null?aValue:0) ;
+            	BigDecimal val1 = new BigDecimal(aValue!=null?""+aValue:"0") ;
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-                Number val2 ;
+                BigDecimal val2 ;
                 if (value instanceof Number) {
-                	val2 = (Number)(value!=null?value:0) ;
+                	val2 = new BigDecimal(value!=null?""+value:"0") ;
                 } else if (value instanceof String) {
-                	val2 = Double.valueOf((String)value) ;
+                	val2 = new BigDecimal((String)value) ;
                 } else {
-                	val2 = Double.valueOf((String)value);
+                	val2 = new BigDecimal((String)value);
                 }
-                
-                String val3 = new StringBuilder().append(val1.doubleValue()+val2.doubleValue()).toString() ;
+                //val2 = val1+val2 ;
+                String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
             	
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
