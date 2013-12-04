@@ -85,7 +85,7 @@ function printManyNativeQuery(aCtx,aParams) {
 					var val_2=val|0 ;
 					eval("parAll.set"+(j)+"("+val_1+"."+val_2+");") ;
 					*/
-					eval("parAll.set"+(j)+"(val);") ;
+					eval("parAll.set"+(j)+"(''+val);") ;
 					
 				}
 					//if (j==4) throw "val="+val;
