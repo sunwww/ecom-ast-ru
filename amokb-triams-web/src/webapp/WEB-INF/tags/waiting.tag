@@ -20,6 +20,7 @@
     <h2>${title}</h2>
     <div class='rootPane' id='${name}waitingMessageInformation'>
     	       <h1><i>Идёт проверка введенных данных</i></h1>
+    	       <input type='button' value='Отмена' onclick='cancel${name}waitingMessage()'/>
     	<%--
         <msh:row>
             <td colspan="6">
@@ -58,9 +59,9 @@
     	+"<br/><input type='button' value='"+aButtonCancelText+"' onclick='cancel${name}waitingMessage()'/>"
     	the${name}waitingMessageDialog.show() ;
     }
-
-
-    function init${name}waitingMessage() {}
+    function init${name}waitingMessage() {
+    	
+    }
 
     
 
