@@ -153,7 +153,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	map.put("accountNumber",pid) ;
 	
 	
-	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
+	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'')) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||coalesce(cpp1.middlename,'')) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
 		+",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault"
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
@@ -254,7 +254,7 @@ function printContractByAccrual(aCtx, aParams) {
 	map.put("login",list.size()>0?list.get(0):login) ;
 	
 	
-	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||cpp.middlename) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||cpp1.middlename) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id"+
+	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'')) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||coalesce(cpp1.middlename,'')) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id"+
 	",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault" 
 		+"		from MedContract mc "
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
