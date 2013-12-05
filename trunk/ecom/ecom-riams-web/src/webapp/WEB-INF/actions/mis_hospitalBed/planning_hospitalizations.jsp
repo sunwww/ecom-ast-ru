@@ -50,6 +50,7 @@
     boolean isgoing = false ;
 	if (department!=null && !department.equals("") && !department.equals("0")) {
 		request.setAttribute("department", " and wp.lpu_id='"+department+"'") ; 
+		request.setAttribute("departmentPlanSql", " and wchb.department_id='"+department+"'") ; 
 		request.setAttribute("department1", " slo.department_id='"+department+"' and") ;
 		isgoing=true ;
 	}
@@ -82,8 +83,9 @@ else null end
 when wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 or wchb.dateTo  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 
-then pp.lastname ||' '|| coalesce(substring(pp.firstname,1,1),'') ||' '||coalesce(substring(pp.middlename,1,1),'')||'<br/>' 
+then pp.lastname ||' '|| coalesce(substring(pp.firstname,1,1),'') ||' '||coalesce(substring(pp.middlename,1,1),'') 
 ||' '|| to_char(wchb.dateFrom,'dd.mm.yyyy')||'-'||coalesce(to_char(wchb.dateTo,'dd.mm.yyyy'),'')
+||'<br/>'
 else null end
 ) as planPat
  from workplace wp
@@ -108,7 +110,7 @@ order by case when length(replace(replace(replace(replace(replace(replace(replac
     </msh:sectionContent>
     </msh:section>
     <msh:section>
-    <msh:sectionTitle>Список пациентов</msh:sectionTitle>
+    <msh:sectionTitle>Список пациентов, по которым не определены палаты</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_pat" nativeSql="
     select 1,list(
@@ -124,15 +126,51 @@ and
 (coalesce(slo.datefinish,slo.transferdate) is null
 or coalesce(slo.datefinish,slo.transferdate)>= to_date('${dateBegin}','dd.mm.yyyy')
 )
-
+and slo.dtype='DepartmentMedCase'
 
 and slo.roomNumber_id is null
  " />
     <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+     action="javascript:void(0)" idField="1" noDataMessage="Нет данных">
       <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
      </msh:table>
     </msh:sectionContent>
+    </msh:section>
+    <msh:section>
+    <ecom:webQuery name="stac_planHospital"
+    nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
+as birthday,mkb.code,wchb.diagnosis
+ ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
+ ,wchb.createDate as wchbcreatedate
+from WorkCalendarHospitalBed wchb
+left join Patient p on p.id=wchb.patient_id
+left join MedCase mc on mc.id=wchb.medcase_id
+left join VocIdc10 mkb on mkb.id=wchb.idc10_id
+left join MisLpu ml on ml.id=wchb.department_id
+left join Diagnosis diag on diag.medcase_id=mc.id
+left join VocIdc10 mkbF on mkbF.id=diag.idc10_id
+where wchb.visit_id is not null
+and wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
+	 and to_date('${dateEnd}','dd.mm.yyyy')
+ ${departmentPlanSql}
+group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
+,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
+order by wchb.createDate
+    "
+    />
+    <msh:table name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
+    idField="1" >
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Направлен в отделение" property="2"/>
+            <msh:tableColumn columnName="Телефон пациента" property="12"/>
+            <msh:tableColumn columnName="ФИО пациента" property="4"/>
+            <msh:tableColumn columnName="Дата рождения" property="5"/>
+            <msh:tableColumn columnName="Код МКБ" property="6"/>
+            <msh:tableColumn columnName="Диагноз" property="7"/>
+            <msh:tableColumn columnName="Дата создания" property="13"/>
+            <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
+    	
+    </msh:table>
     </msh:section>
     <%} %>
     <div id="divViewBed">
