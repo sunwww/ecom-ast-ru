@@ -67,8 +67,8 @@ public class AddressPointServiceBean implements IAddressPointService {
         sql.append(" where ") ;
         if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("') and ") ;
         sql.append(" (p.noActuality='0' or p.noActuality is null)");
-        //sql.append("group by p.lastname,p.firstname,p.middlename,p.birthday") ;
-        sql.append("order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+        sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id") ;
+        sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         
         List<Object[]> listPat = theManager.createNativeQuery(sql.toString()).setMaxResults(50000).getResultList() ;
 		Element title = xmlDoc.newElement(root, "ZGLV", null);
