@@ -19,10 +19,21 @@ function printNativeQuery(aCtx,aParams) {
 		for (var j=2;j<=obj.length;j++) {
 			var val = obj[j-1] ;
 			eval("par.set"+(j)+"(val);") ;
-			if (+val>0) {
-				eval("var val=+val+(+parAll.get"+j+"())") ;
+			if (val==null) val=0 ;
+			
+				eval("var val1=parAll.get"+j+"()") ;
+				if (val1==null) val1=0 ;
+				var val11 = new java.math.BigDecimal(''+val1) ;
+				var val12=  new java.math.BigDecimal(''+0) ;
+				try {
+				val12 =  new java.math.BigDecimal(''+val) ;
+				} catch(e) {
+					
+				}
+				var val=val12.add(val11) ;
+				
 				eval("parAll.set"+(j)+"(val);") ;
-			}
+			
 		}
 		ret.add(par) ;
 	}
@@ -58,9 +69,15 @@ function printManyNativeQuery(aCtx,aParams) {
 			for (var j=2;j<=obj.length;j++) {
 				var val = obj[j-1] ;
 				eval("par.set"+(j)+"(val);") ;
-				if (+val>0) {
-					eval("var val=+val+(+listAll"+jj+".get"+j+"())") ;
-					eval("listAll"+jj+".set"+(j)+"(''+val);") ;
+				//if (val==null) val=0 ;
+				if (val!=null && +val>0) {
+					eval("var val1=listAll"+jj+".get"+j+"()") ;
+					if (val1==null) val1=0 ;
+					var val11 = new java.math.BigDecimal(''+val1) ;
+					var val12 =  new java.math.BigDecimal(''+val) ;
+					var val=val12.add(val11) ;
+					eval("listAll"+jj+".set"+(j)+"(val);") ;
+					
 				}
 			}
 			ret.add(par) ;
@@ -78,7 +95,9 @@ function printManyNativeQuery(aCtx,aParams) {
 		for (var i=0; i < obj.length; i++) {
 			var objTotal = obj[i] ;
 			for (var j=2;j<=maxCnt;j++) {
-				eval("var val=+parAll.get"+j+"()");
+				eval("var val=parAll.get"+j+"()");
+				if (val==null) val=0 ;
+				val=+val ;
 				eval("val=+val+(+listAll"+objTotal+".get"+j+"())") ;
 				if (+val>0) {
 					/*var val_1=(val%1).toFixed(2).slice(2)
