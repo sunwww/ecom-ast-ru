@@ -274,6 +274,7 @@ abstract public class WorkFunction extends BaseEntity {
 	
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
+	@OneToOne
 	public VocCategory getCategory() {return theCategory;}
 	public void setCategory(VocCategory aCategory) {theCategory = aCategory;}
 
