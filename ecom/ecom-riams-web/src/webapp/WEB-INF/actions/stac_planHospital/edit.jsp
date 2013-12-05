@@ -113,6 +113,9 @@
       <msh:sideMenu title="Печать">
       	<msh:sideLink key="CTRL+2" params="id" action="/print-planHospital.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
       </msh:sideMenu>
+      <msh:sideMenu title="Дополнительно">
+      	<msh:sideLink name="Журнал по предварительной госпитализации" action="/stac_planning_hospitalizations.do"/>
+      </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
   
