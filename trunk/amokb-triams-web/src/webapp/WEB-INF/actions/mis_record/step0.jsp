@@ -29,6 +29,18 @@ div.button {
 	    	<p class="info">Необходимо будет оформить Ваши анкетные данные.</p>
 	    	<p class="info">Затем подойти к врачу к назначенному времени.</p>
 	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_record_view_table_specialist()">
+	    	<p class="label">Прием врачей-специалистов</p>
+	    	<p class="info">Просмотр расписания специалистов</p>
+	    	<p class="info"> </p>
+	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_record_view_table_specialist()">
+	    	<p class="label">Услуги, оказываемые в больнице</p>
+	    	<p class="info">Просмотр прейскуранта по услугам</p>
+	    	<p class="info">специалистов </p>
+	    </div>
 	    
     </tiles:put>
     <tiles:put name="javascript" type="string">
@@ -38,6 +50,9 @@ div.button {
     	}
     	function next_record_direct() {
     		window.location = "step_record_info.do" ;
+    	}
+    	function next_record_view_table_specialist() {
+    		window.location = "step_table_0.do" ;
     	}
     	</script>
     </tiles:put>
