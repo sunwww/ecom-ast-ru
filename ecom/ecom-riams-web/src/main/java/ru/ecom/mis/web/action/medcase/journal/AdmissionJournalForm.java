@@ -285,4 +285,11 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Кол-во символов */
 	private Long theCntSymbols;
+	/** Раб.функция */
+	@Comment("Раб.функция")
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Раб.функция */
+	private Long theWorkFunction;
 }

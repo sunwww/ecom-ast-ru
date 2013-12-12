@@ -31,10 +31,15 @@
 				<msh:row>
 					<msh:textField fieldColSpan="3" property="name" label="Название" horizontalFill="true" size="100"/>
 				</msh:row>
-				<msh:textArea property="comment" label="Комментарий" fieldColSpan="3"/>
-				        <msh:row>
-        	<msh:separator label="Дополнительная информация" colSpan="4"/>
-        </msh:row>
+				<msh:row>
+					<msh:autoComplete fieldColSpan="3" property="lpu" label="Отделение" horizontalFill="true" size="100" vocName="lpu"/>
+				</msh:row>
+				<msh:row>
+					<msh:textArea property="comment" label="Комментарий" fieldColSpan="3"/>
+				</msh:row>
+				 <msh:row>
+        			<msh:separator label="Дополнительная информация" colSpan="4"/>
+        		</msh:row>
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
         	<msh:label property="createTime" label="время"/>

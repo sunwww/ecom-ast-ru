@@ -38,7 +38,7 @@ public class PatientServiceJs {
 			int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue() ;
 			System.out.println("monthDif:"+monthDif) ;
 			if (yearDif==2){
-				if (monthDif>6) {
+				if (monthDif>=6) {
 					return "2.6" ;
 				} else {
 					return "2" ;

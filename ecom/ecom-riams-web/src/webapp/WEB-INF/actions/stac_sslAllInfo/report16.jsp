@@ -203,8 +203,7 @@ if (date!=null && !date.equals("")) {
 	    slo.id
 	    ,ss.code as sscode
 	    ,pat.lastname||' '||pat.middlename||' '||pat.firstname||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
-	    ,
-	    vbst.name as vbstname,case when vss.id!=vss1.id then '<font color=red>'||vss1.name||'</font>' else vss.name end as vssname
+	    ,vbst.name as vbstname,case when vss.id!=vss1.id then '<font color=red>'||vss1.name||'</font>' else vss.name end as vssname
 	, case when 
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
@@ -1082,6 +1081,11 @@ if (date!=null && !date.equals("")) {
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) then slo.id else null end)
 	as cnt7EntranceDayHosp
+	,count(distinct case when slo.prevmedcase_id is null and a.addressIsVillage='1' and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) then slo.id else null end)
+	as cnt7EntrV
+	
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
@@ -1218,6 +1222,7 @@ if (date!=null && !date.equals("")) {
 
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
+	 left join address2 a on a.addressid=pat.address_addressid
 	 left join mislpu lpu on lpu.id=slo.department_id
 	 left join medcase sls on sls.id=slo.parent_id
 	 left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
@@ -1268,19 +1273,20 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="число коек" property="20" />
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
-	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="7" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
-	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
-	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
-	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="11" />
-	      <msh:tableColumn isCalcAmount="true" columnName="выписано" property="12" />
-	      <msh:tableColumn isCalcAmount="true" columnName="в другие стационары" property="13" />
-	      <msh:tableColumn isCalcAmount="true" columnName="в круглосуточный стационар" property="14" />
-	      <msh:tableColumn isCalcAmount="true" columnName="в дневной стационар" property="15" />
-	      <msh:tableColumn isCalcAmount="true" columnName="умерло" property="16" />
-	      <msh:tableColumn isCalcAmount="true" columnName="состоит всего" property="17" />
-	      <msh:tableColumn isCalcAmount="true" columnName="состоит матерей" property="18" />
-	      <msh:tableColumn isCalcAmount="true" columnName="проведено койко дней" property="19" />
+	      <msh:tableColumn isCalcAmount="true" columnName="пост. из дн. стац." property="7" />
+	      <msh:tableColumn isCalcAmount="true" columnName="пост. т.ч. с.ж." property="8" />
+	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="9" />
+	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="10" />
+	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="11" />
+	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="12" />
+	      <msh:tableColumn isCalcAmount="true" columnName="выписано" property="13" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в другие стационары" property="14" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в кругл. стационар" property="15" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в дневной стационар" property="16" />
+	      <msh:tableColumn isCalcAmount="true" columnName="умерло" property="17" />
+	      <msh:tableColumn isCalcAmount="true" columnName="состоит всего" property="18" />
+	      <msh:tableColumn isCalcAmount="true" columnName="состоит матерей" property="19" />
+	      <msh:tableColumn isCalcAmount="true" columnName="проведено койко дней" property="20" />
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
