@@ -67,4 +67,13 @@ public class PriceGroupForm  extends PricePositionForm {
 
 	/** Сразу открывать */
 	private Boolean theIsOnceView;
+	
+	/** ЛПУ */
+	@Comment("ЛПУ")
+	@Persist
+	public Long getLpu() {return theLpu;}
+	public void setLpu(Long aLpu) {theLpu = aLpu;}
+
+	/** ЛПУ */
+	private Long theLpu;
 }

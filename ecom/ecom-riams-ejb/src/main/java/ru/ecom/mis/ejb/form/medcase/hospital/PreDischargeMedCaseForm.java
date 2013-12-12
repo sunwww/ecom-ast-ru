@@ -7,6 +7,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.PreDischargeMedCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -31,9 +32,9 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(DischargeMedCaseViewInterceptor.class)
 )
 @ASaveInterceptors(
-        @AEntityFormInterceptor(DischargeMedCaseSaveInterceptor.class)
+        @AEntityFormInterceptor(PreDischargeMedCaseSaveInterceptor.class)
 )
-public class PreDischargeMedCaseForm extends AdmissionMedCaseForm {
+public class PreDischargeMedCaseForm extends DischargeMedCaseForm {
 
 	/** Время выписки */
 	@Comment("Время выписки")
@@ -50,7 +51,6 @@ public class PreDischargeMedCaseForm extends AdmissionMedCaseForm {
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
-	@Required
 	public String getDateFinish() {return theDateFinish;}
 	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
 	
@@ -84,7 +84,6 @@ public class PreDischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	@Required
 	public String getConcludingDiagnos() {return theConcludingDiagnos;}
 	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
 
@@ -107,7 +106,6 @@ public class PreDischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
-	@Required
 	public Long getConcludingActuity() {return theConcludingActuity;}
 	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
 

@@ -46,7 +46,6 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.worker.Education;
 import ru.ecom.mis.ejb.domain.worker.LanguageSkill;
-import ru.ecom.mis.ejb.domain.worker.Qualification;
 import ru.ecom.mis.ejb.domain.worker.WorkBook;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.mis.ejb.domain.worker.voc.VocEducationType;

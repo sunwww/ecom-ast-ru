@@ -52,6 +52,17 @@ public class WorkPlaceForm extends IdEntityForm {
 	public Boolean getIsNoActuality() {return theIsNoActuality;}
 	public void setIsNoActuality(Boolean aIsNoActuality) {theIsNoActuality = aIsNoActuality;}
 
+	/**
+	 * Номер телефона
+	 */
+	@Comment("Номер телефона")
+	@Persist
+	public String getPhoneNumber() {return thePhoneNumber;}
+	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	/**
+	 * Номер телефона
+	 */
+	private String thePhoneNumber;
 	/** Неактуален */
 	private Boolean theIsNoActuality;
 	/** Комментарий */
