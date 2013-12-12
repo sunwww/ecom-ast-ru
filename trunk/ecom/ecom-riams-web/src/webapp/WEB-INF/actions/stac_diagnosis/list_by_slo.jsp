@@ -338,7 +338,7 @@
 			 )
 			/count(distinct case when sls.dateFinish is not null and sls.dischargeTime is not null then sls.id else null end),1)
 			else 0 end as cntSrDays
-		,count(distinct case when so.id is null then sls.id else null end) as cntOper
+		,count(distinct case when so.id is not null then sls.id else null end) as cntOper
 		,round(sum(
 			distinct 
 			  cast(case
