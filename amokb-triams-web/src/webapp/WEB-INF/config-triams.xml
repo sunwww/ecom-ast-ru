@@ -136,6 +136,24 @@
         <action path="/mis_relogin" name="" scope="request" validate="false" type="ru.ecom.web.poly.actions.login.ReLoginAction">
         </action>
 
+		<action path='/step_table_0'
+			type='ru.ecom.web.poly.actions.table.info.ListVocWorkFunction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_table_0.jsp" />
+		</action>
+		<action path='/step_table_1'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListDepartmentAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_table_1.jsp" />
+		</action>
+		<action path='/step_table_2'
+			type='ru.ecom.web.poly.actions.visit.prerecord.ListDepartmentAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/mis_record/step_table_1.jsp" />
+		</action>
 	</action-mappings>
 
 
