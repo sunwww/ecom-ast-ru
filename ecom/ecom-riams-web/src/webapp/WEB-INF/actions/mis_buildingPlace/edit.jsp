@@ -46,7 +46,7 @@
     </msh:sideMenu>
     <msh:ifFormTypeIsView formName="mis_buildingPlaceForm" guid="441c731d-212d-45e8-9964-dde5c8db0a4b">
       <msh:sideMenu title="Добавить" guid="f692ef30-e3cb-4cb7-9f0f-1e0a38e4b08d">
-        <msh:sideLink key="ALT+3" params="id" roles="/Policy/Mis/WorkPlace/FloorBuilding/Create" action="/entityParentPrepareCreate-mis_buildingPlace" name="Этаж здания" title="Добавить этаж здания" />
+        <msh:sideLink key="ALT+3" params="id" roles="/Policy/Mis/WorkPlace/FloorBuilding/Create" action="/entityParentPrepareCreate-mis_floorBuilding" name="Этаж здания" title="Добавить этаж здания" />
       </msh:sideMenu>
 
     </msh:ifFormTypeIsView>
