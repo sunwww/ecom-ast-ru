@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -55,4 +56,15 @@ public class WorkPlace extends BaseEntity{
 	private MisLpu theLpu;
 	/** Название */
 	private String theName;
+	
+	/**
+	 * Номер телефона
+	 */
+	@Comment("Номер телефона")
+	public String getPhoneNumber() {return thePhoneNumber;}
+	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	/**
+	 * Номер телефона
+	 */
+	private String thePhoneNumber;
 }

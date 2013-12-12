@@ -69,6 +69,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			if (frm!=null){
 				form.setConcludingDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
+				if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
 			} else {
 				frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", true) ;
 				if (frm!=null) {

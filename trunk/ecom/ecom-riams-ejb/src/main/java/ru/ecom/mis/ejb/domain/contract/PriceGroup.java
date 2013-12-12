@@ -1,8 +1,10 @@
 package ru.ecom.mis.ejb.domain.contract;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -15,6 +17,15 @@ public class PriceGroup extends PricePosition {
 
 	/** Сразу открывать */
 	private Boolean theIsOnceView;
+	
+	/** ЛПУ */
+	@Comment("ЛПУ")
+	@OneToOne
+	public MisLpu getLpu() {return theLpu;}
+	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+
+	/** ЛПУ */
+	private MisLpu theLpu;
 
 
 }
