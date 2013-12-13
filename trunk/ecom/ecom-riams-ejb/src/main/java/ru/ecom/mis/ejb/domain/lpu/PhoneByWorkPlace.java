@@ -12,7 +12,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @AIndexes({
-	@AIndex(properties={"parent"})
+	@AIndex(properties={"workPlace"})
 })
 @Table(schema="SQLUser")
 public class PhoneByWorkPlace extends BaseEntity {
@@ -49,13 +49,8 @@ public class PhoneByWorkPlace extends BaseEntity {
 	 * Основной телефон
 	 */
 	@Comment("Основной телефон")
-	
-	public Boolean getIsPrimary() {
-		return theIsPrimary;
-	}
-	public void setIsPrimary(Boolean aIsPrimary) {
-		theIsPrimary = aIsPrimary;
-	}
+	public Boolean getIsPrimary() {return theIsPrimary;}
+	public void setIsPrimary(Boolean aIsPrimary) {theIsPrimary = aIsPrimary;}
 	/**
 	 * Основной телефон
 	 */
@@ -64,13 +59,8 @@ public class PhoneByWorkPlace extends BaseEntity {
 	 * Комментарий
 	 */
 	@Comment("Комментарий")
-	
-	public String getComment() {
-		return theComment;
-	}
-	public void setComment(String aComment) {
-		theComment = aComment;
-	}
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
 	/**
 	 * Комментарий
 	 */
