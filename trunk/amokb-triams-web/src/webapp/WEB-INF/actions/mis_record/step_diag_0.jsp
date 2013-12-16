@@ -8,16 +8,16 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">${infoRecord} Шаг 1. Выбор специальности врача</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Шаг 1. Выбор категории </msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
-    tr.listFunctions {
+/*    tr.listFunctions {
     margin-top: 1px; margin-bottom: 1px;
     font:bold 1em Times;
     width:200px ;
     background-color:#080E73;
-    /*font: bold 0.9em/1.2em Arial,Helvetica;*/
+    font: bold 0.9em/1.2em Arial,Helvetica;
     margin-bottom: 1px;
     margin-top: 1px;
     width: 200px;
@@ -25,7 +25,7 @@
     padding-bottom: 5px;
     padding-top: 5px;    
     color: white;
-}
+}*/
     
 #side {
   display: none;
@@ -45,12 +45,11 @@
 
 	    </div>
 	    	    <div id='div1' style="float: left; height: 300px">
-	    <msh:table name="listFunctions" action="step_table_1.do" idField="1" hideTitle="true">
-	    	<msh:tableColumn property="3" columnName="Наименование специальности"/>
+	    <msh:table name="listFunctions" action="step_diag_1.do" idField="1" hideTitle="true">
+	    	<msh:tableColumn property="2" columnName="Наименование специальности"/>
 	    </msh:table>
-	     	    <a href='infomat.do' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
+	    <a href='infomat.do' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
 	    </div>
-	    
 	    <script type="text/javascript">
 	    	//$('div1').style.display='none' ;
 	    	var cntElementsList = 14 ;
