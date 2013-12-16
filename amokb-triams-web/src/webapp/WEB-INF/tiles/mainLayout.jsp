@@ -42,7 +42,9 @@ try {
 <tiles:insert attribute="style" ignore='true'/>
 
 <style type="text/css">
-
+body{
+    background:url("img/fon_z.jpg") no-repeat fixed left top #033268 ;
+}
 	</style>
 
  </head>
