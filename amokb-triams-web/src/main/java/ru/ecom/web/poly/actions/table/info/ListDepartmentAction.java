@@ -99,7 +99,7 @@ public class ListDepartmentAction extends BaseAction {
 			for (WebQueryResult wqrS : listSpec) {
 				res.append("<tr>") ;
 				//res.append("<td>").append(wqrS.get3()).append("</td>") ;
-				res.append("<td>").append(wqrS.get9()).append(" <br/>")
+				res.append("<td><b>").append(wqrS.get9()).append(" </b><br/>")
 					.append(wqrS.get4()).append(" <br/>")
 					.append(wqrS.get6()).append("</td>") ;
 				res.append("<td>").append(wqrS.get5()).append("</td>") ;
