@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/mainInfomatLayout.jsp" flush="true">
 
     <tiles:put name="side" type="string">
       
@@ -18,17 +18,40 @@
     	display: block;
     	width: 97% ;
     }
+        td {
+    	background-color: white ;
+    }
     #side {
   display: none;
 }
 #content {
  margin-left: 0;
+ width:100% ;
 }
+table {
+	width: 100% ;
+}
+th{
+background-color:#080E73;
+color: white;
+padding:5px ;
+
+}
+td{
+    padding:2px;
+    font-weight:normal;
+}
+a {
+  font-size: 1.5em;
+    font-weight: bolder;
+      text-align: center;
+      }
     </style>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
 	    ${tableSpec}
+ 	    <a href='step_table_0.do' style='font-size: 2em;font-weight: bolder; text-align: center;'>НАЗАД</a>
     </tiles:put>
 
 </tiles:insert>
