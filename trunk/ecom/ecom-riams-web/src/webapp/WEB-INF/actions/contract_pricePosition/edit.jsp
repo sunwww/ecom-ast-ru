@@ -35,7 +35,10 @@
 				<msh:row>
 					<msh:checkBox property="isVat" label="учитывается НДС по услуге" fieldColSpan="3"/>
 				</msh:row>
-				        <msh:row>
+				<msh:row>
+					<msh:textArea rows="3" fieldColSpan="3" property="comment" label="Подготовка к исследованию" horizontalFill="true"/>
+				</msh:row>
+								        <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row>
