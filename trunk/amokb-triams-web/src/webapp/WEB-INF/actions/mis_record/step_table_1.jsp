@@ -10,7 +10,7 @@
     <tags:sideMenu/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">${infoRecord} Шаг 1. Выбор подразделения</msh:title>
+        <msh:title mainMenu="Lpu">${infoRecord} Специалисты</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -30,6 +30,7 @@
 }
 table {
 	width: 100% ;
+	font-size: 1.2em;
 }
 th{
 background-color:#080E73;
@@ -38,11 +39,11 @@ padding:5px ;
 
 }
 td{
-    padding:2px;
+    padding:3px;
     font-weight:normal;
 }
 a {
-  font-size: 1.5em;
+  /*font-size: 1.5em;*/
     font-weight: bolder;
       text-align: center;
       }
