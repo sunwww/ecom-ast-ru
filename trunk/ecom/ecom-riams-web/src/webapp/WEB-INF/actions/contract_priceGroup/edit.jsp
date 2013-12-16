@@ -35,6 +35,9 @@
 					<msh:autoComplete fieldColSpan="3" property="lpu" label="Отделение" horizontalFill="true" size="100" vocName="lpu"/>
 				</msh:row>
 				<msh:row>
+					<msh:checkBox property="isViewInfomat" label="Отображать на инфомате" fieldColSpan="3"/>
+				</msh:row>				
+				<msh:row>
 					<msh:textArea property="comment" label="Комментарий" fieldColSpan="3"/>
 				</msh:row>
 				 <msh:row>
