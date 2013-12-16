@@ -55,7 +55,7 @@ public class ListDepartmentAction extends BaseAction {
 		for (WebQueryResult wqr:list) {
 			// Спискок отделений
 			res.append("<tr>") ;
-			res.append("<td>").append(wqr.get2()).append("</td>") ;
+			res.append("<th align='center'>").append(wqr.get2()).append("</th>") ;
 			res.append("</tr>") ;
 			StringBuilder sql1 = new StringBuilder(); 
 			sql1.append("select wf.dtype,wf.id,coalesce(vad.code||' ','')||coalesce(vc.code||' ','')") ;
@@ -66,6 +66,7 @@ public class ListDepartmentAction extends BaseAction {
 			sql1.append("\n ,list('Кабинет №'||room.name||'<br/> Дни и время приема: '||room.comment)") ;
 			sql1.append("\n ,coalesce(vad.code||' ','')||coalesce(vc.code||' ','') as dp ") ;
 			sql1.append("\n ,to_char(min(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then wcd.calendarDate else null end),'dd.mm.yyyy') as datmin") ;
+			sql1.append("\n, vwf.id as vwfid,replace(replace(upper(vwf.name),'ВРАЧ-',''),'ВРАЧ ','') as vwfname");
 			sql1.append("\n from WorkFunction wf") ; 
 			sql1.append("\n left join Worker w on w.id=wf.worker_id") ;
 			sql1.append("\n left join Patient wp on wp.id=w.person_id") ;
@@ -85,26 +86,29 @@ public class ListDepartmentAction extends BaseAction {
 			sql1.append("\n where") ; 
 			sql1.append("\n wc.id is not null and (wf.archival is null or wf.archival='0')") ;
 			sql1.append(addVWF) ;
-			sql1.append("\n and wcd.calendardate between to_date('12.12.2013','dd.mm.yyyy') and to_date('24.12.2013','dd.mm.yyyy')") ;
+			sql1.append("\n and wcd.calendardate >=current_date") ;
 			sql1.append("\n and ") ;
 			sql1.append("\n case when wf.dtype='GroupWorkFunction' then m1.id") ;
 			sql1.append("\n when wf.dtype='PersonalWorkFunction' then m2.id") ;
 			sql1.append("\n else 0 end = '").append(wqr.get3()).append("'") ;
-			sql1.append("\n group by wf.dtype,wf.id,vwf.name,vad.code,vc.code,wf.groupName,wp.lastname,wp.firstname,wp.middlename,mlP.name,mlG.name") ;
-			sql1.append("\n order by vwf.name") ;
+			sql1.append("\n group by wf.dtype,wf.id,vwf.id,vwf.name,vad.code,vc.code,wf.groupName,wp.lastname,wp.firstname,wp.middlename,mlP.name,mlG.name") ;
+			sql1.append("\n order by replace(replace(upper(vwf.name),'ВРАЧ-',''),'ВРАЧ ','')") ;
 			res.append("<tr><td><table border='1px solid'>") ;
 			res.append("<tr><th>ФИО врача</th><th>Кабинет</th><th>Информация о ближайщем времени для записи</th></tr>") ;
 			Collection<WebQueryResult> listSpec = service.executeNativeSql(sql1.toString()) ;
 			for (WebQueryResult wqrS : listSpec) {
 				res.append("<tr>") ;
 				//res.append("<td>").append(wqrS.get3()).append("</td>") ;
-				res.append("<td>").append(wqrS.get4()).append("</br>").append(wqrS.get6()).append("</td>") ;
+				res.append("<td>").append(wqrS.get9()).append(" <br/>")
+					.append(wqrS.get4()).append(" <br/>")
+					.append(wqrS.get6()).append("</td>") ;
 				res.append("<td>").append(wqrS.get5()).append("</td>") ;
 				if (wqrS.get7()!=null) {
 					res.append("<td>").append(wqrS.get7());
-					res.append(" <a href='javascript:viewTable('");
-					res.append(wqrS.get6());
-					res.append("') >Отобразить</a>") ; 
+					res.append(" <a href=\"step_table_2.do?vocWorkFunction=")
+						.append(wqrS.get8())
+						.append("&workFunction=").append(wqrS.get2());
+					res.append("\")> Отобразить</a>") ; 
 					res.append("</td>") ;
 				} else {
 					res.append("<td>").append("нет времен для записи").append("</td>") ;
@@ -112,29 +116,7 @@ public class ListDepartmentAction extends BaseAction {
 				res.append("</tr>") ;
 			}
 			res.append("</table></td></tr>") ;
-			/*
-			if (aManyIs) {
-				res.append("<li onclick=\"if (this.childNodes[1].checked) {this.childNodes[1].checked=false;}else{this.childNodes[1].checked=true} step3('")
-				.append(wqr.get1()).append("#").append(wqr.get3()).append("')\">") ;
-				res.append(" <input style='display:none' readOnly='true' class='");
-				res.append("radio") ;
-			} else {
-				res.append("<li onclick=\"this.childNodes[1].checked='checked';step3('")
-				.append(wqr.get1()).append("#").append(wqr.get3()).append("')\">") ;
-				res.append(" <input class='");
-				res.append("radio") ;
-			}
-			res.append("' type='");
-			if (aManyIs) {
-				res.append("checkbox") ;
-			} else {
-				res.append("radio") ;
-			}
-			res.append("' name='rdFunction' id='rdFunction' value='")
-			.append(wqr.get1()).append("#").append(wqr.get3()).append("'>") ;
-			res.append(wqr.get3()) ;
-			res.append("</li>") ;
-			*/
+			
 		}
 		//res.append("</ul></form>") ;
 		res.append("</table>") ;
