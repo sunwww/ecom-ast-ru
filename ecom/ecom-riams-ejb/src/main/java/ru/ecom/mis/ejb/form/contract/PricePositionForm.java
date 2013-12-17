@@ -157,4 +157,13 @@ public class PricePositionForm extends IdEntityForm{
 
 	/** С НДС */
 	private Boolean theIsVat;
+	
+	/** Отображать на инфомате */
+	@Comment("Отображать на инфомате")
+	@Persist
+	public Boolean getIsViewInfomat() {return theIsViewInfomat;}
+	public void setIsViewInfomat(Boolean aIsViewInfomat) {theIsViewInfomat = aIsViewInfomat;}
+
+	/** Отображать на инфомате */
+	private Boolean theIsViewInfomat;
 }
