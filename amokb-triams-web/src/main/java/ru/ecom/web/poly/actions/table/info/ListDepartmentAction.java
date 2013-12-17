@@ -63,7 +63,7 @@ public class ListDepartmentAction extends BaseAction {
 			sql1.append("\n ,case when wf.dtype='GroupWorkFunction' then wf.groupName") ;
 			sql1.append("\n 	when wf.dtype='PersonalWorkFunction' then wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
 			sql1.append("\n 	else '' end") ;
-			sql1.append("\n ,list('Кабинет №'||room.name||'<br/> Дни и время приема: '||room.comment)") ;
+			sql1.append("\n ,list('№'||room.name||'<br/> Дни и время приема: '||room.comment)") ;
 			sql1.append("\n ,coalesce(vad.code||' ','')||coalesce(vc.code||' ','') as dp ") ;
 			sql1.append("\n ,to_char(min(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then wcd.calendarDate else null end),'dd.mm.yyyy') as datmin") ;
 			sql1.append("\n, vwf.id as vwfid,replace(replace(upper(vwf.name),'ВРАЧ-',''),'ВРАЧ ','') as vwfname");
@@ -99,7 +99,9 @@ public class ListDepartmentAction extends BaseAction {
 			for (WebQueryResult wqrS : listSpec) {
 				res.append("<tr>") ;
 				//res.append("<td>").append(wqrS.get3()).append("</td>") ;
-				res.append("<td><b>").append(wqrS.get9()).append(" </b><br/>")
+				res.append("<td><b><a href=\"step_table_2.do?vocWorkFunction=")
+						.append(wqrS.get8())
+						.append("\">").append(wqrS.get9()).append(" </a></b><br/>")
 					.append(wqrS.get4()).append(" <br/>")
 					.append(wqrS.get6()).append("</td>") ;
 				res.append("<td>").append(wqrS.get5()).append("</td>") ;

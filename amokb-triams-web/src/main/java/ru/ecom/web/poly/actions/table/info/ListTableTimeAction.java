@@ -30,15 +30,21 @@ public class ListTableTimeAction extends BaseAction {
 		String vocworkFunction = aRequest.getParameter("vocWorkFunction") ;
 		String workFunction = aRequest.getParameter("workFunction") ;
 		StringBuilder addVWF = new StringBuilder() ;
-		if (vocworkFunction!=null) {
+		if (workFunction!=null) {
+			addVWF.append(" and wf.id='").append(workFunction).append("' ") ;
+		} else if (vocworkFunction!=null) {
 			addVWF.append(" and vwf.id='").append(vocworkFunction).append("' ") ;
-		}
+		} 
 		System.out.println(addVWF) ;
-		sql.append(" select wf.dtype,wf.id,coalesce(vad.code||' ','')||coalesce(vc.code||' ','') ||vwf.name");
+		sql.append(" select wf.dtype,wf.id,vwf.name ");
 		sql.append(" ,case when wf.dtype='GroupWorkFunction' then wf.groupName");
 		sql.append(" 	when wf.dtype='PersonalWorkFunction' then wp.lastname||' '||wp.firstname||' '||wp.middlename");
 		sql.append(" 	else '' end") ;
-		sql.append(" ,list('Кабинет №'||room.name||'<br/> Дни и время приема: '||room.comment)") ;
+		sql.append(" ,list(") ;
+		//sql.append("'Кабинет №'||");
+		sql.append("room.name") ;
+		//sql.append("||'<br/> Дни и время приема: '||room.comment");
+		sql.append(")") ;
 		sql.append(" ,coalesce(vad.code||' ','')||coalesce(vc.code||' ','') as dp ") ;
 		sql.append(" ,to_char(min(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then wcd.calendarDate else null end),'dd.mm.yyyy') as datmin") ;
 		sql.append(" ") ;
@@ -49,6 +55,7 @@ public class ListTableTimeAction extends BaseAction {
 		sql.append(" ,").append(timelist("4")) ;
 		sql.append(" ,").append(timelist("5")) ;
 		sql.append(" ,").append(timelist("6")) ;
+		sql.append(" ") ;
 		 
 		sql.append(" from WorkFunction wf") ;
 		sql.append(" left join Worker w on w.id=wf.worker_id") ;
@@ -68,7 +75,8 @@ public class ListTableTimeAction extends BaseAction {
 		sql.append(" left join MisLpu m2 on m2.id=w.lpu_id ") ;
 		sql.append(" where") ;
 		sql.append("  wc.id is not null and (wf.archival is null or wf.archival='0')") ; 
-		sql.append("  and ").append(" wf.id = '").append(workFunction).append("'") ;
+		sql.append("  ").append(addVWF) ;
+		sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0')) and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0')") ;
 		sql.append("  and wcd.calendardate between current_date and current_date+7") ;
 		sql.append(" group by wf.dtype,wf.id,vwf.name,vad.code,vc.code,wf.groupName,wp.lastname,wp.firstname,wp.middlename,mlP.name,mlG.name") ;
 		sql.append(" order by vwf.name") ;
@@ -90,7 +98,8 @@ public class ListTableTimeAction extends BaseAction {
 
 		 for (WebQueryResult wqrS:list) {
 				res.append("<tr>") ;
-				res.append("<td>").append(wqrS.get4()).append("</br>")
+				res.append("<td><b>").append(wqrS.get3()).append("</b><br/>")
+				.append(wqrS.get4()).append("<br/>") 
 				.append(wqrS.get6()).append("</td>") ;
 				res.append("<td>").append(wqrS.get5()).append("</td>") ;;
 				res.append("<td>").append(replaceInTable(wqrS.get8())).append("</td>") ;
