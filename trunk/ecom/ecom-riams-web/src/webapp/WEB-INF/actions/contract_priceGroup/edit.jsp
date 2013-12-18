@@ -65,12 +65,14 @@
 			<msh:section title="Группы прейскуранта" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
 				createUrl="javascript:window.location=&quot;entityParentPrepareCreate-contract_priceGroup.do?id=${param.id}&priceList=&quot+$(&quot;priceList&quot;).value">
 			<ecom:webQuery name="priceGroup" nativeSql="
-							select pg.id,pg.code,pg.name from PricePosition pg 
+							select pg.id,pg.code,pg.name,lpu.name as lpuname from PricePosition pg
+							left join MisLpu lpu on lpu.id=pg.lpu_id 
 							where pg.parent_id = '${param.id}' and pg.dtype='PriceGroup' order by pg.code" />
 				<msh:table name="priceGroup" action="entityParentView-contract_priceGroup.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Код" property="2"/>
 					<msh:tableColumn columnName="Наименование" property="3"/>
+					<msh:tableColumn columnName="Отделение" property="4"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Позиции прейскуранта" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
