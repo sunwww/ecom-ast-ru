@@ -24,6 +24,7 @@
 	String typeStatus = ActionUtil.updateParameter("GroupByBedFund","typeStatus","2", request) ;
 	String typeView = ActionUtil.updateParameter("DiagnosisByVisit","typeView","1", request) ;
 	String typeMKB = ActionUtil.updateParameter("DiagnosisBySlo","typeMKB","4", request) ;
+	String typeAge = ActionUtil.updateParameter("DiagnosisBySlo","typeAge","1", request) ;
 	String typeEmergency = ActionUtil.updateParameter("DiagnosisBySlo","typeEmergency","3", request) ;
 	String typeReestr = request.getParameter("typeReestr") ;
 	String typeDtype = ActionUtil.updateParameter("DiagnosisBySlo","typeDtype","3", request) ;
@@ -47,7 +48,17 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeDtype" value="3">  Все
 	        </td>
-        </msh:row>           
+        </msh:row>   
+        <msh:row>
+        	        <td class="label" title="База (typeAge)" colspan="1">
+	        <label for="typeAgeName" id="typeAgeLabel">Возраст рассчитывать:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeAge" value="1">  на дату посещения
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAge" value="2" >  на конец периода
+	        </td>
+        </msh:row>        
      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по МКБ (typeMKB)" colspan="1"><label for="typeMKbName" id="typeMkbLabel">МКБ:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -132,6 +143,11 @@
     		dtypeSql="vis.dtype='Visit'" ;
     	} else if (typeDtype.equals("2")) {
     		dtypeSql="vis.dtype='ShortMedCase'" ;
+    	}
+    	if (typeAge!=null&&typeAge.equals("1")) {
+    		request.setAttribute("ageSql", "vis.dateStart") ;
+    	} else {
+    		request.setAttribute("ageSql", "to_date('"+dateEnd+"','dd.mm.yyyy')") ;
     	}
     	request.setAttribute("dtypeSql", dtypeSql);
     	String stat = (String)request.getParameter("typeStatus") ;
@@ -229,6 +245,7 @@
     		request.setAttribute("mkbCodeSql",mkbCodeA) ;
     		
     		%>
+    		<msh:section>
 	<ecom:webQuery name="datelist" nativeSql="
 	select vis.id,vis.dateStart
 	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
@@ -255,6 +272,8 @@
 	order by pat.lastname,pat.firstname,pat.middlename
 	" 
 	/>
+	<msh:sectionTitle>Общий свод (реестр)</msh:sectionTitle>
+	<msh:sectionContent>
     <msh:table name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn property="2" columnName="Дата приема"/>
@@ -263,34 +282,44 @@
       <msh:tableColumn columnName="МКБ 10" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Характер заболевания" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
       <msh:tableColumn columnName="Специалист" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-    </msh:table>    		
-    		
+    </msh:table>    
+    </msh:sectionContent>		
+    		</msh:section>
     		
     		<%
     	} else {
-    		if (typeView.equals("2")) {
+    		if (typeView.equals("2") || typeView.equals("3")) {
+    			if (typeView.equals("3")) {
+    				request.setAttribute("sqlAddParamView", " and (vip.code='2' or vip.code='3') ") ;
+    				request.setAttribute("titleInfo", "Разбивка пациентов по возрастам (впервые выявленные)") ;
+    			} else {
+    				request.setAttribute("sqlAddParamView", "") ;
+    				request.setAttribute("titleInfo", "Разбивка пациентов по возрастам (общий свод)") ;
+    			}
     			%>
-		<ecom:webQuery name="diag_list" nativeSql="
+    <msh:section>
+
+		<ecom:webQuery name="diag_list" nameFldSql="diag_list_sql" nativeSql="
 		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
 		,vpd.name as vpdname
 		,${mkbCode} as mkb,${mkbName} as mkbname
 		,count(distinct pat.id) as cntPat
 		,count(distinct case when (vs.omccode='2') then pat.id else null end) as cntPatWoman
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPat0_14
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPat15_17
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntPat18_19
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntPat20_39
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntPat40_59
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntPat60_
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPat0_14
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPat15_17
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntPat18_19
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntPat20_39
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntPat40_59
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntPat60_
 		
 		,count(distinct case when adr.addressIsVillage='1' then pat.id else null end) as cntVPat
 		,count(distinct case when (adr.addressIsVillage='1') and (vs.omccode='2') then pat.id else null end) as cntVPatWoman
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntVPat0_14
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntVPat15_17
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntVPat18_19
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntVPat20_39
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntVPat40_59
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntVPat60_
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntVPat0_14
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntVPat15_17
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntVPat18_19
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntVPat20_39
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntVPat40_59
+		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntVPat60_
 		,count(distinct case when (adr.addressIsVillage='1') and vvr.omcCode='2' then pat.id else null end) as cntVAllImprovement
 		from Diagnosis diag
 		left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id
@@ -309,11 +338,24 @@
 			and (vis.noActuality is null or vis.noActuality='0')
 			${serviceStreamSql} ${departmentSql} ${prioritySql} ${specSql} ${workFunctionSql}
 			${emergencySql}
+			${sqlAddParamView}
 			${filterSql}
 		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id
 		"/>
-		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+    <msh:sectionTitle>
+    
+    	    <form action="print-journal_visit_diagnosis_2_3.do" method="post" target="_blank">
+	    Разбивка пациентов по возрастам (общий свод)
+	    <input type='hidden' name="sqlText" id="sqlText" value="${diag_list_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Разбивка пациентов по возрастам (общий свод) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     </msh:sectionTitle>
+	<msh:sectionContent>
+			<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
@@ -351,95 +393,8 @@
 			<msh:tableColumn property="21" isCalcAmount="true" columnName="Улуч."/>
 
 		</msh:table>
-    			
-    			<%
-    		} else if (typeView.equals("3")) {
-    			%>
-
-		<ecom:webQuery name="diag_list" nativeSql="
-		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
-		,vpd.name as vpdname
-		,${mkbCode} as mkb,${mkbName} as mkbname
-		,count(distinct pat.id) as cntPat
-		,count(distinct case when (vs.omccode='2') then pat.id else null end) as cntPatWoman
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPat0_14
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPat15_17
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntPat18_19
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntPat20_39
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntPat40_59
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntPat60_
-		
-		,count(distinct case when adr.addressIsVillage='1' then pat.id else null end) as cntVPat
-		,count(distinct case when (adr.addressIsVillage='1') and (vs.omccode='2') then pat.id else null end) as cntVPatWoman
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntVPat0_14
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntVPat15_17
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 19 then pat.id else null end) as cntVPat18_19
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 20 and 39 then pat.id else null end) as cntVPat20_39
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 40 and 59 then pat.id else null end) as cntVPat40_59
-		,count(distinct case when (adr.addressIsVillage='1') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 59 then pat.id else null end) as cntVPat60_
-		,count(distinct case when (adr.addressIsVillage='1') and vvr.omcCode='2' then pat.id else null end) as cntVAllImprovement
-		from Diagnosis diag
-		left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id
-		left join VocIdc10 mkb on mkb.id=diag.idc10_id
-		left join MedCase vis on vis.id=diag.medCase_id
-		left join VocVisitResult vvr on vvr.id=vis.visitResult_id
-		left join Patient pat on pat.id=vis.patient_id
-		left join Address2 adr on adr.addressid=pat.address_addressid
-		left join VocSex vs on vs.id=pat.sex_id
-		left join VocServiceStream vss on vss.id=vis.serviceStream_id
-		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-		left join WorkFunction wf on wf.id=vis.workFunctionExecute_id
-		left join Worker w on w.id=wf.worker_id
-		where vis.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
-			and to_date('${dateEnd}','dd.mm.yyyy') and ${dtypeSql}
-			and (vis.noActuality is null or vis.noActuality='0')
-			${serviceStreamSql} ${departmentSql} ${prioritySql} ${specSql} ${workFunctionSql}
-			and (vip.code='2' or vip.code='3')
-			${emergencySql}
-			${filterSql}
-		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
-		order by ${mkbCode},vpd.id
-		"/>
-		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
-            <msh:tableNotEmpty>
-              <tr>
-                <th colspan="1" />
-                <th colspan="1" />
-                <th colspan="1" />
-                <th colspan="1" />
-                <th colspan="2" >Зарегистр.</th>
-                <th colspan="6" class="rightBold">в том числе из общего кол-ва по возрастам</th>
-                <th colspan="2" >Зарегистр. с/ж</th>
-                <th colspan="6" class="rightBold">в том числе из общего кол-ва с/ж по возрастам</th>
-              </tr>
-            </msh:tableNotEmpty>            
-		
-			<msh:tableColumn property="sn" columnName="#"/>
-			<msh:tableColumn property="2" columnName="Приоритет"/>
-			<msh:tableColumn property="3" columnName="Код МКБ10"/>
-			<msh:tableColumn property="4" columnName="Наименование болезни"/>
-			<msh:tableColumn property="5" isCalcAmount="true" columnName="Кол-во общее"/>
-			<msh:tableColumn property="6" isCalcAmount="true" columnName="из них женщин"/>
-			<msh:tableColumn property="7" isCalcAmount="true" columnName="0-14"/>
-			<msh:tableColumn property="8" isCalcAmount="true" columnName="15-17"/>
-			<msh:tableColumn property="9" isCalcAmount="true" columnName="18-19"/>
-			<msh:tableColumn property="10" isCalcAmount="true" columnName="20-39"/>
-			<msh:tableColumn property="11" isCalcAmount="true" columnName="40-59"/>
-			<msh:tableColumn property="12" isCalcAmount="true" columnName=">=60"/>
-
-			<msh:tableColumn property="13" isCalcAmount="true" columnName="Кол-во общее"/>
-			<msh:tableColumn property="14" isCalcAmount="true" columnName="из них женщин"/>
-			<msh:tableColumn property="15" isCalcAmount="true" columnName="0-14"/>
-			<msh:tableColumn property="16" isCalcAmount="true" columnName="15-17"/>
-			<msh:tableColumn property="17" isCalcAmount="true" columnName="18-19"/>
-			<msh:tableColumn property="18" isCalcAmount="true" columnName="20-39"/>
-			<msh:tableColumn property="19" isCalcAmount="true" columnName="40-59"/>
-			<msh:tableColumn property="20" isCalcAmount="true" columnName=">=60"/>
-			<msh:tableColumn property="21" isCalcAmount="true" columnName="Улуч."/>
-
-		</msh:table>
-
-    			
+    			    </msh:sectionContent>		
+    		</msh:section>
     			<%
     			
     		} else {
@@ -454,30 +409,30 @@
 		,count(distinct case when (vip.code='2' or vip.code='3') then vis.id else null end) as cntVisPrimary
 		,count(distinct pat.id) as cntPat
 		,count(distinct case when (vip.code='2' or vip.code='3') then pat.id else null end) as cntPatPrimary
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPat14
-		,count(distinct case when (vip.code='2' or vip.code='3') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPatPrimary14
-		,count(distinct case when (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPat17
-		,count(distinct case when (vip.code='2' or vip.code='3') and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPatPrimary17
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPat14
+		,count(distinct case when (vip.code='2' or vip.code='3') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 0 and 14 then pat.id else null end) as cntPatPrimary14
+		,count(distinct case when (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPat17
+		,count(distinct case when (vip.code='2' or vip.code='3') and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 15 and 17 then pat.id else null end) as cntPatPrimary17
 
 		,count(distinct case 
-			when vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
-				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55
+			when vs.omccode='1' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
+				or vs.omccode='2' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55
 			then pat.id else null end) as cntPat55
 		,count(distinct case 
 			when (vip.code='2' or vip.code='3')
-		 and (vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
-				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55)
+		 and (vs.omccode='1' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 60 
+				or vs.omccode='2' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) between 18 and 55)
 			then pat.id else null end) as cntPatPrimary55
 		
 		
 		,count(distinct case 
-			when vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
-				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55
+			when vs.omccode='1' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
+				or vs.omccode='2' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55
 			then pat.id else null end) as cntPatOld
 		,count(distinct case 
 			when (vip.code='2' or vip.code='3')
-		 and (vs.omccode='1' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
-				or vs.omccode='2' and (cast(to_char(vis.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(vis.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(vis.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55)
+		 and (vs.omccode='1' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end)> 60 
+				or vs.omccode='2' and (cast(to_char(${ageSql},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)+case when (cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${ageSql},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${ageSql}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end) > 55)
 			then pat.id else null end) as cntPatPrimaryOld
 		from Diagnosis diag
 		left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id
@@ -544,6 +499,7 @@
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeAge','${typeAge}',1) ;
     //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
     //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
     

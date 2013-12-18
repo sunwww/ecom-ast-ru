@@ -190,7 +190,7 @@ order by pat.lastname,pat.firstname,pat.middlename
 
 				<msh:table name="finansReport" 
 				action="entitySubclassView-mis_medCase.do"
-				viewUrl="entitySubclassShort-mis_medCase.do" 
+				viewUrl="entitySubclassShortView-mis_medCase.do" 
 				idField="1">
 					<msh:tableColumn columnName="Стат.карта" property="2" />
 					<msh:tableColumn columnName="ФИО пациента" property="3" />
