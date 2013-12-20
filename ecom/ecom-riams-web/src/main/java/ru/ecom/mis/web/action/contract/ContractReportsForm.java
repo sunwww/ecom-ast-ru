@@ -40,6 +40,12 @@ public class ContractReportsForm extends BaseValidatorForm{
 	public Long getNationality() {return theNationality;}
 	public void setNationality(Long aNationality) {theNationality = aNationality;}
 
+	/** Отделение */
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+
+	/** Отделение */
+	private Long theDepartment;
 	/** Гражданство */
 	private Long theNationality;
 	/** Услуга по прейскуранту */
@@ -56,4 +62,11 @@ public class ContractReportsForm extends BaseValidatorForm{
 	private String theDateTo;
 	/** DateFrom */
 	private String theDateFrom;
+	
+	/** Тип услуги */
+	public Long getPricePosition() {return thePricePosition;}
+	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
+
+	/** Тип услуги */
+	private Long thePricePosition;
 }
