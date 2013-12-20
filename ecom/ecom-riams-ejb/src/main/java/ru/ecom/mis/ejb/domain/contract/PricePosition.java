@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
+import ru.ecom.mis.ejb.domain.contract.voc.VocPositionType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
@@ -182,4 +183,13 @@ public class PricePosition extends BaseEntity{
 
 	/** Отображать на инфомате */
 	private Boolean theIsViewInfomat;
+	
+	/** Тип услуги */
+	@Comment("Тип услуги")
+	@OneToOne
+	public VocPositionType getPositionType() {return thePositionType;}
+	public void setPositionType(VocPositionType aPositionType) {thePositionType = aPositionType;}
+
+	/** Тип услуги */
+	private VocPositionType thePositionType;
 	}
