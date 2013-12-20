@@ -112,6 +112,49 @@
           <msh:checkBox property="noActuality" label="Недействительность" guid="6299a6be-428f-4a09-9db5-e4c60154b605" />
         <msh:label property="username" label="Оператор" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
+        </msh:panel>
+        <msh:panel styleId="epicriPanel" colsWidth="1%,1%,1%,1%">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="580a3-19bf-4793-af89-f7a56837">
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+	        <msh:row>
+	        <msh:separator colSpan="8" label="Выписной эпикриз" />
+	        </msh:row>
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+	        <msh:row>
+              <td colspan="4" align="center">
+	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
+	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
+	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
+	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
+	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
+	                        
+               </td>
+	        </msh:row>
+	        </msh:ifFormTypeIsNotView>
+	        <msh:row>
+	        <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
+	        </msh:row>
+        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+	        <msh:row>
+              <td colspan="4" align="center">
+	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
+	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
+	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
+	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
+	                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+               </td>
+	        </msh:row>
+	        </msh:ifFormTypeIsNotView>
+        </msh:ifNotInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
+        	<msh:hidden property="dischargeEpicrisis"/>
+        </msh:ifInRole>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/View">
+        	<msh:hidden property="dischargeEpicrisis"/>
+        </msh:ifNotInRole>
+        </msh:panel>
+        <msh:panel colsWidth="5%,10%,5%,80%">
         <msh:separator colSpan="8" label="<a href='entityParentEdit-stac_sslDischarge.do?id=${param.id}'>Выписка</a>" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
         <msh:row guid="ef812a6e-c7ab-465f-8a63-25ae169ed2b2">
           <msh:autoComplete label="Результат госпитализации" property="result" horizontalFill="true" guid="63d091a8-90b9-479f-8aef-0064a789fade" vocName="vocHospitalizationResult" />

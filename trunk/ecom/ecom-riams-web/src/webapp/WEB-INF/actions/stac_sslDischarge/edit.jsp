@@ -209,7 +209,7 @@
 	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-    	    <msh:textField label="Диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textArea label="Диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" rows="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
 	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 ослож." property="complicationMkb" fieldColSpan="3" horizontalFill="true"/>

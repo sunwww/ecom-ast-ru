@@ -32,7 +32,8 @@ from MedContract mc
 left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
 left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
 left join PriceList pl on pl.id=mc.priceList_id 
-where mc.customer_id='${param.id}' 
+where mc.customer_id='${param.id}'
+group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
 order by mc.dateFrom desc
       	" maxResult="10"/>
       	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">

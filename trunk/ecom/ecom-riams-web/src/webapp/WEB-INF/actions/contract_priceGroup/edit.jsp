@@ -78,7 +78,10 @@
 			<msh:section title="Позиции прейскуранта" createRoles="/Policy/Mis/Contract/PriceList/PriceGroup/Create" 
 				createUrl="entityParentPrepareCreate-contract_pricePosition.do?id=${param.id}">
 			<ecom:webQuery name="pricePosition" nativeSql="
-							select pp.id,pp.code,pp.name,pp.cost,pp.dateFrom,pp.dateTo from PricePosition pp 
+							select pp.id,pp.code,pp.name as ppname
+							,vpt.name as vptname,pp.cost,pp.dateFrom,pp.dateTo 
+							from PricePosition pp 
+							left join VocPositionType vpt on vpt.id=pp.positionType_id
 							where pp.parent_id = '${param.id}' and pp.dtype='PricePosition' ORDER BY pp.code" />
 				<msh:table name="pricePosition" action="entityParentView-contract_pricePosition.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
