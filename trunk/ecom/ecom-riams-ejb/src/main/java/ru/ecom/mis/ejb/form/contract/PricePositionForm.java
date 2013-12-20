@@ -11,6 +11,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = PricePosition.class)
@@ -166,4 +167,13 @@ public class PricePositionForm extends IdEntityForm{
 
 	/** Отображать на инфомате */
 	private Boolean theIsViewInfomat;
+	/** Тип услуги */
+	@Comment("Тип услуги")
+	@Required @Persist
+	public Long getPositionType() {return thePositionType;}
+	public void setPositionType(Long aPositionType) {thePositionType = aPositionType;}
+
+	/** Тип услуги */
+	private Long thePositionType;
+
 }

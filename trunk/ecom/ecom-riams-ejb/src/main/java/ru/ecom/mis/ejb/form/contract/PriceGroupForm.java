@@ -76,4 +76,14 @@ public class PriceGroupForm  extends PricePositionForm {
 
 	/** ЛПУ */
 	private Long theLpu;
+	/** Тип услуги */
+	@Comment("Тип услуги")
+	@Persist
+	public Long getPositionType() {return thePositionType;}
+	public void setPositionType(Long aPositionType) {thePositionType = aPositionType;}
+
+	/** Тип услуги */
+	private Long thePositionType;
+
+	
 }
