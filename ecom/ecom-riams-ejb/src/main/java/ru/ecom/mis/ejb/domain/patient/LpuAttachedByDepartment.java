@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -78,4 +80,20 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	private LpuArea theArea;
 	/** Пациент */
 	private Patient thePatient;
+	/** Прикреплен с */
+	@Comment("Прикреплен с")
+	public Date getDateFrom() {return theDateFrom;}
+	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
+
+	/** Прикреплен до */
+	@Comment("Прикреплен до")
+	public Date getDateTo() {return theDateTo;}
+	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
+
+	/** Прикреплен до */
+	private Date theDateTo;
+	/** Прикреплен с */
+	private Date theDateFrom;
+
+
 }
