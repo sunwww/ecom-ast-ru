@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -19,7 +20,12 @@ import ru.nuzmsh.web.struts.BaseAction;
 public class AttachmentByLpuAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	AttachmentByLpuForm form =(AttachmentByLpuForm)aForm ;
-    	if (form!=null && form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))) {
+    	
+    	if (form!=null ) {
+    		ActionErrors  erros = form.validate(aMapping, aRequest) ;
+    		System.out.println(erros) ;
+    		if (erros.isEmpty()&&form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))
+    			) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
 	    	
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -32,7 +38,7 @@ public class AttachmentByLpuAction extends BaseAction {
 	        		, form.getLpu(),format1.format(cal.getTime()), form.getNumberReestr()
 	        		, form.getNumberPackage());
 	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
-        }
+        }}
         return aMapping.findForward("success") ;
     }
 }
