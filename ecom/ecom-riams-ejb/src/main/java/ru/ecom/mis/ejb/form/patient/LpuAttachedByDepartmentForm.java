@@ -9,6 +9,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
@@ -79,4 +81,22 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	private Long theArea;
 	/** ЛПУ */
 	private Long theLpu;
+	
+	/** Прикреплен с */
+	@Comment("Прикреплен с")
+	@Persist @Required @DateString @DoDateString 
+	public String getDateFrom() {return theDateFrom;}
+	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+
+	/** Прикреплен до */
+	@Comment("Прикреплен до")
+	@Persist @DateString @DoDateString
+	public String getDateTo() {return theDateTo;}
+	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+
+	/** Прикреплен до */
+	private String theDateTo;
+	/** Прикреплен с */
+	private String theDateFrom;
+	
 }
