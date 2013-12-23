@@ -20,7 +20,10 @@
 		            <msh:autoComplete fieldColSpan="3" property="area" label="Участок" horizontalFill="true"
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>		
-
+		        <msh:row>
+		        	<msh:textField property="dateFrom" label="Дата прикрепления"/>
+		        	<msh:textField property="dateTo" label="Дата открепления"/>
+		        </msh:row>
                 <msh:submitCancelButtonsRow colSpan="2"/>
             </msh:panel>
             

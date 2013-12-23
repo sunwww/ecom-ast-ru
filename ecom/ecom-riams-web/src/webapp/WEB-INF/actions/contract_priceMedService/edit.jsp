@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entityParentSaveGoView-contract_priceMedService.do" defaultField="">
+		<msh:form action="/entityParentSaveGoView-contract_priceMedService.do" defaultField="medServiceName">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="pricePosition" />

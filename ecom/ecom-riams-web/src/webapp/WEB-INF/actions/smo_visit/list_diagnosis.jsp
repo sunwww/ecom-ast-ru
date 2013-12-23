@@ -186,8 +186,8 @@
     		request.setAttribute("workFunction","0") ;
     	}
     	String workFunction = (String)request.getParameter("workFunction") ;
-    	if (spec!=null && !spec.equals("") && !spec.equals("0")) {
-    		request.setAttribute("workFunctionSql", " and wf.workFunction_id="+spec) ;
+    	if (workFunction!=null && !workFunction.equals("") && !workFunction.equals("0")) {
+    		request.setAttribute("workFunctionSql", " and wf.workFunction_id="+workFunction) ;
     		request.setAttribute("workFunction",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
