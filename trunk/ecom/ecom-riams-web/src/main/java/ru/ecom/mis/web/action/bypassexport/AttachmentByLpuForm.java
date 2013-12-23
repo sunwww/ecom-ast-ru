@@ -25,6 +25,14 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public String getPeriod() {return thePeriod;}
 	public void setPeriod(String aPeriod) {thePeriod = aPeriod;}
 	
+	/** Период */
+	@Comment("Период")
+	@Required @DateString @DoDateString
+	public String getPeriodEnd() {return thePeriodEnd;}
+	public void setPeriodEnd(String aPeriodEnd) {thePeriodEnd = aPeriodEnd;}
+
+	/** Период */
+	private String thePeriodEnd;
 	/** NumberReestr */
 	@Comment("NumberReestr")
 	@Required
@@ -33,7 +41,6 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** Файл */
 	@Comment("Файл")
-	@Required
 	public String getFilename() {return theFilename;}
 	public void setFilename(String aFilename) {theFilename = aFilename;}
 
