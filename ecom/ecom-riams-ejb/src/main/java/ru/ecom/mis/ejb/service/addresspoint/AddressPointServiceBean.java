@@ -88,8 +88,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 			xmlDoc.newElement(zap, "DOCSER", getStringValue(pat[7])) ;
 			xmlDoc.newElement(zap, "DOCNUM", getStringValue(pat[8])) ;
 			xmlDoc.newElement(zap, "RZ", getStringValue(pat[9])) ;
-			xmlDoc.newElement(zap, "SP_PRIK", getStringValue(pat[10])) ;
-			xmlDoc.newElement(zap, "T_PRIK", getStringValue(1)) ;
+			xmlDoc.newElement(zap, "SP_PRIK", getStringValue(pat[10])) ; // 1-территориал, 2-заявление
+			xmlDoc.newElement(zap, "T_PRIK", getStringValue(1)) ; // 1-прикрепление, 2-открепление
 			xmlDoc.newElement(zap, "DATE_1", getStringValue(pat[11])) ;
 			xmlDoc.newElement(zap, "REFREASON", "") ;
 		}
