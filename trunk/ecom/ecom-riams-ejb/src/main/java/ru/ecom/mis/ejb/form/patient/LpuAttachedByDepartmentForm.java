@@ -88,15 +88,24 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	public String getDateFrom() {return theDateFrom;}
 	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
 
-	/** Прикреплен до */
-	@Comment("Прикреплен до")
+	/** Откреплен с */
+	@Comment("Откреплен с")
 	@Persist @DateString @DoDateString
 	public String getDateTo() {return theDateTo;}
 	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
 
-	/** Прикреплен до */
+	/** Откреплен с */
 	private String theDateTo;
 	/** Прикреплен с */
 	private String theDateFrom;
+	
+	/** Тип прикрепления */
+	@Comment("Тип прикрепления")
+	@Persist @Required
+	public Long getAttachedType() {return theAttachedType;}
+	public void setAttachedType(Long aAttachedType) {theAttachedType = aAttachedType;}
+
+	/** Тип прикрепления */
+	private Long theAttachedType;
 	
 }

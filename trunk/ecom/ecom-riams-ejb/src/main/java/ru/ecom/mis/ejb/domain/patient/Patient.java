@@ -104,11 +104,11 @@ public class Patient extends BaseEntity{
 	//public void setDTYPE(String aDTYPE) {theDTYPE = aDTYPE;}
 
 	/** Вакцинации */
-	@Comment("Вакцинации")
+	/*@Comment("Вакцинации")
 	@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
 	public List<Vaccination> getVaccinations() {return theVaccinations;}
 	public void setVaccinations(List<Vaccination> aVaccinations) {theVaccinations = aVaccinations;}
-
+	*/
 	/** Сотрудники */
 	@Comment("Сотрудники")
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
@@ -720,7 +720,7 @@ public class Patient extends BaseEntity{
 	/** DTYPE */
 	//private String theDTYPE;
 	/** Вакцинации */
-	private List<Vaccination> theVaccinations;
+	//private List<Vaccination> theVaccinations;
 	/** Сотрудники */
 	private List<Worker> theWorkers;
 	/** Участок основного прикрепления */

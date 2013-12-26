@@ -37,7 +37,7 @@ public class MedServiceAllValueVoc  implements IAllValue {
 				SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd");
 				addSql = FORMAT_1.format(date) ;
 				addSql = new StringBuilder()
-					.append(" and vocMedService_id is null")
+					.append(" and dtype='MedServiceGroup'")
 					.append(" and (startDate is null or startDate <= to_date('")
 					.append(addSql).append("','yyyy-mm-dd') ) and (finishDate is null or finishDate >=to_date('")
 					.append(addSql).append("','yyyy-mm-dd'))").toString() ;
@@ -48,8 +48,9 @@ public class MedServiceAllValueVoc  implements IAllValue {
 			}
 			
 		} else {
-			addSql =" and vocMedService_id is null ";
-		}
+			addSql = new StringBuilder()
+			.append(" and dtype='MedServiceGroup'")
+			.append(" and (startDate is null or startDate <= CURRENT_DATE ) and (finishDate is null or finishDate >=CURRENT_DATE)").toString() ;		}
 		StringBuilder sql = new StringBuilder () ;
 		sql.append("from MedService where parent_id is null ").append(addSql).append(" order by name") ;
 			
