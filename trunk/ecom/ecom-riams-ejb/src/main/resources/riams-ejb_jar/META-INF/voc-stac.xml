@@ -270,7 +270,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
     					 and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
     					 and wf.id=:par2 and (wfs.lpu_id is null or wfs.lpu_id=:par3)
-    					 and ms.vocMedService_id is not null and (vst.code='OPERATION' or vst.code='SURVEY')"
+    					 and ms.dtype='MedService' and (vst.code='OPERATION' or vst.code='SURVEY')"
     			names = "coalesce(ms.code||' ','')||ms.name"
     			nameId="ms.id"
     			queryAppend=""
