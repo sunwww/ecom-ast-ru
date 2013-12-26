@@ -116,7 +116,6 @@ public class AddressPointServiceBean implements IAddressPointService {
             //manager.close() ;
         }
     }
-
     public void onPersist(LpuAreaAddressText aLpuAreaAddressText) {
         if (CAN_DEBUG) LOG.debug("aLpuAreaAddressText = " + aLpuAreaAddressText.getAddress());
         Address address = aLpuAreaAddressText.getAddress();

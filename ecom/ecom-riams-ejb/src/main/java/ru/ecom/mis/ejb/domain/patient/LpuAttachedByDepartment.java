@@ -13,6 +13,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -85,15 +86,24 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	public Date getDateFrom() {return theDateFrom;}
 	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
 
-	/** Прикреплен до */
-	@Comment("Прикреплен до")
+	/** Прикреплен с */
+	@Comment("Откреплен с")
 	public Date getDateTo() {return theDateTo;}
 	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
 
 	/** Прикреплен до */
 	private Date theDateTo;
-	/** Прикреплен с */
+	/** Откреплен с */
 	private Date theDateFrom;
+	
+	/** Тип прикрепления */
+	@Comment("Тип прикрепления")
+	@OneToOne
+	public VocAttachedType getAttachedType() {return theAttachedType;}
+	public void setAttachedType(VocAttachedType aAttachedType) {theAttachedType = aAttachedType;}
+
+	/** Тип прикрепления */
+	private VocAttachedType theAttachedType;
 
 
 }

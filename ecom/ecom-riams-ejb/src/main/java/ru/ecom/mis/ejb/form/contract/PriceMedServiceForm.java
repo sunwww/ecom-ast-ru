@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.contract;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
+import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -92,4 +93,20 @@ public class PriceMedServiceForm extends IdEntityForm{
 
 	/** Медицинская услуга */
 	private String theMedServiceInfo;
+	
+	/** Услуга */
+	@Comment("Услуга")
+	public MedServiceForm getMedServiceForm() {return theMedServiceForm;}
+	public void setMedServiceForm(MedServiceForm aMedServiceForm) {theMedServiceForm = aMedServiceForm;}
+
+	/** Услуга */
+	private MedServiceForm theMedServiceForm = new MedServiceForm();
+	
+	/** Создать новую услугу */
+	@Comment("Создать новую услугу")
+	public Boolean getMedServiceIsCreate() {return theMedServiceIsCreate;}
+	public void setMedServiceIsCreate(Boolean aMedServiceIsCreate) {theMedServiceIsCreate = aMedServiceIsCreate;}
+
+	/** Создать новую услугу */
+	private Boolean theMedServiceIsCreate;
 }

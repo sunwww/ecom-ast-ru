@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.form.medcase;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
@@ -10,8 +9,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceViewInterceptor;
-import ru.ecom.mis.ejb.form.worker.interceptor.VocWorkFunctionSaveInterceptor;
-import ru.ecom.mis.ejb.form.worker.interceptor.VocWorkFunctionViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -35,7 +32,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 		, view="entityParentView-mis_medService.do"
 //			,list = "entityParentList-mis_medService.do"
 				)
-@Parent(property="parent", parentForm= MedServiceForm.class)
+@Parent(property="parent", parentForm= MedServiceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedService")
 @ASaveInterceptors(
         @AEntityFormInterceptor(MedServiceSaveInterceptor.class)
@@ -45,7 +42,6 @@ import ru.nuzmsh.forms.validator.validators.Required;
 )
 @ACreateInterceptors( {
 	@AEntityFormInterceptor(MedServiceSaveInterceptor.class)
-	
 })
 public class MedServiceForm extends IdEntityForm  {
 	/** Справочная услуга */
@@ -187,4 +183,5 @@ public class MedServiceForm extends IdEntityForm  {
 	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
 	/** Уровонь сложности */
 	private Long theComplexity;
+	
 }

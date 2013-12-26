@@ -339,14 +339,9 @@ public class Vaccination extends BaseEntity {
 
 	/** Пациент */
 	@Comment("Пациент")
-	@ManyToOne
-	public Patient getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Patient aPatient) {
-		thePatient = aPatient;
-	}
+	@OneToOne
+	public Patient getPatient() {return thePatient;}
+	public void setPatient(Patient aPatient) {thePatient = aPatient;}
 
 	/** Пациент */
 	private Patient thePatient;
@@ -355,7 +350,7 @@ public class Vaccination extends BaseEntity {
 	 * СМО
 	 */
 	@Comment("СМО")
-	@ManyToOne
+	@OneToOne
 	public MedCase getMedCase() {
 		return theMedCase;
 	}

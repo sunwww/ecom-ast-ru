@@ -174,11 +174,11 @@ abstract public class MedCase extends BaseEntity {
 
 	//private StatisticStub theStatisticStub;
 	/**Вакцинации*/
-	@Comment("Вакцинации")
+	/*@Comment("Вакцинации")
 	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
 	public List<Vaccination> getVaccinations() {return theVaccinations;}
 	public void setVaccinations(List<Vaccination> aNewProperty) {theVaccinations = aNewProperty;}
-	
+	*/
 	/** Случай смерти */
 	@Comment("Случай смерти")
 	@OneToOne
@@ -344,7 +344,7 @@ abstract public class MedCase extends BaseEntity {
 	/** Опьянение */
 	private VocIntoxication theIntoxication;
     /** Вакцинации*/
-	private List<Vaccination> theVaccinations;	
+	//private List<Vaccination> theVaccinations;	
     /** Случай смерти */
 	private DeathCase theDeathCase;
     /**Выписанные рецептурные бланки */
