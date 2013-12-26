@@ -347,11 +347,25 @@
     			parent="parent_id=:par1 and (startDate is null or to_date(:par2,'dd.mm.yyyy') >=startDate) and (finishDate is null or finishDate>=to_date(:par2,'dd.mm.yyyy'))"
     			names = "name"
     			nameId="id"
-    			queryAppend='vocMedService_id is not null'
+    			queryAppend="dtype='MedService'"
     			join=''
     			order=''
     			queried = "(cast(id as varchar(10)) like :query or name like UPPER(:query))"
     			parentSplitCount="2"
+    			 			
+    	/>
+    
+    </voc>
+    <voc id='medServiceAll' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService'
+    			parent=""
+    			names = "code||' '||name"
+    			nameId="id"
+    			queryAppend="dtype='MedService' and finishDate is null"
+    			join=''
+    			order=''
+    			queried = "((cast(id as varchar(10)) like :query or name like UPPER(:query)) or (replace(upper(code),'.','') like (upper(:query))) or upper(name) like upper(:query) or upper(code) like upper(:query))"
     			 			
     	/>
     
@@ -366,7 +380,7 @@
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.vocMedService_id is not null and ms.isPoliclinic='1'"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
     			queried = "(ms.code like :query or ms.name like UPPER(:query))"
@@ -385,7 +399,7 @@
     			
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.vocMedService_id is not null and ms.isPoliclinic='1'"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join medcase m on m.workFunctionPlan_id=wf.id left join WorkCalendarDay wcd on wcd.id=m.datePlan_id left join worker w on w.id=wf.worker_id'
     			order=''
     			queried = "(ms.code like :query or ms.name like UPPER(:query))"
@@ -399,7 +413,7 @@
     			names = "name||'(' || COALESCE(to_char(startDate,'DD.MM.YYYY'),'нет даты')
 ||'-'||COALESCE(TO_CHAR(finishDate,'DD.MM.YYYY'),'нет даты') ||')'"
     			nameId="id"
-    			queryAppend='vocMedService_id is not null'
+    			queryAppend="dtype='MedService'"
     			join=''
     			order=''
     			queried = "(id like :querId or name like UPPER(:query))"
