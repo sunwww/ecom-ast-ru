@@ -22,8 +22,8 @@ public class PatientSaveInterceptor implements IFormInterceptor {
 		patient.setEditDate(new java.sql.Date(new java.util.Date().getTime())) ;
 
 		if(form.isAttachedByPolicy()) {
-			LpuAttachedByDepartment attached = new LpuAttachedByDepartment() ;
-			attached.setArea(aArea)
+			//LpuAttachedByDepartment attached = new LpuAttachedByDepartment() ;
+			//attached.setArea(aArea)
 			if(form.getCreateNewOmcPolicy()) {
 				// новый полис
 				MedPolicyOmcForm polForm = form.getPolicyOmcForm() ;
