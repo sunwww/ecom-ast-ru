@@ -10,10 +10,30 @@
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="pricePosition" />
-			<msh:panel>
+			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
-					<msh:autoComplete fieldColSpan="3" property="medService" label="Медицинская услуга" vocName="medService" horizontalFill="true" />
+					<msh:autoComplete fieldColSpan="3" property="medService" label="Медицинская услуга" 
+					vocName="medServiceAll" horizontalFill="true" 
+					size="150" viewAction="entityView-mis_medService.do"
+					shortViewAction="entityView-mis_medService.do?short=Short"
+					/>
 				</msh:row>
+				<msh:ifFormTypeIsNotView formName="contract_priceMedServiceForm">
+					<msh:row>
+						
+					</msh:row>
+					<msh:row>
+						<msh:autoComplete label="Категория" property="medServiceForm.parent" vocName="medService" 
+							fieldColSpan="3" horizontalFill="true"/>
+					</msh:row>
+					<msh:row>
+						<msh:textField property="medServiceForm.code"/>
+					</msh:row>
+					<msh:row>
+						<msh:textField property="medServiceForm.name" fieldColSpan="3" 
+							horizontalFill="true"/>
+					</msh:row>
+				</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала"/>
 					<msh:textField property="dateTo" label="Дата окончания"/>

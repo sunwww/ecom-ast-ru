@@ -116,55 +116,6 @@
     	
     	</msh:section>
     </msh:ifInRole>
-    <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
-        <msh:section title="Категории" guid="e681be03-dea7-4bce-96cf-aa600185f156">
-          <ecom:webQuery  name="childMedService" nativeSql="
-          	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
-          	 (
-          	 select list(coalesce(lpu.name,'')||' - '||coalesce(vwf.name,vbt.name||' '||vbst.name||' '||vrt.name,'')) 
-          	 from WorkFunctionService wfs left join MisLpu lpu on lpu.id=wfs.lpu_id left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 	     	 left join VocBedType vbt on vbt.id=wfs.bedType_id
-	     	 left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
-	     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
-          	 where wfs.medService_id=ms.id
-          	 )
-          	 ,ms.code 
-          	 from MedService ms 
-          	 left join VocMedService vms on vms.id=ms.vocMedService_id 
-          	 where ms.parent_id='${param.id}'
-          	 order by ms.code
-          " guid="childMedService" />
-		  	<msh:tableNotEmpty name="childMedService">
-		  	<msh:toolbar >
-			                	<tbody>
-			                		<msh:toolbar>
-				                		<tr>
-				                			<th class='linkButtons' colspan="6">
-			                					<msh:textField property="planDate" label="Дата"/>
-			                					<input type='button' value='Изменить начало актуальности' onclick="javascript:updateStartDate()" />
-			                					<input type='button' value='Изменить окончание актуальности' onclick="javascript:updateEndDate()" />
-			                					<input type='button' value='Удалить категории(мед.услуги)' onclick="javascript:deleteMedService()" />
-			                					<br/>
-			                					<input type='button' value='Добавить раб.функцию (если прикреп. услуга)' onclick="javascript:updateWorkFunction('add')" />
-			                					<input type='button' value='Убрать прикрепление раб.функции' onclick="javascript:updateWorkFunction('delete')" />
-			                					<msh:autoComplete property="function" horizontalFill="true" label="Раб. функция" vocName="vocWorkFunction"/>
-			                					<br/>
-			                					<msh:autoComplete property="lpu" horizontalFill="true" label="ЛПУ" vocName="lpu"/>
-			                				</th>
-				                		</tr>
-			                		</msh:toolbar>
-			                	</tbody>
-		  	</msh:toolbar>
-  	</msh:tableNotEmpty>
-  	<msh:table selection="true" name="childMedService" action="entityParentView-mis_medService.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
-            <msh:tableColumn  property="7" columnName="Код"  />
-            <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
-            <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
-		      <msh:tableColumn columnName="Дата начала" property="4"/>
-		      <msh:tableColumn columnName="Дата окончания" property="5"/>
-		      <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
-          </msh:table>
-        </msh:section>
-    </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
         <msh:section title="Шаблоны заключений" guid="e681be03-d0185f156">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />

@@ -243,6 +243,7 @@
         		
         <!-- Медицинские услуги -->  		
         <form-bean name="mis_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceForm" />
+        <form-bean name="mis_medServiceGroupForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceGroupForm" />
         <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
         <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
@@ -389,7 +390,7 @@
 				path="/WEB-INF/actions/contract_priceList/listAnalisisByPricePosition.jsp" />
 		</action>
 		<!-- Анализ улуг по прейскуранту и медицинских по договорам -->	
-		<action path='/contact_analisis_by_medService'
+		<action path='/contact_analisis_by_medServices'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm" validate='false' scope="session">
 			<forward name="success" redirect="false"

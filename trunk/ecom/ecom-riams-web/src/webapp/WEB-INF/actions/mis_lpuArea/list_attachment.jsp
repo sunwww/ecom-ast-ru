@@ -35,7 +35,10 @@
         <msh:textField property="numberReestr" label="Реестровый номер" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="period" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:textField  property="period" label="Период с" />
+        <msh:textField  property="periodEnd" label="до" />
+      </msh:row>
+      <msh:row>
         <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
        </msh:row>
        <msh:row>
