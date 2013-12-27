@@ -63,10 +63,10 @@ public class ContractReportsForm extends BaseValidatorForm{
 	/** DateFrom */
 	private String theDateFrom;
 	
-	/** Тип услуги */
-	public Long getPricePosition() {return thePricePosition;}
-	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
+	/** Тип позиции */
+	public Long getPositionType() {return thePositionType;}
+	public void setPositionType(Long aPositionType) {thePositionType = aPositionType;}
 
-	/** Тип услуги */
-	private Long thePricePosition;
+	/** Тип позиции */
+	private Long thePositionType;
 }

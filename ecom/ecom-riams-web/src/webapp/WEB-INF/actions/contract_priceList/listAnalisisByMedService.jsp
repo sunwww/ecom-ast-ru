@@ -133,20 +133,20 @@
     	} 
     	String filterByCode = request.getParameter("filterByCode") ;
     	String filterByName = request.getParameter("filterByName") ;
-    	ActionUtil.setLikeSql("filterByCode", "pp.code", request) ;
-    	ActionUtil.setLikeSql("filterByName", "pp.name", request) ;
+    	ActionUtil.setLikeSql("filterByCode", "ms1.code", request) ;
+    	ActionUtil.setLikeSql("filterByName", "ms1.name", request) ;
     	ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
     	if (typeFindMed!=null && (typeFindMed.equals("1") ||typeFindMed.equals("2")||typeFindMed.equals("3")||typeFindMed.equals("4"))) {
     	%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
-select pp.id||':'||coalesce(ms.id,'0') as ppid,pp.code as ppcode,pp.name as ppname
+select coalesce(pp.id,0)||':'||coalesce(ms.id,'0') as ppid,pp.code as ppcode,pp.name as ppname
 ,ms1.code as ms1code,ms1.name as ms1name
 ,ms.code as mscode,ms.name as msname,pp.cost
 from MedService ms1
-left join PriceMedService pms on pms.medService_id=pp.id
-left join PricePosition pp on ms1.id=pms.pricePosition_id
+left join PriceMedService pms on ms1.id=pms.pricePosition_id
+left join PricePosition pp on pms.medService_id=pp.id
 left join MedService ms on ${findMedSql}
 where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} ${findMedAddSql}
 ${filterByCodeSql} ${filterByNameSql}
@@ -166,8 +166,8 @@ order by ms1.code
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table selection="multy" name="journal_expert"
-    viewUrl="entityParentView-contract_pricePosition.do?short=Short" 
-     action="entityParentView-contract_pricePosition.do" idField="1" >
+    viewUrl="entityParentView-mis_medService.do?short=Short" 
+     action="entityParentView-mis_medService.do" idField="1" >
      	<msh:tableNotEmpty>
      		                        <tr>
                             <th colspan='9'>
@@ -199,11 +199,11 @@ order by ms1.code
     <%} else { %>
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
-select pp.id as ppid,pp.code as ppcode,pp.name as ppname
+select ms1.id as ms1id,pp.code as ppcode,pp.name as ppname
 ,ms1.code as ms1code,ms1.name as ms1name,pp.cost,pp.id
 from MedService ms1
-left join PriceMedService pms on pms.medService_id=pp.id
-left join PricePosition pp on ms1.id=pms.pricePosition_id
+left join PriceMedService pms on ms1.id=pms.pricePosition_id
+left join PricePosition pp on pms.medService_id=pp.id
 where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} 
 ${filterByCodeSql} ${filterByNameSql}
 order by ms1.code
@@ -222,8 +222,8 @@ order by ms1.code
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table selection="multy" name="journal_expert"
-    viewUrl="entityParentView-contract_pricePosition.do?short=Short" 
-     action="entityParentView-contract_pricePosition.do" idField="1" >
+    viewUrl="entityParentView-mis_medService.do?short=Short" 
+     action="entityParentView-mis_medService.do" idField="1" >
      	<msh:tableNotEmpty>
      		                        <tr>
                             <th colspan='9'>

@@ -29,7 +29,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    <msh:sideMenu title="Перейти">
 	    	<msh:sideLink styleId="org" action="/voc_orgs" name="Организации" roles="/Policy/Voc/VocOrg/View" title="Перейти к справочнику организаций"/>
 	    	<msh:sideLink styleId="operation" action="/voc_operations" name="Хир.операции" roles="/Policy/Voc/VocOperation/View" title="Перейти к справочнику хир. операций"/>
-	    	<msh:sideLink styleId="medService" action="/entityParentList-mis_medService.do?id=0" name="Услуги" roles="/Policy/Mis/MedService/View" title="Перейти к справочнику услуг"/>
+	    	<msh:sideLink styleId="medService" action="/entityParentList-mis_medServiceGroup.do?id=0" name="Услуги" roles="/Policy/Mis/MedService/View" title="Перейти к справочнику услуг"/>
 	    	<msh:sideLink styleId="drugUN" action="/voc_drugUNs" name="Лек.Ср (непатен.)" roles="/Policy/Voc/VocDrugUnlicensedName/View" title="Перейти к справочнику Лек.Ср"/>
 	    	<msh:sideLink styleId="drugLN" action="/voc_drugLNs" name="Лек.Ср (патен.)" roles="/Policy/Voc/VocDrugLicensedName/View" title="Перейти к справочнику Лек.Ср"/>
 	    	<msh:sideLink styleId="drugTrade" action="/voc_drugs" name="Лек.Ср (торг.)" roles="/Policy/Voc/VocDrugUnlicensedName/View" title="Перейти к справочнику Лек.Ср"/>

@@ -472,18 +472,25 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="f0397eb1-40c1-48ba-a497-8bac20657c4d">
       <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/View" guid="ac45563d-aed0-4721-9247-0f07b0b40cf8">
         <ecom:webQuery name="attbydep"
-        nativeSql="select l.id,ml.name||' '||la.number as areaname 
+        nativeSql="select l.id
+        ,vat.name as vatname
+        ,ml.name as mlname,la.number as areaname
+        
+        ,l.dateFrom as ldateFrom,l.dateTo as ldateTo 
         from lpuAttachedByDepartment l
         left join LpuArea la on la.id=l.area_id
         left join MisLpu ml on ml.id=l.lpu_id
+        left join VocAttachedType vat on vat.id=l.attachedType_id
         where l.patient_id=${param.id}"/>
-        <msh:tableNotEmpty name="attbydep">
-          <msh:section title="Специальное прикрепление">
-            <msh:table name="attbydep" hideTitle="true" action="entityParentView-mis_lpuAttachedByDepartment.do" idField="1">
-              <msh:tableColumn property="2"/>
+          <msh:section title="Специальное прикрепление" createUrl="entityParentPrepareCreate-mis_lpuAttachedByDepartment.do?id=${param.id}" createRoles="/Policy/Mis/Patient/AttachedByDepartment/Create">
+            <msh:table name="attbydep" action="entityParentView-mis_lpuAttachedByDepartment.do" idField="1">
+              <msh:tableColumn property="2" columnName="Тип прикрепления"/>
+              <msh:tableColumn property="3" columnName="ЛПУ"/>
+              <msh:tableColumn property="4" columnName="Участок"/>
+              <msh:tableColumn property="5" columnName="Дата прикрепления"/>
+              <msh:tableColumn property="6" columnName="Дата открепления"/>
             </msh:table>
           </msh:section>
-        </msh:tableNotEmpty>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <!-- ПОЛИСЫ -->

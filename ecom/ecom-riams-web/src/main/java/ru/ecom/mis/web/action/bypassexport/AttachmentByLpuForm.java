@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.action.bypassexport;
 
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -24,15 +25,7 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	@Required @DateString @DoDateString
 	public String getPeriod() {return thePeriod;}
 	public void setPeriod(String aPeriod) {thePeriod = aPeriod;}
-	
-	/** Период */
-	@Comment("Период")
-	@Required @DateString @DoDateString
-	public String getPeriodEnd() {return thePeriodEnd;}
-	public void setPeriodEnd(String aPeriodEnd) {thePeriodEnd = aPeriodEnd;}
 
-	/** Период */
-	private String thePeriodEnd;
 	/** NumberReestr */
 	@Comment("NumberReestr")
 	@Required
@@ -60,5 +53,12 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	private String theNumberPackage;
 	/** ЛПУ */
 	private Long theLpu;
+	/** Период до */
+	@Comment("Период до")
+	@DateString @DoDateString @Required
+	public String getPeriodTo() {return thePeriodTo;}
+	public void setPeriodTo(String aPeriodTo) {thePeriodTo = aPeriodTo;}
 
+	/** Период до */
+	private String thePeriodTo;
 }

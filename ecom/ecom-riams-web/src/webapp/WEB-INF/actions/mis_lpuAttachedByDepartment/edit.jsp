@@ -6,12 +6,15 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='body' type='string'>
-        <msh:form action="entityParentSaveGoParentView-mis_lpuAttachedByDepartment.do" defaultField="series">
+        <msh:form action="entityParentSaveGoParentView-mis_lpuAttachedByDepartment.do" defaultField="attachedTypeName">
             <msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
             <msh:hidden property="patient"/>
 
             <msh:panel>
+            	<msh:row>
+            		<msh:autoComplete property="attachedType" label="Тип прикрепления" fieldColSpan="3" horizontalFill="true" vocName="vocAttachedType"/>
+            	</msh:row>
 				<msh:row styleId='rowLpu'>
 		            <msh:autoComplete fieldColSpan="3" property="lpu" label="ЛПУ" horizontalFill="true"
 		                              vocName="lpu" size="50"/>

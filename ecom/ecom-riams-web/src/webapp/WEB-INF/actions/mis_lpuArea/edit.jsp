@@ -43,47 +43,7 @@
           </msh:table>
         </msh:sectionContent>
       </msh:section>
-      <%--
-      <msh:section>
-      <table width="100%" >
-      	<tbody>
-      		<tr>
-      			<td valign="top">
-      				<msh:section title="Список карт обратившихся за психиатрической помощью по участку">
-      					<msh:sectionContent>
-      						<ecom:webQuery name="listOpenCard" nativeSql="select pcc.id as pccid,pcc.cardNumber as pcccardNumber,p.lastname||' '||p.firstname|| ' '||p.middlename as lfm,area.startDate,area.finishDate,p.birthday as pbirthday from PsychiatricCareCard pcc 
-      						left join Patient p on p.id=pcc.patient_id left join LpuAreaPsychCareCard area on area.lpuArea_id=${param.id} 
-      						where pcc.id=area.careCard_id and area.finishDate is null"/>
-      						<msh:table name="listOpenCard" action="entityParentView-psych_careCard.do" idField="1">
-      							<msh:tableColumn columnName="#" property="sn"/>
-      							<msh:tableColumn columnName="№карты" property="2"/>
-      							<msh:tableColumn columnName="ФИО пациента" property="3"/>
-      							<msh:tableColumn columnName="Год рождения" property="6"/>
-      							<msh:tableColumn columnName="Дата прибытия" property="4"/>
-      							<msh:tableColumn columnName="Дата убытия" property="5"/>
-      						</msh:table>
-      					</msh:sectionContent>
-      				</msh:section>
-      			</td>
-      			<td valign="top">
-      				<msh:section title="Список закрытых карт обратившихся за психиатрической помощью по участку">
-      						<ecom:webQuery name="listCloseCard" nativeSql="select pcc.id as pccid,pcc.cardNumber,p.lastname||' '||p.firstname|| ' '||p.middlename as lfm,area.startDate,area.finishDate,p.birthday from PsychiatricCareCard pcc left join Patient p on p.id=pcc.patient_id 
-      						left join LpuAreaPsychCareCard area on area.lpuArea_id=${param.id} where pcc.id=area.careCard_id and area.finishDate is not null"/>
-      						<msh:table name="listCloseCard" action="entityParentView-psych_careCard.do" idField="1">
-      							<msh:tableColumn columnName="#" property="sn"/>
-      							<msh:tableColumn columnName="№карты" property="2"/>
-      							<msh:tableColumn columnName="ФИО пациента" property="3"/>
-      							<msh:tableColumn columnName="Год рождения" property="6"/>
-      							<msh:tableColumn columnName="Дата прибытия" property="4"/>
-      							<msh:tableColumn columnName="Дата убытия" property="5"/>
-      						</msh:table>
-      				</msh:section>
-      			</td>
-      		</tr>
-      	</tbody>
-      </table>
-      </msh:section>
-      --%>
+     
     </msh:ifFormTypeIsView>
     
   </tiles:put>
