@@ -18,7 +18,7 @@
   <%
   
 	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
-	String typeDtype =ActionUtil.updateParameter("Expert_Ker","typeView","3", request) ;
+	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -36,11 +36,21 @@
       </msh:row>
       <msh:row>
         <msh:textField  property="period" label="Период с" />
-        <msh:textField  property="periodEnd" label="до" />
+        <msh:textField  property="periodTo" label="до" />
       </msh:row>
       <msh:row>
         <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
        </msh:row>
+      <msh:row>
+        <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="1">  прикрепленные пациенты (все)
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="2">  пациенты без адресов
+	        </td>
+       </msh:row>
+       
        <msh:row>
        	<msh:hidden property="filename"/>
        	<td colspan="4">
@@ -52,7 +62,19 @@
             <input type="submit" value="Найти" />
           </td>
       </msh:row>
-      
+      <script type="text/javascript">
+      checkFieldUpdate('typeView','${typeView}',1) ;
+      function checkFieldUpdate(aField,aValue,aDefaultValue) {
+    	   	eval('var chk =  document.forms[0].'+aField) ;
+    	   	var aMax=chk.length ;
+    	   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+    	   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+    	   		chk[+aDefaultValue-1].checked='checked' ;
+    	   	} else {
+    	   		chk[+aValue-1].checked='checked' ;
+    	   	}
+    	   }
+      </script>
     </msh:panel>
     </msh:form>
     <script type='text/javascript'>
