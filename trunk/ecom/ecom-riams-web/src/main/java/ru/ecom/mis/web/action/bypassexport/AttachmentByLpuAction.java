@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
+import ru.ecom.mis.web.action.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
@@ -23,20 +24,29 @@ public class AttachmentByLpuAction extends BaseAction {
     	
     	if (form!=null ) {
     		ActionErrors  erros = form.validate(aMapping, aRequest) ;
-    		System.out.println(erros) ;
+    		//System.out.println(erros) ;
     		if (erros.isEmpty()&&form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))
     			) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
-	    	
+	    	String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
-        	Calendar cal = Calendar.getInstance() ;
+    		Calendar cal = Calendar.getInstance() ;
+        	Calendar calTo = Calendar.getInstance() ;
         	cal.setTime(cur) ;
-        	
+        	Date curTo = DateFormat.parseDate(form.getPeriodTo()) ;
+        	calTo.setTime(curTo) ;
 	    	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
-	        String filename = service.export(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-	        		, form.getLpu(),format1.format(cal.getTime()), form.getNumberReestr()
-	        		, form.getNumberPackage());
+	    	String filename ;
+	        if (typeView!=null && typeView.equals("1")) {
+		    	filename = service.export(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		        		, form.getLpu(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getNumberPackage());
+	        } else {
+		    	filename = service.exportNoAddress(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		        		, form.getLpu(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getNumberPackage());
+	        }
 	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
         }}
         return aMapping.findForward("success") ;
