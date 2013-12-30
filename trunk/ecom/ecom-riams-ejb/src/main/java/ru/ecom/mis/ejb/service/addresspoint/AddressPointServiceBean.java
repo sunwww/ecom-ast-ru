@@ -101,7 +101,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
         String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
         workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-        String filename = "P"+aNReestr+"_"+aDateTo+aNPackage+".xml" ;
+        String filename = "P_without_address"+aNReestr+"_"+aDateTo+aNPackage+".xml" ;
         File outFile = new File(workDir+"/"+filename) ;
         XmlDocument xmlDoc = new XmlDocument() ;
         Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
