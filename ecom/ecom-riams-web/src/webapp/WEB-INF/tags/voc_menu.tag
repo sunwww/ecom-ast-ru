@@ -38,4 +38,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	<msh:sideLink styleId="post" action="/entityList-voc_post.do" name="Должности" roles="/Policy/Voc/VocPost/View" title="Перейти к должностям"/>
 	    	<msh:sideLink styleId="workFunction" action="/entityList-voc_workFunction.do" name="Рабочие функции" roles="/Policy/Voc/VocWorkFunction/View" title="Перейти к рабочим функциям"/>
 	    	<msh:sideLink styleId="extDisp" action="/entityList-extDisp_voc.do" name="Виды доп. диспансеризации" roles="/Policy/Mis/ExtDisp/Card/Voc/View" title="Перейти к списку видов доп. диспансеризации"/>
+			<msh:sideLink styleId="analisisMedServices"
+				action="/contact_analisis_by_medServices.do" 
+				name="Анализ услуг " roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"
+				title="Анализ услуг "
+				/>
 	    </msh:sideMenu>
