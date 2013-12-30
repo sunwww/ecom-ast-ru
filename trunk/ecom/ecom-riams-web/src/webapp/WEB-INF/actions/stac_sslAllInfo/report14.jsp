@@ -459,9 +459,7 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Свод по нозоологиям (выписанные)</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="report14swod" nativeSql="
+    <ecom:webQuery name="report14swod" nameFldSql="report14swod_sql" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
 ,count(sls.id) as cntNoDeath
 ,count(case when sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
@@ -495,6 +493,19 @@ ${age_sql}
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
+    <msh:sectionTitle>Свод по нозоологиям (выписанные)
+    
+    	    <form action="print-report_14_2.do" method="post" target="_blank">
+	    Свод по нозоологиям (выписанные)
+	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    </msh:sectionTitle>
+    <msh:sectionContent>
     <msh:table name="report14swod" 
     viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >

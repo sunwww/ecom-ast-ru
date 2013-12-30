@@ -119,32 +119,9 @@
 	        <msh:row>
 	        <msh:separator colSpan="8" label="Выписной эпикриз" />
 	        </msh:row>
-        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-	        <msh:row>
-              <td colspan="4" align="center">
-	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
-	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
-	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
-	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
-	                        
-               </td>
-	        </msh:row>
-	        </msh:ifFormTypeIsNotView>
 	        <msh:row>
 	        <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
 	        </msh:row>
-        	<msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-	        <msh:row>
-              <td colspan="4" align="center">
-	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
-	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
-	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
-	                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
-               </td>
-	        </msh:row>
-	        </msh:ifFormTypeIsNotView>
         </msh:ifNotInRole>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
         	<msh:hidden property="dischargeEpicrisis"/>

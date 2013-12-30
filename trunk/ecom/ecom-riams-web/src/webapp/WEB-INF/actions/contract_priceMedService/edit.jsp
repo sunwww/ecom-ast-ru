@@ -12,6 +12,9 @@
 			<msh:hidden property="pricePosition" />
 			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
+					<msh:textField property="medService"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete fieldColSpan="3" property="medService" label="Медицинская услуга" 
 					vocName="medServiceAll" horizontalFill="true" 
 					size="150" viewAction="entityView-mis_medService.do"
@@ -20,19 +23,35 @@
 				</msh:row>
 				<msh:ifFormTypeIsNotView formName="contract_priceMedServiceForm">
 					<msh:row>
-						
+						<msh:checkBox property="medServiceIsCreate" label="Добавить мед.услугу" fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row>
+					<msh:row styleId="styleCateg">
 						<msh:autoComplete label="Категория" property="medServiceForm.parent" vocName="medService" 
 							fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row>
-						<msh:textField property="medServiceForm.code"/>
+					<msh:row styleId="styleCateg">
+						<msh:autoComplete label="Услуга по спр. МЗ" property="medServiceForm.vocMedService" vocName="vocMedService" 
+							fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row>
+					<msh:row styleId="styleCateg">
+						<msh:autoComplete label="Тип услуги" property="medServiceForm.serviceType" vocName="vocServiceType" 
+							fieldColSpan="3" horizontalFill="true"/>
+					</msh:row>
+					<msh:row styleId="styleCateg">
+						<msh:textField property="medServiceForm.code"/>
+						<msh:textField property="medServiceForm.complexity"/>
+					</msh:row>
+					<msh:row styleId="styleCateg">
 						<msh:textField property="medServiceForm.name" fieldColSpan="3" 
 							horizontalFill="true"/>
 					</msh:row>
+			        <msh:row styleId="styleCateg">
+			        	<msh:checkBox property="medServiceForm.isHospital" label="В стационаре"/>
+			        	<msh:checkBox property="medServiceForm.isDayHospital" label="В дн.стационаре"/>
+			        </msh:row>
+			        <msh:row styleId="styleCateg">
+			        	<msh:checkBox property="medServiceForm.isPoliclinic" label="В поликлинике"/>
+			        </msh:row>
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала"/>
