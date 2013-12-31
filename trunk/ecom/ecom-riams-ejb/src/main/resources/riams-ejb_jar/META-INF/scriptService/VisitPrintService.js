@@ -315,14 +315,14 @@ function printVisit(aCtx, aParams) {
 	map.put("diagPrimary",diagPrimary);
 	map.put("diagTravm",diagTravm);
 	map.put("diagTravmMkb",diagTravmMkb);
-	var vacText="";
+	/*var vacText="";
 	var vaccination=visit.getVaccinations();
 	for(var i=0;i<vaccination.size();i++){
 		var vac = vaccination.get(i);
 		vacText = (i+1) + ". " + vacText + vac.name ;
 	}
 	
-	map.put("vac",vacText);
+	map.put("vac",vacText);*/
 	var postName="";
 	
 	if(visit.workFunctionExecute!=null && visit.workFunctionExecute.workFunction!=null){
