@@ -35,7 +35,7 @@
 					<msh:autoComplete property="operator" fieldColSpan="4" label="Оператор" vocName="workFunction" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="positionType" fieldColSpan="4" label="Тип услуги" vocName="vocPositionType" horizontalFill="true"/>
+					<msh:autoComplete property="positionType" fieldColSpan="4" label="Тип услуги" vocName="vocPositionType" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="4"  vocName="priceList" horizontalFill="true" />
@@ -220,7 +220,7 @@ order by ${groupOrder}
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="Отделения" property="3" />
 					<msh:tableColumn columnName="${groupName}" property="2" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Кол-во со скидкой" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="с учетом скидки" isCalcAmount="true" property="7" />
@@ -299,7 +299,7 @@ order by ${groupOrder}
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="Отделение" property="3" />
 					<msh:tableColumn columnName="${groupName}" property="2" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="7" />
@@ -373,7 +373,7 @@ order by ${groupOrder}
 						</tr>
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="${groupName}" property="2" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="3" />
 					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="4" />
 					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
@@ -464,7 +464,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 					<msh:tableColumn columnName="Наименование контрагента" property="3" />
 					<msh:tableColumn columnName="Отделение" property="4" />
 					<msh:tableColumn columnName="Услуга" property="5" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="8" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="9" />
