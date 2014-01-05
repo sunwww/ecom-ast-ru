@@ -20,6 +20,7 @@ public class Field extends BaseEntity {
     public static final int TEXT = 1 ;
     public static final int NUMERIC = 2 ;
     public static final int DATE = 3 ;
+    public static final int BOOLEAN = 4 ;
 
     /** Название поля */
     public String getName() { return theName ; }
@@ -89,12 +90,14 @@ public class Field extends BaseEntity {
                 sb.append("D") ;
                 break ;
             case NUMERIC:
-                sb.append("N") ;
-                sb.append(getDbfSize()) ;
-                if(theDbfDecimal!=0) {
-                    sb.append(".") ;
-                    sb.append(theDbfDecimal) ;
-                }
+            	sb.append("N") ;
+            	sb.append(getDbfSize()) ;
+            	if(theDbfDecimal!=0) {
+            		sb.append(".") ;
+            		sb.append(theDbfDecimal) ;
+            	}
+            case BOOLEAN:
+                sb.append("L") ;
         }
         return sb.toString() ;
     }
