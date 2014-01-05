@@ -163,6 +163,30 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 		theFilterAdd = aFilterAdd;
 	}
 
+	/** Фильтр 1 */
+	@Comment("Фильтр 1")
+	public String getFilterAdd1() {
+		return theFilterAdd1;
+	}
+
+	public void setFilterAdd1(String aFilterAdd1) {
+		theFilterAdd1 = aFilterAdd1;
+	}
+
+	/** Фильтр 2 */
+	@Comment("Фильтр 2")
+	public String getFilterAdd2() {
+		return theFilterAdd2;
+	}
+
+	public void setFilterAdd2(String aFilterAdd2) {
+		theFilterAdd2 = aFilterAdd2;
+	}
+
+	/** Фильтр 2 */
+	private String theFilterAdd2;
+	/** Фильтр 1 */
+	private String theFilterAdd1;
 	/** Фильтр */
 	private String theFilterAdd;
 	/** Тип коек */

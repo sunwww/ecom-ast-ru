@@ -1,5 +1,6 @@
 package ru.ecom.expomc.web.actions.format.importfromdbf;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,8 +16,8 @@ import ru.ecom.expomc.ejb.services.form.format.PropertySuggest;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.ForwardUtil;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.dbf.DbfField;
-import ru.nuzmsh.dbf.DbfFile;
+import ru.nuzmsh.util.dbf.DbfFile;
+import ru.nuzmsh.util.dbf.DbfField;
 import ru.nuzmsh.web.struts.BaseAction;
 
 /**
@@ -68,6 +69,7 @@ public class SaveAction extends BaseAction {
             case DbfField.CHAR: return Field.TEXT ;
             case DbfField.DATE: return Field.DATE ;
             case DbfField.NUMERIC: return Field.NUMERIC ;
+            case DbfField.BOOLEAN: return Field.BOOLEAN ;
             //case 'L':return Field.BOOLEAN;
         }
         throw new IllegalArgumentException("Неизвестный тип поля: "+aField.getType()+" "+aField) ;
