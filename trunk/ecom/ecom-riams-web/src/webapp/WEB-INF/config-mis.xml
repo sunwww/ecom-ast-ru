@@ -430,12 +430,6 @@
 				path="/WEB-INF/actions/riams/contract.jsp" />
 		</action>
 
-		<action path='/mis_syncLpuFond'
-			type='ru.ecom.mis.web.action.synclpufond.SyncLpuFondAction'
-			validate='false' scope="request">
-			<forward name="success" redirect="true"
-				path="/entityList-mis_patient.do" />
-		</action>
 
 		<action path='/start'
 			type='ru.ecom.web.actions.base.ForwardAction' validate='false'

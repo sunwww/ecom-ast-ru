@@ -140,6 +140,9 @@
 						<li><msh:link action="stac_journalByCurator.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator">
 	                            Журнал по лечащему врачу (СЛО)
 	                        </msh:link></li>
+						<li><msh:link action="stac_diagnosis_hospital.do" roles="/Policy/Mis/Journal/DiagnosisBySls">
+	                            Журнал диагнозов по стационару (СЛС)
+	                        </msh:link></li>
 						<li><msh:link action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
 	                            Журнал диагнозов по отделениям (СЛО)
 	                        </msh:link></li>

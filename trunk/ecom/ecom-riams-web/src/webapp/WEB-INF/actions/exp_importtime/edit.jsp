@@ -18,8 +18,6 @@
             <msh:sideLink key="ALT+3" params="id" action="/exp_messageList" name="Список сообщений о проверке" />
 
             <msh:sideLink key="ALT+4" params="id" action="/exp_importtimeCheck" name="Проверить" />
-            <msh:sideLink key="ALT+5" params="id" action="/mis_syncLpuFond" name="Синхронизировать услуги" />
-
             <msh:sideLink key="ALT+6" params="id" action="/exp_sync" name="Синхронизировать данные" />
 
             <msh:sideLink params="id" confirm="Удалить импортированные данные?" action="/entityParentDelete-exp_importtime" name="Удалить" />
