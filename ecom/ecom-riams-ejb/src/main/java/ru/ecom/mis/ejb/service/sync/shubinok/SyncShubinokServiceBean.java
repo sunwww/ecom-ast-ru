@@ -123,7 +123,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	                	if (aPolicyNumber.length()>10) {
 	                		aPolicySeries = aPolicyNumber.substring(0,2)+" "+aPolicyNumber.substring(2,4) ;
 	        				aPolicyNumber = aPolicyNumber.substring(4) ;
-	        			} else {
+	        			} else  if (aPolicyNumber!=null && aPolicyNumber.trim().length()>3){
 	        				aPolicySeries = aPolicyNumber.substring(0,3) ;
 	        				aPolicyNumber = aPolicyNumber.substring(3) ;
 	        			}
@@ -258,6 +258,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			aPatient.setPatientSync(new StringBuilder().append("Ф").append(aPatient.getId()).toString()) ;
 	    	theManager.persist(aPatient);
 		}
+    	theManager.flush() ;
+    	theManager.clear() ;
 
     }
     private void syncPatient(PatientInfoShubinok aEntry, Patient aPatient, MedPolicyOmc aMedPolicy) {
