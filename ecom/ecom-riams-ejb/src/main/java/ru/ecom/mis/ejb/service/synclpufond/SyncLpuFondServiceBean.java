@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service.synclpufond;
 
+
 import java.sql.Date;
 import java.util.List;
 
@@ -16,14 +17,9 @@ import ru.ecom.address.ejb.service.ILocalAddressService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.EntityHelper;
-import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
 import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
-
 import ru.nuzmsh.util.format.DateFormat;
 
 /**

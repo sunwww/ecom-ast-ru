@@ -115,7 +115,10 @@ public class FormatServiceBean implements IFormatService {
                 return Field.DATE;
             }
             if (aType.startsWith("N")) {
-                return Field.NUMERIC;
+            	return Field.NUMERIC;
+            }
+            if (aType.startsWith("L")) {
+                return Field.BOOLEAN;
             }
         }
         return Field.TEXT;

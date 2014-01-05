@@ -3,11 +3,14 @@ package ru.ecom.expomc.ejb.domain.omcvoc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("OMC OKSM")
 @Entity
 @Table(name = "OMC_OKSM",schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "alfa2" }) })
 public class OmcOksm extends OmcAbstractVoc {
 	/** Полное имя */
 	@Comment("Полное имя")
