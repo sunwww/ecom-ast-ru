@@ -28,7 +28,6 @@ import ru.ecom.address.ejb.service.IAddressService;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
-import ru.ecom.jaas.ejb.service.SecUserServiceBean;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
