@@ -106,8 +106,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
                         .setParameter("time", aTimeId)
                         .setParameter("id", id);
                 Iterator<PatientAttachedImport> pats = QueryIteratorUtil.iterate(PatientAttachedImport.class, query);
-            	//nextData = pats.hasNext() ;
-            	nextData=false ;
+            	nextData = pats.hasNext() ;
+            	//nextData=false ;
 	            while (pats.hasNext()) {
 	            	PatientAttachedImport patImp = pats.next();
 	                if (monitor.isCancelled()) {
