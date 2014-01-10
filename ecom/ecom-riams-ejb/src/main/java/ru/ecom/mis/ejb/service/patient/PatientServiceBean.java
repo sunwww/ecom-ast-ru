@@ -119,8 +119,32 @@ public class PatientServiceBean implements IPatientService {
 		 //return np.getId();
 	}
 	
-	private String getAddressByKladr(String aKladr,String aRayon, String aSity, String aStreet) {
+	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet) {
 		StringBuilder sql = new StringBuilder() ;
+		aStreet=aStreet.toUpperCase().replaceAll(" ", "").replaceAll("-", "").replaceAll("№", "N") ;
+		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
+		if (aCity.endsWith(" С")
+				||aCity.endsWith(" П")
+				||aCity.endsWith(" Г")
+				||aCity.endsWith("Г.")
+				||aCity.endsWith("П.")
+				||aCity.endsWith("С.")
+				) aCity = aCity.substring(0,aCity.length()-2) ;
+		else if (aCity.endsWith("ГОР.")
+				||aCity.endsWith(" ГОР")
+				||aCity.endsWith(" ПОС")
+				||aCity.endsWith("ПОС.")
+				) aCity = aCity.substring(0,aCity.length()-4) ;
+		else if (aCity.startsWith("С.")||aCity.startsWith("С ")) aCity = aCity.substring(2) ;
+		else if (aCity.startsWith("Г.")||aCity.startsWith("Г ")) aCity = aCity.substring(2) ;
+		else if (aCity.startsWith("П.")||aCity.startsWith("П ")) aCity = aCity.substring(2) ;
+		else if (aCity.startsWith("ГОР.")) aCity = aCity.substring(4) ;
+		else if (aCity.startsWith("ПОС.")) aCity = aCity.substring(4) ;
+		else if (aCity.startsWith("ГОР ")) aCity = aCity.substring(4) ;
+		else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
+		
+		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
+		
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
@@ -129,14 +153,14 @@ public class PatientServiceBean implements IPatientService {
 		} else {
 			if (aStreet.startsWith("?")) return res.toString() ;
 			if (aKladr!=null && !aKladr.equals("")) {
-				String lastKl = aKladr.equals("")?"30":aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+				String lastKl = aKladr.equals("")?aRegion:aKladr.substring(aKladr.length()-1, aKladr.length()) ;
 				
 				while (lastKl!=null&&!lastKl.equals("")&&lastKl.equals("0")) {
 					aKladr = aKladr.substring(0,aKladr.length()-1) ;
 					lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
 				}
 				sql = new StringBuilder() ;
-				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
+				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aCity).append("'" ) ;
 				list.clear() ;
 				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 				if (list.size()>0) {
@@ -147,34 +171,42 @@ public class PatientServiceBean implements IPatientService {
 						lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
 					}
 					sql = new StringBuilder() ;
-					sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
+					sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aStreet).append("'" ) ;
 					list.clear() ;
 					list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-					res.append(list.get(0)[0]) ;
+					if (list.size()>0) {
+						//System.out.println("111") ;
+						res.append(list.get(0)[0]) ;
+					} else {
+						//System.out.println("222") ;
+						return getKladrByRayon(aRegion, aRayon, aCity, aStreet) ;
+					}
 				} else {
-					return getKladrByRayon(aRayon, aSity, aStreet) ;
+					return getKladrByRayon(aRegion, aRayon, aCity, aStreet) ;
 				}
 			} else {
-				return getKladrByRayon(aRayon, aSity, aStreet) ;
+				return getKladrByRayon(aRegion, aRayon, aCity, aStreet) ;
 			}
 		}
 		return res.toString() ;
 	}
-	private String getKladrByRayon(String aRayon, String aSity, String aStreet) {
+	private String getKladrByRayon(String aRegion, String aRayon, String aCity, String aStreet) {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
 		List<Object[]> list ;
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		String kladr="";
+		String kladr=aRegion;
 		if (list.size()>0) {
-			kladr = ""+list.get(0)[1] ;
+			kladr = ""+(list.get(0)[1]!=null?list.get(0)[1]:aRegion) ;
 		}
 		sql = new StringBuilder() ;
-		sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and UPPER(name)='").append(aSity).append("'" ) ;
+		sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and domen<6 and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aCity).append("'" ) ;
 		list.clear() ;
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		
 		if (list.size()>0) {
+			String kladrId=kladr = ""+list.get(0)[1] ; 
 			kladr = ""+list.get(0)[1] ;
 			String lastKl = kladr.substring(kladr.length()-1, kladr.length()) ;
 			while (lastKl!=null&&lastKl.equals("0")) {
@@ -182,43 +214,62 @@ public class PatientServiceBean implements IPatientService {
 				lastKl = kladr.length()>1?kladr.substring(kladr.length()-1, kladr.length()):null ;
 			}
 			sql = new StringBuilder() ;
-			sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and UPPER(name)='").append(aStreet).append("'" ) ;
+			sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aStreet).append("'" ) ;
 			list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			res.append(list.get(0)[0]) ;
+			if (list.size()>0) {
+				res.append(list.get(0)[0]) ;
+			} else {
+				res.append(kladrId) ;
+			}
 		}
 		return res.toString() ;
 	}
 	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
-		sql.append("select id,name from VocIdentityCard where omcCode='").append(aPassportType).append("'" ) ;
-		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (list.size()>0) {
+		List<Object[]> list = null;
+		if (aPassportType!=null && !aPassportType.trim().equals("")) {
+			sql.append("select id,name from VocIdentityCard where omcCode='").append(aPassportType).append("'" ) ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		}
+		if (list!=null && list.size()>0) {
 			res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
 		} else {
 			res.append("##");
 		}
 		sql = new StringBuilder() ;
-		//res = new StringBuilder() ;
-		String[] adr = aAddress.split("#") ;
-		String kladr = adr[0] ;
-		String rayon = adr[1].toUpperCase() ;
-		String sity = adr[2].toUpperCase() ;
-		String street = adr[3].toUpperCase() ;
-		res.append(getAddressByKladr(kladr,rayon, sity, street)) ;
-		res.append("#");
-		sql = new StringBuilder() ;
-		//res = new StringBuilder() ;
-		
-		sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("'" ) ;
-		list.clear() ;
-		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (list.size()>0) {
-			res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+		if (aAddress!=null && !aAddress.trim().equals("")) {
+			//res = new StringBuilder() ;
+			String[] adr = aAddress.split("#") ;
+			String kladr = adr[0] ;
+			String rayon = adr[1].toUpperCase() ;
+			String sity = adr[2].toUpperCase() ;
+			String street = adr[3].toUpperCase() ;
+			String region = adr[4].toUpperCase() ;
+			//System.out.println("000") ;
+			res.append(getAddressByKladr(kladr,region,rayon, sity, street)) ;
+			//System.out.println("333"+rayon) ;
+			res.append("#");
+			sql = new StringBuilder() ;
+			//res = new StringBuilder() ;
+			
+			sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("' or upper(name) like '%").append(rayon).append("%'" ) ;
+			//System.out.println(sql.toString()) ;
+			if (list!=null) list.clear() ;
+			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			//System.out.println("444--") ;
+			if (list.size()>0) {
+				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
+			} else {
+				res.append("##");
+			} 
+			
 		} else {
-			res.append("##");
+			res.append("#") ;
+			res.append("##") ;
 		}
+		//System.out.println("444") ;
 		if (aPolicy!=null &&!aPolicy.equals("")) {
 			String pol[] = aPolicy.split("#") ;
 			sql = new StringBuilder() ;
@@ -233,7 +284,7 @@ public class PatientServiceBean implements IPatientService {
 			String type=getTypePolicy(pol[1]) ;
 			sql = new StringBuilder() ;
 			sql.append("select id,id||' '||name from VocMedPolicyOmc where code='").append(type).append("'" ) ;
-			list.clear() ;
+			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 			if (list.size()>0) {
 				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
@@ -258,7 +309,6 @@ public class PatientServiceBean implements IPatientService {
 			if ( aIsPatient) {
 				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&aIsPolicy) {
 					StringBuilder sql = new StringBuilder() ;
-					
 					if (!fiodr[0].startsWith("?")) {
 						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
 						sql.append(", firstname='").append(fiodr[1]).append("'") ;
@@ -268,6 +318,9 @@ public class PatientServiceBean implements IPatientService {
 						sql.append(", commonNumber='").append(fiodr[5]).append("'") ;
 						sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
 						sql.append(", editUsername='").append(aUsername).append("'") ;
+						if (fiodr.length>6 &&fiodr[6].length()==10) {
+							sql.append(", deathDate=to_date('").append(fiodr[6]).append("','dd.mm.yyyy')") ;
+						}
 						sql.append(" where id='").append(aPatientId).append("'") ;
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 					} else {
@@ -279,6 +332,9 @@ public class PatientServiceBean implements IPatientService {
 						sql.append(", snils='").append(fiodr[4]).append("'") ;
 						sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
 						sql.append(", editUsername='").append(aUsername).append("'") ;
+						if (fiodr.length>6 &&fiodr[6].length()==10) {
+							sql.append(", deathDate=to_date('").append(fiodr[6]).append("','dd.mm.yyyy')") ;
+						}
 						sql.append(" where id='").append(aPatientId).append("'") ;
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 						
@@ -319,7 +375,8 @@ public class PatientServiceBean implements IPatientService {
 			String sity = adr[5].toUpperCase() ;
 			String street = adr[6].toUpperCase() ;
 			String rayon = adr[4].toUpperCase() ;
-			String addressid=getAddressByKladr(kladr,rayon, sity, street) ;
+			String region = adr[8].toUpperCase() ;
+			String addressid=getAddressByKladr(kladr,region,rayon, sity, street) ;
 			
 			sql = new StringBuilder() ;
 			sql.append("update Patient set ") ;
@@ -560,9 +617,17 @@ public class PatientServiceBean implements IPatientService {
 			
 		}
 	}
-    
-    
-	public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
+    public void movePatientDoubleDataAndDeleteOld(Long aIdNew, Long aIdOld) {
+		Patient newpat = theManager.find(Patient.class, aIdNew) ;
+		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
+		if (newpat.getAddress()==null && oldpat.getAddress()!=null) {
+			newpat.setAddress(oldpat.getAddress()) ;
+		}
+		movePatientDoubleData(aIdNew, aIdOld) ;
+		theManager.remove(oldpat) ;
+		
+    }
+    public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
 		if (newpat!=null && oldpat!=null) {
