@@ -21,17 +21,30 @@ public class PriceMedServiceSaveInterceptor  implements IFormInterceptor {
 		if(form.getMedServiceIsCreate()!=null&&form.getMedServiceIsCreate().equals(Boolean.TRUE)) {
 			MedServiceForm msForm = form.getMedServiceForm() ;
 			//msForm.setParent(priceMedService.getId());
-			msForm.setCode(msForm.getCode().toUpperCase().trim()) ;
-			msForm.setName(msForm.getName().toUpperCase().trim()) ;
+			if (msForm.getCode().trim().equals("")) {
+				if (priceMedService.getPricePosition()!=null)
+					msForm.setCode(priceMedService.getPricePosition().getCode().toUpperCase().trim()) ;
+			} else {
+				msForm.setCode(msForm.getCode().toUpperCase().trim()) ;
+			}
+			if (msForm.getName().trim().equals("")) {
+				if (priceMedService.getPricePosition()!=null)
+				msForm.setName(priceMedService.getPricePosition().getName().toUpperCase().trim()) ;
+			} else {
+				msForm.setName(msForm.getName().toUpperCase().trim()) ;
+			}
 			try {
 				long medServiceId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
 					.create(msForm);
+				form.setDateFrom(msForm.getStartDate()) ;
+				form.setDateTo(msForm.getFinishDate()) ;
 				System.out.println("---medService id----"+medServiceId) ;
 				MedService medService = aContext.getEntityManager().find(MedService.class, medServiceId) ;
 				System.out.println("---medService----"+medService) ;
 				priceMedService.setMedService(medService) ;
 				System.out.println("---priceMedService----"+priceMedService) ;
 				form.setMedService(medServiceId) ;
+				
 				aContext.getEntityManager().persist(priceMedService) ;
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getMessage());
