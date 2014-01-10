@@ -148,6 +148,7 @@ public class SqlUtil {
 			xsw.flush();
 			xsw.close();
 			FileUtil.rename(tempFileName, aFileName);
+			FileUtil.chmod(aFileName, "go=r", false);
 		}
 	}
 	public static String getLIST(String aColumns, String aAlias){
