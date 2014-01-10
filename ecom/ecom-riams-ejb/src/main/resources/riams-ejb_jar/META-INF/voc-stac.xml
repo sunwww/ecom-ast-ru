@@ -60,7 +60,7 @@
 		    	join=""
 		    	queryAppend=" wp.dtype='HospitalBed'"
 		    	order=""
-		    	queried=" wp.name like upper(:query) "
+		    	queried=" upper(wp.name) like upper(:query) "
 		    	names = "wp.name"
 		/>
 	</voc>
