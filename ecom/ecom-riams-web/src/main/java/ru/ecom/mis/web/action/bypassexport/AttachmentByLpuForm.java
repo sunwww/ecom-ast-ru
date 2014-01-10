@@ -61,4 +61,12 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** Период до */
 	private String thePeriodTo;
+	
+	/** Участок */
+	@Comment("Участок")
+	public Long getArea() {return theArea;}
+	public void setArea(Long aArea) {theArea = aArea;}
+
+	/** Участок */
+	private Long theArea;
 }
