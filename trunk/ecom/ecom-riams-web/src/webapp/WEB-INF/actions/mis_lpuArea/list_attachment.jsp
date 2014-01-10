@@ -30,6 +30,10 @@
        <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
         <msh:autoComplete property="lpu" vocName="lpu" label="ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="7" guid="67d2a4af-71bc-4a19-8844-4a59b97fabda" horizontalFill="true" />
       </msh:row>
+		        <msh:row styleId='rowLpuArea'>
+		            <msh:autoComplete fieldColSpan="3" property="area" label="Участок" horizontalFill="true"
+		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
+		        </msh:row>		
      <msh:row>
         <msh:textField fieldColSpan="2" property="numberPackage" label="№пакета" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="numberReestr" label="Реестровый номер" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />

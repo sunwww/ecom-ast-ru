@@ -40,11 +40,11 @@ public class AttachmentByLpuAction extends BaseAction {
 	    	String filename ;
 	        if (typeView!=null && typeView.equals("1")) {
 		    	filename = service.export(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-		        		, form.getLpu(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getLpu(),form.getArea(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
 	        } else {
 		    	filename = service.exportNoAddress(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-		        		, form.getLpu(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getLpu(),form.getArea(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
 	        }
 	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;

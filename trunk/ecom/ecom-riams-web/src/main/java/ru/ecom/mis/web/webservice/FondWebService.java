@@ -60,8 +60,8 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_POLIS(aSeries, aNumber, theLpu);
-        System.out.println("result rz:") ;
-        System.out.println(result) ;
+        //System.out.println("result rz:") ;
+        //System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -169,7 +169,7 @@ public class FondWebService {
             	String i = e.getChildText("i") ;
             	String o = e.getChildText("o") ;
             	String dr = upDate(e.getChildText("dr")) ;
-            	
+            	String dateDeath=upDate(e.getChildText("datadead")) ;
             	String ss =e.getChildText("ss") ;
             	sb.append("<td>").append("<input  onclick=\"patientcheck('patient')\" type='radio'")
             	.append(isStart?" checked='true'":"") 
@@ -177,6 +177,7 @@ public class FondWebService {
     			.append(f).append("#").append(i).append("#")
     			.append(o).append("#").append(dr).append("#")
     			.append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("#").append(aRz).append("#")
+    			.append(dateDeath).append("#")
     			.append("'/>").append("</td>") ;
            	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
@@ -186,7 +187,7 @@ public class FondWebService {
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getBirthday().equals(dr)?"":" bgcolor='yellow'"):"").append(">").append(dr).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
-            	sb.append("<td").append(">").append(upDate(e.getChildText("datadead"))).append("</td>") ;
+            	sb.append("<td").append(">").append(dateDeath).append("</td>") ;
              	sb.append("</tr>") ;
             	if (isStart) {
             		isStart=false ;
@@ -199,7 +200,7 @@ public class FondWebService {
         	result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
         	
             //System.out.println("result policy:") ;
-            System.out.println(result) ;
+            //System.out.println(result) ;
         	
         	result = updateXml(result) ;
         	//System.out.println(result);
@@ -298,7 +299,7 @@ public class FondWebService {
         	}catch(Exception e) {
         		e.printStackTrace() ;
         	}
-        	System.out.println(sb) ;
+        	//System.out.println(sb) ;
         	result = (String)aSoap.get_DOCS_from_RZ(aRz, theLpu) ;
             //System.out.println("result document:") ;
             //System.out.println(result) ;
@@ -401,6 +402,7 @@ public class FondWebService {
         			.append(kl).append("#").append(hn).append("#")
         			.append(hb).append("#").append(fn).append("#").append(r).append("#")
         			.append(sity).append("#").append(street).append("#").append(streetT).append("#")
+        			.append(provance).append("#")
         			.append("'/>").append("</td>") ;
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getAddressInfo().equals(kl)?"":" bgcolor='yellow'"):"").append(">").append(kl).append("</td>");
         		sb.append("<td").append(ac).append(">").append(index).append("</td>");

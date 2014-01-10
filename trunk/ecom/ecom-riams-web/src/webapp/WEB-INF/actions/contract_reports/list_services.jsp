@@ -131,8 +131,8 @@ String dateFrom = request.getParameter("dateFrom") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
    			request.setAttribute("groupName", "Услуга") ;
        		request.setAttribute("groupGroupNext", "5") ;
-   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat") ;
-   			request.setAttribute("groupOrder", "pp.code") ;
+   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
+   			request.setAttribute("groupOrder", "lpu.name,pp.code") ;
 		} else if (typeGroup.equals("3")){
 			// Группировка по отделению 
    			request.setAttribute("groupSql", "lpu.name") ;
@@ -167,7 +167,7 @@ String dateFrom = request.getParameter("dateFrom") ;
 		%>
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
+			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
@@ -232,28 +232,33 @@ order by ${groupOrder}
 
 			</msh:section>	
 	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
-			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
+			<msh:section>
+			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 
+, count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
 
+, count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
+- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog 
 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
  sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -283,6 +288,18 @@ group by ${groupGroup}
 order by ${groupOrder}
 			"/>
 
+			<msh:sectionTitle> 
+	    <form action="print-contract_reports_services_2_4.do" method="post" target="_blank">
+	    Финасовый отчет по услугам за период ${FromTo}
+	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+			</msh:sectionTitle>
+			<msh:sectionContent>
 				<msh:table name="finansReport" 
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
@@ -292,46 +309,57 @@ order by ${groupOrder}
 							<th></th>
 							<th></th>
 							<th></th>
-							<th colspan="3">Оплата</th>
-							<th colspan="3">Возврат</th>
-							<th colspan="2">Итог</th>
+							<th colspan="4">Оплата</th>
+							<th colspan="4">Возврат</th>
+							<th colspan="3">Итог</th>
 						</tr>
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="Отделение" property="3" />
 					<msh:tableColumn columnName="${groupName}" property="2" />
-					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="4" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="5" />
-					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="6" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="7" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="8" />
-					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="9" />
-					<msh:tableColumn columnName="Итог с НДС" isCalcAmount="true" property="10" />
-					<msh:tableColumn columnName="Итог без НДС" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="8" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="9" />
+					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="10" />
+					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="12" />
+					<msh:tableColumn columnName="Итог с НДС" isCalcAmount="true" property="13" />
+					<msh:tableColumn columnName="Итог без НДС" isCalcAmount="true" property="14" />
 				</msh:table>
+			</msh:sectionContent>
 
 			</msh:section>	
 	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
-			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
+			<msh:section >
+
+			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 
+, count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as countMedDog 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
 
+, count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as countMedDogRet 
 , sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
 
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end)  
+-
+ sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
+
  sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )
 as sumItogWithoutVat
 FROM medcontract MC
@@ -358,7 +386,17 @@ ${nationalitySql} ${departmentSql} ${positionTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
-
+			<msh:sectionTitle> 
+	    <form action="print-contract_reports_services_3.do" method="post" target="_blank">
+	    Финасовый отчет по услугам за период ${FromTo}
+	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+			</msh:sectionTitle>
 				<msh:table name="finansReport" 
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
@@ -367,26 +405,29 @@ order by ${groupOrder}
 						<tr>
 							<th></th>
 							<th></th>
-							<th colspan="3">Оплата</th>
-							<th colspan="3">Возврат</th>
-							<th colspan="2">Итог</th>
+							<th colspan="4">Оплата</th>
+							<th colspan="4">Возврат</th>
+							<th colspan="3">Итог</th>
 						</tr>
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="${groupName}" property="2" />
-					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="3" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="4" />
-					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="5" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="7" />
-					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="8" />
-					<msh:tableColumn columnName="с НДС" isCalcAmount="true" property="9" />
-					<msh:tableColumn columnName="без НДС" isCalcAmount="true" property="10" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="8" />
+					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="9" />
+					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="10" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="с НДС" isCalcAmount="true" property="12" />
+					<msh:tableColumn columnName="без НДС" isCalcAmount="true" property="13" />
 				</msh:table>
 
 			</msh:section>	
 	<%} else if (typeGroup!=null&& typeGroup.equals("5")) {%>
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
-			<ecom:webQuery name="finansReport" nativeSql="
+			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT mc.id as sqlId
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
@@ -396,20 +437,24 @@ SELECT mc.id as sqlId
 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
 
 , sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.87 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.82 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
+- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end)
+as sumCountMedServiceItog 
 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
  sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.87 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.82 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )
 as sumItogWithoutVat
 FROM medcontract MC
@@ -443,6 +488,18 @@ group by mc.id,${groupGroup},lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,
 
 order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			"/>
+			<msh:sectionTitle>
+	    <form action="print-contract_reports_services_5.do" method="post" target="_blank">
+	    Финасовый отчет по услугам за период ${FromTo}
+	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+			
+			</msh:sectionTitle>
 
 				<msh:table name="finansReport" 
 				action="entityView-contract_medContract.do" 
@@ -456,7 +513,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 							<th></th>
 							<th colspan="3">Оплата</th>
 							<th colspan="3">Возврат</th>
-							<th colspan="2">Итог</th>
+							<th colspan="3">Итог</th>
 						</tr>
 					</msh:tableNotEmpty>
 					<msh:tableColumn columnName="#" property="sn" />
@@ -465,13 +522,14 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 					<msh:tableColumn columnName="Отделение" property="4" />
 					<msh:tableColumn columnName="Услуга" property="5" />
 					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="6" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Сумма с НДС (18%)" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="8" />
-					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="9" />
-					<msh:tableColumn columnName="Сумма с НДС" isCalcAmount="true" property="10" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="9" />
+					<msh:tableColumn columnName="Сумма с НДС (18%)" isCalcAmount="true" property="10" />
 					<msh:tableColumn columnName="Сумма без НДС" isCalcAmount="true" property="11" />
-					<msh:tableColumn columnName="с НДС" isCalcAmount="true" property="12" />
-					<msh:tableColumn columnName="без НДС" isCalcAmount="true" property="13" />
+					<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="12" />
+					<msh:tableColumn columnName="с НДС (18%)" isCalcAmount="true" property="13" />
+					<msh:tableColumn columnName="без НДС" isCalcAmount="true" property="14" />
 				</msh:table>
 
 			</msh:section>

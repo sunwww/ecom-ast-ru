@@ -44,7 +44,7 @@
 		    		<msh:separator label="Направления" colSpan="2"/>
 		    	</msh:row>
 	            <msh:row>
-		        	<msh:checkBox property="${name}Direct1" label="на ВК"/>
+		        	<msh:checkBox property="${name}Direct1" label="Анкета пациента для МРТ ислледования"/>
 		        </msh:row>
 	            <msh:row>
 		    		<msh:separator label="Отказы" colSpan="2"/>

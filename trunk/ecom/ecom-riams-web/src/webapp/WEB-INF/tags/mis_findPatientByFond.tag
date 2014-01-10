@@ -130,6 +130,7 @@
 				$('firstname').value=fiodr[1] ;
 				$('middlename').value=fiodr[2] ;
 				$('birthday').value=fiodr[3] ;
+				$('deathDate').value=fiodr[6] ;
 				if (fiodr[4]!=null) $('snils').value=fiodr[4] ;
 				if (fiodr[5]!=null) $('commonNumber').value=fiodr[5] ;
 			}
@@ -178,9 +179,11 @@
 				$('houseBuilding').value=adr[2] ;
 				$('flatNumber').value=adr[3] ;
 				//$('rayon').value=adr[4] ;//
-				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6] ;
+				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6]+"#"+adr[8] ;
+				
 				//alert(address);
-			} 
+			}
+			if (passType.length>1 || address.length>6 || policyInfo.length>2) {
 			PatientService.getInfoVocForFond(
 					passType,address,policyInfo,{
 						callback: function(aResult) {
@@ -216,7 +219,11 @@
 				);
 
 			
-			
+			} else {
+				$('sexName').focus() ;
+				$('sexName').select() ;
+				cancel${name}FindPatientByFond() ;
+			}
 		}
      }
      function ${name}ButtonView(aView) {

@@ -74,7 +74,7 @@
 					where smc.dtype='ShortMedCase' and smc.medCard_id='${param.id}'
 					and smc.dateStart is null"
 			/>
-	          <msh:table name="tickets" action="entityParentEdit-smo_ticket.do" idField="1" guid="2efa0c8f-b1ce-4046-90bc-2726273449b4">
+	          <msh:table name="tickets" printUrl="print-ticketshort.do?s=PrintTicketService&m=printInfo" action="entityParentEdit-smo_ticket.do" idField="1" guid="2efa0c8f-b1ce-4046-90bc-2726273449b4">
 	            <msh:tableColumn columnName="Номер" property="1" guid="2a9991-fa0c-4e31-a4d2-3a143b2531bb" />
 	            <msh:tableColumn columnName="Дата выдачи" property="2" guid="2a999db1-fa0c-4e31-a4d2-3a143b2531bb" />
 	            <msh:tableColumn columnName="Дата приема" property="3" guid="2a999db0c-4e31-a4d2-3a143b2531bb" />
