@@ -69,4 +69,11 @@ public class ContractReportsForm extends BaseValidatorForm{
 
 	/** Тип позиции */
 	private Long thePositionType;
+	
+	/** Тип отделения */
+	public Long getDepartmentType() {return theDepartmentType;}
+	public void setDepartmentType(Long aDepartmentType) {theDepartmentType = aDepartmentType;}
+
+	/** Тип отделения */
+	private Long theDepartmentType;
 }

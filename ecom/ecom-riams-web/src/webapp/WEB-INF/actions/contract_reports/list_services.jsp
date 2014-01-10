@@ -29,6 +29,9 @@
 					<msh:autoComplete property="department" label="Отделение" vocName="lpu" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="departmentType" fieldColSpan="4" label="Тип отделения" vocName="vocLpuFunction" horizontalFill="true"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="nationality" fieldColSpan="4" label="Гражданство" vocName="omcOksm" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
@@ -164,6 +167,7 @@ String dateFrom = request.getParameter("dateFrom") ;
 		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		ActionUtil.setParameterFilterSql("department","lpu.id", request) ;
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
+		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		%>
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
@@ -201,6 +205,7 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
+${departmentTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
@@ -284,6 +289,8 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
+${departmentTypeSql}
+
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
@@ -383,6 +390,7 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
+${departmentTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
@@ -478,14 +486,8 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
-
-
-
-
-
-
+${departmentTypeSql}
 group by mc.id,${groupGroup},lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
-
 order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			"/>
 			<msh:sectionTitle>
