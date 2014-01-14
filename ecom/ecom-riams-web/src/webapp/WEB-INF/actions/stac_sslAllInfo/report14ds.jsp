@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="14 форма"/>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="форма 14дс"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -151,7 +151,7 @@
   	} else {
   		
   %>
-    <msh:form action="/stac_report_14.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_report_14ds.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport14" />
     <input type="hidden" name="id" id="id" value=""/>
@@ -342,8 +342,8 @@ group by sloa.department_id,ml.name
 order by ml.name
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
       <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
@@ -377,7 +377,7 @@ order by ml.name
 select 
 sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-where vrspt.classname='F14_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
+where vrspt.classname='F14DS_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
 ) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -461,24 +461,26 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:section>
     <ecom:webQuery name="report14swod" nameFldSql="report14swod_sql" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
-,count(sls.id) as cntNoDeath
-,count(case when sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
-,count(case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then sls.id else null end) as cntNoDeathEmerSk
-,sum(
+,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
+,count(case when sls.result_id!=${result_death} and vht.code='ALLTIMEHOSP' then sls.id else null end) as cntDirectAllTimeHosp
+,sum(case when sls.result_id!=${result_death} then
 case 
  when (sls.dateFinish-sls.dateStart)=0 then 1 
  when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
  else (sls.dateFinish-sls.dateStart)
 end
-) as sumDays
+else 0 end) as sumDays
+,count(case when sls.result_id=${result_death} then sls.id else null end) as cntNoDeath
+
  from medcase sls
+left join VocHospType vht on vht.id=sls.targetHospType_id
 left join diagnosis diag on sls.id=diag.medcase_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 left join MedCase sloa on sloa.parent_id=sls.id
 left join BedFund bf on bf.id=sloa.bedFund_id
-left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
+left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
 where 
@@ -507,8 +509,8 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -587,7 +589,7 @@ ${paramSql}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
 ${age_sql}  
-and vrspt1.classname='F14_DIAG' 
+and vrspt1.classname='F14DS_DIAG' 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
@@ -643,7 +645,7 @@ order by p.lastname,p.firstname,p.middlename " />
      from medcase sls
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
-    left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
+    left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     where 
@@ -677,8 +679,8 @@ order by p.lastname,p.firstname,p.middlename " />
     order by vrspt.strCode
     " />
         <msh:table name="report14swod" 
-        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -754,7 +756,7 @@ order by p.lastname,p.firstname,p.middlename " />
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
-    left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
+    left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
@@ -855,8 +857,8 @@ group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
