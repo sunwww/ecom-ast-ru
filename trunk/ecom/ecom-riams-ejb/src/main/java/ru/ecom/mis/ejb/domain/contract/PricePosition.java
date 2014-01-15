@@ -192,4 +192,14 @@ public class PricePosition extends BaseEntity{
 
 	/** Тип услуги */
 	private VocPositionType thePositionType;
+	/**
+	 * НДС
+	 */
+	@Comment("Цена")
+	public BigDecimal getCostVat() {return theCostVat;}
+	public void setCostVat(BigDecimal aCostVat) {theCostVat = aCostVat;}
+	/**
+	 * НДС
+	 */
+	private BigDecimal theCostVat;
 	}
