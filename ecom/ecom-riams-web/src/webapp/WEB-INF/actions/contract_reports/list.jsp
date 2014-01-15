@@ -182,9 +182,9 @@ order by ${groupOrder}
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
-,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*0.18*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*18/118*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
-,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*0.18*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*18/118*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
 ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
@@ -321,9 +321,9 @@ SELECT cao.id as caoid
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy'),CCO.name) as kontragent
 ,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSum
-,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*0.18*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
+,round(sum(case when cao.dtype='OperationAccrual' then cams.cost*cams.countMedService*18/118*(100-coalesce(cao.discount,0))/100 else 0 end),2) as accrualSumVat
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
-,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*0.18*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
+,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*18/118*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
 ,wp.lastname||' '||wp.firstname||' '||wp.middlename as wpfio
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
