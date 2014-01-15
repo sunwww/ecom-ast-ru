@@ -176,4 +176,15 @@ public class PricePositionForm extends IdEntityForm{
 	/** Тип услуги */
 	private Long thePositionType;
 
+	/**
+	 * НДС
+	 */
+	@Comment("НДС")
+	@Persist
+	public String getCostVat() {return theCostVat;}
+	public void setCostVat(String aCostVat) {theCostVat = aCostVat;}
+	/**
+	 * Цена
+	 */
+	private String theCostVat;
 }
