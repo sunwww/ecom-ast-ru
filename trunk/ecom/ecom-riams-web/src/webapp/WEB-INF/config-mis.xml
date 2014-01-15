@@ -415,6 +415,15 @@
 				path="/WEB-INF/actions/contract_reports/list_services.jsp" />
 		</action>
 		<!-- Реестры услуг по договорам -->	
+		<action path='/contract_reports_services_group'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm"
+			validate='false'
+			scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list_services_group.jsp" />
+		</action>
+		<!-- Реестры услуг по договорам -->	
 		<action path='/contract_reports_accrual'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"

@@ -19,7 +19,7 @@
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
   if (request.getParameter("short")==null) {
 %>
-		<msh:form action="/contract_reports_services.do" defaultField="dateFrom">
+		<msh:form action="/contract_reports_services_group.do" defaultField="dateFrom">
 			<msh:panel>
 				<msh:row>
 				<msh:textField property="dateFrom" label="c"/>
@@ -50,22 +50,22 @@
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="1"> услугам
+	        	<input type="radio" name="typeGroup" value="1"> реестр
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="2"> услугам итог
+	        	<input type="radio" name="typeGroup" value="2"> услугам
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="3"> отделения итог
+	        	<input type="radio" name="typeGroup" value="3"> отделения
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="4"> отделения + тип услуги итог
+	        	<input type="radio" name="typeGroup" value="4"> отделения + тип услуги
 	        </td>
         </msh:row>
         <msh:row>
         	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="5"> реестр
+	        	<input type="radio" name="typeGroup" value="5"> &&&
 	        </td>
         </msh:row>				
         <msh:row>
@@ -77,7 +77,7 @@
 <%
   } else{
 	  %>
-		<msh:form action="/contract_reports_services.do" defaultField="dateFrom">
+		<msh:form action="/contract_reports_services_group.do" defaultField="dateFrom">
 			<msh:panel>
 				<msh:row>
 				<msh:textField viewOnlyField="true" property="dateFrom" label="c"/>
@@ -105,37 +105,26 @@
 		</msh:form>
 		
 <%  }
-String dateFrom = request.getParameter("dateFrom") ;
-		String dFrom = "" ;
-		if (dateFrom==null ||dateFrom.equals("") ) {
-			dFrom=" is null " ;
-		} else {
-			dFrom = ">=to_date('"+dateFrom+"', 'dd.mm.yyyy')" ;
-		}
-		request.setAttribute("dFrom",dFrom) ;
-		
+  
+		String dateFrom = request.getParameter("dateFrom") ;
 		String dateTo = request.getParameter("dateTo") ;
-		String dTo = "" ;
-		if (dateTo==null ||dateTo.equals("") ) {
-			dTo=" is null " ;
-		} else {
-			dTo = "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
+		
+	if (dateFrom!=null && !dateTo.equals("")) {
+		
+		if (dateTo==null || dateTo.equals("")) {
+			dateTo=dateFrom ;
 		}
-		request.setAttribute("dTo",dTo) ;
 		
-		String FromTo = "";
-		if  (dateTo==null ||dateTo.equals("") ) {}
-		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else FromTo="C "+dFrom+" По "+dTo;
-		
-		if (typeGroup.equals("1")||typeGroup.equals("2")) {
+		if (typeGroup.equals("2")||typeGroup.equals("2")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
    			request.setAttribute("groupName", "Услуга") ;
        		request.setAttribute("groupGroupNext", "5") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
+   			request.setAttribute("groupGroup1", "lpu.id,lpu.name") ;
    			request.setAttribute("groupOrder", "lpu.name,pp.code") ;
+   			request.setAttribute("groupOrder1", "lpu.name") ;
 		} else if (typeGroup.equals("3")){
 			// Группировка по отделению 
    			request.setAttribute("groupSql", "lpu.name") ;
@@ -152,7 +141,7 @@ String dateFrom = request.getParameter("dateFrom") ;
        		request.setAttribute("groupGroupNext", "2") ;
    			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name") ;
    			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
-		} else {
+		} else if (typeGroup.equals("1")) {
 		
 			//Реестр
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
@@ -171,6 +160,8 @@ String dateFrom = request.getParameter("dateFrom") ;
 		%>
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+			
+			
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
@@ -211,8 +202,8 @@ order by ${groupOrder}
 			"/>
 
 				<msh:table name="finansReport" 
-				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
-				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_services_group.do?typeGroup=${groupGroupNext}" 
+				viewUrl="contract_reports_services_group.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
 					<msh:tableNotEmpty>
 						<tr>
@@ -238,7 +229,9 @@ order by ${groupOrder}
 			</msh:section>	
 	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
 			<msh:section>
-			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
+			<ecom:webQueryGroup name="finansReport" nameFldSql="finansReport_sql"
+			nameGroupFldSql="finansReport_group_sql"
+			groupNativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
@@ -291,12 +284,72 @@ and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedSer
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
 
+group by ${groupGroup1}
+order by ${groupOrder1}
+			"
+			 nativeSql="
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql} as dateNum
+,list(distinct lpu.name)
+
+, count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 18/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+
+, count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
+, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 18/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
+- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog 
+
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+-
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+    
+as sumItog
+, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 18/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+-
+ sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 18/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ )   
+as sumItogWithoutVat
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id 
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+left join VocPositionType vpt on vpt.id=pp.positionType_id 
+left join PricePosition pg on pg.id=pp.parent_id
+
+left join MisLpu lpu on lpu.id=pg.lpu_id
+
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  
+and lpu.id = :group
+${priceMedServiceSql} ${operatorSql} ${priceListSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql}
+${departmentTypeSql}
+
 group by ${groupGroup}
 order by ${groupOrder}
-			"/>
+			"
+			
+			/>
 
 			<msh:sectionTitle> 
-	    <form action="print-contract_reports_services_2_4.do" method="post" target="_blank">
+	    <form action="print-contract_reports_services_group_2_4.do" method="post" target="_blank">
 	    Финасовый отчет по услугам за период ${FromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
@@ -308,8 +361,8 @@ order by ${groupOrder}
 			</msh:sectionTitle>
 			<msh:sectionContent>
 				<msh:table name="finansReport" 
-				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
-				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_services_group.do?typeGroup=${groupGroupNext}" 
+				viewUrl="contract_reports_services_group.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
 					<msh:tableNotEmpty>
 						<tr>
@@ -395,7 +448,7 @@ group by ${groupGroup}
 order by ${groupOrder}
 			"/>
 			<msh:sectionTitle> 
-	    <form action="print-contract_reports_services_3.do" method="post" target="_blank">
+	    <form action="print-contract_reports_services_group_3.do" method="post" target="_blank">
 	    Финасовый отчет по услугам за период ${FromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
@@ -406,8 +459,8 @@ order by ${groupOrder}
 	    </form>     
 			</msh:sectionTitle>
 				<msh:table name="finansReport" 
-				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
-				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_services_group.do?typeGroup=${groupGroupNext}" 
+				viewUrl="contract_reports_services_group.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
 					<msh:tableNotEmpty>
 						<tr>
@@ -491,7 +544,7 @@ group by mc.id,${groupGroup},lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,
 order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			"/>
 			<msh:sectionTitle>
-	    <form action="print-contract_reports_services_5.do" method="post" target="_blank">
+	    <form action="print-contract_reports_services_group_5.do" method="post" target="_blank">
 	    Финасовый отчет по услугам за период ${FromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
@@ -535,7 +588,13 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} %>
+	<%}
+	} else {
+		%>
+		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
+		<%
+		}
+		%>
 	</tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
