@@ -220,6 +220,7 @@ public class VocabularyServiceBean {
         				edps.setPlan(plan) ;
         				edps.setAgeGroup(hashAgeGroup.get(codeAge)) ;
         				edps.setSex(vs) ;
+        				edps.setServiceType(theHashService.get(codeService)) ;
         				theManager.persist(edps) ;
         			}
         		}
@@ -247,7 +248,7 @@ public class VocabularyServiceBean {
     	for (VocExtDispService serv : listService) {
     		Element el = xmlDoc.newElement(servicesEl, "service", null);
     		xmlDoc.newAttribute(el, "code", serv.getCode());
-    		xmlDoc.newAttribute(el, "isVisit", serv.getIsVisit()?"1":"0");
+    		xmlDoc.newAttribute(el, "isVisit", serv.getIsVisit()!=null && serv.getIsVisit()?"1":"0");
     		xmlDoc.newAttribute(el, "name", serv.getName());
     		
     	}
