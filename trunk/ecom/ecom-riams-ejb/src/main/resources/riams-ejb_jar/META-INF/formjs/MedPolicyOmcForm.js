@@ -104,4 +104,6 @@ function onPreDelete(aEntityId, aCtx) {
 	if (list.size()>0) {
 		aCtx.manager.createNativeQuery("update Patient set attachedOmcPolicy_id=null where id="+list.get(0)[0]).executeUpdate() ;
 	}
+	aContext.manager.createNativeQuery("update patientattachedimport set medpolicy_id=null where medpolicy_id="+aEntityId).executeUpdate() ;
+
 }
