@@ -49,6 +49,7 @@ function onPreDelete(aEntityId, aContext) {
 		}
 		
 		if(isErr) throw "Перед удалением необходимо удалить сведения: " + err_mes.substring(2) ;
+		aContext.manager.createNativeQuery("update patientattachedimport set patient_id=null where patient_id="+aEntityId).executeUpdate() ;
 		
 	}
 	
