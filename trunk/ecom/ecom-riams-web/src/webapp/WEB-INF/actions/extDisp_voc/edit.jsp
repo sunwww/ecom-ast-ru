@@ -23,7 +23,9 @@
 			shortList="entityParentList-extDisp_vocPlan.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/Plan/View" >
 			<ecom:webQuery name="extDispPlan" nativeSql="select edp.id,edp.dispType_id 
 			from ExtDispPlan edp where edp.dispType_id=${param.id}" />
-				<msh:table editUrl="js-extDisp_service-editPlan.do" name="extDispPlan" action="entityParentView-extDisp_vocPlan.do" idField="1">
+				<msh:table editUrl="js-extDisp_service-editPlan.do"
+				 
+				name="extDispPlan" action="entityParentView-extDisp_vocPlan.do" idField="1">
 					<msh:tableColumn columnName="Ид" property="1"/>
 				</msh:table>
 			</msh:section>

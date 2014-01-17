@@ -118,7 +118,9 @@
 		if (typeGroup.equals("2")||typeGroup.equals("2")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
+   			request.setAttribute("groupSql1", "lpu.name") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
+   			request.setAttribute("groupSqlId1", "'&lpu='||lpu.id") ;
    			request.setAttribute("groupName", "Услуга") ;
        		request.setAttribute("groupGroupNext", "5") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
@@ -229,11 +231,11 @@ order by ${groupOrder}
 			</msh:section>	
 	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
 			<msh:section>
-			<ecom:webQueryGroup name="finansReport" nameFldSql="finansReport_sql"
+			<ecom:webQueryGroup name="finansReport" groupFld="lpu.id" nameFldSql="finansReport_sql"
 			nameGroupFldSql="finansReport_group_sql"
 			groupNativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
-,${groupSql} as dateNum
+SELECT ${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql1} as dateNum
 ,list(distinct lpu.name)
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
