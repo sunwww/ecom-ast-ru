@@ -33,4 +33,16 @@ public class ServiceImportRolesForm extends BaseValidatorForm {
     private String theUserInFile ;
     /** Роль */
     private long theRoleId ;
+    
+    /** Clear */
+	public Boolean getIsClear() {
+		return theIsClear;
+	}
+
+	public void setIsClear(Boolean aIsClear) {
+		theIsClear = aIsClear;
+	}
+
+	/** Clear */
+	private Boolean theIsClear;
 }
