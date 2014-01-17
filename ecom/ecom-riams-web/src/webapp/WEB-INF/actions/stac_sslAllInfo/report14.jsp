@@ -625,34 +625,31 @@ order by p.lastname,p.firstname,p.middlename " />
         </msh:section>
        
         <msh:section>
-        <msh:sectionTitle>Свод по нозоологиям (умершие)</msh:sectionTitle>
-        <msh:sectionContent>
-        <ecom:webQuery name="report14swod" nativeSql="
+        
+    <msh:sectionTitle>
+        <ecom:webQuery name="report14swod" nameFldSql="report14swod_sql" nativeSql="
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
     ,count(sls.id) as cntDeath
-    ,count(
-    case when (select count(distinct mkb.code) from Diagnosis diag 
-    left join vocidc10 mkb on mkb.id=diag.idc10_id
-    left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-    where sls.id=diag.medcase_id  
-    and (vdrt.id='${diag_typeReg_pat}') 
-    and vpd.id='${diag_priority_m}'
-    )>0 then 1 else null end
-    ) as cntRash
+    ,count(distinct
+case when dc.categoryDifference_id='1' or dc.latrogeny_id is not null then sls.id else null end    ) as cntRash
+    ,
+    count(case when dc.isAutopsy='1' then sls.id else null end) autopsy
+    , count(case when dc.id is null then sls.id else null end) noDeathof
      from medcase sls
+    left join DeathCase dc on dc.medCase_id=sls.id
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
     left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
+    
     where 
     sls.dtype='HospitalMedCase' and sls.dateFinish 
     between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
      
     ${paramSql} and sloa.dateFinish is not null
     and sls.result_id='${result_death}'
-    and coalesce(
+    and case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then 
     (select mkb.code from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
@@ -661,8 +658,9 @@ order by p.lastname,p.firstname,p.middlename " />
     and vdrt.id='${diag_typeReg_pat}'
     and vpd.id='${diag_priority_m}'
     )
-    ,
-    (select mkb.code from Diagnosis diag 
+    else 
+    (
+    select mkb.code from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -670,12 +668,24 @@ order by p.lastname,p.firstname,p.middlename " />
     and vdrt.id='${diag_typeReg_cl}'
     and vpd.id='${diag_priority_m}'
     )
-    ) between rspt.codefrom and rspt.codeto
+    end between rspt.codefrom and rspt.codeto
     ${age_sql}  
      
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />
+    	    <form action="print-stac_report_14_3.do" method="post" target="_blank">
+	    Свод по нозоологиям (умершие)
+	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (умершие) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    </msh:sectionTitle>
+    <msh:sectionContent>
+        
         <msh:table name="report14swod" 
         viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
          action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
@@ -684,6 +694,8 @@ order by p.lastname,p.firstname,p.middlename " />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
           <msh:tableColumn columnName="Умерло" property="5"/>
           <msh:tableColumn columnName="Расхождение диагноза" property="6"/>
+          <msh:tableColumn columnName="Кол-во вскрытий" property="7"/>
+          <msh:tableColumn columnName="Кол-во неоформл" property="8"/>
         </msh:table>
         
         </msh:sectionContent>
@@ -703,11 +715,8 @@ order by p.lastname,p.firstname,p.middlename " />
         </msh:section>
        
         <msh:section>
-        <msh:sectionTitle>Список пациентов ${param.strname}
-        
-        </msh:sectionTitle>
-        <msh:sectionContent>
-        <ecom:webQuery name="journal_surOperation" nativeSql="
+        <msh:sectionTitle>
+        <ecom:webQuery name="journal_surOperation" nameFldSql="journal_reestr_sql" nativeSql="
     select 
     sls.id as slsid
     ,ss.code as sscode
@@ -748,7 +757,8 @@ order by p.lastname,p.firstname,p.middlename " />
      ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
     ,case when sls.emergency='1' then 'Да' else null end as emer
     ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
-
+    ,case when dc.isAutopsy='1' then 'Да' else null end as dcisAutopsy, vdc.name || coalesce (' ятрогения кат.'||vdcL.name,'')as vdcname
+    ,case when dc.id is null then 'Да' else null end as dcid
      from medcase sls
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
@@ -757,6 +767,9 @@ order by p.lastname,p.firstname,p.middlename " />
     left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
+    left join DeathCase dc on dc.medCase_id=sls.id
+    left join VocDeathCategory vdc on vdc.id=dc.categoryDifference_id
+    left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
     where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
         and to_date('${dateEnd}','dd.mm.yyyy')
     and vrspt.id='${param.strcode}'
@@ -787,8 +800,20 @@ order by p.lastname,p.firstname,p.middlename " />
     group by sls.id
     ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-    ,bf.addCaseDuration,sls.result_id
+    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name
     order by p.lastname,p.firstname,p.middlename " />
+    	    <form action="print-stac_report_14_3r.do" method="post" target="_blank">
+	    Реестр пациентов ${param.strname} по нозоологиям (умершие)
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_reestr_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр пациентов ${param.strname} по нозоологиям (умершие) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+        
+        </msh:sectionTitle>
+        <msh:sectionContent>
         <msh:table name="journal_surOperation" 
         viewUrl="entityShortView-stac_ssl.do" 
          action="entityView-stac_ssl.do" idField="1">
@@ -804,6 +829,9 @@ order by p.lastname,p.firstname,p.middlename " />
           <msh:tableColumn columnName="Умер?" property="10"/>
           <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
           <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+          <msh:tableColumn columnName="Было вскрытие?" property="13"/>
+          <msh:tableColumn columnName="Категория расхождений" property="14"/>
+          <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		
