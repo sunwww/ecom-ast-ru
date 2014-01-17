@@ -534,6 +534,7 @@ function getDate(aDateS,aDay) {
 }
 function printReport007(aCtx,aParams) {
 	var date1 = aParams.get("dateBegin");
+	map.put("dateInfo",date1) ;
 	var department = +aParams.get("department") ;
 	var typeHour=+aParams.get("typeHour") ;
 	var date2 = getDate(date1,1) ;
@@ -544,6 +545,14 @@ function printReport007(aCtx,aParams) {
 		timeSql="08:00" ;
 	} else if (typeHour==4) {
 		timeSql="00:00" ;
+	}
+	var sqlDep = "select ml2.printName as printNameMain,ml1.name as ml1name from MisLpu ml1 left join MisLpu ml2 on ml2.id=ml1.parent_id where ml1.id='"+department+"'" ;
+	var listDep = aCtx.manager.createNativeQuery(sqlDep).getResultList() ;
+	if (listDep.size()>0) {
+		map.put("lpuMainInfo",listDep.get(0)[0]) ;
+		map.put("titleInfo",listDep.get(0)[1]+' за '+date1) ;
+	} else {
+		throw "Не найдено отделение "+department+"!!!" ;
 	}
 	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,bf.bedtype_id as bfbedtype,vbst.name as vbstname,vbt.name as vbtname,lpu.name" 
 		+"  from medcase slo"
@@ -751,11 +760,11 @@ function printReport007(aCtx,aParams) {
 		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
 		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('"+timeSql+":00' as time)"
 		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('"+timeSql+":00' as time)>slo.entrancetime)"
-		//+" and slo.prevMedCase_id is not null"
-		+" and (vht.code is null or vht.code!='ALLTIMEHOSP')"
+		+" and slo.prevMedCase_id is null"
+		//+" and (vht.code is null or vht.code!='ALLTIMEHOSP')"
 		+" order by pat.lastname,pat.firstname,pat.middlename" ;
 	//throw asql1 ;
-	//Поступивших из круглосуточного стационара
+	//Поступивших из круглосуточного стационара (переведенных)
 	var asql2 = "select ss.code as sscode"
 		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevMedCase_id is not null then '('||pdep.name||')' else '' end as fio"
 		+" from medcase slo"
@@ -767,13 +776,13 @@ function printReport007(aCtx,aParams) {
 		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
 		+" where  slo.dtype='DepartmentMedCase' and slo.department_id='"+department+"' and (slo.datestart = to_date('"+date1+"','dd.mm.yyyy') and slo.entrancetime>=cast('"+timeSql+":00' as time)"
 		+" or slo.datestart = to_date('"+date2+"','dd.mm.yyyy') and cast('"+timeSql+":00' as time)>slo.entrancetime)"
-		//+" and slo.prevMedCase_id is not null"
-		+" and (vht.code='ALLTIMEHOSP')"
+		+" and slo.prevMedCase_id is not null"
+		//+" and (vht.code='ALLTIMEHOSP')"
 		+" order by pat.lastname,pat.firstname,pat.middlename" ;
 	// Список выписанных
 	var asql3 = "select"
 		+"     	ss.code as sscode"
-		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+"     	,to_char(slo.dateStart,'dd/mm')||' '||pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
 		+" from medcase slo"
 		+" left join medcase sls on sls.id=slo.parent_id"
 		+" left join statisticstub ss on ss.medcase_id=sls.id"
@@ -790,13 +799,15 @@ function printReport007(aCtx,aParams) {
 		+" order by pat.lastname,pat.firstname,pat.middlename" ;
 	// Список переведенных в  другие отделения больницы
 	var asql4 = "select ss.code as sscode"
-		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when nslo.id is not null then ' ('||ndep.name||')' else '' end as fio"
 		+" from medcase slo"
 		+" left join medcase sls on sls.id=slo.parent_id"
 		+" left join statisticstub ss on ss.medcase_id=sls.id"
 		+" left join patient pat on slo.patient_id=pat.id"
 		+" left join medcase pslo on pslo.id=slo.prevmedcase_id"
+		+" left join medcase nslo on nslo.prevmedcase_id=slo.id"
 		+" left join mislpu pdep on pdep.id=pslo.department_id"
+		+" left join mislpu ndep on ndep.id=nslo.department_id"
 		+" left join vochosptype vht on vht.id=sls.sourceHospType_id"
 		+" left join vochospitalizationoutcome vho on vho.id=sls.outcome_id"
 		+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
@@ -822,7 +833,7 @@ function printReport007(aCtx,aParams) {
 		+" order by pat.lastname,pat.firstname,pat.middlename" ;
 	// Список умерших
 	var asql6 = "select ss.code as sscode"
-		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
+		+"     	,to_char(slo.dateStart,'dd/mm')||' '||pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio"
 		+" from medcase slo"
 		+" left join medcase sls on sls.id=slo.parent_id"
 		+" left join statisticstub ss on ss.medcase_id=sls.id"
