@@ -37,7 +37,12 @@ public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
 			
 			for (WebQueryResult wqr:resultGroup) {
 				result.add(wqr) ;
-				result.addAll(service.executeNativeSql(theNativeSql.replaceAll(":group", ""+wqr.get2()),maxResult)) ;
+				String natSql = theNativeSql.replaceAll(":group", ""+wqr.get2()) ;
+				if (wqr.get2()==null) {
+					natSql = theNativeSql.replaceAll("= :group", " is null") 
+								.replaceAll("=:group", " is null") ;
+				}
+				result.addAll(service.executeNativeSql(natSql.toString(),maxResult)) ;
 			}
 			request.setAttribute(theName, result) ;
 		} catch (Exception e) {
@@ -117,6 +122,30 @@ public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
 		theNameFldSql = aNameFldSql;
 	}
 
+	/** Поле группировки */
+	@Comment("Поле группировки")
+	public String getGroupFld() {
+		return theGroupFld;
+	}
+
+	public void setGroupFld(String aGroupFld) {
+		theGroupFld = aGroupFld;
+	}
+
+	/** nameGroupFldSql */
+	@Comment("nameGroupFldSql")
+	public String getNameGroupFldSql() {
+		return theNameGroupFldSql;
+	}
+
+	public void setNameGroupFldSql(String aNameGroupFldSql) {
+		theNameGroupFldSql = aNameGroupFldSql;
+	}
+
+	/** nameGroupFldSql */
+	private String theNameGroupFldSql;
+	/** Поле группировки */
+	private String theGroupFld;
 	/** Куда сохранять запрос */
 	private String theNameFldSql;
 	/** Куда выводить результат */
