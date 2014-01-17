@@ -39,15 +39,15 @@
     int day = cal.get(Calendar.DAY_OF_MONTH) ;
     String path_curdate = "" ;
     switch (month) {
-    case 0: 
+    case 1: 
     	if (day<10) {path_curdate="0101";break;}
     	if (day==13) {path_curdate="0113";break;}
-    case 1:
+    case 2:
     	if (day==14) {path_curdate="0214";break;}
     	if (day>20 && day<24) {path_curdate="0223";break;}
-    case 2:
+    case 3:
     	if (day>5 && day<9) {path_curdate="0308";break;}
-    case 11:
+    case 12:
     	if (day>20) {path_curdate="1231";break;}
     default:
     	path_curdate="default" ;
