@@ -23,11 +23,23 @@
     <ecom:webQuery name="datelist" nativeSql="
     select m.id,m.dateStart,m.dateFinish,m.username,stat.code
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-    ,pat.birthday,dep.name,m.emergency,m.noActuality  from MedCase m 
+    ,pat.birthday,dep.name,m.emergency,m.noActuality  
+    ,
+    case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1' then 'С.ж'
+      when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1' then 'Гор.'
+        when (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30' then 'Иногор.'
+          when oo.voc_code!='643' then 'Иностр.'
+            when (oo.voc_code='643' or oo.id is null) and a.addressid is null then 'Другое'
+            when (oo.voc_code='643' or oo.id is null) and a.domen<3 then 'Другое адрес не полностью заполен'
+            else ''
+              end as jitel
+    from MedCase m 
     left join MisLpu dep on m.department_id = dep.id
     left join Patient pat on m.patient_id = pat.id  
     left join StatisticStub stat on m.statisticstub_id=stat.id 
     left join MisLpu lpu on m.department_id = lpu.id 
+       left join Address2 a on pat.address_addressid=a.addressid 
+        left join Omc_Oksm oo on oo.id=pat.nationality_id 
     where m.DTYPE='HospitalMedCase' ${paramPeriod} ${addParam} ${emergency} ${department} ${pigeonHole}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
@@ -39,6 +51,7 @@
       <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Житель" property="11" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
     </msh:table>
     <msh:tableNotEmpty name="list" guid="189caa95-f200-4b88-ae0f-5669effa19ce">
       <div class="h3">

@@ -52,7 +52,7 @@
         	<input type="radio" name="typeDate" value="3" onchange="if (document.forms[0].typeView[2].checked) document.forms[0].typeDate[0].checked='checked'">  состоящие
         </td>
         </msh:row>
-                <msh:row>
+        <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
 	        	<input type="radio" name="typeView" value="1">  свод по дням
@@ -150,9 +150,7 @@
     	<%if (view!=null && (view.equals("1"))) {%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nativeSql="
+    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
     
     select  
     '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:'
@@ -160,11 +158,42 @@
     m.${dateI} 
 ,count(distinct case when (m.emergency is null or m.emergency='0') and m.deniedHospitalizating_id is null then m.id else null end) as pl
 ,count(distinct case when m.emergency='1' and m.deniedHospitalizating_id is null then m.id else null end) as em
+,count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as obr
+,count(distinct case when m.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then m.id else null end) as obrVil
+,count(distinct case when m.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then m.id else null end) as obrCity
+,count(distinct case when m.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then m.id else null end) as obrInog
+,count(distinct case when m.deniedHospitalizating_id is null 
+and oo.voc_code!='643'  then m.id else null end) as obrInost
+,count(distinct case when m.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
 
-, CEILING(count(distinct m.id)-count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end)) as obr
 , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as denied 
-, count(distinct m.id) as all from medcase m 
-left join MisLpu as ml on ml.id=m.department_id 
+,count(distinct case when m.deniedHospitalizating_id is not null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then m.id else null end) as deniedVil
+,count(distinct case when m.deniedHospitalizating_id is not null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then m.id else null end) as deniedCity
+,count(distinct case when m.deniedHospitalizating_id is not null 
+and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then m.id else null end) as deniedInog
+,count(distinct case when m.deniedHospitalizating_id is not null 
+and oo.voc_code!='643' then m.id else null  end) as deniedInost
+,count(distinct case when m.deniedHospitalizating_id is not null 
+and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3) then m.id else null  end) as deniedOther
+, count(distinct m.id) as all1
+
+from medcase m 
+left join MisLpu as ml on ml.id=m.department_id
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id 
 where m.dtype='HospitalMedCase' and m.${dateI} 
 between to_date('${param.dateBegin}','dd.mm.yyyy')  
 and to_date('${dateEnd}','dd.mm.yyyy')  
@@ -174,6 +203,17 @@ ${emerIs} ${pigeonHole} ${department}
 group by m.${dateI}
 order by m.${dateI}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    <form action="print-stac_journalByHospital_1.do" method="post" target="_blank">
+        Результаты поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+        <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
+        <input type='hidden' name="sqlInfo" id="sqlInfo" value="">
+        <input type='hidden' name="s" id="s" value="PrintService">
+        <input type='hidden' name="m" id="m" value="printNativeQuery">
+        <input type="submit" value="Печать"> 
+                                </form>
+    </msh:sectionTitle>                             
+    <msh:sectionContent>
     <msh:table name="journal_priem" 
     viewUrl="js-stac_sslAllInfo-findByDate.do?short=Short"
     action="js-stac_sslAllInfo-findByDate.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -181,26 +221,35 @@ order by m.${dateI}
               <tr>
                 <th />
                 <th />
-                <th colspan=3>Госпитализаций</th>
-                <th/>
+                <th colspan=8>Госпитализаций</th>
+                <th colspan=6>Отказ</th>
                 <th/>
               </tr>
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Дата" property="2"/>
       <msh:tableColumn columnName="Плановые" property="3"/>
       <msh:tableColumn columnName="Экстренные" property="4"/>
-      <msh:tableColumn columnName="Итого" property="5"/>
-      <msh:tableColumn columnName="Отказ" property="6"/>
-      <msh:tableColumn columnName="Обращений" property="7"/>
+      <msh:tableColumn columnName="Всего" property="5"/>
+      <msh:tableColumn columnName="из всего с.ж" property="6"/>
+      <msh:tableColumn columnName="из всего гор." property="7"/>
+      <msh:tableColumn columnName="из всего иног." property="8"/>
+      <msh:tableColumn columnName="из всего иностр." property="9"/>
+      <msh:tableColumn columnName="из всего другое" property="10"/>
+      <msh:tableColumn columnName="Всего" property="11"/>
+      <msh:tableColumn columnName="из них с.ж" property="12"/>
+      <msh:tableColumn columnName="из них гор." property="13"/>
+      <msh:tableColumn columnName="из них иног." property="14"/>
+      <msh:tableColumn columnName="из них иностр." property="15"/>
+      <msh:tableColumn columnName="из них другое" property="16"/>
+      <msh:tableColumn columnName="Обращений" property="17"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
     	<%} 
     	if (view!=null && (view.equals("2"))) {%>
     <msh:section>
-    <msh:sectionTitle>Госпитализации</msh:sectionTitle>
-    <msh:sectionContent >
-    <ecom:webQuery name="journal_priem_otd" nativeSql="
+    <msh:sectionTitle>
+    <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
     select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
     ||m.department_id 
@@ -212,10 +261,21 @@ order by m.${dateI}
 ,count(distinct case when m.emergency='1' and of1.voc_code='К' then m.id else null end) as emK
 ,count(distinct case when m.emergency='1'  and of1.voc_code='О' then m.id else null end) as emO
 ,count(distinct m.id) as obr
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then m.id else null end) as obrVil
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then m.id else null end) as obrCity
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then m.id else null end) as obrInog
+,count(distinct case when oo.voc_code!='643'  then m.id else null end) as obrInost
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
 from medcase m 
 left join mislpu dep on dep.id=m.department_id
 left join Omc_Frm of1 on of1.id=m.orderType_id
 left join MisLpu as ml on ml.id=m.department_id 
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id 
 where m.dtype='HospitalMedCase' 
 and m.${dateI} between to_date('${param.dateBegin}','dd.mm.yyyy')  
 and to_date('${dateEnd}','dd.mm.yyyy')  
@@ -226,6 +286,16 @@ ${emerIs} ${pigeonHole} ${department}
 group by m.department_id,dep.name
 order by dep.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
+        Госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+        <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_otd_sql}"> 
+        <input type='hidden' name="sqlColumn" id="sqlColumn" value="Отделение">
+        <input type='hidden' name="s" id="s" value="PrintService">
+        <input type='hidden' name="m" id="m" value="printNativeQuery">
+        <input type="submit" value="Печать"> 
+                                </form>
+    </msh:sectionTitle>
+    <msh:sectionContent >
     <msh:table name="journal_priem_otd" 
     viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short"
     action="js-stac_sslAllInfo-findHospByPeriod.do"
@@ -236,7 +306,7 @@ order by dep.name
                 <th colspan=1></th>
                 <th colspan=3>Плановые</th>
                 <th colspan=3>Экстренные</th>
-                <th colspan=1></th>
+                <th colspan=6>Общее кол-во</th>
 
               </tr>
             </msh:tableNotEmpty>    
@@ -247,16 +317,19 @@ order by dep.name
       <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
       <msh:tableColumn columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
       <msh:tableColumn columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Итого" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="из них с.ж" property="10"/>
+      <msh:tableColumn columnName="из них гор." property="11"/>
+      <msh:tableColumn columnName="из них иног." property="12"/>
+      <msh:tableColumn columnName="из них иностр." property="13"/>
+      <msh:tableColumn columnName="из них другое" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
     	<%} 
     	if (view!=null && (view.equals("3"))) {%>
     <msh:section>
-    <msh:sectionTitle>Отказы от госпитализаций</msh:sectionTitle>
-    <msh:sectionContent >
-    <ecom:webQuery name="journal_priem_denied" nativeSql="
+    <ecom:webQuery name="journal_priem_denied" nameFldSql="journal_priem_denied_sql" nativeSql="
     
     select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
     ||m.deniedHospitalizating_id 
@@ -269,6 +342,16 @@ order by dep.name
 ,count(distinct case when m.emergency='1'  and of1.voc_code='О' then m.id else null end) as emO
 
 ,count(distinct m.id) as obr
+
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then m.id else null end) as obrVil
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then m.id else null end) as obrCity
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then m.id else null end) as obrInog
+,count(distinct case when oo.voc_code!='643'  then m.id else null end) as obrInost
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
+
 from medcase m 
 left join vocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
 left join Omc_Frm of1 on of1.id=m.orderType_id
@@ -276,7 +359,11 @@ left join MisLpu as ml on ml.id=m.department_id
 left join SecUser su on su.login=m.username
 left join WorkFunction wf on wf.secUser_id=su.id
 left join Worker w on w.id=wf.worker_id
-left join MisLpu ml1 on ml1.id=w.lpu_id 
+left join MisLpu ml1 on ml1.id=w.lpu_id
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id 
+ 
 where m.dtype='HospitalMedCase' 
 and m.${dateI} between to_date('${param.dateBegin}','dd.mm.yyyy')  
 and to_date('${dateEnd}','dd.mm.yyyy')  
@@ -287,15 +374,29 @@ ${emerIs} ${pigeonHole1} ${department}
 group by m.deniedHospitalizating_id,vdh.name
 order by vdh.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+        <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
+        Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+        <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_denied_sql}"> 
+        <input type='hidden' name="sqlInfo" id="sqlInfo" value="Причина отказа">
+        <input type='hidden' name="sqlColumn" id="sqlColumn" value="Причина отказа">
+        
+        <input type='hidden' name="s" id="s" value="PrintService">
+        <input type='hidden' name="m" id="m" value="printNativeQuery">
+        <input type="submit" value="Печать"> 
+                                </form>
+</msh:sectionTitle>
+    <msh:sectionContent >
     <msh:table name="journal_priem_denied" 
     viewUrl="js-stac_sslAllInfo-findDeniedByPeriod.do?short=Short"
     action="js-stac_sslAllInfo-findDeniedByPeriod.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
+                <th />
                 <th colspan=3>Плановые</th>
                 <th colspan=3>Экстренные</th>
-                <th colspan=1></th>
+                <th colspan=6>Общее кол-во</th>
               </tr>
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Причина отказа" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -305,7 +406,12 @@ order by vdh.name
       <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
       <msh:tableColumn columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
       <msh:tableColumn columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Итого" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="из них с.ж" property="10"/>
+      <msh:tableColumn columnName="из них гор." property="11"/>
+      <msh:tableColumn columnName="из них иног." property="12"/>
+      <msh:tableColumn columnName="из них иностр." property="13"/>
+      <msh:tableColumn columnName="из них другое" property="14"/>
     </msh:table>
     </msh:sectionContent>
     
