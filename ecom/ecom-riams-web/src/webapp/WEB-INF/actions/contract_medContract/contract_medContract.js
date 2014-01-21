@@ -2,7 +2,11 @@
  * Список всех случаев нетрудоспособности по пациенту
  */
 function list_accrual_service(aForm, aCtx) {
-    return aCtx.createForward("/WEB-INF/actions/contract_medContract/list_accrual_service.jsp") ;
+	return aCtx.createForward("/WEB-INF/actions/contract_medContract/list_accrual_service.jsp") ;
+}
+ /**/
+function list_accrual_by_customer(aForm, aCtx) {
+    return aCtx.createForward("/WEB-INF/actions/contract_medContract/list_accrual_by_customer.jsp") ;
 }
 
 function issueRefund(aForm, aCtx) {
