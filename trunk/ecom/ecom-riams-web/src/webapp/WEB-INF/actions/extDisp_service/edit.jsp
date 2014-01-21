@@ -11,50 +11,48 @@
 		<form action="javascript:void(0)"  id="mainForm" method="get" >
 		<input type="hidden" value="${param.id}" name="card" id="card">
 	<ecom:webQuery name="getServiceExam" nativeSql="
-	select eds.id as edsid
+	select 
+	
+ max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,eds.dtype as edsdtype
-, to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
-,case when eds.isPathology='1' then 'checked' else '' end
+,case when veds.isVisit='1' then 'ExtDispExam' else 'ExtDispVisit' end as edsdtype
+, to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
+, case when count(case when eds.card_id=edc.id and eds.isPathology='1' then '1' else null end)>0 then 'checked' else null end
+as servcheck
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
-left join extdispservice eds on eds.serviceType_id=edps.serviceType_id
+left join extdispservice eds on eds.serviceType_id=edps.serviceType_id and eds.dtype='ExtDispExam'
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' 
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
-and 
-(eds.card_id=edc.id and eds.dtype='ExtDispExam' or 
-(eds.card_id is null and (veds.isVisit='0' or veds.isVisit is null)
-))
 and veds.id is not null
-group by eds.id,eds.dtype,eds.serviceDate,eds.isPathology,veds.id,veds.code,veds.name,veds.isVisit
+and (veds.isVisit='0' or veds.isVisit is null)
+group by veds.id,veds.code,veds.name,veds.isVisit
 order by veds.id,veds.name"/>
 	<ecom:webQuery name="getServiceVisit" nativeSql="
-	select eds.id as edsid
-, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,eds.dtype as edsdtype
-, to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
-,eds.recommendation as edsRecommendation
-,case when eds.isEtdccSuspicion='1' then 'checked' else '' end
+	select 
+ max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
+, veds.id as vedsid,'<b>'||veds.code||'</b>' as vedscode,veds.name as vedsname 
+,case when veds.isVisit='1' then 'ExtDispExam' else 'ExtDispVisit' end as edsdtype
+, to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
+,list(case when eds.card_id=edc.id then eds.recommendation else null end) as edsRecommendation
+, case when count(case when eds.card_id=edc.id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
 from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
-left join extdispservice eds on eds.serviceType_id=edps.serviceType_id
+left join extdispservice eds on eds.serviceType_id=edps.serviceType_id and eds.dtype='ExtDispVisit'
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' 
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
-and 
-(eds.card_id=edc.id and eds.dtype='ExtDispVisit' or 
-(eds.card_id is null and (veds.isVisit='1')
-))
+and (veds.isVisit='1')
 and veds.id is not null
-group by eds.id,eds.dtype,eds.serviceDate,eds.isPathology,veds.id,veds.code,veds.name
-,veds.isVisit,eds.recommendation,eds.isEtdccSuspicion
+group by veds.id,veds.code,veds.name
+,veds.isVisit
 order by veds.id,veds.name
 
 	"/>
@@ -65,7 +63,10 @@ order by veds.id,veds.name
 		%>
 <ecom:webQuery name="servicePlanExam"
 nativeSql="
-select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
+select case when 0=1 then '1' else null end
+,veds.id as vedsid
+
+,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
@@ -87,7 +88,10 @@ order by veds.id,veds.name"
 		%>
 <ecom:webQuery name="servicePlanVisit" 
 nativeSql="
-select case when 0=1 then '1' else null end,veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
+select case when 0=1 then '1' else null end,
+veds.id as vedsid
+
+,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
