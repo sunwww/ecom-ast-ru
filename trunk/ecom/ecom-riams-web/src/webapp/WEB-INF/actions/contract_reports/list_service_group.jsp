@@ -1,3 +1,5 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Collection"%>
 <%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
@@ -121,6 +123,7 @@
    			request.setAttribute("groupSql1", "lpu.name") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
    			request.setAttribute("groupSqlId1", "'&lpu='||lpu.id") ;
+   			request.setAttribute("groupSqlIdN1", "lpu.id") ;
    			request.setAttribute("groupName", "Услуга") ;
        		request.setAttribute("groupGroupNext", "5") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
@@ -166,6 +169,7 @@
 			
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
@@ -229,12 +233,12 @@ order by ${groupOrder}
 				</msh:table>
 
 			</msh:section>	
-	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
+	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {
+	%>
 			<msh:section>
-			<ecom:webQueryGroup name="finansReport" groupFld="lpu.id" nameFldSql="finansReport_sql"
-			nameGroupFldSql="finansReport_group_sql"
-			groupNativeSql="
-SELECT ${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}"/>
+			<ecom:setAttribute name="queryGroup_sql" value="
+SELECT lpu.id as sqlId
 ,${groupSql1} as dateNum
 ,list(distinct lpu.name)
 
@@ -288,8 +292,10 @@ ${departmentTypeSql}
 
 group by ${groupGroup1}
 order by ${groupOrder1}
-			"
-			 nativeSql="
+			"/>
+			
+<ecom:setAttribute name="queryElement_id"
+value="
 SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
@@ -339,7 +345,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  
-and lpu.id = :group
+and lpu.id = ${groupDep_id}
 ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -349,20 +355,32 @@ order by ${groupOrder}
 			"
 			
 			/>
-
+			
 			<msh:sectionTitle> 
-	    <form action="print-contract_reports_services_group_2_4.do" method="post" target="_blank">
-	    Финасовый отчет по услугам за период ${FromTo}
-	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
-	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
-	    <input type='hidden' name="m" id="m" value="printNativeQuery">
-	    <input type="submit" value="Печать"> 
-	    </form>     
+			<ecom:webQuery name="queryGroup" nativeSql="${queryGroup_sql}"/>
+			<%
+			String id_group = (String)request.getAttribute("id_group") ;
+			List<WebQueryResult> allRecord = new ArrayList<WebQueryResult>() ;
+			List list= (List) request.getAttribute("queryGroup") ; 
+			for (int i = 0 ; i<list.size() ; i++) {
+				WebQueryResult wqr = (WebQueryResult)list.get(0) ;
+				
+				request.setAttribute("groupDep_id", ""+wqr.get1()) ;
+				wqr.set1(id_group+"&department="+wqr.get1()) ;
+				allRecord.add(wqr) ;
+			%>
+			<ecom:webQuery name="queryElementId" nativeSql="${queryGroup_sql}"/>
+			<%
+				List listEl= (List) request.getAttribute("queryElementId") ;
+			allRecord.addAll(listEl) ;
+				
+			}
+			request.setAttribute("all_record", allRecord) ;
+			%>
+  
 			</msh:sectionTitle>
 			<msh:sectionContent>
-				<msh:table name="finansReport" 
+				<msh:table name="all_record" 
 				action="contract_reports_services_group.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services_group.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -590,7 +608,8 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 				</msh:table>
 
 			</msh:section>
-	<%}
+	<%
+	} 
 	} else {
 		%>
 		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
