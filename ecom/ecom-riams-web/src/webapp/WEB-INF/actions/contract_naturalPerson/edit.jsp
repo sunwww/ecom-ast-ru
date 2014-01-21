@@ -20,7 +20,7 @@
       </msh:panel>
       
       <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
-      	shortList="js-contract_medContract-list_by_customer.do?short=Short&id=${param.id}" title="Список последних 10 договоров заказчика">
+      	shortList="js-contract_medContract-list_accrual_by_customer.do?short=Short&id=${param.id}" title="Список последних 10 договоров заказчика">
       	<ecom:webQuery name="medContracts" nativeSql="
       	select mc.id as mcid ,mc.contractNumber as mccontractNumber
 ,mc.dateFrom as mcdateFrom 
