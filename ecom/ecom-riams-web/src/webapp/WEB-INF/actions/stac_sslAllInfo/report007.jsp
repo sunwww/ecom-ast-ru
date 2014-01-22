@@ -211,7 +211,7 @@ if (date!=null && !date.equals("")) {
 	as cnt7EntranceDayHosp
 	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
-	and (ad1.domen=5 or ad2.domen=5)
+	and (ad1.addressIsVillage='1')
 	then 'Х' else null end
 	as cnt8EntranceVillagers
 	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
@@ -291,7 +291,6 @@ if (date!=null && !date.equals("")) {
 	left join vocservicestream vss1 on vss1.id=slo.servicestream_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
-	LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId
 	where 
 	slo.dtype='DepartmentMedCase' ${department}
 	 and (to_date('${dateBegin}','dd.mm.yyyy')>=slo.datestart or
@@ -364,7 +363,7 @@ if (date!=null && !date.equals("")) {
 	as cnt7EntranceDayHosp
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.datestart = to_date('${dateNext}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
-	and (ad1.domen=5 or ad2.domen=5)
+	and (ad1.addressIsVillage='1')
 	then slo.id else null end)
 	as cnt8EntranceVillagers
 	,count(distinct case when slo.prevmedcase_id is null and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
