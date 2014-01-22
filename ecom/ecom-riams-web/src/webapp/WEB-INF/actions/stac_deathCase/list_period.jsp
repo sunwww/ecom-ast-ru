@@ -203,8 +203,8 @@ then -1 else 0 end)
 			else (dc.deathDate-m.dateStart)
 		  end as cntDays 
     ,case when m.emergency='1' then 'экстр.' else 'план.' end as emergency 
-    ,list(distinct case when vdrt.code='3' or vdrt.code='4' then mkb.code else '' end) as conclDiag
-    ,list(distinct case when vdrt.code='5' then mkb.code else '' end) as deathDiag
+    ,list(distinct case when (vdrt.code='3' or vdrt.code='4') then vpd.name||' '||mkb.code else null end) as conclDiag
+    ,list(distinct case when vdrt.code='5' then vpd.name||' '||mkb.code else null end) as deathDiag
     ,dc.commentReason as dccommentReason
     ,vdcC.name||' '||coalesce(dcvpd.name,'нет данных') as categoryDifference
     ,vdcL.name as latrogeny
@@ -220,6 +220,7 @@ then -1 else 0 end)
     left join MisLpu dml on dml.id=dmc.department_id
     left join MisLpu pml on pml.id=pdmc.department_id
     left join Diagnosis d on d.medCase_id=m.id
+    left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
     left join VocIdc10 mkb on mkb.id=d.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id
     left join VocPriorityDiagnosis dcvpd on dcvpd.id=dc.diagnosisDifference_id
@@ -234,7 +235,7 @@ then -1 else 0 end)
     ${sexSql} ${departmentSql} ${categoryDifferenceSql}
     group by dc.id,p.lastname,p.firstname,p.middlename,p.birthday
     ,m.emergency,dc.deathDate,dc.deathTime,dc.commentReason
-    ,vdrt.code,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
+    ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
     ,m.dateStart,m.entranceTime,pml.name,dml.name,dml.isNoOmc,bf.addCaseDuration
     ,dc.commentCategory
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
