@@ -631,7 +631,7 @@ order by p.lastname,p.firstname,p.middlename " />
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
     ,count(sls.id) as cntDeath
     ,count(distinct
-case when dc.categoryDifference_id='1' or dc.latrogeny_id is not null then sls.id else null end    ) as cntRash
+case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then sls.id else null end    ) as cntRash
     ,
     count(case when dc.isAutopsy='1' then sls.id else null end) autopsy
     , count(case when dc.id is null then sls.id else null end) noDeathof
@@ -757,7 +757,8 @@ case when dc.categoryDifference_id='1' or dc.latrogeny_id is not null then sls.i
      ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
     ,case when sls.emergency='1' then 'Да' else null end as emer
     ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
-    ,case when dc.isAutopsy='1' then 'Да' else null end as dcisAutopsy, vdc.name || coalesce (' ятрогения кат.'||vdcL.name,'')as vdcname
+    ,case when dc.isAutopsy='1' then 'Да' else null end as dcisAutopsy
+    , vdc.name || coalesce (' ятрогения кат.'||vdcL.name,'')as vdcname
     ,case when dc.id is null then 'Да' else null end as dcid
      from medcase sls
     left join StatisticStub ss on ss.id=sls.statisticStub_id

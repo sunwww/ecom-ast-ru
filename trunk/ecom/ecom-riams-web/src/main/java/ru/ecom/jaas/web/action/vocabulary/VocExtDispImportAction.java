@@ -137,7 +137,7 @@ public class VocExtDispImportAction extends BaseAction {
 	                            			String code = groupElement.getAttributeValue("code") ;
 	                            			wqr.set1(code);
 	                            			wqr.set2(groupElement.getAttributeValue("name"));
-	                            			listAge.add(wqr) ;
+	                            			listHealth.add(wqr) ;
 	                            			System.out.println("\t  группа здоровья ["+code+"]") ;
 	                            		}
 	                            	}

@@ -20,7 +20,7 @@
     <msh:sectionContent>
   	<ecom:webQuery name="list" nativeSql="select m.id,ss.code,m.dateStart,m.dateFinish
   	,p.lastname||' '||p.firstname||' '||p.middlename,m.username,d.name as dname
-  	,case when m.emergency=1 then 'Да' else 'Нет' end  as memergency,vdh.name as vdhname
+  	,case when m.emergency='1' then 'Да' else 'Нет' end  as memergency,vdh.name as vdhname
   	,m.dateStart,m.dateFinish from MedCase as m 
   	left join patient p on p.id=m.patient_id 
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
