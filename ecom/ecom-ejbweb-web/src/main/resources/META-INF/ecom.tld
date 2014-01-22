@@ -321,25 +321,14 @@
    </tag>
 
     <tag>
-        <description>Выполнить запрос</description>
+        <description>Сохранить аттрибут</description>
         <display-name>Выполнить запрос</display-name>
-        <name>webQueryGroup</name>
-        <tag-class>ru.ecom.web.tags.WebQueryGroupTag</tag-class>
+        <name>setAttribute</name>
+        <tag-class>ru.ecom.web.tags.SetAttributeTag</tag-class>
         <body-content>empty</body-content>
 
 
-        <attribute>
-            <description>Куда сохранять запрос группировки</description>
-            <name>nameGroupFldSql</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <description>Куда сохранять запрос</description>
-            <name>nameFldSql</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
+       
         <attribute>
             <description>Куда сохранять</description>
             <name>name</name>
@@ -348,29 +337,8 @@
         </attribute>
         <attribute>
             <description>Поля для группировки</description>
-            <name>groupFld</name>
+            <name>value</name>
             <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-
-        <attribute>
-            <description>Sql группировки</description>
-            <name>groupNativeSql</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        
-        <attribute>
-            <description>Максимальное кол-во записей</description>
-            <name>maxResult</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-
-        <attribute>
-            <description>Запрос на родном SQL для базы</description>
-            <name>nativeSql</name>
-            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
 
