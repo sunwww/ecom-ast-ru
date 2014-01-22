@@ -37,10 +37,13 @@ public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
 			
 			for (WebQueryResult wqr:resultGroup) {
 				result.add(wqr) ;
-				String natSql = theNativeSql.replaceAll(":group", ""+wqr.get2()) ;
+				String natSql ;//= theNativeSql.replaceAll(":group", ""+wqr.get2()) ;
 				if (wqr.get2()==null) {
 					natSql = theNativeSql.replaceAll("= :group", " is null") 
 								.replaceAll("=:group", " is null") ;
+				} else {
+					natSql = theNativeSql.replaceAll(":group", "'"+wqr.get2()+"'") ; 
+							
 				}
 				result.addAll(service.executeNativeSql(natSql.toString(),maxResult)) ;
 			}
