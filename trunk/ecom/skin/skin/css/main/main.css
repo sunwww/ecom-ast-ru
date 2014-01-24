@@ -857,7 +857,7 @@ table.tabview td.navigationBottom {
 	border-bottom: 1px solid white ;
 	border-left: 1px solid white ;
 	border-right: 1px solid white ;
-	text-align: right ;
+	text-align: left ;
 	cursor: text ;
 }
 
