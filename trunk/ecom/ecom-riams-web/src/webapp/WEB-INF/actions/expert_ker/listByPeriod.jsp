@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал врачебной комиссии"/>
@@ -56,6 +56,26 @@
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocExpertPatientStatus" property="patientStatus" label="Статус пациента" 
+          	horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        		vocName="vocExpertReason" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="modeCase" fieldColSpan="3" label="Вид экспертизы" horizontalFill="true" vocName="vocExpertModeCase"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="deviationStandards" label="Отклонения от стандарта" horizontalFill="true" vocName="vocExpertDeviationStandards"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="conclusion" fieldColSpan="1" label="Обоснование" horizontalFill="true" vocName="vocExpertConclusion"/>
+        	<msh:autoComplete parentAutocomplete="conclusion" property="conclusionSent" fieldColSpan="1" label="Заключение напр." horizontalFill="true" vocName="vocExpertConclusionSent"/> 
+        	
+        </msh:row>
+      
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
@@ -119,6 +139,16 @@
     		request.setAttribute("emergencyInfo", ", поступивших по плановым показаниям") ;
     	} 
     	ActionUtil.setParameterFilterSql("department","ml.id", request) ;
+    	
+    	ActionUtil.setParameterFilterSql("modeCase","cec.modeCase_id", request) ;
+    	ActionUtil.setParameterFilterSql("patientStatus","cec.patientStatus_id", request) ;
+    	ActionUtil.setParameterFilterSql("reasonDirect","cec.reasonDirect_id", request) ;
+    	ActionUtil.setParameterFilterSql("deviationStandards","cec.deviationStandards_id", request) ;
+    	ActionUtil.setParameterFilterSql("conclusionSent","cec.conclusionSent_id", request) ;
+    	ActionUtil.setParameterFilterSql("conclusion","cec.conclusion_id", request) ;
+    	//modeCase patientStatus reasonDirect deviationStandards conclusion conclusionSent
+    	//${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
+    	//patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}
 
     	%>
  <%
@@ -175,7 +205,7 @@ left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
 left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
-${emergencySql} ${departmentSql}
+${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
     order by cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -245,13 +275,13 @@ left join VocExpertSubject ves on ves.id=cec.subjectCase_id
 left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
-${emergencySql} ${departmentSql}
+${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
 	group by ml.id,ml.name
     order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-    viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
+     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
       <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />
