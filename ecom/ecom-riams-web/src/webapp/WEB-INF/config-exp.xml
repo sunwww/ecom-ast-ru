@@ -14,6 +14,7 @@
        <form-bean name="expert_ker_directForm" type="ru.ecom.mis.ejb.form.expert.DirectOfMedicalCommissionForm"/>
        <form-bean name="expert_cardForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationCardForm"/>
        <form-bean name="expert_qualityEstimationForm" type="ru.ecom.mis.ejb.form.expert.QualityEstimationForm"/>
+       <form-bean name="expert_journalForm" type="ru.ecom.mis.web.action.medcase.journal.ExpertJournalForm"/>
        <form-bean name="exp_regicForm" type="ru.ecom.expomc.ejb.services.form.registry.RegInsuranceCompanyForm" />
        <form-bean name="exp_formatForm" type="ru.ecom.expomc.ejb.services.form.format.FormatForm" />
        <form-bean name="exp_fieldForm" type="ru.ecom.expomc.ejb.services.form.format.FieldForm" />
@@ -73,7 +74,7 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/expert_ker/openList.jsp" />
         </action>
         <action path='/expert_journal_ker' type='ru.ecom.web.actions.base.ForwardAction'
-                name='stac_admissionJournalForm'
+                name='expert_journalForm'
                 validate='true'
                 scope="session"
                 input='/WEB-INF/actions/expert_ker/listByPeriod.jsp'
