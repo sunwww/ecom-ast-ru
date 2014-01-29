@@ -26,7 +26,9 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocKindHighCare;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseDefect;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMethodHighCare;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
@@ -427,4 +429,21 @@ abstract public class MedCase extends BaseEntity {
 	public void setDateFinish(Date aNewProperty) {theDateFinish = aNewProperty;}
 	/** Дата окончания */
 	private Date theDateFinish;
+	
+	/** Вид ВМП */
+	@Comment("Вид ВМП")
+	@OneToOne
+	public VocKindHighCare getKindHighCare() {return theKindHighCare;}
+	public void setKindHighCare(VocKindHighCare aKindHighCare) {theKindHighCare = aKindHighCare;}
+
+	/** Метод ВМП */
+	@Comment("Метод ВМП")
+	@OneToOne
+	public VocMethodHighCare getMethodHighCare() {return theMethodHighCare;}
+	public void setMethodHighCare(VocMethodHighCare aMethodHighCare) {theMethodHighCare = aMethodHighCare;}
+
+	/** Метод ВМП */
+	private VocMethodHighCare theMethodHighCare;
+	/** Вид ВМП */
+	private VocKindHighCare theKindHighCare;
 }
