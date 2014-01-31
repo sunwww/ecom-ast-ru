@@ -62,6 +62,9 @@
         <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="3">
         	<input type="radio" name="typeGroup" value="2">  кем направлен
         </td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="4">
+        	<input type="radio" name="typeGroup" value="3">  тип ЛПУ кем направлен
+        </td>
       </msh:row>      
       <msh:row>
         <td class="label" title="Доставлен по показаниям (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания к поступлению:</label></td>
@@ -83,6 +86,9 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="lpuDirect" fieldColSpan="4" horizontalFill="true" label="ЛПУ направителя" vocName="mainLpu"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="lpuFunctionDirect" fieldColSpan="4" horizontalFill="true" label="Тип напр ЛПУ" vocName="vocLpuFunction"/>
         </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
@@ -168,10 +174,16 @@
   	if (lpuDirect!=null&&!lpuDirect.equals("")&&!lpuDirect.equals("0")) {
 		request.setAttribute("lpuDirectSql", " and sls.orderLpu_id='"+lpuDirect+"'") ;
   	}
+	ActionUtil.setParameterFilterSql("lpuFunctionDirect","ml.lpuFunction_id", request) ;
+
   	if (typeGroup!=null && typeGroup.equals("1")) {
   		request.setAttribute("typeGroupId", "dep.id") ;
   		request.setAttribute("typeGroupName", "dep.name") ;
   		request.setAttribute("typeGroupColumn", "department") ;
+  	} else if (typeGroup!=null && typeGroup.equals("3")) {
+  		request.setAttribute("typeGroupId", "ml.lpuFunction_id") ;
+  		request.setAttribute("typeGroupName", "vlf.name") ;
+  		request.setAttribute("typeGroupColumn", "lpuFunctionDirect") ;
   	} else {
   		request.setAttribute("typeGroupId", "ml.id") ;
   		request.setAttribute("typeGroupName", "ml.name") ;
@@ -207,7 +219,7 @@
     <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="report_direct_swod" nativeSql="
-select '&department=${param.department}&serviceStream=${param.serviceStream}&lpuDirect='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
+select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
 count(*) 
 ,count(case when sls.emergency='1' then sls.id else null end) as cntEmergency
 ,count(case when sls.emergency='1' and of.voc_code='А' then sls.id else null end) as cntEmerVrAmb
@@ -226,10 +238,12 @@ left join misLpu dep on dep.id=sls.department_id
 left join omc_frm of on of.id=sls.orderType_id
 left join vocServiceStream vss on vss.id=sls.serviceStream_id
 left join VocHospType vht on sls.sourceHospType_id=vht.id
+left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where slo.dtype='DepartmentMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
+${lpuFunctionDirectSql}
 group by ${typeGroupId},${typeGroupName}
 order by ${typeGroupName}
 " />
@@ -296,7 +310,11 @@ then -1 else 0 end)
  as age,sls.dateStart,sls.dateFinish
 , ml.name as mlname, dep.name as depname
  ,of.name as ofname, vss.name as vssname
+ ,vht.name as vhtname,case when sls.emergency='1' then 'Экстр.' else 'План.' end as emerg
+ , vlf.name as vlfname
 from MedCase sls
+left join VocHospType vht on sls.sourceHospType_id=vht.id
+
 left join patient p on p.id=sls.patient_id
 left join MedCase slo on sls.id=slo.parent_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -304,10 +322,12 @@ left join misLpu ml on ml.id=sls.orderLpu_id
 left join misLpu dep on dep.id=sls.department_id
 left join omc_frm of on of.id=sls.orderType_id
 left join vocServiceStream vss on vss.id=sls.serviceStream_id
+left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where slo.dtype='DepartmentMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
+${lpuFunctionDirectSql}
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table name="journal_surOperation" 
     viewUrl="entityShortView-stac_ssl.do" 
@@ -318,7 +338,10 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Возраст" property="4" />
       <msh:tableColumn columnName="Дата поступления" property="5"/>
       <msh:tableColumn columnName="Дата выписки" property="6"/>
+      <msh:tableColumn columnName="Порядок пост." property="12"/>
+      <msh:tableColumn columnName="Тип нарп. ЛПУ" property="11"/>
       <msh:tableColumn columnName="Кем направлен" property="7"/>
+      <msh:tableColumn columnName="Функция ЛПУ" property="13"/>
       <msh:tableColumn columnName="Отделение" property="8"/>
       <msh:tableColumn columnName="Кем доставлен" property="9"/>
       <msh:tableColumn columnName="Поток обслуживания" property="10"/>

@@ -108,8 +108,10 @@
         	label="Специалист" horizontalFill="true" vocName="workFunctionByDirect"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="workFunction" fieldColSpan="5"
+        	<msh:autoComplete property="workFunction" fieldColSpan="1"
         	label="Раб.функция" horizontalFill="true" vocName="vocWorkFunction"/>
+            <msh:autoComplete vocName="vocIllnesPrimary" property="illnesPrimary" 
+            label="Характер заболевания" horizontalFill="true" fieldColSpan="1"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="2"
@@ -203,6 +205,10 @@
     	if (priority!=null && !priority.equals("") && !priority.equals("0")) {
     		request.setAttribute("prioritySql", " and diag.priority_id="+priority) ;
     	} 
+    	String illnesPrimary = (String)request.getParameter("illnesPrimary") ;
+    	if (illnesPrimary!=null && !illnesPrimary.equals("") && !illnesPrimary.equals("0")) {
+    		request.setAttribute("illnesPrimarySql", " and diag.illnesPrimary_id="+illnesPrimary) ;
+    	} 
     	
     	if (typeEmergency!=null && typeEmergency.equals("1")) {
     		request.setAttribute("emergencySql", " and vis.emergency='1' ") ;
@@ -246,11 +252,15 @@
     		
     		%>
     		<msh:section>
-	<ecom:webQuery name="datelist" nativeSql="
-	select vis.id,vis.dateStart
+	<ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
+	select vis.id,to_char(vis.dateStart,'dd.mm.yyyy') as datestart
 	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
-	,pat.birthday,mkb.code,vip.name
+	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,mkb.code,vip.name
 	,vwf.name||' '||wp.lastname ||' ' ||wp.firstname|| ' ' || wp.middlename as doctor
+	,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
+	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
+	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
+	
 	 from Diagnosis diag
 	left join VocIllnesPrimary vip on vip.id=diag.illnesPrimary_id
 	left join VocIdc10 mkb on mkb.id=diag.idc10_id
@@ -263,16 +273,24 @@
 	left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 	left join Worker w on w.id=wf.worker_id
 	left join Patient wp on wp.id=w.person_id
+	left join Address2 a on a.addressid=pat.address_addressId
 	where vis.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and ${dtypeSql}
 			and (vis.noActuality is null or vis.noActuality='0')
 			${serviceStreamSql} ${departmentSql} ${prioritySql} ${specSql} ${workFunctionSql}
-			${emergencySql} ${mkbCodeSql}
+			${emergencySql} ${mkbCodeSql} ${illnesPrimarySql}
 			${filterSql}
 	order by pat.lastname,pat.firstname,pat.middlename
 	" 
 	/>
-	<msh:sectionTitle>Общий свод (реестр)</msh:sectionTitle>
+	<msh:sectionTitle>	 
+	<form action="print-journal_visit_diagnosis_r.do" method="post" target="_blank">
+    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${dateEnd}">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form></msh:sectionTitle>
 	<msh:sectionContent>
     <msh:table name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -282,6 +300,7 @@
       <msh:tableColumn columnName="МКБ 10" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Характер заболевания" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
       <msh:tableColumn columnName="Специалист" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Адрес" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
     </msh:table>    
     </msh:sectionContent>		
     		</msh:section>
@@ -337,7 +356,7 @@
 			and to_date('${dateEnd}','dd.mm.yyyy') and ${dtypeSql}
 			and (vis.noActuality is null or vis.noActuality='0')
 			${serviceStreamSql} ${departmentSql} ${prioritySql} ${specSql} ${workFunctionSql}
-			${emergencySql}
+			${emergencySql} ${illnesPrimarySql}
 			${sqlAddParamView}
 			${filterSql}
 		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
@@ -355,7 +374,8 @@
 	    <input type="submit" value="Печать"> 
 	    </form>     </msh:sectionTitle>
 	<msh:sectionContent>
-			<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+			<msh:table name="diag_list" idField="1" 
+			action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&illnesPrimary=${param.illnesPrimary}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
@@ -448,12 +468,12 @@
 			and to_date('${dateEnd}','dd.mm.yyyy') and ${dtypeSql}
 			and (vis.noActuality is null or vis.noActuality='0')
 			${serviceStreamSql} ${departmentSql} ${prioritySql} ${specSql} ${workFunctionSql}
-			${emergencySql}
+			${emergencySql} ${illnesPrimarySql}
 			${filterSql}
 		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id
 		"/>
-		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&illnesPrimary=${param.illnesPrimary}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
