@@ -197,6 +197,12 @@
         	<msh:autoComplete property="omcStandartExpert" fieldColSpan="6" label="ОМС стандарт (эксперт)" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="kindHighCare" fieldColSpan="6" label="Вид ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="methodHighCare" fieldColSpan="6" label="Метод ВМП" parentAutocomplete="kindHighCare" horizontalFill="true" vocName="vocMethodHighCare"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
         </msh:row>
         <msh:row>

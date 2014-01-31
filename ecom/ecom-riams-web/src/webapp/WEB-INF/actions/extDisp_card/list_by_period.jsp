@@ -169,6 +169,7 @@ p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,edc.isDiagnostics as cntDiagM
 ,edc.isSpecializedCare as cntSpecCareM
 ,edc.isSanatorium as cntSanatM
+,edc.isServiceIndication as cntIsServiceIndication
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Patient p on p.id=edc.patient_id
@@ -223,7 +224,10 @@ order by p.lastname,p.firstname,p.middlename
 	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
 			<msh:section title="Свод за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
-select '&dispType='||ved.id,ved.name,ved.code,count(distinct edc.id) from ExtDispCard edc
+select '&dispType='||ved.id,ved.name,ved.code,count(distinct edc.id) as cntAll
+,count(distinct case when edc.isServiceIndication='1' then edc.id else null end) as cntAllDirect
+
+ from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
@@ -243,6 +247,7 @@ order by ved.code
 					<msh:tableColumn columnName="Тип доп.диспансеризации" property="2" />
 					<msh:tableColumn columnName="Код" property="3" />
 					<msh:tableColumn columnName="Кол-во оформленных карт" property="4" />
+					<msh:tableColumn columnName="Кол-во, направ. на след. этап" property="5" />
 				</msh:table>
 
 			</msh:section>
