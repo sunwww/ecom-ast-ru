@@ -245,6 +245,13 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	public Long getLpuDirect() {return theLpuDirect;}
 	public void setLpuDirect(Long aLpuDirect) {theLpuDirect = aLpuDirect;}
 
+	/** Тип ЛПУ направителя */
+	@Comment("Тип ЛПУ направителя")
+	public Long getLpuFunctionDirect() {return theLpuFunctionDirect;}
+	public void setLpuFunctionDirect(Long aLpuFunctionDirect) {theLpuFunctionDirect = aLpuFunctionDirect;}
+
+	/** Тип ЛПУ направителя */
+	private Long theLpuFunctionDirect;
 	/** ЛПУ направителя */
 	private Long theLpuDirect;
 	
@@ -316,4 +323,17 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Раб.функция */
 	private Long theWorkFunction;
+	
+	/** illnesPrimary */
+	@Comment("illnesPrimary")
+	public Long getIllnesPrimary() {
+		return theIllnesPrimary;
+	}
+
+	public void setIllnesPrimary(Long aIllnesPrimary) {
+		theIllnesPrimary = aIllnesPrimary;
+	}
+
+	/** illnesPrimary */
+	private Long theIllnesPrimary;
 }
