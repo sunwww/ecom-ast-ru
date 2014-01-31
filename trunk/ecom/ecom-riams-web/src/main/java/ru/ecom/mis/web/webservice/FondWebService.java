@@ -161,7 +161,7 @@ public class FondWebService {
             sb.append("<th>").append("Умер?").append("</th>") ;
             sb.append("<th>").append("Дата смерти").append("</th>") ;
             sb.append("</tr>") ;
-            if (aPatFrm.getSnils()==null) aPatFrm.setSnils("") ;
+            if (aPatFrm!=null&&aPatFrm.getSnils()==null) aPatFrm.setSnils("") ;
             boolean isStart = true ;
             for (Element e:list_cur) {
 
