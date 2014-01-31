@@ -40,6 +40,30 @@
 		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5))||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy')||' '||cast(slo.dischargeTime as varchar(5)),to_char(slo.transferDate,'dd.mm.yyyy')||' '||cast(slo.transferTime as varchar(5)),'')"
 		/>
 	</voc>
+	<voc id="vocKindHighCare" type="NativeVocService">
+		<NativeVocService
+		    	from=" VocKindHighCare as vkhc "
+		    	parent=''
+		    	nameId="vkhc.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vkhc.name like upper(:query) or vkhc.code like upper(:querId) or replace(vkhc.code,'.','') like upper(:querId))"
+		    	names = "vkhc.code||' '||vkhc.name"
+		/>
+	</voc>
+	<voc id="vocMethodHighCare" type="NativeVocService">
+		<NativeVocService
+		    	from=" VocMethodHighCare as vmhc "
+		    	parent='vkhc.id=:parent'
+		    	nameId="vmhc.id"
+		    	join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare"
+		    	queryAppend=""
+		    	order=""
+		    	queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
+		    	names = "vmhc.code||' '||vmhc.name"
+		/>
+	</voc>
 	<voc id="hospitalRoomByLpu" type="NativeVocService">
 		<NativeVocService
 		    	from=" WorkPlace as wp "
@@ -48,7 +72,7 @@
 		    	join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
 		    	queryAppend=" wp.dtype='HospitalRoom'"
 		    	order=""
-		    	queried=" wp.name like upper(:query) "
+		    	queried=" upper(wp.name) like upper(:query) "
 		    	names = "'№'||wp.name||' ('||wp1.name||')'"
 		/>
 	</voc>
