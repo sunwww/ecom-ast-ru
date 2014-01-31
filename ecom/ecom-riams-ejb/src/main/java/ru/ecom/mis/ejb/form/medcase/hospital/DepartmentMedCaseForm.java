@@ -310,4 +310,21 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 
 	/** Омс стандарт, установленный экспертом */
 	private Long theOmcStandartExpert;
+	
+	/** Вид ВМП */
+	@Comment("Вид ВМП")
+	@Persist
+	public Long getKindHighCare() {return theKindHighCare;}
+	public void setKindHighCare(Long aKindHighCare) {theKindHighCare = aKindHighCare;}
+
+	/** Метод ВМП */
+	@Comment("Метод ВМП")
+	@Persist
+	public Long getMethodHighCare() {return theMethodHighCare;}
+	public void setMethodHighCare(Long aMethodHighCare) {theMethodHighCare = aMethodHighCare;}
+
+	/** Метод ВМП */
+	private Long theMethodHighCare;
+	/** Вид ВМП */
+	private Long theKindHighCare;
 }

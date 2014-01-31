@@ -193,7 +193,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
                 names   = 'code,name'
-                queried = 'code,name'
+                queried = "code,name"
                 queryConvertType="FIRST_LAT_UPPER"
                 queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null)"
                 />
@@ -210,7 +210,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
                 names   = 'code,name'
-                queried = 'code,name'
+                queried = "code,name"
                 queryConvertType="FIRST_LAT_UPPER"
                 />
     </voc>

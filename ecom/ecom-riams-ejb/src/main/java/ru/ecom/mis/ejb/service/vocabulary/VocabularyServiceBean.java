@@ -155,11 +155,12 @@ public class VocabularyServiceBean {
         		}
         		List<WebQueryResult> listHealthGroup = (List<WebQueryResult>)wqr.get6() ;
         		for (WebQueryResult wqrHG:listHealthGroup) {
-        			List<VocExtDispHealthGroup> listPlan = theManager.createQuery("from VocExtDispHealthGroup where dispType_id='"+dispType.getId()+"' and code='"+wqrHG.get1()+"'").getResultList() ;
+        			String code =  ""+wqrHG.get1() ;
+        			List<VocExtDispHealthGroup> listPlan = theManager.createQuery("from VocExtDispHealthGroup where dispType_id='"+dispType.getId()+"' and code='"+code+"'").getResultList() ;
         			if (listPlan.size()==0) {
         				VocExtDispHealthGroup hg = new VocExtDispHealthGroup() ;
         				hg.setDispType(dispType) ;
-        				hg.setCode(""+wqrHG.get1()) ;
+        				hg.setCode(code) ;
         				hg.setName(""+wqrHG.get2()) ;
         				theManager.persist(hg) ;
         			}
