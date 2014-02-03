@@ -1,3 +1,4 @@
+<%@page import="java.math.BigDecimal"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Collection"%>
 <%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
@@ -157,7 +158,7 @@
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		%>
-		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
+		<% if (typeGroup!=null&& typeGroup.equals("1")) { %>
 			
 			
 			
@@ -360,25 +361,21 @@ for (int ii=0;ii<listPat.size();ii++) {
 				<% }%>
 			</table>
 			
-	<%} else if (typeGroup!=null&& typeGroup.equals("2") ) {
-	%>
-				<ecom:webQuery name="dep_list" nameFldSql="dep_list_sql" nativeSql="
+	<%} else if (typeGroup!=null&& typeGroup.equals("2") ) { %>
+		<ecom:webQuery name="dep_list" nameFldSql="dep_list_sql" nativeSql="
 SELECT lpu.id as sqlId
 ,lpu.name as lpuname
-
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end)
-as sumCountMedServiceItog 
-
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
-    
+,mc.id as sqlId
+,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
+,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
+,CCO.name) as kontragent
+,pp.id as sqlId
+,pp.code||' '||pp.name as pmsname
+,pp.positionType_id
+, sum(cams.countMedService) as sumCountMedServiceItog 
+, sum(round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2))   
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
- )
+, sum(round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2))   
 as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
@@ -388,43 +385,84 @@ LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
 left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
-
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 left join PricePosition pg on pg.id=pp.parent_id
 left join MisLpu lpu on lpu.id=pg.lpu_id
-
 left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') 
+AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+and (cao.dtype='OperationAccrual' ) and cao.repealOperation_id is null  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
 and pp.positionType_id in (3,7)
 
-group by lpu.id,lpu.name
-order by lpu.name
+group by lpu.id,lpu.name,mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom,pp.positionType_id,pp.id,pp.code,pp.name
+order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,pp.code
 			"/>
 			<table border='1px solid'>
 <tr>
 	<th>Наименование</th>
 	<th>Кол-во услуг</th>
 	<th>Сумма с НДС</th>
-	
 	<th>Сумма без НДС</th>
 
 </tr>
 
 			<% 
 			List list = (List) request.getAttribute("dep_list") ;
+			Object vLpu1 = null ;
+			Object vContract = null;
+			Object vService = null;
+			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;
+			BigDecimal sLpu1d = new BigDecimal(0) ;BigDecimal sLpu2d = new BigDecimal(0) ; BigDecimal sLpu3d = new BigDecimal(0) ;
+			BigDecimal sContract1 = new BigDecimal(0) ;BigDecimal sContract2 = new BigDecimal(0) ; BigDecimal sContract3 = new BigDecimal(0) ;
+			BigDecimal sContract1d = new BigDecimal(0) ;BigDecimal sContract2d = new BigDecimal(0) ; BigDecimal sContract3d = new BigDecimal(0) ;
+			boolean isNewLpu = false; boolean isNewContract=false ;
 			for (int i=0;i<list.size();i++) { 
 				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
-				request.setAttribute("lpu", wqr) ;
-				request.setAttribute("groupDep_id", wqr.get1()!=null?"="+wqr.get1():" is null") ;
+				if (i>0) {
+					if (vLpu1.equals(wqr.get2())) {
+				}
 				out.println("<tr>") ;
-				//out.print("<th>"); out.print(wqr.get1());out.println("</th>") ;
+				
+				if (isNewContract) {
+					out.print("<th>"); out.print("ИТОГО:");out.println("</th>") ;
+					out.print("<th>"); out.print(sContract1);out.println("</th>") ;
+					out.print("<th>"); out.print(sContract2);out.println("</th>") ;
+					out.print("<th>"); out.print(sContract3);out.println("</th>") ;
+					out.print("<th>"); out.print(sContract1d);out.println("</th>") ;
+					out.print("<th>"); out.print(sContract2d);out.println("</th>") ;
+					out.print("<th>"); out.print(sContract3d);out.println("</th>") ;
+				} 
+				if (isNewLpu) {
+					out.print("<th>"); out.print("ИТОГО:");out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu2);out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu3);out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu2d);out.println("</th>") ;
+					out.print("<th>"); out.print(sLpu3d);out.println("</th>") ;
+				}
+				sLpu1 = new BigDecimal(0) ;sLpu2 = new BigDecimal(0) ;sLpu3 = new BigDecimal(0) ;sLpu4 = new BigDecimal(0) ;
+				if (wqr.get9()!=null && (""+wqr.get9()).equals("7")) {
+					sContract1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sContract2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sContract3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+				} else {
+					sContract1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sContract2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sContract3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+				}
+				
+				
+				sLpu1.add(sContract1) ;
+				sLpu2.add(sContract2) ;
+				sLpu2.add(sContract2) ;
+				
 				out.print("<th>"); out.print(wqr.get2());out.println("</th>") ;
 				out.print("<th>"); out.print(wqr.get3());out.println("</th>") ;
 				out.print("<th>"); out.print(wqr.get4());out.println("</th>") ;
@@ -439,7 +477,7 @@ order by lpu.name
 				out.print("<th>"); out.print(wqr.get13());out.println("</th>") ;*/
 				out.println("</tr>") ;
 			%>
-			
+			<%--
 				<ecom:webQuery name="pat_list" nameFldSql="pat_list_sql" nativeSql="
 SELECT mc.id as sqlId
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
@@ -583,6 +621,7 @@ for (int iii=0;iii<listService.size();iii++) {
 	
 	<%} %>
 	<%} %>
+	 --%>
 	<%} %>
 	
 	<%
