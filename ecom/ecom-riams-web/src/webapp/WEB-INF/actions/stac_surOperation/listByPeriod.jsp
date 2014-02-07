@@ -17,9 +17,11 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <% 
+  
   if (request.getParameter("short")==null) {
 	  ActionUtil.updateParameter("SurgicalOperation","typeView","1", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeOrder","1", request) ;
+	  ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
   }
   %>
     <msh:form action="/journal_surOperation.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -68,6 +70,18 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeOrder" value="4">  доп. параметры, код операции
         </td>
+      </msh:row>     
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Искать по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="1">  операции
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDate" value="2">  выписки (учит. операции в отд.)
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDate" value="3">  выписки (учит. операции в прием.отд.)
+        </td>
       </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -95,6 +109,7 @@
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeOrder','${typeOrder}',1) ;
+    checkFieldUpdate('typeDate','${typeDate}',1) ;
     
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -156,6 +171,15 @@
     String view = (String)request.getAttribute("typeView") ;
     String typeOrder = (String)request.getAttribute("typeOrder") ;
     if (date!=null && !date.equals("")) {
+    	String typeDateSql = "so.operationDate" ;
+    	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+    	if (typeDate!=null && typeDate.equals("2")) {
+    		typeDateSql = "sls.dateFinish" ;
+    	} else if (typeDate!=null && typeDate.equals("3")) {
+    		typeDateSql = "slsHosp.dateFinish" ;
+    	} 
+    	request.setAttribute("typeDateSql", typeDateSql);
+    	
         AdmissionJournalForm frm = (AdmissionJournalForm) session.getAttribute("stac_admissionJournalForm");
         //String department = (String)request.getAttribute("department") ;
         //String spec = (String)request.getAttribute("spec") ;
@@ -211,14 +235,18 @@
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
-    select '${departmentSql} ${specSql}:'||to_char(so.operationDate,'dd.mm.yyyy')||':'||to_char(so.operationDate,'dd.mm.yyyy')
-    ,to_char(so.operationDate,'dd.mm.yyyy'), count(so.id)
-     from SurgicalOperation so where 
-    so.operationDate  between to_date('${dateBegin}','dd.mm.yyyy') 
+    select '${departmentSql} ${specSql}:'||to_char(${typeDateSql},'dd.mm.yyyy')||':'||to_char(${typeDateSql},'dd.mm.yyyy')
+    ,to_char(${typeDateSql},'dd.mm.yyyy'), count(so.id)
+     from SurgicalOperation so 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+     where 
+    ${typeDateSql}  between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
-    group by so.operationDate 
-    order by so.operationDate" />
-    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    group by ${typeDateSql} 
+    order by ${typeDateSql}" />
+    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
@@ -240,11 +268,14 @@ left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
 left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -266,11 +297,14 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1">
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Код" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -292,12 +326,15 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by so.department_id,dep.name
 order by dep.name 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="3" />
     </msh:table>
@@ -318,12 +355,15 @@ left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
 left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Код" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -348,11 +388,14 @@ left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
 left join patient p on p.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
        <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -377,11 +420,14 @@ and to_date('${dateEnd}','dd.mm.yyyy')  and so.department_id=so1.department_id
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
-where so.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short" action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -397,7 +443,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     <msh:sectionTitle>Реестр хирургических операций</msh:sectionTitle>
     <msh:sectionContent>
 	    <ecom:webQuery name="journal_surOperation1" nativeSql="select so.id as id
-	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(so.operationDate,'DD.MM.YYYY')) as operDate
+	    ,coalesce(to_char(${typeDateSql},'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(${typeDateSql}To,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
 	    , vo.name as voname
 	    ,(select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id ) as surgOper 
 	    ,p.lastname||' '||p.firstname||' '||p.middlename ||' гр '||to_char(p.birthday,'DD.MM.YYYY') as patientInfo,
@@ -424,7 +470,10 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	      left join Patient p on p.id=so.patient_id
 	      left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 	      left join MedService vo on vo.id=so.medService_id
-	       where operationDate 
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
 	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
