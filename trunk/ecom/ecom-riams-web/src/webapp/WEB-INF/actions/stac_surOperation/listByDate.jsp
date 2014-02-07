@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -28,7 +29,15 @@
   	if (ids.length>=6 && ids[5]!=null && !ids[5].equals("") && !ids[5].equals("0")) {
 	  	request.setAttribute("department", " and so.department_id='"+ids[5]+"'") ;
   	}
-  	
+  	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+  	String typeDateSql = "so.operationDate" ;
+	if (typeDate!=null && typeDate.equals("2")) {
+		typeDateSql = "sls.dateFinish" ;
+	} else if (typeDate!=null && typeDate.equals("3")) {
+		typeDateSql = "slsHosp.dateFinish" ;
+	} 
+	request.setAttribute("typeDateSql", typeDateSql);
+	
     
   %>
     <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
@@ -64,7 +73,12 @@
 	      left join Patient p on p.id=so.patient_id
 	      left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 	      left join MedService vo on vo.id=so.medService_id
-	       where operationDate 
+	      
+     left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+     left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+     left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+	      
+	       where ${typeDateSql} 
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
