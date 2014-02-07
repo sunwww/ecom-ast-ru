@@ -206,6 +206,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           </msh:row>
           <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
 	          <msh:row>
+	          	<msh:textField property="newbornWeight" label="Вес новор."/>
 	          	<msh:autoComplete property="newborn" label="Новорожденный" fieldColSpan="3" vocName="vocNewBorn" horizontalFill="true" />
 	          </msh:row>
           </msh:ifInRole>
