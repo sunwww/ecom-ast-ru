@@ -89,6 +89,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="12"> свод по заболеваниям
 	        </td>     
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="13"> свод по специалистам и услугам 
+	        </td>     
         </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
@@ -178,7 +181,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join ExtDispRisk edr on edr.card_id=edc.id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
@@ -186,7 +189,7 @@ group by edc.id,p.lastname,p.firstname,
 p.middlename,p.birthday,edc.startDate ,edc.finishDate 
 ,vedag.name,vedhg.name,vedsg.name
 , edc.isObservation ,edc.isTreatment ,edc.isDiagnostics ,edc.isSpecializedCare,edc.isSanatorium 
-,mkb.code
+,mkb.code,edc.isServiceIndication
 order by p.lastname,p.firstname,p.middlename
 			"/>
 <msh:sectionTitle>
@@ -234,7 +237,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join ExtDispRisk edr on edr.card_id=edc.id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code
@@ -271,7 +274,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join ExtDispRisk edr on edr.card_id=edc.id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedag.id,vedag.name
@@ -306,7 +309,7 @@ left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} and vedr.id is not null
 group by ved.id,ved.name,ved.code,vedag.id,vedag.name,vedr.id,vedr.name
@@ -353,7 +356,7 @@ left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedag.id,vedag.name,vedhg.id,vedhg.name
@@ -417,7 +420,7 @@ left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend}  and eds.serviceDate is not null
 group by ved.id,ved.name,ved.code,veds.id,veds.name,veds.code
@@ -466,7 +469,7 @@ left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedag.id,vedag.name,substring(mkb.code,1,3)
@@ -505,7 +508,7 @@ left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend}
 group by ved.id,wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename
@@ -548,7 +551,7 @@ left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join VocExtDispAgeReportGroup vedarg on vedarg.id=vedag.reportGroup_id
 left join ExtDispRisk edr on edr.card_id=edc.id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedarg.id,vedarg.code,vedarg.name
@@ -584,7 +587,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join VocExtDispAgeReportGroup vedarg on vedarg.id=vedag.reportGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} and vedr.id is not null
 group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,vedr.id,vedr.name
@@ -632,7 +635,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join VocExtDispAgeReportGroup vedarg on vedarg.id=vedag.reportGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,vedhg.id,vedhg.name
@@ -692,7 +695,7 @@ left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
 left join VocExtDispAgeReportGroup vedarg on vedarg.id=vedag.reportGroup_id
-left join VocExtDispRisk vedr on vedag.id=edr.dispRisk_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,substring(mkb.code,1,3)
@@ -711,6 +714,63 @@ order by substring(mkb.code,1,3),vedarg.name
 
 			</msh:section>
 
+	<%} else if (typeGroup!=null&& typeGroup.equals("13")) {%>
+			<msh:section title="Свод по услугам за ${beginDate}-${finishDate} ">
+			<ecom:webQuery name="extDispSwod" nativeSql="
+select '&dispType='||ved.id||'&workFunction='||wf.id||'&='||veds.id as id
+,ved.name as vedname
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo
+,veds.name as vedrname
+,count(distinct case when vs.omcCode='1' then edc.id else null end) as cntM1
+,count(distinct case when vs.omcCode='1' and (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntM2
+,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW1
+,count(distinct case when vs.omcCode='1' and (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntW2
+,count(distinct edc.id) as cntAll1
+,count(distinct case when (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntAll2
+from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
+left join ExtDispService eds on eds.card_id=edc.id
+left join VocExtDispService veds on eds.serviceType_id=veds.id
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join Patient p on p.id=edc.patient_id
+left join VocSex vs on vs.id=p.sex_id
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend}  and eds.serviceDate is not null
+group by wf.id,ved.id,ved.name,ved.code,veds.id,veds.name,veds.code,vwf.name,wp.lastname,wp.firstname,wp.middlename
+order by vwf.name,wp.lastname,wf.id,,veds.id
+			"/>
+
+				<msh:table name="extDispSwod" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				idField="1">
+				<msh:tableNotEmpty>
+					<tr>
+						<th></th>
+						<th colspan="2">Мужчины</th>
+						<th colspan="2">Женщины</th>
+						<th colspan="2">Всего</th>
+						<th></th>
+					</tr>
+				</msh:tableNotEmpty>
+					<msh:tableColumn columnName="Услуга" property="4" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="5" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="6" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="7" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="8" />
+					<msh:tableColumn columnName="Прошли" isCalcAmount="true" property="9" />
+					<msh:tableColumn columnName="Выявлено заболевания" isCalcAmount="true" property="10" />
+				</msh:table>
+
+			</msh:section>
 	<%} %>
 	<%} %>
 	</tiles:put>
