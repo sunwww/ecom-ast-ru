@@ -868,4 +868,12 @@ public class PatientForm extends IdEntityForm {
 	/** Категория ребенка */
 	private Long theCategoryChild;
 	
+	/** Вес новорожденного */
+	@Comment("Вес новорожденного")
+	public Long getNewbornWeight() {return theNewbornWeight;}
+	public void setNewbornWeight(Long aNewbornWeight) {theNewbornWeight = aNewbornWeight;}
+
+	/** Вес новорожденного */
+	private Long theNewbornWeight;
+	
 }

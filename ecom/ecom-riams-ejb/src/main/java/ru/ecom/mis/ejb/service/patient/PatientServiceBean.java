@@ -206,7 +206,7 @@ public class PatientServiceBean implements IPatientService {
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		
 		if (list.size()>0) {
-			String kladrId=kladr = ""+list.get(0)[1] ; 
+			String kladrId=kladr = ""+list.get(0)[0] ; 
 			kladr = ""+list.get(0)[1] ;
 			String lastKl = kladr.substring(kladr.length()-1, kladr.length()) ;
 			while (lastKl!=null&&lastKl.equals("0")) {

@@ -1038,4 +1038,11 @@ public class Patient extends BaseEntity{
 
 	/** Категория ребенка */
 	private VocCategoryChild theCategoryChild;
+	/** Вес новорожденного */
+	@Comment("Вес новорожденного")
+	public Long getNewbornWeight() {return theNewbornWeight;}
+	public void setNewbornWeight(Long aNewbornWeight) {theNewbornWeight = aNewbornWeight;}
+
+	/** Вес новорожденного */
+	private Long theNewbornWeight;
 }
