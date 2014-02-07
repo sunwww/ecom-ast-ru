@@ -146,6 +146,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report14ds.jsp" />
         </action>
+        <action path='/stac_report_36' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report36_hosp.jsp" />
+        </action>
         <action path='/stac_report_cases_not_filled' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
