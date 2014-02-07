@@ -155,7 +155,7 @@ function printJournal(aCtx, aParams) {
     	order="p.lastname,p.firstname,p.middlename,dd.number" ;
     }
     var sql = "select dd.id as ddid,to_char(dd.issueDate,'dd.MM.yyyy') as date1"
-       +" ,dd.number as ddnumber,dd.hospitalizedNumber as ddhosnumber"
+       +" ,vddp.name||' '||dd.number as ddnumber,dd.hospitalizedNumber as ddhosnumber"
        +" ,p.lastname||' '||p.firstname||' '||p.middlename as pat"
        +" ,dd.job as ddjob,dd.workComboType_id as ddcombo"
 		+" ,mkbP.code as mkbPcode,mkbF.code as mkbFcode"
@@ -167,6 +167,7 @@ function printJournal(aCtx, aParams) {
         +"	left join patient p on p.id=dc.patient_id"
 		+" left join vocidc10 mkbP on mkbP.id=dd.idc10_id"
 		+" left join vocidc10 mkbF on mkbF.id=dd.idc10Final_id"
+		+" left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id"
 		+" left join vocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id "
         +" 	where "+status+" "+statusNoActuality+" "+ dateGroup +" between cast('"+beginDate+"' as date) and cast('"+endDate+"' as date) "+sqlReason+" order by "+order+" " ;
     
