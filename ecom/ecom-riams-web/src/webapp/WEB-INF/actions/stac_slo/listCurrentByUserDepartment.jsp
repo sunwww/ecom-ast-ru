@@ -40,8 +40,8 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select m.id,m.dateStart||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
-    	,pat.birthday,sc.code as sccode
+    select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
+    	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
     	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
     ,	  case 
@@ -54,8 +54,13 @@
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1) 
 			else (CURRENT_DATE-m.dateStart)
 		  end as cnt2
-    	
-    from medCase m 
+    ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
+    from medCase m
+    left join Diagnosis diag on diag.medcase_id=m.id
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+     
     left join MedCase as sls on sls.id = m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id
@@ -84,6 +89,7 @@
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
+      <msh:tableColumn columnName="Диагноз" property="10"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

@@ -17,15 +17,17 @@
   <tiles:put name="body" type="string">
   <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
   <ecom:webQuery name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
-  <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
+  <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
+  <ecom:webQuery name="diag_typeReg_order_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='2'"/>
+  <ecom:webQuery name="diag_typeReg_discharge_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   <ecom:webQuery name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
   <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
   	String sexWoman = "1" ;
-  	String typeAge=ActionUtil.updateParameter("Report14","typeAge","1", request) ;
-  	String typeView=ActionUtil.updateParameter("Report14","typeView","1", request) ;
-  	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
+  	String typeAge=ActionUtil.updateParameter("Report36HOSP","typeAge","1", request) ;
+  	String typeView=ActionUtil.updateParameter("Report36HOSP","typeView","1", request) ;
+  	String typeDate=ActionUtil.updateParameter("Report36HOSP","typeDate","2", request) ;
   	String dateAge="dateStart" ;
   	if (typeDate!=null && typeDate.equals("2")) {
   		dateAge="dateFinish" ;
@@ -128,19 +130,12 @@
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
-  	/*
-  	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
-  	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
-  	ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request) ;
-  	
-  	paramSql.append(" ").append(request.getAttribute("departmentSql")!=null?request.getAttribute("departmentSql"):"") ;
-  	paramSql.append(" ").append(request.getAttribute("hospTypeSql")!=null?request.getAttribute("hospTypeSql"):"") ;
-  	paramSql.append(" ").append(request.getAttribute("sexSql")!=null?request.getAttribute("sexSql"):"") ;
-  	*/
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
+  	ActionUtil.getValueByList("diag_typeReg_order_sql", "diag_typeReg_order", request) ;
+  	ActionUtil.getValueByList("diag_typeReg_discharge_sql", "diag_typeReg_discharge", request) ;
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
   	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
   	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
@@ -151,9 +146,7 @@
   	} else {
   		
   %>
-    <msh:form action="/stac_report_14ds.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
-    <input type="hidden" name="m" id="m" value="printReport14" />
+    <msh:form action="/stac_report_36.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="id" id="id" value=""/>
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
@@ -207,7 +200,7 @@
         	<input type="radio" name="typeView" value="1"> по выписным
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeView" value="2"> по нозоологиям (выписанные)
+        	<input type="radio" name="typeView" value="2"> по нозоологиям (приемник)
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="3"> по нозоологиям (умершие)
@@ -307,7 +300,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report14swod" nativeSql="
+    <ecom:webQuery name="Report36HOSPswod" nativeSql="
 select 
 '&department='||sloa.department_id,ml.name as mlname
 ,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
@@ -335,9 +328,9 @@ ${age_sql}
 group by sloa.department_id,ml.name
 order by ml.name
 " />
-    <msh:table name="report14swod" 
-    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    <msh:table name="Report36HOSPswod" 
+    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
       <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
@@ -453,47 +446,369 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:section>
    
     <msh:section>
-    <ecom:webQuery name="report14swod" nameFldSql="report14swod_sql" nativeSql="
-    select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
-,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
-,count(case when sls.result_id!=${result_death} and vht.code='ALLTIMEHOSP' then sls.id else null end) as cntDirectAllTimeHosp
-,sum(case when sls.result_id!=${result_death} then
-case 
- when (sls.dateFinish-sls.dateStart)=0 then 1 
- when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
- else (sls.dateFinish-sls.dateStart)
-end
-else 0 end) as sumDays
-,count(case when sls.result_id=${result_death} then sls.id else null end) as cntNoDeath
+    <ecom:webQuery name="Report36HOSPswod" nameFldSql="Report36HOSPswod_sql" nativeSql="
 
- from medcase sls
+select 
+vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
+and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
+or sloAll.dateFinish is null
+)
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntBeginPeriodAll
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
+and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
+or sloAll.dateFinish is null
+)
+and
+cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'), 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntBeginPeriod0_14
+
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
+and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
+or sloAll.dateFinish is null
+)
+and
+cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'), 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntBeginPeriod15_17
+
+,count(case when
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_order}'
+then sls.id else null end) as cntEntranceAll
+,count(case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='2'
+and
+cast(to_char(sls.dateStart,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateStart, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateStart,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14 then sls.id else null end)  as cntEntrance0_14
+,count(case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_order}'
+and
+cast(to_char(sls.dateStart,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateStart, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateStart,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17 then sls.id else null end)  as cntEntrance15_17
+,count(case when
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_order}'
+and sls.admissionInHospital_id=1
+then sls.id else null end) as cntEntranceAdmHosp
+,count(case when
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_order}'
+and sls.hospitalization_id=1
+then sls.id else null end) as cntEntranceHosp
+,count(case when
+sls.dtype='HospitalMedCase' 
+and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_order}'
+and sls.admissionOrder_id in (2,4,5,6,7,8,9)
+then sls.id else null end) as cntEntranceHospNeDobr
+,count(case when
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntDischargeAll
+
+,cast(sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='3' and vpd.id='1'
+then cast((
+case 
+		when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+		else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+		end
+)||'.'||sls.id as numeric) else null end)  
+
+-sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then cast('0.'||sls.id as numeric) else null end)
+as int)
+as sumDayAllDischarge
+
+,count(case when
+sls.dtype='HospitalMedCase'
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and sls.result_id=6
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntDischargeDeath
+
+,cast(sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+ and sls.result_id='${result_death}'
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then cast((
+case 
+		when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+		else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+		end
+)||'.'||sls.id as numeric) else null end)  
+
+-sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+ and sls.result_id='${result_death}'
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then cast('0.'||sls.id as numeric) else null end)
+as int)
+as sumDayDeathDischarge
+
+
+,count(case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14 then sls.id else null end)  as cntDischarge0_14
+
+,cast(sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14 then cast((
+case 
+		when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+		else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+		end
+)||'.'||sls.id as numeric) else null end)  
+
+-sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14 then cast
+('0.'||sls.id as numeric) else null end)  
+as int)
+as sumDayDischarge0_14
+
+,count(case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17 then sls.id else null end)  as cntDischarge15_17
+
+,cast(sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17 then cast((
+case 
+		when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
+		else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
+		end
+)||'.'||sls.id as numeric) else null end)  
+
+-sum(distinct case when 
+sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+and
+cast(to_char(sls.dateFinish,'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.dateFinish, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.dateFinish,'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17 then cast
+('0.'||sls.id as numeric) else null end)  
+as int)
+as sumDayDischarge15_17
+
+
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
+or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
+)
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntFinishPeriodAll
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
+or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
+)
+and
+cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'),'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'), 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'),'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 0 and 14
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntFinishPeriod0_14
+
+,count(case when
+sloAll.dtype='DepartmentMedCase' 
+and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
+or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
+)
+and
+cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'),'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'), 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(to_date('${dateEnd}','dd.mm.yyyy'),'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) between 15 and 17
+and mkb.code between rspt.codefrom and rspt.codeto 
+and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
+then sls.id else null end) as cntFinishPeriod15_17
+
+
+
+
+from medcase sls
 left join VocHospType vht on vht.id=sls.targetHospType_id
 left join diagnosis diag on sls.id=diag.medcase_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-left join MedCase sloa on sloa.parent_id=sls.id
-left join BedFund bf on bf.id=sloa.bedFund_id
-left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
+left join MedCase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'
+left join MedCase sloD on sloD.parent_id=sls.id and sloD.dateFinish is not null
+left join diagnosis diagD on sloD.id=diagD.medcase_id
+left join BedFund bf on bf.id=sloD.bedFund_id
+left join vocidc10 mkbD on mkbD.id=diagD.idc10_id
+left join VocDiagnosisRegistrationType vdrtD on vdrtD.id=diagD.registrationType_id
+left join VocPriorityDiagnosis vpdD on vpdD.id=diagD.priority_id
+
+left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
-where 
-sls.dtype='HospitalMedCase' and sls.dateFinish 
-between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and mkb.code between rspt.codefrom and rspt.codeto 
-${paramSql} and sloa.dateFinish is not null
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-and sls.result_id!='${result_death}'
+where (sls.dtype='HospitalMedCase' 
+and (sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+or sls.dateFinish is null)
+and (sls.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
+))
+
+and (mkb.code between rspt.codefrom and rspt.codeto 
+or mkbD.code between rspt.codefrom and rspt.codeto )
 ${age_sql} 
- 
+
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
+
 " />
     <msh:sectionTitle>Свод по нозоологиям (выписанные)
     
     	    <form action="print-report_14_2.do" method="post" target="_blank">
 	    Свод по нозоологиям (выписанные)
-	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
+	    <input type='hidden' name="sqlText" id="sqlText" value="${Report36HOSPswod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
@@ -502,16 +817,32 @@ order by vrspt.strCode
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="report14swod" 
-    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    <msh:table name="Report36HOSPswod" 
+    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
-      <msh:tableColumn columnName="Кол-во выписанных" property="5"/>
-      <msh:tableColumn columnName="из них доставленых по экстренным показаниям" property="6"/>
-      <msh:tableColumn columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="7"/>
-      <msh:tableColumn columnName="Проведено выписанными койко-дней" property="8"/>
+      <msh:tableColumn columnName="Начало всего" property="5"/>
+      <msh:tableColumn columnName="Начало 0-14" property="6"/>
+      <msh:tableColumn columnName="Начало 15-17" property="7"/>
+      <msh:tableColumn columnName="Поступ. всего" property="8"/>
+      <msh:tableColumn columnName="Поступ. 0-14" property="9"/>
+      <msh:tableColumn columnName="Поступ.15-17" property="10"/>
+      <msh:tableColumn columnName="Поступ. вп.в д.г" property="11"/>
+      <msh:tableColumn columnName="Поступ. втч вп. в жизни" property="12"/>
+      <msh:tableColumn columnName="Пост. недобр." property="13"/>
+      <msh:tableColumn columnName="Выбыло" property="14"/>
+      <msh:tableColumn columnName="к.д" property="15"/>
+      <msh:tableColumn columnName="умерло" property="16"/>
+      <msh:tableColumn columnName="к.д" property="17"/>
+      <msh:tableColumn columnName="0-14" property="18"/>
+      <msh:tableColumn columnName="к.д." property="19"/>
+      <msh:tableColumn columnName="15-17" property="20"/>
+      <msh:tableColumn columnName="к.д." property="21"/>
+      <msh:tableColumn columnName="сост. всего" property="22"/>
+      <msh:tableColumn columnName="сост. 0-14" property="23"/>
+      <msh:tableColumn columnName="сост. 15-17" property="24"/>
     </msh:table>
     
     </msh:sectionContent>
@@ -623,7 +954,7 @@ order by p.lastname,p.firstname,p.middlename " />
         <msh:section>
         <msh:sectionTitle>Свод по нозоологиям (умершие)</msh:sectionTitle>
         <msh:sectionContent>
-        <ecom:webQuery name="report14swod" nativeSql="
+        <ecom:webQuery name="Report36HOSPswod" nativeSql="
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
     ,count(sls.id) as cntDeath
     ,count(
@@ -672,9 +1003,9 @@ order by p.lastname,p.firstname,p.middlename " />
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />
-        <msh:table name="report14swod" 
-        viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        <msh:table name="Report36HOSPswod" 
+        viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -820,7 +1151,7 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:section>
     <msh:sectionTitle>Свод по операциям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report14swod" nativeSql="
+    <ecom:webQuery name="Report36HOSPswod" nativeSql="
 
 select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode 
 ,count(distinct so.id) as cntOper
@@ -850,9 +1181,9 @@ ${age_sql}
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
-    <msh:table name="report14swod" 
-    viewUrl="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14ds.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    <msh:table name="Report36HOSPswod" 
+    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
