@@ -383,7 +383,26 @@
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
-    			queried = "(ms.code like :query or ms.name like UPPER(:query))"
+    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			 			
+    	/>
+    
+    </voc>
+    <voc id='medServiceForDirect1' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService ms'
+    			parent="wf.id=:parent 
+    			and (wfs.lpu_id is null or wf.dtype='PersonalWorkFunction' and wfs.lpu_id=w.lpu_id or wf.dtype='GroupWorkFunction' and wfs.lpu_id=wf.lpu_id )
+    			and (ms.startDate is null or CURRENT_DATE  >= ms.startDate) 
+    			and (ms.finishDate is null or ms.finishDate >= CURRENT_DATE)
+    			"
+    			
+    			names = "ms.code||' '||ms.name"
+    			nameId="ms.id"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join worker w on w.id=wf.worker_id'
+    			order=''
+    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			 			
     	/>
     
@@ -402,7 +421,7 @@
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join medcase m on m.workFunctionPlan_id=wf.id left join WorkCalendarDay wcd on wcd.id=m.datePlan_id left join worker w on w.id=wf.worker_id'
     			order=''
-    			queried = "(ms.code like :query or ms.name like UPPER(:query))"
+    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			 			
     	/>
     
