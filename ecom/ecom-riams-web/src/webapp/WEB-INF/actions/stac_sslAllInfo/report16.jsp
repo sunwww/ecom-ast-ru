@@ -405,7 +405,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="пост. всего" property="7" />
 	      <msh:tableColumn columnName="в т.ч. из дневного стационар" property="8" />
 	      <msh:tableColumn columnName="с.ж" property="9" />
-	      <msh:tableColumn columnName="до 17 лет" property="10" />
+	      <msh:tableColumn columnName="0-17 лет" property="10" />
 	      <msh:tableColumn columnName="60 лет и старше" property="11" />
 	      <msh:tableColumn columnName="перев. из других отд" property="12" />
 	      <msh:tableColumn columnName="перев. в другие отд" property="13" />
@@ -646,7 +646,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="с.ж" property="7" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="11" />
@@ -1275,7 +1275,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="пост. из дн. стац." property="7" />
 	      <msh:tableColumn isCalcAmount="true" columnName="пост. т.ч. с.ж." property="8" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="9" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="11" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="12" />
@@ -1592,7 +1592,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="из дн. стац." property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="с.ж." property="7" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="до 14 лет" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="15-17" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 и ст" property="11" />

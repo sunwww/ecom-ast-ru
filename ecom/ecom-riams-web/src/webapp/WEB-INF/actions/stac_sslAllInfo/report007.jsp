@@ -313,7 +313,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="7" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="с.ж" property="9" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="10" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="11" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="12" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="13" />
@@ -468,7 +468,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="с.ж" property="7" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="11" />
@@ -960,7 +960,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. из дневного стационар" property="7" />
-	      <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="8" />
+	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="11" />

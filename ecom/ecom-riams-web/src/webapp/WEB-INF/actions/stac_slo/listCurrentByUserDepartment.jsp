@@ -40,6 +40,7 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
+
     select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
     	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
@@ -90,6 +91,65 @@
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
       <msh:tableColumn columnName="Диагноз" property="10"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <msh:section>
+        <msh:sectionTitle>Список пациентов, находящихся в реанимации
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="datelist" nativeSql="
+    select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
+    	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
+    	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
+    	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
+    ,	  case 
+			when (CURRENT_DATE-sls.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1) 
+			else (CURRENT_DATE-sls.dateStart)
+		  end as cnt1
+   	
+    from medCase m 
+   
+    left join MedCase as prev1 on prev1.id=m.prevMedCase_id
+    left join MedCase as prev2 on prev2.id=prev1.prevMedCase_id
+    left join MedCase as prev3 on prev3.id=prev2.prevMedCase_id
+    left join MisLpu lp on lp.id=m.department_id
+    left join MisLpu lp1 on lp1.id=prev1.department_id
+    left join MisLpu lp2 on lp2.id=prev2.department_id
+    left join MedCase as sls on sls.id = m.parent_id 
+    left join bedfund as bf on bf.id=m.bedfund_id 
+    left join StatisticStub as sc on sc.medCase_id=sls.id
+    left join SurgicalOperation so on so.medCase_id =m.id
+    left join SurgicalOperation so1 on so1.medCase_id =sls.id
+    left join medservice ms on ms.id=so.medService_id
+    left join WorkFunction wf on wf.id=m.ownerFunction_id
+    left join Worker w on w.id=wf.worker_id
+    left join Patient wp on wp.id=w.person_id
+    left join Patient pat on m.patient_id = pat.id 
+    where m.DTYPE='DepartmentMedCase' 
+    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
+    and
+    
+    	lp.isNoOmc='1' and (prev1.department_id='${department}' 
+    	or lp1.isNoOmc='1' and 
+    	(prev2.department_id='${department}' or lp2.isNoOmc='1' and prev3.department_id='${department}')
+    	)
+    group by  m.id,m.dateStart,pat.lastname,pat.firstname
+    ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
+    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
+    order by pat.lastname,pat.firstname,pat.middlename
+    "
+     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Леч.врач" property="7"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
+      <msh:tableColumn columnName="Операции" property="6"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
