@@ -130,8 +130,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    			if (cntSlo.intValue()==listBedFund.size()) {
 	    				for (Object[] slo:listBedFund) {
 	    					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"',bedFund_id='"+slo[1]+"' where id='"+slo[0]+"'").executeUpdate() ;
+	    					theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='"+aServiceStream+"' where medCase_id='"+slo[0]+"'").executeUpdate() ;
 	    				}
 	    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;
+    					theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='"+aServiceStream+"' where medCase_id='"+aSmo+"'").executeUpdate() ;
 	    			} else {
 	    				throw new IllegalArgumentException("По данному потоку обслуживания не во всех отделениях, в которых производилось лечение, заведен коечный фонд"); 
 	    			}
@@ -147,6 +149,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    			Object[] slo=listBedFund.get(0) ;
 	    			if (listBedFund.size()==1) {
 	    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"',bedFund_id='"+slo[1]+"' where id='"+aSmo+"'").executeUpdate() ;
+    					theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='"+aServiceStream+"' where medCase_id='"+aSmo+"'").executeUpdate() ;
 	    			} else {
 	    				throw new IllegalArgumentException("По данному потоку обслуживания в отделение не заведен коечный фонд"); 
 	    			}
