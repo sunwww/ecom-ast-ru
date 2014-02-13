@@ -686,6 +686,14 @@ public class Patient extends BaseEntity{
 	public String getNonresidentZipcode() {return theNonresidentZipcode;}
 	public void setNonresidentZipcode(String aNonresidentZipcode) {theNonresidentZipcode = aNonresidentZipcode;}
 
+	/** Район проживания */
+	@Comment("Район проживания")
+	@OneToOne
+	public VocRayon getRealRayon() {return theRealRayon;}
+	public void setRealRayon(VocRayon aRealRayon) {theRealRayon = aRealRayon;}
+
+	/** Район проживания */
+	private VocRayon theRealRayon;
 	/** Почтовый индекс иногороднего */
 	private String theNonresidentZipcode;
 	/** Почтовый индекс проживания */

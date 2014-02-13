@@ -875,5 +875,13 @@ public class PatientForm extends IdEntityForm {
 
 	/** Вес новорожденного */
 	private Long theNewbornWeight;
+	/** Район проживания */
+	@Comment("Район проживания")
+	@Persist
+	public Long getRealRayon() {return theRealRayon;}
+	public void setRealRayon(Long aRealRayon) {theRealRayon = aRealRayon;}
+
+	/** Район проживания */
+	private Long theRealRayon;
 	
 }
