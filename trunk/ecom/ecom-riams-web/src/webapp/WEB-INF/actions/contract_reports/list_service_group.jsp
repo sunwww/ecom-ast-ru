@@ -365,13 +365,13 @@ for (int ii=0;ii<listPat.size();ii++) {
 		<ecom:webQuery name="dep_list" nameFldSql="dep_list_sql" nativeSql="
 SELECT lpu.id as sqlId
 ,lpu.name as lpuname
-,mc.id as sqlId
+,mc.id as mcId
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
 ,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
 ,CCO.name) as kontragent
 ,pp.id as sqlId
-,pp.code||' '||pp.name as pmsname
 ,pp.positionType_id
+,pp.code||' '||pp.name as pmsname
 , sum(cams.countMedService) as sumCountMedServiceItog 
 , sum(round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2))   
 as sumItog
@@ -417,221 +417,129 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 			Object vLpu1 = null ;
 			Object vContract = null;
 			Object vService = null;
-			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;
+			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;BigDecimal sLpu4 = new BigDecimal(0) ;
 			BigDecimal sLpu1d = new BigDecimal(0) ;BigDecimal sLpu2d = new BigDecimal(0) ; BigDecimal sLpu3d = new BigDecimal(0) ;
 			BigDecimal sContract1 = new BigDecimal(0) ;BigDecimal sContract2 = new BigDecimal(0) ; BigDecimal sContract3 = new BigDecimal(0) ;
 			BigDecimal sContract1d = new BigDecimal(0) ;BigDecimal sContract2d = new BigDecimal(0) ; BigDecimal sContract3d = new BigDecimal(0) ;
 			boolean isNewLpu = false; boolean isNewContract=false ;
 			for (int i=0;i<list.size();i++) { 
 				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
+				isNewContract=false ; isNewLpu=false ;
 				if (i>0) {
-					if (vLpu1.equals(wqr.get2())) {
+					if (vLpu1==null&&wqr.get2()==null || vLpu1!=null&&wqr.get2()!=null&&vLpu1.equals(wqr.get2())) {
+						isNewLpu=false ;
+						//vLpu1=wqr.get2() ;
+						if (vContract==null&&wqr.get3()==null || vContract!=null&&wqr.get3()!=null&&vContract.equals(wqr.get3())) {
+							isNewContract=false;
+							
+						} else {
+							isNewContract=true;
+						}
+					} else {
+						isNewLpu=true ;
+						isNewContract=true;
+					}
+					/*if (isNewContract) {
+						out.println("<tr>") ;
+						out.print("<th>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
+						out.print("<th>"); out.print(sContract1);out.println("</th>") ;
+						out.print("<th>"); out.print(sContract2);out.println("</th>") ;
+						out.print("<th>"); out.print(sContract3);out.println("</th>") ;
+						out.println("</tr>") ;
+						out.println("<tr>") ;
+						out.print("<td><i>"); out.print("итог опер.:");out.println("</i></td>") ;
+						out.print("<td>"); out.print(sContract1d);out.println("</td>") ;
+						out.print("<td>"); out.print(sContract2d);out.println("</td>") ;
+						out.print("<td>"); out.print(sContract3d);out.println("</td>") ;
+						out.println("<tr>") ;
+					} */
+					if (isNewLpu) {
+						out.println("<tr>") ;
+						out.print("<th>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu2);out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu3);out.println("</th>") ;
+						out.println("</tr>") ;
+						out.println("<tr>") ;
+						out.print("<th>"); out.print("ИТОГО по опер.:");out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu2d);out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu3d);out.println("</th>") ;
+						out.println("<tr>") ;
+					}
+				} else{
+					vContract=wqr.get3() ;
+					vLpu1=wqr.get2() ;
+					isNewLpu = true ;
+					isNewContract = true ;
+					sContract1 = new BigDecimal(0) ;sContract2 = new BigDecimal(0) ; sContract3 = new BigDecimal(0) ;
+					sContract1d = new BigDecimal(0) ;sContract2d = new BigDecimal(0) ; sContract3d = new BigDecimal(0) ;
+
+					
 				}
-				out.println("<tr>") ;
+					
+					
+					if (isNewLpu) {
+						sLpu1 = new BigDecimal(0) ;sLpu2 = new BigDecimal(0) ;sLpu3 = new BigDecimal(0) ;
+						sLpu1d = new BigDecimal(0) ;sLpu2d = new BigDecimal(0) ;sLpu3d = new BigDecimal(0) ;
+						out.println("<tr>") ;
+						out.print("<th colspan='4'>"); out.print(wqr.get2());out.println("</th>") ;
+						out.println("<tr>") ;
+					}
+					if (isNewContract) {
+						out.println("<tr>") ;
+						out.print("<td colspan='1'>"); out.print(wqr.get5());out.println("</td>") ;
+						out.println("<tr>") ;
+					} 
 				
-				if (isNewContract) {
-					out.print("<th>"); out.print("ИТОГО:");out.println("</th>") ;
-					out.print("<th>"); out.print(sContract1);out.println("</th>") ;
-					out.print("<th>"); out.print(sContract2);out.println("</th>") ;
-					out.print("<th>"); out.print(sContract3);out.println("</th>") ;
-					out.print("<th>"); out.print(sContract1d);out.println("</th>") ;
-					out.print("<th>"); out.print(sContract2d);out.println("</th>") ;
-					out.print("<th>"); out.print(sContract3d);out.println("</th>") ;
-				} 
-				if (isNewLpu) {
-					out.print("<th>"); out.print("ИТОГО:");out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu2);out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu3);out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu2d);out.println("</th>") ;
-					out.print("<th>"); out.print(sLpu3d);out.println("</th>") ;
-				}
-				sLpu1 = new BigDecimal(0) ;sLpu2 = new BigDecimal(0) ;sLpu3 = new BigDecimal(0) ;sLpu4 = new BigDecimal(0) ;
+				
+				
 				if (wqr.get9()!=null && (""+wqr.get9()).equals("7")) {
-					sContract1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
-					sContract2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
-					sContract3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+					sContract1d=sContract1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sContract2d=sContract2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sContract3d=sContract3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
 				} else {
-					sContract1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
-					sContract2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
-					sContract3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+					sContract1=sContract1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sContract2=sContract2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sContract3=sContract3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+				}
+				if (wqr.get9()!=null && (""+wqr.get9()).equals("7")) {
+					sLpu1d=sLpu1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sLpu2d=sLpu2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sLpu3d=sLpu3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
+				} else {
+					sLpu1=sLpu1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sLpu2=sLpu2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sLpu3=sLpu3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
 				}
 				
 				
-				sLpu1.add(sContract1) ;
-				sLpu2.add(sContract2) ;
-				sLpu2.add(sContract2) ;
+				//out.print("<td>"); out.print(wqr.get3());out.println("</td>") ;
+				out.print("<td>"); out.print(wqr.get8());out.println("</td>") ;
+				out.print("<td>"); out.print(wqr.get9());out.println("</td>") ;
+				out.print("<td>"); out.print(wqr.get10());out.println("</td>") ;
+				out.print("<td>"); out.print(wqr.get11());out.println("</td>") ;
 				
-				out.print("<th>"); out.print(wqr.get2());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get3());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get4());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get5());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get6());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get7());out.println("</th>") ;
-				/*out.print("<th>"); out.print(wqr.get8());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get9());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get10());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get11());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get12());out.println("</th>") ;
-				out.print("<th>"); out.print(wqr.get13());out.println("</th>") ;*/
 				out.println("</tr>") ;
+				vLpu1=wqr.get2();
+				vContract=wqr.get3() ;
+				
+			}
 			%>
-			<%--
-				<ecom:webQuery name="pat_list" nameFldSql="pat_list_sql" nativeSql="
-SELECT mc.id as sqlId
-,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
-,coalesce(CCP.lastname||' '||CCP.firstname||' '||CCP.middlename||' г.р. '||to_char(CCP.birthday,'dd.mm.yyyy')
-,CCO.name) as kontragent
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end)
-as sumCountMedServiceItog 
-
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
-    
-as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
- )
-as sumItogWithoutVat
-
-FROM medcontract MC
-LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
-LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
-LEFT JOIN patient CCP ON CCP.id=CC.patient_id
-LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
-left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
-
-left join PriceMedService pms on pms.id=cams.medService_id
-left join PricePosition pp on pp.id=pms.pricePosition_id
-left join PricePosition pg on pg.id=pp.parent_id
-left join MisLpu lpu on lpu.id=pg.lpu_id
-
-left join WorkFunction wf on wf.id=cao.workFunction_id
-left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-left join Worker w on w.id=wf.worker_id
-left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
-${departmentTypeSql}
-and lpu.id ${groupDep_id}
-and pp.positionType_id in (3,7)
-group by mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
-order by CCP.lastname,CCP.firstname,CCP.middlename
-			"/>
-			<%
-List listPat = (List) request.getAttribute("pat_list") ;
-for (int ii=0;ii<listPat.size();ii++) { 
-	WebQueryResult wqr1 = (WebQueryResult)listPat.get(ii) ;
-	//request.setAttribute("pat", wqr1) ;
-	out.println("<tr>") ;
-	//out.print("<td>"); out.print(wqr1.get1());out.println("</td>") ;
-	out.print("<td><i>"); out.print(wqr1.get3());out.println("</i></td>") ;
-	//out.print("<td>"); out.print(wqr1.get3());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get4());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get5());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get6());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get7());out.println("</td>") ;
-	/*out.print("<td>"); out.print(wqr1.get8());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get9());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get10());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get11());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get12());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get13());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr1.get14());out.println("</td>") ;*/
-	out.println("</tr>") ;
-	request.setAttribute("groupContract_id", wqr1.get1()!=null?"="+wqr1.get1():" is null") ;
+			
+	<%}%>
 	
-	%>
-				<ecom:webQuery name="service_list" nameFldSql="service_list_sql" nativeSql="
-SELECT pp.id as sqlId
-,pp.code||' '||pp.name as pmsname
-
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end)
-as sumCountMedServiceItog 
-
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
-    
-as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
--
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
- )
-as sumItogWithoutVat
-
-FROM medcontract MC
-LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
-LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
-LEFT JOIN patient CCP ON CCP.id=CC.patient_id
-LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
-left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
-
-left join PriceMedService pms on pms.id=cams.medService_id
-left join PricePosition pp on pp.id=pms.pricePosition_id
-left join PricePosition pg on pg.id=pp.parent_id
-left join MisLpu lpu on lpu.id=pg.lpu_id
-
-left join WorkFunction wf on wf.id=cao.workFunction_id
-left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-left join Worker w on w.id=wf.worker_id
-left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
-${departmentTypeSql}
-and lpu.id ${groupDep_id}
-and mc.id ${groupContract_id} 
-and pp.positionType_id in (3,7)
-group by pp.id,pp.code,pp.name
-order by pp.code
-			"/>
+	</table>
 	<%
-List listService = (List) request.getAttribute("service_list") ;
-for (int iii=0;iii<listService.size();iii++) { 
-	WebQueryResult wqr2 = (WebQueryResult)listService.get(iii) ;
-	//request.setAttribute("service", wqr2) ;
-	out.println("<tr>") ;
-	//out.print("<td>"); out.print(wqr1.get1());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get2());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get3());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get4());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get5());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get6());out.println("</td>") ;
-	/*out.print("<td>"); out.print(wqr2.get7());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get8());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get9());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get10());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get11());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get12());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get13());out.println("</td>") ;
-	out.print("<td>"); out.print(wqr2.get14());out.println("</td>") ;*/
-	out.println("</tr>") ;
-	%>
-	
-	<%} %>
-	<%} %>
-	 --%>
-	<%} %>
-	
-	<%
-	} 
+			
 	} else {
 		%>
 		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
 		<%
 		}
 		%>
+		
+		
 	</tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">

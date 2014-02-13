@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -13,6 +14,12 @@
     	<tags:stac_journal currentAction="stac_journalByHospital"/>
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%  	
+  String typeAge=ActionUtil.updateParameter("Report14","typeAge","8", request) ;
+ 
+ %>
+   <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
+ 
     <msh:form action="/stac_journalByHospital.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
@@ -40,6 +47,40 @@
         	<input type="radio" name="typeEmergency" value="3">  все
         </td>
       </msh:row>
+      <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возрастная группа:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="1">  взрослые
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeAge" value="2"  >  взрослые старше труд. возраста
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="3"  >  дети
+        </td>
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="4">  до 1 года
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="5"  >  0-14 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="6"  >  15-17 лет
+        </td>
+        </msh:row>
+        <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
+         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeAge" value="7"  >  взрослые труд. возраста
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="8"  >  все
+        </td>
+       </msh:row>
+      
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
@@ -85,7 +126,7 @@
     </msh:panel>
     </msh:form>
     <script type='text/javascript'>
-    
+    checkFieldUpdate('typeAge','${typeAge}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
@@ -129,6 +170,102 @@
     	} else {
     		request.setAttribute("dateEnd", date1) ;
     	}
+    	ActionUtil.getValueByList("sex_woman_sql", "sex_woman", request) ;
+      	String sexWoman = (String)request.getAttribute("sex_woman") ;
+      	String dateAge="dateStart" ;
+      	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
+    	if (typeDate!=null && typeDate.equals("2")) {
+    		dateAge="dateFinish" ;
+    	}
+    	if (typeAge!=null &&typeAge.equals("3")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+      				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+      				.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+      				.append(" -cast(to_char(p.birthday, 'mm') as int)")
+      				.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+      				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+      				.append(" <0)")
+      				.append(" then -1 else 0 end) < 18 ") ;
+      		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("age_info", "В. Дети") ;
+      	} else if (typeAge!=null &&typeAge.equals("2")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+    			.append(" then -1 else 0 end) > case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
+      	} else if (typeAge!=null &&typeAge.equals("1")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+    			.append(" then -1 else 0 end) >= 18 ") ;
+      		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "А. Взрослые") ;
+      	} else if (typeAge!=null &&typeAge.equals("7")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+      			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
+      			.append(sexWoman).append("' then 55 else 60 end ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста") ;
+      	} else if (typeAge!=null &&typeAge.equals("4")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+    			.append(" then -1 else 0 end) < 1 ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "до года") ;
+      	} else if (typeAge!=null &&typeAge.equals("5")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+    			.append(" then -1 else 0 end) between 0 and 14 ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "0-14") ;
+      	} else if (typeAge!=null &&typeAge.equals("6")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+    			.append(" then -1 else 0 end) between 15 and 17 ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "15-17") ;
+      	}
+    	
+    	
     	String view = (String)request.getAttribute("typeView") ;
     	String pigeonHole1="" ;
     	String pigeonHole="" ;
@@ -199,7 +336,7 @@ between to_date('${param.dateBegin}','dd.mm.yyyy')
 and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.${dateI}
 order by m.${dateI}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -282,7 +419,7 @@ and to_date('${dateEnd}','dd.mm.yyyy')
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${emerIs} ${pigeonHole} ${department}
+${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -370,7 +507,7 @@ and to_date('${dateEnd}','dd.mm.yyyy')
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${period}
-${emerIs} ${pigeonHole1} ${department}
+${emerIs} ${pigeonHole1} ${department} ${age_sql}
 group by m.deniedHospitalizating_id,vdh.name
 order by vdh.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />

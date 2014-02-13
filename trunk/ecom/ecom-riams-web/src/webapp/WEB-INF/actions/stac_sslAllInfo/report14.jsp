@@ -15,6 +15,7 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
+  <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
   <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
   <ecom:webQuery name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
   <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
@@ -22,7 +23,9 @@
   <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
-  	String sexWoman = "1" ;
+  	
+  	ActionUtil.getValueByList("sex_woman_sql", "sex_woman", request) ;
+  	String sexWoman = (String)request.getAttribute("sex_woman") ;
   	String typeAge=ActionUtil.updateParameter("Report14","typeAge","1", request) ;
   	String typeView=ActionUtil.updateParameter("Report14","typeView","1", request) ;
   	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
