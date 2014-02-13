@@ -309,9 +309,10 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         <!--                                                        id='passportAddressField' name='passportAddressField' size='10'-->
         <!--                                                        value='Адрес... ' type='text'/></td>-->
         <!--        </msh:row> -->
+        <msh:separator colSpan="4" label="Адрес регистрации" guid="5a353bf6-7fee-45e5-96ec-7b019182cfcb" />
         <msh:row guid="e034c8ae-b8b7-40f8-82a7-eac5979cc85e">
           <td colspan="1" title="Адрес (addressField)" class="label">
-            <label id="addressFieldLabel" for="addressField"> Российский адрес регистрации:</label>
+            <label id="addressFieldLabel" for="addressField"> Российский адрес:</label>
           </td>
           <td colspan="5" class="addressField" id="addressFieldRow">
             <input title="АдресNoneField" class=" horizontalFill" id="addressField" name="addressField" size="10" value="Адрес... " type="text" />
@@ -321,12 +322,12 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           <msh:autoComplete property="rayon" label="Район" vocName="vocRayon" fieldColSpan="3" horizontalFill="true" guid="cc3da2e5-757d-4971-81df-eea01ee6315b" />
         </msh:row>
          <msh:row guid="8d2-e407-42e4-813c-9s33a">
-          <msh:textField property="foreignRegistrationAddress" label="Иностранный адрес регистрации" horizontalFill="true" fieldColSpan="3" guid="abd74-48cb-4a8b-9f82-63s98e" />
+          <msh:textField property="foreignRegistrationAddress" label="Иностранный адрес" horizontalFill="true" fieldColSpan="3" guid="abd74-48cb-4a8b-9f82-63s98e" />
         </msh:row>
         <msh:row>
         
         <td colspan="2" title="Адрес (nonresidentAddressField)" class="label">
-            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Иногородний адрес (по месту регистрации):</label>
+            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Иногородний адрес:</label>
           </td>
           <td colspan="4" class="addressField">
             <input title="АдресNoneField" class=" horizontalFill" id="nonresidentAddressField" name="nonresidentAddressField" size="10" value="Адрес... " type="text" />
@@ -343,6 +344,9 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row guid="8dr2-e407-9s33a">
           <msh:textField property="foreignRealAddress" label="Иностранный адрес" horizontalFill="true" fieldColSpan="3" guid="abeed74-48cb-4a8b-9f82-63wws98e" />
+        </msh:row>
+        <msh:row guid="5f7aa4f8-3933-4dff-8700-80da510d5d77">
+          <msh:autoComplete property="realRayon" label="Район" vocName="vocRayon" fieldColSpan="3" horizontalFill="true" guid="cc3da2e5-757d-4971-81df-eea01ee6315b" />
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isCompatriot" label="Соотечественник"/>

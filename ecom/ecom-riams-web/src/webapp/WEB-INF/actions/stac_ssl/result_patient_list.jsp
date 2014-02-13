@@ -149,7 +149,10 @@
     hmc.id as hmcid
     ,ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'') as fio
-    ,(hmc.dateFinish-pat.birthday)/365 as age
+    ,	cast(to_char(hmc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++(case when (cast(to_char(hmc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
++(case when (cast(to_char(hmc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end) as age
     ,case when hmc.emergency='1' then 'Э' else 'П' end
     
     ,vpat.name as vpatname
@@ -159,11 +162,12 @@
 		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		end as countDays
 	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
-    , list(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else '' end) as diag
-	, count(soHosp.id)+count(soDep.id) as cntOper
+    , list(distinct case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else null end) as diag
+	, cast(count(soHosp.id)+count(soDep.id) as int) as cntOper
 	, list(to_char(soDep.operationDate,'dd.mm.yyyy')|| '-'||voDep.code|| ' '||voDep.name) ||' ' ||list(to_char(soHosp.operationDate,'dd.mm.yyyy')|| '-'||voHosp.code|| ' '||voHosp.name)
 	, d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname
 	, coalesce(oml.name,'') as omlname1,coalesce(vof.name,'') as whomOrder1  
+	,coalesce(vhtS.name,'') as vhtSname
     from MedCase as hmc
    	left join diagnosis diag on diag.medcase_id=hmc.id
    	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
@@ -180,6 +184,7 @@
     
     left join patient pat on pat.id=hmc.patient_id
     left join VocHospType vht on vht.id=hmc.hospType_id
+    left join VocHospType vhtS on vhtS.id=hmc.sourceHospType_id
     left join address2 adr on adr.addressId = pat.address_addressId
     left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
     left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
@@ -204,8 +209,9 @@
     
     group by hmc.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday
     ,vpat.name,hmc.dateFinish,hmc.dateStart,hmc.emergency,vht.code,ss.code
-    ,d.name,d.isNoOmc,pd.name, oml.name,vof.name
+    ,d.name,d.isNoOmc,pd.name, oml.name,vof.name,vhtS.name
     ${hav} ${addOperation}
+    order by pat.lastname,pat.firstname,pat.middlename
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list"
         viewUrl="entitySubclassShortView-mis_medCase.do"
@@ -223,6 +229,7 @@
             <msh:tableColumn columnName="Диагноз" property="10"/>
             <msh:tableColumn columnName="Кол-во операций" property="11"/>
             <msh:tableColumn columnName="Операции" property="12"/>
+            <msh:tableColumn columnName="Тип напр.ЛПУ" property="16"/>
             <msh:tableColumn columnName="Кем направлен" property="14"/>
             <msh:tableColumn columnName="Кем доставлен" property="15"/>
         </msh:table>

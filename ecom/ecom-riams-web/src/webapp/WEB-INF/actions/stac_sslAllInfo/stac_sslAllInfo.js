@@ -23,7 +23,7 @@ function findHospByPeriod(aForm, aCtx) {
 		aCtx.request.setAttribute("paramPeriod"," and m."+id[4]+" between to_date('"+id[5]+"','dd.mm.yyyy') and to_date('"+id[6]+"','dd.mm.yyyy')")
 	}
 	var dep = +id[7] ;
-	if (dep>0) aCtx.request.setAttribute("addParam", " and m.department_id='"+dep+"'") ;
+	if (dep>0) aCtx.request.setAttribute("addParam", " and m.department_id='"+dep+"' and m.deniedHospitalizating_id is null") ;
 	return listRecord(aCtx,id) ;
 }
 function findDeniedByPeriod(aForm, aCtx) {

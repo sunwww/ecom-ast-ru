@@ -46,6 +46,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_drivePatient_print.jsp" />
         </action>
+        <action path='/stac_journal_direct_psych' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/journal_admissionOrder_psych.jsp" />
+        </action>        
   </action-mappings>
 </struts-config>
 

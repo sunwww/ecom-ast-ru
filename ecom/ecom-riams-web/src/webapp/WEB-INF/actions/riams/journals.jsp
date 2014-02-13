@@ -170,6 +170,9 @@
 						<li><msh:link action="stac_journal_transfer_department.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
 	                            Переводы между отделениями
 	                        </msh:link></li>
+						<li><msh:link action="stac_journal_direct_psych.do" roles="/Policy/Mis/MedCase/Stac/Journal/AdmissionOrderByPsych">
+	                            Журнал по порядку поступления (добров., недобров.)
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
