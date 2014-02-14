@@ -383,7 +383,7 @@
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
-    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			 			
     	/>
     
@@ -402,7 +402,7 @@
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join worker w on w.id=wf.worker_id'
     			order=''
-    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			 			
     	/>
     
@@ -421,7 +421,7 @@
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join medcase m on m.workFunctionPlan_id=wf.id left join WorkCalendarDay wcd on wcd.id=m.datePlan_id left join worker w on w.id=wf.worker_id'
     			order=''
-    			queried = "(upper(ms.code) like upper(:query) or upeer(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			 			
     	/>
     
