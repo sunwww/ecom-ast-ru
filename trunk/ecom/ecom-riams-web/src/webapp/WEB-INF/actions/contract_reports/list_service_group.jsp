@@ -415,9 +415,9 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 
 			<% 
 			List list = (List) request.getAttribute("dep_list") ;
-			DecimalFormat decimal_formatter = new DecimalFormat("###.00") ;
+			DecimalFormat decimal_formatter = new DecimalFormat("##0.00") ;
 			DecimalFormatSymbols custom = new DecimalFormatSymbols() ;
-			//custom.setDecimalSeparator(',') ;
+			custom.setDecimalSeparator(',') ;
 			decimal_formatter.setDecimalFormatSymbols(custom);
 			decimal_formatter.setGroupingSize(0);
 			
