@@ -28,7 +28,7 @@
   		,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 		
 		,case when v.dateStart is not null then 'нет диагноза' when v.visitResult_id is null then '' else 'пред. оформлен' end as prerecord
-
+		, list(distinct ms.code||' '||ms.name) as servicies
 from medcase v 
 left join patient p on p.id=v.patient_id
 left join WorkCalendarDay wcd on wcd.id=v.datePlan_id
@@ -44,6 +44,8 @@ left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join diagnosis d on d.medcase_id=v.id
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
+left join medCase smc on smc.parent_id=v.id and smc.dtype='ServiceMedCase'
+left join MedService ms on ms.id=smc.medservice_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and (v.noActuality is null or v.noActuality='0')
 group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
@@ -57,6 +59,7 @@ order by wct.timeFrom"/>
 	      <msh:tableColumn columnName="Доп. инф." property="6" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Пациент" property="5" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+	      <msh:tableColumn columnName="Услуги" property="7" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Кто направил" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
 	      <msh:tableColumn columnName="Кем направлен" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
 	    </msh:table>
@@ -86,6 +89,7 @@ order by wct.timeFrom"/>
 	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 	    ,pe.lastname||' '||pe.firstname||' '||pe.middlename as pefio
 	    ,vvr.name as vvrname 
+		, list(distinct ms.code||' '||ms.name) as servicies
 
 from medcase v 
 left join patient p on p.id=v.patient_id
@@ -102,6 +106,9 @@ left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join diagnosis d on d.medcase_id=v.id
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
+left join medCase smc on smc.parent_id=v.id and smc.dtype='ServiceMedCase'
+left join MedService ms on ms.id=smc.medservice_id
+
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and v.dateStart is not null
 and (v.noActuality is null or v.noActuality='0')
 group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
@@ -114,6 +121,7 @@ order by v.timeExecute"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+	      <msh:tableColumn columnName="Услуги" property="9" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Исполнен" identificator="false" property="3" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
 	      <msh:tableColumn columnName="Кто направил" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />

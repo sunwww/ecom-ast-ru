@@ -63,6 +63,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Отчет по услугам" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Разбивка по услугам"
 		/>
+	<msh:sideLink styleId="serviciesReportGroup" 
+		action="/contract_reports_services_group" 
+		name="Отчет по услугам (группы)" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Разбивка по услугам (группы)"
+		/>
 	<msh:sideLink styleId="financeReport"
 		action="/contract_reports_finance" 
 		name="финансовый отчет" roles="/Policy/Mis/Contract/Journals/Finance,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"

@@ -184,7 +184,7 @@
         //String department = (String)request.getAttribute("department") ;
         //String spec = (String)request.getAttribute("spec") ;
     	if (typeOrder!=null) {
-    		String group1 = "so.medservice_id,vo.name,vo.code,vo.complexity" ;
+    		String group1 = "so.medservice_id,vo.id,vo.name,vo.code,vo.complexity" ;
     		String orderName = "vo.name" ;
     		String orderId = "vo.id" ;
     		if (view!=null &&(view.equals("6")||view.equals("7"))) {

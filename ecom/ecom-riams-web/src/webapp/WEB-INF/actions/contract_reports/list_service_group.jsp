@@ -1,3 +1,5 @@
+<%@page import="java.text.DecimalFormatSymbols"%>
+<%@page import="java.text.DecimalFormat"%>
 <%@page import="java.math.BigDecimal"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Collection"%>
@@ -15,7 +17,7 @@
 		<msh:title mainMenu="Contract" >Отчет по услугам</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
-	<tags:contractMenu currentAction="serviciesReport"/>
+	<tags:contractMenu currentAction="serviciesReportGroup"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
   <%
@@ -398,7 +400,6 @@ AND to_date('${param.dateTo}', 'dd.mm.yyyy')
 and (cao.dtype='OperationAccrual' ) and cao.repealOperation_id is null  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
-and pp.positionType_id in (3,7)
 
 group by lpu.id,lpu.name,mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom,pp.positionType_id,pp.id,pp.code,pp.name
 order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,pp.code
@@ -414,9 +415,16 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 
 			<% 
 			List list = (List) request.getAttribute("dep_list") ;
+			DecimalFormat decimal_formatter = new DecimalFormat("###.00") ;
+			DecimalFormatSymbols custom = new DecimalFormatSymbols() ;
+			//custom.setDecimalSeparator(',') ;
+			decimal_formatter.setDecimalFormatSymbols(custom);
+			decimal_formatter.setGroupingSize(0);
+			
 			Object vLpu1 = null ;
 			Object vContract = null;
 			Object vService = null;
+			int cntMC = 1 ;
 			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;BigDecimal sLpu4 = new BigDecimal(0) ;
 			BigDecimal sLpu1d = new BigDecimal(0) ;BigDecimal sLpu2d = new BigDecimal(0) ; BigDecimal sLpu3d = new BigDecimal(0) ;
 			BigDecimal sContract1 = new BigDecimal(0) ;BigDecimal sContract2 = new BigDecimal(0) ; BigDecimal sContract3 = new BigDecimal(0) ;
@@ -453,19 +461,26 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 						out.print("<td>"); out.print(sContract3d);out.println("</td>") ;
 						out.println("<tr>") ;
 					} */
+					
 					if (isNewLpu) {
 						out.println("<tr>") ;
-						out.print("<th>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu2);out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu3);out.println("</th>") ;
+						out.print("<th align='right'>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu2d));out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu3d));out.println("</th>") ;
 						out.println("</tr>") ;
 						out.println("<tr>") ;
-						out.print("<th>"); out.print("ИТОГО по опер.:");out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu2d);out.println("</th>") ;
-						out.print("<th>"); out.print(sLpu3d);out.println("</th>") ;
+						out.print("<th align='right'>"); out.print("ИТОГО по др.усл.:");out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu2));out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu3));out.println("</th>") ;
+						out.println("</tr>") ;
 						out.println("<tr>") ;
+						out.print("<th align='right'>"); out.print("ВСЕГО:");out.println("</th>") ;
+						out.print("<th>"); out.print(sLpu1.add(sLpu1d));out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu2.add(sLpu2d)));out.println("</th>") ;
+						out.print("<th>"); out.print(decimal_formatter.format(sLpu3.add(sLpu3d)));out.println("</th>") ;
+						out.println("</tr>") ;
 					}
 				} else{
 					vContract=wqr.get3() ;
@@ -484,30 +499,28 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 						sLpu1d = new BigDecimal(0) ;sLpu2d = new BigDecimal(0) ;sLpu3d = new BigDecimal(0) ;
 						out.println("<tr>") ;
 						out.print("<th colspan='4'>"); out.print(wqr.get2());out.println("</th>") ;
-						out.println("<tr>") ;
+						out.println("</tr>") ;
+						cntMC = 1 ;
 					}
 					if (isNewContract) {
 						out.println("<tr>") ;
-						out.print("<td colspan='1'>"); out.print(wqr.get5());out.println("</td>") ;
-						out.println("<tr>") ;
+						out.print("<td colspan='4'><i>");out.print(cntMC++);out.print(". "); out.print(wqr.get5());out.println("</i></td>") ;
+						out.println("</tr>") ;
 					} 
 				
 				
 				
-				if (wqr.get9()!=null && (""+wqr.get9()).equals("7")) {
+				if (wqr.get7()!=null && (""+wqr.get7()).equals("7")) {
 					sContract1d=sContract1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
 					sContract2d=sContract2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
 					sContract3d=sContract3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
-				} else {
-					sContract1=sContract1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
-					sContract2=sContract2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
-					sContract3=sContract3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
-				}
-				if (wqr.get9()!=null && (""+wqr.get9()).equals("7")) {
 					sLpu1d=sLpu1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
 					sLpu2d=sLpu2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
 					sLpu3d=sLpu3d.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
 				} else {
+					sContract1=sContract1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
+					sContract2=sContract2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
+					sContract3=sContract3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
 					sLpu1=sLpu1.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
 					sLpu2=sLpu2.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
 					sLpu3=sLpu3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
@@ -516,15 +529,34 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 				
 				//out.print("<td>"); out.print(wqr.get3());out.println("</td>") ;
 				out.print("<td>"); out.print(wqr.get8());out.println("</td>") ;
-				out.print("<td>"); out.print(wqr.get9());out.println("</td>") ;
-				out.print("<td>"); out.print(wqr.get10());out.println("</td>") ;
-				out.print("<td>"); out.print(wqr.get11());out.println("</td>") ;
+				out.print("<td align='center'>"); out.print(wqr.get9());out.println("</td>") ;
+				out.print("<td align='center'>"); out.print(decimal_formatter.format(wqr.get10()));out.println("</td>") ;
+				out.print("<td align='center'>"); out.print(decimal_formatter.format(wqr.get11()));out.println("</td>") ;
 				
 				out.println("</tr>") ;
 				vLpu1=wqr.get2();
 				vContract=wqr.get3() ;
 				
 			}
+			out.println("<tr>") ;
+			out.print("<th align='right'>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
+			out.print("<th>"); out.print(sLpu1d);out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu2d));out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu3d));out.println("</th>") ;
+			out.println("</tr>") ;
+			out.println("<tr>") ;
+			out.print("<th align='right'>"); out.print("ИТОГО по др.усл.:");out.println("</th>") ;
+			out.print("<th>"); out.print(sLpu1);out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu2));out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu3));out.println("</th>") ;
+			out.println("</tr>") ;
+			out.println("<tr>") ;
+			out.print("<th align='right'>"); out.print("ВСЕГО:");out.println("</th>") ;
+			out.print("<th>"); out.print(sLpu1.add(sLpu1d));out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu2.add(sLpu2d)));out.println("</th>") ;
+			out.print("<th>"); out.print(decimal_formatter.format(sLpu3.add(sLpu3d)));out.println("</th>") ;
+			out.println("</tr>") ;
+			
 			%>
 			
 	<%}%>
