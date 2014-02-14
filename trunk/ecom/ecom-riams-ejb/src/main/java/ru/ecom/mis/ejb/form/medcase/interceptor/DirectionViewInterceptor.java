@@ -11,6 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.ticket.interceptors.TicketMedCaseViewInterceptor;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class DirectionViewInterceptor implements IFormInterceptor {
@@ -37,6 +38,9 @@ public class DirectionViewInterceptor implements IFormInterceptor {
 				if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
 	    	}
     	}
+    	form.setMedServices(TicketMedCaseViewInterceptor.getArray(manager,"MedCase","medService_id"
+				,new StringBuilder().append("parent_id='").append(entity.getId()).append("'").append(" and dtype='ServiceMedCase'").toString()
+			)) ;
 	}
 
 }
