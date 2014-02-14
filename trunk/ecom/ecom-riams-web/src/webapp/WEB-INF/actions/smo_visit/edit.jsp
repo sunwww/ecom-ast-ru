@@ -77,6 +77,9 @@
         <msh:row>
           <msh:autoComplete vocName="vocMedCaseDefect" labelColSpan="3" property="medCaseDefect" label="Дефекты направления" horizontalFill="true" />
         </msh:row>
+        <msh:row>
+	   		<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="6"/>
+	    </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	       	<msh:row>
 	       		<msh:separator label="Скорая помощь" colSpan="4"/>
@@ -282,6 +285,21 @@
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
   	<script type="text/javascript">
+  	var oldValue=$('dateStart').value;
+  	if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+  	eventutil.addEventListener($('dateStart'),'blur',function(){
+  		if (oldValue!=$('dateStart').value) {
+  			var wf = +$("workFunctionExecute").value;
+    		if (wf=='') {wf=0;}
+  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
+    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+	      	 		callback: function(aResult) {
+	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 		}
+	      	 	}) ;
+  		}
+  	}) ;
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
   	//alert($("workFunctionExecute").value) ;

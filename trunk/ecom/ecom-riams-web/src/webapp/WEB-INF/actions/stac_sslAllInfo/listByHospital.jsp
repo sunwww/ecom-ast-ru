@@ -105,6 +105,12 @@
 	        	<input type="radio" name="typeView" value="3"  >  общий свод отказов от госпитализаций
 	        </td>
         </msh:row>
+        <msh:row>
+        	<td></td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeView" value="4">  свод по часам заболевания при экст. госпит.  
+	        </td>        	
+        </msh:row>
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -364,21 +370,21 @@ order by m.${dateI}
               </tr>
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Дата" property="2"/>
-      <msh:tableColumn columnName="Плановые" property="3"/>
-      <msh:tableColumn columnName="Экстренные" property="4"/>
-      <msh:tableColumn columnName="Всего" property="5"/>
-      <msh:tableColumn columnName="из всего с.ж" property="6"/>
-      <msh:tableColumn columnName="из всего гор." property="7"/>
-      <msh:tableColumn columnName="из всего иног." property="8"/>
-      <msh:tableColumn columnName="из всего иностр." property="9"/>
-      <msh:tableColumn columnName="из всего другое" property="10"/>
-      <msh:tableColumn columnName="Всего" property="11"/>
-      <msh:tableColumn columnName="из них с.ж" property="12"/>
-      <msh:tableColumn columnName="из них гор." property="13"/>
-      <msh:tableColumn columnName="из них иног." property="14"/>
-      <msh:tableColumn columnName="из них иностр." property="15"/>
-      <msh:tableColumn columnName="из них другое" property="16"/>
-      <msh:tableColumn columnName="Обращений" property="17"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Плановые" property="3"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Экстренные" property="4"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж" property="6"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего гор." property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего иног." property="8"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего иностр." property="9"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего другое" property="10"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="11"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="12"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="13"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="14"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="15"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="16"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Обращений" property="17"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -555,7 +561,75 @@ order by vdh.name
     </msh:section>
     <% }
     	%>
-    	
+   	    	<%if (view!=null && (view.equals("4"))) {%>
+    <msh:section>
+    <msh:sectionTitle>
+    <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
+    
+    select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
+    ||m.department_id 
+,dep.name
+,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
+,count(distinct case when (m.emergency is null or m.emergency='0') and of1.voc_code='К' then m.id else null end) as plK
+,count(distinct case when (m.emergency is null or m.emergency='0')  and of1.voc_code='О' then m.id else null end) as plO
+,count(distinct case when m.emergency='1' then m.id else null end) as em
+,count(distinct case when m.emergency='1' and vpat.code='1' then m.id else null end) as em1
+,count(distinct case when m.emergency='1' and vpat.code='2' then m.id else null end) as em2
+,count(distinct case when m.emergency='1' and vpat.code='3' then m.id else null end) as em3
+from medcase m 
+left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
+left join mislpu dep on dep.id=m.department_id
+left join Omc_Frm of1 on of1.id=m.orderType_id
+left join MisLpu as ml on ml.id=m.department_id 
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id 
+where m.dtype='HospitalMedCase' 
+and m.${dateI} between to_date('${param.dateBegin}','dd.mm.yyyy')  
+and to_date('${dateEnd}','dd.mm.yyyy')  
+and ( m.noActuality is null or m.noActuality='0')
+and m.deniedHospitalizating_id is null
+${period}
+${emerIs} ${pigeonHole} ${department} ${age_sql}
+group by m.department_id,dep.name
+order by dep.name
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <form action="print-stac_journalByHospital_4.do" method="post" target="_blank">
+        Госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+        <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_otd_sql}"> 
+        <input type='hidden' name="sqlColumn" id="sqlColumn" value="Отделение">
+        <input type='hidden' name="s" id="s" value="PrintService">
+        <input type='hidden' name="m" id="m" value="printNativeQuery">
+        <input type="submit" value="Печать"> 
+                                </form>
+    </msh:sectionTitle>
+    <msh:sectionContent >
+    <msh:table name="journal_priem_otd" 
+    viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short"
+    action="js-stac_sslAllInfo-findHospByPeriod.do"
+     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+              <tr>
+                <th colspan=1></th>
+                <th colspan=1></th>
+                <th colspan=3>Плановые</th>
+                <th colspan=4>Экстренные</th>
+
+              </tr>
+            </msh:tableNotEmpty>    
+      <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+      <msh:tableColumn columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+      <msh:tableColumn columnName="Доставленных в первые 6 часов" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn columnName="Доставленных в первые 7-24 часов" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn columnName="Доставленных позднее 24 часов" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    	<%} %>
     	<%
     } else {%>
     	<i>Нет данных </i>

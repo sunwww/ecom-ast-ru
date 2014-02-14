@@ -40,13 +40,13 @@
         </msh:row>
         <msh:row guid="row1">
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
-          <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" />
+          <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" 
+          />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="medServices" vocName="medServiceForDirect1" parentAutocomplete="workFunctionPlan"
-        		viewAction="entityView-mis_medService.do" label="Мед.услуги" fieldColSpan="3"
-        		horizontalFill="true"
-        	/>
+        	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" 
+	   		property="medServices" vocName="medServiceForSpec" colSpan="6" />
+	 
 	    </msh:row>
         <msh:ifFormTypeIsNotView formName="smo_directionForm">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
@@ -184,7 +184,7 @@
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
       document.forms[0].action = 'javascript:isExistTicket()';
-      
+      if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
       function isExistTicket() {
  		 if (!$('emergency').checked) {
  			 WorkCalendarService.checkPolicyByPatient($('patient').value,
@@ -274,6 +274,7 @@
   		}) ;
       datePlanAutocomplete.addOnChangeCallback(function(){
     	  getPreRecord() ;
+    	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
   		}) ;
     function checkRecord(aId,aValue) {
     	$('timePlan').value = aId; 
@@ -352,7 +353,8 @@
   			) ;
   			$('timePlan').value="0" ;
 			$('timePlanName').value = "";
-  			
+			if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+		      
   		}
   	function getPreRecord() {
   		if ($('tdPreRecord')) {
