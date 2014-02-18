@@ -27,7 +27,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="extDisp_vocAgeReportGroupForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_vocAgeReportGroup" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_vocAgeReportGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Delete"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_vocAgeReportGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 		<tags:voc_menu currentAction="extDisp"/>

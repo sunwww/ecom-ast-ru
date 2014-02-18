@@ -250,7 +250,7 @@ order by ml.name,pat.lastname,pat.firstname,pat.middlename
     <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="swod_department" nativeSql="
-select vj.id,vj.name,count(distinct sls.id)
+select ml.id,ml.name,count(distinct sls.id)
 from medcase sls
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join Patient pat on pat.id=sls.patient_id

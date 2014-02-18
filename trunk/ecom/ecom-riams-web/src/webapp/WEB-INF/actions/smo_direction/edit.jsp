@@ -347,14 +347,14 @@
 				        $('datePlanName').value = "";
 				        getPreRecord();
 	  				}
-  					getWorkFunctionByUsername() ;
+  					if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+  				    getWorkFunctionByUsername() ;
 	  			}
   			}
   			) ;
   			$('timePlan').value="0" ;
 			$('timePlanName').value = "";
-			if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
-		      
+			 
   		}
   	function getPreRecord() {
   		if ($('tdPreRecord')) {

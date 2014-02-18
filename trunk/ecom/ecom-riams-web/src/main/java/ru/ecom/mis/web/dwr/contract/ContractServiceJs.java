@@ -32,10 +32,18 @@ public class ContractServiceJs {
 				}
 			} else {
 				try {
-					service.executeUpdateNativeSql("insert into "
-						+" ExtDispPlanService "
-						+" (sex_id,plan_id,serviceType_id,ageGroup_id) values ((select min(vs.id) from vocsex vs where vs.omcCode='"+aSex+"'),'"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
-						) ;
+					Collection<WebQueryResult> wqrSex = service.executeNativeSql("select vs.id,vs.name from vocsex vs where vs.omcCode='"+aSex+"'",1) ;
+					if (wqrSex.isEmpty()) {
+						service.executeUpdateNativeSql("insert into "
+								+" ExtDispPlanService "
+								+" (sex_id,plan_id,serviceType_id,ageGroup_id) values ((select min(vs.id) from vocsex vs where vs.omcCode='"+aSex+"'),'"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+								) ;
+					} else {
+						service.executeUpdateNativeSql("insert into "
+								+" ExtDispPlanService "
+								+" (sex_id,plan_id,serviceType_id,ageGroup_id) values ('"+wqrSex.iterator().next().get1()+"','"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+								) ;
+					}
 				} catch (Exception e) {
 					service.executeUpdateNativeSql("alter table extdispplanservice alter column id set default nextval('extdispplanservice_sequence')") ;
 					service.executeUpdateNativeSql("insert into "

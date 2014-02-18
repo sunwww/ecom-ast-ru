@@ -286,7 +286,7 @@
   
   	<script type="text/javascript">
   	var oldValue=$('dateStart').value;
-  	if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+  	updateService() ;
   	eventutil.addEventListener($('dateStart'),'blur',function(){
   		if (oldValue!=$('dateStart').value) {
   			var wf = +$("workFunctionExecute").value;
@@ -296,10 +296,18 @@
     		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
 	      	 		callback: function(aResult) {
 	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+	      	 		  	
 	      	 		}
 	      	 	}) ;
   		}
   	}) ;
+  	function updateService() {
+		var wf = +$("workFunctionExecute").value;
+   		if (wf==0) {wf=+$("workFunctionPlan").value;}
+   		if (wf=='') {wf=0;}
+  		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;  		
+  	}
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
   	//alert($("workFunctionExecute").value) ;
@@ -339,30 +347,7 @@
   	}
   	</script>
   </msh:ifFormTypeIsNotView>
-  <%--
-  <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
-  <msh:ifFormTypeIsNotView formName="smo_visitForm">
-  
-  <script type="text/javascript">
-  var oldValue = $('dateStart').value ;
-  if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
-  eventutil.addEventListener($('dateStart'),'blur',function(){
-		if (oldValue!=$('dateStart').value) {
-			var wf = +$("workFunctionExecute").value;
-  		if (wf=='') {wf=0;}
-			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-  		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-  		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      	 		callback: function(aResult) {
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 		}
-	      	 	}) ;
-		}
-	}) ;
-  </script>
-  </msh:ifFormTypeIsNotView>
-  </msh:ifInRole>
-   --%>
+
   <script type="text/javascript">
 	  function printDischarge() {
 		  if (confirm('Вы хотите распечатать выписку по заключению без изменений?')) {
