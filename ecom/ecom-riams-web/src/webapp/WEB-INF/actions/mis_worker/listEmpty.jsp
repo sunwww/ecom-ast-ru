@@ -22,7 +22,12 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  	<ecom:webQuery name="listArch" nativeSql="select w.id,wp.lastname||' '||wp.firstname||' '||wp.middlename from worker w left join Patient wp on wp.id=w.person_id where w.lpu_id=${param.id} and (select count(*) from WorkFunction wf where wf.worker_id=w.id)=0"/>
+  	<ecom:webQuery name="listArch" nativeSql="select w.id
+  	,wp.lastname||' '||wp.firstname||' '||wp.middlename as fio 
+  	from worker w 
+  	left join Patient wp on wp.id=w.person_id 
+  	where w.lpu_id=${param.id} 
+  	and (select count(*) from WorkFunction wf where wf.worker_id=w.id)=0"/>
     <msh:table name="listArch" action="entityParentView-mis_worker.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
       <msh:tableColumn columnName="#" property="sn" guid="4797" />
       <msh:tableColumn columnName="ФИО" property="2" guid="4ceb96e" />

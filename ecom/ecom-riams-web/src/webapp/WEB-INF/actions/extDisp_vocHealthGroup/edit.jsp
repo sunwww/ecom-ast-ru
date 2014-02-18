@@ -25,7 +25,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="extDisp_vocHealthGroupForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_vocHealthGroup" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_vocHealthGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/Delete"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_vocHealthGroup" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Voc/HealthGroup/Delete"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
         <tags:voc_menu currentAction="medService"/>

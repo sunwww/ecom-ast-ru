@@ -44,11 +44,11 @@
 		<msh:ifFormTypeAreViewOrEdit formName="extDisp_vocPlanForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_vocPlan" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-extDisp_vocPlan" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_vocPlan" name="Удалить" title="Удалить" roles=""/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+N" params="id" 
-					action="/entityParentPrepareCreate-extDisp_vocPlanService" 
+					action="/js-extDisp_service-editPlan1.do" 
 					name="Услугу" title="Добавить услугу" roles=""/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
