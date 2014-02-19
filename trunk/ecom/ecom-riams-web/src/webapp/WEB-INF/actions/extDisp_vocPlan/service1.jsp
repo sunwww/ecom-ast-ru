@@ -29,6 +29,7 @@
 			ageSql1.append("||''||max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id=").append(wqr.get1()).append(" and (edps.sex_id is null or vs.omcCode='2') then 1 else 0 end) as SA").append(wqr.get1()).append("G") ;
 		}
 		request.setAttribute("ageGroupSex1Sql", ageSql1.toString()) ;
+		if (cntAgeGroup>=22) {request.setAttribute("ageGroupSex2SqlAdd", "left join ExtDispPlanService edps on edps.serviceType_id=veds.id left join VocSex vs on vs.id=edps.sex_id") ;}
 		for (int i=22;i<cntAgeGroup && i<44;i++) {
 			WebQueryResult wqr = (WebQueryResult) colAgeGroup.get(i) ;
 			ageSql2.append(",max(case when edps.plan_id='").append(plan).append("' and edps.ageGroup_id='").append(wqr.get1()).append("' and (edps.sex_id is null or vs.omcCode='1') then 1 else 0 end)") ; 
@@ -47,8 +48,7 @@ order by veds.code,veds.name"/>
 		<ecom:webQuery name="result2" nativeSql="select veds.id,veds.code,veds.name
 ${ageGroupSex2Sql}
 from vocExtDispService veds
-left join ExtDispPlanService edps on edps.serviceType_id=veds.id
-left join VocSex vs on vs.id=edps.sex_id
+${ageGroupSex2SqlAdd}
 group by veds.id,veds.code,veds.name
 order by veds.code,veds.name"/>
 <table class='servicetbl' border="1">
