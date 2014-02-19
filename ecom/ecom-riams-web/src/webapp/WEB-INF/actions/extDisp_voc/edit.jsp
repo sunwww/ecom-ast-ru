@@ -40,7 +40,7 @@
 			<msh:section title="Возрастные группы для отчета" createRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocAgeReportGroup.do?id=${param.id}"
 			shortList="entityParentList-extDisp_vocAgeReportGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/View">
 			<ecom:webQuery name="vocExtDispAgeReportGroup" nativeSql="select vedag.id,vedag.code,vedag.name from VocExtDispAgeReportGroup vedag where vedag.dispType_id=${param.id}"/>
-				<msh:table name="vocExtDispAgeReportGroup" action="entityParentView-extDisp_vocAgeGroup.do" idField="1">
+				<msh:table name="vocExtDispAgeReportGroup" action="entityParentView-extDisp_vocAgeReportGroup.do" idField="1">
 					<msh:tableColumn columnName="Код" property="2"/>
 					<msh:tableColumn columnName="Наименование" property="3"/>
 				</msh:table>
