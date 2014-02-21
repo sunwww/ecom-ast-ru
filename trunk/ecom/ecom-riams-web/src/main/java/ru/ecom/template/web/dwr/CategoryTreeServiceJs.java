@@ -41,12 +41,13 @@ public class CategoryTreeServiceJs {
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
     				isOnceViewFld=" pp.dtype='PriceGroup' and pp.isOnceView" ;
-    				whereAdd=" and pp.priceList_id='"+aAddParam+"' "+whereAdd ;
+    				whereAdd=" and pp.priceList_id='"+aAddParam+"'  and pp.dateTo is null "+whereAdd ;
     				
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id=pp.id)";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
     		table="PricePosition pp" ;fldId="pp.id";fldView="pp.code||' '||pp.name" 
     				;fldParent="pp.parent_id";fldOrderBy="pp.code";
+    				//whereAdd=" and pp.dateTo is null "+whereAdd;
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else {
     		return "" ;
