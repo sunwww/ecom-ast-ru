@@ -24,6 +24,7 @@
 	String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
+	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
 	String person = request.getParameter("person") ;
 	
 	if (person!=null && !person.equals("") && !person.equals("0")) {
@@ -137,6 +138,18 @@
 
         </msh:row>
         <msh:row>
+	        <td class="label" title="Показания (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="1">  Экстренные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeEmergency" value="2" >  Плановые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="3">  Все
+	        </td>
+	    </msh:row>
+        <msh:row>
 	        <td class="label" title="База (typeDtype)" colspan="1"><label for="typeDtypeName" id="typeDtypeLabel">Версия:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeDtype" value="1">  Визит.
@@ -176,6 +189,11 @@
     			request.setAttribute("dtypeSql", "smo.dtype='ShortMedCase'") ;
     		} else {
     			request.setAttribute("dtypeSql", "(smo.dtype='ShortMedCase' or smo.dtype='Visit')") ;
+    		}
+    		if (typeEmergency.equals("1")) {
+    			request.setAttribute("emergencySql", " and smo.emergency='1'") ;
+    		} else if (typeEmergency.equals("2")) {
+    			request.setAttribute("emergencySql", " and (smo.emergency='0' or smo.emergency is null)") ;
     		}
     		if (typeDate.equals("1")) {
     			request.setAttribute("dateSql", "spo.dateFinish") ;
@@ -291,7 +309,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
         <msh:table
@@ -406,7 +424,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
@@ -423,7 +441,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
   
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeDtype=${typeDtype}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -598,7 +616,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
     <msh:sectionTitle>
@@ -614,7 +632,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -780,7 +798,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -796,7 +814,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="4"/>
@@ -895,7 +913,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -911,7 +929,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1020,7 +1038,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null
+${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1036,7 +1054,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1100,7 +1118,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
-${personSql} and smo.dateStart is not null
+${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1116,7 +1134,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
                   <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1139,8 +1157,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionContent>
 
     </msh:section>    	
-    <%
-    }
+    <% }
     }
     		} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
@@ -1153,6 +1170,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
+    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     
     
     function checkFieldUpdate(aField,aValue,aDefault) {
