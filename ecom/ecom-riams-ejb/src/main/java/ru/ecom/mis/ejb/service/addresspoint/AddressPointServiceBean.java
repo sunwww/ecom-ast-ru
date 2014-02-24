@@ -45,13 +45,13 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-
-    public String export(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    
+    public String exportAll(String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename = "P"+aNReestr+"_"+aDateTo+aNPackage+".xml" ;
+    	String filename = "P"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+aNPackage+".xml" ;
     	File outFile = new File(workDir+"/"+filename) ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
@@ -69,16 +69,17 @@ public class AddressPointServiceBean implements IAddressPointService {
     	sql.append(" where ") ;
     	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("') and ") ;
     	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
-    	sql.append(" (p.noActuality='0' or p.noActuality is null)");
+    	sql.append(" (p.noActuality='0' or p.noActuality is null) ");
+    	sql.append(aAddSql) ;
     	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
     	
     	List<Object[]> listPat = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
-    	xmlDoc.newElement(title, "PERIOD", aDateTo.substring(2,4));
+    	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
-    	xmlDoc.newElement(title, "FILENAME", "P"+aNReestr+"_"+aDateTo+aNPackage);
+    	xmlDoc.newElement(title, "FILENAME", "P"+aNReestr+"_"+aPeriodByReestr+aNPackage);
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "ZAP", null);
@@ -102,60 +103,17 @@ public class AddressPointServiceBean implements IAddressPointService {
     	xmlDoc.saveDocument(outFile) ;
     	return filename;
     }
-    public String exportNoAddress(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
-        EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-        Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
-        String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-        workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-        String filename = "P_without_address"+aNReestr+"_"+aDateTo+aNPackage+".xml" ;
-        File outFile = new File(workDir+"/"+filename) ;
-        XmlDocument xmlDoc = new XmlDocument() ;
-        Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
-        StringBuilder sql = new StringBuilder() ;
-        sql.append("select p.id,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
-        sql.append(" ,p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
-        sql.append(" ,case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
-        sql.append(" ,case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
-    	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
-        sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
-        sql.append(" from Patient p") ;
-        sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
-        sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
-        sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
-        sql.append(" where ") ;
-    	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("') and ") ;
-    	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
-        sql.append(" p.address_addressid is null and ") ;
-        sql.append(" (p.noActuality='0' or p.noActuality is null)");
-        sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
-        sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-        
-        List<Object[]> listPat = theManager.createNativeQuery(sql.toString()).setMaxResults(70000).getResultList() ;
-		Element title = xmlDoc.newElement(root, "ZGLV", null);
-		xmlDoc.newElement(title, "PERIOD", aDateTo.substring(2,4));
-		xmlDoc.newElement(title, "N_REESTR", aNReestr);
-		xmlDoc.newElement(title, "FILENAME", "P_without_address"+aNReestr+"_"+aDateTo+aNPackage);
-		int i=0 ;
-		for (Object[] pat:listPat) {
-			Element zap = xmlDoc.newElement(root, "ZAP", null);
-			xmlDoc.newElement(zap, "IDCASE", getStringValue(++i)) ;
-			xmlDoc.newElement(zap, "FAM", getStringValue(pat[1])) ;
-			xmlDoc.newElement(zap, "IM", getStringValue(pat[2])) ;
-			xmlDoc.newElement(zap, "OT", getStringValue(pat[3])) ;
-			xmlDoc.newElement(zap, "DR", getStringValue(pat[4])) ;
-			xmlDoc.newElement(zap, "SNILS", getStringValue(pat[5])) ;
-			xmlDoc.newElement(zap, "DOCTYPE", getStringValue(pat[6])) ;
-			xmlDoc.newElement(zap, "DOCSER", getStringValue(pat[7])) ;
-			xmlDoc.newElement(zap, "DOCNUM", getStringValue(pat[8])) ;
-			xmlDoc.newElement(zap, "RZ", getStringValue(pat[9])) ;
-			xmlDoc.newElement(zap, "SP_PRIK", getStringValue(pat[10])) ; // 1-территориал, 2-заявление
-			xmlDoc.newElement(zap, "T_PRIK", getStringValue(1)) ; // 1-прикрепление, 2-открепление
-			xmlDoc.newElement(zap, "DATE_1", getStringValue(pat[11])) ;
-			xmlDoc.newElement(zap, "REFREASON", "") ;
-		}
-		xmlDoc.saveDocument(outFile) ;
-		return filename;
-	}
+    public String export(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	return exportAll("","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+    }
+    public String exportAdult(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	StringBuilder addSql = new StringBuilder().append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) >= 18") ;
+    	return exportAll("_adult",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+    }
+    public String exportNoAddress(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
+    	return exportAll("_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+    }
     private String getStringValue(Object aValue) {
     	return aValue!=null?""+aValue:"" ;
     }
