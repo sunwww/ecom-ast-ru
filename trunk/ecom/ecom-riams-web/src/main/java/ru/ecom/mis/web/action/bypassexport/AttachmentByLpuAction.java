@@ -36,15 +36,24 @@ public class AttachmentByLpuAction extends BaseAction {
         	cal.setTime(cur) ;
         	Date curTo = DateFormat.parseDate(form.getPeriodTo()) ;
         	calTo.setTime(curTo) ;
-	    	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
+        	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
+	    	SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
 	    	String filename ;
 	        if (typeView!=null && typeView.equals("1")) {
 		    	filename = service.export(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-		        		, form.getLpu(),form.getArea(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()), format1.format(calTo.getTime()),form.getNumberReestr()
+		        		, form.getNumberPackage());
+	        } else if (typeView!=null && typeView.equals("2")) {
+		    	filename = service.exportNoAddress(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
 	        } else {
-		    	filename = service.exportNoAddress(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-		        		, form.getLpu(),form.getArea(),format1.format(cal.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		    	filename = service.exportAdult(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		        		, form.getLpu(),form.getArea()
+		        		,format2.format(cal.getTime())
+		        		,format2.format(calTo.getTime())
+		        		,format1.format(calTo.getTime())
+		        		, form.getNumberReestr()
 		        		, form.getNumberPackage());
 	        }
 	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
