@@ -53,6 +53,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	        	<input type="radio" name="typeView" value="2">  пациенты без адресов
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="3">  пациенты от 18 лет
+	        </td>
        </msh:row>
        
        <msh:row>
@@ -111,7 +114,7 @@
     	
     }
     </script>
-
+<%--
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
@@ -278,6 +281,6 @@ ${emergencySql} ${departmentSql}
     	<i>Нет данных </i>
     	<% 
     	}%>
-    
+     --%>
   </tiles:put>
 </tiles:insert>
