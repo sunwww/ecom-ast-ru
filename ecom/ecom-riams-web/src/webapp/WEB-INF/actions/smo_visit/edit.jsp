@@ -125,9 +125,18 @@
         </msh:ifFormTypeIsNotView>
       </msh:panel>
     </msh:form>
+    
     <msh:ifFormTypeIsView guid="ifFormTypeIsView1212" formName="smo_visitForm">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View" guid="984f4783-f982-4aea-9652-0f5567c932d6">
         <msh:section guid="sectionChilds" title="Диагнозы">
+        <ecom:webQuery name="info_print_list" nativeSql="select vwf.id,vwf.name
+      		from WorkFunction wf
+      		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+      		left join MedCase mc on mc.workFunctionExecute_id=wf.id
+      		left join Diagnosis diag on diag.medcase_id=mc.id
+      		where mc.id='${param.id}'
+      		group by vwf.id,vwf.name
+      		having count(diag.id)>0 or count(case when vwf.isNoDiagnosis='1' then vwf.id else null end)>0" maxResult="1"/>
           <ecom:parentEntityListAll guid="parentEntityListChilds" formName="smo_diagnosisForm" attribute="childs" />
           <msh:table guid="tableChilds" name="childs" action="entityParentView-smo_diagnosis.do" idField="id">
             <msh:tableColumn columnName="Дата установления" property="establishDate" guid="c975f4df-68b1-42b9-8ba7-44e4b82b0144" />
@@ -269,7 +278,7 @@
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
       </msh:sideMenu>
-      <msh:tableNotEmpty name="childs">
+      <msh:tableNotEmpty name="info_print_list">
       <msh:sideMenu title="Печать" guid="cdf02c63-67bc-4542-a68d-38398f5059bd">
         <msh:sideLink action="/javascript:printVisit('.do')" name="Визита" title="Печать визита" key="ALT+8" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/PrintVisit" />
         <msh:sideLink params="id" action="/print-talon_amb.do?s=VisitPrintService&amp;m=printTalon" key="ALT+9" name="Талона" title="Печать талона" guid="12dbaf61-0108-4845-86c3-cee528329b33" roles="/Policy/Mis/MedCase/Visit/PrintTalon" />

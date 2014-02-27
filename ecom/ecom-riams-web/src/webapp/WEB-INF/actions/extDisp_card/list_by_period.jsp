@@ -47,7 +47,7 @@
 	        	<input type="radio" name="typeGroup" value="2"> общий свод
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="3"> свод по возрастной категории
+	        	<input type="radio" name="typeGroup" value="3"> свод по возрастной периодам
 	        </td>
         </msh:row>
         <msh:row>

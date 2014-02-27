@@ -52,6 +52,7 @@
 	}
 	
 	String sql = "where "+dtypeSql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
+	String medcard = form.getMedcard() ;
 	if (form.getLpu()!=null && (form.getLpu().intValue()>0)) {
 		sql = sql + " and w.lpu_id='"+form.getLpu()+"'" ;
 	}
@@ -89,6 +90,9 @@
 			.append(" then -1 else 0 end) between 0 and 14 ") ;
 	} 
 	sql = sql+isTalkSql ;
+	if (medcard!=null&&!medcard.equals("")&&medcard.length()>1) {
+		sql=sql+" and ((select count(id) from medcard medc where medc.person_id=t.patient_id and medc.number='"+medcard+"')>0 or p.patientSync='"+medcard+"')" ;
+	}
 	sql = sql+ageSql.toString() ;
 	request.setAttribute("sql", sql) ;
 	request.setAttribute("order", order) ;
@@ -107,6 +111,9 @@
         <msh:row>
         	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="medcard" fieldColSpan="6" size="30"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="lpu" vocName="lpu"
