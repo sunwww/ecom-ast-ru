@@ -108,6 +108,13 @@ public class InternalDocuments extends Document {
 		theMaterialBiologAnalysis = aMaterialBiologAnalysis;
 	}
 
+	/** Услуги */
+	@Comment("Услуги")
+	public String getServicies() {return theServicies;}
+	public void setServicies(String aServicies) {theServicies = aServicies;}
+
+	/** Услуги */
+	private String theServicies;
 	/** Материал для микробилогического исследования */
 	private VocDocumentMaterialBiologAnalysis theMaterialBiologAnalysis;
 	/** Исследование */
