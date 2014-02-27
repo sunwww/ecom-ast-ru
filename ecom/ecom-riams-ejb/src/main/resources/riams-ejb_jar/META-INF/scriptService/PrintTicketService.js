@@ -104,6 +104,22 @@ function printInfo(aCtx, aParams) {
     var plc = null;
     record("pat",prs) ;
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+    var policy_list_sql = "select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end"
+       +" , ri.name as riname,coalesce('серия '||mp.series,'')||' '||coalesce(' №'||mp.polnumber,'')"
+       +" ,mp.actualDateFrom,mp.actualDateTo ,mp.commonNumber,vmo.name as vmoname"
+       +" from MedPolicy as mp "
+       +"  left join reg_ic as ri on ri.id=mp.company_id" 
+       +" left join vocmedpolicyomc vmo on vmo.id=mp.type_id"
+       +" where mp.patient_id="+prs.id+" and mp.actualDateFrom <=CURRENT_DATE and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE)" ;
+    var p_list=aCtx.manager.createNativeQuery(policy_list_sql).getResultList() ;
+    if (p_list.size()>0) {
+    	var p_obj=p_list.get(0) ;
+    	map.put("policyInfoSN",p_obj[3]);
+    	map.put("policyInfoC",p_obj[2]);
+    } else {
+    	map.put("policyInfoSN","") ;
+    	map.put("policyInfoC","") ;
+    }
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
     record("ticketd",ticket.dateFinish!=null?FORMAT.format(ticket.dateFinish):"") ;
