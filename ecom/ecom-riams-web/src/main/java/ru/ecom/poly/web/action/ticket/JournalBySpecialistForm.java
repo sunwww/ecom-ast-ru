@@ -163,4 +163,17 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Гражданство */
 	private Long theNationality;
+	
+	/** Мед.карта */
+	@Comment("Мед.карта")
+	public String getMedcard() {
+		return theMedcard;
+	}
+
+	public void setMedcard(String aMedcard) {
+		theMedcard = aMedcard;
+	}
+
+	/** Мед.карта */
+	private String theMedcard;
 }
