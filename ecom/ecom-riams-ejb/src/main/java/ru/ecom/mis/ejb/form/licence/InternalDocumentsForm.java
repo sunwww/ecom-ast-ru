@@ -81,7 +81,15 @@ public class InternalDocumentsForm extends DocumentForm{
 	public void setMaterialBiologAnalysis(Long aMaterialBiologAnalysis) {
 		theMaterialBiologAnalysis = aMaterialBiologAnalysis;
 	}
+	
+	/** Услуги */
+	@Comment("Услуги")
+	@Persist
+	public String getServicies() {return theServicies;}
+	public void setServicies(String aServicies) {theServicies = aServicies;}
 
+	/** Услуги */
+	private String theServicies;
 	/** Материал для микробилогического исследования */
 	private Long theMaterialBiologAnalysis;
 	/** Исследование */
