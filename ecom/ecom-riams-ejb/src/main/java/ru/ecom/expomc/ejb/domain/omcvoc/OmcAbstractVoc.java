@@ -34,7 +34,7 @@ public class OmcAbstractVoc extends NoLiveBaseEntity implements Serializable, II
     @Comment("Код")
     @AFormatFieldSuggest({"PROF_LPU","KOD","VID_LPU","RES_G"
     	,"C_PRVD","AS","KL","Q_Z", "TYPS", "CASUS", "EXPERT"
-            , "TCOD", "KOD_FOMS", "RNUMBER","COD","CODE" })
+            , "TCOD", "KOD_FOMS", "RNUMBER","COD","CODE","MCOD" })
     @Column(name="voc_code")
     public String getCode() { return theCode ; }
     public void setCode(String aCode) { theCode = aCode ; }
@@ -42,7 +42,7 @@ public class OmcAbstractVoc extends NoLiveBaseEntity implements Serializable, II
     /** Название района */
     @Comment("Наименование")
     @AFormatFieldSuggest({"NAME","DESCRIPTIO", "DISCRIPTIO"
-    	,"N_PRVD","NAME_Z","NAZV", "NAZV_PRE"})
+    	,"N_PRVD","NAME_Z","NAZV", "NAZV_PRE","NAME_MOP"})
     public String getName() { return theName ; }
     public void setName(String aName) { theName = aName ; }
 
