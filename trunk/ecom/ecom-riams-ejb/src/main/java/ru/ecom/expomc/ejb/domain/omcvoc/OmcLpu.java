@@ -72,6 +72,7 @@ public class OmcLpu extends OmcAbstractVoc {
 
 	/** Код федеральный */
 	@Comment("Код федеральный")
+	@AFormatFieldSuggest({"N_REESTR"})
 	public String getCodef() {return theCodef;}
 	public void setCodef(String aCodef) {theCodef = aCodef;}
 
