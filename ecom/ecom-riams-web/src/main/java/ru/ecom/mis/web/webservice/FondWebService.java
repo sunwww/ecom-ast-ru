@@ -128,10 +128,10 @@ public class FondWebService {
 		if (!aRz.equals("")) {
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-        	//System.out.println(result);
-            //System.out.println("result info:") ;
-            //System.out.println(result) ;
-        	result =updateXml(result) ;
+        	System.out.println(result);
+            System.out.println("result info:") ;
+            System.out.println(result) ;
+        	result = updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
     		
 			/*
@@ -160,6 +160,8 @@ public class FondWebService {
             sb.append("<th>").append("СНИЛС").append("</th>") ;
             sb.append("<th>").append("Умер?").append("</th>") ;
             sb.append("<th>").append("Дата смерти").append("</th>") ;
+            sb.append("<th>").append("ЛПУ").append("</th>") ;
+            sb.append("<th>").append("Тип прикрепления").append("</th>") ;
             sb.append("</tr>") ;
             if (aPatFrm!=null&&aPatFrm.getSnils()==null) aPatFrm.setSnils("") ;
             boolean isStart = true ;
@@ -189,6 +191,8 @@ public class FondWebService {
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(dateDeath).append("</td>") ;
+            	sb.append("<td").append(">").append(e.getChildText("lpu")).append("</td>") ;
+            	sb.append("<td").append(">").append(e.getChildText("sp_prik")).append("</td>") ;
              	sb.append("</tr>") ;
             	if (isStart) {
             		isStart=false ;
