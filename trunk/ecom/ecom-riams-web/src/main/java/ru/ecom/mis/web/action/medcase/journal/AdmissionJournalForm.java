@@ -336,4 +336,17 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** illnesPrimary */
 	private Long theIllnesPrimary;
+	
+	/** AdditionStatus */
+	@Comment("AdditionStatus")
+	public Long getAdditionStatus() {
+		return theAdditionStatus;
+	}
+
+	public void setAdditionStatus(Long aAdditionStatus) {
+		theAdditionStatus = aAdditionStatus;
+	}
+
+	/** AdditionStatus */
+	private Long theAdditionStatus;
 }
