@@ -66,6 +66,9 @@
 	if (form.getServiceStream()!=null && (form.getServiceStream().intValue()>0)) {
 		sql = sql+" and t.serviceStream_id='"+form.getServiceStream()+"'" ;
 	}
+	if (form.getAdditionStatus()!=null && (form.getAdditionStatus().intValue()>0)) {
+		sql = sql+" and p.additionStatus_id='"+form.getAdditionStatus()+"'" ;
+	}
 	if (form.getPrimaryInYear()!=null && (form.getPrimaryInYear().intValue()>0)) {
 		sql = sql+" and t.hospitalization_id='"+form.getPrimaryInYear()+"'" ;
 	}
@@ -133,7 +136,10 @@
         	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
         		horizontalFill="true" fieldColSpan="6" size="70"/>
         </msh:row>
-        
+        <msh:row>
+        	<msh:autoComplete property="additionStatus" vocName="vocAdditionStatus" 
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>        
         <msh:row>
         	<msh:autoComplete labelColSpan="6" property="primaryInYear" vocName="vocHospitalization" />
         </msh:row>
