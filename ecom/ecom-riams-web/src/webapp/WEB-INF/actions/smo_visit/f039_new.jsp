@@ -52,6 +52,10 @@
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="additionStatus" vocName="vocAdditionStatus" 
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="specialist" vocName="workFunction" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
@@ -100,6 +104,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="9">по месяцам  
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="10">по доп.статусу  
+	        </td>
         </msh:row>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -124,6 +131,9 @@
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="6">  62 форма
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="7">  свод по пациентам
 	        </td>
 
         </msh:row>
@@ -182,6 +192,7 @@
     		ActionUtil.setParameterFilterSql("serviceStream","smo.serviceStream_id", request) ;
     		ActionUtil.setParameterFilterSql("workPlaceType","smo.workPlaceType_id", request) ;
     		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
+    		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
     		if (typeDtype.equals("1")) {
     			request.setAttribute("dtypeSql", "smo.dtype='Visit'") ;
@@ -271,6 +282,13 @@
        			request.setAttribute("groupName", "Период") ;
        			request.setAttribute("groupGroup", "to_char(smo.dateStart,'mm.yyyy')") ;
        			request.setAttribute("groupOrder", "to_char(smo.dateStart,'mm.yyyy')") ;
+    		} else if (typeGroup.equals("10")) {
+    			// Группировка по доп.статусу
+       			request.setAttribute("groupSql", "vas.name") ;
+       			request.setAttribute("groupSqlId", "'&additionStatus='||vas.id") ;
+       			request.setAttribute("groupName", "Доп.статус") ;
+       			request.setAttribute("groupGroup", "vas.id,vas.name") ;
+       			request.setAttribute("groupOrder", "vas.name") ;
     		}
     		if (typeReestr!=null && (typeReestr.equals("1"))) {
     	%>
@@ -287,15 +305,15 @@ select smo.id as name
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end) as age
-,case when (ad1.domen=5 or ad2.domen=5) then 'сел' else null end as cntVil
+,case when (ad1.addressisvillage='1') then 'сел' else null end as cntVil
 ,vr.name as vrname
 ,vwpt.name as vwptname 
 ,vss.name as vssname
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -308,7 +326,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -333,11 +351,11 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     <msh:section>
 <ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
 ,count(case when (vwpt.code='POLYCLINIC') then 1 else null end) as cntAllPoly
-,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntVil
+,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then 1 else null end) as cntVil
 ,count(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
@@ -409,8 +427,9 @@ then -1 else 0 end)<18
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -423,7 +442,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -489,11 +508,11 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntPAll
-,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntPVil
+,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage) then 1 else null end) as cntPVil
 
 ,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' then 1 else null end) as cntPIllnessAll
 ,count(case when (vr.code='ILLNESS')  and vwpt.code='POLYCLINIC'
@@ -601,8 +620,9 @@ then -1 else 0 end) between 15 and 17
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -615,7 +635,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
@@ -680,7 +700,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(*) as cntAll 
@@ -690,7 +710,7 @@ select
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)<15
 then 1 else null end) as cntAll14 
-,count(case when (ad1.domen=5 or ad2.domen=5) and 
+,count(case when (ad1.addressIsVillage='1') and 
 (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -703,7 +723,7 @@ then 1 else null end) as cntAll14
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end) between 15 and 17
 )	then 1 else null end) as cntAll17 
-,count(case when (ad1.domen=5 or ad2.domen=5) and (
+,count(case when (ad1.addressIsVillage='1') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
@@ -715,7 +735,7 @@ then 1 else null end) as cntAll14
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 		then -1 else 0 end)>17
 ) then 1 else null end) as cntAllold 
-,count(case when (ad1.domen=5 or ad2.domen=5) and (
+,count(case when (ad1.addressIsVillage='1') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
@@ -783,8 +803,9 @@ then 1 else null end) as cntAll14
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -797,7 +818,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -840,11 +861,11 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntAllPoly
-,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntAllPolyV 
+,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then 1 else null end) as cntAllPolyV 
 ,count(case when vwpt.code='POLYCLINIC' and
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -881,7 +902,7 @@ then 1 else null end) as cntAll17
 ) then 1 else null end) as cntCons17 
 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHome 
-,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntHomeV 
+,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (ad1.addressIsVillage='1') then 1 else null end) as cntHomeV 
 ,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -898,8 +919,9 @@ then 1 else null end) as cntAll17
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
-LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -912,7 +934,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -964,11 +986,11 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntAllPoly
-,count(case when vwpt.code='POLYCLINIC' and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntAllPolyV 
+,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then 1 else null end) as cntAllPolyV 
 ,count(case when vwpt.code='POLYCLINIC' and
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -1005,7 +1027,7 @@ then 1 else null end) as cntAll17
 ) then 1 else null end) as cntCons17 
 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntHome 
-,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (ad1.domen=5 or ad2.domen=5) then 1 else null end) as cntHomeV 
+,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (ad1.addressIsVillage='1') then 1 else null end) as cntHomeV 
 ,count(case when (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
 ,count(case when (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -1022,8 +1044,8 @@ then 1 else null end) as cntAll17
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -1037,7 +1059,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1089,7 +1111,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(*) as cntAll 
@@ -1104,7 +1126,7 @@ FROM MedCase smo
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
-LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId  
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
 LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
 LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
@@ -1117,7 +1139,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1153,6 +1175,101 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="посещений" property="8"/>
             <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="9"/>
             <msh:tableColumn isCalcAmount="true" columnName="обращений" property="10"/>
+        </msh:table>
+    </msh:sectionContent>
+
+    </msh:section>    	
+    <%} else if (typeView!=null && (typeView.equals("7"))) {
+    	%>
+    <msh:section>
+<ecom:webQuery name="journal_ticket" nativeSql="
+select
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+,${groupSql} as nameFld
+
+,count(distinct smo.patient_id) as cntPatAll 
+,count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= 18
+) then smo.patient_id else null end) as cntStr18 
+,count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= case when vs.omcCode='2' then 55 else 60 end
+) then smo.patient_id else null end) as cntStrTrud 
+,count(distinct smo.patient_id)-count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= 18
+) then smo.patient_id else null end) as cntStrD018
+
+,count(distinct smo.patient_id)-count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= 15
+) then smo.patient_id else null end) as cntStrD014
+,count(distinct smo.patient_id)-(count(distinct smo.patient_id)-count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= 15
+) then smo.patient_id else null end))-
+count(distinct case when (
+		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
+		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+		then -1 else 0 end) >= 18
+) then smo.patient_id else null end)
+ as cntStr15_17 
+
+FROM MedCase smo  
+left join MedCase spo on spo.id=smo.parent_id
+LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocSex vs on vs.id=p.sex_id
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
+LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
+LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
+LEFT JOIN VocSocialStatus pvss on pvss.id=p.socialStatus_id
+LEFT JOIN WorkFunction wf on wf.id=smo.workFunctionExecute_id 
+LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+LEFT JOIN Worker w on w.id=wf.worker_id 
+LEFT JOIN Patient wp on wp.id=w.person_id 
+LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+WHERE  ${dtypeSql} 
+and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
+and (smo.noActuality is null or smo.noActuality='0')  
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${personSql} and smo.dateStart is not null ${emergencySql}
+GROUP BY ${groupGroup} ORDER BY ${groupOrder}
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+    <msh:sectionTitle>
+    <form action="print-f039_patient.do" method="post" target="_blank">
+    Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+        <msh:table
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="${groupName}" property="2"/>            
+            <msh:tableColumn isCalcAmount="true" columnName="Всего пациентов" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="18 лет и старше" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="дети до 18 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="8"/>
         </msh:table>
     </msh:sectionContent>
 
