@@ -131,6 +131,7 @@
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
   	/*
   	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
   	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
@@ -142,6 +143,7 @@
   	*/
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
+  	//paramHref.append("&additionStatus=").append(request.getParameter("additionStatus")!=null?request.getParameter("additionStatus"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
@@ -207,7 +209,7 @@
       <msh:row>
         <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1"> по выписным
+        	<input type="radio" name="typeView" value="1"> по выбывшие по отд.
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="2"> по нозоологиям (выписанные)
@@ -221,6 +223,9 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="4"> по операциям
         </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="5"> по выбывшие по доп.статусу
+        </td>
        </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
@@ -230,6 +235,9 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="additionStatus" fieldColSpan="4" horizontalFill="true" label="Доп.статус пациента" vocName="vocAdditionStatus"/>
         </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
@@ -345,8 +353,8 @@ group by sloa.department_id,ml.name
 order by ml.name
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
       <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
@@ -450,7 +458,162 @@ order by p.lastname,p.firstname,p.middlename " />
     		<%
     	} else {%>
     	<i>Нет данных </i>
-    	<% }} 
+    	<% }
+    } 
+    
+    if (view.equals("5")) {
+    if (date!=null && !date.equals("")) {
+        
+    	%>
+    
+    <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Свод по дополнительному статусу</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="report14swod" nativeSql="
+select 
+'&additionStatus='||vas.id,vas.name as mlname
+,count(distinct sls.id) as cntAll
+,count(distinct sls.patient_id) as cntPat
+,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
+,count(case when sls.result_id!=${result_death} and sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
+,count(case when sls.result_id!=${result_death} and sls.emergency='1' and sls.orderType_id='3' then sls.id else null end) as cntNoDeathEmerSk
+,sum(case when sls.result_id!=${result_death} then
+case 
+ when (sls.dateFinish-sls.dateStart)=0 then 1 
+ when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
+ else (sls.dateFinish-sls.dateStart)
+end
+else 0 end) as sumDays
+,count(case when sls.result_id=${result_death} then sls.id else null end) as cntDeath
+
+ from medcase sls
+left join Patient p on p.id=sls.patient_id
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+left join MedCase sloa on sloa.parent_id=sls.id
+left join MisLpu ml on ml.id=sloa.department_id
+left join BedFund bf on bf.id=sloa.bedFund_id
+where 
+sls.dtype='HospitalMedCase' and sls.dateFinish 
+between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+${paramSql} and sloa.dateFinish is not null
+${age_sql}
+group by vas.id,vas.name
+order by vas.name
+" />
+    <msh:table name="report14swod" 
+    viewUrl="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+      <msh:tableColumn columnName="Доп.статус" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших (госпитал.)" property="3"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="4"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных (госпитал.)" property="5"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="6"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="8"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Умерло (чел.)" property="9"/>
+    </msh:table>
+    
+    </msh:sectionContent>
+    </msh:section>
+    <%} else if (period!=null && !period.equals("") 
+    ) {
+    	
+    	String[] obj = period.split("-") ;
+    	String dateBegin=obj[0] ;
+    	dateEnd=obj[1];
+    	request.setAttribute("dateBegin", dateBegin);
+    	request.setAttribute("dateEnd", dateEnd);
+    	
+    		%>
+    <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Список пациентов ${param.strname}
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_surOperation" nativeSql="
+select 
+sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
+left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+where vrspt.classname='F14_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
+) as listStr
+,ss.code as sscode
+,p.lastname||' '||p.firstname||' '||p.middlename as fio
+,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end) as age
+,to_char(sls.dateStart,'dd.mm.yyyy') as slsdateStart
+,to_char(sls.dateFinish,'dd.mm.yyyy') as slsdateFinish
+,case 
+ when (sls.dateFinish-sls.dateStart)=0 then 1 
+ when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
+ else (sls.dateFinish-sls.dateStart)
+end
+ as cntDays
+ ,mkb.code as mkbcode
+ ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
+,case when sls.emergency='1' then 'Да' else null end as emer
+,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
+
+ from medcase sls
+left join StatisticStub ss on ss.id=sls.statisticStub_id
+left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+left join diagnosis diag on sls.id=diag.medcase_id
+left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+left join MedCase sloa on sloa.parent_id=sls.id
+left join BedFund bf on bf.id=sloa.bedFund_id
+left join Patient p on p.id=sls.patient_id
+where sls.dtype='HospitalMedCase' 
+and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
+    and to_date('${dateEnd}','dd.mm.yyyy')
+
+and sloa.dateFinish is not null
+${paramSql}
+and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
+${age_sql}  
+
+group by sls.id
+,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
+,bf.addCaseDuration,sls.result_id,mkb.code
+order by p.lastname,p.firstname,p.middlename " />
+    <msh:table name="journal_surOperation" 
+    viewUrl="entityShortView-stac_ssl.do" 
+     action="entityView-stac_ssl.do" idField="1">
+      <msh:tableColumn columnName="##" property="sn" />
+      <msh:tableColumn columnName="Строки отчета" property="2" />
+      <msh:tableColumn columnName="№стат. карт" property="3" />
+      <msh:tableColumn columnName="ФИО пациента" property="4" />
+      <msh:tableColumn columnName="Возраст" property="5" />
+      <msh:tableColumn columnName="Дата поступления" property="6"/>
+      <msh:tableColumn columnName="Дата выписки" property="7"/>
+      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
+      <msh:tableColumn columnName="Диагноз" property="9"/>
+      <msh:tableColumn columnName="Умер?" property="10"/>
+      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
+      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>    		
+    		<%
+    	} else {%>
+    	<i>Нет данных </i>
+    	<% }
+    } 
     
     if (view.equals("2")) {
     if (date!=null && !date.equals("")) {
@@ -510,8 +673,8 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -690,8 +853,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     <msh:sectionContent>
         
         <msh:table name="report14swod" 
-        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -887,8 +1050,8 @@ group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
