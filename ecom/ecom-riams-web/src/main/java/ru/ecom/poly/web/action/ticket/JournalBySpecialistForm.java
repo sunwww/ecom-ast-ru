@@ -176,4 +176,17 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Мед.карта */
 	private String theMedcard;
+	
+	/** доп. статус */
+	@Comment("доп. статус")
+	public Long getAdditionStatus() {
+		return theAdditionStatus;
+	}
+
+	public void setAdditionStatus(Long aAdditionStatus) {
+		theAdditionStatus = aAdditionStatus;
+	}
+
+	/** доп. статус */
+	private Long theAdditionStatus;
 }
