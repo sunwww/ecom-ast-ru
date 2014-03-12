@@ -25,8 +25,7 @@
   <msh:section title="Рабочие функции">
   	<ecom:webQuery name="listPerson" nativeSql="
   	select wf.id
-  	,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename as fio
-  	,wf.groupName,'нет данных') as infowf
+  	,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename, wf.groupName,'нет данных') as infowf
   	, vwf.name as vwfname
   	,wc.id as wcid ,wf.code
   	from workfunction wf 

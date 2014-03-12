@@ -124,7 +124,7 @@
     
     <msh:ifFormTypeIsNotView formName="smo_directionForm">
     	<tags:smo_direction_time name="Time" workFuncId="workFunctionPlan" calenDayId="datePlan" calenTimeId="timePlan" />
-    	<tags:mis_double name='Ticket' title='Существующие направления в базе:'/>
+    	<tags:mis_double name='Ticket' title='Существующие направления в базе:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
     	
     </msh:ifFormTypeIsNotView>
   </tiles:put>
@@ -348,6 +348,7 @@
 				        getPreRecord();
 	  				}
   					if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+  					if (theOtmoa_medServices) theOtmoa_medServices.clearData() ; ;
   				    getWorkFunctionByUsername() ;
 	  			}
   			}

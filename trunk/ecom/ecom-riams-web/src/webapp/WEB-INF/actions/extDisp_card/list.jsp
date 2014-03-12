@@ -18,7 +18,7 @@
 		select edc.id as edcid,lpu.name as lpuname
 		,edc.hospitalized ,  vedsg.name as vedsgname
 		, ved.name as vedname, edc.startDate as edcStartDate,edc.finishDate as edcFinishDate
-		,vedhg.name as vedhgname,vi.name as viname
+		,vedhg.name as vedhgname,vi.code as viname
 		,edc.onDeparture,edc.isObservation,edc.isTreatment,edc.isDiagnostics
 		,edc.isSpecializedCare,edc.isSanatorium,edc.isSmallNation
 		from ExtDispCard edc

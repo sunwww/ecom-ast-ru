@@ -38,9 +38,12 @@
         	<msh:textField label="Пользователь" property="username" viewOnlyField="true" />
         </msh:row>
         </msh:ifFormTypeAreViewOrEdit>
-        <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
+        <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59"  />
       </msh:panel>
     </msh:form>
+    <msh:ifFormTypeIsNotView formName="smo_short_ticketForm">
+    	<tags:mis_double name='Ticket' title='Существующие направления в базе:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
+    </msh:ifFormTypeIsNotView>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="smo_short_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
@@ -61,10 +64,48 @@
   <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsNotView formName="smo_short_ticketForm">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+    <script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
     <script type="text/javascript">
+    var oldaction = document.forms[0].action ;
+    document.forms[0].action = 'javascript:isExistTicket(this)';
     workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     	getInfoByWorker();
 	});
+    function isExistTicket() {
+    	
+		 if (!$('emergency').checked) {
+			 TicketService.checkPolicyByMedcard($('medcard').value,$('dateFinish').value,$('serviceStream').value
+					 , {
+				 callback: function(aResult) {
+					 if (+aResult<1) {
+							checkDouble();
+				  	  } else {
+				  		  alert('У Вас стоит запрет на запись пациентов по ОМС без полиса!!!');
+				  		  
+				  		  document.forms[0].submitButton.disabled = false ;
+				  	  } 
+					 }
+				 });
+		  } else {
+			 checkDouble();
+		  }
+		 
+	}
+    function checkDouble() {
+  	  TicketService.findDoubleBySpecAndDate($('id').value,$('medcard').value
+	    			,$('workFunctionExecute').value  , $('dateFinish').value
+	  		, {
+	                 callback: function(aResult) {
+	                    if (aResult) {
+					    		showTicketDouble(aResult) ;
+	                     } else {
+	                    	 document.forms[0].action = oldaction ;
+					    	 document.forms[0].submit() ;
+	                     }
+	                 }
+		        	}
+		  ); 
+    }
     function getInfoByWorker() {
     	var wf = +$("workFunctionExecute").value ;
     	var ds = $("dateFinish").value ;

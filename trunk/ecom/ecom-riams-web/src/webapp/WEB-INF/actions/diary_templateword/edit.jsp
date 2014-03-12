@@ -23,11 +23,10 @@
                 <msh:row>
                     <msh:textField property="reduction" label="Ключевое слово" horizontalFill="true"/>
                 </msh:row>
+            </msh:ifFormTypeIsNotView>
                 <msh:row>
                     <msh:textArea property="decryption" label="Расшифрока" horizontalFill="true"/>
                 </msh:row>
-            </msh:ifFormTypeIsNotView>
-
             <msh:submitCancelButtonsRow colSpan="6"/>
         </msh:panel>
 
