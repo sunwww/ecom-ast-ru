@@ -23,7 +23,7 @@
   		<ecom:webQuery name="list_no" nativeSql="select v.id
   		,cast(wct.timeFrom as varchar(5)) as timeFrom
   		
-  		,po.lastname||' '||po.firstname||' '||po.middlename as pofio
+  		,po.lastname||' '||po.firstname||' '||po.middlename||' ('||mlo.name||')' as pofio
   		,lpuo.name as lpuoname
   		,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 		
@@ -37,6 +37,7 @@ left join WorkFunction wfo on wfo.id=v.orderWorkFunction_id
 left join Worker wo on wo.id=wfo.worker_id
 left join Patient po on po.id=wo.person_id
 left join VocWorkFunction vwfo on vwfo.id=wfo.workFunction_id
+left join MisLpu mlo on mlo.id=wo.lpu_id
 left join WorkFunction wfe on wfe.id=v.workFunctionExecute_id
 left join Worker we on we.id=wfe.worker_id
 left join Patient pe on pe.id=we.person_id
@@ -51,7 +52,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
 ,pe.lastname,pe.firstname,pe.middlename
-,vvr.name,v.visitResult_id
+,vvr.name,v.visitResult_id,mlo.name
 having (v.dateStart is null or (count(d.id)=0 and (vwfe.isNoDiagnosis is null or vwfe.isNoDiagnosis='0')))
 order by wct.timeFrom"/>
 	    <msh:table name="list_no" action="entityEdit-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -84,7 +85,7 @@ order by wct.timeFrom"/>
 	    <ecom:webQuery name="list_yes" nativeSql="select v.id
 	    ,cast(wct.timeFrom as varchar(5)) as timeFrom
 	    ,to_char(v.dateStart,'DD.MM.YYYY')||' '||cast(v.timeExecute as varchar(5)) as dateStart
-	    ,po.lastname||' '||po.firstname||' '||po.middlename as pofio
+	    ,po.lastname||' '||po.firstname||' '||po.middlename||' ('||mlo.name||')' as pofio
 	    ,lpuo.name as lpuoname 
 	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 	    ,pe.lastname||' '||pe.firstname||' '||pe.middlename as pefio
@@ -99,6 +100,7 @@ left join WorkFunction wfo on wfo.id=v.orderWorkFunction_id
 left join Worker wo on wo.id=wfo.worker_id
 left join Patient po on po.id=wo.person_id
 left join VocWorkFunction vwfo on vwfo.id=wfo.workFunction_id
+left join MisLpu mlo on mlo.id=wo.lpu_id
 left join WorkFunction wfe on wfe.id=v.workFunctionExecute_id
 left join Worker we on we.id=wfe.worker_id
 left join Patient pe on pe.id=we.person_id
@@ -115,7 +117,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
 ,pe.lastname,pe.firstname,pe.middlename
-,vvr.name,v.visitResult_id
+,vvr.name,v.visitResult_id,mlo.name
 having (count(d.id)>0 or vwfe.isNoDiagnosis='1')
 order by v.timeExecute"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">

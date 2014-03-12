@@ -309,6 +309,7 @@ then -1 else 0 end) as age
 ,vr.name as vrname
 ,vwpt.name as vwptname 
 ,vss.name as vssname
+,list(mkb.code) as mkblist,list(ms.code||' '||ms.name) as servecilist
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -323,11 +324,17 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+left join diagnosis diag on diag.medcase_id=smo.id
+left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join medcase mssmo on mssmo.parent_id=smo.id and mssmo.dtype='ServiceMedCase'
+left join medservice ms on ms.id=mssmo.medservice_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
+group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
+
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
         <msh:table
@@ -340,6 +347,8 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="цель визита" property="7"/>
             <msh:tableColumn columnName="место" property="8"/>
             <msh:tableColumn columnName="поток обсл." property="9"/>
+            <msh:tableColumn columnName="диагноз" property="10"/>
+            <msh:tableColumn columnName="услуга" property="11"/>
         </msh:table>
     </msh:sectionContent>
 

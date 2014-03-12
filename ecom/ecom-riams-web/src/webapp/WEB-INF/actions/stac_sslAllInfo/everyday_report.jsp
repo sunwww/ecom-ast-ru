@@ -294,7 +294,71 @@ order by vph.name
     	}  else {
     		
     		// СВОД
+    		
     		%>
+    		<%--
+    		
+    		Поступившие пациенты в стационар
+    		
+    		select  
+    vph.id,vph.name
+, count(distinct sls.id) as all1
+,count(distinct case when sls.deniedHospitalizating_id is null then sls.id else null end) as obr
+,count(distinct case when sls.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then sls.id else null end) as obrVil
+,count(distinct case when sls.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then sls.id else null end) as obrCity
+,count(distinct case when sls.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then sls.id else null end) as obrInog
+,count(distinct case when sls.deniedHospitalizating_id is null 
+and oo.voc_code!='643'  then sls.id else null end) as obrInost
+,count(distinct case when sls.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then sls.id else null end) as obrOther
+
+
+,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null then sls.id else null end) as em
+,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='О' then sls.id else null end) as emSam
+,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='К' then sls.id else null end) as emSkor
+,count(distinct case when (sls.emergency is null or sls.emergency='0') and sls.deniedHospitalizating_id is null then sls.id else null end) as pl
+
+, count(distinct case when sls.deniedHospitalizating_id is not null then sls.id else null end) as denied 
+from medcase sls 
+left join MisLpu as ml on ml.id=sls.department_id
+left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+left join Patient p on p.id=sls.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id 
+left join Omc_Frm vof on vof.id=sls.orderType_id
+where sls.dtype='HospitalMedCase' and sls.dateStart 
+=to_date('07.03.2014','dd.mm.yyyy')  
+and ( sls.noActuality is null or sls.noActuality='0')
+group by vph.id,vph.name
+
+
+
+Выбывшие из стационара
+
+select  
+    vph.id,vph.name
+, count(distinct sls.id) as cntAll
+,count(distinct case when vho.code!='1' then sls.id else null end) as cntDischargeOtherLpu
+,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeathPatient
+,list(distinct case when vhr.code='11' then pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'')||' г.р.'||to_char(pat.birthday,'dd.mm.yyyy') else null end) as listDeathPatient
+from medcase sls 
+left join Patient pat on pat.id=sls.patient_id
+left join MisLpu as ml on ml.id=sls.department_id
+left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+left join Omc_Frm vof on vof.id=sls.orderType_id
+left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
+left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+where sls.dtype='HospitalMedCase' and sls.dateFinish 
+=to_date('07.03.2014','dd.mm.yyyy')  
+and ( sls.noActuality is null or sls.noActuality='0')
+group by vph.id,vph.name
+    		 --%>
     		    <msh:section>
     <msh:sectionTitle>Реестр ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
     </msh:sectionTitle>

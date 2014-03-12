@@ -45,9 +45,6 @@ public class WorkCalendarServiceJs {
 	private static boolean theIsRemoteUser ;
 	private static Long theLpuRemoteUser ;
 	public String checkPolicyByPatient(Long aPatientId,String aDatePlan, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
-		System.out.println(aPatientId) ;
-		System.out.println(aDatePlan) ;
-		System.out.println(aServiceStream) ;
 		aDatePlan = aDatePlan.trim() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select id,code from VocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE'" ;
@@ -57,7 +54,6 @@ public class WorkCalendarServiceJs {
 	                +"FROM MedPolicy where patient_id='"+aPatientId+"' "
 	                +"AND actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (actualDateTo is null or actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
 	                +"and DTYPE like 'MedPolicyOmc%'" ;
-			System.out.println(sql) ;
 			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
 			if (list.size()==0) return "1" ;
 			if (list.size()>1) return "2" ;

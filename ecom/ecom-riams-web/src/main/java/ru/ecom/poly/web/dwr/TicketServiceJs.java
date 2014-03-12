@@ -233,13 +233,9 @@ public class TicketServiceJs {
 		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	
-    	if(!StringUtil.isNullOrEmpty(aDate)) {
+    	if(StringUtil.isNullOrEmpty(aDate)) {
             return "" ;
         }
-    	System.out.println("id="+aId) ;
-    	System.out.println("medcard="+aMedcard) ;
-    	System.out.println("spec="+aSpec) ;
-    	System.out.println("date="+aDate) ;
     	
         StringBuilder sql = new StringBuilder() ;
         sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
@@ -255,7 +251,8 @@ public class TicketServiceJs {
 			.append("' and coalesce(t.dateStart,t.dateFinish)=to_date('").append(aDate).append("','dd.mm.yyyy') and (t.istalk is null or t.istalk='0')") ;
         
         if (aId!=null) sql.append(" and t.id!=").append(aId);
-
+        
+        
         Collection<WebQueryResult> doubles = service.executeNativeSql(sql.toString()) ;
         if (doubles.size()>0) {
         	StringBuilder ret = new StringBuilder() ;
@@ -283,6 +280,28 @@ public class TicketServiceJs {
 		Collection<WebQueryResult> list=service.executeNativeSql("select person_id,id from medcard where id="+aMedcard) ;
 		return list.isEmpty()?null:checkHospital(aDateStart, ConvertSql.parseLong(list.iterator().next().get1()), aServiceStream, aRequest) ;
 	}
+	
+	public String checkPolicyByMedcard(Long aMedcardId,String aDatePlan, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
+		/*System.out.println(aMedcardId) ;
+		System.out.println(aDatePlan) ;
+		System.out.println(aServiceStream) ;*/
+		aDatePlan = aDatePlan.trim() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select id,code from VocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE'" ;
+		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString(),1) ;
+		if (list1.size()>0) {
+			sql = "SELECT mp.id,mp.dtype " 
+	                +"FROM MedPolicy mp left join Medcard mc on mp.patient_id=mc.person_id left join Patient pat on pat.id=mc.person_id where mc.id='"+aMedcardId+"' "
+	                +"AND ((mp.actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (mp.actualDateTo is null or mp.actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
+	                +"and mp.DTYPE like 'MedPolicyOmc%') or pat.deathdate<= to_date('"+aDatePlan+"','dd.mm.yyyy'))" ;
+			//System.out.println(sql) ;
+			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
+			if (list.size()==0) return "1" ;
+			if (list.size()>1) return "2" ;
+		}
+		return "0" ;
+	}
+	
 	public String checkHospital(String aDateStart, Long aPatient, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		

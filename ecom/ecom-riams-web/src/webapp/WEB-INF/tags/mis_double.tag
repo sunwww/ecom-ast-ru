@@ -4,6 +4,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="cmdAdd" required="false" description="кнопка сохранения" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
 <%@ attribute name="rolesBan" required="false" description="Роль ограничивающая, создание при обнаружении дубля"%>
 
@@ -64,6 +65,7 @@
      }
      // Отмена
      function cancel${name}Double() {
+    	 if ('${cmdAdd}'!='')try{ eval(${cmdAdd})} catch(e){} ;
         the${name}DoubleDialog.hide() ;
      }
 

@@ -16,11 +16,16 @@ import javax.naming.NamingException;
  */
 public class KeyWordServiceJs {
     public String getDecryption(String aReduction, HttpServletRequest aRequest) throws NamingException {
-        if (StringUtil.isNullOrEmpty(aReduction)) {
+        if (aReduction!=null) aReduction = aReduction.trim() ;
+    	if (StringUtil.isNullOrEmpty(aReduction)) {
             return "" ;
         } else {
-            IKeyWordService service = Injection.find(aRequest).getService(IKeyWordService.class) ;
-            return service.getDecryption(aReduction) ;
+        	
+            System.out.println("-"+aReduction+"-") ;
+        	IKeyWordService service = Injection.find(aRequest).getService(IKeyWordService.class) ;
+        	String ret = service.getDecryption(aReduction) ;
+        	System.out.println("-"+ret+"-") ;
+            return ret ;
         }
     }
 

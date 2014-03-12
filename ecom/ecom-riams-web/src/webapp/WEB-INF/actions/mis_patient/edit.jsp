@@ -805,7 +805,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		territory="territoryRegistrationNonresident" region="regionRegistrationNonresident"
 		typeSettlement="typeSettlementNonresident" settlement="settlementNonresident"
 		typeStreet="typeStreetNonresident" street="streetNonresident" zipcode="nonresidentZipcode"/>
-    <tags:mis_double name='Patient' title='Существующие пациенты в базе:' rolesBan="/Policy/Mis/Patient/BanDoubleCreate"/>
+    <tags:mis_double name='Patient' title='Существующие пациенты в базе:' rolesBan="/Policy/Mis/Patient/BanDoubleCreate" cmdAdd="document.forms[0].submitButton.disabled = false "/>
     <tags:mis_findPatientByFond name='Patient' patientField="id"/>
   </tiles:put>
   <tiles:put name="side" type="string">

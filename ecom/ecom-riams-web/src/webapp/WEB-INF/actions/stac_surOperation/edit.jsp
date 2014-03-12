@@ -213,7 +213,7 @@
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
-    	<tags:mis_double name='MedService' title='Данная операция оказана:'/>
+    	<tags:mis_double name='MedService' title='Данная операция оказана:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
     </msh:ifFormTypeIsNotView>  </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_surOperationForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
