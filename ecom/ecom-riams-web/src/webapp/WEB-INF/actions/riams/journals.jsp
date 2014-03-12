@@ -121,6 +121,9 @@
 						<li><msh:link action="stac_report_016.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report016">
 	                            016/у-02 форма
 	                        </msh:link></li>
+						<li><msh:link action="stac_report_36.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report36">
+	                            36 форма
+	                        </msh:link></li>
 						<li><msh:link action="stac_report_direct_in_hospital.do" roles="/Policy/Mis/Journal/DirectByHospital">
 	                            Отчет по направленным
 	                        </msh:link></li>
