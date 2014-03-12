@@ -132,10 +132,11 @@
                                 <msh:toolbar>
                         <msh:row>
                             <th colspan='12'>
-                                    Печать:<a href='javascript:printAdmission()'> адрес. листков прибытия</a>
-                                    <a href='javascript:printDischarge()'>адрес. листков убытиях</a>
-                                    <a href='javascript:printAdmission1()'>реестр для листков прибытия</a>
-                                    <a href='javascript:printDischarge1()'>реестр для листков убытиях</a>
+                                    Печать:<a href='javascript:printList("listAdmission")'> адрес. листков прибытия</a>
+                                    <a href='javascript:printList("listDischarge")'>адрес. листков убытиях</a>
+                                    <a href='javascript:printList("reestrAdmission")'>реестр для листков прибытия</a>
+                                    <a href='javascript:printList("reestrDischarge")'>реестр для листков убытиях</a>
+                                    <a href='javascript:printList("reestrAddressPatient")'>реестр пациентов</a>
                             </th>
                           </msh:row>
                                 </msh:toolbar>
@@ -189,7 +190,7 @@
                                 <msh:toolbar>
                         <msh:row>
                             <th colspan='12'>
-                                    Печать:<a href='javascript:printInogReestr()'> реестра</a>
+                                    Печать:<a href='javascript:printList("reestrInogByHospital")'> реестра</a>
                             </th>
                           </msh:row>
                                 </msh:toolbar>
@@ -245,7 +246,7 @@
                                 <msh:toolbar>
                         <msh:row>
                             <th colspan='12'>
-                                    Печать:<a href='javascript:printInogReestr()'> реестра</a>
+                                    Печать:<a href='javascript:printList("reestrInogByHospital")'> реестра</a>
                             </th>
                           </msh:row>
                                 </msh:toolbar>
@@ -293,7 +294,19 @@
     		chk[aValue-1].checked='checked' ;
     	}
     }
-	    function printAdmission() {
+	function printList(aFilename) {
+		//listAdmission,listDischarge
+    	var status = '${status}'; 
+    	
+        var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
+        if (ids) {
+            window.location = 'print-'+aFilename+'.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids +'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
+            
+        } else {
+            alert("Нет выделенных данных");
+        }
+	}    /*
+    function printAdmission() {
         	var status = '${status}'; 
 	    	
             var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
@@ -350,7 +363,7 @@
             } else {
                 alert("Нет выделенных данных");
             }
-	    }
+	    }*/
     </script>
     
   </tiles:put>
