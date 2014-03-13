@@ -21,10 +21,10 @@ public class KeyWordServiceJs {
             return "" ;
         } else {
         	
-            System.out.println("-"+aReduction+"-") ;
+            //System.out.println("-"+aReduction+"-") ;
         	IKeyWordService service = Injection.find(aRequest).getService(IKeyWordService.class) ;
         	String ret = service.getDecryption(aReduction) ;
-        	System.out.println("-"+ret+"-") ;
+        	///System.out.println("-"+ret+"-") ;
             return ret ;
         }
     }

@@ -1196,7 +1196,12 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
+,count(distinct smo.id) as cntSmoAll 
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (ad1.addressid is null or ad1.kladr not like '30%') then smo.id else null end) as cntSmoInog 
+,count(distinct case when oo.voc_code!='643' and oo.id is not null then smo.id else null end) as cntSmoInostr
 ,count(distinct smo.patient_id) as cntPatAll 
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (ad1.addressid is null or ad1.kladr not like '30%') then smo.patient_id else null end) as cntPatInog 
+,count(distinct case when oo.voc_code!='643' and oo.id is not null then smo.patient_id else null end) as cntPatInostr
 ,count(distinct case when (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
@@ -1251,6 +1256,7 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+Left join Omc_oksm oo on oo.id=p.nationality_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
@@ -1273,12 +1279,17 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
         <msh:table
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn isCalcAmount="true" columnName="Всего пациентов" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="18 лет и старше" property="4"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="дети до 18 лет" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего посещ." property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иног. посещ." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иностр. посещ." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего пац." property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иног.пац." property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иностр. пац." property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="18 лет и старше" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="дети до 18 лет" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="13"/>
         </msh:table>
     </msh:sectionContent>
 

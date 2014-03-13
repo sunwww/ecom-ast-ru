@@ -131,6 +131,7 @@
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("serviceStream", "sls.serviceStream_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
   	/*
   	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
@@ -143,6 +144,7 @@
   	*/
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
+  	paramHref.append("&serviceStream=").append(request.getParameter("serviceStream")!=null?request.getParameter("serviceStream"):"") ;
   	//paramHref.append("&additionStatus=").append(request.getParameter("additionStatus")!=null?request.getParameter("additionStatus"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
@@ -232,6 +234,9 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип стационара" vocName="vocHospType"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
@@ -338,12 +343,17 @@ case
 end
 else 0 end) as sumDays
 ,count(case when sls.result_id=${result_death} then sls.id else null end) as cntDeath
+,count(distinct sls.patient_id) as cntPat
+,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
+,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
 
  from medcase sls
 left join Patient p on p.id=sls.patient_id
 left join MedCase sloa on sloa.parent_id=sls.id
 left join MisLpu ml on ml.id=sloa.department_id
 left join BedFund bf on bf.id=sloa.bedFund_id
+left join Address2 ad on p.address_AddressId=ad.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
@@ -361,6 +371,9 @@ order by ml.name
       <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
       <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="6"/>
       <msh:tableColumn isCalcAmount="true" columnName="Умерло" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="8"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="9"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="10"/>
     </msh:table>
     
     </msh:sectionContent>
@@ -472,12 +485,16 @@ order by p.lastname,p.firstname,p.middlename " />
    
     <msh:section>
     <msh:sectionTitle>Свод по дополнительному статусу</msh:sectionTitle>
-    <msh:sectionContent>
+        <msh:sectionContent>
     <ecom:webQuery name="report14swod" nativeSql="
 select 
 '&additionStatus='||vas.id,vas.name as mlname
-,count(distinct sls.id) as cntAll
 ,count(distinct sls.patient_id) as cntPat
+,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
+,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
+,count(distinct sls.id) as cntAll
+,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.id else null end) as cntSmoInog
+,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.id else null end) as cntSmoInostr
 ,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
 ,count(case when sls.result_id!=${result_death} and sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
 ,count(case when sls.result_id!=${result_death} and sls.emergency='1' and sls.orderType_id='3' then sls.id else null end) as cntNoDeathEmerSk
@@ -496,6 +513,8 @@ left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 left join MedCase sloa on sloa.parent_id=sls.id
 left join MisLpu ml on ml.id=sloa.department_id
 left join BedFund bf on bf.id=sloa.bedFund_id
+left join Address2 ad on p.address_AddressId=ad.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
@@ -508,13 +527,16 @@ order by vas.name
     viewUrl="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Доп.статус" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших (госпитал.)" property="3"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="4"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных (госпитал.)" property="5"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="6"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="7"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="8"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Умерло (чел.)" property="9"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="3"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="4"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="5"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших (госпитал.)" property="6"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных иног. (госпитал.)" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных иностр. (госпитал.)" property="8"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="9"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="10"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="11"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Умерло (чел.)" property="12"/>
     </msh:table>
     
     </msh:sectionContent>
