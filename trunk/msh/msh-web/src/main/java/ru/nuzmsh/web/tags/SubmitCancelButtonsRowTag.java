@@ -208,7 +208,7 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
                 String labelIng = isTypeCreate() ? getLabelCreating() : getLabelSaving() ;
 
                 out.print(labelIng) ;
-                out.print("\"; this.form.submit(); return true ;'\"");
+                out.print("\"; this.form.submit(); ");
                 if(!theDoNotDisableButtons) {
                     out.print(" this.disabled=true; ");
                 }
