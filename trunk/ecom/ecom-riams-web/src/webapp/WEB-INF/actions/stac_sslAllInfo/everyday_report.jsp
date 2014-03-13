@@ -13,10 +13,10 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Реестр по пациентам поступившим/ выбывшим из стационара</msh:title>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Ежедневный отчет по стационару</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:stac_journal currentAction="stac_reestrByHospital"/>
+  	<tags:stac_journal currentAction="stac_everyday"/>
   </tiles:put>
   <tiles:put name="body" type="string">
     <%
@@ -130,16 +130,7 @@
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
-            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-            	<input type="submit" onclick="print('stac_reestrForDay1')" value="Печать реестра" />
-            </msh:ifInRole>
-            <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-            	<input type="submit" onclick="print('stac_reestrForDay')" value="Печать" />
-            </msh:ifNotInRole>
-            
-            <input type="submit" onclick="printJournal()" value="Печать журнала госпитализаций и отказов от госпитализаций" />
-<%--            <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
-             --%>
+
           </td>
       </msh:row>
     </msh:panel>
