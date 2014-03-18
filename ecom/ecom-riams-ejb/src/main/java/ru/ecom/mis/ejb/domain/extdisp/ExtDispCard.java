@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
@@ -31,6 +33,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="patient"),
 	@AIndex(properties="finishDate")
     }) 
+@EntityListeners(DeleteListener.class)
 public class ExtDispCard extends BaseEntity{
 	/** Пациент */
 	@Comment("Пациент")

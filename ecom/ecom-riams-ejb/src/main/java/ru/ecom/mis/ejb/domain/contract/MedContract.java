@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -13,6 +14,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.contract.ContractRule;
@@ -36,6 +38,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 			,@AIndex(properties={"customer"})
 		}
 )
+@EntityListeners(DeleteListener.class)
 public class MedContract extends BaseEntity{
 	/**
 	 * ЛПУ
