@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -14,6 +15,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
@@ -28,6 +30,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(unique= false, properties = {"servedPerson"})
 	,@AIndex(unique= false, properties = {"contract"})
 })
+	@EntityListeners(DeleteListener.class)
 public class ContractAccount extends BaseEntity{
 	
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
