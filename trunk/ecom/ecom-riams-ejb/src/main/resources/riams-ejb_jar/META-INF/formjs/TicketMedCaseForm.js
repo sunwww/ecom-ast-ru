@@ -101,7 +101,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		spo.setStartFunction(workFunction) ;
 		spo.setServiceStream(aEntity.getServiceStream()) ;
 		spo.setNoActuality(false) ;
-		if (aForm.isCloseSpo!=null && aForm.isCloseSpo) {
+		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)) {
 			spo.setDateFinish(aEntity.getDateStart()) ;
 			spo.setFinishFunction(workFunction) ;
 		}
@@ -109,14 +109,14 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		aEntity.setParent(spo) ;
 		aCtx.manager.persist(aEntity) ;
 	} else {
-		if (aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) {
+		if (((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)) && aEntity.parent!=null) {
 			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
 			try {
 				
 				aCtx.serviceInvoke("SmoVisitService", "closeSpoWithoutDiagnosis",aEntity.parent.id,aForm.getConcludingMkb(),"to_date('"+aForm.dateStart+"','dd.mm.yyyy')") ;
 			} catch(e) {}
 			
-		}		
+		}	
 	}
 	
 	
