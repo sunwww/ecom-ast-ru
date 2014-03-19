@@ -131,11 +131,11 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="extDisp_cardForm">
 			<msh:sideMenu>
-				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_card" name="Изменить" title="Изменить" roles=""/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_card" name="Удалить" title="Удалить" roles=""/>
+				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_card" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
+				<msh:sideLink confirm="Удалить доп.диспансеризацию?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_card" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
-				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles=""/>
+				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
