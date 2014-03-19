@@ -1,12 +1,15 @@
 package ru.ecom.mis.ejb.service.medcase;
 
+import java.io.File;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -16,19 +19,26 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
+import org.w3c.dom.Element;
 
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
+import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -47,9 +57,11 @@ import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
+import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.poly.ejb.services.GroupByDate;
 import ru.ecom.poly.ejb.services.MedcardServiceBean;
+import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 /**
@@ -64,6 +76,83 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aLpuCheck) 
+    			throws ParserConfigurationException, TransformerException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValue("PACKAGE_HOSP","number");
+		
+    	String filename = "N3M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select p.lastname,p.firstname,p.middlename,to_char(p.birthday,'yyyy-mm-dd'),vs.omcCode,");
+    	sql.append(" vbt.omcCode,ss.code,diag.id");
+    	sql.append("  from medcase sls");
+    	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
+    	sql.append(" left join Patient p on p.id=sls.patient_id");
+    	sql.append(" left join VocSex vs on vs.id=p.sex_id");
+    	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
+    	sql.append(" left join diagnosis diag on diag.medcase_id=sls.id");
+    	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
+    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+    	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart = to_date('2014-03-18','yyyy-mm-dd')");
+    	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	
+    	List<Object[]> listPat = theManager.createNativeQuery(sql.toString())
+    			.setMaxResults(70000).getResultList() ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	int i=0 ;
+    	for (Object[] pat:listPat) {
+    		Element zap = xmlDoc.newElement(root, "NPR", null);
+    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
+    		xmlDoc.newElement(zap, "DCODE_MO", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "DLPU_1", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "DATE_1", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "TIME_1", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "VPOLIS", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "SPOLIS", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "FAM", AddressPointServiceBean.getStringValue(pat[1])) ;
+    		xmlDoc.newElement(zap, "IM", AddressPointServiceBean.getStringValue(pat[2])) ;
+    		xmlDoc.newElement(zap, "OT", AddressPointServiceBean.getStringValue(pat[3])) ;
+    		xmlDoc.newElement(zap, "W", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "DR", AddressPointServiceBean.getStringValue(pat[4])) ;
+    		xmlDoc.newElement(zap, "PROFIL", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "PODR", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "NHISTORY", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "DS1", AddressPointServiceBean.getStringValue("")) ;
+    		/*
+    		xmlDoc.newElement(zap, "SNILS", AddressPointServiceBean.getStringValue(pat[5])) ;
+    		
+    		xmlDoc.newElement(zap, "DOCTYPE", AddressPointServiceBean.getStringValue(pat[6])) ;
+    		xmlDoc.newElement(zap, "DOCSER", AddressPointServiceBean.getStringValue(pat[7])) ;
+    		xmlDoc.newElement(zap, "DOCNUM", AddressPointServiceBean.getStringValue(pat[8])) ;
+    		xmlDoc.newElement(zap, "RZ", AddressPointServiceBean.getStringValue(pat[9])) ;
+    		
+    		xmlDoc.newElement(zap, "SP_PRIK", AddressPointServiceBean.getStringValue(pat[10])) ; // 1-территориал, 2-заявление
+    		xmlDoc.newElement(zap, "T_PRIK", AddressPointServiceBean.getStringValue(pat[13])) ; // 1-прикрепление, 2-открепление
+    		xmlDoc.newElement(zap, "DATE_1", AddressPointServiceBean.getStringValue(pat[12]!=null?pat[12]:pat[11])) ;
+    		
+    		xmlDoc.newElement(zap, "REFREASON", "") ;*/
+    	}
+    	xmlDoc.saveDocument(outFile) ;
+    	return filename;
+    }
     public void createNewDiary(String aTitle, String aText, String aUsername) {
     	TemplateProtocol protocol = new TemplateProtocol() ;
     	protocol.setText(aText) ;
