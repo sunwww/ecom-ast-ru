@@ -30,6 +30,13 @@ public class VocMedService extends VocBaseEntity{
 	public String getServiceType() {return theServiceType;}
 	public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
 
+	/** Входит в омс */
+	@Comment("Входит в омс")
+	public Boolean getIsOmc() {return theIsOmc;}
+	public void setIsOmc(Boolean aIsOmc) {theIsOmc = aIsOmc;}
+
+	/** Входит в омс */
+	private Boolean theIsOmc;
 	/** Тип услуги */
 	private String theServiceType;
 	/** Комментарий */
