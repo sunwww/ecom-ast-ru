@@ -208,7 +208,7 @@ order by veds.id,veds.name"
 		%>
 		
 		<tr><td class="buttons"><input type="button" value="Отменить" title="Отменить изменения" onclick="this.disabled=true; window.history.back()" id="cancelButton">
-		<input type="button" title="Сохранить изменения "	onclick="this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
+		<input type="button" title="Сохранить изменения "	onclick="this.disabled=true; this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
 		</table>
 		<%
 		

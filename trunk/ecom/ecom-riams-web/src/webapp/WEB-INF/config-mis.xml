@@ -288,6 +288,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_attachment.jsp" />
         </action>
+        <action path='/stac_direct_in_fond' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectDataInFondAction'
+                name='mis_attachmentForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/direct_fond.jsp" />
+        </action>
         <action path='/smo_report_plan_hospital_by_visit' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='false'
