@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -16,6 +18,8 @@ import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentMaterialBiologAnalysis;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentObjectBiologAnalysis;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -58,6 +62,22 @@ public class InternalDocuments extends Document {
 	public VocIdc10 getIdc10() {return theIdc10;}
 	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
 
+	/** Телефон */
+	@Comment("Телефон")
+	public String getPhonePatient() {return thePhonePatient;}
+	public void setPhonePatient(String aPhonePatient) {thePhonePatient = aPhonePatient;}
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@OneToOne
+	public VocServiceStream getServiceStream() {return theServiceStream;}
+	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+
+	
+	/** Поток обслуживания */
+	private VocServiceStream theServiceStream;
+	/** Телефон */
+	private String thePhonePatient;
 	/** Код диагноза */
 	private VocIdc10 theIdc10;
 	/** Диагноз */
@@ -71,8 +91,9 @@ public class InternalDocuments extends Document {
 	
 	/** Талон */
 	@Comment("Талон")
-	@OneToOne
+	@OneToOne @Deprecated
 	public Ticket getTicket() {return theTicket;}
+	@Deprecated
 	public void setTicket(Ticket aTicket) {theTicket = aTicket;}
 
 	/** Цель биологического исследования */
@@ -123,4 +144,44 @@ public class InternalDocuments extends Document {
 	private VocDocumentObjectBiologAnalysis theObjectBiologAnalysis;
 	/** Талон */
 	private Ticket theTicket;
+	
+	/** Отделение */
+	@Comment("Отделение")
+	@OneToOne
+	public MisLpu getDepartment() {return theDepartment;}
+	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	@OneToOne
+	public VocBedType getBedType() {return theBedType;}
+	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
+
+	/** Профиль коек */
+	private VocBedType theBedType;
+	/** Отделение */
+	private MisLpu theDepartment;
+	/** Планируемая дата с */
+	@Comment("Планируемая дата с")
+	public Date getPlanDateFrom() {return thePlanDateFrom;}
+	public void setPlanDateFrom(Date aPlanDateFrom) {thePlanDateFrom = aPlanDateFrom;}
+
+	/** Планируемая дата по */
+	@Comment("Планируемая дата по")
+	public Date getPlanDateTo() {return thePlanDateTo;}
+	public void setPlanDateTo(Date aPlanDateTo) {thePlanDateTo = aPlanDateTo;}
+
+	/** Планируемая дата по */
+	private Date thePlanDateTo;
+	/** Планируемая дата с */
+	private Date thePlanDateFrom;
+	
+	/** Планируется операция? */
+	@Comment("Планируется операция?")
+	public Boolean getIsPlanOperation() {return theIsPlanOperation;}
+	public void setIsPlanOperation(Boolean aIsPlanOperation) {theIsPlanOperation = aIsPlanOperation;}
+
+	/** Планируется операция? */
+	private Boolean theIsPlanOperation;
+
 }

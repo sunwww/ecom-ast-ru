@@ -1,9 +1,8 @@
 package ru.ecom.mis.ejb.form.licence;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.licence.InternalDocuments;
+
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -11,6 +10,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 @EntityForm
 @EntityFormPersistance(clazz = InternalDocuments.class)
@@ -106,4 +107,65 @@ public class InternalDocumentsForm extends DocumentForm{
 	private String theRecommendations;
 	/** Обоснование */
 	private String theHistory;
+	/** Отделение */
+	@Comment("Отделение")
+	@Persist
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	@Persist
+	public Long getBedType() {return theBedType;}
+	public void setBedType(Long aBedType) {theBedType = aBedType;}
+
+	/** Профиль коек */
+	private Long theBedType;
+	/** Отделение */
+	private Long theDepartment;
+	
+	/** Телефон */
+	@Comment("Телефон")
+	@Persist
+	public String getPhonePatient() {return thePhonePatient;}
+	public void setPhonePatient(String aPhonePatient) {thePhonePatient = aPhonePatient;}
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+
+	
+	/** Поток обслуживания */
+	private Long theServiceStream;
+	/** Телефон */
+	private String thePhonePatient;
+	
+	/** Планируемая дата с */
+	@Comment("Планируемая дата с")
+	@Persist @DateString @DoDateString
+	public String getPlanDateFrom() {return thePlanDateFrom;}
+	public void setPlanDateFrom(String aPlanDateFrom) {thePlanDateFrom = aPlanDateFrom;}
+
+	/** Планируемая дата по */
+	@Comment("Планируемая дата по")
+	@Persist @DateString @DoDateString
+	public String getPlanDateTo() {return thePlanDateTo;}
+	public void setPlanDateTo(String aPlanDateTo) {thePlanDateTo = aPlanDateTo;}
+
+	/** Планируемая дата по */
+	private String thePlanDateTo;
+	/** Планируемая дата с */
+	private String thePlanDateFrom;
+	
+	/** Планируется операция? */
+	@Comment("Планируется операция?")
+	@Persist
+	public Boolean getIsPlanOperation() {return theIsPlanOperation;}
+	public void setIsPlanOperation(Boolean aIsPlanOperation) {theIsPlanOperation = aIsPlanOperation;}
+
+	/** Планируется операция? */
+	private Boolean theIsPlanOperation;
+	
 }

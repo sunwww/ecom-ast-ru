@@ -114,7 +114,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
     	return exportAll("_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
-    private String getStringValue(Object aValue) {
+    public static String getStringValue(Object aValue) {
     	return aValue!=null?""+aValue:"" ;
     }
     public void onRemove(LpuAreaAddressText aLpuAreaAddressText) {
