@@ -12,13 +12,37 @@
       <msh:hidden property="medCase" />
       <msh:panel>
       	<msh:row>
+        	<msh:textField property="phonePatient" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="datePlanFrom" label="Дата госп. с"/>
+        	<msh:textField property="datePlanTo" label="по"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="sentToLpu" label="ЛПУ куда направлен" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" parentAutocomplete="sentToLpu" vocName="vocLpuHospOtd"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="bedType" label="Профиль коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedType"/>
+        </msh:row>
+        
+        <msh:row>
       		<msh:autoComplete property="idc10" horizontalFill="true" vocName="vocIdc10" fieldColSpan="8"/>
       	</msh:row>
         <msh:row>
           <msh:textArea property="diagnosis" label="Обоснование:"
                size="100" rows="5" fieldColSpan="8" />
-               
         </msh:row>
+        <msh:row>
+	       	<msh:checkBox property="isPlanOperation" label="Операция?"/>
+	       	<msh:checkBox property="isCreatePlanHosp" label="Операция?"/>
+        </msh:row>
+        
 
 
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
