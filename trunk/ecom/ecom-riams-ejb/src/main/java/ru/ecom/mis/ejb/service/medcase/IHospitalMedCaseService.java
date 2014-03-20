@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
@@ -17,6 +20,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu)throws ParserConfigurationException, TransformerException;
 	public void createNewDiary(String aTitle, String aText, String aUsername) ;
 	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
 	public void removeDataFromParameterConfig(Long aDepartment, String aIds) ;

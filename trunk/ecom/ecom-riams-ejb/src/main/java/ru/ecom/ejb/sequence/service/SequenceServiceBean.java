@@ -14,6 +14,9 @@ public class SequenceServiceBean implements ISequenceService {
 	public String startUseNextValue(String aTable,String aField) {
 		return SequenceHelper.getInstance().startUseNextValue(aTable,aField, theManager);
 	}
+	public String startUseNextValueNoCheck(String aTable,String aField) {
+		return SequenceHelper.getInstance().startUseNextValueNoCheck(aTable,aField, theManager);
+	}
 	
 	
 	@PersistenceContext

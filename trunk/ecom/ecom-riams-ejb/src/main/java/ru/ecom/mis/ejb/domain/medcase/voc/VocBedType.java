@@ -15,6 +15,21 @@ public class VocBedType extends VocBaseEntity{
 	public String getOmcCode() {return theOmcCode;}
 	public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
 
+	
+	/** Код федеральный стационар */
+	@Comment("Код федеральный стационар")
+	public String getCodeF() {return theCodeF;}
+	public void setCodeF(String aCodeF) {theCodeF = aCodeF;}
+
+	/** Код федеральный стационар (для детей) */
+	@Comment("Код федеральный стационар (для детей)")
+	public String getCodeFC() {return theCodeFC;}
+	public void setCodeFC(String aCodeFC) {theCodeFC = aCodeFC;}
+
+	/** Код федеральный стационар (для детей) */
+	private String theCodeFC;
+	/** Код федеральный стационар */
+	private String theCodeF;
 	/** ОМС код */
 	private String theOmcCode;
 }

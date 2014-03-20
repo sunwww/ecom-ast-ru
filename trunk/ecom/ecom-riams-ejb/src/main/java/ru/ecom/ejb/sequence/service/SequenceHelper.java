@@ -46,6 +46,25 @@ public class SequenceHelper {
 			return value ;
 		}
 	}
+	public String startUseNextValueNoCheck(String aTable, String aField, EntityManager aManager) {
+		synchronized(SYNC) {
+			SequenceInfo info = getSequenceInfo(aTable.toLowerCase(), aManager) ;
+			String value = null;
+			String addValue = addValue(aTable) ;
+			String mayByNextValue = nextValue(addValue, info.getNextValue());
+			
+			
+			value = mayByNextValue ;
+			mayByNextValue = nextValue(addValue, mayByNextValue);
+		
+			if(value==null) {
+				throw new IllegalStateException("Ошибка получение следу") ;
+			}
+			info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
+			
+			return value ;
+		}
+	}
 	
 	private boolean checkExists(String aTable, String aField, String mayByNextValue, EntityManager aManager) {
 		List<Medcard> list = aManager.createQuery("from "+aTable+" where "+aField+"=:number")
