@@ -17,6 +17,7 @@ import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentBiologAnalysis;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentMaterialBiologAnalysis;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentObjectBiologAnalysis;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -183,5 +184,14 @@ public class InternalDocuments extends Document {
 
 	/** Планируется операция? */
 	private Boolean theIsPlanOperation;
+	
+	/** Тип коек */
+	@Comment("Тип коек")
+	@OneToOne
+	public VocBedSubType getBedSubType() {return theBedSubType;}
+	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private VocBedSubType theBedSubType;
 
 }
