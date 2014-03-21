@@ -196,6 +196,8 @@
  							checkDouble();
  				  	  } else {
  				  		  alert('У Вас стоит запрет на запись пациентов по ОМС без полиса!!!');
+ 				  		document.forms[0].submitButton.disabled = false ;
+ 				  		  
  				  	  } 
  					 }
  				 });
