@@ -31,11 +31,6 @@ public class DischargeDocumentForm extends InternalDocumentsForm{
 	public String getDiagnosis() {return theDiagnosis;}
 	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
 
-	/** СМО */
-	@Comment("СМО")
-	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
 
 
 	/** Рекомендации */
@@ -54,8 +49,7 @@ public class DischargeDocumentForm extends InternalDocumentsForm{
 	private String theHistory;
 	/** Рекомендации */
 	private String theRecommendations;
-	/** СМО */
-	private Long theMedCase;
+
 	/** Диагноз */
 	private String theDiagnosis;
 

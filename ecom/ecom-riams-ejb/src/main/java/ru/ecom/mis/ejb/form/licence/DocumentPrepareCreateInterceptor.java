@@ -51,6 +51,16 @@ public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor 
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }
         form.setDiagnosis(res.toString()) ;
+        list.clear() ;
+        list= manager.createNativeQuery("select ms.code,ms.name from MedCase mc  "
+        		+" left join MedService ms on ms.id=mc.medService_id"
+        		+" where mc.parent_id='"+aParentId+"' and mc.dtype='ServiceMedService' order by ms.code").getResultList() ;
+        res = new StringBuilder() ; 
+         isFirst = true ;
+        for (Object[] obj:list) {
+        	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
+        }
+        form.setServicies(res.toString()) ;
         
     }
 

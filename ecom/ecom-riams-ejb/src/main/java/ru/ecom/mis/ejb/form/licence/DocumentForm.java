@@ -14,6 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
@@ -107,4 +108,13 @@ public class DocumentForm extends IdEntityForm{
 
 	/** Время создания */
 	private String theCreateTime;
+	
+	/** Тип коек */
+	@Comment("Тип коек")
+	@Persist @Required
+	public Long getBedSubType() {return theBedSubType;}
+	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private Long theBedSubType;
 }

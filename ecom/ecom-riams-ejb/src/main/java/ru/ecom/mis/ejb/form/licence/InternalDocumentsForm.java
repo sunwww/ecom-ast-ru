@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.form.licence;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.licence.InternalDocuments;
-
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -168,4 +167,13 @@ public class InternalDocumentsForm extends DocumentForm{
 	/** Планируется операция? */
 	private Boolean theIsPlanOperation;
 	
+	/** Тип коек */
+	@Comment("Тип коек")
+	@Persist
+	public Long getBedSubType() {return theBedSubType;}
+	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private Long theBedSubType;
+
 }
