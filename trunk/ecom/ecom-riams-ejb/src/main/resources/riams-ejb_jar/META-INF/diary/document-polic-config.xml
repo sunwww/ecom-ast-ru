@@ -46,7 +46,7 @@
     	
 	</parameter>
     <parameter id='5' type='DischargeDocument' name='Выписка из медицинской карты (диаг.отд.)' 
-    	action='entityParentPrepareCreate-doc_dischargeDiag' roles='/Policy/Mis/MedCase/Document/Internal/DischargeDiagnost'>
+    	action='entityParentPrepareCreate-doc_dischargeDiag' roles='/Policy/Mis/MedCase/Document/Internal/DischargeDiagnost/Create'>
     	<fields>
     		<field type='row' open='1'/>
     		<field property='servicies' type='textArea' label='Услуги...' fieldColSpan='3' required='true'/>

@@ -25,7 +25,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property = "medCase", parentForm = MedCaseForm.class)
 @Subclasses(value = { DischargeDocumentForm.class
 		,DirectionDocumentForm.class ,BaseMedicalExaminationForm.class
-		,DirectionToMicrobiologAnalysisForm.class})
+		,DirectionToMicrobiologAnalysisForm.class
+		,DischargeDiagnostDocumentForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document")
 public class DocumentForm extends IdEntityForm{
 

@@ -54,7 +54,7 @@ public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor 
         list.clear() ;
         list= manager.createNativeQuery("select ms.code,ms.name from MedCase mc  "
         		+" left join MedService ms on ms.id=mc.medService_id"
-        		+" where mc.parent_id='"+aParentId+"' and mc.dtype='ServiceMedService' order by ms.code").getResultList() ;
+        		+" where mc.parent_id='"+aParentId+"' and mc.dtype='ServiceMedCase' order by ms.code").getResultList() ;
         res = new StringBuilder() ; 
          isFirst = true ;
         for (Object[] obj:list) {
