@@ -175,6 +175,7 @@
       		<ecom:webQuery name="docum" nativeSql="select d.id as did,d.history
       		, case when d.dtype='DirectionDocument' then 'Направление' 
       		when d.dtype='DischargeDocument' then 'Выписка'
+      		when d.dtype='DischargeDiagnostDocument' then 'Выписка диагностическая'
       		when d.dtype='BaseMedicalExamination' then 'Паспорт здоровья'
       		when d.dtype='DirectionToMicrobiologAnalysis' then 'Направление на микробиологическое исследование'
       		else '-' end,d.diagnosis
