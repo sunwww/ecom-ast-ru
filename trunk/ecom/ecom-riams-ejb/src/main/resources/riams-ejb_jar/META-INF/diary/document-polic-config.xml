@@ -45,5 +45,16 @@
     	<print filename='directMicrobiologDocument'/>
     	
 	</parameter>
-
+    <parameter id='5' type='DischargeDocument' name='Выписка из медицинской карты (диаг.отд.)' 
+    	action='entityParentPrepareCreate-doc_dischargeDiag' roles='/Policy/Mis/MedCase/Document/Internal/DischargeDiagnost'>
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='servicies' type='textArea' label='Услуги...' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Краткий анамнез...' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='dischargeDocumentDiag'/>
+	</parameter>
 </parameterconfig>
