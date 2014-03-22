@@ -209,8 +209,9 @@ function printDocument(aCtx,aParams) {
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	map.put("history", recordMultiText(doc.history)) ;
+	map.put("servicies", recordMultiText(doc.servicies)) ;
 	map.put("diagnosis", recordMultiText(doc.diagnosis)) ;
-	var wf = medCase.workFunctionPlan ;
+	var wf = medCase.workFunctionExecute ;
 	var pers = wf.worker!=null?wf.worker.person:null;
 	var spec = "_____________________" ;
 	if (pers!=null) {
