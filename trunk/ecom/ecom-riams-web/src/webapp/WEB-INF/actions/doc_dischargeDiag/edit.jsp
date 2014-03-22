@@ -38,7 +38,6 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="doc_dischargeDiagForm">
-  <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintNotView">
   <script type="text/javascript">
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
@@ -47,17 +46,7 @@
   }
     printDocument();
     </script>
-  </msh:ifInRole>
-  <msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/PrintNotView">
-  <script type="text/javascript">
-    function printDocument() {
-      	if (confirm('Распечатать документ?')) {
-      		window.location.href = "print-documentDischargeDiag.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      	}
-      }
-    printDocument();
-    </script>
-  </msh:ifNotInRole>
+
   </msh:ifFormTypeIsView>
   </tiles:put>
   

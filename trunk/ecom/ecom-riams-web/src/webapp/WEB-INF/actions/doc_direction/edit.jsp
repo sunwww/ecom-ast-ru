@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="/entityParentSaveGoView-doc_direction.do" defaultField="idc10Name" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+    <msh:form action="/entityParentSaveGoView-doc_direction.do" defaultField="phonePatient" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="medCase" />
@@ -15,8 +15,8 @@
         	<msh:textField property="phonePatient" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="datePlanFrom" label="Дата госп. с"/>
-        	<msh:textField property="datePlanTo" label="по"/>
+        	<msh:textField property="planDateFrom" label="Дата госп. с"/>
+        	<msh:textField property="planDateTo" label="по"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="sentToLpu" label="ЛПУ куда направлен" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
@@ -40,7 +40,7 @@
         </msh:row>
         <msh:row>
 	       	<msh:checkBox property="isPlanOperation" label="Операция?"/>
-	       	<msh:checkBox property="isCreatePlanHosp" label="Операция?"/>
+	       	<msh:checkBox property="isCreatePlanHosp" label="Создать пред.госпит.?"/>
         </msh:row>
         
 

@@ -60,7 +60,7 @@ public class PrintAction extends BaseAction {
         		, aRequest.getParameter("s")
         		, aRequest.getParameter("m"), map) ;
         String next = aRequest.getParameter("next") ;
-        if (next!=null && !next.equals("")) {
+        if (next!=null && !next.equals("") &&filename.toLowerCase().contains(".txt")) {
         	
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
         	return new ActionForward(next.replace("__", "?"),true);
