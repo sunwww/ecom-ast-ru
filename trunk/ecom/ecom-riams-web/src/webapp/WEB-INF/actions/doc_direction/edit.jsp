@@ -32,6 +32,10 @@
         </msh:row>
         
         <msh:row>
+        	<msh:autoComplete property="bedSubType" label="Тип коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedSubType"/>
+        </msh:row>
+        
+        <msh:row>
       		<msh:autoComplete property="idc10" horizontalFill="true" vocName="vocIdc10" fieldColSpan="8"/>
       	</msh:row>
         <msh:row>
@@ -40,7 +44,9 @@
         </msh:row>
         <msh:row>
 	       	<msh:checkBox property="isPlanOperation" label="Операция?"/>
-	       	<msh:checkBox property="isCreatePlanHosp" label="Создать пред.госпит.?"/>
+	       	<msh:ifFormTypeIsCreate formName="doc_directionForm">
+	       		<msh:checkBox property="isCreatePlanHosp" label="Создать пред.госпит.?"/>
+	       	</msh:ifFormTypeIsCreate>
         </msh:row>
         
 

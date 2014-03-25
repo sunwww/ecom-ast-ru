@@ -376,9 +376,15 @@
                    callback: function(aResult) {
                    
                       if (aResult) {
-				    		//showTicketDouble(aResult) ;
-				    		alert('Уже заведен талон посещения на '+$('dateStart').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
-				    			 ;
+				    	 TicketService.checkCreateDoubleBySpecAndDate({
+                    		  callback: function(aResult) {
+	                    		  if (aResult) {
+	                    			  alert('Уже заведен талон посещения на '+$('dateStart').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
+					    			  document.forms[0].submitButton.disabled = false ;
+	                    		  } else {
+	      				    		  showTicketDouble(aResult) ;
+	                    		  }
+                    	  }) ;
                        } else {
                      		TicketService.checkHospitalByMedcard($('dateStart').value,document.forms[0].medcard.value,$('serviceStream').value
                      		  		,{callback: function(aString) {
