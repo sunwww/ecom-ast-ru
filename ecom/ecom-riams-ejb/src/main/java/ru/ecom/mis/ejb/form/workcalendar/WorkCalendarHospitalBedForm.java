@@ -1,16 +1,11 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
-import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -223,5 +218,21 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	/** Отделение */
 	private Long theDepartment;
 	
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	@Persist
+	public Long getBedType() {return theBedType;}
+	public void setBedType(Long aBedType) {theBedType = aBedType;}
+
 	
+	/** Тип коек */
+	@Comment("Тип коек")
+	@Persist
+	public Long getBedSubType() {return theBedSubType;}
+	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private Long theBedSubType;
+	/** Профиль коек */
+	private Long theBedType;	
 }

@@ -11,4 +11,5 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ExternalMedservice extends ExternalDocument{
+		
 }
