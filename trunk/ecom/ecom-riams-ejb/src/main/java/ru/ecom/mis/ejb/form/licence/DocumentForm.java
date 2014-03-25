@@ -110,12 +110,5 @@ public class DocumentForm extends IdEntityForm{
 	/** Время создания */
 	private String theCreateTime;
 	
-	/** Тип коек */
-	@Comment("Тип коек")
-	@Persist @Required
-	public Long getBedSubType() {return theBedSubType;}
-	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
 
-	/** Тип коек */
-	private Long theBedSubType;
 }

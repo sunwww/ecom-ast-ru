@@ -14,7 +14,9 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
 import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -211,4 +213,21 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 
 	/** Рабочая функция */
 	private WorkFunction theWorkFunction;
+	
+	/** Профиль коек */
+	@Comment("Профиль коек")
+	@OneToOne
+	public VocBedType getBedType() {return theBedType;}
+	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
+
+	/** Тип коек */
+	@Comment("Тип коек")
+	@OneToOne
+	public VocBedSubType getBedSubType() {return theBedSubType;}
+	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private VocBedSubType theBedSubType;
+	/** Профиль коек */
+	private VocBedType theBedType;
 }

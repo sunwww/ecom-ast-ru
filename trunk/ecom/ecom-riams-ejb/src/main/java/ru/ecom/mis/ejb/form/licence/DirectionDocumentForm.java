@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -113,15 +115,26 @@ public class DirectionDocumentForm extends InternalDocumentsForm {
 	
 	/** Создать запись о план. госпитализаций */
 	@Comment("Создать запись о план. госпитализаций")
-	public Boolean getIsCreatePlanHosp() {
-		return theIsCreatePlanHosp;
-	}
-
-	public void setIsCreatePlanHosp(Boolean aIsCreatePlanHosp) {
-		theIsCreatePlanHosp = aIsCreatePlanHosp;
-	}
+	public Boolean getIsCreatePlanHosp() {return theIsCreatePlanHosp;}
+	public void setIsCreatePlanHosp(Boolean aIsCreatePlanHosp) {theIsCreatePlanHosp = aIsCreatePlanHosp;}
 
 	/** Создать запись о план. госпитализаций */
 	private Boolean theIsCreatePlanHosp;
 	
+	/** Пред.госпитал. */
+	@Comment("Пред.госпитал.")
+	@Persist
+	public Long getPlanHospitalBed() {return thePlanHospitalBed;}
+	public void setPlanHospitalBed(Long aPlanHospitalBed) {thePlanHospitalBed = aPlanHospitalBed;}
+
+	/** Пред.госпитал. */
+	private Long thePlanHospitalBed;
+	/** Тип коек */
+	@Comment("Тип коек")
+	@Persist @Required
+	public Long getBedSubType() {return theBedSubType;}
+	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+
+	/** Тип коек */
+	private Long theBedSubType;
 }
