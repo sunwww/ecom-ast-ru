@@ -521,7 +521,7 @@ select
 ,${groupSql} as nameFld
 ,count(*) as cntAll
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntPAll
-,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage) then 1 else null end) as cntPVil
+,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then 1 else null end) as cntPVil
 
 ,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' then 1 else null end) as cntPIllnessAll
 ,count(case when (vr.code='ILLNESS')  and vwpt.code='POLYCLINIC'

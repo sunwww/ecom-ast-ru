@@ -363,6 +363,10 @@ public class TicketServiceJs {
     	return "0#У Вас стоит ограничение на редактрование данного протокола!" ;
 	}
     	
+	public boolean checkCreateDoubleBySpecAndDate(HttpServletRequest aRequest) throws Exception {
+		boolean always = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsNotCreateDoubleTicket",aRequest) ;
+		return always ;
+	}
     private boolean checkUser(Long aIdTicket, Long aDoctor, HttpServletRequest aRequest) throws Exception {
     	boolean always = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit",aRequest) ;
     	if (always) {
