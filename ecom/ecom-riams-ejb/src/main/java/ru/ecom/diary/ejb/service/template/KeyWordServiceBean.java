@@ -31,7 +31,6 @@ public class KeyWordServiceBean implements IKeyWordService {
         }
         return "" ;
     }
-
     @EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext
     EntityManager theManager ;
