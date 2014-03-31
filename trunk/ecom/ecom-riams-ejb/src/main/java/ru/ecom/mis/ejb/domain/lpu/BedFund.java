@@ -28,7 +28,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes(
 	{
-		@AIndex(unique= false, properties = {"lpu","serviceStream","bedType","bedSubType","reductionType","dateStart"})
+		@AIndex(unique= false, properties = {"lpu","serviceStream","bedType"})
 		,@AIndex(unique= false, properties = {"bedType"})
 		,@AIndex(unique= false, properties = {"lpu"})
 		,@AIndex(unique= false, properties = {"serviceStream"})
