@@ -14,7 +14,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	//@AIndex(properties= {"object","permission","dateFrom","dateTo","username"},table="Permission")
 	@AIndex(properties= {"dateFrom","dateTo","username"},table="Permission")
 	,@AIndex(properties= {"dateFrom","dateTo","username","object","permission"},table="Permission")
-    ,@AIndex(properties= {"dateFrom","dateTo","username","object","permission","idObject"},table="Permission")
+    //,@AIndex(properties= {"dateFrom","dateTo","username","object","permission","idObject"},table="Permission")
 })
 @Table(schema="SQLUser")
 public class UserPermission extends Permission {
