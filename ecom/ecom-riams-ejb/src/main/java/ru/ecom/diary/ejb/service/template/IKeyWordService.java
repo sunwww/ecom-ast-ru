@@ -9,6 +9,6 @@ package ru.ecom.diary.ejb.service.template;
  */
 
 public interface IKeyWordService {
-    public String getDecryption(String aReduction) ;
+    public String getDecryption(String aReduction, String aUsername) ;
 
 }
