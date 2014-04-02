@@ -89,8 +89,12 @@ for (int i=0;i<cntResult;i++) {
 	<tr class='dataTr'>
 	<%
 		out.print("<td rowspan='2'>");out.print(wqr1.get1()) ;out.println("</td>");
-		out.print("<td rowspan='2'>");out.print(wqr1.get2()) ;out.println("</td>");
-		out.print("<td rowspan='2' style='text-align: left;'>");out.print(wqr1.get3()) ;out.println("</td>");
+		out.print("<td rowspan='2'>");
+		out.print(wqr1.get2()) ;out.println("</td>");
+		out.print("<td rowspan='2' style='text-align: left;'>");
+		out.print("<a href='javascript:void(0)' class='adivs' onclick=\"updateExtDispPlanServiceAllAge('");out.print(wqr1.get1());out.print("',this)\">-</a>") ;
+		out.print("<a href='javascript:void(0)' class='adivs' onclick=\"updateExtDispPlanServiceAllAge('");out.print(wqr1.get1());out.print("',this)\">+</a>") ;
+		out.print(wqr1.get3()) ;out.println("</td>");
 		StringBuilder strM = new StringBuilder() ;
 		StringBuilder strW = new StringBuilder() ;
 		strM.append("<th>М</th>") ;
@@ -108,13 +112,13 @@ for (int i=0;i<cntResult;i++) {
 				strM.append("<td class='manTd'>") ;
 				//out.println(obj.substring(0,1)) ;
 				if (obj.substring(0,1).equals("1")) {
-					strM.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");
+					strM.append("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service");
 					strM.append(wqr1.get1()) ;
 					strM.append("_"+age+"_1' onclick=\"updatePlanService('");
 					strM.append(wqr1.get1());
 					strM.append("','"+age+"','1')\">+</a>");
 				} else {
-					strM.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");
+					strM.append("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service");
 					strM.append(wqr1.get1());
 					strM.append("_"+age+"_1' onclick=\"updatePlanService('");
 					strM.append(wqr1.get1());
@@ -123,9 +127,9 @@ for (int i=0;i<cntResult;i++) {
 				//strW.append("</td><td>") ;
 				//out.println(obj.substring(1,2)) ;
 				if (obj.substring(1,2).equals("1")) {
-					strW.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
+					strW.append("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
 				} else {
-					strW.append("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
+					strW.append("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
 				}
 				strW.append("</td>") ;
 				strM.append("</td>") ;
@@ -171,6 +175,19 @@ for (int i=0;i<cntResult;i++) {
 				 $('service'+aServiceId+"_"+aAgeGroup+"_"+aSex).innerHTML=aResult ;                
 			  }});			
 		}
+		function updateExtDispPlanServiceAllAge(aServiceId,aElement) {
+			
+			ContractService.updateExtDispPlanServiceAllAge('${param.id}',aElement.innerHTML
+					,aServiceId,
+			{
+			 callback: function(aResult) {
+				 var el=document.getElementsByClassName("service"+aServiceId) ;
+				 alert("Сохранено");
+				 for (var i=0;i<el.length;i++) {
+					 el[i].innerHTML=aResult ;
+				 }
+			  }});			
+		}		
 		</script>
 	</tiles:put>
   <tiles:put name="style" type="string">

@@ -89,7 +89,11 @@ for (int i=0;i<cntResult;i++) {
 	<%
 		out.print("<td>");out.print(wqr1.get1()) ;out.println("</td>");
 		out.print("<td>");out.print(wqr1.get2()) ;out.println("</td>");
-		out.print("<td style='text-align: left;'>");out.print(wqr1.get3()) ;out.println("</td>");
+		out.print("<td style='text-align: left;'>");
+		out.print("<a href='javascript:void(0)' class='adivs' onclick=\"updateExtDispPlanServiceAllAge('");out.print(wqr1.get1());out.print("',this)\">-</a>") ;
+		out.print("<a href='javascript:void(0)' class='adivs' onclick=\"updateExtDispPlanServiceAllAge('");out.print(wqr1.get1());out.print("',this)\">+</a>") ;
+		out.print(wqr1.get3()) ;
+		out.println("</td>");
 		for (int ai=0;ai<cntAgeGroup ;ai++) {
 			String obj = "" ;
 			if (ai<22) {
@@ -102,19 +106,19 @@ for (int i=0;i<cntResult;i++) {
 				out.print("<td class='manTd'>") ;
 				//out.println(obj.substring(0,1)) ;
 				if (obj.substring(0,1).equals("1")) {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");out.print(wqr1.get1()) ;
+					out.print("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service");out.print(wqr1.get1()) ;
 					out.print("_"+age+"_1' onclick=\"updatePlanService('");out.print(wqr1.get1());out.print("','"+age+"','1')\">+</a>");
 				} else {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service");out.print(wqr1.get1());
+					out.print("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service");out.print(wqr1.get1());
 					out.print("_"+age+"_1' onclick=\"updatePlanService('");out.print(wqr1.get1());out.print("','"+age+"','1')\">-</a>");
 				}
 				out.print("</td>") ;
 				out.print("<td>") ;
 				//out.println(obj.substring(1,2)) ;
 				if (obj.substring(1,2).equals("1")) {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
+					out.print("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">+</a>");
 				} else {
-					out.print("<a title='"+ageNameList[ai]+"' class='adivs' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
+					out.print("<a title='"+ageNameList[ai]+"' class='adivs service"+wqr1.get1()+"' href='javascript:void(0)' id='service"+wqr1.get1()+"_"+age+"_2' onclick=\"updatePlanService('"+wqr1.get1()+"','"+age+"','2')\">-</a>");
 				}
 				out.print("</td>") ;
 			} else {
@@ -155,6 +159,19 @@ for (int i=0;i<cntResult;i++) {
 			{
 			 callback: function(aResult) {
 				 $('service'+aServiceId+"_"+aAgeGroup+"_"+aSex).innerHTML=aResult ;                
+			  }});			
+		}
+		function updateExtDispPlanServiceAllAge(aServiceId,aElement) {
+			
+			ContractService.updateExtDispPlanServiceAllAge('${param.id}',aElement.innerHTML
+					,aServiceId,
+			{
+			 callback: function(aResult) {
+				 var el=document.getElementsByClassName("service"+aServiceId) ;
+				 alert("Сохранено");
+				 for (var i=0;i<el.length;i++) {
+					 el[i].innerHTML=aResult ;
+				 }
 			  }});			
 		}
 		</script>

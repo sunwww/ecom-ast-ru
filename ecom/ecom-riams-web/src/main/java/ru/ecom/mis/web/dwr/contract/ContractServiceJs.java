@@ -67,6 +67,49 @@ public class ContractServiceJs {
 		} 
 		return actionNext ;
 	}
+
+	public String updateExtDispPlanServiceAllAge(Long aPlan, String aAction, Long aServiceId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String actionNext="" ;
+		System.out.println("action="+aAction+"=") ;
+		Collection<WebQueryResult> listAge = service.executeNativeSql("select veda.id,veda.name from VocExtDispAgeGroup veda ") ;
+		if (aAction!=null && (aAction.equals("+"))) {
+			for (WebQueryResult wqrAge:listAge) {
+			String aAgeGroup=""+wqrAge.get1() ;
+			
+				Collection<WebQueryResult> list = service.executeNativeSql("select edps.id,edps.sex_id "
+					+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+					+"' and edps.ageGroup_id='"+aAgeGroup+"'") ;
+				if (!list.isEmpty()) {
+					service.executeUpdateNativeSql("update "
+								+" ExtDispPlanService edps "
+								+" set sex_id=null"
+								+" where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
+								+"' and edps.ageGroup_id='"+aAgeGroup+"'") ;
+				} else {
+					try {
+						service.executeUpdateNativeSql("insert into "
+								+" ExtDispPlanService "
+								+" (plan_id,serviceType_id,ageGroup_id) values ('"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+								) ;
+					} catch (Exception e) {
+						service.executeUpdateNativeSql("alter table extdispplanservice alter column id set default nextval('extdispplanservice_sequence')") ;
+						service.executeUpdateNativeSql("insert into "
+								+" ExtDispPlanService "
+								+" (plan_id,serviceType_id,ageGroup_id) values ('"+aPlan+"','"+aServiceId+"','"+aAgeGroup+"')"
+								) ;
+					}
+				}
+			} 
+			actionNext="-" ;
+		} else if (aAction!=null && (aAction.equals("-"))) {
+			service.executeUpdateNativeSql("delete "
+					+" from ExtDispPlanService edps where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId+"'") ;
+			actionNext="+" ;
+		}
+		return aAction ;
+	}
+
 	public String settingAppropriateService(String aAppropriateService, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

@@ -2,6 +2,7 @@ package ru.ecom.template.web.dwr;
 
 import ru.nuzmsh.util.StringUtil;
 import ru.ecom.diary.ejb.service.template.IKeyWordService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +21,10 @@ public class KeyWordServiceJs {
     	if (StringUtil.isNullOrEmpty(aReduction)) {
             return "" ;
         } else {
-        	
+        	String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
             //System.out.println("-"+aReduction+"-") ;
         	IKeyWordService service = Injection.find(aRequest).getService(IKeyWordService.class) ;
-        	String ret = service.getDecryption(aReduction) ;
+        	String ret = service.getDecryption(aReduction,login) ;
         	///System.out.println("-"+ret+"-") ;
             return ret ;
         }
