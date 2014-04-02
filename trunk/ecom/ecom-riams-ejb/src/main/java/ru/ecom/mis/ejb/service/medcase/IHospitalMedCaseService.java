@@ -20,7 +20,11 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
-	public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu)throws ParserConfigurationException, TransformerException;
+	public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) throws ParserConfigurationException, TransformerException ;
+	public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) throws ParserConfigurationException, TransformerException;
+	public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) throws ParserConfigurationException, TransformerException;
+	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) throws ParserConfigurationException, TransformerException;
+	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu)  throws ParserConfigurationException, TransformerException;
 	public void createNewDiary(String aTitle, String aText, String aUsername) ;
 	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
 	public void removeDataFromParameterConfig(Long aDepartment, String aIds) ;
