@@ -45,11 +45,11 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 		return list ;
 	}
 	private void loadFile( String aResourceString,List<VocValue> aList,VocContext aContext) throws IOException  {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
+        //LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
         InputStream in = null;
         try {
         	in = getInputStream(aResourceString) ;
-                LOG.info(new StringBuilder().append("		file=").append(in).toString());
+                //LOG.info(new StringBuilder().append("		file=").append(in).toString());
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {
@@ -84,10 +84,10 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
 	    String type = aElement.getAttributeValue("type");
-	    LOG.info(new StringBuilder().append(" Parameter ").append(key)
+	    /*LOG.info(new StringBuilder().append(" Parameter ").append(key)
 	        		.append(" (name = ").append(name).append("")
 	        		.append(" type= ").append(type).append(")")
-	        		.toString());
+	        		.toString());*/
 	    StringBuilder vocname = new StringBuilder() ;
 		vocname.append(name).append(" (").append(type).append(")") ;
 		VocValue voc = new VocValue(key, name.toString()) ;
