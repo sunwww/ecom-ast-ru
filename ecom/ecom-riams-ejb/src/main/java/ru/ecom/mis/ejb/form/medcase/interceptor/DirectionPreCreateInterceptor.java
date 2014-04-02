@@ -30,9 +30,16 @@ public class DirectionPreCreateInterceptor implements IParentFormInterceptor {
 		                              +"  and DTYPE like 'MedPolicyOmc%'")
 			//.setParameter("patid", form.getId())
 			.getResultList();
+		List<Object[]> hospInfo = manager.createNativeQuery("select list(to_char(mc.dateStart,'dd.mm.yyyy')||' '||ml.name),list(ml.name) as mlname from MedCase mc left join MisLpu ml on ml.id=mc.department_id where mc.patient_id='"+aParentId+"' and mc.dtype='HospitalMedCase' and mc.dateFinish is null").getResultList() ;
+		String errorInfo = null ;
+		if (hospInfo.size()>0) {
+			errorInfo = "Пацинет ГОСПИТАЛИЗИРОВАН в стационар "+hospInfo.get(0)[0] ;
+			if (polerr.size()!=1) errorInfo="<br/>"+errorInfo ;
+		}
 		//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-		if(polerr.size()==0) form.setInfoByPolicy("НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС");
-		if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
+		if(polerr.size()==0) errorInfo="НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС"+errorInfo!=null?errorInfo:"";
+		if(polerr.size()>1) errorInfo="БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС"+errorInfo!=null?errorInfo:"";
+		form.setInfoByPolicy(errorInfo) ;
 
 	// 
 	
