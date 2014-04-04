@@ -228,7 +228,7 @@ if (date!=null && !date.equals("")) {
 	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
-	and (ad1.domen=5 or ad2.domen=5)
+	and (ad1.addressIsVillage='1')
 	then 'X' else null end
 	as cnt8EntranceVillagers
 	,case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
@@ -374,7 +374,6 @@ if (date!=null && !date.equals("")) {
 	left join vocservicestream vss1 on vss1.id=slo.servicestream_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
-	LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId
 	where 
 		slo.dtype='DepartmentMedCase' 
 		${departmentSql} 
@@ -458,7 +457,7 @@ if (date!=null && !date.equals("")) {
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
-	and (ad1.domen=5 or ad2.domen=5)
+	and (ad1.addressIsVillage='1')
 	then slo.id else null end)
 	as cnt8EntranceVillagers
 	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
@@ -603,7 +602,6 @@ if (date!=null && !date.equals("")) {
 	left join vocservicestream vss on vss.id=bf.servicestream_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
-	LEFT JOIN Address2 ad2 on ad2.addressId=ad1.parent_addressId
 	where 
 	slo.dtype='DepartmentMedCase' 
 	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
