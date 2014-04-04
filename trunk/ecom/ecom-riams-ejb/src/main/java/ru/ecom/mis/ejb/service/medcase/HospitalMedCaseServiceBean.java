@@ -84,6 +84,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
+    private String getTitleFile(String aPackage,String aLpu, String aPeriodByReestr,String aNPackage) {
+    	aLpu="300001";
+    	String filename = "N"+aPackage+"M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	return filename ;
+    }
     public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -94,7 +99,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	
-    	String filename = "N1M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -210,7 +215,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	
-    	String filename = "N2M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -305,7 +310,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	
-    	String filename = "N3M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	String filename = getTitleFile("3",aLpu,aPeriodByReestr,aNPackage) ; ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -395,7 +400,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	
-    	String filename = "N4M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ; ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -476,7 +481,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
 		
-    	String filename = "N5M"+aLpu+"T30"+aPeriodByReestr+aNPackage ;
+    	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;

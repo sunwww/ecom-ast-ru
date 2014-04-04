@@ -46,7 +46,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
-    public String exportAll(String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    public String exportAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
+    	if (aAge!=null) {
+    		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
+    	}
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -70,7 +74,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("') and ") ;
     	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
     	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-    	sql.append(" ").append(aAddSql) ;
+    	sql.append(" ").append(addSql) ;
     	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
     	
@@ -103,16 +107,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     	xmlDoc.saveDocument(outFile) ;
     	return filename;
     }
-    public String export(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
-    	return exportAll("","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+    public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	return exportAll(aAge,"","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
-    public String exportAdult(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
-    	StringBuilder addSql = new StringBuilder().append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) >= 18") ;
-    	return exportAll("_adult",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
-    }
-    public String exportNoAddress(boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+
+    public String exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
-    	return exportAll("_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+    	return exportAll(aAge,"_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
     public static String getStringValue(Object aValue) {
     	return aValue!=null?""+aValue:"" ;
