@@ -19,6 +19,7 @@
   
 	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
 	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
+	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -46,15 +47,25 @@
         <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
        </msh:row>
       <msh:row>
+        <td class="label" title="Возраст  (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="1">  до 18 лет
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAge" value="2">  от 18 лет 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAge" value="3">  все 
+	        </td>
+	        
+       </msh:row>
+      <msh:row>
         <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1">  прикрепленные пациенты (все)
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	        	<input type="radio" name="typeView" value="2">  пациенты без адресов
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="3">  пациенты от 18 лет
 	        </td>
        </msh:row>
        
@@ -71,6 +82,7 @@
       </msh:row>
       <script type="text/javascript">
       checkFieldUpdate('typeView','${typeView}',1) ;
+      checkFieldUpdate('typeAge','${typeAge}',3) ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
     	   	var aMax=chk.length ;

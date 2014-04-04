@@ -28,7 +28,8 @@ public class AttachmentByLpuAction extends BaseAction {
     		if (erros.isEmpty()&&form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))
     			) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
-	    	String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
+    		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
+	    	String typeAge = ActionUtil.updateParameter("PatientAttachment","typeAge","3", aRequest) ; 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
@@ -38,25 +39,27 @@ public class AttachmentByLpuAction extends BaseAction {
         	calTo.setTime(curTo) ;
         	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
 	    	SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
-	    	String filename ;
+	    	String filename = null;
+	    	String age = null ;
+	    	if (typeAge!=null&&typeAge.equals("1")) {
+	    		age = "<=18" ;
+	    	} else if (typeAge!=null&&typeAge.equals("2")) {
+	    		age = ">=18" ;
+	    	}
 	        if (typeView!=null && typeView.equals("1")) {
-		    	filename = service.export(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		    	filename = service.export(age,form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()), format1.format(calTo.getTime()),form.getNumberReestr()
 		        		, form.getNumberPackage());
 	        } else if (typeView!=null && typeView.equals("2")) {
-		    	filename = service.exportNoAddress(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		    	filename = service.exportNoAddress(age,form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
-	        } else {
-		    	filename = service.exportAdult(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-		        		, form.getLpu(),form.getArea()
-		        		,format2.format(cal.getTime())
-		        		,format2.format(calTo.getTime())
-		        		,format1.format(calTo.getTime())
-		        		, form.getNumberReestr()
-		        		, form.getNumberPackage());
-	        }
+	        } 
+	        if (filename!=null) {
 	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
+	        } else {
+	        	form.setFilename("---") ;
+	        }
         }}
         return aMapping.findForward("success") ;
     }
