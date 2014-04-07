@@ -199,7 +199,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	//saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
-    private void saveXmlDocument(XmlDocument aXmlDocument,File aOutFile) throws TransformerFactoryConfigurationError, TransformerException {
+    public static void saveXmlDocument(XmlDocument aXmlDocument,File aOutFile) throws TransformerFactoryConfigurationError, TransformerException {
     	Transformer tr = TransformerFactory.newInstance().newTransformer() ;
     	tr.setOutputProperty(OutputKeys.ENCODING, "cp1251") ;
     	StreamResult sr = new StreamResult(aOutFile) ;
@@ -472,7 +472,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	return filename+".xml";
     }
     public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
-    			throws ParserConfigurationException, TransformerException {
+    		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -480,7 +480,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-		
+    	
     	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
@@ -525,6 +525,86 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
+    	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	sql.append(" and mkb.code is not null") ;
+    	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
+    	
+    	List<Object[]> list = theManager.createNativeQuery(sql.toString())
+    			.setMaxResults(70000).getResultList() ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	int i=0 ;
+    	for (Object[] obj:list) {
+    		Element zap = xmlDoc.newElement(root, "NPR", null);
+    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
+    		xmlDoc.newElement(zap, "N_Npr",AddressPointServiceBean.getStringValue("0")) ;
+    		xmlDoc.newElement(zap, "DNPR", AddressPointServiceBean.getStringValue(obj[1])) ;
+    		xmlDoc.newElement(zap, "FOR_POM", AddressPointServiceBean.getStringValue(obj[2])) ;
+    		xmlDoc.newElement(zap, "LPU", AddressPointServiceBean.getStringValue("300001")) ;
+    		xmlDoc.newElement(zap, "LPU_1", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "DATE_1", AddressPointServiceBean.getStringValue(obj[4])) ;
+    		xmlDoc.newElement(zap, "DATE_2", AddressPointServiceBean.getStringValue(obj[5])) ;
+    		/*
+    		xmlDoc.newElement(zap, "VPOLIS", AddressPointServiceBean.getStringValue(obj[2])) ;
+    		xmlDoc.newElement(zap, "SPOLIS", AddressPointServiceBean.getStringValue(obj[3])) ;
+    		xmlDoc.newElement(zap, "NPOLIS", AddressPointServiceBean.getStringValue(obj[4])) ;
+    		xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue(obj[5])) ;
+    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue(obj[6])) ;
+    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue(obj[7])) ;
+    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "FAM", AddressPointServiceBean.getStringValue(obj[8])) ;
+    		xmlDoc.newElement(zap, "IM", AddressPointServiceBean.getStringValue(obj[9])) ;
+    		xmlDoc.newElement(zap, "OT", AddressPointServiceBean.getStringValue(obj[10])) ;
+    		 */
+    		xmlDoc.newElement(zap, "W", AddressPointServiceBean.getStringValue(obj[16])) ;
+    		xmlDoc.newElement(zap, "DR", AddressPointServiceBean.getStringValue(obj[17])) ;
+    		xmlDoc.newElement(zap, "PROFIL", AddressPointServiceBean.getStringValue(obj[18])) ;
+    		xmlDoc.newElement(zap, "PODR", AddressPointServiceBean.getStringValue("")) ;
+    		xmlDoc.newElement(zap, "NHISTORY", AddressPointServiceBean.getStringValue(obj[19])) ;
+    		xmlDoc.newElement(zap, "REFREASON", "") ;
+    		
+    	}
+    	saveXmlDocument(xmlDoc,outFile) ;
+    	return filename+".xml";
+    }
+    public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    			throws ParserConfigurationException, TransformerException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+		
+    	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
+    	
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select vbt.id,vbt.name") ;
+    	sql.append(" ,count(distinct sls.id) as cntHosp") ;
+    	sql.append(" ,count(distinct case when sls.dateStart=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntEnter") ;
+    	sql.append(" ,count(distinct case when sls.dateFinish=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntDischarge") ;
+    	sql.append(" ,count(distinct case when sls.dateFinish is null or sls.datefinish>=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntCurrent") ;
+    	sql.append(" ,(select sum(bf1.amount) from bedfund bf1 where bf1.bedtype_id=vbt.id and bf1.bedsubtype_id=bf1.bedsubtype_id) as sumBed") ;
+    	sql.append(" from medcase sls") ;
+    	sql.append(" left join medcase sloF on sloF.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloF.prevMedCase_id is null") ;
+    	sql.append(" left join medcase sloL on sloL.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloL.dateFinish is not null ") ;
+    	sql.append(" left join BedFund bf on bf.id=sloF.bedFund_id") ;
+    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id") ;
+    	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart>=to_date('").append(aDateFrom).append("','yyyy-mm-dd')") ;
+    	sql.append(" and sls.dateFinish>=coalesce(to_date('").append(aDateFrom).append("','yyyy-mm-dd'),current_date)") ;
+    	sql.append(" and vss.id in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	sql.append(" group by vbt.id,vbt.name,bf.bedsubtype_id") ;
+    	sql.append(" order by vbt.name");
+
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
