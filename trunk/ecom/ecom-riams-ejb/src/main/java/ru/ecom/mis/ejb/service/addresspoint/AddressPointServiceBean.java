@@ -31,6 +31,7 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
+import ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
@@ -79,7 +80,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
     	
     	List<Object[]> listPat = theManager.createNativeQuery(sql.toString())
-    			.setMaxResults(70000).getResultList() ;
+    			.setMaxResults(90000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
@@ -104,7 +105,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     		
     		xmlDoc.newElement(zap, "REFREASON", "") ;
     	}
-    	xmlDoc.saveDocument(outFile) ;
+    	HospitalMedCaseServiceBean.saveXmlDocument(xmlDoc, outFile) ;
+    	//xmlDoc.saveDocument(outFile) ;
     	return filename;
     }
     public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
