@@ -44,6 +44,34 @@ order by mc.dateFrom desc
       		<msh:tableColumn property="5" columnName="Прейкурант"/>
       	</msh:table>
       </msh:section>
+      			<ecom:webQuery name="lastVisit1" nativeSql="select 
+    	m.id,m.dateStart as dateFrom
+    	,coalesce(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	,vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename) as worker
+    	from medCase m
+    	left join VocServiceStream vss on vss.id=m.serviceStream_id
+    	left join ContractPerson cp on cp.patient_id=m.patient_id
+    	left join workfunction wf on wf.id=m.workFunctionExecute_id
+    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+    	left join workfunction wf1 on wf1.id=m.workFunctionPlan_id
+    	left join vocworkfunction vwf1 on vwf1.id=wf1.workFunction_id
+    	left join WorkCalendarDay wcd on wcd.id=m.datePlan_id
+    	left join worker w on w.id=wf.worker_id
+    	left join patient wp on wp.id=w.person_id
+    	left join worker w1 on w1.id=wf1.worker_id
+    	left join patient wp1 on wp1.id=w1.person_id
+    	where cp.id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
+    	and m.dateStart is not null
+    	and vss.code='CHARGED'
+    	order by m.dateStart desc
+    	" maxResult="5" />
+     <msh:section title="Последнее посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 
+     viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
+    	<msh:table name="lastVisit1" action="entitySubclassView-mis_medCase.do" idField="1">
+	    	<msh:tableColumn property="2" columnName="Дата"/>
+    		<msh:tableColumn property="3" columnName="Специалист"/>
+    	</msh:table>
+     </msh:section>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
