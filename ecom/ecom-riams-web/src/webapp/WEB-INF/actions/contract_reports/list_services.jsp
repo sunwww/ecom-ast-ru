@@ -505,6 +505,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 
 				<msh:table name="finansReport" 
 				action="entityView-contract_medContract.do" 
+				viewUrl="entityView-contract_medContract.do?short=Short"
 				idField="1">
 					<msh:tableNotEmpty>
 						<tr>
