@@ -384,6 +384,7 @@
 	                    		  } else {
 	      				    		  showTicketDouble(aResult) ;
 	                    		  }
+	                    	   }
                     	  }) ;
                        } else {
                      		TicketService.checkHospitalByMedcard($('dateStart').value,document.forms[0].medcard.value,$('serviceStream').value
