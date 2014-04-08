@@ -69,6 +69,13 @@
 	        	<input type="radio" name="typeView" value="6">  наличие своб. мест
 	        </td>
        </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="7">  все
+        </td>
+
+       </msh:row>
        
        <msh:row>
        	<msh:hidden property="filename"/>
