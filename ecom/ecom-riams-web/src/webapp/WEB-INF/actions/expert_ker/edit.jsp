@@ -150,6 +150,10 @@
         name='ВК по пациенту' title="Просмотр ВК по пациенту" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
     
     </msh:sideMenu>
+    <msh:sideMenu title="Печать" >
+        <msh:sideLink params="id" action="/print-directVK.do?s=HospitalPrintService&amp;m=printDirectVK"  
+        	name="Направления" title="Печать направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
+    </msh:sideMenu>    
 	<msh:sideMenu title="Журналы по КЭР">
 	      <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"
 	      	roles="/Policy/Mis/MedCase/ClinicExpertCard/JournalByPeriod" styleId="journalKERByPeriod"
