@@ -58,7 +58,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	String[] filenameList=service.exportFondZip(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01") ;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	for (String fn:filenameList) {
-	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>") ;
+	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
 	        	}
         		form.setFilename(sb.toString()) ;
 	        }

@@ -135,9 +135,7 @@
     		%>
     
     <msh:section>
-    <msh:sectionTitle>Период с ${dateFrom} по ${dateTo}.</msh:sectionTitle>
-    <msh:sectionContent>
-<ecom:webQuery name="journal_reestr" nativeSql="
+<ecom:webQuery name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
 select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
@@ -156,6 +154,18 @@ group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlenam
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
 order by ${dateSql}
 "/> 
+    <msh:sectionTitle>
+    <form action="print-smo_report_plan_hospital_by_visit.do" method="post" target="_blank">
+    Период с ${dateFrom} по ${dateTo}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_reestr_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${dateFrom} по ${dateTo}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать">
+    </form>    
+    </msh:sectionTitle>
+    <msh:sectionContent>
         <msh:table
          name="journal_reestr" viewUrl="entityShortView-smo_planHospitalByVisit.do" action="entityView-smo_planHospitalByVisit.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
