@@ -1127,10 +1127,12 @@ select
 ,count(distinct case when vr.code='PROFYLACTIC' then smo.id else null end) as cntProf 
 ,count(distinct case when vr.code='ILLNESS' then smo.id else null end) as cntIllnessSmo
 ,count(distinct case when vr.code='ILLNESS' then smo.patient_id else null end) as cntIllnessPat
-,count(distinct case when vr.code='ILLNESS' then spo.id else null end) as cntIllnessSpo
+,count(distinct case when vr.code='ILLNESS' and spo.dateStart!=spo.dateFinish then spo.id else null end) as cntIllnessSpo
+,count(distinct case when vr.code='ILLNESS' and spo.dateStart=spo.dateFinish then spo.id else null end) as cntIllnessSpo1
 ,count(distinct case when vr.code='CONSULTATION' then smo.id else null end) as cntConsSmo
 ,count(distinct case when vr.code='CONSULTATION' then smo.patient_id else null end) as cntConsPat
-,count(distinct case when vr.code='CONSULTATION' then spo.id else null end) as cntConsSpo
+,count(distinct case when vr.code='CONSULTATION' and spo.dateStart!=spo.dateFinish then spo.id else null end) as cntConsSpo
+,count(distinct case when vr.code='CONSULTATION' and spo.dateStart=spo.dateFinish then spo.id else null end) as cntConsSpo1
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -1171,8 +1173,8 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th colspan="3">из всех посещ. в связи с заб.</th>
-         		<th colspan="3">из всех посещ. в связи с конс.</th>
+         		<th colspan="4">из всех посещ. в связи с заб.</th>
+         		<th colspan="4">из всех посещ. в связи с конс.</th>
          	</tr>
          </msh:tableNotEmpty>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
@@ -1180,10 +1182,12 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="из них с проф. целью" property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="посещений" property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="обращений" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="посещений" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="обращений" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="обращений (более 1 дня)" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="обращений (1 день)" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="посещений" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="пациентов" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="обращений (более 1 дня)" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="обращений (1 день)" property="12"/>
         </msh:table>
     </msh:sectionContent>
 
