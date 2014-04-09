@@ -157,8 +157,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	System.out.println(sb) ;
     	try {
-    		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append(";").toString(),sb.toString()} ;
-			Runtime.getRuntime().exec(arraCmd);
+    		//String[] arraCmd = {,sb.toString()} ;
+    		Runtime.getRuntime().exec(new StringBuilder().append("cd ").append(workDir).toString());
+			Runtime.getRuntime().exec(sb.toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -679,9 +680,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEM",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEW",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREED",0,true,"") ;
-    		//???Element obsmo = xmlDoc.newElement(zap, "OBSMO", null) ;
-    		//XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"REFREASON",null,false,"") ;
-   		
+    		String[] smoCodes = {"30002","30004"} ;
+    		for (String smoCode:smoCodes) {
+        		Element obsmo = xmlDoc.newElement(zap, "OBSMO", null) ;
+        		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMO",smoCode,true,"") ;
+        		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOSL",0,true,"") ;
+        		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOKD",0,true,"") ;
+    		}
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";

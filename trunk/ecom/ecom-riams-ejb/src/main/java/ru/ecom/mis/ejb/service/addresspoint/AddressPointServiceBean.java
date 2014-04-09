@@ -27,11 +27,11 @@ import ru.ecom.address.ejb.service.AddressPointCheckHelper;
 import ru.ecom.address.ejb.service.IAddressService;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.ejb.xml.XmlUtil;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
-import ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
@@ -56,12 +56,12 @@ public class AddressPointServiceBean implements IAddressPointService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename = "P"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+aNPackage+".xml" ;
+    	String filename = "P"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage)+".xml" ;
     	File outFile = new File(workDir+"/"+filename) ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select p.id,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
+    	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
     	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
     	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
     	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
@@ -88,24 +88,24 @@ public class AddressPointServiceBean implements IAddressPointService {
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "ZAP", null);
-    		xmlDoc.newElement(zap, "IDCASE", getStringValue(++i)) ;
-    		xmlDoc.newElement(zap, "FAM", getStringValue(pat[1])) ;
-    		xmlDoc.newElement(zap, "IM", getStringValue(pat[2])) ;
-    		xmlDoc.newElement(zap, "OT", getStringValue(pat[3])) ;
-    		xmlDoc.newElement(zap, "DR", getStringValue(pat[4])) ;
-    		xmlDoc.newElement(zap, "SNILS", getStringValue(pat[5])) ;
-    		xmlDoc.newElement(zap, "DOCTYPE", getStringValue(pat[6])) ;
-    		xmlDoc.newElement(zap, "DOCSER", getStringValue(pat[7])) ;
-    		xmlDoc.newElement(zap, "DOCNUM", getStringValue(pat[8])) ;
-    		xmlDoc.newElement(zap, "RZ", getStringValue(pat[9])) ;
+    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
+    		xmlDoc.newElement(zap, "FAM", XmlUtil.getStringValue(pat[1])) ;
+    		xmlDoc.newElement(zap, "IM", XmlUtil.getStringValue(pat[2])) ;
+    		xmlDoc.newElement(zap, "OT", XmlUtil.getStringValue(pat[3])) ;
+    		xmlDoc.newElement(zap, "DR", XmlUtil.getStringValue(pat[4])) ;
+    		xmlDoc.newElement(zap, "SNILS", XmlUtil.getStringValue(pat[5])) ;
+    		xmlDoc.newElement(zap, "DOCTYPE", XmlUtil.getStringValue(pat[6])) ;
+    		xmlDoc.newElement(zap, "DOCSER", XmlUtil.getStringValue(pat[7])) ;
+    		xmlDoc.newElement(zap, "DOCNUM", XmlUtil.getStringValue(pat[8])) ;
+    		xmlDoc.newElement(zap, "RZ", XmlUtil.getStringValue(pat[9])) ;
     		
-    		xmlDoc.newElement(zap, "SP_PRIK", getStringValue(pat[10])) ; // 1-территориал, 2-заявление
-    		xmlDoc.newElement(zap, "T_PRIK", getStringValue(pat[13])) ; // 1-прикрепление, 2-открепление
-    		xmlDoc.newElement(zap, "DATE_1", getStringValue(pat[12]!=null?pat[12]:pat[11])) ;
+    		xmlDoc.newElement(zap, "SP_PRIK", XmlUtil.getStringValue(pat[10])) ; // 1-территориал, 2-заявление
+    		xmlDoc.newElement(zap, "T_PRIK", XmlUtil.getStringValue(pat[13])) ; // 1-прикрепление, 2-открепление
+    		xmlDoc.newElement(zap, "DATE_1", XmlUtil.getStringValue(pat[12]!=null?pat[12]:pat[11])) ;
     		
     		xmlDoc.newElement(zap, "REFREASON", "") ;
     	}
-    	HospitalMedCaseServiceBean.saveXmlDocument(xmlDoc, outFile) ;
+    	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     	//xmlDoc.saveDocument(outFile) ;
     	return filename;
     }
@@ -116,9 +116,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     public String exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
     	return exportAll(aAge,"_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
-    }
-    public static String getStringValue(Object aValue) {
-    	return aValue!=null?""+aValue:"" ;
     }
     public void onRemove(LpuAreaAddressText aLpuAreaAddressText) {
         EntityManager manager = theManager ; //theFactory.createEntityManager() ;
