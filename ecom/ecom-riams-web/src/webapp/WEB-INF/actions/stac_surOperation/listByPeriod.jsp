@@ -18,6 +18,7 @@
   <tiles:put name="body" type="string">
   <% 
   
+  String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
   if (request.getParameter("short")==null) {
 	  ActionUtil.updateParameter("SurgicalOperation","typeView","1", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeOrder","1", request) ;
@@ -83,6 +84,20 @@
         	<input type="radio" name="typeDate" value="3">  выписки (учит. операции в прием.отд.)
         </td>
       </msh:row>
+      <msh:row>
+      <msh:row>
+        <td class="label" title="Поиск по эндоскопии (typeEndoscopyUse)" colspan="1"><label for="typeEndoscopyUseName" id="typeEndoscopyUseLabel">Операции с испол.:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEndoscopyUse" value="1">  эндоскопии
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEndoscopyUse" value="2" >  без эндоскопии
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEndoscopyUse" value="3">  все
+        </td>
+      </msh:row>      	
+      </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -107,6 +122,7 @@
      checkFieldUpdate('typePatient','${typePatient}',3) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
+    checkFieldUpdate('typeEndoscopyUse','${typeEndoscopyUse}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeOrder','${typeOrder}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
@@ -170,6 +186,13 @@
     
     String view = (String)request.getAttribute("typeView") ;
     String typeOrder = (String)request.getAttribute("typeOrder") ;
+    String typeEndoscopyUseSql=""; 
+    if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
+    	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
+    } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
+    	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
+    }
+    request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
     if (date!=null && !date.equals("")) {
     	String typeDateSql = "so.operationDate" ;
     	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
@@ -236,19 +259,22 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
     select '${departmentSql} ${specSql}:'||to_char(${typeDateSql},'dd.mm.yyyy')||':'||to_char(${typeDateSql},'dd.mm.yyyy')
-    ,to_char(${typeDateSql},'dd.mm.yyyy'), count(so.id)
+    ,to_char(${typeDateSql},'dd.mm.yyyy')
+    , count(so.id) as cntOper
+    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
      from SurgicalOperation so 
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
      where 
     ${typeDateSql}  between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
     group by ${typeDateSql} 
     order by ${typeDateSql}" />
     <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -262,6 +288,8 @@
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.medservice_id as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
     , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
+    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
@@ -272,7 +300,7 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -281,6 +309,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="7" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -293,7 +322,9 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||':'||so.medservice_id||':'||so.department_id as id
     ,dep.name as depname
-    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt
+    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+     
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
@@ -301,7 +332,7 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1">
@@ -310,6 +341,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них эндоскопии" property="7"/>
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -323,6 +355,8 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
     ,dep.name as depname
     ,count(*) as cnt 
+        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
@@ -330,13 +364,14 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by so.department_id,dep.name
 order by dep.name 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -349,6 +384,8 @@ order by dep.name
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id as id
     , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
+        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
@@ -359,7 +396,7 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -368,6 +405,7 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="6" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -382,6 +420,8 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':' as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
    ,vo.complexity,count(*) as cnt 
+       , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+   
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
@@ -392,13 +432,14 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
        <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="5" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -417,6 +458,8 @@ cast((select count(distinct so1.id) from SurgicalOperation so1
 where so1.operationDate between to_date('${dateBegin}','dd.mm.yyyy') 
 and to_date('${dateEnd}','dd.mm.yyyy')  and so.department_id=so1.department_id
 ) as numeric) ,2) as srDep
+    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
 left join mislpu dep on dep.id=so.department_id
@@ -424,7 +467,7 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -432,6 +475,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn columnName="% от общ. числа опер. по отд." property="5"/>            
+      <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="6" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -475,7 +519,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
-	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec}
+	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec} ${typeEndoscopyUseSql}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" 
