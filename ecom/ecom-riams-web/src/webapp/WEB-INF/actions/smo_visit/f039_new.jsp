@@ -22,6 +22,7 @@
   	String typeReestr =ActionUtil.updateParameter("Form039Action","typeReestr","2", request) ;
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
 	String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
+	String typeAgeWork =ActionUtil.updateParameter("Form039Action","typeAgeWork","2", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
@@ -107,6 +108,16 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="10">по доп.статусу  
 	        </td>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Трудоспособный возраст считать с (typeAgeWork)" colspan="1"><label for="typeAgeWorkName" id="typeAgeWorkLabel">Трудоспособный возраст с:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeAgeWork" value="1">  16 лет
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAgeWork" value="2" >  18 лет
+	        </td>
+
         </msh:row>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -200,6 +211,11 @@
     			request.setAttribute("dtypeSql", "smo.dtype='ShortMedCase'") ;
     		} else {
     			request.setAttribute("dtypeSql", "(smo.dtype='ShortMedCase' or smo.dtype='Visit')") ;
+    		}
+    		if (typeAgeWork.equals("1")) {
+    			request.setAttribute("typeAgeWorkId", "16") ;
+    		} else {
+    			request.setAttribute("typeAgeWorkId", "18") ;
     		}
     		if (typeEmergency.equals("1")) {
     			request.setAttribute("emergencySql", " and smo.emergency='1'") ;
@@ -845,21 +861,42 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
         <msh:table
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         <msh:tableNotEmpty>
+         	<tr>
+         		<th></th>
+    		
+         		<th colspan="7">Посещения на дому и поликлиника</th>		
+         		<th colspan="4">Посещения по поводу заболевания(д) в пол-ке</th>	
+         		<th colspan="1">Проф. посещ. в пол-ке</th>
+         		<th colspan="1">Посещ. на дому</th>
+         		<th colspan="4">Посещ. по поводу забол.(д) на дому</th>
+         		<th colspan="4">Проф. посещ. на дому</th>
+         	</tr>
+         </msh:tableNotEmpty>          
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="4"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет сел." property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет сел." property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="взрослые" property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="взрослые сел." property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="по поводу заболевания" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="заб. 0-14" property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="заб. 15-17" property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="заб. взр." property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="профил." property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="посещ. на дому" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14 лет с.ж." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет" property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17 лет с.ж." property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">=18 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">=18 с.ж." property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">=18" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="15"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">=18" property="19"/>
+            
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во пд" property="20"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="21"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="22"/>
+            <msh:tableColumn isCalcAmount="true" columnName=">=18" property="23"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -1012,7 +1049,7 @@ then 1 else null end) as cntAll17
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 55 else 60 end
+		then -1 else 0 end) between ${typeAgeWorkId} and case when vs.omcCode='2' then 54 else 59 end
 ) then 1 else null end) as cntIllnesOld
 ,count(case when (vr.code='ILLNESS') and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -1026,7 +1063,7 @@ then 1 else null end) as cntAll17
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 		+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 		+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 55 else 60 end
+		then -1 else 0 end) between ${typeAgeWorkId} and case when vs.omcCode='2' then 54 else 59 end
 ) then 1 else null end) as cntConsOld
 ,count(case when (vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' and (
 		cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -1308,6 +1345,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
   	<script type="text/javascript">
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+    checkFieldUpdate('typeAgeWork','${typeAgeWork}',1) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;

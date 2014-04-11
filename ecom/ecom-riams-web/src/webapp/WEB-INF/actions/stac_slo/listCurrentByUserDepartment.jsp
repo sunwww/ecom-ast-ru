@@ -41,7 +41,10 @@
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
 
-    select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
+    select m.id,to_char(m.dateStart,'dd.mm.yyyy')
+    ||case when m.datestart!=sls.dateStart then '(госп. с '||to_char(sls.dateStart,'dd.mm.yyyy')||')' else '' end
+    ||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart
+    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
     	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
