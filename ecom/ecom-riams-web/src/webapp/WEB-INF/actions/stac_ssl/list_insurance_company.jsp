@@ -26,13 +26,6 @@
 	String typeView =ActionUtil.updateParameter("ReestrByInsCompany","typeView","1", request) ;
   	%>
     <msh:form action="/stac_reestrByInsCompany.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <input type="hidden" name="s" id="s" value="HospitalPrintService" />
-    <input type="hidden" name="m" id="m" value="printReestrByDay" />
-    <input type="hidden" name="id" id="id" value=""/>
-        <input type='hidden' id="sqlText1" name="sqlText1">
-        <input type='hidden' id="sqlText2" name="sqlText2">
-        <input type='hidden' id="infoText1" name="infoText1">
-        <input type='hidden' id="infoText2" name="infoText2">
       <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -71,44 +64,22 @@
         </td>
         </msh:row>      
 
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="1">  поступления в стац.
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-        	<input type="radio" name="typeDate" value="2">  выписки
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-        	<input type="radio" name="typeDate" value="3">  состоящие
-        </td>
-        </msh:row>
-        <msh:row>
-	        <td class="label" title="Отделение (typeDepartment)" colspan="1"><label for="typeDepartmentName" id="typeDepartmentLabel">Отделение:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDepartment" value="1">  госпитализации
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDepartment" value="2"  >  по СЛО
-	        </td>
-        </msh:row>
+   
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="1">  реестр
+	        	<input type="radio" name="typeView" value="1"  >  свод поступивших
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="2"  >  свод по отделениям и страховым компаниям
+	        	<input type="radio" name="typeView" value="2"  >  свод выписанных
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="3"  >  свод по отделениям
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="4"  >  свод по отделениям
+	        	<input type="radio" name="typeView" value="3"  >  свод отказов от госпитализаций
 	        </td>
         </msh:row>
         <msh:row guid="Дата">
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:textField fieldColSpan="1" property="dateBegin" label="Дата c"/>
+        <msh:textField fieldColSpan="1" property="dateEnd" label="по"/>
       </msh:row>
       <msh:row>
         <msh:autoComplete property="serviceStream" fieldColSpan="4"
@@ -116,21 +87,6 @@
       </msh:row>
       <msh:row>
         <msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
-      </msh:row>
-      <msh:row>
-           <td colspan="11">
-            <input type="submit" onclick="find()" value="Найти" />
-            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-            	<input type="submit" onclick="print('stac_reestrForDay1')" value="Печать реестра" />
-            </msh:ifInRole>
-            <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-            	<input type="submit" onclick="print('stac_reestrForDay')" value="Печать" />
-            </msh:ifNotInRole>
-            
-            <input type="submit" onclick="printJournal()" value="Печать журнала госпитализаций и отказов от госпитализаций" />
-<%--            <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
-             --%>
-          </td>
       </msh:row>
     </msh:panel>
     </msh:form>
@@ -169,65 +125,28 @@
     	String view = (String)request.getAttribute("typeView") ;
     	//String fldDepartment = "ml.id" ;
     	
-    	String pigeonHole="" ;
-    	String pigeonHole1="" ;
-    	String pHole = request.getParameter("pigeonHole") ;
-    	if (pHole!=null && !pHole.equals("") && !pHole.equals("0")) {
-    		pigeonHole1= " and (ml.pigeonHole_id='"+pHole+"' or ml1.pigeonHole_id='"+pHole+"')" ;
-    		pigeonHole= " and ml.pigeonHole_id='"+pHole+"'" ;
-    	}
-    	request.setAttribute("pigeonHole", pigeonHole) ;
-    	request.setAttribute("pigeonHole1", pigeonHole1) ;
     	
-    	String department="" ;
-    	String dep = request.getParameter("department") ;
-    	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("department", " and "+request.getAttribute("departmentFldIdSql")+"='"+dep+"'") ;
-    	}
-    	String serviceStream = request.getParameter("serviceStream") ;
-    	if (serviceStream!=null && !serviceStream.equals("") && !serviceStream.equals("0")) {
-    		request.setAttribute("serviceStreamSql", " and m.serviceStream_id='"+serviceStream+"' " ) ;
-    	}
+    	
+        ActionUtil.setParameterFilterSql("department", "sls.department_id", request) ;
+        ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
     	
     	if (view!=null && (view.equals("1"))) {
     	%>
     
     <msh:section>
     <msh:sectionTitle>Реестр ${dateInfo} за день ${param.dateBegin}. 
-    По ${dischInfo}  ${emerInfo} ${hourInfo} ${infoTypePat}
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
-    m.id as mid
-    ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart
-    ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as mdateFinish
-    ,cast(m.dischargeTime as varchar(5)) as mdischargeTime
-    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
-    ,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode,m.emergency as memergency
-    ,${departmentFldNameSql} as mlname
-    , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
-    when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient
-    
-     from MedCase as m  
-     left join StatisticStub as sc on sc.medCase_id=m.id 
-     left outer join Patient pat on m.patient_id = pat.id 
-     left join MisLpu as ml on ml.id=m.department_id 
-     left join Omc_Oksm ok on pat.nationality_id=ok.id
-	 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-	 left join address2 adr on adr.addressId = pat.address_addressId
-     left join MedCase slo on slo.parent_id=m.id
-     left join MisLpu as sloml on sloml.id=slo.department_id
-     where m.DTYPE='HospitalMedCase' ${period}
-     and m.deniedHospitalizating_id is null
-       ${emerIs} ${pigeonHole} 
-       
-       ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
-       group by m.id,m.dateStart,m.entranceTime,m.dateFinish,m.dischargeTime
-		    ,m.dischargeTime,pat.lastname,pat.firstname,pat.middlename
-		    ,pat.birthday,sc.code,m.emergency,${departmentFldNameSql}
-		    ,ok.voc_code,pvss.omccode,adr.kladr
-		
-       order by m.${dateI},${departmentFldNameSql},pat.lastname,pat.firstname,pat.middlename
+    select mp.dtype,ri.name,count(v.patient_id),count(mc.patient_id) from medcase mc
+left join medcase v on v.patient_id=mc.patient_id and v.dateStart=mc.dateStart and v.dtype='Visit'
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+where mc.dtype='HospitalMedCase' and mc.datestart between to_date('${date}','dd.mm.yyyy') and to_date('28.02.2014','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is null  ${serviceStreamSql}
+group by mp.dtype,ri.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
