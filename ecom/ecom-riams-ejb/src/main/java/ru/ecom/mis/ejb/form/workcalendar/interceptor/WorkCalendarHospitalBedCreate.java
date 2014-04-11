@@ -10,12 +10,13 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm;
+import ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
     	
-    	WorkCalendarHospitalBedByVisitForm form = (WorkCalendarHospitalBedByVisitForm)aForm ;
+    	WorkCalendarHospitalBedForm form = (WorkCalendarHospitalBedForm)aForm ;
         Date date = new Date();
         String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
     	form.setCreateUsername(username);
@@ -45,13 +46,19 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         }
         form.setDiagnosis(res.toString()) ;
         list.clear() ;
-    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid " 
+    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid,case when vlf.code in ('7','3') then w.lpu_id else null end as wlpuid " 
     			+ " from SecUser su " 
     			+ " left join WorkFunction wf on wf.secuser_id=su.id " 
+    			+ " left join Worker w on w.id=wf.worker_id " 
+    			+ " left join MisLpu ml on w.lpu_id=ml.id " 
+    			+ " left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id " 
     			+ " where su.login = :login and wf.id is not null") 
     		.setParameter("login", username).setMaxResults(1).getResultList() ;
     	if (list.size()>0) {
     		form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
+    		form.setDepartment(ConvertSql.parseLong(list.get(0)[2])) ;
+    	} else {
+    		
     	}
     	
     }

@@ -230,4 +230,18 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 	private VocBedSubType theBedSubType;
 	/** Профиль коек */
 	private VocBedType theBedType;
+	
+	/** Откуда направление */
+	@Comment("Откуда направление")
+	@OneToOne
+	public MisLpu getOrderLpu() {
+		return theOrderLpu;
+	}
+
+	public void setOrderLpu(MisLpu aOrderLpu) {
+		theOrderLpu = aOrderLpu;
+	}
+
+	/** Откуда направление */
+	private MisLpu theOrderLpu;
 }

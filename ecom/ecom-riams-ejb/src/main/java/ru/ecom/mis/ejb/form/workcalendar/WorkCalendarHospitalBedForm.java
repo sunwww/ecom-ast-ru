@@ -1,8 +1,14 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
+import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -20,7 +26,9 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Планирование госпитализации", nameProperties= "id"
 , list="stac_planning_hospitalizations.do"
 , view="entityView-stac_planHospital.do")
-//@Parent(property="lpu", parentForm=MisLpuForm.class)
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)
+)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	/** Отделение */
@@ -235,4 +243,14 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	private Long theBedSubType;
 	/** Профиль коек */
 	private Long theBedType;	
+	
+	/** Откуда направление */
+	@Comment("Откуда направление")
+	@Persist @Required
+	public Long getOrderLpu() {return theOrderLpu;}
+	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+
+	/** Откуда направление */
+	private Long theOrderLpu;
+
 }
