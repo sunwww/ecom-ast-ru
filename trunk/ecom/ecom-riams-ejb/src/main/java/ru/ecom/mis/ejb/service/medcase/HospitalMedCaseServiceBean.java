@@ -157,9 +157,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	System.out.println(sb) ;
     	try {
-    		//String[] arraCmd = {,sb.toString()} ;
-    		Runtime.getRuntime().exec(new StringBuilder().append("cd ").append(workDir).toString());
-			Runtime.getRuntime().exec(sb.toString());
+    		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
+			Runtime.getRuntime().exec(arraCmd);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
