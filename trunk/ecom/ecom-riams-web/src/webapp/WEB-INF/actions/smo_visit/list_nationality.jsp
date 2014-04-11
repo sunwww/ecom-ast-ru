@@ -59,10 +59,13 @@
       <msh:row>
         <td class="label" title="Отображать (typeView)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Отображать:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1">  реестр
+        	<input type="radio" name="typeView" value="1">  реестр обращений
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="2">  свод
+        	<input type="radio" name="typeView" value="2">  реестр пациентов
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="3">  свод
         </td>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
@@ -74,7 +77,16 @@
         	<input type="radio" name="typePatient" value="2">  соотечественники
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
+        	<input type="radio" name="typePatient" value="3">  иногородние
+        </td>
+      </msh:row>
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  без адреса
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typePatient" value="5">  иностранцы+соотечественники
         </td>
       </msh:row>
        <msh:row>
@@ -123,8 +135,16 @@
     			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
         	} else if (typePatient.equals("2")) {
     			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
-    			request.setAttribute("patientSql", " and p.isCompatriot='1' ") ;
+    			request.setAttribute("patientSql", " and (p.isCompatriot='1' or vn.isCompatriot='1')") ;
     			request.setAttribute("infoTypePat", "Поиск по соотечественникам") ;
+        	} else if (typePatient.equals("3")) {
+    			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+    			request.setAttribute("patientSql", " and a.kladr not like '30%' and (vn.id is null or vn.voc_code='643')") ;
+    			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
+        	} else if (typePatient.equals("4")) {
+    			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+    			request.setAttribute("patientSql", " and a.kladr is null and (vn.id is null or vn.voc_code='643')") ;
+    			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
     		} else {
     			request.setAttribute("patientSql", "") ;
     			request.setAttribute("infoTypePat", "Поиск по всем") ;
@@ -173,11 +193,12 @@
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY')||' '||cast(m.timeExecute as varchar(5)) as dateStart
 
-	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
+	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'DD.MM.YYYY') as birthday
 	    ,vwfe.name||' '||pe.lastname as pefio
-
+	    ,list(mkb.code) as mkbcode
 from medcase m 
 left join patient p on p.id=m.patient_id
+left join address2 a on a.addressid=p.address_addressid
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
 left join Worker we on we.id=wfe.worker_id
@@ -186,19 +207,26 @@ left join Patient pe on pe.id=we.person_id
 left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
 left join VocVisitResult vvr on vvr.id=m.visitResult_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
+left join Diagnosis d on d.medcase_id=m.id
+left join Vocidc10 mkb on mkb.id=d.idc10_id
 where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
 and (m.noActuality is null or m.noActuality='0')
 ${emergencySql} ${departmentWFSql}
 ${serviceStreamSql}
  ${nationalitySql} ${patientSql}
+group by m.id,m.dateStart,m.timeExecute
+	    ,p.lastname,p.firstname,p.middlename,p.birthday
+	    ,vwfe.name,pe.lastname 
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do" 
 	idField="1">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+	      <msh:tableColumn columnName="Дата обращения" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
+	      <msh:tableColumn columnName="Диагноз" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Стационар">
@@ -214,6 +242,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 from medcase m 
 left join medcase smo on smo.id=m.parent_id
 left join patient p on p.id=m.patient_id
+left join address2 a on a.addressid=p.address_addressid
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join statisticstub ss on ss.id=smo.statisticStub_id
 left join mislpu ml on ml.id=m.department_id
@@ -250,6 +279,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 
 from medcase m 
 left join patient p on p.id=m.patient_id
+left join address2 a on a.addressid=p.address_addressid
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join statisticstub ss on ss.id=m.statisticStub_id
 left join MisLpu ml on ml.id=m.department_id
@@ -275,6 +305,140 @@ order by p.lastname,p.firstname,p.middlename"/>
 
     <% 
     //окончание реестра
+    } else if (typeView.equals("2")) {
+	%>
+
+      	<msh:section title="Поликлиника">
+
+      	
+    	    <ecom:webQuery name="list_yes" maxResult="1000" nativeSql="select 
+    	    p.id as pid
+    	    ,count(distinct m.id)
+
+    	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'DD.MM.YYYY') as birthday
+    	    ,vwfe.name||' '||pe.lastname as pefio
+    	    ,vn.name as vnname
+    	    ,a.fullname
+    	    ,list(distinct mkb.code) as mkbcode
+    from medcase m 
+    left join patient p on p.id=m.patient_id
+    left join address2 a on a.addressid=p.address_addressid
+    left join Omc_Oksm vn on vn.id=p.nationality_id
+    left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
+    left join Worker we on we.id=wfe.worker_id
+    left join MisLpu ml on ml.id=we.lpu_id
+    left join Patient pe on pe.id=we.person_id
+    left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
+    left join VocVisitResult vvr on vvr.id=m.visitResult_id
+    left join VocServiceStream vss on vss.id=m.serviceStream_id
+    left join Diagnosis d on d.medcase_id=m.id
+    left join Vocidc10 mkb on mkb.id=d.idc10_id
+    where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+    and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
+    and (m.noActuality is null or m.noActuality='0')
+    ${emergencySql} ${departmentWFSql}
+    ${serviceStreamSql}
+     ${nationalitySql} ${patientSql}
+    group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
+    	    ,vwfe.name,pe.lastname 
+    order by p.lastname,p.firstname,p.middlename"/>
+    <msh:table name="list_yes" action="entityView-mis_patient.do"
+    	viewUrl="entityShortView-mis_patient.do" 
+    	idField="1">
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
+    	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+    	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+    	      <msh:tableColumn columnName="Кол-во обращения" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
+    	      <msh:tableColumn columnName="Диагноз" property="8" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	    </msh:table>
+      	</msh:section>
+      	<msh:section title="Стационар">
+
+      	
+    	    <ecom:webQuery name="list_stac" maxResult="1000" nativeSql="select
+    	    p.id as pid
+    	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
+    	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
+    	    
+    	    ,list(ml.name) as mlname
+    	    ,list(ss.code) as sscode
+    	    ,list(vss.name) as vssname
+    	    ,vn.name as vnname
+    	    ,a.fullname as afullname
+    from medcase m 
+    left join medcase smo on smo.id=m.parent_id
+    left join patient p on p.id=m.patient_id
+    left join address2 a on a.addressid=p.address_addressid
+    left join Omc_Oksm vn on vn.id=p.nationality_id
+    left join statisticstub ss on ss.id=smo.statisticStub_id
+    left join mislpu ml on ml.id=m.department_id
+    left join VocServiceStream vss on vss.id=smo.serviceStream_id
+    where  
+    m.DTYPE='DepartmentMedCase' and m.dateFinish between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+    and (m.noActuality is null or m.noActuality='0')
+    and smo.deniedHospitalizating_id is null
+    ${emergencySql} ${departmentSql} 
+    ${serviceStreamSql}
+    ${nationalitySql} ${patientSql}
+    group by p.id,p.lastname,p.firstname,p.middlename 
+    ,p.birthday,vn.name ,a.fullname
+    order by p.lastname,p.firstname,p.middlename"/>
+    <msh:table viewUrl="entityShortView-stac_ssl.do" 
+     name="list_stac"
+     action="entityView-mis_patient.do" idField="1" >
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+    	      <msh:tableColumn columnName="№№ стат.карт" property="5" />
+    	      <msh:tableColumn columnName="Пациент" property="2" />
+    	      <msh:tableColumn columnName="Дата рождения" property="3" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Отделения" identificator="false" property="4" />
+    	      <msh:tableColumn property="6" columnName="Потоки обслуживания"/>
+    	    </msh:table>
+      	</msh:section>
+      	<msh:section title="Отказы от госпитализаций">
+
+      	
+    	    <ecom:webQuery name="list_stac1" maxResult="1000" nativeSql="select p.id
+    	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
+    	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
+    	    ,vn.name as vnname
+    	    ,a.fullname as afullname
+    	    ,list(to_char(m.datestart,'dd.mm.yyyy')||vdh.name) as denhosp
+    	    
+    from medcase m 
+    left join patient p on p.id=m.patient_id
+    left join address2 a on a.addressid=p.address_addressid
+    left join Omc_Oksm vn on vn.id=p.nationality_id
+    left join statisticstub ss on ss.id=m.statisticStub_id
+    left join MisLpu ml on ml.id=m.department_id
+    left join VocServiceStream vss on vss.id=m.serviceStream_id
+    left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
+    where  m.DTYPE='HospitalMedCase'
+    and m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+    and (m.noActuality is null or m.noActuality='0')
+    and m.deniedHospitalizating_id is not null
+    ${emergencySql} ${departmentSql} 
+    ${serviceStreamSql}
+    ${nationalitySql} ${patientSql}
+    group by p.id,p.lastname,p.firstname,p.middlename
+    	    ,p.birthday ,vn.name ,a.fullname
+    order by p.lastname,p.firstname,p.middlename"/>
+    <msh:table viewUrl="entityShortView-mis_patient.do" 
+     name="list_stac1" 
+     action="entityView-mis_patient.do" idField="1" >
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+    	      <msh:tableColumn columnName="Пациент" property="2" />
+    	      <msh:tableColumn columnName="Дата рождения" property="3" />
+    	      <msh:tableColumn columnName="Гражданство" property="4" />
+    	      <msh:tableColumn columnName="Адрес" property="5" />
+    	      <msh:tableColumn columnName="Дата и причина отказов" property="6" />
+    	    </msh:table>
+      	</msh:section>  	
+	<%    	
     } else {
     	// начало свода
     	%>
@@ -313,48 +477,33 @@ end as srDaysNoCh
 from medcase m
 left join medcase smo on smo.id=m.parent_id
 left join patient p on p.id=m.patient_id
+left join address2 a on a.addressid=p.address_addressid
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join VocHospType vht on vht.id=m.hospType_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 
-left join WorkFunction wf on wf.id=m.workFunctionExecute_id 
-left join Worker w on w.id=wf.worker_id
-left join MisLpu mlV on mlV.id=w.lpu_id
+left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id 
+left join Worker we on we.id=wfe.worker_id
+left join MisLpu mlV on mlV.id=we.lpu_id
 left join MisLpu ml on ml.id=m.department_id
 
 where ((m.dtype='Visit' or m.dtype='ShortMedCase') 
 and m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+${departmentWFSql}
 
-or m.dtype='DepartmentMedCase'
+or m.dtype='DepartmentMedCase' ${departmentSql} 
 and m.dateFinish between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 
-or m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is not null
+or m.dtype='HospitalMedCase' ${departmentSql} 
 and m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+and m.deniedHospitalizating_id is not null
 ) 
 and (m.noActuality is null or m.noActuality='0') ${emergencySql}
-${departmentSql}  ${serviceStreamSql} ${patientSql} ${nationalitySql} 
+ ${serviceStreamSql} ${patientSql} ${nationalitySql} 
 group by ${groupSqlId},${groupSql}
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-<ecom:webQuery name="journal_swod1" nameFldSql="sql_journal_swod1" nativeSql="
-select ${group1Id}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId} as idparam,${group1Sql} as vnname
-,count(distinct m.id) as polic
-,count(distinct case when vss.code='CHARGED' then m.id else null end) as policCh
-from Ticket m
-left join WorkFunction wfe on wfe.id=m.workFunction_id
-left join Worker we on we.id=wfe.worker_id
-left join MisLpu ml on ml.id=we.lpu_id
-left join MedCard mc on mc.id=m.medCard_id
-left join patient p on p.id=mc.person_id
-left join Omc_Oksm vn on vn.id=p.nationality_id
-left join VocServiceStream vss on vss.id=m.vocPaymentType_id
-where m.date between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-${emergencySql} ${department1Sql}  ${serviceStreamSql}
-${patientSql}
- ${nationalitySql}
-group by ${group1SqlId},${group1Sql}
 
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
 
     <msh:sectionTitle>Период с ${param.beginDate} по ${param.finishDate}${emergencyInfo}
     <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">

@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="форма 14дс"/>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="форма 36. 2300"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -127,8 +127,10 @@
   	StringBuilder paramSql= new StringBuilder() ;
   	StringBuilder paramHref= new StringBuilder() ;
   	
+  	ActionUtil.setParameterFilterSql("department","departmentAll", "sloAll.department_id", request) ;
+  	ActionUtil.setParameterFilterSql("department","departmentDischarge", "sloD.department_id", request) ;
+  	ActionUtil.setParameterFilterSql("department","departmentAdmission", "sls.department_id", request) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
-  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
@@ -364,7 +366,7 @@ order by ml.name
 select 
 sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-where vrspt.classname='F14DS_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
+where vrspt.classname='F36_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
 ) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -455,7 +457,7 @@ sloAll.dtype='DepartmentMedCase'
 and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
 and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
 or sloAll.dateFinish is null
-)
+) ${departmentAllSql}
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntBeginPeriodAll
@@ -464,7 +466,7 @@ sloAll.dtype='DepartmentMedCase'
 and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
 and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
 or sloAll.dateFinish is null
-)
+)  ${departmentAllSql}
 and
 cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
@@ -483,7 +485,7 @@ sloAll.dtype='DepartmentMedCase'
 and sloAll.dateStart < to_date('${dateBegin}','dd.mm.yyyy') 
 and (sloAll.dateFinish > to_date('${dateBegin}','dd.mm.yyyy') 
 or sloAll.dateFinish is null
-)
+)  ${departmentAllSql}
 and
 cast(to_char(to_date('${dateBegin}','dd.mm.yyyy'),'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
@@ -498,13 +500,13 @@ and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntBeginPeriod15_17
 
 ,count(case when
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_order}'
 then sls.id else null end) as cntEntranceAll
 ,count(case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='2'
@@ -518,7 +520,7 @@ cast(to_char(sls.dateStart,'yyyy') as int)
 <0)
 then -1 else 0 end) between 0 and 14 then sls.id else null end)  as cntEntrance0_14
 ,count(case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_order}'
@@ -532,35 +534,35 @@ cast(to_char(sls.dateStart,'yyyy') as int)
 <0)
 then -1 else 0 end) between 15 and 17 then sls.id else null end)  as cntEntrance15_17
 ,count(case when
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_order}'
 and sls.admissionInHospital_id=1
 then sls.id else null end) as cntEntranceAdmHosp
 ,count(case when
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_order}'
 and sls.hospitalization_id=1
 then sls.id else null end) as cntEntranceHosp
 ,count(case when
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentAdmissionSql}
 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_order}'
 and sls.admissionOrder_id in (2,4,5,6,7,8,9)
 then sls.id else null end) as cntEntranceHospNeDobr
 ,count(case when
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntDischargeAll
 
 ,cast(sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='3' and vpd.id='1'
@@ -573,7 +575,7 @@ case
 )||'.'||sls.id as numeric) else null end)  
 
 -sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -582,7 +584,7 @@ as int)
 as sumDayAllDischarge
 
 ,count(case when
-sls.dtype='HospitalMedCase'
+sls.dtype='HospitalMedCase' ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and sls.result_id=6
 and mkb.code between rspt.codefrom and rspt.codeto 
@@ -590,7 +592,7 @@ and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntDischargeDeath
 
 ,cast(sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase' ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
  and sls.result_id='${result_death}'
@@ -604,7 +606,7 @@ case
 )||'.'||sls.id as numeric) else null end)  
 
 -sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
  and sls.result_id='${result_death}'
@@ -615,7 +617,7 @@ as sumDayDeathDischarge
 
 
 ,count(case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -630,7 +632,7 @@ cast(to_char(sls.dateFinish,'yyyy') as int)
 then -1 else 0 end) between 0 and 14 then sls.id else null end)  as cntDischarge0_14
 
 ,cast(sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -651,7 +653,7 @@ case
 )||'.'||sls.id as numeric) else null end)  
 
 -sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -669,7 +671,7 @@ as int)
 as sumDayDischarge0_14
 
 ,count(case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -684,7 +686,7 @@ cast(to_char(sls.dateFinish,'yyyy') as int)
 then -1 else 0 end) between 15 and 17 then sls.id else null end)  as cntDischarge15_17
 
 ,cast(sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -705,7 +707,7 @@ case
 )||'.'||sls.id as numeric) else null end)  
 
 -sum(distinct case when 
-sls.dtype='HospitalMedCase' 
+sls.dtype='HospitalMedCase'  ${departmentDischargeSql}
 and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and mkb.code between rspt.codefrom and rspt.codeto 
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
@@ -724,7 +726,7 @@ as sumDayDischarge15_17
 
 
 ,count(case when
-sloAll.dtype='DepartmentMedCase' 
+sloAll.dtype='DepartmentMedCase'  ${departmentAllSql}
 and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
 and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
 or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
@@ -733,7 +735,7 @@ and mkb.code between rspt.codefrom and rspt.codeto
 and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntFinishPeriodAll
 ,count(case when
-sloAll.dtype='DepartmentMedCase' 
+sloAll.dtype='DepartmentMedCase' ${departmentAllSql}
 and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
 and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
 or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
@@ -752,7 +754,7 @@ and vdrt.id='${diag_typeReg_discharge}' and vpd.id='${diag_priority_m}'
 then sls.id else null end) as cntFinishPeriod0_14
 
 ,count(case when
-sloAll.dtype='DepartmentMedCase' 
+sloAll.dtype='DepartmentMedCase' ${departmentAllSql}
 and sloAll.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
 and (coalesce(sloAll.dateFinish,sloAll.transferDate) > to_date('${dateEnd}','dd.mm.yyyy') 
 or coalesce(sloAll.dateFinish,sloAll.transferDate) is null
@@ -787,19 +789,20 @@ left join vocidc10 mkbD on mkbD.id=diagD.idc10_id
 left join VocDiagnosisRegistrationType vdrtD on vdrtD.id=diagD.registrationType_id
 left join VocPriorityDiagnosis vpdD on vpdD.id=diagD.priority_id
 
-left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
+left join VocReportSetParameterType vrspt on vrspt.classname='F36_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
 where (sls.dtype='HospitalMedCase' 
 and (sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 or sls.dateFinish is null)
 and (sls.dateStart <= to_date('${dateEnd}','dd.mm.yyyy') 
-))
+)) 
 
 and (mkb.code between rspt.codefrom and rspt.codeto 
 or mkbD.code between rspt.codefrom and rspt.codeto )
 ${age_sql} 
-
+${paramSql}
+${departmentAllSql}
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 
@@ -914,7 +917,7 @@ ${paramSql}
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 and sls.result_id!='${result_death}'
 ${age_sql}  
-and vrspt1.classname='F14DS_DIAG' 
+and vrspt1.classname='F36_DIAG' 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
@@ -970,7 +973,7 @@ order by p.lastname,p.firstname,p.middlename " />
      from medcase sls
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
-    left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
+    left join VocReportSetParameterType vrspt on vrspt.classname='F36_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     where 
@@ -1081,7 +1084,7 @@ order by p.lastname,p.firstname,p.middlename " />
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
-    left join VocReportSetParameterType vrspt on vrspt.classname='F14DS_DIAG'
+    left join VocReportSetParameterType vrspt on vrspt.classname='F36_DIAG'
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
@@ -1166,7 +1169,7 @@ left join BedFund bf on bf.id=sloa.bedFund_id
 left join MedCase sloall on sloall.parent_id=sls.id
 left join surgicaloperation so on so.medCase_id=sloall.id
 left join MedService ms on ms.id=so.medService_id
-left join VocReportSetParameterType vrspt on vrspt.classname='F14_OPER'
+left join VocReportSetParameterType vrspt on vrspt.classname='F36_OPER'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join VocOperationTechnology vot on vot.id=so.technology_id
 left join VocOperationOutcome voo on voo.id=so.outcome_id
@@ -1245,7 +1248,7 @@ left join StatisticStub ss on ss.id=sls.statisticStub_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
-and vrspt1.classname='F14_OPER'
+and vrspt1.classname='F36_OPER'
 ${paramSql} ${age_sql} 
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
