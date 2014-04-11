@@ -41,6 +41,9 @@
         	<msh:separator label="Параметры госпитализации" colSpan="4"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="orderLpu" label="Направлен из ЛПУ" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
         </msh:row>
         <msh:row>

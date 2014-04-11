@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -85,6 +86,11 @@
                  <msh:autoComplete property="department" vocName="lpu" label="ЛПУ" 
                  	horizontalFill="true" fieldColSpan="12"/>
      	</msh:row>
+     	<msh:row>
+     		<msh:autoComplete property="serviceStream" vocName="vocServiceStream" label="Поток обслуживания"
+     			horizontalFill="true" fieldColSpan="12"
+     		/>
+     	</msh:row>
        <msh:row>
                  <msh:autoComplete property="spec" vocName="workFunction" label="Ответственный" 
                  	horizontalFill="true" fieldColSpan="12"/>
@@ -97,6 +103,7 @@
     String dateEnd = (String)request.getAttribute("dateEnd") ;
     String typeView = (String) request.getAttribute("typeView") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=(String)request.getAttribute("dateBegin") ;
+    ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
     request.setAttribute("dateEnd", dateEnd) ;
     if (date!=null && !date.equals("")) {
     	if (typeView!=null && typeView.equals("1")) {
@@ -124,7 +131,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is null or ok.voc_code='643')
-	${pigeonHole} ${status} ${department}
+	${pigeonHole} ${status} ${department} ${serviceStreamSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -182,7 +189,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is not null and ok.voc_code != '643' or adr.kladr is not null and adr.kladr not like  '30%')
-	${pigeonHole} ${status}
+	${pigeonHole} ${status} ${serviceStreamSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -238,7 +245,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and ok.voc_code is not null and ok.voc_code != '643'
-	${pigeonHole} ${status}
+	${pigeonHole} ${status} ${serviceStreamSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
