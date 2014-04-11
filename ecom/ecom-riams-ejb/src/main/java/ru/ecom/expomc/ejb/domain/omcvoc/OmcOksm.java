@@ -27,6 +27,13 @@ public class OmcOksm extends OmcAbstractVoc {
 	public String getAlfa3() {return theAlfa3;}
 	public void setAlfa3(String aAlfa3) {theAlfa3 = aAlfa3;}
 
+	/** СНГ */
+	@Comment("СНГ")
+	public Boolean getIsCompatriot() {return theIsCompatriot;}
+	public void setIsCompatriot(Boolean aIsCompatriot) {theIsCompatriot = aIsCompatriot;}
+
+	/** СНГ */
+	private Boolean theIsCompatriot;
 	/** alfa3 */
 	private String theAlfa3;
 
