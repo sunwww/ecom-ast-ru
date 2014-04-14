@@ -11,7 +11,7 @@
     <msh:form action="/stac_planning_hospitalizations.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel>
     	<msh:row>
-    		<msh:autoComplete property="department" vocName="lpu" fieldColSpan="3" horizontalFill="true"/>
+    		<msh:autoComplete property="department" vocName="vocLpuHospOtdAll" fieldColSpan="3" horizontalFill="true"/>
     	</msh:row>
     	<msh:row>
     		<msh:autoComplete property="roomType" vocName="vocRoomType" label="Уровень палаты"/>
