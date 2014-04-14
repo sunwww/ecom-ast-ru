@@ -40,7 +40,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity(name="MisLpu")
 @AIndexes({
-	@AIndex(properties={"parent"})
+	@AIndex(properties={"lpuFunction"})
+	,@AIndex(properties={"parent"})
 	,@AIndex(properties={"name"})
 	,@AIndex(properties={"parent","name"})
 })

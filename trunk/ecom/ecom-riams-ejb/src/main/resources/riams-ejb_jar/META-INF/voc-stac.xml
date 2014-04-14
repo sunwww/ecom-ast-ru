@@ -386,6 +386,18 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
      </voc> 
+    <voc id='vocLpuHospOtdAll' type='NativeVocService'>
+        <NativeVocService
+                from="MisLpu ml"
+                names="ml.name||' ('||mlP.name||')'"
+                parent=''
+                nameId="ml.id"
+                queryAppend=" (vlf.code='3' or vlf.code='7') "
+                join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id left join MisLpu mlP on mlP.id=ml.parent_id "
+                order=""
+	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+        />
+     </voc> 
      
       <!-- Справочник показаний к поступлению -->
     <voc id='vocAdmissionAspect' type='EntityVocService'>
