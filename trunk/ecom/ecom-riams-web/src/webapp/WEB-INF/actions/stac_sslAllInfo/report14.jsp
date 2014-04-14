@@ -1048,8 +1048,11 @@ select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode
 ,count(distinct sls.id) as cntPat
 ,count(distinct case when vot.code='1' then so.id else null end) as cntTech
 ,count(distinct case when sls.result_id='${result_death}' then sls.id else null end) as cntPatDeath
+
 ,count(distinct case when voo.code='2' then so.id else null end) as cntDeathOper
 ,count(distinct case when sls.result_id='${result_death}' and vot.code='1' then so.id else null end) as cntDeathTech
+,count(distinct case when vha.code='EMERGENCY' then so.id else null end) as cntEmergencyOper
+,count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyOper
  from medcase sls
 left join MedCase sloa on sloa.parent_id=sls.id
 left join BedFund bf on bf.id=sloa.bedFund_id
@@ -1061,6 +1064,7 @@ left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join VocOperationTechnology vot on vot.id=so.technology_id
 left join VocOperationOutcome voo on voo.id=so.outcome_id
 left join Patient p on p.id=sls.patient_id
+left join VocHospitalAspect vha on vha.id=so.aspect_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
@@ -1082,6 +1086,8 @@ order by vrspt.strCode
       <msh:tableColumn columnName="Кол-во умерших пациентов" property="7"/>
       <msh:tableColumn columnName="Отмечено исход операции летальный" property="8"/>
       <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9"/>
+      <msh:tableColumn columnName="Экстренные" property="10"/>
+      <msh:tableColumn columnName="Эндоскопические" property="11"/>
     </msh:table>
     
     </msh:sectionContent>

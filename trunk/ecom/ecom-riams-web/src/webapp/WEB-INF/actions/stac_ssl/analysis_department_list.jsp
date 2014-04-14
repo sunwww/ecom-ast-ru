@@ -99,7 +99,7 @@
 	        </td>
 	    </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" label="Отделение" vocName="lpu"/>
+        	<msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
