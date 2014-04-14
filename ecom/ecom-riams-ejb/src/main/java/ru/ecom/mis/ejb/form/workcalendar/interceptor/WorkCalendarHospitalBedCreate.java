@@ -21,13 +21,7 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
     	form.setCreateUsername(username);
     	form.setCreateDate(DateFormat.formatToDate(date));
-        /*if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/ShortEnter")) {
-        	form.setDateStart(DateFormat.formatToDate(date));
-        	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-            form.setEntranceTime(timeFormat.format(date));
-        } else {
-        	
-        }*/
+        
         EntityManager manager = aContext.getEntityManager();
         //MedCase parent = manager.find(MedCase.class, aParentId) ;
         List<Object[]> list= manager.createNativeQuery("select mkb.code,d.name,mkb.id,mc.serviceStream_id,mc.patient_id from MedCase mc"
@@ -46,7 +40,7 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         }
         form.setDiagnosis(res.toString()) ;
         list.clear() ;
-    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid,case when vlf.code in ('7','3') then w.lpu_id else null end as wlpuid " 
+    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid " 
     			+ " from SecUser su " 
     			+ " left join WorkFunction wf on wf.secuser_id=su.id " 
     			+ " left join Worker w on w.id=wf.worker_id " 
@@ -56,7 +50,7 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
     		.setParameter("login", username).setMaxResults(1).getResultList() ;
     	if (list.size()>0) {
     		form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
-    		form.setDepartment(ConvertSql.parseLong(list.get(0)[2])) ;
+    	
     	} else {
     		
     	}

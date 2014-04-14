@@ -34,5 +34,13 @@ public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedF
 	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
 	/** Палата */
 	private Long theHospitalRoom;
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	@Persist @Required
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Рабочая функция */
+	private Long theWorkFunction;
 
 }

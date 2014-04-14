@@ -8,6 +8,11 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 
 }
+
+function onPreCreate(aForm, aCtx) {
+	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	aForm.setWorkFunction(wf.id) ;
+}
 /**
  * Перед сохранением
  */

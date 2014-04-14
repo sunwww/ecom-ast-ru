@@ -26,9 +26,6 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Планирование госпитализации", nameProperties= "id"
 , list="stac_planning_hospitalizations.do"
 , view="entityView-stac_planHospital.do")
-@AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)
-)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	/** Отделение */
@@ -168,14 +165,9 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
-	@Persist @Required
-	public Long getWorkFunction() {
-		return theWorkFunction;
-	}
-
-	public void setWorkFunction(Long aWorkFunction) {
-		theWorkFunction = aWorkFunction;
-	}
+	@Persist 
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
 	/** Рабочая функция */
 	private Long theWorkFunction;
