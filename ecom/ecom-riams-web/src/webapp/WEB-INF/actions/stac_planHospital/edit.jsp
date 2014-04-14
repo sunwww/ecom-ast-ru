@@ -108,7 +108,7 @@
       </msh:panel>
       
     </msh:form>
-    <tags:mis_patient_new divForButton="personButton" name='Person' title='Создание новой персоны' autoComplitePatient="person"/>
+    <tags:mis_patient_new divForButton="personButton" name='Person' title='Создание новой персоны' autoComplitePatient="patient"/>
 
 </tiles:put>
   <tiles:put name="title" type="string">
