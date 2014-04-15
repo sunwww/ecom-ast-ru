@@ -42,7 +42,11 @@
         	<msh:autoComplete property="orderLpu" label="Направлен из ЛПУ" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
+        	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
+        	<msh:checkBox property="isOperation" label="Операция?"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="bedType" label="Профиль коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedType"/>
@@ -60,10 +64,7 @@
         <msh:row>
         	<msh:textField property="cntDays" label="дней"/>
         </msh:row>
-        <msh:row>
-        	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
-        	<msh:checkBox property="isOperation" label="Операция?"/>
-        </msh:row>
+
         <msh:row>
         	<msh:autoComplete property="idc10" vocName="vocIdc10" label="Код МКБ" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
@@ -143,6 +144,34 @@
     </script>
   </msh:ifNotInRole>
   </msh:ifFormTypeIsView>
+  <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisit">
+<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+  	
+  	<script type="text/javascript">
+  		initPersonPatientDialog();
+  		departmentAutocomplete.addOnChangeCallback(function() {
+			HospitalMedCaseService.getDefaultBedTypeByDepartment(
+					 $('department').value, $('serviceStream').value
+      				, $('dateFrom').value,{
+      			callback: function(aResult) {
+      				var res = aResult.split('#') ;
+
+      				if (+res[0]!=0) {
+      					$('bedType').value = res[0] ; 
+      					$('bedTypeName').value = res[1] ; 
+      					$('bedSubType').value = res[2] ; 
+      					$('bedSubTypeName').value = res[3] ; 
+      				} else {
+      		      	 	$('bedType').value='0';
+      		      	 	$('bedTypeName').value='';
+      		      	 	$('bedSubType').value='0';
+      		      	 	$('bedSubTypeName').value='';
+      				}
+      			}
+      		}) ;  
+  		});
+      		</script>  
+  </msh:ifFormTypeIsNotView>
   </tiles:put>
 
 </tiles:insert>

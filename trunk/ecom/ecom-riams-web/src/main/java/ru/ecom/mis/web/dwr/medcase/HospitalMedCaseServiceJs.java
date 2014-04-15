@@ -238,6 +238,55 @@ public class HospitalMedCaseServiceJs {
     	service.setPatientByExternalMedservice(aNumberDoc, aOrderDate, aPatient) ;
     	return "обновлено" ;
     }
+    public String getDefaultDepartmentByUser(HttpServletRequest aRequest) throws NamingException {
+    	StringBuilder res = new StringBuilder() ;
+    	StringBuilder sql = new StringBuilder() ;
+    	String username=LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+    	sql.append(" select ml.id,ml.name||coalesce(' ('||ml1.name||')','') from workfunction wf");
+    	sql.append(" left join secuser su on su.id=wf.secuser_id");
+    	sql.append(" left join worker w on w.id=wf.worker_id");
+    	sql.append(" left join mislpu ml on ml.id=w.lpu_id");
+    	sql.append(" left join mislpu ml1 on ml1.id=ml.parent_id");
+    	sql.append(" where su.login='").append(username).append("'") ;
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),2) ;
+    	if (list.size()>0) {
+    		WebQueryResult wqr = list.iterator().next() ;
+    		res.append(wqr.get1()).append("#").append(wqr.get2()).append("#") ;
+    		
+    		
+    	} else {
+    		res.append("##");
+    	}
+    	
+    	return res.toString() ;
+    	
+    }
+    public String getDefaultBedTypeByDepartment(Long aDepartment, Long aServiceStream, String aDateFrom,HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	StringBuilder sql = new StringBuilder() ;
+    	StringBuilder res = new StringBuilder() ;
+    	sql = new StringBuilder() ;
+    	sql.append("select vbt.id as vbtid, vbt.name as vbtname,vbst.id as vbstid,vbst.name as vbstname from BedFund bf ") ;
+    	sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
+    	sql.append(" where bf.lpu_id='").append(aDepartment) ;
+    	if (aServiceStream!=null && aServiceStream.intValue()>0) sql.append("' and bf.serviceStream_id='").append(aServiceStream) ;
+    	sql.append("' and bf.dateFinish is null") ;
+    	
+    	
+    	
+    	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),2) ;
+    	if (list.size()>0) {
+    		WebQueryResult wqr = list.iterator().next() ;
+    		res.append(wqr.get1()).append("#").append(wqr.get2()).append("#") ;
+    		res.append(wqr.get3()).append("#").append(wqr.get4()).append("#") ;
+    		
+    	} else {
+    		res.append("####");
+    	}
+    	
+    	return res.toString() ;
+    }
     public String getDefaultBedFundBySlo(Long aParent, Long aDepartment, Long aServiceStream, String aDateFrom,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sql = new StringBuilder() ;
