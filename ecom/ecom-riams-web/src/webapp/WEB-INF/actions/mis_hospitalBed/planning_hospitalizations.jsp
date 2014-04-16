@@ -62,7 +62,7 @@
     		window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
     	}
     	function viewSlo(aSlo) {
-    		window.location = 'entityView-stac_slo.do?id='+aSlo+"&tmp="+Math.random() ;
+    		getDefinition('entitySubclassView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
     	}
     	
     	if (+$('department').value<1) {
