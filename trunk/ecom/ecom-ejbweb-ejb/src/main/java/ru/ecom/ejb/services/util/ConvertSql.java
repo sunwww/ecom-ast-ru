@@ -2,6 +2,7 @@ package ru.ecom.ejb.services.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 
 public class ConvertSql {
 	public static Long parseLong(Object aValue) {
@@ -23,6 +24,37 @@ public class ConvertSql {
 			return Long.valueOf((String) aValue);
 		}
 		return ret ;
+	}
+	public static String parseString(Object aValue, boolean aIsVk) {
+		return aValue==null?"":String.valueOf(aValue);
+	}
+	public static String parseString(Object aValue) {
+		return String.valueOf(aValue) ;
+	}
+	public static boolean parseBoolean(Object aValue) {
+		if (aValue==null) return false;
+		if (parseString(aValue).equals("1")) return true ;
+		return false ;
+	}
+	public static java.sql.Date parseDate(Object aValue) {
+		if (aValue==null) return null ;
+		if (aValue instanceof java.sql.Date) {
+			return (java.sql.Date)aValue ;
+		}
+		if (aValue instanceof java.util.Date) {
+			return new java.sql.Date(((java.util.Date)aValue).getTime()) ;
+		}
+		return null ;
+	}
+	public static java.sql.Date parseDate(Object aValue,int aAddDay) {
+		java.sql.Date dat = parseDate(aValue) ;
+		if (dat!=null) {
+			Calendar cal = Calendar.getInstance() ;
+			cal.setTime(dat) ;
+			cal.add(Calendar.DATE, aAddDay) ;
+			return new java.sql.Date(cal.getTime().getTime()) ;
+		}
+		return null ;
 	}
 	
 	public static boolean ChInt(String Interval,String Mkb) {
