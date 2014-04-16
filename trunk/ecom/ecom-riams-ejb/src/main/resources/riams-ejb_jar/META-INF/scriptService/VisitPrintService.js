@@ -18,7 +18,7 @@ function printVisits(aCtx, aParams) {
 	map.put("ids",ids.length) ;
 	
 	
-	for (var i=1; i < ids.length; i++) {
+	for (var i=ids.length-1; i>=0; i--) {
 		var id1=ids[i] ;
 		if (id1.indexOf("!")!=-1) {
 		

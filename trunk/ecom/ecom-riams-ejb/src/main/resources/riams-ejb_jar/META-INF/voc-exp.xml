@@ -205,16 +205,7 @@
                 queried = 'code,name'
                 queryConvertType="FIRST_LAT_UPPER"
                 />
-    </voc>
-    <voc id='vocIdc10ticket' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
-                names   = 'code,name'
-                queried = "code,name"
-                queryConvertType="FIRST_LAT_UPPER"
-                />
-    </voc>
-    
+    </voc>    
      <!--  МКБ 10 Травма-->
     <voc id='vocIdc10Travm' type='EntityVocService'>
         <EntityVocService
