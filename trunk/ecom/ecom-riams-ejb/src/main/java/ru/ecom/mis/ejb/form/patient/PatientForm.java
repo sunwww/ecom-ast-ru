@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.form.patient;
 
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -9,6 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorType;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientDynamicSecurityInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
@@ -884,5 +887,12 @@ public class PatientForm extends IdEntityForm {
 
 	/** Район проживания */
 	private Long theRealRayon;
-	
+	/** Цветовая характеристика */
+	@Comment("Цветовая характеристика")
+	@Persist
+	public Long getColorType() {return theColorType;}
+	public void setColorType(Long aColorType) {theColorType = aColorType;}
+
+	/** Цветовая характеристика */
+	private Long theColorType;	
 }
