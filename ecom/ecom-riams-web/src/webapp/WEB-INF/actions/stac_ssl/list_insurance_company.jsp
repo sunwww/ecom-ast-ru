@@ -16,17 +16,18 @@
     <msh:title guid="helloItle-123" mainMenu="Journal">Разбивка по страховым компаниям СЛС</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:stac_journal currentAction="stac_reestrByInsCompany"/>
+  	<tags:stac_journal currentAction="stac_report_insCompany"/>
   </tiles:put>
   <tiles:put name="body" type="string">
     <%
-  	String noViewForm = request.getParameter("noViewForm") ;
-	String typeDate =ActionUtil.updateParameter("ReestrByInsCompany","typeDate","1", request) ;
-	String typeEmergency =ActionUtil.updateParameter("ReestrByInsCompany","typeEmergency","3", request) ;
+  	//String noViewForm = request.getParameter("noViewForm") ;
+	//String typeDate =ActionUtil.updateParameter("ReestrByInsCompany","typeDate","1", request) ;
+	//String typeEmergency =ActionUtil.updateParameter("ReestrByInsCompany","typeEmergency","3", request) ;
 	String typeView =ActionUtil.updateParameter("ReestrByInsCompany","typeView","1", request) ;
   	%>
-    <msh:form action="/stac_reestrByInsCompany.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_report_insCompany.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
       <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+      <%--
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -48,6 +49,7 @@
         	<input type="radio" name="typeEmergency" value="3">  все
         </td>
       </msh:row>
+      
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -63,18 +65,27 @@
         	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>      
-
+ --%>
    
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="1"  >  свод поступивших
+	        	<input type="radio" name="typeView" value="1"  >  поступившие
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="2"  >  свод выписанных
+	        	<input type="radio" name="typeView" value="2"  >  поступившие по отделениям
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="3"  >  свод отказов от госпитализаций
+	        	<input type="radio" name="typeView" value="3"  >  выписанные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="4"  >  выписанные по отделениям
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="5"  >  отказы от госпитализаций
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="6"  >  свод по причинам отказов от госпитализаций
 	        </td>
         </msh:row>
         <msh:row guid="Дата">
@@ -86,18 +97,19 @@
         	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
       </msh:row>
       <msh:row>
-        <msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
+        <msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+      </msh:row>
+      <msh:row>
+      	<msh:submitCancelButtonsRow colSpan="4"/>
       </msh:row>
     </msh:panel>
     </msh:form>
        <script type='text/javascript'>
     
-    checkFieldUpdate('typeDate','${typeDate}',1) ;
-    checkFieldUpdate('typePatient','${typePatient}',4) ;
-    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
+    //checkFieldUpdate('typePatient','${typePatient}',4) ;
+    //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeHour','${typeHour}',3) ;
-    checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
+    //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
     
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -122,172 +134,253 @@
     String date = request.getParameter("dateBegin") ;
     
     if (date!=null && !date.equals(""))  {
+    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	if (dateEnd==null||dateEnd.equals("")) {
+    		request.setAttribute("dateEnd", date) ;
+    	} else {
+    		request.setAttribute("dateEnd", dateEnd) ;
+    	}
+    	request.setAttribute("dateBegin",date) ;
     	String view = (String)request.getAttribute("typeView") ;
-    	//String fldDepartment = "ml.id" ;
-    	
-    	
-    	
-        ActionUtil.setParameterFilterSql("department", "sls.department_id", request) ;
-        ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
-    	
+    	ActionUtil.setParameterFilterSql("department", "mc.department_id", request) ;
+    	ActionUtil.setParameterFilterSql("department","departmentDischarge", "sloD.department_id", request) ;
+        ActionUtil.setParameterFilterSql("serviceStream", "mc.serviceStream_id", request) ;
+    	boolean isReestr = request.getParameter("reestr")!=null?true:false ;
     	if (view!=null && (view.equals("1"))) {
+    		//свод поступивших
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Реестр ${dateInfo} за день ${param.dateBegin}. 
+    <msh:sectionTitle>Свод поступивших ${dateInfo} за день ${param.dateBegin}. 
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
-    select mp.dtype,ri.name,count(v.patient_id),count(mc.patient_id) from medcase mc
-left join medcase v on v.patient_id=mc.patient_id and v.dateStart=mc.dateStart and v.dtype='Visit'
+    <ecom:webQuery name="swod" nameFldSql="swod_sql" nativeSql=" 
+    select ri.id as mcdtype
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+    ,ri.name as riname
+    ,count(distinct mc.patient_id) as cntpatient
+    ,count(distinct mc.id)  as cntmc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+    from medcase mc
 left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
 left join medpolicy mp on mp.id=mcmp.policies_id
 left join reg_ic ri on ri.id=mp.company_id
 left join vocservicestream vss on vss.id=mc.serviceStream_id
-where mc.dtype='HospitalMedCase' and mc.datestart between to_date('${date}','dd.mm.yyyy') and to_date('28.02.2014','dd.mm.yyyy')
-and mc.deniedhospitalizating_id is null  ${serviceStreamSql}
-group by mp.dtype,ri.name
+where mc.dtype='HospitalMedCase' 
+and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is null  ${serviceStreamSql} ${departmentSql}
+group by mp.dtype,ri.name,ri.id
+order by ri.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение" property="9" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Пациент" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="4" />
+      <msh:tableColumn columnName="Кол-во случаев" property="5" />
+      <msh:tableColumn columnName="из них экстренных" property="6" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% if (request.getAttribute("period1")!=null) { %>
-    <msh:section>
-    <msh:sectionTitle>Реестр отказов от госпитализаций за день ${param.dateBegin}
-    . По ${emerInfo} ${hourInfo} ${infoTypePat}</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery nameFldSql="journal_priem_denied_sql" name="journal_priem"  nativeSql="select 
-    m.id as mid
-    ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart
-    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
-    ,sc.code as sccode,m.emergency as memergency
-    ,vdh.name as vdhname
-    , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
-    when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient
-    
-     from MedCase as m  
-     left join StatisticStub as sc on sc.medCase_id=m.id 
-     left outer join Patient pat on m.patient_id = pat.id 
-     left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id
-     left join Omc_Oksm ok on pat.nationality_id=ok.id
-	 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-	 left join address2 adr on adr.addressId = pat.address_addressId  
-
-	left join MisLpu as ml on ml.id=m.department_id 
-
-	 left join SecUser su on su.login=m.username
-	left join WorkFunction wf on wf.secUser_id=su.id
-	left join Worker w on w.id=wf.worker_id
-	left join MisLpu ml1 on ml1.id=w.lpu_id 
-     where m.DTYPE='HospitalMedCase' ${period}
-      and m.deniedHospitalizating_id is not null
-      ${emerIs} ${pigeonHole1} ${department} ${serviceStreamSql}
-      ${addPat}
-       order by m.${dateI},pat.lastname,pat.firstname,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem"  viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Экстрено" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Причина отказа" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Пациент" property="7"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    <% }
-    	
-    	
-    	}  else {
+    <%
+    	} else if (view!=null && (view.equals("2"))) {
     		
-    		// СВОД
+    		if (isReestr) {
+    			%><%
+    		} else {
     		%>
     		    <msh:section>
-    <msh:sectionTitle>Реестр ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
+    <msh:sectionTitle>Свод поступивших по отделениям ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
-    
-    ${departmentFldIdSql} as mlid,${departmentFldNameSql} as mlname
-    ,count(distinct m.id)
-  	,count(distinct case when m.emergency='1' then m.id else null end) as memergency
-  	,count(distinct case when (m.emergency='0' or m.emergency is null) then m.id else null end) as mplan
-    ,count(distinct case when (ok.voc_code is not null and ok.voc_code!='643') then m.id else null end) as inostr  
-    ,count(distinct case when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then m.id else null end) as inog
-    
-     from MedCase as m  
-     left join StatisticStub as sc on sc.medCase_id=m.id 
-     left outer join Patient pat on m.patient_id = pat.id 
-     left join MisLpu as ml on ml.id=m.department_id 
-     left join Omc_Oksm ok on pat.nationality_id=ok.id
-	 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-	 left join address2 adr on adr.addressId = pat.address_addressId
-     
-     left join MedCase slo on slo.parent_id=m.id
-     left join MisLpu as sloml on sloml.id=slo.department_id
-     where m.DTYPE='HospitalMedCase' ${period} ${department} 
-     and m.deniedHospitalizating_id is null
-     ${emerIs} ${pigeonHole} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
-     group by ${departmentFldIdSql},${departmentFldNameSql}
-        order by ${departmentFldIdSql},${departmentFldNameSql}
+    <ecom:webQuery name="swod" nameFldSql="journal_priem_sql" nativeSql="
+    select '&insCompany='||ri.id||'&department='||ml.name||'&dtype='||mp.dtype as mcdtype
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+    ,ri.name as riname
+    ,ml.name as ml.name
+    ,count(distinct mc.patient_id) as cntpatient
+    ,count(distinct mc.id)  as cntmc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+    from medcase mc
+left join mislpu ml on ml.id=mc.department_id
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+where mc.dtype='HospitalMedCase' 
+and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is null  ${serviceStreamSql} ${departmentSql}
+group by mp.dtype,ri.name,ri.id,ml.name,ml.id
+order by ri.name,ml.name
+
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="stac_reestrByInsCompany.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во экстренных" isCalcAmount="true" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во плановых" isCalcAmount="true" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во иностранцев" isCalcAmount="true" property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во иногородних" isCalcAmount="true" property="7" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Отделение" property="4" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="5" />
+      <msh:tableColumn columnName="Кол-во случаев" property="6" />
+      <msh:tableColumn columnName="из них экстренных" property="7" />
+
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% if (request.getAttribute("period1")!=null) { %>
-    <msh:section>
-    <msh:sectionTitle>Свод отказов от госпитализаций за день ${param.dateBegin}. По ${emerInfo} ${hourInfo}</msh:sectionTitle>
+    <%
+    		}
+    		} else if (view!=null && (view.equals("3"))) {
+    		
+    		// свод выписанных
+    		%>
+    		    <msh:section>
+    <msh:sectionTitle>Свод выписанных ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
+    </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_denied_sql" nativeSql="select 
-    vdh.name as vdhname
-    ,count(distinct m.id)
-  	,count(distinct case when m.emergency='1' then m.id else null end) as memergency
-    ,count(distinct case when (ok.voc_code is not null and ok.voc_code!='643') then m.id else null end) as inostr  
-    ,count(distinct case when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then m.id else null end) as inog
-     from MedCase as m  
-     left join StatisticStub as sc on sc.medCase_id=m.id 
-     left outer join Patient pat on m.patient_id = pat.id 
-     left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id
-     left join Omc_Oksm ok on pat.nationality_id=ok.id
-	 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-	 left join address2 adr on adr.addressId = pat.address_addressId  
-	 left join SecUser su on su.login=m.username
-	left join WorkFunction wf on wf.secUser_id=su.id
-	left join MisLpu as ml on ml.id=m.department_id 
-	left join Worker w on w.id=wf.worker_id
-	left join MisLpu ml1 on ml1.id=w.lpu_id 
-     where m.DTYPE='HospitalMedCase' ${period}
-      and m.deniedHospitalizating_id is not null
-      ${emerIs} ${pigeonHole1} group by vdh.name order by vdh.name
+    <ecom:webQuery name="swod" nameFldSql="journal_priem_sql" nativeSql="select
+     ri.id as riid
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+     ,ri.name as riname
+     ,count(mc.patient_id) as cntpatient
+     ,count(mc.id) as cntMc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+     from medcase mc
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+left join MedCase sloD on sloD.parent_id=mc.id and sloD.dateFinish is not null
+where mc.dtype='HospitalMedCase' and mc.datefinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is null  ${serviceStreamSql} ${departmentDischargeSql}
+and mc.dtype='DepartmentMedCase'
+group by mp.dtype,ri.name,ri.id
+order by ri.name
+
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="stac_reestrByInsCompany.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Причина отказа" property="1" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="2" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностранцев" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иногородних" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="4" />
+      <msh:tableColumn columnName="Кол-во случаев" property="5" />
+      <msh:tableColumn columnName="из них экстренных" property="6" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
+    <%
+    	} else if (view!=null && (view.equals("4"))) {
+    		
+    		// свод выписанных
+    		%>
+    		    <msh:section>
+    <msh:sectionTitle>Свод выписанных по отделениям ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="swod" nameFldSql="journal_priem_sql" nativeSql="select
+     '&insCompany='||ri.id||'&department='||ml.name||'&dtype='||mp.dtype as riid
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+     ,ri.name as riname
+     ,ml.name as mlname
+     ,count(mc.patient_id) as cntpatient
+     ,count(mc.id) as cntMc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+     from medcase mc
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+left join MedCase sloD on sloD.parent_id=mc.id and sloD.dateFinish is not null
+where mc.dtype='HospitalMedCase' and mc.datefinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is null  ${serviceStreamSql} ${departmentDischargeSql}
+and mc.dtype='DepartmentMedCase'
+group by mp.dtype,ri.name,ri.id
+order by ri.name
+
+      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Отделение" property="4" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="5" />
+      <msh:tableColumn columnName="Кол-во случаев" property="6" />
+      <msh:tableColumn columnName="из них экстренных" property="7" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%
+    	} else if (view!=null && (view.equals("5"))) {
+    		
+    		// свод отказов
+    		%>
+    		    <msh:section>
+    <msh:sectionTitle>Свод отказов от госпитализаций по стаховым компаниям ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="swod" nameFldSql="journal_priem_sql" nativeSql="    
+    select ri.id as mcdtype
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+    ,ri.name as riname
+    ,count(distinct mc.patient_id) as cntpatient
+    ,count(distinct mc.id)  as cntmc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+    from medcase mc
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+where mc.dtype='HospitalMedCase' 
+and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is not null  ${serviceStreamSql} ${departmentSql}
+group by mp.dtype,ri.name,ri.id
+order by ri.name
+      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="4" />
+      <msh:tableColumn columnName="Кол-во случаев" property="5" />
+      <msh:tableColumn columnName="из них экстренных" property="6" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%
+    	} else if (view!=null && (view.equals("6"))) {
+    		
+    		// свод отказов
+    		%>
+    		    <msh:section>
+    <msh:sectionTitle>Свод по отказам от госпитализаций ${dateInfo} за день ${param.dateBegin}. По ${dischInfo}  ${emerInfo} ${hourInfo}
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="swod" nameFldSql="journal_priem_sql" nativeSql="    
+    select ri.id as mcdtype
+    ,case when mp.dtype='MedPolicyOmc' then 'ОМС' when mp.dtype='MedPolicyOmcForeign' then 'ОМС иногороднего' when mp.dtype is null then 'нет' else 'ДМС' end as dtypeName
+    ,ri.name as riname
+    ,vdh.name as vdhname
+    ,count(distinct mc.patient_id) as cntpatient
+    ,count(distinct mc.id)  as cntmc
+    ,count(distinct case when mc.emergency='1' then mc.id else null end)  as cntmcEmergency
+    from medcase mc
+left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
+left join vocservicestream vss on vss.id=mc.serviceStream_id
+left join VocDeniedHospitalizating vdh on vdh.id=mc.deniedHospitalizating_id
+where mc.dtype='HospitalMedCase' 
+and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.deniedhospitalizating_id is not null  ${serviceStreamSql} ${departmentSql}
+group by mp.dtype,ri.name,ri.id,vdh.id,vdh.name
+order by ri.name,vdh.name
+      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:table name="swod" action="javascript:void(0)" idField="1">
+      <msh:tableColumn columnName="Тип полиса" property="2" />
+      <msh:tableColumn columnName="Страховая компания" property="3" />
+      <msh:tableColumn columnName="Причина отказа от госпитализаций" property="4" />
+      <msh:tableColumn columnName="Кол-во пациентов" property="5" />
+      <msh:tableColumn columnName="Кол-во случаев" property="6" />
+      <msh:tableColumn columnName="из них экстренных" property="7" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    
     		<%
-    	}
+    	
     	}} else {%>
     	<i>Нет данных </i>
     	<% }   %>
