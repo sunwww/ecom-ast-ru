@@ -32,6 +32,7 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.voc.VocAdditionStatus;
 import ru.ecom.mis.ejb.domain.patient.voc.VocCategoryChild;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorType;
 import ru.ecom.mis.ejb.domain.patient.voc.VocEthnicity;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource;
@@ -1053,4 +1054,12 @@ public class Patient extends BaseEntity{
 
 	/** Вес новорожденного */
 	private Long theNewbornWeight;
+	/** Цветовая характеристика */
+	@Comment("Цветовая характеристика")
+	@OneToOne
+	public VocColorType getColorType() {return theColorType;}
+	public void setColorType(VocColorType aColorType) {theColorType = aColorType;}
+
+	/** Цветовая характеристика */
+	private VocColorType theColorType;
 }

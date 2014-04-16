@@ -20,6 +20,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate) ;
 	public String[] exportFondZip(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException;
 	public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException ;
