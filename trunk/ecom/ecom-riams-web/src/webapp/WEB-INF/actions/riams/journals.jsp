@@ -176,6 +176,9 @@
 						<li><msh:link action="stac_journal_direct_psych.do" roles="/Policy/Mis/MedCase/Stac/Journal/AdmissionOrderByPsych">
 	                            Журнал по порядку поступления (добров., недобров.)
 	                        </msh:link></li>
+						<li><msh:link action="stac_report_insCompany.do" roles="/Policy/Mis/MedCase/Stac/Journal/InsuranceCompany">
+	                            Журнал по страховым компаниям
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>

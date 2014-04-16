@@ -42,7 +42,7 @@
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Посещение в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
-          <msh:autoComplete vocName="vocIdc10ticket" property="idc10" label="Диагноз код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
+          <msh:autoComplete vocName="vocIdc10" property="idc10" label="Диагноз код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
         </msh:row>
         <msh:row guid="7866a1f6-46fd-4df8-81dd-15391801c26d">
           <msh:autoComplete vocName="vocAcuityDiagnosis" property="vocIllnesType" label="Характер заболевания" horizontalFill="true" guid="da756e0d-c6c0-4870-85c6-65973d6183de" />

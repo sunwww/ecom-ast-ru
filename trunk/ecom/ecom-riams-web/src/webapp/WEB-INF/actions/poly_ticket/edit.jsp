@@ -47,7 +47,7 @@
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Посещение в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
-          <msh:autoComplete vocName="vocIdc10ticket" property="idc10" label="Диагноз код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
+          <msh:autoComplete vocName="vocIdc10" property="idc10" label="Диагноз код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
         </msh:row>
         <%-- 
         <msh:row>
@@ -108,7 +108,7 @@
         <%--
         <msh:separator label="Ранее зарегистрированный диагноз" colSpan="4" guid="88c6ecbf-55f4-4d7a-8db7-f41a75b8f86d" />
         <msh:row guid="f969e28a-aa6a-4457-bf2b-e228b53544e5">
-          <msh:autoComplete vocName="vocIdc10ticket" property="prevIdc10" label="Диагноз" fieldColSpan="3" horizontalFill="true" guid="dd2d60e5-7f9b-45c2-8df1-74b553d52ae8" />
+          <msh:autoComplete vocName="vocIdc10" property="prevIdc10" label="Диагноз" fieldColSpan="3" horizontalFill="true" guid="dd2d60e5-7f9b-45c2-8df1-74b553d52ae8" />
         </msh:row>
         <msh:row guid="11657459-a8bc-400d-a2cc-df9b05de500b">
           <msh:textField label="Дата" property="prevIdc10Date" size="10" guid="46035755-65f7-4643-82bf-a85be832fea1" />
