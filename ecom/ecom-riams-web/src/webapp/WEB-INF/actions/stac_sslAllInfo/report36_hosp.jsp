@@ -199,13 +199,28 @@
       <msh:row>
         <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1"> по выписным
+        	<input type="radio" name="typeView" value="1"> свод по отделениям
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeView" value="2"> по нозоологиям (приемник)
+        	<input type="radio" name="typeView" value="2"> форма 36. 2300
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="3"> форма 16
+        </td>
+       </msh:row>
+       <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="4"> по реестр поступивших
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="3"> по нозоологиям (умершие)
+        	<input type="radio" name="typeView" value="5">  по реестр выбывших
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="6"> по состоящих на нач. периода
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="7"> по состоящих на конец периода
         </td>
        </msh:row>
         <msh:row>
@@ -222,6 +237,7 @@
         <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
+            <input type="button" onclick="refresh()" value="Пересчет" />
           </td>
       </msh:row>
     </msh:panel>
@@ -250,6 +266,11 @@
     	frm.target='' ;
     	frm.action='journal_doc_externalMedService.do' ;
     }
+    function refresh() {
+    	var frm = document.forms[0] ;
+    	frm.target='' ;
+    	frm.action='refresh' ;
+    }
     function print() {
     	var frm = document.forms[0] ;
     	frm.m.value="printHistology" ;
@@ -258,19 +279,7 @@
     	$('id').value = $('dateBegin').value+":"
     		+$('dateBegin').value+":"
     		+$('department').value;
-    }/*
-    function printJournal() {
-    	var frm = document.forms[0] ;
-    	frm.m.value="printJournalByDay" ;
-    	frm.target='_blank' ;
-    	frm.action='print-stac_journal001.do' ;
-    	$('id').value = 
-    		$('dateBegin').value+":"
-    		
-    		+$('department').value;
     }
-    */
-    /**/
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
     }
