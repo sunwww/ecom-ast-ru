@@ -140,7 +140,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -174,7 +174,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -222,7 +222,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -239,7 +239,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -274,7 +274,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -289,7 +289,8 @@ order by pat.lastname,pat.firstname,pat.middlename
 			"/>
 
 				<msh:table name="finansReport" 
-				action="entitySubclassView-mis_medCase.do" 
+				action="entitySubclassView-mis_medCase.do"
+				viewUrl="entitySubclassShortView-mis_medCase.do" 
 				idField="1">
 					<msh:tableColumn columnName="Стат.карта" property="2" />
 					<msh:tableColumn columnName="ФИО пациента" property="3" />
@@ -321,7 +322,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -338,7 +339,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -367,7 +368,8 @@ order by pat.lastname,pat.firstname,pat.middlename
 			"/>
 
 				<msh:table name="finansReport" 
-				action="entitySubclassView-smo_medCase.do" 
+				action="entitySubclassView-mis_medCase.do"
+				viewUrl="entitySubclassShortView-mis_medCase.do" 
 				idField="1">
 					<msh:tableColumn columnName="Стат.карта" property="2" />
 					<msh:tableColumn columnName="ФИО пациента" property="3" />
@@ -399,7 +401,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -416,7 +418,7 @@ from ContractPerson cp
 left join ServedPerson sp on sp.Person_id=cp.id
 left join ContractAccount ca on ca.id=sp.account_id
 left join ContractAccountOperation cao on cao.account_id=ca.id and cao.dtype='OperationAccrual'
-and cao.operationdate  between sls.dateStart and coalesce(sls.dateFinish,current_date)
+and cao.operationdate  between sls.dateStart-3 and coalesce(sls.dateFinish,current_date)
 left join contractaccountoperationbyservice caos on caos.accountoperation_id = cao.id
 left join contractaccountmedservice cas on caos.accountmedservice_id = cas.id and cas.servedperson_id = sp.id
 left join pricemedservice pms on pms.id=cas.medservice_id
@@ -444,7 +446,8 @@ order by pat.lastname,pat.firstname,pat.middlename
 			"/>
 
 				<msh:table name="finansReport" 
-				action="entitySubclassView-smo_medCase.do" 
+				action="entitySubclassView-mis_medCase.do"
+				viewUrl="entitySubclassShortView-mis_medCase.do" 
 				idField="1">
 					<msh:tableColumn columnName="Стат.карта" property="2" />
 					<msh:tableColumn columnName="ФИО пациента" property="3" />
