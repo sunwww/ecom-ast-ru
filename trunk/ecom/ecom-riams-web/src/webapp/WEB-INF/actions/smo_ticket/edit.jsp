@@ -150,6 +150,23 @@
     	</msh:ifInRole>
     </msh:ifInRole>
     </msh:ifFormTypeIsView>
+          <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
+      	<msh:section title="Предварительная госпитализация">
+      		<ecom:webQuery name="WorkCalendarHospitalBed" nativeSql="select d.id as di
+      		,d.dateFrom
+      		,dep.name
+      		,d.diagnosis
+      		from WorkCalendarHospitalBed d
+      		left join MisLpu dep on dep.id=d.department_id 
+      		where d.visit_id='${param.id}'
+      		"/>
+      		<msh:table name="WorkCalendarHospitalBed" action="entityView-smo_planHospitalByVisit.do" 
+      	 	 viewUrl="entityShortView-smo_planHospitalByVisit.do" idField="1" hideTitle="true">
+      			<msh:tableColumn property="2" columnName="Пред. дата госпитализации"/>
+      			<msh:tableColumn property="3" columnName="Отделение"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Poly/PrescriptionBlank/View">
     <msh:ifFormTypeIsView formName="smo_ticketForm" guid="e2bc3fba-21d3-49fd-95ba-4b65d5dc2eaf">
       <msh:section guid="f58220d8-bf90-4099-a5c8-cb51ad9937fb">
@@ -211,6 +228,7 @@
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
