@@ -43,7 +43,7 @@ public class ActionUtil {
 		String sql ="" ;
     	if (param!=null && !param.equals("") && !param.equals("0")) {
     		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
-    		sql=" and "+aFldId+"="+param;
+    		sql=" and "+aFldId+"='"+param+"'";
     		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
     		aRequest.setAttribute(aAttributeName,param) ;
     	} else {
