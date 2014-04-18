@@ -217,5 +217,13 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** Категория специалиста */
 	private Long theCategory;
+	/** Импорт */
+	@Comment("Импорт")
+	@Persist
+	public Boolean getIsImport() {return theIsImport;}
+	public void setIsImport(Boolean aIsImport) {theIsImport = aIsImport;}
+
+	/** Импорт */
+	private Boolean theIsImport;
 }
 
