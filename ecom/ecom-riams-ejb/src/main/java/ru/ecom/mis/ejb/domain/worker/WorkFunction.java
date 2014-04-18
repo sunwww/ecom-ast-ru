@@ -280,4 +280,12 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Категория специалиста */
 	private VocCategory theCategory;
+	
+	/** Импорт */
+	@Comment("Импорт")
+	public Boolean getIsImport() {return theIsImport;}
+	public void setIsImport(Boolean aIsImport) {theIsImport = aIsImport;}
+
+	/** Импорт */
+	private Boolean theIsImport;
 }
