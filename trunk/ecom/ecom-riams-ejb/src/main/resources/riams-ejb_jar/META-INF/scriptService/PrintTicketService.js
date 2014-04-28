@@ -125,8 +125,8 @@ function printInfo(aCtx, aParams) {
     record("ticketd",ticket.dateFinish!=null?FORMAT.format(ticket.dateFinish):"") ;
     record("medcard",mc) ;
     record("idticket",""+ticket.id) ;
-    recordVocProba("sex", prs.sex, 1, 2);
-    recordVocProba("paym", ticket.serviceStream, 1, 5);
+    //recordVocProba("sex", prs.sex, 1, 2);
+    //recordVocProba("paym", ticket.serviceStream, 1, 5);
     if (ticket.getWorkFunctionExecute()!=null) {
     	record("Doctor", ticket.getWorkFunctionExecute().getWorkerInfo());
     	ifVocIsNotNull(ticket.getWorkFunctionExecute().getWorkFunction(),"DoctorFunction") ;
@@ -191,15 +191,7 @@ function recordDate(aKey, aDate) {
 		map.put(aKey+".year","") ;
 	}
 }
-function recordBoCreateolean(aKey,aBool) {
-	if (aBool!=null && aBool==true) {
-		map.put(aKey+".k1","<text:span text:style-name=\"T13\">") ;
-		map.put(aKey+".k2","</text:span>");
-	} else {
-		map.put(aKey+".k1","") ;
-		map.put(aKey+".k2","");
-	}
-}
+
 function recordArray(aKey,aValue,aMinVal,aMaxVal,aPrint) {
 	
 	for (var i=aMinVal;i<=aMaxVal;i++) {
@@ -233,16 +225,5 @@ function recordTime(aKey, aTime) {
 	} else {
 		map.put(aKey,"") ;
 	}
-}
-function recordVocProba(aKey, aValue, aMin, aMax) {
-	for (i=aMin;i<=aMax;i++) {
-		map.put(aKey+i+".k1","");
-		map.put(aKey+i+".k2","");
-	}
-	if (aValue!=null) {
-		var ind= aValue.id ;
-		map.put(aKey+ind+".k1","<text:span text:style-name=\"T14\">");
-		map.put(aKey+ind+".k2","</text:span>");
-		}
-	} 
+} 
 
