@@ -14,7 +14,7 @@
     <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
     <%
     int idimg = (int)(17*Math.random()) ;
-    request.setAttribute("idimg", ""+idimg) ;
+    
     Calendar cal = Calendar.getInstance() ;
     int month = cal.get(Calendar.MONTH) ;
     int day = cal.get(Calendar.DAY_OF_MONTH) ;
@@ -46,8 +46,9 @@
     	if (day>20) {path_curdate="1231";break;}
     default:
     	path_curdate="default" ;
-    	
+    	idimg=0;
     }
+    request.setAttribute("idimg", ""+idimg) ;
     request.setAttribute("curdate_MMdd", ""+path_curdate) ;
     %>
 	<style type="text/css">
