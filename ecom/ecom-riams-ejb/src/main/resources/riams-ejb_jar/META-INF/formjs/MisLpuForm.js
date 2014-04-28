@@ -42,4 +42,8 @@ function isUnitLpu(aMainLpuId,aChildLpuId,aCtx) {
 	}
 	return false ;
 }
+function onPreDelete(aEntityId, aCtx){
+	aCtx.manager.createNativeQuery("delete from RepMisLpuChild where lpu_id=:lpu or childLpu_id=:lpu")
+	.setParameter("lpu", aEntityId).executeUpdate();
+}
 	
