@@ -243,5 +243,19 @@ public class AggregateHospitalReport extends BaseEntity {
 	/** Перевели из отделения */
 	private Long theTransferDepartmentFrom;
 	
+	/** Тип стационара */
+	@Comment("Тип стационара")
+	public Long getHospType() {return theHospType;	}
+	public void setHospType(Long aHospType) {theHospType = aHospType;}
+
+	/** Тип стационара */
+	private Long theHospType;
+	/** Пол ид */
+	@Comment("Пол ид")
+	public Long getSex() {return theSex;}
+	public void setSex(Long aSex) {theSex = aSex;}
+
+	/** Пол ид */
+	private Long theSex;
 	
 }

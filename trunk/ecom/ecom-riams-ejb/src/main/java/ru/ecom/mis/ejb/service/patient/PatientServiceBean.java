@@ -733,7 +733,7 @@ public class PatientServiceBean implements IPatientService {
 			String username = theSessionContext.getCallerPrincipal().toString() ;
 			QueryClauseBuilder builder = new QueryClauseBuilder();
 			StringBuilder sql = new StringBuilder() ;
-			sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday from patient p ") ;
+			sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,case when p.colorType='1' then p.ColorType else null end as ColorType from patient p ") ;
 			sql.append(" left join psychiatricCareCard pcc on pcc.patient_id=p.id") ;
 			sql.append(" left join lpuareapsychcarecard lpcc on lpcc.careCard_id=pcc.id") ;
 			sql.append(" left join lpuarea la on la.id = lpcc.lpuarea_id") ;
@@ -801,7 +801,7 @@ public class PatientServiceBean implements IPatientService {
 				StringBuilder sb = new StringBuilder();
 				sb
 						.append("SELECT patient.id, lastname, firstname, middlename 					");
-				sb.append("       , MisLpu.name   					");
+				sb.append("       , MisLpu.name ,  ,case when patient.colorType='1' then patient.ColorType else null end as ColorType					");
 				sb.append("  FROM Patient, LpuAttachedByDepartment, MisLpu ");
 				sb.append(" WHERE 													");
 				sb
@@ -853,7 +853,7 @@ public class PatientServiceBean implements IPatientService {
 	private Query findByPolicy(Long aLpuId, Long aLpuAreaId, String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		String query = 
-			  "select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday from MedPolicy " 
+			  "select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday,case when patient.colorType='1' then patient.ColorType else null end as ColorType from MedPolicy " 
 			+ " inner join Patient on MedPolicy.patient_id = Patient.id"
 			+ " where"
 			;
@@ -875,7 +875,7 @@ public class PatientServiceBean implements IPatientService {
 	private Query findByMedCardNumber(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		String query = 
-				"select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday from Medcard " 
+				"select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday,case when patient.colorType='1' then patient.ColorType else null end as ColorType from Medcard " 
 						+ " inner join Patient on Medcard.person_id = Patient.id"
 						+ " where"
 						;
@@ -890,7 +890,7 @@ public class PatientServiceBean implements IPatientService {
 	private Query findByPatientSync(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		String query = 
-			  "select id, lastname, firstname, middlename, birthday from Patient "
+			  "select id, lastname, firstname, middlename, birthday,case when colorType='1' then ColorType else null end as ColorType from Patient "
 			+ " where"
 			;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
@@ -908,11 +908,20 @@ public class PatientServiceBean implements IPatientService {
 		for (Object[] arr : list) {
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
-			f.setLastname((String) arr[1]);
-			f.setFirstname((String) arr[2]);
-			f.setMiddlename((String) arr[3]);
-			if(arr[4]!=null) {
-				f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
+			if (arr.length>5 && arr[5]!=null) {
+				f.setLastname(new StringBuilder().append("<font color='red'>").append(arr[1]).append("</font>").toString());
+				f.setFirstname(new StringBuilder().append("<font color='red'>").append(arr[2]).append("</font>").toString());
+				f.setMiddlename(new StringBuilder().append("<font color='red'>").append(arr[3]).append("</font>").toString());
+				if(arr[4]!=null) {
+					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
+				}
+			} else {
+				f.setLastname((String) arr[1]);
+				f.setFirstname((String) arr[2]);
+				f.setMiddlename((String) arr[3]);
+				if(arr[4]!=null) {
+					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
+				}
 			}
 			ret.add(f);
 		}
@@ -925,8 +934,15 @@ public class PatientServiceBean implements IPatientService {
 
 		for (Patient patient : list) {
 			try {
-				ret.add(theEntityFormService.loadForm(PatientForm.class,
-						patient));
+				PatientForm frm = theEntityFormService.loadForm(PatientForm.class,
+						patient) ;
+				if (patient.getColorType()!=null &&patient.getColorType()) {
+					frm.setLastname(new StringBuilder().append("<font color='red'>").append(frm.getLastname()).append("</font>").toString());
+					frm.setFirstname(new StringBuilder().append("<font color='red'>").append(frm.getFirstname()).append("</font>").toString());
+					frm.setMiddlename(new StringBuilder().append("<font color='red'>").append(frm.getMiddlename()).append("</font>").toString());
+					
+				}
+				ret.add(frm);
 			} catch (EntityFormException e) {
 				throw new IllegalStateException(e);
 			}
