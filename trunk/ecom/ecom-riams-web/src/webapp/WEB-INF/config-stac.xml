@@ -97,6 +97,20 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report16.jsp" />
         </action>
+        <action path='/stac_report_refresh' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/stac_report_refresh.jsp" />
+        </action>
+        <action path='/stac_report_refresh_save' type='ru.ecom.mis.web.action.medcase.HospitalReportRefreshAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/stac_report_refresh.do" />
+        </action>
         <action path='/stac_journal_surgical_help' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

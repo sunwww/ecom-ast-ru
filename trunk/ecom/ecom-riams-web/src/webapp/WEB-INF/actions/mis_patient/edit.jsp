@@ -121,6 +121,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       <msh:hidden property="realHouseBuilding" guid="ab904ba6-ed1c-4bc0-a641-81baed6f8cbd" />
       <msh:hidden property="realHouseNumber" guid="0468a9e5-872e-4491-a71a-a24ebc07202e" />
       <msh:hidden property="realZipcode" guid="0468a9e5-872e-4491-a71a-a24ebc07202e" />
+      <msh:hidden property="colorType" guid="0468a9-a24ebc07202e" />
       <msh:hidden property="zipcode" guid="0468a9-a24ebc07202e" />
       
       
@@ -327,7 +328,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         <msh:row>
         
         <td colspan="2" title="Адрес (nonresidentAddressField)" class="label">
-            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Иногородний адрес:</label>
+            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Lheuj адрес:</label>
           </td>
           <td colspan="4" class="addressField">
             <input title="АдресNoneField" class=" horizontalFill" id="nonresidentAddressField" name="nonresidentAddressField" size="10" value="Адрес... " type="text" />
@@ -741,62 +742,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	      </msh:ifNotInRole>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
-    <msh:ifFormTypeIsView formName="mis_patientForm" guid="e4c62deb-7fd7-43f2-a2a1-ba3e365bde45">
-<%--      <msh:ifInRole roles="/Policy/Mis/Worker/WorkBook/View" guid="afdcf287-9d6c-464f-a1d8-3fb95d933137">
-        <msh:section title="Трудовые книжки" guid="362d2b20-f3b2-4836-a8d1-84b4c5ab8cff">
-          <ecom:parentEntityListAll formName="mis_workBookForm" attribute="workBook" guid="76b0f72f-adf3-410b-a915-0426db5091bf" />
-          <msh:table hideTitle="false" disableKeySupport="false" idField="id" name="workBook" action="entityParentView-mis_workBook.do" disabledGoFirst="false" disabledGoLast="false" guid="abdbfecd-0947-4586-ac49-1b5552fed11c">
-            <msh:tableColumn columnName="Дата заведения" identificator="false" property="dateStart" guid="5b095a99-cb34-4c90-8911-e29828581a86" />
-            <msh:tableColumn columnName="Серия" property="seriesBook" guid="b8bb-e98e-45df-a4e5-a9b8a" />
-            <msh:tableColumn columnName="Номер" identificator="false" property="numberBook" guid="b1c058bb-e98e-45df-a4e5-a96c63db7b8a" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Worker/Education/View" guid="24b59e61-a417-4537-82ac-d6f5613bdd07">
-        <msh:section title="Образование" guid="d1aa4d91-2c6f-44dc-a49e-b8c5a1">
-          <msh:ifInRole roles="/Policy/Mis/Worker/Education/View" guid="2a7edef7-cf21-49b2-ae9a-d78523a3b6ec">
-            <ecom:parentEntityListAll formName="mis_educationForm" attribute="education" guid="4b8212fa-be13-4a65-a0a3-a554763" />
-            <msh:table hideTitle="false" disableKeySupport="false" idField="id" name="education" action="entityParentView-mis_education.do" disabledGoFirst="false" disabledGoLast="false" guid="c60c3d41-d947-476f-8b04-88dc30fe4">
-              <msh:tableColumn columnName="Номер диплома" identificator="false" property="numberDiplom" guid="9e9e4a59-b34b-4322-a0c9-b3b38326d93b" />
-              <msh:tableColumn columnName="Институт" identificator="false" property="institutText" guid="ae917d2a-6ddb-46f3-9726-70a1b4b7b065" />
-              <msh:tableColumn columnName="Специальность" identificator="false" property="specText" guid="1f6b89cc-7be0-4021-b4b6-92bcc23c46f6" />
-              <msh:tableColumn columnName="Дата окончания обучения" identificator="false" property="dateFinish" guid="f087cdfb-0209-4adf-a829-ffb7191b72c3" />
-            </msh:table>
-          </msh:ifInRole>
-        </msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Worker/Qualification/View" guid="0b57c749-ae5b-469b-80e6-ddb67b2749cb">
-        <msh:section title="Квалификация" guid="d1aa4d91-2c6f-44dc-a49e-b8c53">
-          <ecom:parentEntityListAll formName="mis_qualificationForm" attribute="qualification" guid="4b8212fa-be13-4a65-a0a3-a554743" />
-          <msh:table hideTitle="false" disableKeySupport="false" idField="id" name="qualification" action="entityParentView-mis_qualification.do" disabledGoFirst="false" disabledGoLast="false" guid="c60c3d41-d947-476f-8b04-88dc3re4">
-            <msh:tableColumn columnName="Номер сертификата" identificator="false" property="certificateNumber" guid="4c11444f-b924-40aa-8939-3adad7b174da" />
-            <msh:tableColumn columnName="Категория" identificator="false" property="categoryText" guid="2a789db1-6735-416b-835d-5d83435436cc" />
-            <msh:tableColumn columnName="Степень" identificator="false" property="academicDegreeText" guid="43542cbb-0f06-4652-a32c-781917c1ef36" />
-            <msh:tableColumn columnName="Звание" identificator="false" property="academicStatusText" guid="665a60a9-1758-40dd-8482-ec5f73dc0446" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Worker/Award/View" guid="a7036440-353f-4667-a18e-a0da8a55cdaa">
-        <msh:section title="Награды" guid="d1aa4d91-2c6f-44dc-a49e-b8c53325">
-          <ecom:parentEntityListAll formName="work_awardForm" attribute="award" guid="4b8212fa-be13-4a65-a0a3-a55474333" />
-          <msh:table hideTitle="false" disableKeySupport="false" idField="id" name="award" action="entityParentView-work_award.do" disabledGoFirst="false" disabledGoLast="false" guid="c60c3d41-d947-476f-8b04-88dc333e4">
-            <msh:tableColumn identificator="false" property="rewardingDate" guid="abd15606-c115-4b21-a269-7eb6f5e425f4" columnName="Дата награждения" />
-            <msh:tableColumn columnName="Номер" identificator="false" property="awardNumber" guid="502932b7-462e-4c3b-940d-f90ad95f40e5" />
-            <msh:tableColumn columnName="Комментарий" identificator="false" property="comments" guid="6d16caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
-       
-      <msh:ifInRole roles="/Policy/Mis/Worker/LaguageSkill/View" guid="84adda1f-79d9-48b2-8c20-6772f2ab2399">
-        <msh:section title="Знание языков" guid="d1aa4d91-2c6f-44dc-a49e-b8c53-1232">
-          <ecom:parentEntityListAll formName="mis_languageSkillForm" attribute="lang" guid="4b8212fa-be13-4a65-a0a3-a55474" />
-          <msh:table hideTitle="true" disableKeySupport="false" idField="id" name="lang" action="entityParentView-mis_languageSkill.do" disabledGoFirst="false" disabledGoLast="false" guid="c60c3d41-d947-476f-8b04-88dc35">
-            <msh:tableColumn columnName="Язык" identificator="false" property="languageText" guid="ed23e87c-dcbb-45ee-823a-e7b693108e1e" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
-      --%>
-    </msh:ifFormTypeIsView>
+ 
     
     <tags:addressTag nextField="rayonName" fieldRayon="rayon"/>
     <tags:addressNewTag form="mis_patientForm" name="realAddress" zipcode="realZipcode" flatNumber="realFlatNumber" houseNumber="realHouseNumber" houseBuilding="realHouseBuilding" addressField="realAddressField" />
@@ -837,6 +783,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       	<tags:mis_moveDoublePatient name="Data" title="Перенести данные пациента" roles="/Policy/Mis/Patient/MoveDoublePatient"/>
       	<msh:sideLink action="/js-work_personalWorkFunction-listByPerson" params="id" roles="/Policy/Mis/Worker/WorkFunction/View"
       		name="Рабочие функции" title="Просмотреть рабочие функции по персоне"
+      	/>
+      	<msh:sideLink action=".javascript:updateColorPatient(${param.id})" params="id" roles="/Policy/Mis/Patient/EditColorType"
+      		name="Изменить цвет" title="Изменить цвет "
       	/>
       </msh:sideMenu>
       
@@ -909,6 +858,18 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
   </script>
   </msh:ifFormTypeIsCreate>
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <msh:ifInRole roles="/Policy/Mis/Patient/EditColotType">
+    <script type="text/javascript">
+	function updateColorPatient() {
+		PatientService.editColorType($('id').value,$('colorType').value=="true"?"1":"0", {
+            callback: function(aResult) {
+            	 window.document.location.reload();
+            }
+        	});
+		
+	}
+    </script>
+    </msh:ifInRole>
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
     	function checkPatientByCommonNumber(a) {
@@ -1071,7 +1032,11 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	//alert(!$('attachedByPolicy').checked) ;
         	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	
-		//]]></script>
+		//]]>
+      if ($('colorType').value) {
+    	  $()
+      }
+      </script>
     </msh:ifFormTypeIsView>
     
     <!-- Редактирование  -->

@@ -20,6 +20,7 @@
 	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
 	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
 	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
+	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -60,6 +61,19 @@
 	        
        </msh:row>
       <msh:row>
+        <td class="label" title="Прикрепление  (typeAttachment)" colspan="1"><label for="typeAttachmentName" id="typeAttachmentLabel">Возраст:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAttachment" value="1">  по территории
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAttachment" value="2">  по заявлению 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAttachment" value="3">  все 
+	        </td>
+	        
+       </msh:row>
+      <msh:row>
         <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1">  прикрепленные пациенты (все)
@@ -81,6 +95,7 @@
           </td>
       </msh:row>
       <script type="text/javascript">
+      checkFieldUpdate('typeAttachment','${typeAttachment}',3) ;
       checkFieldUpdate('typeView','${typeView}',1) ;
       checkFieldUpdate('typeAge','${typeAge}',3) ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {

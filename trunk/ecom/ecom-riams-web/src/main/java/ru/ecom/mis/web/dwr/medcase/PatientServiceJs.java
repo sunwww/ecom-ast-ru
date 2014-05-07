@@ -19,6 +19,15 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String editColorType(Long aPatient,String aColorTypeCurrent, HttpServletRequest aRequest) throws NamingException  {
+		String colorType="1" ;
+		if (aColorTypeCurrent!=null && aColorTypeCurrent.trim().equals("1")) {
+			colorType="0" ;
+		}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update Patient set colorType='"+colorType+"' where id='"+aPatient+"'") ;
+		return "сохранено" ;
+	}
 	public String getAgeForDisp(Long aPatient, String aFinishDate, HttpServletRequest aRequest) throws NamingException {
 		try {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
