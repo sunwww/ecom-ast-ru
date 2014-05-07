@@ -1056,10 +1056,9 @@ public class Patient extends BaseEntity{
 	private Long theNewbornWeight;
 	/** Цветовая характеристика */
 	@Comment("Цветовая характеристика")
-	@OneToOne
-	public VocColorType getColorType() {return theColorType;}
-	public void setColorType(VocColorType aColorType) {theColorType = aColorType;}
+	public Boolean getColorType() {return theColorType;}
+	public void setColorType(Boolean aColorType) {theColorType = aColorType;}
 
 	/** Цветовая характеристика */
-	private VocColorType theColorType;
+	private Boolean theColorType;
 }

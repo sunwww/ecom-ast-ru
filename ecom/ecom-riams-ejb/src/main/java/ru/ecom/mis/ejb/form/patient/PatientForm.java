@@ -890,9 +890,9 @@ public class PatientForm extends IdEntityForm {
 	/** Цветовая характеристика */
 	@Comment("Цветовая характеристика")
 	@Persist
-	public Long getColorType() {return theColorType;}
-	public void setColorType(Long aColorType) {theColorType = aColorType;}
+	public Boolean getColorType() {return theColorType;}
+	public void setColorType(Boolean aColorType) {theColorType = aColorType;}
 
 	/** Цветовая характеристика */
-	private Long theColorType;	
+	private Boolean theColorType;	
 }
