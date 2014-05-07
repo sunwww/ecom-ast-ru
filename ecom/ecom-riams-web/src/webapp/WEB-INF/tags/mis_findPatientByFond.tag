@@ -118,7 +118,7 @@
 		     		,$('is${name}Document').checked,$('is${name}Address').checked
 		     		 ,{
 		                   callback: function(aString) {
-		                      alert("Данные обновлены") ;
+		                      //alert("Данные обновлены") ;
 		                       window.document.location.reload();
 		                    }
 		                }
