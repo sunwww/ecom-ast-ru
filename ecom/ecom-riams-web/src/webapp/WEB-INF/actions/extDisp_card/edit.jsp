@@ -101,7 +101,7 @@ from extdispservice eds
 left join VocExtDispService veds on veds.id=eds.servicetype_id
 where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			"/>
-				<msh:table name="examQuery" action="js-extDisp_service-edit.do" idField="1">
+				<msh:table  name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
 					<msh:tableColumn columnName="Дата" property="3"/>
 					<msh:tableColumn columnName="Рекомендации" property="4"/>
