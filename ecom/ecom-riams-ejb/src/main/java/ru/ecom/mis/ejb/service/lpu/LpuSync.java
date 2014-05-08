@@ -56,6 +56,7 @@ public class LpuSync implements ISync {
 			lpu.setDirector(omcLpu.getDirector());
 			lpu.setPhone(omcLpu.getPhone());
 			lpu.setCodef(omcLpu.getCodef()) ;
+			
 			//lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
 			try {
     			//lpu.setInn(Long.parseLong(omcLpu.getInn())) ;

@@ -30,7 +30,7 @@ public class DirectionPreCreateInterceptor implements IParentFormInterceptor {
 		                              +"  and DTYPE like 'MedPolicyOmc%'")
 			//.setParameter("patid", form.getId())
 			.getResultList();
-		List<Object[]> hospInfo = manager.createNativeQuery("select list(to_char(mc.dateStart,'dd.mm.yyyy')||' '||ml.name),list(ml.name) as mlname from MedCase mc left join MisLpu ml on ml.id=mc.department_id where mc.patient_id='"+aParentId+"' and mc.dtype='HospitalMedCase' and mc.dateFinish is null group by mc.patient_id").getResultList() ;
+		List<Object[]> hospInfo = manager.createNativeQuery("select list(to_char(mc.dateStart,'dd.mm.yyyy')||' '||ml.name),list(ml.name) as mlname from MedCase mc left join MisLpu ml on ml.id=mc.department_id where mc.patient_id='"+aParentId+"' and mc.dtype='HospitalMedCase' and mc.dateFinish is null and mc.deniedHospitalizating_id is null group by mc.patient_id").getResultList() ;
 		String errorInfo = null ;
 		if (hospInfo.size()>0) {
 			errorInfo = "Пацинет ГОСПИТАЛИЗИРОВАН в стационар "+hospInfo.get(0)[0] ;
