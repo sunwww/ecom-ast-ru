@@ -374,5 +374,40 @@ where city like '%АСТРАХАНЬ%'
 
 	/** Страна */
 	private String theCountry;
+	
+	/** Lpuauto */
+	@Comment("Lpuauto")
+	@AFormatFieldSuggest({"LPUAUTO" })
+	public String getLpuauto() {return theLpuauto;}
+	public void setLpuauto(String aLpuauto) {theLpuauto = aLpuauto;}
 
+	/** Lpuauto */
+	private String theLpuauto;
+	
+	/** Lpu */
+	@Comment("Lpu")
+	@AFormatFieldSuggest({"LPU" })
+	public String getLpu() {return theLpu;}
+	public void setLpu(String aLpu) {theLpu = aLpu;}
+
+	/** Lpu */
+	private String theLpu;
+	
+	/** Дата прикрепления */
+	@Comment("Дата прикрепления")
+	@AFormatFieldSuggest({"LPUDT" })
+	public Date getLpuDateFrom() {return theLpuDateFrom;}
+	public void setLpuDateFrom(Date aLpuDateFrom) {theLpuDateFrom = aLpuDateFrom;}
+
+	/** Дата прикрепления */
+	private Date theLpuDateFrom;
+	
+	/** Дата открепления */
+	@Comment("Дата открепления")
+	@AFormatFieldSuggest({"LPUDX" })
+	public Date getLpuDateTo() {return theLpuDateTo;}
+	public void setLpuDateTo(Date aLpuDateTo) {theLpuDateTo = aLpuDateTo;}
+
+	/** Дата открепления */
+	private Date theLpuDateTo;
 }
