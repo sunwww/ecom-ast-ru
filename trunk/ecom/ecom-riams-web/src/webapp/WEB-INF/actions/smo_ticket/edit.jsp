@@ -228,7 +228,7 @@
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create" key="ALT+7" />
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
