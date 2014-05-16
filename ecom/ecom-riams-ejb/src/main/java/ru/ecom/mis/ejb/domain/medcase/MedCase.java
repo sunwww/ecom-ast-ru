@@ -193,12 +193,6 @@ abstract public class MedCase extends BaseEntity {
     public void setPrescriptionBlanks(List<PrescriptionBlank> aPrescriptionBlanks) { thePrescriptionBlanks = aPrescriptionBlanks; }
   
 
-    /** Осмотры */
-	@Comment("Осмотры")
-	@OneToMany(mappedBy="medCase",cascade=ALL)
-	public List<Inspection> getInspections() {return theInspections;	}
-	public void setInspections(List<Inspection> aInspections) {theInspections = aInspections;}
-
 	/** Представитель */
 	@Comment("Представитель")
 	@OneToOne
@@ -212,16 +206,6 @@ abstract public class MedCase extends BaseEntity {
 	private VocHospitalization theHospitalization;	
 	/** Представитель */
 	private Kinsman theKinsman;
-	/** Осмотры */
-	private List<Inspection> theInspections;
-
-
-	
-	  /** Переливания трансфузионных сред */
-	@Comment("Переливания трансфузионных сред")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL )
-	public List<Transfusion> getTransfusions() {return theTransfusions;}
-	public void setTransfusions(List<Transfusion> aTransfusions) {theTransfusions = aTransfusions;}
 
 	@Transient
 	public String getPatientInfo() {
@@ -322,8 +306,6 @@ abstract public class MedCase extends BaseEntity {
 	private Date theCreateDate;
 	/** Оператор */
 	private String theUsername;
-	/** Переливания трансфузионных сред */
-	private List<Transfusion> theTransfusions;	
 	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
 	/**Пациент */
