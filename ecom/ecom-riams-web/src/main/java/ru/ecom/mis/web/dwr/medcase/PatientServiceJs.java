@@ -59,6 +59,8 @@ public class PatientServiceJs {
 				return "1.9" ;
 			} else if (yearDif==0){
 				return ""+yearDif+"."+monthDif ;
+			} else if(yearDif<18) {
+				return ""+yearDif ;
 			} else {
 				int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
 				int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
