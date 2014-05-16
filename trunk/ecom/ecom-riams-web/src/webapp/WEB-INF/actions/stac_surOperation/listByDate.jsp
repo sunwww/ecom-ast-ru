@@ -37,7 +37,7 @@
 		typeDateSql = "slsHosp.dateFinish" ;
 	} 
 	request.setAttribute("typeDateSql", typeDateSql);
-	
+	ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
     
   %>
     <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
@@ -82,7 +82,7 @@
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
-	           ${addParamSql}
+	           ${addParamSql} ${serviceStreamSql}
 	          order by p.lastname,p.firstname,p.middlename
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" 
