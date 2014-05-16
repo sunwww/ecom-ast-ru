@@ -25,10 +25,7 @@ public class OtherTransfusion extends Transfusion{
 	public VocOtherTransfusPreparation getOtherPreparation() {return theOtherPreparation;}
 	public void setOtherPreparation(VocOtherTransfusPreparation aOtherPreparation) {theOtherPreparation = aOtherPreparation;}
 
-	@Transient
-	public String getInformation() {
-		return theOtherPreparation!=null?theOtherPreparation.getName():"";
-	}
+
 	/** Другая трансфузионная жидкость */
 	private VocOtherTransfusPreparation theOtherPreparation;
 
