@@ -78,7 +78,7 @@
         </msh:row>
         <msh:row guid="4bd126b5-2316-42c4-bcb7-ccf5108b2c27">
           <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" horizontalFill="true" guid="bf850705-5557-438e-b56e-33d59b1618e4" />
-          <msh:autoComplete vocName="vocTrauma" property="concludingTrauma" label="Травма" horizontalFill="true" guid="eedb1042-1861-426e-a0ec-6151c3933dd1" />
+          <msh:autoComplete vocName="vocTraumaType" property="concludingTrauma" label="Травма" horizontalFill="true" guid="eedb1042-1861-426e-a0ec-6151c3933dd1" />
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	        <msh:row>
