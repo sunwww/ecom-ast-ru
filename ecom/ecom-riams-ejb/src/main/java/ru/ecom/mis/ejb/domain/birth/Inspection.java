@@ -62,7 +62,7 @@ public abstract class Inspection extends BaseEntity{
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
-	@ManyToOne
+	@OneToOne
 	public MedCase getMedCase() {return theMedCase;}
 	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
 

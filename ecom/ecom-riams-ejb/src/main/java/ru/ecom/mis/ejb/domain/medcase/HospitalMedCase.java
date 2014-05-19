@@ -394,16 +394,7 @@ public class HospitalMedCase extends LongMedCase {
 	} 
 		*/
 
-	/** Температурный лист */
-	@Comment("Температурный лист")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<TemperatureCurve> getTemperatureCurves() {
-		return theTemperatureCurves;
-	}
-
-	public void setTemperatureCurves(List<TemperatureCurve> aTemperatureCurves) {
-		theTemperatureCurves = aTemperatureCurves;
-	}
+	
 	
 	/** Главное ЛПУ инфо */
 	@Comment("Главное ЛПУ инфо")
@@ -436,8 +427,6 @@ public class HospitalMedCase extends LongMedCase {
 	 private VocPsychHospitalReason thePsychReason;
 	 /** Педикулез */
 	private VocPediculosis thePediculosis;
-	/** Температурный лист */
-	private List<TemperatureCurve> theTemperatureCurves;
 
 	/** Тип текущего стационара */
 	private VocHospType theHospType;

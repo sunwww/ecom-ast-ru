@@ -40,6 +40,18 @@
 		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5))||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy')||' '||cast(slo.dischargeTime as varchar(5)),to_char(slo.transferDate,'dd.mm.yyyy')||' '||cast(slo.transferTime as varchar(5)),'')"
 		/>
 	</voc>
+	<voc id="vocCountBedInHospitalRoom" type="NativeVocService">
+		<NativeVocService
+		    	from=" VocCountBedInHospitalRoom as vkhc "
+		    	parent=''
+		    	nameId="vkhc.id"
+		    	join=""
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (vkhc.name like upper(:query) or cast(vkhc.id as varchar(3)) like upper(:querId))"
+		    	names = "vkhc.name"
+		/>
+	</voc>
 	<voc id="vocKindHighCare" type="NativeVocService">
 		<NativeVocService
 		    	from=" VocKindHighCare as vkhc "
