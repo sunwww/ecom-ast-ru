@@ -4,18 +4,18 @@ import java.sql.Date;
 import java.sql.Time;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreparatorBlood;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionDefinitionRhesus;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethod;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionPregnancyHang;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReaction;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionResearchAntibodies;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -73,6 +73,7 @@ public abstract class Transfusion extends BaseEntity{
 
 	/** Изготовитель */
 	@Comment("Изготовитель")
+	@OneToOne
 	public VocPreparatorBlood getPreparator() {return thePreparator;}
 	public void setPreparator(VocPreparatorBlood aPreparator) {thePreparator = aPreparator;}
 
@@ -202,8 +203,8 @@ public abstract class Transfusion extends BaseEntity{
 	/** Исследования антител */
 	@Comment("Исследования антител")
 	@OneToOne
-	public VocYesNo getResearchAntibodies() {return theResearchAntibodies;}
-	public void setResearchAntibodies(VocYesNo aResearchAntibodies) {theResearchAntibodies = aResearchAntibodies;}
+	public VocTransfusionResearchAntibodies getResearchAntibodies() {return theResearchAntibodies;}
+	public void setResearchAntibodies(VocTransfusionResearchAntibodies aResearchAntibodies) {theResearchAntibodies = aResearchAntibodies;}
 
 	/** Выявленные антитела */
 	@Comment("Выявленные антитела")
@@ -245,10 +246,27 @@ public abstract class Transfusion extends BaseEntity{
 	/** Выявленные антитела */
 	private String theAntibodiesList;
 	/** Исследования антител */
-	private VocYesNo theResearchAntibodies;
+	private VocTransfusionResearchAntibodies theResearchAntibodies;
 	/** Номер контейнера */
 	private String theContainerNumber;
 	/** Срок годности */
 	private Date theExpirationDate;
 
+	/** Реакции на переливания в прошлом */
+	@Comment("Реакции на переливания в прошлом")
+	@OneToOne
+	public VocYesNo getTransfusionReactionLast() {return theTransfusionReactionLast;}
+	public void setTransfusionReactionLast(VocYesNo aTransfusionReactionLast) {theTransfusionReactionLast = aTransfusionReactionLast;}
+
+	/** Реакции на переливания в прошлом */
+	private VocYesNo theTransfusionReactionLast;
+	
+	/** Определение резус-принадлежности рециента производилось */
+	@Comment("Определение резус-принадлежности рециента производилось")
+	@OneToOne
+	public VocTransfusionDefinitionRhesus getDefinitionRhesus() {return theDefinitionRhesus;}
+	public void setDefinitionRhesus(VocTransfusionDefinitionRhesus aDefinitionRhesus) {theDefinitionRhesus = aDefinitionRhesus;}
+
+	/** Определение резус-принадлежности рециента производилось */
+	private VocTransfusionDefinitionRhesus theDefinitionRhesus;
 }

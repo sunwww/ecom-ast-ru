@@ -150,7 +150,7 @@ public class TemperatureCurve extends BaseEntity {
 	
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
-	@ManyToOne
+	@OneToOne
 	public MedCase getMedCase() {
 		return theMedCase;
 	}

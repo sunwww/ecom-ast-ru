@@ -1,9 +1,14 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Transfusion;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionDefinitionRhesus;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionPregnancyHang;
+import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -12,9 +17,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+import ru.nuzmsh.forms.validator.validators.TimeString;
 
 /**
  * Форма "Переливание трансфузионных сред"
@@ -75,8 +82,8 @@ public class TransfusionForm extends IdEntityForm {
 	/** Изготовитель */
 	@Comment("Изготовитель")
 	@Persist @DoUpperCase
-	public String getPreparator() {return thePreparator;}
-	public void setPreparator(String aPreparator) {thePreparator = aPreparator;}
+	public Long getPreparator() {return thePreparator;}
+	public void setPreparator(Long aPreparator) {thePreparator = aPreparator;}
 
 	/** Способ переливания */
 	@Comment("Способ переливания")
@@ -139,7 +146,7 @@ public class TransfusionForm extends IdEntityForm {
 	/** Дата приготовления */
 	private String thePreparationDate;
 	/** Изготовитель */
-	private String thePreparator;
+	private Long thePreparator;
 	/** Способ переливания */
 	private Long theTransfusionMethod;
 	/** Исполнитель */
@@ -150,5 +157,154 @@ public class TransfusionForm extends IdEntityForm {
 	private String theComplications;
 	/** Номер в журнале */
 	private Integer theJournalNumber;	
+	
+	/** Время переливание с */
+	@Comment("Время переливание с")
+	@TimeString @DoTimeString @Persist @Required
+	public String getTimeFrom() {return theTimeFrom;}
+	public void setTimeFrom(String aTimeFrom) {theTimeFrom = aTimeFrom;}
 
+	/** Время переливания по */
+	@Comment("Время переливания по")
+	@TimeString @DoTimeString @Persist @Required
+	public String getTimeTo() {return theTimeTo;}
+	public void setTimeTo(String aTimeTo) {theTimeTo = aTimeTo;}
+
+	/** Время переливания по */
+	private String theTimeTo;
+	/** Время переливание с */
+	private String theTimeFrom;
+	
+	/** Фенотип */
+	@Comment("Фенотип")
+	@Persist
+	public String getPhenotype() {return thePhenotype;}
+	public void setPhenotype(String aPhenotype) {thePhenotype = aPhenotype;}
+
+	/** Фенотип C */
+	@Comment("Фенотип C")
+	@Persist
+	public Boolean getPhenotypeC() {return thePhenotypeC;}
+	public void setPhenotypeC(Boolean aPhenotypeC) {thePhenotypeC = aPhenotypeC;}
+
+	/** Фенотип с */
+	@Comment("Фенотип с")
+	@Persist
+	public Boolean getPhenotypec() {return thePhenotypec;}
+	public void setPhenotypec(Boolean aPhenotypec) {thePhenotypec = aPhenotypec;}
+
+	/** Фенотип Е */
+	@Comment("Фенотип Е")
+	@Persist
+	public Boolean getPhenotypeD() {return thePhenotypeD;}
+	public void setPhenotypeD(Boolean aPhenotypeD) {thePhenotypeD = aPhenotypeD;}
+
+	/** Фенотип e */
+	@Comment("Фенотип e")
+	@Persist
+	public Boolean getPhenotypeE() {return thePhenotypeE;}
+	public void setPhenotypeE(Boolean aPhenotypeE) {thePhenotypeE = aPhenotypeE;}
+
+	/** Фенотип E */
+	@Comment("Фенотип E")
+	@Persist
+	public Boolean getPhenotypee() {return thePhenotypee;}
+	public void setPhenotypee(Boolean aPhenotypee) {thePhenotypee = aPhenotypee;}
+
+	/** Фенотип E */
+	private Boolean thePhenotypee;	
+	/** Фенотип e */
+	private Boolean thePhenotypeE;
+	/** Фенотип Е */
+	private Boolean thePhenotypeD;
+	/** Фенотип с */
+	private Boolean thePhenotypec;
+	/** Фенотип C */
+	private Boolean thePhenotypeC;
+	/** Фенотип */
+	private String thePhenotype;
+	
+	/** Срок годности */
+	@Comment("Срок годности")
+	@Persist @Required
+	public String getExpirationDate() {return theExpirationDate;}
+	public void setExpirationDate(String aExpirationDate) {theExpirationDate = aExpirationDate;}
+
+	/** Номер контейнера */
+	@Comment("Номер контейнера")
+	@Persist @Required
+	public String getContainerNumber() {return theContainerNumber;}
+	public void setContainerNumber(String aContainerNumber) {theContainerNumber = aContainerNumber;}
+
+	/** Исследования антител */
+	@Comment("Исследования антител")
+	@Persist @Required
+	public Long getResearchAntibodies() {return theResearchAntibodies;}
+	public void setResearchAntibodies(Long aResearchAntibodies) {theResearchAntibodies = aResearchAntibodies;}
+
+	/** Выявленные антитела */
+	@Comment("Выявленные антитела")
+	@Persist
+	public String getAntibodiesList() {return theAntibodiesList;}
+	public void setAntibodiesList(String aAntibodiesList) {theAntibodiesList = aAntibodiesList;}
+
+	/** Трансфузионный анамнез */
+	@Comment("Трансфузионный анамнез")
+	@Persist @Required
+	public Long getTransfusionHistory() {return theTransfusionHistory;}
+	public void setTransfusionHistory(Long aTransfusionHistory) {theTransfusionHistory = aTransfusionHistory;}
+
+	
+	/** Трансфузионный по индив. подбору в прошлом */
+	@Comment("Трансфузионный по индив. подбору в прошлом")
+	@Persist @Required
+	public Long getPersonalTransfusionHistory() {return thePersonalTransfusionHistory;}
+	public void setPersonalTransfusionHistory(Long aTransfusionHistory) {thePersonalTransfusionHistory = aTransfusionHistory;}
+
+	/** Кол-во беременностей */
+	@Comment("Кол-во беременностей")
+	@Persist
+	public String getCountPregnancy() {return theCountPregnancy;}
+	public void setCountPregnancy(String aCountPregnancy) {theCountPregnancy = aCountPregnancy;}
+
+	/** Особенности беременности */
+	@Comment("Особенности беременности")
+	@Persist
+	public VocTransfusionPregnancyHang getPregnancyHang() {return thePregnancyHang;}
+	public void setPregnancyHang(VocTransfusionPregnancyHang aPregnancyHang) {thePregnancyHang = aPregnancyHang;}
+
+	/** Особенности беременности */
+	private VocTransfusionPregnancyHang thePregnancyHang;
+	/** Кол-во беременностей */
+	private String theCountPregnancy;
+	/** Трансфузионный по индив. подбору в прошлом */
+	private Long thePersonalTransfusionHistory;
+	/** Трансфузионный анамнез */
+	private Long theTransfusionHistory;
+	/** Выявленные антитела */
+	private String theAntibodiesList;
+	/** Исследования антител */
+	private Long theResearchAntibodies;
+	/** Номер контейнера */
+	private String theContainerNumber;
+	/** Срок годности */
+	private String theExpirationDate;
+	
+	/** Реакции на переливания в прошлом */
+	@Comment("Реакции на переливания в прошлом")
+	@OneToOne
+	public Long getTransfusionReactionLast() {return theTransfusionReactionLast;}
+	public void setTransfusionReactionLast(Long aTransfusionReactionLast) {theTransfusionReactionLast = aTransfusionReactionLast;}
+
+	/** Реакции на переливания в прошлом */
+	private Long theTransfusionReactionLast;
+	
+	/** Определение резус-принадлежности рециента производилось */
+	@Comment("Определение резус-принадлежности рециента производилось")
+	@OneToOne
+	public Long getDefinitionRhesus() {return theDefinitionRhesus;}
+	public void setDefinitionRhesus(Long aDefinitionRhesus) {theDefinitionRhesus = aDefinitionRhesus;}
+
+	/** Определение резус-принадлежности рециента производилось */
+	private Long theDefinitionRhesus;
 }
