@@ -37,33 +37,40 @@
           <msh:autoComplete property="patientBloodGroup" label="Группа крови" vocName="vocBloodGroup" horizontalFill="true" />
           <msh:autoComplete property="patientRhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor" horizontalFill="true" />
         </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="" label="При исследовании антитела выявлены" vocName="vocYesNo"/>
-        	<msh:textField property="" label="Выявленные антитела"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="" label="Были переливания" vocName="vocYesNo"/>
-        	<msh:autoComplete property="" label="Были трансфизии по инд.подбору" vocName="vocYesNo"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="" label="Были реакции осложнения на переливания" vocName="vocYesNo" labelColSpan="3"/>
-        </msh:row>
-        <msh:row>
-        	<msh:textField property="сountPregnancy" label="Кол-во беременносте"/>
-        	<msh:autoComplete property="" label="Особенности течения" vocName="vocYesNo"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="" label="Макроскопическая оценка: пригодна к переливанию" vocName="vocYesNo" labelColSpan="3"/>
-        </msh:row>
         </msh:panel>
         <msh:panel colsWidth="1%,1%,1%,1%,1%,1%,1%,1%,1%,1%,1%,1%,1%,1%,1%">
-        	<msh:checkBox property="phenotypeC" label="Фенотип: C"/>
+        <msh:row>
+        	<msh:label property="phenotype" label="Фенотип"/>
+        	<msh:checkBox property="phenotypeC" label="C"/>
         	<msh:checkBox property="phenotypec" label="c"/>
         	<msh:checkBox property="phenotypeD" label="D"/>
         	<msh:checkBox property="phenotypeE" label="E"/>
         	<msh:checkBox property="phenotypee" label="e"/>
+        </msh:row>
         </msh:panel>
         <msh:panel>
+        <msh:row>
+        	<msh:autoComplete property="definitionRhesus" vocName="vocTransfusionDefinitionRhesus" label="Определение резус-принадлежности рециента производилось" labelColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="researchAntibodies" label="Исследование антител" vocName="vocTransfusionResearchAntibodies"/>
+        	<msh:textField property="antibodiesList" label="Выявленные антитела"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="transfusionHistory" label="Были переливания" vocName="vocYesNo"/>
+        	<msh:autoComplete property="personalTransfusionHistory" label="Были трансфизии по инд.подбору" vocName="vocYesNo"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="transfusionReactionLast" label="Были реакции осложнения на переливания" vocName="vocYesNo" labelColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="countPregnancy" label="Кол-во беременностей"/>
+        	<msh:autoComplete property="pregnancyHang" label="Особенности течения" vocName="vocTransfusionPregnancyHang"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="macroBall" label="Макроскопическая оценка: пригодна к переливанию" vocName="vocYesNo" labelColSpan="3"/>
+        </msh:row>
+
         <msh:row>
           <msh:separator label="Данные с этикетки контейнера" colSpan="6" />
         </msh:row>
@@ -72,13 +79,12 @@
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocPreparatorBlood" property="preparator" label="Изготовитель" horizontalFill="true" fieldColSpan="1" size="35"/>
-          <msh:textField property="series" label="Серия" />
-          <msh:textField property="doze" label="Объем"/>
+          <msh:textField property="preparationDate" label="Дата заготовки" />
+          <msh:textField property="expirationDate" label="Срок годности" />
         </msh:row>
         <msh:row>
           <msh:textField property="containerNumber" label="№ контейнера" size="35"/>
-          <msh:textField property="preparationDate" label="Дата заготовки" />
-          <msh:textField property="expirationDate" label="Срок годности" />
+          <msh:textField property="doze" label="Объем"/>
         </msh:row>
         <msh:row>
         </msh:row>
@@ -89,6 +95,13 @@
         </msh:row>
         </msh:panel>
         <msh:panel>
+        <msh:row>
+          <msh:separator label="Информация о контрольных проверках" colSpan="4" guid="43c6f5c7-a52f-4da5-89ac-02b5a5c35986" />
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete property="patBloodGroupCheck" label="Група крови реципиента" vocName="vocBloodGroup" horizontalFill="true" />
+          <msh:autoComplete property="prepBloodGroupCheck" label="Група крови донора" vocName="vocBloodGroup" horizontalFill="true" />
+        </msh:row>
         <msh:row>
           <msh:separator label="Информация о переливании" colSpan="4" guid="43c6f5c7-a52f-4da5-89ac-02b5a5c35986" />
         </msh:row>
@@ -104,9 +117,65 @@
         <msh:row guid="4cbe96c9-d023-4ed7-9d9b-2d5960458199">
           <msh:autoComplete property="transfusionReaction" label="Трансфузионная реакция" vocName="vocTransfusionReaction" guid="e2c027c4-2b6c-451a-a02d-4a7efc593dbb" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="7fc751c1-21f2-49d8-9330-a0166cb2cd56">
-          <msh:textField property="complications" label="Осложнения после переливания" guid="150d273e-b9d4-47f2-ab6c-94d406fa6545" fieldColSpan="3" horizontalFill="true" />
+        <msh:row>
+          <msh:textField property="complications" label="Осложнения после переливания" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
+        <msh:row>
+          <msh:separator label="Информация о реактивах, использовавшихся при определении показателей" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="reagentForm1.reagent" label="Реактив 1" vocName="vocTransfusionReagent" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textField property="reagentForm1.series" label="Серия"/>
+        	<msh:textField property="reagentForm1.expirationDate" label="Срок годности"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="reagentForm2.reagent" label="Реактив 1" vocName="vocTransfusionReagent" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textField property="reagentForm2.series" label="Серия"/>
+        	<msh:textField property="reagentForm2.expirationDate" label="Срок годности"/>
+        </msh:row>
+        <msh:row>
+          <msh:separator label="Проведенные пробы на индивидуальную совместимость" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+          <msh:separator label="Наблюдение за состоянием реципиента" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+          <msh:separator label="сразу после переливания" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm0.bloodPressureLower" label="АД ниж"/>
+        	<msh:textField property="monitorForm0.bloodPressureTop" label="АД вер"/>
+        	<msh:textField property="monitorForm0.pulseRate" label="ЧДД"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm0.temperature" label="t"/>
+        	<msh:autoComplete property="monitorForm0.urineColor" vocName="vocUrineColor" label="Цвет мочи"/>
+        </msh:row>
+        <msh:row>
+          <msh:separator label="через 1 час после переливания" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm1.bloodPressureLower" label="АД ниж"/>
+        	<msh:textField property="monitorForm1.bloodPressureTop" label="АД вер"/>
+        	<msh:textField property="monitorForm1.pulseRate" label="ЧДД"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm1.temperature" label="t"/>
+        	<msh:autoComplete property="monitorForm1.urineColor" vocName="vocUrineColor" label="Цвет мочи"/>
+        </msh:row>
+        <msh:row>
+          <msh:separator label="через 2 часа после переливания" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm2.bloodPressureLower" label="АД ниж"/>
+        	<msh:textField property="monitorForm2.bloodPressureTop" label="АД вер"/>
+        	<msh:textField property="monitorForm2.pulseRate" label="ЧДД"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="monitorForm2.temperature" label="t"/>
+        	<msh:autoComplete property="monitorForm2.urineColor" vocName="vocUrineColor" label="Цвет мочи"/>
+        </msh:row>
+
         <msh:row guid="8cf0863d-991d-4e6c-bb0a-ead66299a21c">
           <msh:autoComplete property="executor" label="Исполнитель" vocName="workFunction" guid="56067cb3-f8bd-4c07-9330-ad6ffee3e83a" fieldColSpan="3" horizontalFill="true" />
         </msh:row>

@@ -62,7 +62,7 @@
     		window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
     	}
     	function viewSlo(aSlo) {
-    		getDefinition('entitySubclassView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
+    		getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
     	}
     	
     	if (+$('department').value<1) {
@@ -187,12 +187,12 @@ and slo.dtype='DepartmentMedCase'
 and slo.roomNumber_id is null
  " />
     <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" noDataMessage="Нет данных">
+     action="javascript:void(0)" idField="1" noDataMessage="Нет данных" hideTitle="true">
       <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
      </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <msh:section>
+    <msh:section title="Список направлений на госпитализацию из поликлиники">
     <ecom:webQuery name="stac_planHospital"
     nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
@@ -211,12 +211,13 @@ and wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
  ${departmentPlanSql}
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
-order by p.lastname,p.firstname,p.middlename
+order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
     "
     />
     <msh:table name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
     idField="1" >
             <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
             <msh:tableColumn columnName="Направлен в отделение" property="2"/>
             <msh:tableColumn columnName="Телефон пациента" property="12"/>
             <msh:tableColumn columnName="ФИО пациента" property="4"/>
@@ -224,7 +225,6 @@ order by p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="Код МКБ" property="6"/>
             <msh:tableColumn columnName="Диагноз" property="7"/>
             <msh:tableColumn columnName="Дата создания" property="13"/>
-            <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
     	
     </msh:table>
     </msh:section>
