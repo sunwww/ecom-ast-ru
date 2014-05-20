@@ -226,7 +226,7 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Срок годности */
 	@Comment("Срок годности")
-	@Persist @Required
+	@Persist @Required @DateString @DoDateString
 	public String getExpirationDate() {return theExpirationDate;}
 	public void setExpirationDate(String aExpirationDate) {theExpirationDate = aExpirationDate;}
 
@@ -270,11 +270,11 @@ public class TransfusionForm extends IdEntityForm {
 	/** Особенности беременности */
 	@Comment("Особенности беременности")
 	@Persist
-	public VocTransfusionPregnancyHang getPregnancyHang() {return thePregnancyHang;}
-	public void setPregnancyHang(VocTransfusionPregnancyHang aPregnancyHang) {thePregnancyHang = aPregnancyHang;}
+	public Long getPregnancyHang() {return thePregnancyHang;}
+	public void setPregnancyHang(Long aPregnancyHang) {thePregnancyHang = aPregnancyHang;}
 
 	/** Особенности беременности */
-	private VocTransfusionPregnancyHang thePregnancyHang;
+	private Long thePregnancyHang;
 	/** Кол-во беременностей */
 	private String theCountPregnancy;
 	/** Трансфузионный по индив. подбору в прошлом */
@@ -292,7 +292,7 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Реакции на переливания в прошлом */
 	@Comment("Реакции на переливания в прошлом")
-	@OneToOne
+	@Persist
 	public Long getTransfusionReactionLast() {return theTransfusionReactionLast;}
 	public void setTransfusionReactionLast(Long aTransfusionReactionLast) {theTransfusionReactionLast = aTransfusionReactionLast;}
 
@@ -301,7 +301,7 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Определение резус-принадлежности рециента производилось */
 	@Comment("Определение резус-принадлежности рециента производилось")
-	@OneToOne
+	@Persist
 	public Long getDefinitionRhesus() {return theDefinitionRhesus;}
 	public void setDefinitionRhesus(Long aDefinitionRhesus) {theDefinitionRhesus = aDefinitionRhesus;}
 

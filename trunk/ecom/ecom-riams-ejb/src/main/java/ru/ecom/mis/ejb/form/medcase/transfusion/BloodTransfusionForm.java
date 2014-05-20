@@ -1,10 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import java.sql.Date;
+
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.BloodTransfusion;
-import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -12,6 +13,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
@@ -132,4 +135,168 @@ public class BloodTransfusionForm extends TransfusionForm{
 	private TransfusionReagentForm theReagentForm2 = new TransfusionReagentForm();
 	/** Реактив 1 */
 	private TransfusionReagentForm theReagentForm1 = new TransfusionReagentForm();
+	
+	/** Частота пульса */
+	@Comment("Частота пульса")
+	@Persist
+	public Integer getPulseRateBT() {return thePulseRateBT;}
+	public void setPulseRateBT(Integer aPulseRate) {thePulseRateBT = aPulseRate;}
+
+	/** Температура */
+	@Comment("Температура")
+	@Persist
+	public Integer getTemperatureBT() {return theTemperatureBT;}
+	public void setTemperatureBT(Integer aTemperature) {theTemperatureBT = aTemperature;}
+
+	/** Артериальное давление (верхнее) */
+	@Comment("Артериальное давление (верхнее)")
+	@Persist
+	public Integer getBloodPressureTopBT() {return theBloodPressureTopBT;}
+	public void setBloodPressureTopBT(Integer aBloodPressureTop) {theBloodPressureTopBT = aBloodPressureTop;}
+
+	/** Артериальное давление (нижнее) */
+	@Comment("Артериальное давление (нижнее)")
+	@Persist
+	public Integer getBloodPressureLowerBT() {return theBloodPressureLowerBT;}
+	public void setBloodPressureLowerBT(Integer aBloodPressureLower) {theBloodPressureLowerBT = aBloodPressureLower;}
+	
+	/** Частота дыхательных движений */
+	@Comment("Частота дыхательных движений")
+	@Persist
+	public Integer getRespiratoryRateBT() {return theRespiratoryRateBT;}
+	public void setRespiratoryRateBT(Integer aRespiratoryRate) {theRespiratoryRateBT = aRespiratoryRate;}
+
+	/** Цвет сыворотки (биол. проба) */
+	@Comment("Цвет сыворотки (биол. проба)")
+	@Persist
+	public Long getSerumColorBT() {return theSerumColorBT;}
+	public void setSerumColorBT(Long aSerumColor) {theSerumColorBT = aSerumColor;}
+
+	/** Переливание прекращено */
+	@Comment("Переливание прекращено")
+	@Persist
+	public Boolean getIsBreakBT() {return theIsBreakBT;}
+	public void setIsBreakBT(Boolean aIsBreakBT) {theIsBreakBT = aIsBreakBT;}
+
+	/** Состояние удовлетворительное */
+	@Comment("Состояние удовлетворительное")
+	@Persist
+	public Long getStateBT() {return theStateBT;}
+	public void setStateBT(Long aStateBT) {theStateBT = aStateBT;}
+
+	/** Тяжелый боьлной */
+	@Comment("Тяжелый боьлной")
+	@Persist
+	public Boolean getIsIllPatientsBT() {return theIsIllPatientsBT;}
+	public void setIsIllPatientsBT(Boolean aIsIllPatients) {theIsIllPatientsBT = aIsIllPatients;}
+
+	/** Жалобы */
+	@Comment("Жалобы")
+	@Persist
+	public String getLamentBT() {return theLamentBT;}
+	public void setLamentBT(String aLamentBT) {theLamentBT = aLamentBT;}
+
+	/** Жалобы */
+	private String theLamentBT;
+	/** Тяжелый боьлной */
+	private Boolean theIsIllPatientsBT;
+	/** Состояние удовлетворительное */
+	private Long theStateBT;
+	/** Переливание прекращено */
+	private Boolean theIsBreakBT;
+	/** Цвет сыворотки (биол. проба) */
+	private Long theSerumColorBT;
+	/** Частота дыхательных движений */
+	private Integer theRespiratoryRateBT;
+	/** Артериальное давление (нижнее) */
+	private Integer theBloodPressureLowerBT;
+	/** Артериальное давление (верхнее) */
+	private Integer theBloodPressureTopBT;
+	/** Температура */
+	private Integer theTemperatureBT;
+	/** Частота пульса */
+	private Integer thePulseRateBT;
+	
+	
+	/** Метод 1 по инд. совместимости */
+	@Comment("Метод 1 по инд. совместимости")
+	@Persist
+	public Long getMethodPT1() {return theMethodPT1;}
+	public void setMethodPT1(Long aMethodPT1) {theMethodPT1 = aMethodPT1;}
+
+	/** 1. Реактив по инд. совместимости */
+	@Comment("1. Реактив по инд. совместимости")
+	@Persist
+	public String getReagentPT1() {return theReagentPT1;}
+	public void setReagentPT1(String aReagentPT1) {theReagentPT1 = aReagentPT1;}
+
+	/** 1. Серия реактива по инд. совместимости */
+	@Comment("1. Серия реактива по инд. совместимости")
+	@Persist
+	public String getReagentSeriesPT1() {return theReagentSeriesPT1;}
+	public void setReagentSeriesPT1(String aReagentSeriesPT1) {theReagentSeriesPT1 = aReagentSeriesPT1;}
+
+	/** 1. Срок годности */
+	@Comment("1. Срок годности")
+	@Persist @DateString @DoDateString
+	public String getReagentExpDatePT1() {return theReagentExpDatePT1;}
+	public void setReagentExpDatePT1(String aReagentExpDatePT1) {theReagentExpDatePT1 = aReagentExpDatePT1;}
+
+	/** Результат. Совместима */
+	@Comment("Результат. Совместима")
+	@OneToOne
+	public Long getResultGoodPT1() {return theResultGoodPT1;}
+	public void setResultGoodPT1(Long aResultGoodPT1) {theResultGoodPT1 = aResultGoodPT1;}
+
+	/** Результат. Совместима */
+	private Long theResultGoodPT1;
+	/** 1. Срок годности */
+	private String theReagentExpDatePT1;
+	/** 1. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT1;
+	/** 1. Реактив по инд. совместимости */
+	private String theReagentPT1;
+	/** Метод 1 по инд. совместимости */
+	private Long theMethodPT1;
+	
+	/** Метод 2 по инд. совместимости */
+	@Comment("Метод 2 по инд. совместимости")
+	@Persist
+	public Long getMethodPT2() {return theMethodPT2;}
+	public void setMethodPT2(Long aMethodPT2) {theMethodPT2 = aMethodPT2;}
+
+	/** 2. Реактив по инд. совместимости */
+	@Comment("2. Реактив по инд. совместимости")
+	@Persist
+	public String getReagentPT2() {return theReagentPT2;}
+	public void setReagentPT2(String aReagentPT2) {theReagentPT2 = aReagentPT2;}
+
+	/** 2. Серия реактива по инд. совместимости */
+	@Comment("2. Серия реактива по инд. совместимости")
+	@Persist
+	public String getReagentSeriesPT2() {return theReagentSeriesPT2;}
+	public void setReagentSeriesPT2(String aReagentSeriesPT2) {theReagentSeriesPT2 = aReagentSeriesPT2;}
+
+	/** 2. Срок годности */
+	@Comment("2. Срок годности")
+	@Persist @DateString @DoDateString
+	public String getReagentExpDatePT2() {return theReagentExpDatePT2;}
+	public void setReagentExpDatePT2(String aReagentExpDatePT2) {theReagentExpDatePT2 = aReagentExpDatePT2;}
+
+	/** Результат. Совместима */
+	@Comment("Результат. Совместима")
+	@Persist
+	public Long getResultGoodPT2() {return theResultGoodPT2;}
+	public void setResultGoodPT2(Long aResultGoodPT2) {theResultGoodPT2 = aResultGoodPT2;}
+
+	/** Результат. Совместима */
+	private Long theResultGoodPT2;
+	/** 1. Срок годности */
+	private String theReagentExpDatePT2;
+	/** 1. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT2;
+	/** 1. Реактив по инд. совместимости */
+	private String theReagentPT2;
+	/** Метод 1 по инд. совместимости */
+	private Long theMethodPT2;
 }
