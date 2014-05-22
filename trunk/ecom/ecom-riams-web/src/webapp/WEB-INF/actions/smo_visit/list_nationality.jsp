@@ -191,6 +191,7 @@
         	ActionUtil.setParameterFilterSql("department","departmentD","m.department_id", request) ;
         	ActionUtil.setParameterFilterSql("department","departmentWF","we.lpu_id", request) ;
         	ActionUtil.setParameterFilterSql("nationality","p.nationality_id", request) ;
+        	ActionUtil.setParameterFilterSql("region","a.region_addressid", request) ;
     		%>
    
     <% 
@@ -228,7 +229,7 @@ and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')
 and (m.noActuality is null or m.noActuality='0')
 ${emergencySql} ${departmentWFSql}
 ${serviceStreamSql}
- ${nationalitySql} ${patientSql}
+ ${nationalitySql} ${regionSql} ${patientSql}
 group by m.id,m.dateStart,m.timeExecute
 	    ,p.lastname,p.firstname,p.middlename,p.birthday
 	    ,vwfe.name,pe.lastname 
@@ -268,7 +269,7 @@ and (m.noActuality is null or m.noActuality='0')
 and smo.deniedHospitalizating_id is null
 ${emergencySql} ${departmentSql} 
 ${serviceStreamSql}
-${nationalitySql} ${patientSql}
+${nationalitySql} ${regionSql} ${patientSql}
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityShortView-stac_ssl.do" 
  name="list_stac"
@@ -306,7 +307,7 @@ and (m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${emergencySql} ${departmentSql} 
 ${serviceStreamSql}
-${nationalitySql} ${patientSql}
+${nationalitySql} ${regionSql} ${patientSql}
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityShortView-stac_ssl.do" 
  name="list_stac1"
@@ -355,7 +356,7 @@ ${groupSqlAdd}
     and (m.noActuality is null or m.noActuality='0')
     ${emergencySql} ${departmentWFSql}
     ${serviceStreamSql}
-     ${nationalitySql} ${patientSql}
+     ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
     	    ,vwfe.name,pe.lastname , vn.name
     order by p.lastname,p.firstname,p.middlename"/>
@@ -400,7 +401,7 @@ ${groupSqlAdd}
     and smo.deniedHospitalizating_id is null
     ${emergencySql} ${departmentSql} 
     ${serviceStreamSql}
-    ${nationalitySql} ${patientSql}
+    ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename 
     ,p.birthday,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
@@ -442,7 +443,7 @@ ${groupSqlAdd}
     and m.deniedHospitalizating_id is not null
     ${emergencySql} ${departmentSql} 
     ${serviceStreamSql}
-    ${nationalitySql} ${patientSql}
+    ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename
     	    ,p.birthday ,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
@@ -518,7 +519,7 @@ and m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('
 and m.deniedHospitalizating_id is not null
 ) 
 and (m.noActuality is null or m.noActuality='0') ${emergencySql}
- ${serviceStreamSql} ${patientSql} ${nationalitySql} 
+ ${serviceStreamSql} ${patientSql} ${nationalitySql} ${regionSql} 
 group by ${groupSqlId},${groupSql}
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -528,7 +529,7 @@ group by ${groupSqlId},${groupSql}
     <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${sql_journal_swod}"> 
     <input type='hidden' name="sqlText2" id="sqlText2" value="${sql_journal_swod1}">
-    <input type='hidden' name="sqlCount" id="sqlCount" value="2">
+    <input type='hidden' name="sqlCount" id="sqlCount" value="1">
     <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.beginDate}-${param.finishDate}${emergencyInfo}.">
     <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
