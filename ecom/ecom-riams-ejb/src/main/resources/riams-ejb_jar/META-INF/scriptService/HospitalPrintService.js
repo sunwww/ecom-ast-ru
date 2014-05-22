@@ -918,9 +918,9 @@ function recordPatient(medCase,aCtx) {
 	map.put("sls.hospType",medCase.hospType) ;
 	//Номер наряда
 	map.put("sls.supplyOrderNumber",medCase.supplyOrderNumber) ;
-	
-	if(medCase.temperatureCurves.size()>0) {
-		var temper = medCase.temperatureCurves.get(0) ;
+	var temperList =aCtx.manager.createQuery("from TemperatureCurve where medCase_id=:medCase").setParameter("medCase", medCase.id).getResultList()
+	if(temperList.size()>0) {
+		var temper= temperList.get(0) ;
 		var temperInfo = "";
 		if (temper.weight>0) {
 			temperInfo = temperInfo+"вес "+temper.weight ;
