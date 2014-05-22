@@ -269,4 +269,6 @@ public abstract class Transfusion extends BaseEntity{
 
 	/** Определение резус-принадлежности рециента производилось */
 	private VocTransfusionDefinitionRhesus theDefinitionRhesus;
+	
+	
 }
