@@ -15,5 +15,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocTransfusionReaction extends VocBaseEntity{
+	/** Описание */
+	@Comment("Описание")
+	public String getDescription() {return theDescription;}
+	public void setDescription(String aDescription) {theDescription = aDescription;}
 
+	/** Описание */
+	private String theDescription;
 }
