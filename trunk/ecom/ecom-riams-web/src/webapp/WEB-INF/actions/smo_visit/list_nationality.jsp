@@ -167,13 +167,24 @@
     			request.setAttribute("group1SqlId", "vss.id") ;
     			request.setAttribute("group1Id", "'&serviceStream='||vss.id") ;
         	} else {
-    			request.setAttribute("groupSql", "vn.name") ;
-    			request.setAttribute("groupSqlId", "coalesce(p.nationality_id,0)") ;
-    			request.setAttribute("groupId", "'&nationality='||coalesce(p.nationality_id,0)") ;
-    			request.setAttribute("group1Sql", "vn.name") ;
-    			request.setAttribute("group1SqlId", "coalesce(p.nationality_id,0)") ;
-    			request.setAttribute("group1Id", "'&nationality='||coalesce(p.nationality_id,0)") ;
-    			request.setAttribute("groupName", "Гражданство") ;
+        		if (!typePatient.equals("3")) {
+	    			request.setAttribute("groupSql", "vn.name") ;
+	    			request.setAttribute("groupSqlId", "coalesce(p.nationality_id,0)") ;
+	    			request.setAttribute("groupId", "'&nationality='||coalesce(p.nationality_id,0)") ;
+	    			request.setAttribute("group1Sql", "vn.name") ;
+	    			request.setAttribute("group1SqlId", "coalesce(p.nationality_id,0)") ;
+	    			request.setAttribute("group1Id", "'&nationality='||coalesce(p.nationality_id,0)") ;
+	    			request.setAttribute("groupName", "Гражданство") ;
+        		} else {
+	    			request.setAttribute("groupSql", "ar.name") ;
+	    			request.setAttribute("groupSqlId", "coalesce(a.region_addressid,0)") ;
+	    			request.setAttribute("groupId", "'&region='||coalesce(a.region_addressid,0)") ;
+	    			request.setAttribute("group1Sql", "ar.name") ;
+	    			request.setAttribute("group1SqlId", "coalesce(ap.region_addressid,0)") ;
+	    			request.setAttribute("group1Id", "'&region='||coalesce(a.region_addressid,0)") ;
+	    			request.setAttribute("groupName", "Район") ;
+	    			request.setAttribute("groupSqlAdd", "left join Address2 ar on ar.addressid=a.region_addressid") ;
+        		}
         	}
         	ActionUtil.setParameterFilterSql("serviceStream","vss.id", request) ;
         	ActionUtil.setParameterFilterSql("department","m.department_id", request) ;
@@ -181,8 +192,10 @@
         	ActionUtil.setParameterFilterSql("department","departmentWF","we.lpu_id", request) ;
         	ActionUtil.setParameterFilterSql("nationality","p.nationality_id", request) ;
     		%>
+   
     <% 
     //начало реестра
+    
     if (typeView.equals("1")) {%>
 
 
@@ -209,6 +222,7 @@ left join VocVisitResult vvr on vvr.id=m.visitResult_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Diagnosis d on d.medcase_id=m.id
 left join Vocidc10 mkb on mkb.id=d.idc10_id
+${groupSqlAdd}
 where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
 and (m.noActuality is null or m.noActuality='0')
@@ -243,6 +257,7 @@ from medcase m
 left join medcase smo on smo.id=m.parent_id
 left join patient p on p.id=m.patient_id
 left join address2 a on a.addressid=p.address_addressid
+${groupSqlAdd}
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join statisticstub ss on ss.id=smo.statisticStub_id
 left join mislpu ml on ml.id=m.department_id
@@ -280,6 +295,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 from medcase m 
 left join patient p on p.id=m.patient_id
 left join address2 a on a.addressid=p.address_addressid
+${groupSqlAdd}
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join statisticstub ss on ss.id=m.statisticStub_id
 left join MisLpu ml on ml.id=m.department_id
@@ -323,6 +339,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     from medcase m 
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
+${groupSqlAdd}
     left join Omc_Oksm vn on vn.id=p.nationality_id
     left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
     left join Worker we on we.id=wfe.worker_id
@@ -340,7 +357,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     ${serviceStreamSql}
      ${nationalitySql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
-    	    ,vwfe.name,pe.lastname 
+    	    ,vwfe.name,pe.lastname , vn.name
     order by p.lastname,p.firstname,p.middlename"/>
     <msh:table name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
@@ -372,6 +389,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     left join medcase smo on smo.id=m.parent_id
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
+    ${groupSqlAdd}
     left join Omc_Oksm vn on vn.id=p.nationality_id
     left join statisticstub ss on ss.id=smo.statisticStub_id
     left join mislpu ml on ml.id=m.department_id
@@ -412,6 +430,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     from medcase m 
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
+    ${groupSqlAdd}
     left join Omc_Oksm vn on vn.id=p.nationality_id
     left join statisticstub ss on ss.id=m.statisticStub_id
     left join MisLpu ml on ml.id=m.department_id
@@ -481,7 +500,7 @@ left join address2 a on a.addressid=p.address_addressid
 left join Omc_Oksm vn on vn.id=p.nationality_id
 left join VocHospType vht on vht.id=m.hospType_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
-
+${groupSqlAdd}
 left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id 
 left join Worker we on we.id=wfe.worker_id
 left join MisLpu mlV on mlV.id=we.lpu_id
