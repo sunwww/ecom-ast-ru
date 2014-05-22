@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -7,6 +9,7 @@ import javax.persistence.Table;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodPreparation;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethodPT;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionTestSerumColor;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -169,4 +172,80 @@ public class BloodTransfusion extends Transfusion{
 	private Integer theTemperatureBT;
 	/** Частота пульса */
 	private Integer thePulseRateBT;
+	
+	/** Метод 1 по инд. совместимости */
+	@Comment("Метод 1 по инд. совместимости")
+	@OneToOne
+	public VocTransfusionMethodPT getMethodPT1() {return theMethodPT1;}
+	public void setMethodPT1(VocTransfusionMethodPT aMethodPT1) {theMethodPT1 = aMethodPT1;}
+
+	/** 1. Реактив по инд. совместимости */
+	@Comment("1. Реактив по инд. совместимости")
+	public String getReagentPT1() {return theReagentPT1;}
+	public void setReagentPT1(String aReagentPT1) {theReagentPT1 = aReagentPT1;}
+
+	/** 1. Серия реактива по инд. совместимости */
+	@Comment("1. Серия реактива по инд. совместимости")
+	public String getReagentSeriesPT1() {return theReagentSeriesPT1;}
+	public void setReagentSeriesPT1(String aReagentSeriesPT1) {theReagentSeriesPT1 = aReagentSeriesPT1;}
+
+	/** 1. Срок годности */
+	@Comment("1. Срок годности")
+	public Date getReagentExpDatePT1() {return theReagentExpDatePT1;}
+	public void setReagentExpDatePT1(Date aReagentExpDatePT1) {theReagentExpDatePT1 = aReagentExpDatePT1;}
+
+	/** Результат. Совместима */
+	@Comment("Результат. Совместима")
+	@OneToOne
+	public VocYesNo getResultGoodPT1() {return theResultGoodPT1;}
+	public void setResultGoodPT1(VocYesNo aResultGoodPT1) {theResultGoodPT1 = aResultGoodPT1;}
+
+	/** Результат. Совместима */
+	private VocYesNo theResultGoodPT1;
+	/** 1. Срок годности */
+	private Date theReagentExpDatePT1;
+	/** 1. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT1;
+	/** 1. Реактив по инд. совместимости */
+	private String theReagentPT1;
+	/** Метод 1 по инд. совместимости */
+	private VocTransfusionMethodPT theMethodPT1;
+	
+	/** Метод 2 по инд. совместимости */
+	@Comment("Метод 2 по инд. совместимости")
+	@OneToOne
+	public VocTransfusionMethodPT getMethodPT2() {return theMethodPT2;}
+	public void setMethodPT2(VocTransfusionMethodPT aMethodPT2) {theMethodPT2 = aMethodPT2;}
+
+	/** 2. Реактив по инд. совместимости */
+	@Comment("2. Реактив по инд. совместимости")
+	public String getReagentPT2() {return theReagentPT2;}
+	public void setReagentPT2(String aReagentPT2) {theReagentPT2 = aReagentPT2;}
+
+	/** 2. Серия реактива по инд. совместимости */
+	@Comment("2. Серия реактива по инд. совместимости")
+	public String getReagentSeriesPT2() {return theReagentSeriesPT2;}
+	public void setReagentSeriesPT2(String aReagentSeriesPT2) {theReagentSeriesPT2 = aReagentSeriesPT2;}
+
+	/** 2. Срок годности */
+	@Comment("2. Срок годности")
+	public Date getReagentExpDatePT2() {return theReagentExpDatePT2;}
+	public void setReagentExpDatePT2(Date aReagentExpDatePT2) {theReagentExpDatePT2 = aReagentExpDatePT2;}
+
+	/** Результат. Совместима */
+	@Comment("Результат. Совместима")
+	@OneToOne
+	public VocYesNo getResultGoodPT2() {return theResultGoodPT2;}
+	public void setResultGoodPT2(VocYesNo aResultGoodPT2) {theResultGoodPT2 = aResultGoodPT2;}
+
+	/** Результат. Совместима */
+	private VocYesNo theResultGoodPT2;
+	/** 1. Срок годности */
+	private Date theReagentExpDatePT2;
+	/** 1. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT2;
+	/** 1. Реактив по инд. совместимости */
+	private String theReagentPT2;
+	/** Метод 1 по инд. совместимости */
+	private VocTransfusionMethodPT theMethodPT2;
 }
