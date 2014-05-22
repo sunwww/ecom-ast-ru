@@ -305,5 +305,14 @@ public class Address extends BaseEntity {
 
 	/** ОКАТО */
 	private String theOkato;
+	
+	/** Регион */
+	@Comment("Регион")
+	@OneToOne
+	public Address getRegion() {return theRegion;}
+	public void setRegion(Address aRegion) {theRegion = aRegion;}
+
+	/** Регион */
+	private Address theRegion;
 
 }
