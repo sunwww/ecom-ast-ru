@@ -14,13 +14,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class TransfusionMonitoring extends BaseEntity{
 	/** Кол-во часов */
 	@Comment("Кол-во часов")
-	public Integer getHourAfterTransfusion() {
-		return theHourAfterTransfusion;
-	}
-
-	public void setHourAfterTransfusion(Integer aHourAfterTransfusion) {
-		theHourAfterTransfusion = aHourAfterTransfusion;
-	}
+	public Integer getHourAfterTransfusion() {return theHourAfterTransfusion;}
+	public void setHourAfterTransfusion(Integer aHourAfterTransfusion) {theHourAfterTransfusion = aHourAfterTransfusion;}
 
 	/** Частота пульса */
 	@Comment("Частота пульса")
