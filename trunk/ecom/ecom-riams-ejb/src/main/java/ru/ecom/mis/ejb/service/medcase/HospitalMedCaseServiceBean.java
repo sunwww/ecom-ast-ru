@@ -1455,7 +1455,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
 	public String getTemperatureCurve(long aMedCaseId) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
-		List<TemperatureCurve> list = hospital.getTemperatureCurves() ;
+		List<TemperatureCurve> list = theManager.createQuery("from TemperatureCurve where medCase_id=:medCase").setParameter("medCase", aMedCaseId).getResultList() ; 
+				
 		StringBuilder json = new StringBuilder() ;
 		json.append("{\"childs\":[") ;
 		boolean isFirst = true ;
