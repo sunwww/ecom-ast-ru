@@ -94,7 +94,23 @@
 	} 
 	sql = sql+isTalkSql ;
 	if (medcard!=null&&!medcard.equals("")&&medcard.length()>1) {
-		sql=sql+" and ((select count(id) from medcard medc where medc.person_id=t.patient_id and medc.number='"+medcard+"')>0 or p.patientSync='"+medcard+"')" ;
+		
+    		String[] fs1=medcard.split(",") ;
+    		StringBuilder filtOr = new StringBuilder() ;
+    		
+    		for (int i=0;i<fs1.length;i++) {
+    			String filt1 = fs1[i].trim() ;
+    			
+    			if (filt1.length()>0) {
+    				if (filtOr.length()>0) filtOr.append(",") ;
+		    		filtOr.append("'"+filt1+"'") ;
+
+    			}
+    		}
+    		
+    		
+    	
+		sql=sql+" and ((select count(id) from medcard medc where medc.person_id=t.patient_id and upper(medc.number) in ("+filtOr.toString()+"))>0 or upper(p.patientSync) in ("+filtOr.toString()+"))" ;
 	}
 	sql = sql+ageSql.toString() ;
 	request.setAttribute("sql", sql) ;
