@@ -1,3 +1,4 @@
+<%@page import="java.util.Calendar"%>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -6,7 +7,20 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-
+<%
+Calendar cal = Calendar.getInstance() ;
+String fon = "" ;
+if (cal.get(Calendar.MONTH)==Calendar.MARCH) fon="1" ;
+if (cal.get(Calendar.MONTH)==Calendar.APRIL) fon="1" ;
+if (cal.get(Calendar.MONTH)==Calendar.MAY) fon="1" ;
+if (cal.get(Calendar.MONTH)==Calendar.JUNE) fon="2" ;
+if (cal.get(Calendar.MONTH)==Calendar.JULY) fon="2" ;
+if (cal.get(Calendar.MONTH)==Calendar.AUGUST) fon="2" ;
+if (cal.get(Calendar.MONTH)==Calendar.SEPTEMBER) fon="3" ;
+if (cal.get(Calendar.MONTH)==Calendar.OCTOBER) fon="3" ;
+if (cal.get(Calendar.MONTH)==Calendar.NOVEMBER) fon="3" ;
+request.setAttribute("fon_id", fon) ;
+%>
 <html:html xhtml="true" locale="true">
  <head>
    <title>МедОС</title>
@@ -43,7 +57,7 @@ try {
 
 <style type="text/css">
 body{
-    background:url("img/fon_z.jpg") no-repeat fixed left top #033268 ;
+    background:url("img/fon_z${fon_id}.jpg") no-repeat fixed left top #033268 ;
 }
 	</style>
 
