@@ -1,4 +1,30 @@
 var map = new java.util.HashMap() ;
+function printBloodTrasfusion(aCtx,aParams) {
+	var id = new java.lang.Long(aParams.get("id")) ;
+	var trans = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.BloodTransfusion,id);
+	var medCase = trans.medCase ;
+	var patient = medCase.patient ;
+	map.put("trans",trans) ;
+	map.put("medCase",medCase) ;
+	map.put("pat",patient) ;
+	//Биологический тест
+	map.put("biologicTest","") ;
+	//Индивидуальный тест
+	map.put("personalTest","") ;
+	//Исследования антител
+	map.put("antibodies","") ;
+	//Макроскопическая оценка
+	map.put("macroBall","") ;
+	//Акушерский анамнез
+	map.put("pregDescription","") ;
+	//Осложнения
+	map.put("complication","") ;
+	//Наблюдения после переливания
+	map.put("monitor1","") ;
+	map.put("monitor2","") ;
+	map.put("monitor3","") ;
+	return map ;
+}
 function printDirectVK(aCtx,aParams) {
 	var id = new java.lang.Long(aParams.get("id")) ;
 	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.ClinicExpertCard,id);
@@ -1002,9 +1028,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 	map.put("sls.hospitalization",medCase.hospitalization) ;
 	map.put("sls.kinsInfo",medCase.kinsman!=null?medCase.kinsman.info:"") ;
 	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
-			+", case when dateFinish is not null then coalesce(vwfd.code||' ','')||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
-			+", case when dateFinish is not null then d.name else '' end as dname,d.id as did"
-			+", case when dateFinish is not null then wf.code else '' end as worker"
+			+", coalesce(vwfd.code||' ','')||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename as worker"
+			+",d.name as dname,d.id as did"
+			+", coalesce(wf.code,'') as worker"
+			+", case when d.IsNoOmc='1' then '1' else null end as IsNoOmc"
 			+" from MedCase dmc "
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
@@ -1022,11 +1049,13 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 			var dep = otds.get([i]) ;
 			if (otd!="") {otd += ", ";}
 			otd += dep[0] +" "+" c "+dep[1]+" по "+dep[2] ;
-			lech += dep[3] ;
 			
-			lastotd += dep[4] ;
-			lastotdId = dep[5] ;
-			lechCode=dep[6] ;
+			if (dep[7]==null) {
+				lech = dep[3] ;
+				lastotd = dep[4];
+				lastotdId = dep[5] ;
+				lechCode=dep[6] ;
+			}
 		}
 		map.put("sls.departments",otd) ;
 		map.put("sls.owner",lech) ;
@@ -1043,7 +1072,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
 		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
 		recordDisability(aCtx,slsId,"dis") ;
-
+		var dc =aCtx.manager.createQuery("from DeathCase where medCase_id="+medCase.id).getResultList() ;
+		if (dc.size()>0) {
+			map.put("dc.deathCase",dc.get(0)) ;
+		}
 }
 
 function recordZavOtd(aCtx,aLastOtdId,aField) {
