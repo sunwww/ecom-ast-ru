@@ -252,8 +252,18 @@ public class WebQueryResult implements Serializable {
 	public void set26(Object a26) {
 		the26 = a26;
 	}
+	
+	/** 27 */
+	public Object get27() {
+		return the27;
+	}
 
+	public void set27(Object a27) {
+		the27 = a27;
+	}
 
+	/** 27 */
+	private Object the27;
 	/** 26 */
 	private Object the26;
 	/** 25 */
