@@ -57,9 +57,9 @@ public class TransfusionForm extends IdEntityForm {
 
 	/** Показания к применению */
 	@Comment("Показания к применению")
-	@Persist
-	public String getReason() {return theReason;}
-	public void setReason(String aReason) {theReason = aReason;}
+	@Persist @Required
+	public Long getReason() {return theReason;}
+	public void setReason(Long aReason) {theReason = aReason;}
 
 	/** Доза (мл) */
 	@Comment("Доза (мл)")
@@ -75,19 +75,19 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Дата приготовления */
 	@Comment("Дата приготовления")
-	@Persist @DateString @DoDateString
+	@Persist @DateString @DoDateString @Required
 	public String getPreparationDate() {return thePreparationDate;}
 	public void setPreparationDate(String aPreparationDate) {thePreparationDate = aPreparationDate;}
 
 	/** Изготовитель */
 	@Comment("Изготовитель")
-	@Persist @DoUpperCase
+	@Persist @DoUpperCase @Required
 	public Long getPreparator() {return thePreparator;}
 	public void setPreparator(Long aPreparator) {thePreparator = aPreparator;}
 
 	/** Способ переливания */
 	@Comment("Способ переливания")
-	@Persist
+	@Persist @Required
 	public Long getTransfusionMethod() {return theTransfusionMethod;}
 	public void setTransfusionMethod(Long aTransfusionMethod) {theTransfusionMethod = aTransfusionMethod;}
 
@@ -105,7 +105,6 @@ public class TransfusionForm extends IdEntityForm {
 
 	/** Осложнения после переливания */
 	@Comment("Осложнения после переливания")
-	@Persist
 	public String getComplications() {return theComplications;}
 	public void setComplications(String aComplications) {theComplications = aComplications;}
 
@@ -115,22 +114,6 @@ public class TransfusionForm extends IdEntityForm {
 	public Integer getJournalNumber() {return theJournalNumber;}
 	public void setJournalNumber(Integer aJournalNumber) {theJournalNumber = aJournalNumber;}
 
-	/** Информация о трансфузионной среде */
-	@Comment("Информация о трансфузионной среде")
-	@Persist
-	public String getInformation() {return theInformation;}
-	public void setInformation(String aInformation) {theInformation = aInformation;}
-
-	/** Информация о исполнителе */
-	@Comment("Информация о исполнителе")
-	@Persist
-	public String getExecutorInfo() {return theExecutorInfo;}
-	public void setExecutorInfo(String aExecutorInfo) {theExecutorInfo = aExecutorInfo;}
-
-	/** Информация о исполнителе */
-	private String theExecutorInfo;
-	/** Информация о трансфузионной среде */
-	private String theInformation;
 	/** Дата начала */
 	private String theStartDate;
 	/** Первичное */
@@ -138,7 +121,7 @@ public class TransfusionForm extends IdEntityForm {
 	/** СМО */
 	private Long theMedCase;
 	/** Показания к применению */
-	private String theReason;
+	private Long theReason;
 	/** Доза (мл) */
 	private Integer theDoze;
 	/** Серия */
@@ -190,8 +173,8 @@ public class TransfusionForm extends IdEntityForm {
 	/** Фенотип с */
 	@Comment("Фенотип с")
 	@Persist
-	public Boolean getPhenotypec() {return thePhenotypec;}
-	public void setPhenotypec(Boolean aPhenotypec) {thePhenotypec = aPhenotypec;}
+	public Boolean getPhenotypec1() {return thePhenotypec1;}
+	public void setPhenotypec1(Boolean aPhenotypec1) {thePhenotypec1 = aPhenotypec1;}
 
 	/** Фенотип Е */
 	@Comment("Фенотип Е")
@@ -208,17 +191,17 @@ public class TransfusionForm extends IdEntityForm {
 	/** Фенотип E */
 	@Comment("Фенотип E")
 	@Persist
-	public Boolean getPhenotypee() {return thePhenotypee;}
-	public void setPhenotypee(Boolean aPhenotypee) {thePhenotypee = aPhenotypee;}
+	public Boolean getPhenotypee1() {return thePhenotypee1;}
+	public void setPhenotypee1(Boolean aPhenotypee1) {thePhenotypee1 = aPhenotypee1;}
 
 	/** Фенотип E */
-	private Boolean thePhenotypee;	
+	private Boolean thePhenotypee1;	
 	/** Фенотип e */
 	private Boolean thePhenotypeE;
 	/** Фенотип Е */
 	private Boolean thePhenotypeD;
 	/** Фенотип с */
-	private Boolean thePhenotypec;
+	private Boolean thePhenotypec1;
 	/** Фенотип C */
 	private Boolean thePhenotypeC;
 	/** Фенотип */
@@ -292,7 +275,7 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Реакции на переливания в прошлом */
 	@Comment("Реакции на переливания в прошлом")
-	@Persist
+	@Persist @Required
 	public Long getTransfusionReactionLast() {return theTransfusionReactionLast;}
 	public void setTransfusionReactionLast(Long aTransfusionReactionLast) {theTransfusionReactionLast = aTransfusionReactionLast;}
 
@@ -301,10 +284,59 @@ public class TransfusionForm extends IdEntityForm {
 	
 	/** Определение резус-принадлежности рециента производилось */
 	@Comment("Определение резус-принадлежности рециента производилось")
-	@Persist
+	@Persist @Required
 	public Long getDefinitionRhesus() {return theDefinitionRhesus;}
 	public void setDefinitionRhesus(Long aDefinitionRhesus) {theDefinitionRhesus = aDefinitionRhesus;}
 
 	/** Определение резус-принадлежности рециента производилось */
 	private Long theDefinitionRhesus;
+	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DateString @DoDateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	@Persist @TimeString @DoTimeString
+	public String getCreateTime() {return theCreateTime;	}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Пользователь, которые последним редактировал запись */
+	@Comment("Пользователь, которые последним редактировал запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Дата редакции */
+	@Comment("Дата редакции")
+	@Persist @DateString @DoDateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+
+	/** Время редакции */
+	@Comment("Время редакции")
+	@Persist @TimeString @DoTimeString
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+
+	/** Время редакции */
+	private String theEditTime;
+	/** Дата редакции */
+	private String theEditDate;
+	/** Пользователь, которые последним редактировал запись */
+	private String theEditUsername;
+	/** Время создания */
+	private String theCreateTime;
+	/** Дата создания */
+	private String theCreateDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
 }

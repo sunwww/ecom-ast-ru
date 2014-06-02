@@ -253,6 +253,7 @@ public class PhoneMessage extends BaseEntity {
 	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
 
 	/** Время редакции */
+	
 	@Comment("Время редакции")
 	public Time getEditTime() {return theEditTime;}
 	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}

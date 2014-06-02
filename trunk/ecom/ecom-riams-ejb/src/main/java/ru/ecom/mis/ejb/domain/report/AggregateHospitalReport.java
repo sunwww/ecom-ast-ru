@@ -258,4 +258,34 @@ public class AggregateHospitalReport extends BaseEntity {
 	/** Пол ид */
 	private Long theSex;
 	
+	/** Дата поступлание в стационар 24 */
+	@Comment("Дата поступлание в стационар 24")
+	public Date getEntranceHospDate24() {return theEntranceHospDate24;}
+	public void setEntranceHospDate24(Date aEntranceHospDate24) {theEntranceHospDate24 = aEntranceHospDate24;}
+
+	/** Дата поступления в стационар 7 */
+	@Comment("Дата поступления в стационар 7")
+	public Date getEntranceHospDate7() {return theEntranceHospDate7;}
+	public void setEntranceHospDate7(Date aEntranceHospDate7) {theEntranceHospDate7 = aEntranceHospDate7;}
+
+	/** Дата поступления в стационар 9 */
+	@Comment("Дата поступления в стационар 9")
+	public Date getEntranceHospDate9() {return theEntranceHospDate9;}
+	public void setEntranceHospDate9(Date aEntranceHospDate9) {theEntranceHospDate9 = aEntranceHospDate9;}
+
+	/** Дата поступления в стационар 9 */
+	private Date theEntranceHospDate9;
+	/** Дата поступления в стационар 7 */
+	private Date theEntranceHospDate7;
+	/** Дата поступлание в стационар 24 */
+	private Date theEntranceHospDate24;
+	
+	/** Доп. койко день */
+	@Comment("Доп. койко день")
+	public Long getAddBedDays() {return theAddBedDays;}
+	public void setAddBedDays(Long aAddBedDays) {theAddBedDays = aAddBedDays;}
+
+	/** Доп. койко день */
+	private Long theAddBedDays;
+	
 }

@@ -1,4 +1,14 @@
 <vocconfig>
+<voc id="vocTransfusionReason" type="NativeVocService">
+	<NativeVocService
+		from="VocTransfusionReason vtr"
+		parent="vpb.id = :parent"
+		nameId="vtr.id"
+		queryAppend="" join="left join VocBloodPreparation vpb on vpb.code=vtr.codePreparation" order=""
+		names="vtr.name"
+		queried="upper(vtr.name) like upper(:query)"
+	/>
+</voc>
 <voc id="vocExtDispHealthGroupByDispType" type="NativeVocService">
 	<NativeVocService
 		from="VocExtDispHealthGroup vedhg"
@@ -1099,12 +1109,12 @@
     	<NativeVocService
     			from = 'WorkFunction as wf '
     			parent = " (select m.id from medcard as m where m.id=:parent and (m.lpu_id is null or w.lpu_id=m.lpu_id))>0 "
-    			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ('||ml.name||')'"
     			queried =" (cast(wf.id as varchar(6)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
     			queryAppend = "wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
     			order =''
     			nameId='wf.id'
-    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join MisLpu ml on ml.id=w.lpu_id'
     	/>
     </voc>
     <voc id='workFunctionByLpu' type='NativeVocService'>

@@ -7,12 +7,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReagent;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Реактивы, используемые при определение показателей")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="transfusion")
+    })
 public class TransfusionReagent extends BaseEntity{
 	/** Реактив */
 	@Comment("Реактив")

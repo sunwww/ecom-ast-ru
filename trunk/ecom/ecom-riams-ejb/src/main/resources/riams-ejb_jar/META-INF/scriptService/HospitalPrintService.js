@@ -1,5 +1,5 @@
 var map = new java.util.HashMap() ;
-function printBloodTrasfusion(aCtx,aParams) {
+function printBloodTransfusionInfo(aCtx,aParams) {
 	var id = new java.lang.Long(aParams.get("id")) ;
 	var trans = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.BloodTransfusion,id);
 	var medCase = trans.medCase ;
@@ -7,22 +7,138 @@ function printBloodTrasfusion(aCtx,aParams) {
 	map.put("trans",trans) ;
 	map.put("medCase",medCase) ;
 	map.put("pat",patient) ;
+	map.put("statCard",medCase.parent.statisticStub.code) ;
 	//Биологический тест
-	map.put("biologicTest","") ;
+	var biolTest = new java.lang.StringBuilder() ;
+	if (trans.getIsIllPatientsBT()!=null&&trans.getIsIllPatientsBT().booleanValue()==true) {
+		biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
+		biolTest.append(trans.getSerumColorBT()!=null?trans.getSerumColorBT().getName():"_________") ;
+	} else {
+		biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
+		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
+		biolTest.append(", AD: ").append(trans.getBloodPressureLowerBT()).append("/").append(trans.getBloodPressureTopBT()) ;
+		biolTest.append(", ЧДД: ").append(trans.getRespiratoryRateBT()) ;
+		biolTest.append(", t: ").append(trans.getTemperatureBT()) ;
+		if (trans.getStateBT()!=null) {
+			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
+				biolTest.append(". Состояние удовлетворительное.") ;
+			} else {
+				biolTest.append(". Состояние неудовлетворительное. Жалобы:").append(trans.getLamentBT()).append(".") ;
+			}
+		} else {
+			biolTest.append(". Состояние: ____________________________. Жалобы _____________________________") ;
+		}
+	}
+	if (trans.getIsBreakBT()!=null&&trans.getIsBreakBT().booleanValue()==true) biolTest.append(" Переливание прекращено.") ;
+	
+	map.put("biologicTest",biolTest.toString()) ;
 	//Индивидуальный тест
-	map.put("personalTest","") ;
+	var personalTest = new java.lang.StringBuilder() ;
+	if (trans.methodPT1!=null) {
+		personalTest.append(trans.getMethodPT1().getName()!=null?trans.getMethodPT1().getName():"") ;
+		personalTest.append(" ") ;
+		if (trans.reagentPT1!=null && !trans.reagentPT1.equals("")) {
+			personalTest.append("реактив ").append(trans.reagentPT1)
+			.append(" сер. ").append(trans.reagentSeriesPT1!=null?trans.reagentSeriesPT1:"__________")
+			.append(" годен до ").append(trans.reagentExpDatePT11!=null?Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(trans.reagentExpDatePT11):"_____._____.__________") ;
+		}
+		if (trans.resultGoodPT1!=null &&trans.resultGoodPT1.code!=null) {
+			if (trans.resultGoodPT1.code.equals("1")) {
+				personalTest.append(" - совместима. ")
+			} else {
+				personalTest.append(" - несовместима. ")
+			}
+		} else {
+			personalTest.append(" - совместима _____.  ")
+		}
+	}
+	if (trans.methodPT2!=null) {
+		personalTest.append(trans.getMethodPT2().getName()!=null?trans.getMethodPT2().getName():"") ;
+		personalTest.append(" ") ;
+		if (trans.reagentPT2!=null && !trans.reagentPT2.equals("")) {
+			personalTest.append("реактив ").append(trans.reagentPT2)
+				.append(" сер. ").append(trans.reagentSeriesPT2!=null?trans.reagentSeriesPT2:"__________")
+				.append(" годен до ").append(trans.reagentExpDatePT12!=null?Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(trans.reagentExpDatePT12):"_____._____.__________") ;
+		}
+		if (trans.resultGoodPT2!=null &&trans.resultGoodPT2.code!=null) {
+			if (trans.resultGoodPT2.code.equals("1")) {
+				personalTest.append(" - совместима. ")
+			} else {
+				personalTest.append(" - несовместима. ")
+			}
+		} else {
+			personalTest.append(" - совместима _____.  ")
+		}
+	}
+	map.put("personalTest",personalTest.toString()) ;
 	//Исследования антител
-	map.put("antibodies","") ;
+	var antibodies = new java.lang.StringBuilder() ;
+	if (trans.getResearchAntibodies()!=null) {
+		antibodies.append(trans.getResearchAntibodies().name!=null?trans.getResearchAntibodies().name:"") ;
+		
+		if (trans.getResearchAntibodies().getCode()!=null&&trans.getResearchAntibodies().getCode().equals("1")) {
+			antibodies.append(" Выявленные антитела: ").append(trans.getAntibodiesList()) ;
+		} 
+	} else {
+		antibodies.append("________________________. Выявленные антитела:____________________") ;
+	}
+	map.put("antibodies",antibodies.toString()) ;
 	//Макроскопическая оценка
-	map.put("macroBall","") ;
+	//map.put("macroBall","") ;
+	if (trans.getMacroBall().getCode()!=null&&trans.getMacroBall().getCode().equals("1")) {
+		map.put("macroBall"," пригодна к использованию.") ;
+	} else {
+		map.put("macroBall"," не пригодна к использованию.") ;
+	}	
 	//Акушерский анамнез
-	map.put("pregDescription","") ;
+	var pregDescription = new java.lang.StringBuilder() ;
+	if (trans.getCountPregnancy()!=null&&+trans.getCountPregnancy()>0) {
+		pregDescription.append(trans.getCountPregnancy()) ;
+		pregDescription.append(". Особенности течения: ") ;
+		if (trans.getPregnancyHang()!=null) {
+			pregDescription.append(trans.getPregnancyHang().name) ;
+		} else {
+			pregDescription.append("-") ;
+		}
+	} else {
+		pregDescription.append("-") ;
+	}
+	map.put("pregDescription",pregDescription.toString()) ;
 	//Осложнения
-	map.put("complication","") ;
+	var list = aCtx.manager.createNativeQuery(new java.lang.StringBuilder().append(" select list(vtr.name) from TransfusionComplication tc left join VocTransfusionReaction vtr on vtr.id=tc.reaction_id where tc.transfusion_id='").append(id).append("' group by tc.transfusion_id").toString()).getResultList();
+	if (list.size()>0) {
+		map.put("complication",new java.lang.StringBuilder().append(list.get(0)).toString()) ;
+	} else {
+		map.put("complication","-") ;
+	}
+	//Были ли реакции на переливание ранее
+	if (trans.getTransfusionReactionLast()!=null&&trans.getTransfusionReactionLast().getCode()!=null&&trans.getTransfusionReactionLast().getCode().equals("1")) {
+		map.put("reactionLast"," были.") ;
+	} else {
+		map.put("reactionLast"," не были.") ;
+	}	
+	//Реактивы
+	var listR = aCtx.manager.createNativeQuery("select tr.id,vtr.name||' сер. '||tr.series||' годен до '||to_char(tr.expirationDate,'dd.mm.yyyy') from TransfusionReagent tr left join VocTransfusionReagent vtr on vtr.id=tr.reagent_id where tr.transfusion_id='"+id+"' order by tr.numberReagent").getResultList();
+	if (listR.size()>0) {
+		var reagent=new java.lang.StringBuilder() ;
+		for (i=0;i<listR.size();i++) {
+			if (i>0) {reagent.append("; ") ;} 
+			reagent.append(i+1) ; reagent.append(". ") ;
+			reagent.append(""+listR.get(i)[1]) ;
+		}
+		map.put("reagent",reagent.toString()) ;
+	} else {
+		map.put("reagent","-") ;
+	}
 	//Наблюдения после переливания
-	map.put("monitor1","") ;
-	map.put("monitor2","") ;
-	map.put("monitor3","") ;
+	for (var i=0;i<3;i++) {
+		var listM =  aCtx.manager.createQuery("from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+i+"'").getResultList() ;
+		if (listM.size()>0) {
+			map.put("monitor"+i,listM.get(0)) ;
+		} else {
+			map.put("monitor"+i,new Packages.ru.ecom.mis.ejb.domain.medcase.TransfusionMonitoring()) ;
+		}
+	}
 	return map ;
 }
 function printDirectVK(aCtx,aParams) {
@@ -811,7 +927,8 @@ function printPregHistoryByMC(aCtx, aParams) {
 	map.put("pregnancy", medCase.pregnancy) ;
 	map.put("pregCard", medCase.pregnancy!=null?medCase.pregnancy.pregnanExchangeCard:null) ;
 	var pregInspect = null ;
-	for (var i=0 ; i<medCase.inspections.size();i++) {
+	var inspections = aCtx.manager.createQuery("from PregnanInspection where medCase_id="+medCase.id).getResultList() ;
+	for (var i=0 ; i<inspections.size();i++) {
 		var inspection = medCase.inspections.get(i) ;
 		if (inspection instanceof Packages.ru.ecom.mis.ejb.domain.birth.PregnanInspection) {
 			pregInspect = inspection ;

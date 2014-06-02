@@ -5,12 +5,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocUrineColor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Наблюделие за состоянием реципиента")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+	@AIndex(properties="transfusion")
+    })
 public class TransfusionMonitoring extends BaseEntity{
 	/** Кол-во часов */
 	@Comment("Кол-во часов")

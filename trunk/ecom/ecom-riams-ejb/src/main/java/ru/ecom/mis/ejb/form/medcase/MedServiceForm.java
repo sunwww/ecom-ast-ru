@@ -184,4 +184,12 @@ public class MedServiceForm extends IdEntityForm  {
 	/** Уровонь сложности */
 	private Long theComplexity;
 	
+	/** Не входит в ОМС */
+	@Comment("Не входит в ОМС")
+	@Persist
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
+
+	/** Не входит в ОМС */
+	private Boolean theIsNoOmc;
 }

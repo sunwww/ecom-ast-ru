@@ -128,15 +128,22 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" , vht.code as f27transferLpu") ;
 	    	sql.append(" , vhtHosp.id as f28hospTypeId") ;
 	    	sql.append(" , vs.id as f29sexId") ;
+	    	sql.append(" , case when firstSlo.entranceTime<cast('07:00' as time) then cast('1' as int) else null end as f30entranceTime7") ;
+	    	sql.append(" , case when firstSlo.entranceTime<cast('09:00' as time) then cast('1' as int) else null end as f31entranceTime9") ;
+	    	sql.append(" , firstSlo.datestart as f32entrancedate") ;
+	    	sql.append(" , case when vbst.code='1' then '0' else '1' end  as f33isdayhosp") ;
+	    	
 	    	sql.append(" from medcase sls") ;
 	    	sql.append(" left join medcase slo on sls.id=slo.parent_id") ;
 	    	sql.append(" left join AggregateHospitalReport ahr on ahr.slo=slo.id") ;
 	    	sql.append(" left join medcase prevSlo on prevSlo.id=slo.prevMedCase_id") ;
 	    	sql.append(" left join medcase nextSlo on nextSlo.prevmedcase_id=slo.id") ;
+	    	sql.append(" left join medcase firstSlo on sls.id=firstSlo.parent_id and firstSlo.prevmedcase_id is null") ;
 	    	sql.append(" left join patient pat on pat.id=sls.patient_id") ;
 	    	sql.append(" left join address2 a on a.addressid=pat.address_addressid") ;
 	    	sql.append(" left join vocsex vs on vs.id=pat.sex_id") ;
 	    	sql.append(" left join bedfund bf on bf.id=slo.bedfund_id") ;
+	    	sql.append(" left join vocbedsubtype vbst on bf.bedsubtype_id=vbst.id") ;
 	    	sql.append(" left join mislpu ml on ml.id=slo.department_id") ;
 	    	sql.append(" left join mislpu mlN on mlN.id=nextSlo.department_id") ;
 	    	sql.append(" left join mislpu mlP on mlP.id=prevSlo.department_id") ;
@@ -151,16 +158,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" left join VocHospitalizationResult  vhr on vhr.id=sls.result_id") ;
 	    	sql.append(" left join VocHospType vht on vht.id=sls.targetHospType_id") ;
 	    	sql.append(" left join VocHospType vhtHosp on vhtHosp.id=sls.hospType_id") ;
-	    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart <= (to_date('").append(aDischargeDate).append("','dd.mm.yyyy')-1)") ;
+	    	sql.append(" where sls.dtype='HospitalMedCase' and firstSlo.dtype='DepartmentMedCase'  and firstSlo.dtype='DepartmentMedCase' and sls.dateStart <= (to_date('").append(aDischargeDate).append("','dd.mm.yyyy')-1)") ;
 	    	sql.append(" and (sls.dateFinish >= (to_date('").append(aEntranceDate).append("','dd.mm.yyyy')-1) or sls.dateFinish is null)") ;
 	    	sql.append(" and sls.deniedHospitalizating_id is null") ;
 	    	sql.append(" group by vs.omccode,vs.id,slo.datestart,slo.datefinish,slo.transferdate") ;
 	    	sql.append(" ,pat.id,sls.id,slo.id,a.addressisvillage") ;
-	    	sql.append(" ,sls.admissionInHospital_id,sls.hospitalization_id") ;
+	    	sql.append(" ,sls.admissionInHospital_id,sls.hospitalization_id,firstSlo.datestart,firstSlo.entranceTime") ;
 	    	sql.append(" ,sls.admissionOrder_id,vhr.code") ;
 	    	sql.append(" ,slo.department_id,nextslo.department_id,prevslo.department_id") ;
 	    	sql.append(" ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id") ;
-	    	sql.append(" ,slo.entranceTime, slo.dischargeTime,sls.emergency,vht.code,slo.transferTime,vhtHosp.id ") ;
+	    	sql.append(" ,slo.entranceTime, slo.dischargeTime,sls.emergency,vht.code,slo.transferTime,vhtHosp.id,vbst.code ") ;
 	    	sql.append(" order by sls.id") ;
 	    	monitor.advice(20) ;
 	    	
@@ -187,9 +194,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		ahr.setEntranceDate24(ConvertSql.parseDate(obj[4])) ;
 	    		ahr.setEntranceDate7(ConvertSql.parseDate(obj[4],ConvertSql.parseBoolean(obj[23])?-1:0)) ;
 	    		ahr.setEntranceDate9(ConvertSql.parseDate(obj[4],ConvertSql.parseBoolean(obj[24])?-1:0)) ;
+	    		ahr.setEntranceHospDate24(ConvertSql.parseDate(obj[32])) ;
+	    		ahr.setEntranceHospDate7(ConvertSql.parseDate(obj[32],ConvertSql.parseBoolean(obj[30])?-1:0)) ;
+	    		ahr.setEntranceHospDate9(ConvertSql.parseDate(obj[32],ConvertSql.parseBoolean(obj[31])?-1:0)) ;
 	    		ahr.setIdcDepartmentCode(ConvertSql.parseString(obj[14])) ;
-	    		ahr.setIdcDischarge(ConvertSql.parseString(obj[15])) ;
-	    		ahr.setIdcEntranceCode(ConvertSql.parseString(obj[16])) ;
+	    		ahr.setIdcDischarge(ConvertSql.parseString(obj[16])) ;
+	    		ahr.setIdcEntranceCode(ConvertSql.parseString(obj[15])) ;
 	    		ahr.setIsDeath(ConvertSql.parseBoolean(obj[10])) ;
 	    		ahr.setIsEmergency(ConvertSql.parseBoolean(obj[25])) ;
 	    		ahr.setIsFirstCurrentYear(ConvertSql.parseBoolean(obj[8])) ;
@@ -207,6 +217,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		ahr.setTransferLpuCode(ConvertSql.parseString(obj[27])) ;
 	    		ahr.setHospType(ConvertSql.parseLong(obj[28])) ;
 	    		ahr.setSex(ConvertSql.parseLong(obj[29])) ;
+	    		ahr.setAddBedDays(ConvertSql.parseLong(obj[33])) ;
 	    		theManager.persist(ahr);
 	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(ConvertSql.parseLong(obj[0])).append(" ").append(ConvertSql.parseLong(obj[2])).append("...").toString());
 	    		if(i%size==0) monitor.advice(1);
