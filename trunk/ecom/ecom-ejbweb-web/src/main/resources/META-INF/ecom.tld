@@ -34,6 +34,14 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+      <attribute>
+         <description>Field JSP tag.</description>
+         <name>fieldColSpan</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
         <attribute>
             <description>Query Id</description>
             <name>tableId</name>
