@@ -4,6 +4,9 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<%
+
+%>
     <tiles:put name="side" type="string">  
     </tiles:put>
   <tiles:put name='body' type='string'>
@@ -81,7 +84,6 @@ div.button {
 	    	<p class="info">Запись нового пациента</p>
 	    </div>
 	    <br>
-  		<img src="img/new_year4.png"/>
   		<script type="text/javascript">
   		window.print() ;
   		function next_pre_new_rec() {
