@@ -183,5 +183,12 @@ public class MedService extends BaseEntity{
 
 	/** Дневной стационар */
 	private Boolean theIsDayHospital;
+	
+	/** Не входит в ОМС */
+	@Comment("Не входит в ОМС")
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
 
+	/** Не входит в ОМС */
+	private Boolean theIsNoOmc;
 }

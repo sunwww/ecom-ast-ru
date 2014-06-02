@@ -1,12 +1,14 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
-import java.sql.Date;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.BloodTransfusion;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.transfusion.interceptor.BloodTransfusionViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.transfusion.interceptor.TransfusionPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -23,6 +25,12 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Переливание крови", nameProperties= "id", view="entityParentView-trans_blood.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion/Blood")
+@AViewInterceptors(
+        @AEntityFormInterceptor(BloodTransfusionViewInterceptor.class)
+)
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(TransfusionPreCreateInterceptor.class)
+)
 public class BloodTransfusionForm extends TransfusionForm{
 	/** Препарат крови */
 	@Comment("Препарат крови")
@@ -56,7 +64,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Донор */
 	@Comment("Донор")
-	@Persist
+	@Persist @Required
 	public String getDonor() {return theDonor;}
 	public void setDonor(String aDonor) {theDonor = aDonor;}
 
@@ -92,7 +100,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 	
 	/** Макроскопическая оценка крови */
 	@Comment("Макроскопическая оценка крови")
-	@OneToOne
+	@Persist @Required
 	public Long getMacroBall() {return theMacroBall;}
 	public void setMacroBall(Long aMacroBall) {theMacroBall = aMacroBall;}
 
@@ -244,7 +252,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Результат. Совместима */
 	@Comment("Результат. Совместима")
-	@OneToOne
+	@Persist
 	public Long getResultGoodPT1() {return theResultGoodPT1;}
 	public void setResultGoodPT1(Long aResultGoodPT1) {theResultGoodPT1 = aResultGoodPT1;}
 
@@ -299,4 +307,12 @@ public class BloodTransfusionForm extends TransfusionForm{
 	private String theReagentPT2;
 	/** Метод 1 по инд. совместимости */
 	private Long theMethodPT2;
+	
+	/** Биологическая проба */
+	@Comment("Биологическая проба")
+	public String getBiologicTest() {return theBiologicTest;}
+	public void setBiologicTest(String aBiologicTest) {theBiologicTest = aBiologicTest;}
+
+	/** Биологическая проба */
+	private String theBiologicTest;
 }

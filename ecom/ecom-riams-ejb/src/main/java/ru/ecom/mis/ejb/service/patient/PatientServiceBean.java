@@ -1196,9 +1196,9 @@ public class PatientServiceBean implements IPatientService {
 	private String getTypePolicy(String pol) {
 		String type="" ;
 		if (pol!=null) {
-			if (pol.startsWith("0") && pol.length()<4) {
+			if ((pol.startsWith("0")|| pol.startsWith("1"))&&  pol.length()<4) {
 				type = "2" ;
-			} else if (pol.startsWith("0") && pol.length()>3) {
+			} else if ((pol.startsWith("0") || pol.startsWith("1")) && pol.length()>3) {
 				type = "3" ;
 			} else {
 				type ="1" ;

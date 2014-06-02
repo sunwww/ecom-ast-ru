@@ -4,17 +4,20 @@ import java.sql.Date;
 import java.sql.Time;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreparatorBlood;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionDefinitionRhesus;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethod;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionPregnancyHang;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReaction;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReason;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionResearchAntibodies;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -32,6 +35,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="medCase")
     })
 @Table(schema="SQLUser")
+@EntityListeners(DeleteListener.class)
 public abstract class Transfusion extends BaseEntity{
 	
 	/** Дата начала */
@@ -53,8 +57,9 @@ public abstract class Transfusion extends BaseEntity{
 
 	/** Показания к применению */
 	@Comment("Показания к применению")
-	public String getReason() {return theReason;}
-	public void setReason(String aReason) {theReason = aReason;}
+	@OneToOne
+	public VocTransfusionReason getReason() {return theReason;}
+	public void setReason(VocTransfusionReason aReason) {theReason = aReason;}
 
 	/** Доза (мл) */
 	@Comment("Доза (мл)")
@@ -112,7 +117,7 @@ public abstract class Transfusion extends BaseEntity{
 	/** СМО */
 	private MedCase theMedCase;
 	/** Показания к применению */
-	private String theReason;
+	private VocTransfusionReason theReason;
 	/** Доза (мл) */
 	private Integer theDoze;
 	/** Серия */
@@ -159,8 +164,8 @@ public abstract class Transfusion extends BaseEntity{
 
 	/** Фенотип с */
 	@Comment("Фенотип с")
-	public Boolean getPhenotypec() {return thePhenotypec;}
-	public void setPhenotypec(Boolean aPhenotypec) {thePhenotypec = aPhenotypec;}
+	public Boolean getPhenotypec1() {return thePhenotypec1;}
+	public void setPhenotypec1(Boolean aPhenotypec1) {thePhenotypec1 = aPhenotypec1;}
 
 	/** Фенотип Е */
 	@Comment("Фенотип Е")
@@ -174,17 +179,17 @@ public abstract class Transfusion extends BaseEntity{
 
 	/** Фенотип E */
 	@Comment("Фенотип E")
-	public Boolean getPhenotypee() {return thePhenotypee;}
-	public void setPhenotypee(Boolean aPhenotypee) {thePhenotypee = aPhenotypee;}
+	public Boolean getPhenotypee1() {return thePhenotypee1;}
+	public void setPhenotypee1(Boolean aPhenotypee1) {thePhenotypee1 = aPhenotypee1;}
 
 	/** Фенотип E */
-	private Boolean thePhenotypee;	
+	private Boolean thePhenotypee1;	
 	/** Фенотип e */
 	private Boolean thePhenotypeE;
 	/** Фенотип Е */
 	private Boolean thePhenotypeD;
 	/** Фенотип с */
-	private Boolean thePhenotypec;
+	private Boolean thePhenotypec1;
 	/** Фенотип C */
 	private Boolean thePhenotypeC;
 	/** Фенотип */
@@ -270,5 +275,48 @@ public abstract class Transfusion extends BaseEntity{
 	/** Определение резус-принадлежности рециента производилось */
 	private VocTransfusionDefinitionRhesus theDefinitionRhesus;
 	
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;	}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Пользователь, которые последним редактировал запись */
+	@Comment("Пользователь, которые последним редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Дата редакции */
+	@Comment("Дата редакции")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+
+	/** Время редакции */
+	
+	@Comment("Время редакции")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+
+	/** Время редакции */
+	private Time theEditTime;
+	/** Дата редакции */
+	private Date theEditDate;
+	/** Пользователь, которые последним редактировал запись */
+	private String theEditUsername;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата создания */
+	private Date theCreateDate;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
 	
 }

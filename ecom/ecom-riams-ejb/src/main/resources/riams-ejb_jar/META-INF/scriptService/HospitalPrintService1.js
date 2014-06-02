@@ -435,9 +435,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 	wqr.set10(medCase.hospitalization) ;//"sls.hospitalization",
 	wqr.set11(medCase.kinsman!=null?medCase.kinsman.info:"") ;//"sls.kinsInfo",
 	var otds =aCtx.manager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
-			+", case when dateFinish is not null then coalesce(vwfd.code||' ','')||' '||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename else '' end as worker"
-			+", case when dateFinish is not null then d.name else '' end as dname,d.id as did"
-			+", case when dateFinish is not null then wf.code else '' end as worker"
+			+", coalesce(vwfd.code||' ','')||' '||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename  as worker"
+			+", d.name as dname,d.id as did"
+			+",  coalesce(wf.code,'') as worker"
+			+", case when d.IsNoOmc='1' then d.IsNoOmc else null end as IsNoOmc"
 			+" from MedCase dmc "
 			+" left join MisLpu d on d.id=dmc.department_id "
 			+" left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
@@ -456,10 +457,11 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 			if (otd!="") {otd += ", ";}
 			otd += dep[0] +" "+" c "+dep[1]+" по "+dep[2] ;
 			lech += dep[3] ;
-			
-			lastotd += dep[4] ;
-			lastotdId = dep[5] ;
-			lechCode=dep[6] ;
+			if (dep[7]==null) {
+				lastotd += dep[4] ;
+				lastotdId = dep[5] ;
+				lechCode=dep[6] ;
+			}
 		}
 		wqr.set12(otd) ;//"sls.departments",
 		wqr.set13(lech) ;//"sls.owner",
@@ -482,6 +484,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		wqr.set24(recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication")) ;
 		wqr.set25(recordDisability(aCtx,slsId,"dis")) ;
 		wqr.set26(medCase.orderDate!=null?medCase.orderDate:"") ;
+		var dc =aCtx.manager.createQuery("from DeathCase where medCase_id="+medCase.id).getResultList() ;
+		if (dc.size()>0) {
+			wqr.set27(dc.get(0)) ;
+		}
 		return wqr ;
 }
 function recordDisability(aContext,aSlsId,aField) {
