@@ -58,7 +58,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений в отделение  ${departmentInfo}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nativeSql="select m.id,m.dateStart as mdateStart,m.dateFinish,m.transferDate,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,sc.code as sccode
+    <ecom:webQuery name="journal_priem" nativeSql="select sls.id,m.dateStart as mdateStart,m.dateFinish,m.transferDate,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename,pat.birthday,sc.code as sccode
     ,vas.name as vasname,vbst.name as vbstname,vss.name as vssname
     ,case when m.prevMedCase_id is not null then 'Да' else 'Нет' end,vhr.name,sls.dateStart as slsdateStart
     from medCase m 
@@ -74,7 +74,8 @@
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'  and m.${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')
     order by vbst.name, m.${dateSearch}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_empty')"> 
+    <msh:table selection="multiply" name="journal_priem" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Доп.статус" property="8"/>
@@ -186,5 +187,20 @@
  			});*/
     </script>
   </tiles:put>
+   <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+            function printExpCard(aFile) {
+            	var ids = theTableArrow.getInsertedIdsAsParams("id","journal_priem") ;
+            	if(ids) {
+            		//alert(ids) ;
+            		window.location = 'print-'+aFile+'.do?multy=1&m=printBillings&s=HospitalPrintService1&'+ids ;
+            		
+            	} else {
+            		alert("Нет выделенных случаев");
+            	}
+            	
+            }
+       </script>
+   </tiles:put>  
 </tiles:insert>
 

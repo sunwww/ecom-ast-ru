@@ -290,10 +290,10 @@
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
-    <input type="submit" value="Печать"> 
+    <input type="submit" value="Печать всего"> 
     </form>
  
-    	<msh:table name="swod_by_standart" 
+    	<msh:table name="swod_by_standart" selection="multiply" 
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
 		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 		      <msh:tableColumn columnName="Отделение" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
@@ -391,7 +391,7 @@
 	 vbt.id , vbt.name,vbst.id,vbst.name
     order by  ${viewDateOrder} d.name,${viewServiceStreamOrder} ${viewAddStatusOrder} vbt.name,vbst.name
     	"/>
-    	<msh:table name="swod_by_standart" 
+    	<msh:table name="swod_by_standart"  selection="multiply"
     	viewUrl="stac_groupByBedFundList.do?short=Short&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1"
     	action="stac_groupByBedFundList.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1" idField="1">
     		<msh:tableColumn property="2" cssClass="noDate" columnName="Дата"/>
@@ -416,4 +416,5 @@
      
 
   </tiles:put>
+
 </tiles:insert>
