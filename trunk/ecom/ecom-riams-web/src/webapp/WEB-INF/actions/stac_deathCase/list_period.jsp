@@ -183,7 +183,7 @@
     	}
     	%>
     <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" nativeSql="select
-    dc.id, ss.code as sscode
+    m.id, ss.code as sscode
     ,p.lastname||' '||p.firstname||' '||p.middlename||' гр '||to_char(p.birthday,'DD.MM.YYYY') as fiodr
     ,cast(to_char(dc.deathDate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
@@ -233,7 +233,7 @@ then -1 else 0 end)
     and dmc.transferDate is null
     ${emerSql} ${autopsySql} ${differenceSql} ${operationSql}
     ${sexSql} ${departmentSql} ${categoryDifferenceSql}
-    group by dc.id,p.lastname,p.firstname,p.middlename,p.birthday
+    group by dc.id,m.id,p.lastname,p.firstname,p.middlename,p.birthday
     ,m.emergency,dc.deathDate,dc.deathTime,dc.commentReason
     ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
     ,m.dateStart,m.entranceTime,pml.name,dml.name,dml.isNoOmc,bf.addCaseDuration
@@ -256,7 +256,8 @@ then -1 else 0 end)
     <input type="submit" onclick="print()" value="Печать" />
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="journal_ticket" action="entityView-stac_deathCase.do" idField="1" noDataMessage="Не найдено">
+    	<input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_death_empty')"> 
+        <msh:table selection="multiply" name="journal_ticket" action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="№ИБ" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
@@ -280,5 +281,20 @@ then -1 else 0 end)
     	<% }   %>
     
   </tiles:put>
+     <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+            function printExpCard(aFile) {
+            	var ids = theTableArrow.getInsertedIdsAsParams("id","journal_ticket") ;
+            	if(ids) {
+            		//alert(ids) ;
+            		window.location = 'print-'+aFile+'.do?multy=1&m=printStatCards&s=HospitalPrintService1&'+ids ;
+            		
+            	} else {
+            		alert("Нет выделенных случаев");
+            	}
+            	
+            }
+       </script>
+   </tiles:put>  
 </tiles:insert>
 

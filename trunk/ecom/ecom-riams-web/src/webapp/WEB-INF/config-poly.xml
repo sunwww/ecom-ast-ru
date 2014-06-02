@@ -253,14 +253,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/journal_ticket_spec_list.jsp"/>
         </action>
-        <action path='/poly_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
-                name='poly_journalBySpecForm'
-                validate='true'
-                scope='session'
-                input='/WEB-INF/actions/poly_ticket/f039_list.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/f039_list.jsp"/>
-        </action>
         <action path='/poly_directOtherSpecialist' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='true'
@@ -276,6 +268,14 @@
                 input='/WEB-INF/actions/smo_visit/f039_new.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_new.jsp"/>
+        </action>
+        <action path='/visit_report_service' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/report_service.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_service.jsp"/>
         </action>
         <action path='/smo_openSPO' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'

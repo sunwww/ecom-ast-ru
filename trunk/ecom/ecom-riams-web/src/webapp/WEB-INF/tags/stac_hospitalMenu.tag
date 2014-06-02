@@ -77,9 +77,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	params="id"  action='/entityParentList-smo_medService'  key='Alt+7' title='Мед.услуги'
     	styleId="smo_medService" 
     	/>
-    <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"     
+   <!--  <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"     
     	params="id"  action='/entityParentList-trans_transfusion'  key='Alt+8' 
-    	title='Переливание трансфузионных сред'/>
+    	title='Переливание трансфузионных сред'/>  -->
     <msh:sideLink roles="/Policy/Mis/Inspection/View" name="Осмотры"     
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
@@ -135,6 +135,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать выписки" params="id"  
     	action='/print-discharge_hospital.do?m=printBilling&s=HospitalPrintService' title='Печать выписки'
+    	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
+    	name="Печать экс. карты" params="id"  
+    	action='/print-expert_card_empty.do?m=printBilling&s=HospitalPrintService' title='Печать экс. карты'
     	/>
      <mis:sideLinkForWoman roles="" classByObject="MedCase" id="${param.id}"
      	action="/print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC" 

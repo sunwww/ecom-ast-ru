@@ -67,12 +67,28 @@ select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis v
 from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		         "
 		         />
-		        <msh:table viewUrl="entityShortView-psych_careCard.do" hideTitle="false" disableKeySupport="false" idField="1" name="psychCard" action="entityParentView-psych_careCard.do" disabledGoFirst="false" disabledGoLast="false">
-		            <msh:tableColumn columnName="Номер карты" identificator="false" property="2" />
-		            <msh:tableColumn columnName="Наблюдения" identificator="false" property="3" />
-		            <msh:tableColumn columnName="МКБ10" identificator="false" property="4" />
-		            
-		        </msh:table>
+		        <msh:tableNotEmpty name="psychCard">
+			        <msh:table viewUrl="entityShortView-psych_careCard.do" hideTitle="false" disableKeySupport="false" idField="1" name="psychCard" action="entityParentView-psych_careCard.do" disabledGoFirst="false" disabledGoLast="false">
+			            <msh:tableColumn columnName="Номер карты" identificator="false" property="2" />
+			            <msh:tableColumn columnName="Наблюдения" identificator="false" property="3" />
+			            <msh:tableColumn columnName="МКБ10" identificator="false" property="4" />
+			        </msh:table>
+		        </msh:tableNotEmpty>
+		        <msh:tableEmpty name="psychCard">
+		        	<ecom:webQuery name="lastDiag1" nativeSql="select 
+    	m.id,to_char(m.dateStart,'dd.mm.yyyy')||' '||list(mkb.code) as dateFrom
+    	from medCase m
+    	left join Diagnosis d on d.medCase_id=m.id
+    	left join VocIdc10 mkb on mkb.id=d.idc10_id
+    	where m.patient_id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
+    	and m.dateStart is not null
+    	group by m.id,m.dateStart
+    	order by m.dateStart desc
+    	" maxResult="1" />
+    				<msh:table hideTitle="false" disableKeySupport="false" idField="1" name="lastDiag1" action="javascript:void(0)" disabledGoFirst="false" disabledGoLast="false">
+			            <msh:tableColumn columnName="Диагноз посл. посещения" identificator="false" property="2" />
+			        </msh:table>
+		        </msh:tableEmpty>
         </msh:section>
       </msh:ifInRole>
       </td>

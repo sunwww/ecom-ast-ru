@@ -184,6 +184,8 @@
     		ActionUtil.setParameterFilterSql("serviceStream","smo.serviceStream_id", request) ;
     		ActionUtil.setParameterFilterSql("workPlaceType","smo.workPlaceType_id", request) ;
     		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
+    		ActionUtil.setParameterFilterSql("workFunctionGroup","wf.group_id", request) ;
+    		ActionUtil.setParameterFilterSql("medService","ms.id", request) ;
     		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
     		if (typeDtype.equals("1")) {
@@ -328,7 +330,7 @@ left join medservice ms on ms.id=mssmo.medservice_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 
@@ -357,9 +359,9 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     <msh:section>
 <ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||'&medService='||ms.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
-,ms.name as vmsname
+,ms.code||' '||ms.name as vmsname
 ,count(*) as cntAll
 ,count(case when (vwpt.code='POLYCLINIC') then smc.id else null end) as cntAllPoly
 ,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then smc.id else null end) as cntVil
@@ -402,9 +404,9 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
 and (smo.noActuality is null or smo.noActuality='0')
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
-GROUP BY ms.name,${groupGroup} ORDER BY ${groupOrder}
+GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
     <form action="print-f039_stand.do" method="post" target="_blank">
@@ -427,14 +429,14 @@ GROUP BY ms.name,${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th colspan="4">Число посещений (в поликлинику)</th>
+         		<th colspan="4">Услуги</th>
 
-         		<th colspan="7">Число посещений по видам оплаты</th>
+         		<th colspan="7">Услуги по видам оплаты</th>
          	</tr>
          </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn columnName="Кабинет" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во посещ." property="4"/>
+            <msh:tableColumn columnName="Услуги" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во" property="4"/>
             
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж." property="6"/>
@@ -462,7 +464,7 @@ GROUP BY ms.name,${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||'&workFunctionGroup='||wfg.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,coalesce(wfg.groupname)
 ,count(*) as cntAll
@@ -507,9 +509,9 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
 and (smo.noActuality is null or smo.noActuality='0')
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
-GROUP BY wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
+GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
     <form action="print-f039_stand.do" method="post" target="_blank">
@@ -532,9 +534,9 @@ GROUP BY wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th colspan="4">Число посещений (в поликлинику)</th>
+         		<th colspan="4">Услуги</th>
 
-         		<th colspan="7">Число посещений по видам оплаты</th>
+         		<th colspan="7">Услуги по видам оплаты</th>
          	</tr>
          </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            

@@ -53,6 +53,7 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="complexity" label="Уровень сложности"/>
+        	<msh:checkBox property="isNoOmc" label="Не входит в ОМС"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="startDate" label="Дата начала"/>

@@ -11,12 +11,9 @@
   <tiles:put name="body" type="string">
     <msh:table name="list" action="entitySubclassView-trans_transfusion.do" idField="id" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn columnName="Номер в журнале" property="journalNumber" guid="ed7e6ec7-524e-4b87-8b2c-5a722792a123" />
-      <msh:tableColumn columnName="Трансфузионная среда" property="information" guid="c4b30e10-9ca0-42b1-94fb-88cf0f7afa2e" />
       <msh:tableColumn columnName="Дата приготовления" property="preparationDate" guid="1ef2e314-6eb6-4c85-be47-ca392566d371" />
-      <msh:tableColumn columnName="Изготовитель" property="preparator" guid="dk29-5653-4920-bb78-168ha34" />
       <msh:tableColumn columnName="Дата начала" property="startDate" guid="2976f5c7-3844-4ae2-be91-2a395cae0f1f" />
       <msh:tableColumn columnName="Доза" property="doze" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Исполнитель" property="executorInfo" guid="8e832f90-6905-44cf-952e-76495689c35b" />
     </msh:table>
   </tiles:put>
   <tiles:put name="side" type="string">

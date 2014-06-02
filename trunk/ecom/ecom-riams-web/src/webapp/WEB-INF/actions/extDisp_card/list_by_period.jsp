@@ -44,53 +44,63 @@
 	        	<input type="radio" name="typeGroup" value="1"> реестр по типу доп.дисп.
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="2"> общий свод
+	        	<input type="radio" name="typeGroup" value="2"> доп. реестр
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="3"> свод по возрастной периодам
+	        	<input type="radio" name="typeGroup" value="3"> реестр по услугам
 	        </td>
         </msh:row>
         <msh:row>
         	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="4"> свод по факторам риска
+	        	<input type="radio" name="typeGroup" value="4"> общий свод
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="5"> свод по группам здоровья
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="6"> свод по услугам
+	        	<input type="radio" name="typeGroup" value="5"> свод по возрастной периодам
 	        </td>
 
         </msh:row>			
         <msh:row>
         	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="7"> свод по заболеваниям
+	        	<input type="radio" name="typeGroup" value="6"> свод по факторам риска
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="8"> свод по раб.функции
+	        	<input type="radio" name="typeGroup" value="7"> свод по группам здоровья
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="8"> свод по услугам
+	        </td>
+
+        </msh:row>			
+        <msh:row>
+        	<td></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="9"> свод по заболеваниям
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="10"> свод по раб.функции
 	        </td>        
         </msh:row>	
         <msh:row>
         	<td>Группировки по отчету</td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="9"> свод по возрастным категориям
+	        	<input type="radio" name="typeGroup" value="11"> свод по возрастным категориям
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="10"> свод по факторам риска
+	        	<input type="radio" name="typeGroup" value="12"> свод по факторам риска
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="11"> свод по группам здоровья
+	        	<input type="radio" name="typeGroup" value="13"> свод по группам здоровья
 	        </td>
         </msh:row>			
         <msh:row>
         	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="12"> свод по заболеваниям
+	        	<input type="radio" name="typeGroup" value="14"> свод по заболеваниям
 	        </td>     
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="13"> свод по специалистам и услугам 
+	        	<input type="radio" name="typeGroup" value="15"> свод по специалистам и услугам 
 	        </td>     
         </msh:row>
         <msh:row>
@@ -108,8 +118,8 @@
 		}
 		request.setAttribute("beginDate", beginDate) ;
 		request.setAttribute("finishDate", finishDate) ;
-		if (!typeGroup.equals("2") && (dispType==null || dispType.equals("")||dispType.equals("0"))) {
-			typeGroup = "2" ;
+		if (!typeGroup.equals("4") && (dispType==null || dispType.equals("")||dispType.equals("0"))) {
+			typeGroup = "4" ;
 		}
 		/*
 		if (typeGroup.equals("1")) {
@@ -224,7 +234,147 @@ order by p.lastname,p.firstname,p.middlename
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
+		<% } else if (typeGroup!=null && typeGroup.equals("2") ) {%>
+			<msh:section>
+			<ecom:webQuery name="reestrExtDispCard" nameFldSql="reestrExtDispCard_sql" nativeSql="
+select edc.id,p.lastname||' '||p.firstname||' '||p.middlename as fio
+, to_char(p.birthday,'dd.mm.yyyy') as birthday
+,vedag.name as vedagname
+,vedhg.name as vedhgname
+,mkb.code as mkbcode
+,list(distinct vedr.name) as vrisks
+,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
+	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end 
+	||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end 
+	
+	as address
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+,to_char(edc.startDate,'dd.mm.yyyy')||'-'||to_char(edc.finishDate,'dd.mm.yyyy') as edcDate
+from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join Patient p on p.id=edc.patient_id
+left join Address2 a on a.addressid=p.address_addressid
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend} 
+group by edc.id,p.lastname,p.firstname,
+p.middlename,p.birthday,edc.startDate ,edc.finishDate 
+,vedag.name,vedhg.name,vedsg.name
+, edc.isObservation ,edc.isTreatment ,edc.isDiagnostics ,edc.isSpecializedCare,edc.isSanatorium 
+,mkb.code,edc.isServiceIndication,a.fullname,p.houseNumber,p.houseBuilding
+,p.flatNumber,vwf.name,wp.lastname,wp.firstname,wp.middlename
+order by p.lastname,p.firstname,p.middlename
+			"/>
+<msh:sectionTitle>
+    <form action="print-extDisp_journal_period_reestr2.do" method="post" target="_blank">
+Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
+    <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+
+</msh:sectionTitle>
+<msh:sectionContent>
+				<msh:table name="reestrExtDispCard" 
+				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
+				idField="1">
+					<msh:tableColumn columnName="ФИО пациента" property="2" />
+					<msh:tableColumn columnName="Год рождения" property="3" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
+					<msh:tableColumn columnName="Группа здоровья" property="5" />
+					<msh:tableColumn columnName="Диагноз" property="6" />
+					<msh:tableColumn columnName="Факторы риска" property="7" />
+					<msh:tableColumn columnName="Адрес" property="8" />
+					<msh:tableColumn columnName="Фамилия врача" property="9" />
+					<msh:tableColumn columnName="Дата дисп." property="10" />
+				</msh:table>
+				</msh:sectionContent>
+			</msh:section>
+		<% } else if (typeGroup!=null && typeGroup.equals("3") ) {%>
+						<msh:section>
+			<ecom:webQuery name="reestrExtDispCard" nameFldSql="reestrExtDispCard_sql" nativeSql="
+select edc.id,p.lastname||' '||p.firstname||' '||p.middlename as fio
+, to_char(p.birthday,'dd.mm.yyyy') as birthday
+,vedag.name as vedagname
+,vedhg.name as vedhgname
+,mkb.code as mkbcode
+,list(distinct vedr.name) as vrisks
+,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
+	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end 
+	||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end 
+	
+	as address
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+,to_char(edc.startDate,'dd.mm.yyyy')||'-'||to_char(edc.finishDate,'dd.mm.yyyy') as edcDate
+,list(veds.code||' '||veds.name||' - '||to_char(eds.serviceDate,'dd.mm.yyyy')) as service
+from ExtDispCard edc
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join Patient p on p.id=edc.patient_id
+left join Address2 a on a.addressid=p.address_addressid
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
+left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
+left join VocExtDispService veds on eds.serviceType_id=veds.id
+left join VocIdc10 mkb on mkb.id=edc.idcMain_id
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend} 
+group by edc.id,p.lastname,p.firstname,
+p.middlename,p.birthday,edc.startDate ,edc.finishDate 
+,vedag.name,vedhg.name,vedsg.name
+, edc.isObservation ,edc.isTreatment ,edc.isDiagnostics ,edc.isSpecializedCare,edc.isSanatorium 
+,mkb.code,edc.isServiceIndication,a.fullname,p.houseNumber,p.houseBuilding
+,p.flatNumber,vwf.name,wp.lastname,wp.firstname,wp.middlename
+order by p.lastname,p.firstname,p.middlename
+			"/>
+<msh:sectionTitle>
+    <form action="print-extDisp_journal_period_reestr2.do" method="post" target="_blank">
+Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
+    <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+
+</msh:sectionTitle>
+<msh:sectionContent>
+				<msh:table name="reestrExtDispCard" 
+				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
+				idField="1">
+					<msh:tableColumn columnName="ФИО пациента" property="2" />
+					<msh:tableColumn columnName="Год рождения" property="3" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
+					<msh:tableColumn columnName="Группа здоровья" property="5" />
+					<msh:tableColumn columnName="Диагноз" property="6" />
+					<msh:tableColumn columnName="Факторы риска" property="7" />
+					<msh:tableColumn columnName="Адрес" property="8" />
+					<msh:tableColumn columnName="Фамилия врача" property="9" />
+					<msh:tableColumn columnName="Дата дисп." property="10" />
+					<msh:tableColumn columnName="Услуги" property="11" />
+				</msh:table>
+				</msh:sectionContent>
+			</msh:section>
+	<%} else if (typeGroup!=null&& typeGroup.equals("4")) {%>
 			<msh:section title="Свод за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id,ved.name,ved.code,count(distinct edc.id) as cntAll
@@ -256,7 +406,7 @@ order by ved.code
 			</msh:section>
 
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("5")) {%>
 			<msh:section title="Свод по возрастным категориям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispAgeSwod" nativeSql="
 select '&dispType='||ved.id||'&ageGroup='||vedag.id as id
@@ -291,7 +441,7 @@ order by vedag.name
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("4")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("6")) {%>
 			<msh:section title="Свод по факторам риска за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&dispRisk='||vedr.id as id,ved.name as vedname
@@ -328,7 +478,7 @@ order by vedr.id,vedag.name
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("5")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("7")) {%>
 			<msh:section title="Свод по группам здоровья за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&healthGroup='||coalesce(vedhg.id,'-1') as id,ved.name as vedname
@@ -395,7 +545,7 @@ order by vedhg.name,vedag.name
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("6")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("8")) {%>
 			<msh:section title="Свод по услугам за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id as id
@@ -449,7 +599,7 @@ order by veds.id
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("7")) {
+	<%} else if (typeGroup!=null&& typeGroup.equals("9")) {
 	%>
 			<msh:section title="Свод по заболеваниям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
@@ -488,7 +638,7 @@ order by substring(mkb.code,1,3),vedag.name
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("8")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("10")) {%>
 			<msh:section title="Свод по раб.функциям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&workFunction='||wf.id as id
@@ -532,7 +682,7 @@ order by wp.lastname
 
 
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("9")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("11")) {%>
 			<msh:section title="Свод по группам возрастов за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispAgeSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id as id
@@ -568,7 +718,7 @@ order by vedarg.code
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("10")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("12")) {%>
 			<msh:section title="Свод по факторам риска за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&dispRisk='||vedr.id as id,ved.name as vedname
@@ -606,7 +756,7 @@ order by vedr.id,vedarg.code
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("11")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("13")) {%>
 			<msh:section title="Свод по группам здоровья за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&healthGroup='||coalesce(vedhg.id,'-1') as id,ved.name as vedname
@@ -675,7 +825,7 @@ order by vedhg.name,vedarg.code
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("12")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("14")) {%>
 			<msh:section title="Свод по заболеваниям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&mkb='||substring(mkb.code,1,3) as id,ved.name as vedname
@@ -714,7 +864,7 @@ order by substring(mkb.code,1,3),vedarg.name
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("13")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("15")) {%>
 			<msh:section title="Свод по услугам за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&workFunction='||wf.id||'&='||veds.id as id
@@ -746,7 +896,7 @@ left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend}  and eds.serviceDate is not null
 group by wf.id,ved.id,ved.name,ved.code,veds.id,veds.name,veds.code,vwf.name,wp.lastname,wp.firstname,wp.middlename
-order by vwf.name,wp.lastname,wf.id,,veds.id
+order by vwf.name,wp.lastname,wf.id,veds.id
 			"/>
 
 				<msh:table name="extDispSwod" 

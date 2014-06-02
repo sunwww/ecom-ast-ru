@@ -358,7 +358,7 @@ ${groupSqlAdd}
     ${serviceStreamSql}
      ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
-    	    ,vwfe.name,pe.lastname , vn.name
+    	    ,vwfe.name,pe.lastname , vn.name,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
     <msh:table name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 

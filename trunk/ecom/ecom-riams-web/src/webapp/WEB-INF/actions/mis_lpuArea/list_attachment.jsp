@@ -20,7 +20,7 @@
 	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
 	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
 	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
-	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
+	String typeAttachment=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -61,7 +61,7 @@
 	        
        </msh:row>
       <msh:row>
-        <td class="label" title="Прикрепление  (typeAttachment)" colspan="1"><label for="typeAttachmentName" id="typeAttachmentLabel">Возраст:</label></td>
+        <td class="label" title="Прикрепление  (typeAttachment)" colspan="1"><label for="typeAttachmentName" id="typeAttachmentLabel">Прикрепление:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeAttachment" value="1">  по территории
         </td>

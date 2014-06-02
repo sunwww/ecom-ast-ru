@@ -25,7 +25,7 @@
   	StringBuilder paramHref= new StringBuilder() ;
   	
 	ActionUtil.setParameterFilterSql("strcode", "vrspt.id", request) ;
-  	ActionUtil.setParameterFilterSql("department","department", "ahr.department_id", request) ;
+  	ActionUtil.setParameterFilterSql("department","department", "ahr.department", request) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "ahr.sex", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "ahr.hospType", request)) ;
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
@@ -75,13 +75,16 @@
         </td>
        </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
+        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип стационара" vocName="vocHospType"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="strcode" parentId="F36_DIAG" fieldColSpan="4" horizontalFill="true" label="Строка" vocName="vocReportSetParameterTypeByClassname"/>
         </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
@@ -332,6 +335,7 @@ or ahr.idcEntranceCode between rspt.codefrom and rspt.codeto
 ${age_sql} 
 ${paramSql}
 ${departmentSql}
+${strcodeSql}
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 
@@ -350,8 +354,8 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="Report36HOSPswod" 
-    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=4&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=4&department=${param.department}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}" 
+     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -375,6 +379,8 @@ order by vrspt.strCode
       <msh:tableColumn columnName="сост. всего" property="22"/>
       <msh:tableColumn columnName="сост. 0-14" property="23"/>
       <msh:tableColumn columnName="сост. 15-17" property="24"/>
+      <msh:tableColumn columnName="перевед. из др." property="25"/>
+      <msh:tableColumn columnName="перевед. в др." property="26"/>
     </msh:table>
     
     </msh:sectionContent>
@@ -391,7 +397,7 @@ order by vrspt.strCode
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
+    <msh:sectionTitle>Список поступивших пациентов ${param.strname}
     
     </msh:sectionTitle>
     <msh:sectionContent>
@@ -400,74 +406,20 @@ select
 ahr.sls as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slsdateFinish
+,p.birthday as birthday
+,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
+,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
+,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
  ,ahr.idcDischarge as idcDischarge
  ,ahr.idcDepartmentCode as idcDepartmentCode
  ,ahr.idcEntranceCode as idcEntranceCode
 ,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Да' else null end as emer
-
- from AggregateHospitalReport ahr
- left join medcase sls on ahr.sls=sls.id
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
-left join Patient p on p.id=sls.patient_id
-where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-  and ahr.transferDepartmentIn is null
-  ${strcodeSql}
-      ${paramSql} 
-
-group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
-order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
-    viewUrl="entityShortView-stac_ssl.do" 
-     action="entityView-stac_ssl.do" idField="1">
-      <msh:tableColumn columnName="##" property="sn" />
-      <msh:tableColumn columnName="Строки отчета" property="2" />
-      <msh:tableColumn columnName="№стат. карт" property="3" />
-      <msh:tableColumn columnName="ФИО пациента" property="4" />
-      <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6"/>
-      <msh:tableColumn columnName="Дата выписки" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    		
-        <% } else if (view.equals("5")) {
-    	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
-select 
-ahr.sls as slsid,list(vrspt1.strCode) as listStr
-,ss.code as sscode
-,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slsdateFinish
- ,ahr.idcDischarge as idcDischarge
- ,ahr.idcDepartmentCode as idcDepartmentCode
- ,ahr.idcEntranceCode as idcEntranceCode
-,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Да' else null end as emer
+,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
+,
+case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end as beddays
 
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
@@ -480,12 +432,14 @@ left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id a
 left join Patient p on p.id=sls.patient_id
 where ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
   and ahr.transferDepartmentFrom is null
-  ${strcodeSql}
-      ${paramSql} 
+${age_sql} 
+${paramSql}
+${departmentSql}
+${strcodeSql}
 
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
 ,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table name="journal_surOperation" 
@@ -496,12 +450,88 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="№стат. карт" property="3" />
       <msh:tableColumn columnName="ФИО пациента" property="4" />
       <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6"/>
-      <msh:tableColumn columnName="Дата выписки" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
+      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
+      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
+      <msh:tableColumn columnName="МКБ вып." property="9"/>
+      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
+      <msh:tableColumn columnName="МКБ напр." property="11"/>
+      <msh:tableColumn columnName="Лет. исход" property="12"/>
+      <msh:tableColumn columnName="Показания" property="13"/>
+      <msh:tableColumn columnName="К.дн" property="14"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>    		
+        <% } else if (view.equals("5")) {
+    	%>
+    
+    <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Список выбывших пациентов ${param.strname}
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_surOperation" nativeSql="
+select 
+ahr.sls as slsid,list(vrspt1.strCode) as listStr
+,ss.code as sscode
+,p.lastname||' '||p.firstname||' '||p.middlename as fio
+,p.birthday as birthday
+,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
+,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
+,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
+ ,ahr.idcDischarge as idcDischarge
+ ,ahr.idcDepartmentCode as idcDepartmentCode
+ ,ahr.idcEntranceCode as idcEntranceCode
+,case when ahr.isDeath='1' then 'Да' else null end as death
+,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
+,
+case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end as beddays
+
+ from AggregateHospitalReport ahr
+ left join medcase sls on ahr.sls=sls.id
+left join StatisticStub ss on ss.id=sls.statisticStub_id
+left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
+left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
+left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
+left join Patient p on p.id=sls.patient_id
+where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+  and ahr.transferDepartmentIn is null
+${age_sql} 
+${paramSql}
+${departmentSql}
+${strcodeSql}
+
+group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
+,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
+,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
+order by p.lastname,p.firstname,p.middlename " />
+    <msh:table name="journal_surOperation" 
+    viewUrl="entityShortView-stac_ssl.do" 
+     action="entityView-stac_ssl.do" idField="1">
+      <msh:tableColumn columnName="##" property="sn" />
+      <msh:tableColumn columnName="Строки отчета" property="2" />
+      <msh:tableColumn columnName="№стат. карт" property="3" />
+      <msh:tableColumn columnName="ФИО пациента" property="4" />
+      <msh:tableColumn columnName="Возраст" property="5" />
+      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
+      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
+      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
+      <msh:tableColumn columnName="МКБ вып." property="9"/>
+      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
+      <msh:tableColumn columnName="МКБ напр." property="11"/>
+      <msh:tableColumn columnName="Лет. исход" property="12"/>
+      <msh:tableColumn columnName="Показания" property="13"/>
+      <msh:tableColumn columnName="К.дн" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
@@ -513,7 +543,7 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
+    <msh:sectionTitle>Состоящие на начало периода пациентов ${param.strname}
     
     </msh:sectionTitle>
     <msh:sectionContent>
@@ -522,37 +552,45 @@ select
 ahr.sls as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slsdateFinish
+,p.birthday as birthday
+,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
+,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
+,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
  ,ahr.idcDischarge as idcDischarge
  ,ahr.idcDepartmentCode as idcDepartmentCode
  ,ahr.idcEntranceCode as idcEntranceCode
 ,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Да' else null end as emer
+,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
+,
+case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end as beddays
 
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on mkb.code between rspt.codefrom and rspt.codeto
+left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on mkb.code between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id
+left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
+left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
 left join Patient p on p.id=sls.patient_id
-where sls.dtype='HospitalMedCase' and ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy')
-    and 
-and vrspt.id='${param.strcode}'
+where ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
+and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
+or ahr.dischargeDate24 is null
+) ${departmentSql}
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
+${age_sql} 
 ${paramSql}
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-and sls.result_id!='${result_death}'
-${age_sql}  
-and vrspt1.classname='F36_DIAG' 
-group by sls.id
+${departmentSql}
+${strcodeSql}
+
+group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,bf.addCaseDuration,sls.result_id,mkb.code
-order by p.lastname,p.firstname,p.middlename " />
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
+,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
+order by p.lastname,p.firstname,p.middlename" />
     <msh:table name="journal_surOperation" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
@@ -561,12 +599,15 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="№стат. карт" property="3" />
       <msh:tableColumn columnName="ФИО пациента" property="4" />
       <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6"/>
-      <msh:tableColumn columnName="Дата выписки" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
+      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
+      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
+      <msh:tableColumn columnName="МКБ вып." property="9"/>
+      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
+      <msh:tableColumn columnName="МКБ напр." property="11"/>
+      <msh:tableColumn columnName="Лет. исход" property="12"/>
+      <msh:tableColumn columnName="Показания" property="13"/>
+      <msh:tableColumn columnName="К.дн" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
@@ -587,38 +628,43 @@ select
 ahr.sls as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slsdateFinish
+,p.birthday as birthday
+,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
+,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
+,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
  ,ahr.idcDischarge as idcDischarge
  ,ahr.idcDepartmentCode as idcDepartmentCode
  ,ahr.idcEntranceCode as idcEntranceCode
 ,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Да' else null end as emer
+,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
+,
+case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end as beddays
 
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on mkb.code between rspt.codefrom and rspt.codeto
+left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on mkb.code between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id
+left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
+left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
 left join Patient p on p.id=sls.patient_id
-where sls.dtype='HospitalMedCase' and ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy')
-    and 
-and vrspt.id='${param.strcode}'
+where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+  and ahr.transferDepartmentIn is null
+${age_sql} 
 ${paramSql}
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-and sls.result_id!='${result_death}'
-${age_sql}  
-and vrspt1.classname='F36_DIAG' 
-group by sls.id
+${departmentSql}
+${strcodeSql}
+
+group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,bf.addCaseDuration,sls.result_id,mkb.code
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
+,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+       <msh:table name="journal_surOperation" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -626,12 +672,15 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="№стат. карт" property="3" />
       <msh:tableColumn columnName="ФИО пациента" property="4" />
       <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6"/>
-      <msh:tableColumn columnName="Дата выписки" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
+      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
+      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
+      <msh:tableColumn columnName="МКБ вып." property="9"/>
+      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
+      <msh:tableColumn columnName="МКБ напр." property="11"/>
+      <msh:tableColumn columnName="Лет. исход" property="12"/>
+      <msh:tableColumn columnName="Показания" property="13"/>
+      <msh:tableColumn columnName="К.дн" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
