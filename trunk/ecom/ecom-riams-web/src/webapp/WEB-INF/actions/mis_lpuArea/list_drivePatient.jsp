@@ -25,6 +25,27 @@
 	<input type="hidden" id="check" name="check" />
 	<input type="hidden" id="m" value="printArea" name="m"/>
 	<input type="hidden" id="s" value="PsychiatricService" name="s"/>
+      <msh:row>
+        <msh:separator label="Параметры отображения списка" colSpan="7"/>
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Диагноз  (typeDiag)" colspan="1"><label for="typeDiagName" id="typeDiagLabel">Диагноз:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDiag" value="1">  Код МКБ
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeDiag" value="2">  Код МКБ + наименование
+	        </td>
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Отображать адрес регистрации (typeAddress)" colspan="1"><label for="typeAddressName" id="typeAddressLabel">Адрес:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAddress" value="1">  регистрации
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAddress" value="2">  проживания
+	        </td>
+       </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -182,6 +203,8 @@
      checkFieldUpdate('typeAge','${typeAge}',2) ;
      checkFieldUpdate('typeSuicide','${typeSuicide}',3) ;
      checkFieldUpdate('typeCare','${typeCare}',4) ;
+     checkFieldUpdate('typeDiag','${typeDiag}',1) ;
+     checkFieldUpdate('typeAddress','${typeAddress}',1) ;
      function checkFieldUpdate(aField,aValue,aDefault) {
      	
      	eval('var chk =  document.forms[0].'+aField) ;
@@ -259,11 +282,11 @@ cast(to_char(CURRENT_DATE,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int
 as age
    ,coalesce(p.lastname,'-')||' '||coalesce(p.firstname,'-')|| ' '||coalesce(p.middlename,'-') as lfm
    ,area.startDate as areastartdate,area.finishDate as areafinishdate,p.birthday as pbirthday 
-   , case when p.address_addressId is not null 
+   , case when p.${addressAdd}address_addressId is not null 
 	          then coalesce(a.fullname,a.name) || 
-	               case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
-	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end 
-	||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end
+	               case when p.${addressAdd}houseNumber is not null and p.${addressAdd}houseNumber!='' then ' д.'||p.${addressAdd}houseNumber else '' end 
+	 ||case when p.${addressAdd}houseBuilding is not null and p.${addressAdd}houseBuilding!='' then ' корп.'|| p.${addressAdd}houseBuilding else '' end 
+	||case when p.${addressAdd}flatNumber is not null and p.${addressAdd}flatNumber!='' then ' кв. '|| p.${addressAdd}flatNumber else '' end
 	       when p.territoryRegistrationNonresident_id is not null
 	          then okt.name||' '||p.RegionRegistrationNonresident||' '||oq.name||' '||p.SettlementNonresident
 	               ||' '||ost.name||' '||p.StreetNonresident||
@@ -272,7 +295,7 @@ as age
 	||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end
 	   else '' 
 	  end as address
-   ,$$getDiagnosis^ZPsychUtil(p.id,isnull(area.finishDate,CURRENT_DATE))
+   ,$$getDiagnosis^ZPsychUtil(p.id,isnull(area.finishDate,CURRENT_DATE),${typeDiag})
    ,vpor.name as vporname,vptr.name as vptrname,vpsor.name as vpsorname
    ${invAddField} ${suicideAddField} ${compTreatAddField} ${groupAddField}
    from PsychiatricCareCard pcc 
@@ -293,7 +316,7 @@ as age
    left join Invalidity inv on inv.patient_id=p.id
    left join VocInvalidity vi on vi.id=inv.group_id
     left join VocLawCourt invvlc on invvlc.id=inv.lawCourt_id
-	left join Address2 a on a.addressId=p.address_addressId
+	left join Address2 a on a.addressId=p.${addressAdd}address_addressId
 	left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
 	left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
 	left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
