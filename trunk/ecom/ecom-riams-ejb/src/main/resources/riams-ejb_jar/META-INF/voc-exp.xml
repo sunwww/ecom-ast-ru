@@ -82,7 +82,9 @@
     </voc>
 
     <voc id='timeOmcLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcLpu' />
+        <timeVoc    entity = 'OmcLpu'
+        queryConvertType="UPPER_CASE" 
+        />
     </voc>
 
     <voc id='timeOmcVidLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
