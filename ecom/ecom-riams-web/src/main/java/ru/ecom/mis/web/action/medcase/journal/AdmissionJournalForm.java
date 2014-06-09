@@ -350,16 +350,11 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	/** AdditionStatus */
 	private Long theAdditionStatus;
 	
-	/** Код строки */
-	@Comment("Код строки")
-	public Long getStrcode() {
-		return theStrcode;
-	}
+	/** Строка отчета */
+	@Comment("Строка отчета")
+	public Long getReportStr() {return theReportStr;}
+	public void setReportStr(Long aReportStr) {theReportStr = aReportStr;}
 
-	public void setStrcode(Long aStrcode) {
-		theStrcode = aStrcode;
-	}
-
-	/** Код строки */
-	private Long theStrcode;
+	/** Строка отчета */
+	private Long theReportStr;
 }
