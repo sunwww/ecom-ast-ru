@@ -258,6 +258,14 @@ public class AggregateHospitalReport extends BaseEntity {
 	/** Пол ид */
 	private Long theSex;
 	
+	/** Переводной диагноз */
+	@Comment("Переводной диагноз")
+	public String getIdcTransferCode() {return theIdcTransferCode;}
+	public void setIdcTransferCode(String aIdcTransferCode) {theIdcTransferCode = aIdcTransferCode;}
+
+	/** Переводной диагноз */
+	private String theIdcTransferCode;
+
 	/** Дата поступлание в стационар 24 */
 	@Comment("Дата поступлание в стационар 24")
 	public Date getEntranceHospDate24() {return theEntranceHospDate24;}
