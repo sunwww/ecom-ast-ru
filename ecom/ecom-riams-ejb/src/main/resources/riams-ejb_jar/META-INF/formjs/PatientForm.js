@@ -74,7 +74,7 @@ function updateAddress(aForm) {
 		aForm.flatNumber=aForm.realFlatNumber ;
 		aForm.houseBuilding=aForm.realHouseBuilding ;
 		aForm.houseNumber=aForm.realHouseNumber ;
-	} else if ((+aForm.address>0) && (+aForm.readAddress<1)) {
+	} else if ((+aForm.address>0) && (+aForm.realAddress<1)) {
 		aForm.realAddress=aForm.address ;
 		aForm.realFlatNumber=aForm.flatNumber ;
 		aForm.realHouseBuilding=aForm.houseBuilding ;
