@@ -24,7 +24,7 @@
   	StringBuilder paramSql= new StringBuilder() ;
   	StringBuilder paramHref= new StringBuilder() ;
   	
-	ActionUtil.setParameterFilterSql("strcode", "vrspt.id", request) ;
+	ActionUtil.setParameterFilterSql("reportStr", "vrspt.id", request) ;
   	ActionUtil.setParameterFilterSql("department","department", "ahr.department", request) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "ahr.sex", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "ahr.hospType", request)) ;
@@ -84,7 +84,7 @@
         	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="strcode" parentId="F36_DIAG" fieldColSpan="4" horizontalFill="true" label="Строка" vocName="vocReportSetParameterTypeByClassname"/>
+        	<msh:autoComplete property="reportStr" fieldColSpan="4" horizontalFill="true" label="Строка отчета" parentId="F36_DIAG" vocName="vocReportStr"/>
         </msh:row>
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
@@ -146,7 +146,10 @@
     String dateEnd = request.getParameter("dateEnd") ;
     //String id = (String)request.getParameter("id") ;
     String period = request.getParameter("period") ;
-    String strcode =request.getParameter("strcode") ;
+    String reportStr =request.getParameter("reportStr") ;
+    if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
+    	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
+    }
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
@@ -164,7 +167,7 @@
     <msh:section>
     <ecom:webQuery name="Report36HOSPswod" nameFldSql="Report36HOSPswod_sql" nativeSql="
 select
-vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
+vrspt.id||'&reportStr='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
 ,count(case when
 ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
 and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
@@ -237,7 +240,15 @@ and ahr.transferDepartmentIn is null
 ${departmentSql}
 then ahr.sls else null end) as cntDischargeAll
 
-,cast('1' as int)
+,sum(case when
+ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.idcDischarge between rspt.codefrom and rspt.codeto
+and ahr.transferDepartmentIn is null
+${departmentSql}
+then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end else null end)
 as sumDayAllDischarge
 
 ,count(case when
@@ -248,7 +259,17 @@ and ahr.transferDepartmentIn is null
 ${departmentSql}
 then ahr.sls else null end) as cntDischargeDeath
 
-,cast('1' as int)
+,
+sum(case when
+ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.idcDischarge between rspt.codefrom and rspt.codeto
+and ahr.isDeath='1'
+and ahr.transferDepartmentIn is null
+${departmentSql}
+then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end else null end)
 as sumDayDeathDischarge
 
 
@@ -259,8 +280,16 @@ ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
 and ahr.ageDischargeSlo between 0 and 14 then ahr.sls else null end)  as cntDischarge0_14
 
-,cast('1'
-as int)
+,sum(case when
+ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.idcDischarge between rspt.codefrom and rspt.codeto
+and ahr.ageDischargeSlo between 0 and 14
+and ahr.transferDepartmentIn is null
+${departmentSql}
+then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end else null end)
 as sumDayDischarge0_14
 
 ,count(case when 
@@ -270,7 +299,16 @@ ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
 and ahr.ageDischargeSlo between 15 and 17 then ahr.sls else null end)  as cntDischarge15_17
 
-,cast(sum(1) as int)
+,sum(case when
+ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.idcDischarge between rspt.codefrom and rspt.codeto
+and ahr.ageDischargeSlo between 15 and 17
+and ahr.transferDepartmentIn is null
+${departmentSql}
+then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+else 
+ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+end else null end)
 as sumDayDischarge15_17
 
 
@@ -322,7 +360,7 @@ left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=ahr.patient
 
 where ( 
- ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ ahr.dischargeDate24>=to_date('${dateBegin}','dd.mm.yyyy')
 or ahr.dischargeDate24 is null)
 and (ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
 ) 
@@ -332,15 +370,14 @@ or ahr.idcDischarge between rspt.codefrom and rspt.codeto
 or ahr.idcEntranceCode between rspt.codefrom and rspt.codeto
 
  )
-${age_sql} 
 ${paramSql}
 ${departmentSql}
-${strcodeSql}
+${reportStrSql}
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 
 " />
-    <msh:sectionTitle>Свод по нозоологиям (выписанные)
+    <msh:sectionTitle>
     
     	    <form action="print-report_14_2.do" method="post" target="_blank">
 	    Свод по нозоологиям (выписанные)
@@ -355,7 +392,8 @@ order by vrspt.strCode
     <msh:sectionContent>
     <msh:table name="Report36HOSPswod" 
     viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}" 
-     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1" >
+     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1" 
+     >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -389,9 +427,46 @@ order by vrspt.strCode
        
         	%>
      
-        <% } else if (view.equals("4")) {
+        <% } else if (view.equals("4")||view.equals("5")||view.equals("6")
+        		||view.equals("7")||view.equals("8")||view.equals("9")) {
+        	String sql ="" ;
+        	if (view.equals("4")) {
+        		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        	    if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
+        	    	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr.idcEntranceCode between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
+        	    }
+        	    request.setAttribute("titleReestr","Список поступивших пациентов") ;
+        		request.setAttribute("dateSql", sql) ;
+        		request.setAttribute("diagnosField","idcEntranceCode") ;
+        	} else if (view.equals("5")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        		request.setAttribute("titleReestr","Список выбывших пациентов") ;
+        		request.setAttribute("diagnosField","idcDischargeCode") ;
+        	} else if (view.equals("6")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        		request.setAttribute("titleReestr","Список пациентов, состоящих на начало периода") ;
+        		request.setAttribute("diagnosField","idcEntranceCode") ;
+        	} else if (view.equals("7")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        		request.setAttribute("titleReestr","Список пациентов, состоящих на конец периода") ;
+        		request.setAttribute("diagnosField","idcDepartmentCode") ;
+        	} else if (view.equals("8")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is not null" ;
+        		request.setAttribute("titleReestr","Список пациентов, переведенных в другое отделение") ;
+        		request.setAttribute("diagnosField","idcDepartmentCode") ;
+        	} else if (view.equals("9")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is not null" ;
+        		request.setAttribute("titleReestr","Список пациентов, переведенных из другого отделения") ;
+        		request.setAttribute("diagnosField","idcTransferCode") ;
+        	}
+        	request.setAttribute("dateSql", sql) ;
     	%>
-    
     <msh:section>
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
@@ -401,41 +476,41 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery maxResult="5000" name="journal_surOperation" nativeSql="
 select 
-ahr.sls as slsid,list(vrspt1.strCode) as listStr
+ahr.sls as slsid
+,(select list(vrspt1.strCode) from ReportSetTYpeParameterType rspt1 
+left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id 
+where ahr.${diagnosField} between rspt1.codefrom and rspt1.codeto
+ and vrspt1.classname='F36_DIAG') 
+ as listStr
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,p.birthday as birthday
+,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
 ,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
 ,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
- ,ahr.idcDischarge as idcDischarge
- ,ahr.idcDepartmentCode as idcDepartmentCode
- ,ahr.idcEntranceCode as idcEntranceCode
+,ahr.idcEntranceCode as idcEntranceCode
+,ahr.idcDepartmentCode as idcDepartmentCode
+,ahr.idcDischarge as idcDischarge
 ,case when ahr.isDeath='1' then 'Да' else null end as death
 ,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
 ,
 case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+ahr.dischargeDate24-ahr.entranceHospDate24+cast(ahr.addbeddays as int)
 end as beddays
 
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
+${reportStrLeftJoin}
 left join Patient p on p.id=sls.patient_id
-where ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-  and ahr.transferDepartmentFrom is null
-${age_sql} 
+where ${dateSql}   ${reportStrSql}
+      ${paramSql} 
 ${paramSql}
 ${departmentSql}
-${strcodeSql}
 
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -453,15 +528,16 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
       <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
       <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
-      <msh:tableColumn columnName="МКБ вып." property="9"/>
+      <msh:tableColumn columnName="МКБ напр." property="9"/>
       <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
-      <msh:tableColumn columnName="МКБ напр." property="11"/>
+      <msh:tableColumn columnName="МКБ вып." property="11"/>
       <msh:tableColumn columnName="Лет. исход" property="12"/>
       <msh:tableColumn columnName="Показания" property="13"/>
       <msh:tableColumn columnName="К.дн" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
+
         <% } else if (view.equals("5")) {
     	%>
     
@@ -508,7 +584,7 @@ where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_da
 ${age_sql} 
 ${paramSql}
 ${departmentSql}
-${strcodeSql}
+${reportStrSql}
 
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -584,7 +660,7 @@ and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto
 ${age_sql} 
 ${paramSql}
 ${departmentSql}
-${strcodeSql}
+${reportStrSql}
 
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
@@ -657,7 +733,7 @@ where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_da
 ${age_sql} 
 ${paramSql}
 ${departmentSql}
-${strcodeSql}
+${reportStrSql}
 
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
