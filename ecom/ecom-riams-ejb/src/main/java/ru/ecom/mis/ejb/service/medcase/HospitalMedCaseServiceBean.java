@@ -132,11 +132,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" , case when firstSlo.entranceTime<cast('09:00' as time) then cast('1' as int) else null end as f31entranceTime9") ;
 	    	sql.append(" , firstSlo.datestart as f32entrancedate") ;
 	    	sql.append(" , case when vbst.code='1' then '0' else '1' end  as f33isdayhosp") ;
-	    	
+	    	sql.append(" ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' then prevMkbD.code else null end) as f34prevdepDiag") ;
 	    	sql.append(" from medcase sls") ;
 	    	sql.append(" left join medcase slo on sls.id=slo.parent_id") ;
-	    	sql.append(" left join AggregateHospitalReport ahr on ahr.slo=slo.id") ;
 	    	sql.append(" left join medcase prevSlo on prevSlo.id=slo.prevMedCase_id") ;
+	    	sql.append(" left join diagnosis prevDiagD on prevSlo.id=prevDiagD.medcase_id") ;
+	    	sql.append(" left join vocidc10 prevMkbD on prevMkbD.id=prevDiagD.idc10_id") ;
+	    	sql.append(" left join VocDiagnosisRegistrationType prevVdrtD on prevVdrtD.id=prevDiagD.registrationType_id") ;
+	    	sql.append(" left join VocPriorityDiagnosis prevVpdD on prevVpdD.id=prevDiagD.priority_id") ;
+
+	    	sql.append(" left join AggregateHospitalReport ahr on ahr.slo=slo.id") ;
 	    	sql.append(" left join medcase nextSlo on nextSlo.prevmedcase_id=slo.id") ;
 	    	sql.append(" left join medcase firstSlo on sls.id=firstSlo.parent_id and firstSlo.prevmedcase_id is null") ;
 	    	sql.append(" left join patient pat on pat.id=sls.patient_id") ;
@@ -200,6 +205,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		ahr.setIdcDepartmentCode(ConvertSql.parseString(obj[14])) ;
 	    		ahr.setIdcDischarge(ConvertSql.parseString(obj[16])) ;
 	    		ahr.setIdcEntranceCode(ConvertSql.parseString(obj[15])) ;
+	    		ahr.setIdcTransferCode(ConvertSql.parseString(obj[34])) ;
 	    		ahr.setIsDeath(ConvertSql.parseBoolean(obj[10])) ;
 	    		ahr.setIsEmergency(ConvertSql.parseBoolean(obj[25])) ;
 	    		ahr.setIsFirstCurrentYear(ConvertSql.parseBoolean(obj[8])) ;
