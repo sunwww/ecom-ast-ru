@@ -1,6 +1,8 @@
 var map = new java.util.HashMap() ;
 function printArea(aCtx, aParams) {
 	//var check = (aParams.get("id")+"").split(":") ;
+	var typeDiag = +aParams.get("typeDiag");// +check[0] ;
+	var typeAddress = +aParams.get("typeAddress");// +check[0] ;
 	var typeDate = +aParams.get("typeDate");// +check[0] ;
 	var typeInv = +aParams.get("typeInv");//+check[1] ;
 	var typeSuicide =+aParams.get("typeSuicide");// +check[2] ;
@@ -20,16 +22,22 @@ function printArea(aCtx, aParams) {
 	var compTreatment = +aParams.get("compTreatment");
 	var groupInv = +aParams.get("groupInv");
 	var group = +aParams.get("group");
+	
 	var ambulatoryCare = +aParams.get("ambulatoryCare");
 	if (ambulatoryCare!=null && ambulatoryCare>0
 			&& lpuArea!=null && lpuArea>0) {
 	} else {
 		throw "Указаны не все параметры" ;
 	}
+	var addressAdd="" ;
+	if (typeAddress==2) {
+		addressAdd="real";
+	}
+
 	var lpuAreaO =aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.LpuArea
 			, new java.lang.Long(lpuArea)) ;
 	var lpuAreaInfo = lpuAreaO.name ;
-	var sexSql=""; sexInfo=""
+	var sexSql=""; sexInfo="" ;
 	if (sex!=null && +sex>0) {
 		sexSql=" and p.sex_id='"+sex+"'" ;
 		var vs=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocSex
@@ -276,11 +284,11 @@ function printArea(aCtx, aParams) {
 	sql = sql + " ,coalesce(to_char(area.finishDate,'dd.mm.yyyy'),to_char(area.transferDate,'dd.mm.yyyy'),'') as areafinishdate";
 	sql = sql + " ,coalesce(vptr.name,vpsor.name,'') as vptrname" ;
 	sql = sql + " ,coalesce(to_char(pcc.deathDate,'dd.mm.yyyy'),'')||vpdr.name as deathinfo" ;
-	sql = sql + ", case when p.address_addressId is not null "
+	sql = sql + ", case when p."+addressAdd+"address_addressId is not null "
 	+"          then coalesce(a.fullname,a.name) || "
-	+"               case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end" 
-	+		" ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end" 
-	+		"||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end"
+	+"               case when p."+addressAdd+"houseNumber is not null and p."+addressAdd+"houseNumber!='' then ' д.'||p."+addressAdd+"houseNumber else '' end" 
+	+		" ||case when p."+addressAdd+"houseBuilding is not null and p."+addressAdd+"houseBuilding!='' then ' корп.'|| p."+addressAdd+"houseBuilding else '' end" 
+	+		"||case when p."+addressAdd+"flatNumber is not null and p."+addressAdd+"flatNumber!='' then ' кв. '|| p."+addressAdd+"flatNumber else '' end"
 	+"       when p.territoryRegistrationNonresident_id is not null"
 	+"          then okt.name||' '||p.RegionRegistrationNonresident||' '||oq.name||' '||p.SettlementNonresident"
 	+"               ||' '||ost.name||' '||p.StreetNonresident||"
@@ -289,7 +297,7 @@ function printArea(aCtx, aParams) {
 	+"||case when p.ApartmentNonresident is not null and p.ApartmentNonresident!='' then ' кв. '|| p.ApartmentNonresident else '' end"
 	+"   else '' "
 	+"  end as address" ;
-	sql = sql + " ,' '||$$getDiagnosis^ZPsychUtil(p.id,isnull(area.finishDate,CURRENT_DATE)) as diag" ;
+	sql = sql + " ,' '||$$getDiagnosis^ZPsychUtil(p.id,isnull(area.finishDate,CURRENT_DATE),"+typeDiag+") as diag" ;
 	sql = sql + invAddField + suicideAddField + comTreatAddField + groupAddField;
 	sql = sql + " from PsychiatricCareCard pcc " ;
 	sql = sql + " left join VocPsychDeathReason vpdr on vpdr.id=pcc.deathReason_id";
@@ -309,7 +317,7 @@ function printArea(aCtx, aParams) {
 	sql = sql + " left join Invalidity inv on inv.patient_id=p.id" ;
 	sql = sql + " left join VocInvalidity vi on vi.id=inv.group_id" ;
 	sql = sql + " left join VocLawCourt invvlc on invvlc.id=inv.lawCourt_id" ;
-	sql = sql + " left join Address2 a on a.addressId=p.address_addressId" ;
+	sql = sql + " left join Address2 a on a.addressId=p."+addressAdd+"address_addressId" ;
 	sql = sql + " left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id";
 	sql = sql + " left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id";
 	sql = sql + " left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id" ;
