@@ -27,7 +27,7 @@
 	String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
 	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
   	%>
-    <msh:form action="/stac_reestrByHospital.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
@@ -184,10 +184,9 @@
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("department", " and "+request.getAttribute("departmentFldIdSql")+"='"+dep+"'") ;
     	}
-    	String serviceStream = request.getParameter("serviceStream") ;
-    	if (serviceStream!=null && !serviceStream.equals("") && !serviceStream.equals("0")) {
-    		request.setAttribute("serviceStreamSql", " and m.serviceStream_id='"+serviceStream+"' " ) ;
-    	}
+    	ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request);
+    	//ActionUtil.setParameterFilterSql("pigeonHole", "m.department_id", request);
+    	//ActionUtil.setParameterFilterSql("pigeonHole","pigeonHole1", "m.department_id", request);
     	
     	if (view!=null && (view.equals("1"))) {
     	%>
@@ -197,30 +196,27 @@
     По ${dischInfo}  ${emerInfo} ${hourInfo} ${infoTypePat}
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
    select vph.id,vph.name
 ,count(*) as cntAll
-,count(distinct case when pat.newborn_id is not null then sls.id else null end) as cntNewBorn
-,count(distinct case when (current_date-pat.birthday)<(17*355) then sls.id else null end) as cntChild
-,count(distinct case when adr.addressisvillage='1' then sls.id else null end) as cntVill
-,count(distinct case when adr.addressiscity='1' then sls.id else null end) as cntCity
-,count(distinct case when pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%' then sls.id else null end) as cntInog
-,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then sls.id else null end) as cntInost
-from medcase sls
-left join Patient pat on pat.id=sls.patient_id
+,count(distinct case when pat.newborn_id is not null then m.id else null end) as cntNewBorn
+,count(distinct case when (current_date-pat.birthday)<(17*355) then m.id else null end) as cntChild
+,count(distinct case when adr.addressisvillage='1' then m.id else null end) as cntVill
+,count(distinct case when adr.addressiscity='1' then m.id else null end) as cntCity
+,count(distinct case when pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%' then m.id else null end) as cntInog
+,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then m.id else null end) as cntInost
+from medcase m
+left join Patient pat on pat.id=m.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
-left join Mislpu ml on sls.department_id=ml.id
+left join Mislpu ml on m.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
-where sls.dtype='HospitalMedCase' 
-and sls.datefinish is null 
-and sls.deniedHospitalizating_id is null
-
-     where m.DTYPE='HospitalMedCase' ${period}
-     and m.deniedHospitalizating_id is null
-       ${emerIs} ${pigeonHole} 
-       
-       ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
+where m.dtype='HospitalMedCase' 
+and m.datefinish is null 
+and m.deniedHospitalizating_id is null
+${period}
+${emerIs} ${pigeonHole} 
+${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
 group by vph.id,vph.name
 order by vph.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -240,7 +236,8 @@ order by vph.name
     <msh:sectionTitle>Реестр отказов от госпитализаций за день ${param.dateBegin}
     . По ${emerInfo} ${hourInfo} ${infoTypePat}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery nameFldSql="journal_priem_denied_sql" name="journal_priem"  nativeSql="select 
+    <ecom:webQuery nameFldSql="journal_priem_denied_sql" name="journal_priem"  nativeSql="
+    select 
     m.id as mid
     ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
@@ -263,7 +260,7 @@ order by vph.name
 	left join WorkFunction wf on wf.secUser_id=su.id
 	left join Worker w on w.id=wf.worker_id
 	left join MisLpu ml1 on ml1.id=w.lpu_id 
-     where m.DTYPE='HospitalMedCase' ${period}
+     ${period}
       and m.deniedHospitalizating_id is not null
       ${emerIs} ${pigeonHole1} ${department} ${serviceStreamSql}
       ${addPat}
@@ -293,39 +290,39 @@ order by vph.name
     		
     		select  
     vph.id,vph.name
-, count(distinct sls.id) as all1
-,count(distinct case when sls.deniedHospitalizating_id is null then sls.id else null end) as obr
-,count(distinct case when sls.deniedHospitalizating_id is null 
+, count(distinct m.id) as all1
+,count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as obr
+,count(distinct case when m.deniedHospitalizating_id is null 
 and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
-then sls.id else null end) as obrVil
-,count(distinct case when sls.deniedHospitalizating_id is null 
+then m.id else null end) as obrVil
+,count(distinct case when m.deniedHospitalizating_id is null 
 and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
-then sls.id else null end) as obrCity
-,count(distinct case when sls.deniedHospitalizating_id is null 
+then m.id else null end) as obrCity
+,count(distinct case when m.deniedHospitalizating_id is null 
 and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
-then sls.id else null end) as obrInog
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and oo.voc_code!='643'  then sls.id else null end) as obrInost
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then sls.id else null end) as obrOther
+then m.id else null end) as obrInog
+,count(distinct case when m.deniedHospitalizating_id is null 
+and oo.voc_code!='643'  then m.id else null end) as obrInost
+,count(distinct case when m.deniedHospitalizating_id is null 
+and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
 
 
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null then sls.id else null end) as em
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='О' then sls.id else null end) as emSam
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='К' then sls.id else null end) as emSkor
-,count(distinct case when (sls.emergency is null or sls.emergency='0') and sls.deniedHospitalizating_id is null then sls.id else null end) as pl
+,count(distinct case when m.emergency='1' and m.deniedHospitalizating_id is null then m.id else null end) as em
+,count(distinct case when m.emergency='1' and m.deniedHospitalizating_id is null and vof.voc_code='О' then m.id else null end) as emSam
+,count(distinct case when m.emergency='1' and m.deniedHospitalizating_id is null and vof.voc_code='К' then m.id else null end) as emSkor
+,count(distinct case when (m.emergency is null or m.emergency='0') and m.deniedHospitalizating_id is null then m.id else null end) as pl
 
-, count(distinct case when sls.deniedHospitalizating_id is not null then sls.id else null end) as denied 
-from medcase sls 
-left join MisLpu as ml on ml.id=sls.department_id
+, count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as denied 
+from medcase m 
+left join MisLpu as ml on ml.id=m.department_id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
-left join Patient p on p.id=sls.patient_id
+left join Patient p on p.id=m.patient_id
 left join Address2 a on p.address_addressid=a.addressid
 left join Omc_Oksm oo on oo.id=p.nationality_id 
-left join Omc_Frm vof on vof.id=sls.orderType_id
-where sls.dtype='HospitalMedCase' and sls.dateStart 
+left join Omc_Frm vof on vof.id=m.orderType_id
+where m.dtype='HospitalMedCase' and m.dateStart 
 =to_date('07.03.2014','dd.mm.yyyy')  
-and ( sls.noActuality is null or sls.noActuality='0')
+and ( m.noActuality is null or m.noActuality='0')
 group by vph.id,vph.name
 
 
@@ -334,20 +331,20 @@ group by vph.id,vph.name
 
 select  
     vph.id,vph.name
-, count(distinct sls.id) as cntAll
-,count(distinct case when vho.code!='1' then sls.id else null end) as cntDischargeOtherLpu
-,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeathPatient
+, count(distinct m.id) as cntAll
+,count(distinct case when vho.code!='1' then m.id else null end) as cntDischargeOtherLpu
+,count(distinct case when vhr.code='11' then m.id else null end) as cntDeathPatient
 ,list(distinct case when vhr.code='11' then pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'')||' г.р.'||to_char(pat.birthday,'dd.mm.yyyy') else null end) as listDeathPatient
-from medcase sls 
-left join Patient pat on pat.id=sls.patient_id
-left join MisLpu as ml on ml.id=sls.department_id
+from medcase m 
+left join Patient pat on pat.id=m.patient_id
+left join MisLpu as ml on ml.id=m.department_id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
-left join Omc_Frm vof on vof.id=sls.orderType_id
-left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-where sls.dtype='HospitalMedCase' and sls.dateFinish 
+left join Omc_Frm vof on vof.id=m.orderType_id
+left join VocHospitalizationOutcome vho on vho.id=m.outcome_id
+left join VocHospitalizationResult vhr on vhr.id=m.result_id
+where m.dtype='HospitalMedCase' and m.dateFinish 
 =to_date('07.03.2014','dd.mm.yyyy')  
-and ( sls.noActuality is null or sls.noActuality='0')
+and ( m.noActuality is null or m.noActuality='0')
 group by vph.id,vph.name
     		 --%>
     		    <msh:section>
@@ -436,7 +433,7 @@ group by vph.id,vph.name
 	    function find() {
 	    	var frm = document.forms[0] ;
 	    	frm.target='' ;
-	    	frm.action='stac_reestrByHospital.do' ;
+	    	frm.action='stac_everyday_report.do' ;
 	    }
 	    function print(aFile) {
 	    	var frm = document.forms[0] ;
@@ -455,28 +452,6 @@ group by vph.id,vph.name
 	    		+$('pigeonHole').value+":"
 	    		+$('department').value+":"
 	    		+$('serviceStream').value;
-	    	
-	    }
-	    function printJournal() {
-	    	var frm = document.forms[0] ;
-	    	frm.m.value="printJournalByDay" ;
-	    	frm.s.value="HospitalPrintReport" ;
-	    	frm.target='_blank' ;
-	    	frm.action='print-stac_report001.do' ;
-	    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
-	    		+getCheckedRadio(frm,"typeHour")+":"
-	    		+getCheckedRadio(frm,"typeDate")+":"
-	    		+$('dateBegin').value+":"
-	    		+$('pigeonHole').value+":"
-	    		+$('department').value;
-	    }
-	    function printNew() {
-	    	//print() ;
-	    	var frm = document.forms[0] ;
-	    	frm.m.value="printReestrByDay" ;
-	    	frm.s.value="HospitalPrintService" ;
-	    	frm.target='_blank' ;
-	    	frm.action='print-stac_reestrForDay.do' ;
 	    }
 		</script>
   </tiles:put>
