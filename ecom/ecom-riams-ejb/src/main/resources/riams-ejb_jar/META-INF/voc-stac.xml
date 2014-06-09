@@ -1,16 +1,4 @@
 <vocconfig>
-	<voc id="vocReportSetParameterTypeByClassname" type="NativeVocService">
-		<NativeVocService
-		    	from=" VocReportSetParameterType "
-		    	parent='classname=:parent'
-		    	nameId="id"
-		    	join=""
-		    	queryAppend=""
-		    	order=""
-		    	queried=" code like upper(:query) or strCode like upper(:querId) "
-		    	names = "strCode||'. '||code||'-'||name"
-		/>
-	</voc>
 	<voc id="slsByPregnancy" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as sls "
