@@ -54,3 +54,35 @@ function onPreDelete(aEntityId, aContext) {
 	}
 	
 }
+
+/**
+ * Перед сохранением
+ */
+function onPreSave(aForm, aEntity, aContext) {
+	updateAddress(aForm) ;
+}
+
+/**
+ * Перед созданием
+ */
+function onPreCreate(aForm, aContext) {
+	updateAddress(aForm) ;
+}
+function updateAddress(aForm) {
+	if ((+aForm.realAddress>0) && (+aForm.address<1)) {
+		aForm.address=aForm.realAddress ;
+		aForm.flatNumber=aForm.realFlatNumber ;
+		aForm.houseBuilding=aForm.realHouseBuilding ;
+		aForm.houseNumber=aForm.realHouseNumber ;
+	} else if ((+aForm.address>0) && (+aForm.readAddress<1)) {
+		aForm.realAddress=aForm.address ;
+		aForm.realFlatNumber=aForm.flatNumber ;
+		aForm.realHouseBuilding=aForm.houseBuilding ;
+		aForm.realHouseNumber=aForm.houseNumber ;
+	}
+	if (+aForm.rayon>0 && +aForm.realRayon<1) {
+		aForm.realRayon=aForm.rayon ;
+	} else if (+aForm.realRayon>0 && +aForm.rayon<1) {
+		aForm.rayon=aForm.realRayon ;
+	}
+}
