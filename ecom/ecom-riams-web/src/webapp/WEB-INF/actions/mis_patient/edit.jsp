@@ -708,7 +708,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					left join MisLpu ml on ml.id=sls.department_id
 					left join StatisticStub ss on sls.statisticStub_id = ss.id 
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
-					where patient_id=${param.id} 
+					where sls.patient_id=${param.id} 
 						and sls.DTYPE='HospitalMedCase'  
 					and (sls.dateFinish is null 
 					or sls.dischargeTime is null)
@@ -732,17 +732,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		          <ecom:webQuery name="openedSLSs" nativeSql="select 
 		          sls.id as slsid, sls.dateStart as slsdatestart, ss.code as sscode,vdh.name as vdhname
 		          ,case when sls.emergency='1' then 'Экстренно' else 'Планово' end emerg
-		          ,ml.name as mlname
+		          ,ml.name as mlname,ml1.name as ml1name
 					from MedCase sls
 					left join MisLpu ml on ml.id=sls.department_id
 					left join StatisticStub ss on sls.statisticStub_id = ss.id 
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
-					where patient_id=${param.id} 
+					left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
+					left join MisLpu ml1 on ml1.id=slo.department_id
+					where sls.patient_id=${param.id} 
 						and sls.DTYPE='HospitalMedCase'  
 					and (sls.dateFinish is null 
 					or sls.dischargeTime is null)
 					and (sls.dateStart=CURRENT_DATE
-					 or sls.deniedHospitalizating_id is null)
+					 or sls.deniedHospitalizating_id is null and slo.transferDate is null)
+					 
 					"  />
 		          <msh:table idField="1" name="openedSLSs"
 		          viewUrl="entityShortView-stac_ssl.do"
@@ -750,7 +753,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		            <msh:tableColumn columnName="Дата пост." property="2"/>
 		            <msh:tableColumn columnName="Стат.карта" property="3"/>
 		            <msh:tableColumn columnName="Тип" property="5"/>
-		            <msh:tableColumn columnName="Направлен в отделение" property="6"/>
+		            <msh:tableColumn columnName="Отделение поступления" property="6"/>
+		            <msh:tableColumn columnName="Отделение текущее" property="7"/>
 		            <msh:tableColumn columnName="Отказ от госпитализации" property="4"/>
 		            
 		          </msh:table>
