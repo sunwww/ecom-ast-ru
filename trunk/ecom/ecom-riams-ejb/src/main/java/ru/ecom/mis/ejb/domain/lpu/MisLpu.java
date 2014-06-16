@@ -43,6 +43,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"lpuFunction"})
 	,@AIndex(properties={"parent"})
 	,@AIndex(properties={"name"})
+	,@AIndex(properties={"pigeonHole"})
 	,@AIndex(properties={"parent","name"})
 })
 @Table(schema="SQLUser")
