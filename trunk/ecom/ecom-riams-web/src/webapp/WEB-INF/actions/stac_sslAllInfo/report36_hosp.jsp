@@ -73,6 +73,12 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="7"> по состоящих на конец периода
         </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="8"> перевед. из др. отд.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="9"> перевед. в др. отд.
+        </td>
        </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
@@ -432,7 +438,7 @@ order by vrspt.strCode
         	String sql ="" ;
         	if (view.equals("4")) {
         		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
-        			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is null" ;
         	    if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
         	    	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr.idcEntranceCode between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
         	    }
@@ -443,7 +449,7 @@ order by vrspt.strCode
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
         		request.setAttribute("titleReestr","Список выбывших пациентов") ;
-        		request.setAttribute("diagnosField","idcDischargeCode") ;
+        		request.setAttribute("diagnosField","idcDischarge") ;
         	} else if (view.equals("6")) {
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
@@ -456,14 +462,14 @@ order by vrspt.strCode
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("8")) {
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
-            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is not null" ;
-        		request.setAttribute("titleReestr","Список пациентов, переведенных в другое отделение") ;
-        		request.setAttribute("diagnosField","idcDepartmentCode") ;
-        	} else if (view.equals("9")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is not null" ;
         		request.setAttribute("titleReestr","Список пациентов, переведенных из другого отделения") ;
         		request.setAttribute("diagnosField","idcTransferCode") ;
+        	} else if (view.equals("9")) {
+        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is not null" ;
+        		request.setAttribute("titleReestr","Список пациентов, переведенных в другое отделение") ;
+        		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	}
         	request.setAttribute("dateSql", sql) ;
     	%>
