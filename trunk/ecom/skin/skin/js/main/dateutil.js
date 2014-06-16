@@ -202,7 +202,7 @@ function parseDate(inputStr) {
     }
     if (yyyy < 100)
     {
-        if (yyyy >= 15) {
+        if (yyyy >= 25) {
             yyyy += 1900;
         } else {
             yyyy += 2000;
