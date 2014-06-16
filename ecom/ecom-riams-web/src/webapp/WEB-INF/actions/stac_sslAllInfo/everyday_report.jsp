@@ -449,17 +449,17 @@ order by vph.name
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
    select ml.id,ml.name
-,count(case when m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntCurrent
-,count(case when m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy') and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as cntCurrentOmc
-,count(case when m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy') and (vss.code in ('PRIVATEINSURANCE','DOGOVOR','FCB')) then m.id else null end) as cntCurrentDmc
-,count(case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntEntr
-,count(distinct case when pat.newborn_id is not null then m.id else null end) as cntNewBorn
-,count(distinct case when (current_date-pat.birthday)<(17*355) then m.id else null end) as cntChild
-,count(distinct case when adr.addressisvillage='1' then m.id else null end) as cntVill
-,count(distinct case when adr.addressiscity='1' then m.id else null end) as cntCity
-,count(distinct case when adr.kladr is not null and adr.kladr not like '30%' then m.id else null end) as cntInog
-,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then m.id else null end) as cntInost
+,count(distinct case when (m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy')) then m.id else null end) as cntCurrent
+,count(distinct case when (m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy')) and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as cntCurrentOmc
+,count(distinct case when (m.datefinish is null or m.datefinish > to_date('${param.dateBegin}','dd.mm.yyyy')) and (vss.code in ('PRIVATEINSURANCE','DOGOVOR','FCB')) then m.id else null end) as cntCurrentDmc
+,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntEntr
+,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and  m.emergency='1' then m.id else null end) as cntEntrEmergency
+,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
+,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
+,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntOper
 from medcase m
+left join SurgicalOperation so on so.medcase_id=m.id
+left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Patient pat on pat.id=m.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 left join Address2 adr on adr.addressid=pat.address_addressid
@@ -473,18 +473,20 @@ and m.dtype='DepartmentMedCase'
 and m.deniedHospitalizating_id is null
 ${emerIs} ${pigeonHole} 
 ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
-group by vph.id,vph.name
-order by vph.name
+group by ml.id,ml.name
+order by ml.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во новорожд." property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во детей" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Кол-во с.ж." property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иног." property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иноcn." property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="внебюдж./ДМС" property="5" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="6" />
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="7" />
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="8" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="9" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="10" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
