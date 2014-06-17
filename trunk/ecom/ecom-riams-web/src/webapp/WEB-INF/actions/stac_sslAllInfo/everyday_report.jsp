@@ -45,6 +45,7 @@
       		vocName="vocPigeonHole"
       		/>
       </msh:row>
+      <!-- 
       <msh:row>
         <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -57,6 +58,7 @@
         	<input type="radio" name="typeEmergency" value="3">  все
         </td>
       </msh:row>
+      
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -72,7 +74,7 @@
         	<input type="radio" name="typePatient" value="4">  все
         </td>
         </msh:row>      
-        <!-- 
+        
       <msh:row>
         <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -142,8 +144,8 @@
        <script type='text/javascript'>
     
     //checkFieldUpdate('typeDate','${typeDate}',1) ;
-    checkFieldUpdate('typePatient','${typePatient}',4) ;
-    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
+    //checkFieldUpdate('typePatient','${typePatient}',4) ;
+    //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     //checkFieldUpdate('typeHour','${typeHour}',3) ;
     //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
@@ -289,8 +291,7 @@ order by vph.name
     </msh:section>
     
      <msh:section>
-    	    <msh:sectionTitle>Список, поступивших в стационар
-    	    </msh:sectionTitle>
+    	    <msh:sectionTitle>Свод пациентов по отделениям</msh:sectionTitle>
     	    <msh:sectionContent>
     	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
     	   select  
@@ -457,6 +458,9 @@ order by vph.name
 ,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
 ,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
 ,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntOper
+,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') and m.emergency='1' then m.id else null end) as cntOperEm
+,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntOperPl
+,count(distinct case when d.date=to_date('${param.dateBegin}','dd.mm.yyyy') and d.state_id=3 then m.id else null end) as cntOperPl
 from medcase m
 left join SurgicalOperation so on so.medcase_id=m.id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
@@ -466,6 +470,7 @@ left join Address2 adr on adr.addressid=pat.address_addressid
 left join Mislpu ml on m.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join Diary d on d.medcase_id=m.id
 where m.datestart <= to_date('${param.dateBegin}','dd.mm.yyyy') 
 and (m.datefinish is null or m.datefinish >= to_date('${param.dateBegin}','dd.mm.yyyy'))
 
@@ -487,6 +492,8 @@ order by ml.name
       <msh:tableColumn isCalcAmount="true" columnName="план." property="8" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="9" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="10" />
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="11" />
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="12" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
