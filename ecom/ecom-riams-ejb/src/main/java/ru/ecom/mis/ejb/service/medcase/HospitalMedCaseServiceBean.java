@@ -185,9 +185,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	                throw new IllegalMonitorStateException("Прервано пользователем");
 	            }
 	    		AggregateHospitalReport ahr = new AggregateHospitalReport() ;
-	    		ahr.setAgeDischargeSlo(ConvertSql.parseLong(0));
+	    		//ahr.setAgeDischargeSlo(ConvertSql.parseLong(0));
 	    		ahr.setAgeDischargeSls(ConvertSql.parseLong(0));
-	    		ahr.setAgeEntranceSlo(ConvertSql.parseLong(0));
+	    		//ahr.setAgeEntranceSlo(ConvertSql.parseLong(0));
 	    		ahr.setAgeEntranceSls(ConvertSql.parseLong(0));
 	    		ahr.setBedSubType(ConvertSql.parseLong(obj[19])) ;
 	    		ahr.setBedType(ConvertSql.parseLong(obj[18])) ;
