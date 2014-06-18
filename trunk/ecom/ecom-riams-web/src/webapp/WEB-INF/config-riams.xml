@@ -6,6 +6,9 @@
 
     <form-beans>
     
+    <form-bean name="rep_parameterForm" type="ru.ecom.mis.ejb.form.medcase.report.ReportParameterForm"/>
+    <form-bean name="rep_parameterVarietyForm" type="ru.ecom.mis.ejb.form.medcase.report.ReportParameterVarietyForm"/>
+    
     <!-- БЕРЕМЕННОСТЬ -->
     <form-bean name="preg_pregnancyForm" type="ru.ecom.mis.ejb.form.birth.PregnancyForm"/>
     <form-bean name="preg_pregnanCardForm" type="ru.ecom.mis.ejb.form.birth.PregnanExchangeCardForm"/>
