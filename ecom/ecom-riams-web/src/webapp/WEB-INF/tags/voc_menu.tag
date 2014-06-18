@@ -43,4 +43,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				name="Анализ услуг " roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"
 				title="Анализ услуг "
 				/>
+			<msh:sideLink styleId="repconfig"
+				action="/js-rep_parameter-report_list.do" 
+				name="Параметры отчетов" roles="/Policy/Voc/ReportConfig/View"
+				title="Параметры отчетов"
+				/>
 	    </msh:sideMenu>
