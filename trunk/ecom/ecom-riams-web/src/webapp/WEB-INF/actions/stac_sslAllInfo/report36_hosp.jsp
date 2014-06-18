@@ -1,3 +1,4 @@
+
 <%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -70,6 +71,9 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="6"> по состоящих на нач. периода
         </td>
+       </msh:row>
+       <msh:row>
+        <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="7"> по состоящих на конец периода
         </td>
@@ -348,14 +352,14 @@ then ahr.sls else null end) as cntFinishPeriod15_17
 
 ,count(case when
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentFrom is not null
 ${departmentSql}
 then ahr.sls else null end) as cntTransferFrom
 
 ,count(case when
 ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentIn is not null
 ${departmentSql}
 then ahr.sls else null end) as cntTransferIn
@@ -454,17 +458,18 @@ order by vrspt.strCode
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
         		request.setAttribute("titleReestr","Список пациентов, состоящих на начало периода") ;
-        		request.setAttribute("diagnosField","idcEntranceCode") ;
+        		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("7")) {
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
         		request.setAttribute("titleReestr","Список пациентов, состоящих на конец периода") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
-        	} else if (view.equals("8")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        	
+		} else if (view.equals("8")) {
+        		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is not null" ;
         		request.setAttribute("titleReestr","Список пациентов, переведенных из другого отделения") ;
-        		request.setAttribute("diagnosField","idcTransferCode") ;
+        		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("9")) {
         		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is not null" ;
@@ -477,14 +482,8 @@ order by vrspt.strCode
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
    
-    <msh:section>
-    <msh:sectionTitle>Список поступивших пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery maxResult="5000" name="journal_surOperation" nativeSql="
-select 
-ahr.sls as slsid
+    <msh:section><ecom:webQuery maxResult="5000" name="reestr" nameFldSql="reestr_sql" nativeSql="
+select ahr.sls as slsid
 ,(select list(vrspt1.strCode) from ReportSetTYpeParameterType rspt1 
 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id 
 where ahr.${diagnosField} between rspt1.codefrom and rspt1.codeto
@@ -523,7 +522,21 @@ group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ah
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
 ,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:sectionTitle>
+    <form action="print-stac_report36_3.do" method="post" target="_blank">
+    ${titleReestr} ${param.strname}
+    <input type='hidden' name="sqlText" id="sqlText" value="${reestr_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Список поступивших пациентов ${param.strname}">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    
+    <msh:table name="reestr" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -544,229 +557,6 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:sectionContent>
     </msh:section>    		
 
-        <% } else if (view.equals("5")) {
-    	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Список выбывших пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
-select 
-ahr.sls as slsid,list(vrspt1.strCode) as listStr
-,ss.code as sscode
-,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,p.birthday as birthday
-,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
- ,ahr.idcDischarge as idcDischarge
- ,ahr.idcDepartmentCode as idcDepartmentCode
- ,ahr.idcEntranceCode as idcEntranceCode
-,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
-,
-case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
-else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
-end as beddays
-
- from AggregateHospitalReport ahr
- left join medcase sls on ahr.sls=sls.id
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
-left join Patient p on p.id=sls.patient_id
-where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-  and ahr.transferDepartmentIn is null
-${age_sql} 
-${paramSql}
-${departmentSql}
-${reportStrSql}
-
-group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
-,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
-order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
-    viewUrl="entityShortView-stac_ssl.do" 
-     action="entityView-stac_ssl.do" idField="1">
-      <msh:tableColumn columnName="##" property="sn" />
-      <msh:tableColumn columnName="Строки отчета" property="2" />
-      <msh:tableColumn columnName="№стат. карт" property="3" />
-      <msh:tableColumn columnName="ФИО пациента" property="4" />
-      <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
-      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
-      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
-      <msh:tableColumn columnName="МКБ вып." property="9"/>
-      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
-      <msh:tableColumn columnName="МКБ напр." property="11"/>
-      <msh:tableColumn columnName="Лет. исход" property="12"/>
-      <msh:tableColumn columnName="Показания" property="13"/>
-      <msh:tableColumn columnName="К.дн" property="14"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    		
-        <% } else if (view.equals("6")) {
-    	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Состоящие на начало периода пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
-select 
-ahr.sls as slsid,list(vrspt1.strCode) as listStr
-,ss.code as sscode
-,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,p.birthday as birthday
-,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
- ,ahr.idcDischarge as idcDischarge
- ,ahr.idcDepartmentCode as idcDepartmentCode
- ,ahr.idcEntranceCode as idcEntranceCode
-,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
-,
-case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
-else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
-end as beddays
-
- from AggregateHospitalReport ahr
- left join medcase sls on ahr.sls=sls.id
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
-left join Patient p on p.id=sls.patient_id
-where ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
-) ${departmentSql}
-and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
-${age_sql} 
-${paramSql}
-${departmentSql}
-${reportStrSql}
-
-group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
-,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
-order by p.lastname,p.firstname,p.middlename" />
-    <msh:table name="journal_surOperation" 
-    viewUrl="entityShortView-stac_ssl.do" 
-     action="entityView-stac_ssl.do" idField="1">
-      <msh:tableColumn columnName="##" property="sn" />
-      <msh:tableColumn columnName="Строки отчета" property="2" />
-      <msh:tableColumn columnName="№стат. карт" property="3" />
-      <msh:tableColumn columnName="ФИО пациента" property="4" />
-      <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
-      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
-      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
-      <msh:tableColumn columnName="МКБ вып." property="9"/>
-      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
-      <msh:tableColumn columnName="МКБ напр." property="11"/>
-      <msh:tableColumn columnName="Лет. исход" property="12"/>
-      <msh:tableColumn columnName="Показания" property="13"/>
-      <msh:tableColumn columnName="К.дн" property="14"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    		
-        <% } else if (view.equals("7")) {
-    	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
-select 
-ahr.sls as slsid,list(vrspt1.strCode) as listStr
-,ss.code as sscode
-,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,p.birthday as birthday
-,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
- ,ahr.idcDischarge as idcDischarge
- ,ahr.idcDepartmentCode as idcDepartmentCode
- ,ahr.idcEntranceCode as idcEntranceCode
-,case when ahr.isDeath='1' then 'Да' else null end as death
-,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
-,
-case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
-else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
-end as beddays
-
- from AggregateHospitalReport ahr
- left join medcase sls on ahr.sls=sls.id
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-left join ReportSetTYpeParameterType rspt1 on ahr.idcDischarge between rspt1.codefrom and rspt1.codeto
-left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id and vrspt1.classname='F36_DIAG' 
-left join Patient p on p.id=sls.patient_id
-where ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-  and ahr.transferDepartmentIn is null
-${age_sql} 
-${paramSql}
-${departmentSql}
-${reportStrSql}
-
-group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
-,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
-order by p.lastname,p.firstname,p.middlename " />
-       <msh:table name="journal_surOperation" 
-    viewUrl="entityShortView-stac_ssl.do" 
-     action="entityView-stac_ssl.do" idField="1">
-      <msh:tableColumn columnName="##" property="sn" />
-      <msh:tableColumn columnName="Строки отчета" property="2" />
-      <msh:tableColumn columnName="№стат. карт" property="3" />
-      <msh:tableColumn columnName="ФИО пациента" property="4" />
-      <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
-      <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
-      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
-      <msh:tableColumn columnName="МКБ вып." property="9"/>
-      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
-      <msh:tableColumn columnName="МКБ напр." property="11"/>
-      <msh:tableColumn columnName="Лет. исход" property="12"/>
-      <msh:tableColumn columnName="Показания" property="13"/>
-      <msh:tableColumn columnName="К.дн" property="14"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    		
- 		
     <%
     } 
     	
