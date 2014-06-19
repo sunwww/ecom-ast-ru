@@ -49,8 +49,8 @@
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" name="Услугу" params="id" action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23-45a26d-5hfd" />
 
-      <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание крови" title="Добавить переливание крови" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" />
-      <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание транс.сред, кроме крови" title="Добавить переливание кроме трансфузионных сред всех, кроме крови" guid="42b3d7fc-e998-458f-b259-0c865d5270b8" />
+      <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
+      <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
     	
     	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"  
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
