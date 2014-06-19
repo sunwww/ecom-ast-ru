@@ -13,8 +13,8 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz= OtherTransfusion.class)
-@Comment("Переливание других трансфузионных жидкостей")
-@WebTrail(comment = "Переливание других трансфузионных жидкостей", nameProperties= "id", view="entityParentView-trans_other.do",list = "entityParentList-trans_transfusion.do")
+@Comment("Переливание кровезамещающих растворов")
+@WebTrail(comment = "Переливание кровезамещающих растворов", nameProperties= "id", view="entityParentView-trans_other.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion/Other")
 public class OtherTransfusionForm extends TransfusionForm {
