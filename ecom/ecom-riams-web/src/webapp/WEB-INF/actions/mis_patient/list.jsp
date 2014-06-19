@@ -23,7 +23,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  <msh:ifNotInRole roles="/Policy/Mis/Patient/SocialCard">
+  <msh:ifInRole roles="/Policy/MainMenu/Patient">
     <msh:form action="/mis_patients.do" defaultField="lastname" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
       <msh:panel colsWidth="10%, 10%, 70%" guid="354f9651-7a86-447b-9066-43af5b3bf277">
         <msh:row guid="7648279d-8e6a-4004-aaee-efe8ba8287dc">
@@ -43,8 +43,9 @@
         </msh:row>
       </msh:panel>
     </msh:form>
-    </msh:ifNotInRole>
+   </msh:ifInRole>
     <%  if(request.getAttribute("list") != null) {  %>
+    <msh:ifInRole roles="/Policy/MainMenu/Patient">
       <msh:section title="Результат поиска" guid="8bc5fc1c-72bb-45c8-9eb2-58715c967b81">
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list" action="entityView-mis_patient.do" idField="id" disableKeySupport="true" guid="7df98006-d2f7-4055-98a4-3b687377d9be" noDataMessage="Не найдено">
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -56,8 +57,9 @@
           <msh:tableColumn columnName="Участок" property="lpuAreaName" guid="44b16e3d-45a1-49a9-9b53-9a17320e0c67" />
         </msh:table>
       </msh:section>
+      </msh:ifInRole>
       <% }%>
-    
+     
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript">// <![CDATA[//
