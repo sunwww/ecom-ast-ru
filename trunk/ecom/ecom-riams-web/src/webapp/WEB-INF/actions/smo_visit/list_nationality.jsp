@@ -20,8 +20,8 @@
   <%
 	String typeEmergency =ActionUtil.updateParameter("Report_nationality","typeEmergency","3", request) ;
 	String typePatient =ActionUtil.updateParameter("Report_nationality","typePatient","1", request) ;
-	String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","1", request) ;
-	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","2", request) ;
+	String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","2", request) ;
+	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
 
   %>
     <msh:form action="/journal_nationality_smo.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -210,6 +210,7 @@
 	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'DD.MM.YYYY') as birthday
 	    ,vwfe.name||' '||pe.lastname as pefio
 	    ,list(mkb.code) as mkbcode
+	    ,vss.name
 from medcase m 
 left join patient p on p.id=m.patient_id
 left join address2 a on a.addressid=p.address_addressid
@@ -232,7 +233,7 @@ ${serviceStreamSql}
  ${nationalitySql} ${regionSql} ${patientSql}
 group by m.id,m.dateStart,m.timeExecute
 	    ,p.lastname,p.firstname,p.middlename,p.birthday
-	    ,vwfe.name,pe.lastname 
+	    ,vwfe.name,pe.lastname,vss.name
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do" 
 	idField="1">
@@ -242,6 +243,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="Дата обращения" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
 	      <msh:tableColumn columnName="Диагноз" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
 	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Поток обслуживания" property="7"/>
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Стационар">
@@ -337,6 +339,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    ,vn.name as vnname
     	    ,a.fullname
     	    ,list(distinct mkb.code) as mkbcode
+    	    ,vss.name
     from medcase m 
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
@@ -358,7 +361,7 @@ ${groupSqlAdd}
     ${serviceStreamSql}
      ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
-    	    ,vwfe.name,pe.lastname , vn.name,a.fullname
+    	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name
     order by p.lastname,p.firstname,p.middlename"/>
     <msh:table name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
@@ -371,6 +374,7 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
     	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
     	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Поток обслуживания" property="9"/>
     	    </msh:table>
       	</msh:section>
       	<msh:section title="Стационар">
@@ -469,6 +473,9 @@ select ${groupId}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId
 ,count(*) as cntAll
 ,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') then m.id else null end) as polic
 ,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') and vss.code='CHARGED' then m.id else null end) as policCh
+,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') and vss.code!='CHARGED' then m.id else null end) as policOther
+,list(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') and vss.code!='CHARGED' then vss.name else null end) as policOtherServiceStream
+
 ,count(distinct case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') then m.id else null end) as hospitAll
 ,sum(case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') then case when smo.dateFinish=smo.dateStart then 1 else smo.dateFinish-smo.dateStart end else null end) as hospitDaysAll
 ,count(distinct case when m.dtype='DepartmentMedCase' and (m.hospType_id is null or vht.code='ALLTIMEHOSP') and vss.code='CHARGED' then m.id else null end) as hospitAllCh
@@ -545,7 +552,7 @@ group by ${groupSqlId},${groupSql}
                 <th colspan="1" />
                 <th colspan="1" />
                 <th colspan="1" />
-                <th colspan="2" class="rightBold">Амбулаторно-поликлиническая помощь</th>
+                <th colspan="4" class="rightBold">Амбулаторно-поликлиническая помощь</th>
                 <th colspan="7" class="rightBold">Стационарная медицинская помощь</th>
                 <th colspan="4" class="rightBold">Стационарно-замещающая медицинская помощь</th>
                 <th colspan="1" />
@@ -556,18 +563,20 @@ group by ${groupSqlId},${groupSql}
             <msh:tableColumn columnName="Общее кол-во" property="3" isCalcAmount="true"/>
             <msh:tableColumn columnName="всего" property="4" isCalcAmount="true"/>
             <msh:tableColumn columnName="в т.ч. платно" property="5" isCalcAmount="true"/>
-            <msh:tableColumn columnName="всего" property="6" isCalcAmount="true"/>
-            <msh:tableColumn columnName="к.дней" property="7" isCalcAmount="true"/>
-            <msh:tableColumn columnName="в т.ч. платно" property="8" isCalcAmount="true"/>
+            <msh:tableColumn columnName="в т.ч. др. потоки" property="6" isCalcAmount="true"/>
+            <msh:tableColumn columnName="потоки обс." property="7"/>
+            <msh:tableColumn columnName="всего" property="8" isCalcAmount="true"/>
             <msh:tableColumn columnName="к.дней" property="9" isCalcAmount="true"/>
-            <msh:tableColumn columnName="в т.ч. др. потоки" property="10" isCalcAmount="true"/>
-            <msh:tableColumn columnName="потоки обс." property="11"/>
-            <msh:tableColumn columnName="сред. к.дней" property="12"/>
-            <msh:tableColumn columnName="всего" property="13" isCalcAmount="true"/>
-            <msh:tableColumn columnName="к.дней" property="14" isCalcAmount="true"/>
-            <msh:tableColumn columnName="в т.ч. платно" property="15" isCalcAmount="true"/>
+            <msh:tableColumn columnName="в т.ч. платно" property="10" isCalcAmount="true"/>
+            <msh:tableColumn columnName="к.дней" property="11" isCalcAmount="true"/>
+            <msh:tableColumn columnName="в т.ч. др. потоки" property="12" isCalcAmount="true"/>
+            <msh:tableColumn columnName="потоки обс." property="13"/>
+            <msh:tableColumn columnName="сред. к.дней" property="14"/>
+            <msh:tableColumn columnName="всего" property="15" isCalcAmount="true"/>
             <msh:tableColumn columnName="к.дней" property="16" isCalcAmount="true"/>
-            <msh:tableColumn columnName="отказы от госп." property="17" isCalcAmount="true"/>
+            <msh:tableColumn columnName="в т.ч. платно" property="17" isCalcAmount="true"/>
+            <msh:tableColumn columnName="к.дней" property="18" isCalcAmount="true"/>
+            <msh:tableColumn columnName="отказы от госп." property="19" isCalcAmount="true"/>
         </msh:table>
     </msh:sectionContent>
     
