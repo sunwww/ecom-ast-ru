@@ -33,13 +33,7 @@
 		    if (department!=null && department.intValue()>0 )  {
     	%>
     <msh:section>
-    <msh:sectionTitle>Журнал состоящих пациентов в отделение  ${departmentInfo} на текущее момент
-     <a href='stac_print_protocol.do?department=${department}&stNoPrint=selected'>Печать дневников</a>
-     <a href='stac_print_surOperation.do?department=${department}&stNoPrint=selected'>Печать хир. операций</a>
-     <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
 
     select m.id,to_char(m.dateStart,'dd.mm.yyyy')
     ||case when m.datestart!=sls.dateStart then '(госп. с '||to_char(sls.dateStart,'dd.mm.yyyy')||')' else '' end
@@ -83,25 +77,7 @@
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
-      <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Леч.врач" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
-      <msh:tableColumn columnName="Операции" property="6"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
-      <msh:tableColumn columnName="Диагноз" property="10"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <msh:section>
-        <msh:sectionTitle>Список пациентов, находящихся в реанимации
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+         <ecom:webQuery name="datelist_r" nameFldSql="datelist_r_sql" nativeSql="
     select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
     	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper 
@@ -144,7 +120,43 @@
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+     <msh:sectionTitle>
+    <form action="print-stac_current_department.do" method="post" target="_blank">
+    Журнал состоящих пациентов в отделение  ${departmentInfo} на текущее момент
+    <input type='hidden' name="sqlText" id="sqlText" value="${datelist}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделение  ${departmentInfo} на текущее момент">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+     <a href='stac_print_protocol.do?department=${department}&stNoPrint=selected'>Печать дневников</a>
+     <a href='stac_print_surOperation.do?department=${department}&stNoPrint=selected'>Печать хир. операций</a>
+     <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
+     
+    </msh:sectionTitle>
+    <msh:sectionContent>
+
     <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Леч.врач" property="7"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
+      <msh:tableColumn columnName="Операции" property="6"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
+      <msh:tableColumn columnName="Диагноз" property="10"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <msh:section>
+        <msh:sectionTitle>Список пациентов, находящихся в реанимации
+    </msh:sectionTitle>
+    <msh:sectionContent>
+
+    <msh:table name="datelist_r" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
