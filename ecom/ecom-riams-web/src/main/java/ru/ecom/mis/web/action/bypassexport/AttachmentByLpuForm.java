@@ -10,7 +10,6 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class AttachmentByLpuForm extends BaseValidatorForm {
 	/** ЛПУ */
 	@Comment("ЛПУ")
-	@Required
 	public Long getLpu() {return theLpu;}
 	public void setLpu(Long aLpu) {theLpu = aLpu;}
 

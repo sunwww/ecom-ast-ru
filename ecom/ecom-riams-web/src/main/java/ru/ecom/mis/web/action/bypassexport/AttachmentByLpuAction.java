@@ -30,7 +30,8 @@ public class AttachmentByLpuAction extends BaseAction {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
     		String typeAge = ActionUtil.updateParameter("PatientAttachment","typeAge","3", aRequest) ; 
-	    	String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
+    		String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
+	    	String typeChange = ActionUtil.updateParameter("PatientAttachment","typeChange","1", aRequest) ; 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
@@ -57,6 +58,14 @@ public class AttachmentByLpuAction extends BaseAction {
 	        	sqlAdd.append(" and (vat.code='1' or (vat.id is null and lp.id is null)) ") ;
 	        } else if (typeAttachment!=null&&typeAttachment.equals("2")) {
 	        	sqlAdd.append(" and vat.code='2'") ;
+	        }
+	        if (typeChange!=null&&typeChange.equals("1")) {
+	        	sqlAdd.append(" and (lp.dateFrom between to_date('")
+	        		.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
+	        		.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
+	        	
+	        } else if (typeChange!=null&&typeChange.equals("2")) {
+	        	//sqlAdd.append("") ;
 	        }
 	    	filename = service.exportAll(age,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 	        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
