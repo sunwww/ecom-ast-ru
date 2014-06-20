@@ -81,7 +81,16 @@ public class TableColumnTag extends AbstractGuidSupportTag {
 	public void setIsCalcAmount(boolean aIsCalcAmount) {
 		theIsCalcAmount = aIsCalcAmount;
 	}
+	/** Дополнительные параметры 
+    * @jsp.attribute   description="Дополнительные параметры"
+    *                  required="false"
+    *                  rtexprvalue="true"
+    */
+	public String getAddParam() {return theAddParam;}
+	public void setAddParam(String aAddParam) {theAddParam = aAddParam;}
 
+	/** Дополнительные параметры */
+	private String theAddParam;
 	/** String */
 	private boolean theIsCalcAmount;
     /** Название колонки */
