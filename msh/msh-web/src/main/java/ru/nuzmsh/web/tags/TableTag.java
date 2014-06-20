@@ -63,6 +63,17 @@ public class TableTag extends AbstractGuidSupportTag {
 	/** Не выводить шапку таблицы */
 	private boolean theHideTitle = false;
 	
+	/** Отображение по каждой ячейке 
+     * @jsp.attribute   description = "Не выводить шапку таблицы"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+	 * */
+	public boolean getCellFunction() {return theCellFunction;}
+	public void setCellFunction(boolean aCellFunction) {theCellFunction = aCellFunction;}
+
+	/** Отображение по каждой ячейке */
+	private boolean theCellFunction;
+	
     /**
      * Запретить поддержку клавиш
      * @jsp.attribute   description = "Запретить поддержку клавиш"
@@ -188,7 +199,7 @@ public class TableTag extends AbstractGuidSupportTag {
         theColumns.add(
                 new Column(aTag.getProperty(), aTag.getColumnName()
                         , aTag.isIdentificator(), aTag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                        , aTag.getGuid(),aTag.getIsCalcAmount())
+                        , aTag.getGuid(),aTag.getIsCalcAmount(),aTag.getAddParam())
                 
         );
     }
@@ -359,6 +370,10 @@ public class TableTag extends AbstractGuidSupportTag {
     private String getGoFunctionName(String aId) {
     	return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("');").toString();
     }
+    private String getGoFunctionCellName(String aId,String aCellName) {
+    	return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("','").append(aCellName).append("');").toString();
+    }
+    
     private String getViewFunctionName(String aId) {
     	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
     	if (theFunctionViewName==null) {
@@ -504,12 +519,17 @@ public class TableTag extends AbstractGuidSupportTag {
                         	
                         }
                         
-                        String goFunctionName = getGoFunctionName(currentId) ;
+                        String goFunctionMainName = getGoFunctionName(currentId) ;
                         
                         
                         for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
                             Column column = (Column) iterator.next();
-                            Object valueC = column.printCell(out, row, goFunctionName, currentId);
+                            Object valueC ;
+                            if (theCellFunction) {
+                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId);
+                            } else {
+                            	valueC = column.printCell(out, row, goFunctionMainName, currentId);
+                            }
                         	if (!isFirstRow) {
                         		if (valueC!=null) {
                         			rowSum = column.amountCell(out, rowSum, valueC) ;
@@ -667,7 +687,7 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -675,6 +695,8 @@ public class TableTag extends AbstractGuidSupportTag {
             theServleRequest = aRequest ;
             theGuid = aGuid ;
             theIsCalcAmount = aIsCalcAmount ;
+            if (aAddParam==null) aAddParam="" ;
+            theAddParam =aAddParam ; 
         }
 
         @SuppressWarnings("unused")
@@ -856,6 +878,7 @@ public class TableTag extends AbstractGuidSupportTag {
         private final HttpServletRequest theServleRequest ;
         private final String theGuid ;
         private final boolean theIsCalcAmount ;
+        private final String theAddParam ;
     }
 
 
