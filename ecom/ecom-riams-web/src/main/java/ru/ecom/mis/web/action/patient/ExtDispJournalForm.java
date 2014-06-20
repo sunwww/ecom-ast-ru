@@ -78,4 +78,12 @@ public class ExtDispJournalForm extends BaseValidatorForm {
 	private Long theRisk;
 	/** Группа здоровья */
 	private Long theHealthGroup;
+	
+	/** Услуга */
+	@Comment("Услуга")
+	public Long getService() {return theService;}
+	public void setService(Long aService) {theService = aService;}
+
+	/** Услуга */
+	private Long theService;
 }
