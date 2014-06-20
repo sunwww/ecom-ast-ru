@@ -173,11 +173,17 @@
     
     if (date!=null && !date.equals(""))  {
     	String view = (String)request.getAttribute("typeView") ;
+    	String typeReestr = request.getParameter("typeReestr") ;
     	//String fldDepartment = "ml.id" ;
     	
     	String pigeonHole="" ;
     	String pigeonHole1="" ;
+    	StringBuilder paramHref = new StringBuilder();
+    	paramHref.append("typeReestr=1");
+    	paramHref.append("&typeView=").append(view);
     	String pHole = request.getParameter("pigeonHole") ;
+    	paramHref.append("&pigeonHole=").append(pHole);
+    	
     	if (pHole!=null && !pHole.equals("") && !pHole.equals("0")) {
     		pigeonHole1= " and (ml.pigeonHole_id='"+pHole+"' or ml1.pigeonHole_id='"+pHole+"')" ;
     		pigeonHole= " and ml.pigeonHole_id='"+pHole+"'" ;
@@ -190,9 +196,10 @@
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("department", " and "+request.getAttribute("departmentFldIdSql")+"='"+dep+"'") ;
     	}
+    	paramHref.append("&department=").append(department);
     	ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request);
-    	//ActionUtil.setParameterFilterSql("pigeonHole", "m.department_id", request);
-    	//ActionUtil.setParameterFilterSql("pigeonHole","pigeonHole1", "m.department_id", request);
+    	String serviceStream=request.getParameter("serviceStream");
+    	paramHref.append("&serviceStream=").append(serviceStream!=null?serviceStream:"");
     	/*
     	String dateI = null ;
 			String timeI = null ;
@@ -244,6 +251,19 @@
 		    }*/
     	
     	if (view!=null && (view.equals("1"))) {
+    		if (typeReestr!=null && typeReestr.equals("1")) {
+    			String table=request.getParameter("table") ;
+    			String tableCell=request.getParameter("tableCell") ;
+    			
+    			if (table!=null&&table.equals("1")) {
+    				
+    			} else if (table!=null&&table.equals("2")) {
+    				
+    			} else {
+    				
+    			}
+    			
+    		} else {
     	%>
     
     <msh:section>
@@ -277,7 +297,9 @@ ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
 group by vph.id,vph.name
 order by vph.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table cellFunction="true" name="journal_priem" 
+    viewUrl="stac_everyday_report.do?${paramHref}&table=1" 
+    action="stac_everyday_report.do?${paramHref}&table=1" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -336,7 +358,9 @@ and ( m.noActuality is null or m.noActuality='0')
     	group by vph.id,vph.name
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    	    <msh:table cellFunction="true" name="journal_priem" 
+    	    viewUrl="stac_everyday_report.do?${paramHref}&table=2" 
+    	    action="stac_everyday_report.do?${paramHref}&table=2" idField="1">
     	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
     	      <msh:tableColumn columnName="Приемник" property="2"/>
     	      <msh:tableColumn columnName="Кол-во обрат." property="3"/>
@@ -382,7 +406,7 @@ and ( m.noActuality is null or m.noActuality='0')
     	group by vph.id,vph.name
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	    <msh:table name="journal_priem" action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    	    <msh:table cellFunction="true" name="journal_priem" action="stac_everyday_report.do?${paramHref}&table=3" idField="1">
     	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
     	      <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
     	      <msh:tableColumn columnName="Кол-во выбывших" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -393,7 +417,7 @@ and ( m.noActuality is null or m.noActuality='0')
     	    </msh:sectionContent>
     	    </msh:section>
     <%
-    	
+    		}
     	}  else if (view!=null && (view.equals("2"))) {
     		%>
     <msh:section>
@@ -402,40 +426,40 @@ and ( m.noActuality is null or m.noActuality='0')
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
-   select vph.id,vph.name
-,count(*) as cntAll
-,count(distinct case when pat.newborn_id is not null then m.id else null end) as cntNewBorn
-,count(distinct case when (current_date-pat.birthday)<(17*355) then m.id else null end) as cntChild
-,count(distinct case when adr.addressisvillage='1' then m.id else null end) as cntVill
-,count(distinct case when adr.addressiscity='1' then m.id else null end) as cntCity
-,count(distinct case when adr.kladr is not null and adr.kladr not like '30%' then m.id else null end) as cntInog
-,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then m.id else null end) as cntInost
+   select ml.id,ml.name
+,count(distinct case when (coalesce(m.datefinish,m.transferdate) is null or coalesce(m.datefinish,m.transferdate) > to_date('${param.dateBegin}','dd.mm.yyyy')) then m.id else null end) as cntCurrent
+,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy')  then m.id else null end) as cntEntr
 from medcase m
+left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Patient pat on pat.id=m.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Mislpu ml on m.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join Diary d on d.medcase_id=m.id
 where m.datestart <= to_date('${param.dateBegin}','dd.mm.yyyy') 
-and (m.datefinish is null or m.datefinish >= to_date('${param.dateBegin}','dd.mm.yyyy'))
+and m.dtype='DepartmentMedCase'
+and (coalesce(m.datefinish,m.transferdate) is null or coalesce(m.datefinish,m.transferdate) >= to_date('${param.dateBegin}','dd.mm.yyyy'))
 
-and m.dtype='HospitalMedCase'
+
 and m.deniedHospitalizating_id is null
+
 ${emerIs} ${pigeonHole} 
 ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
-group by vph.id,vph.name
-order by vph.name
+and ml.isNoOmc='1'
+group by ml.id,ml.name
+order by ml.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во новорожд." property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во детей" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Кол-во с.ж." property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иног." property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иноcn." property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    <msh:table  cellFunction="true" name="journal_priem" 
+    viewUrl="stac_everyday_report.do?${paramHref}" 
+    action="stac_everyday_report.do?${paramHref}" 
+    idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -456,7 +480,8 @@ order by vph.name
 ,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntEntr
 ,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and  m.emergency='1' then m.id else null end) as cntEntrEmergency
 ,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
-,count(distinct case when m.datestart=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntEntrPlan
+,count(distinct case when m.transferdate=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntTransfer
+,count(distinct case when m.datefinish=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntFinish
 ,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') then m.id else null end) as cntOper
 ,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') and m.emergency='1' then m.id else null end) as cntOperEm
 ,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntOperPl
@@ -472,28 +497,31 @@ left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
 left join Diary d on d.medcase_id=m.id
 where m.datestart <= to_date('${param.dateBegin}','dd.mm.yyyy') 
-and (m.datefinish is null or m.datefinish >= to_date('${param.dateBegin}','dd.mm.yyyy'))
-
 and m.dtype='DepartmentMedCase'
+and (coalesce(m.datefinish,m.transferdate) is null or coalesce(m.datefinish,m.transferdate) >= to_date('${param.dateBegin}','dd.mm.yyyy'))
+and ml.isNoOmc='0'
 and m.deniedHospitalizating_id is null
 ${emerIs} ${pigeonHole} 
 ${department} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
 group by ml.id,ml.name
 order by ml.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
+    <msh:table cellFunction="true" name="journal_priem" 
+    viewUrl="stac_everyday_report.do?${paramHref}" 
+    action="stac_everyday_report.do?${paramHref}" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" />
       <msh:tableColumn isCalcAmount="true" columnName="внебюдж./ДМС" property="5" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="6" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="6" />
       <msh:tableColumn isCalcAmount="true" columnName="экстр." property="7" />
       <msh:tableColumn isCalcAmount="true" columnName="план." property="8" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="9" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="10" />
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="11" />
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="12" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="9" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="10" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="11" />
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="12" />
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="13" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
@@ -595,7 +623,7 @@ group by vph.id,vph.name
      group by ${departmentFldIdSql},${departmentFldNameSql}
         order by ${departmentFldIdSql},${departmentFldNameSql}
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table cellFunction="true" name="journal_priem" action="stac_reestrByHospital.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
