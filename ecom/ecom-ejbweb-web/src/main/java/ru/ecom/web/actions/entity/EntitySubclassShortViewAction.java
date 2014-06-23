@@ -17,15 +17,24 @@ public class EntitySubclassShortViewAction extends AbstractEntityAction {
         IEntityForm form = castEntityForm(aForm, aMapping);
         IEntityFormService service = EntityInjection.find(aRequest).getEntityFormService();
         Long id = Long.parseLong(aRequest.getParameter("id")) ;
+        String shortP = aRequest.getParameter("short") ;
 
 
         IEntityForm loadedForm = service.loadBySubclass(form.getClass(), id) ;
         String name = theStrutsConfigUtil.findFormNameByClass(loadedForm.getClass(), aRequest) ;
 
-        StringBuilder sb = new StringBuilder("/entityShortView-");
+        StringBuilder sb = new StringBuilder();
+        if (shortP!=null) {
+        	sb.append("/entityView-");
+        } else {
+        	sb.append("/entityShortView-");
+        }
         sb.append(name.substring(0, name.length()-"Form".length())) ;
         sb.append(".do?id=") ;
         sb.append(id) ;
+        if (shortP!=null) {
+        	sb.append("&short=Short") ;
+        }
         return new ActionForward(sb.toString(), true);
     }
 
