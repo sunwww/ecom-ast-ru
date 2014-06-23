@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
     <!-- 
@@ -15,29 +15,30 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:panel guid="panel">
         <msh:row>
-        	<msh:textField label="Код строки" property="strcode"/>
-        	<msh:textField label="Код" property="code"/>
+        	<msh:textField property="className" label="ОТЧЕТ" size="20"/>
+        	<msh:textField label="Код строки" property="strCode"/>
         </msh:row>
         <msh:row>
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete label="Пол" property="sex" horizontalFill="true" fieldColSpan="3"/>
+        	<msh:textField label="Код" property="code" size="20"/>
+        	<msh:autoComplete label="Пол" property="sex" vocName="vocSex"/>
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
       </msh:panel>
     </msh:form>
-    <msh:ifFormTypeIsView formName="rep_reportForm">
+    <msh:ifFormTypeIsView formName="rep_parameterForm">
 <ecom:webQuery name="list" nativeSql="
-  	select id, codeFrom,codeTo 
-  	from ReportSetTypeParameterType
+  	select tpt.id, tpt.codeFrom,tpt.codeTo 
+  	from ReportSetTypeParameterType tpt
 where tpt.parameterType_id='${param.id}'
 
 "/>
   	<msh:table name="list" 
-  	
-  	viewUrl="entityParentView-rep_parameterVariety.do?short=Short"
   	deleteUrl="entityParentDeleteGoParentView-rep_parameterVariety.do?short=Short"
+  	editUrl="entityParentEdit-rep_parameterVariety.do"
+  	
   	 action="entityParentView-rep_parameterVariety.do" idField="1">
   		<msh:tableColumn property="2" columnName="с"/>
   		<msh:tableColumn property="3" columnName="по"/>
