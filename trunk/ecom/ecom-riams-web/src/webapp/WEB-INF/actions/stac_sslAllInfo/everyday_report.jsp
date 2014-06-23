@@ -47,72 +47,7 @@
       		vocName="vocPigeonHole"
       		/>
       </msh:row>
-      <!-- 
-      <msh:row>
-        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeEmergency" value="1">  экстренные
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeEmergency" value="2" >  плановые
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeEmergency" value="3">  все
-        </td>
-      </msh:row>
       
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="1">  региональные
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  прожив. в др.регионах
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  иностранцы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="4">  все
-        </td>
-        </msh:row>      
-        
-      <msh:row>
-        <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="1">  7 часов
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="2">  8 часов
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="3" >  9 часов
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeHour" value="4">  календар. день
-        </td>
-      </msh:row> 
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="1">  поступления в стац.
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-        	<input type="radio" name="typeDate" value="2">  выписки
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-        	<input type="radio" name="typeDate" value="3">  состоящие
-        </td>
-        </msh:row>
-        <msh:row>
-	        <td class="label" title="Отделение (typeDepartment)" colspan="1"><label for="typeDepartmentName" id="typeDepartmentLabel">Отделение:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDepartment" value="1">  госпитализации
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDepartment" value="2"  >  по СЛО
-	        </td>
-        </msh:row>-->
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить информацию:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -253,19 +188,69 @@
 		    }*/
     	
 		    if (typeReestr!=null && typeReestr.equals("1")) {
-    			String table=request.getParameter("table") ;
-    			String tableCell=request.getParameter("tableCell") ;
-    			String patient=request.getParameter("patient") ;
-    			String dateinfo=request.getParameter("dateinfo") ;
-    			String age=request.getParameter("age") ;
-    			String discharge=request.getParameter("discharge") ;
-    			String denied=request.getParameter("denied") ;
-    			String emergency=request.getParameter("emergency") ;
-    			String orderType=request.getParameter("orderType") ;
-    			String stream=request.getParameter("stream") ;
-    			String operation=request.getParameter("operation") ;
-    			
-		    } else if (view!=null && (view.equals("1"))) {
+    			String patient=request.getParameter("patient") ; String dateinfo=request.getParameter("dateinfo") ;
+    			String age=request.getParameter("age") ; String discharge=request.getParameter("discharge") ;
+    			String denied=request.getParameter("denied") ; String emergency=request.getParameter("emergency") ;
+    			String orderType=request.getParameter("orderType") ; String stream=request.getParameter("stream") ;
+    			String operation=request.getParameter("operation") ; String dtype=request.getParameter("dtype" );
+    			StringBuilder where = new StringBuilder() ;
+    			if (dateinfo==null) {
+    				//No date dateinfo
+    			} else {
+    				String dtypeAs = "slo";String groupBy="" ;
+    				if (dtype!=null&&dtype.equals("Hosp")) {
+    					dtype="HospitalMedCase" ;dtypeAs="sls" ;
+    				} else {
+    					dtype="DepartmentMedCase" ;
+    				}
+    				if (dateinfo.equals("dateCurrent")) {
+    					where.append(dtypeAs).append(".datestart <= to_date('").append(date).append("','dd.mm.yyyy') and (").append(dtypeAs).append(".datefinish is null or ").append(dtypeAs).append(".datefinish >= to_date('").append(date).append("','dd.mm.yyyy'))") ;
+    				} else if (dateinfo.equals("dateStart")) {
+    					where.append(dtypeAs).append(".dateStart <= to_date('").append(date).append("','dd.mm.yyyy')");
+    				} else if (dateinfo.equals("dateFinish")) {
+    					where.append(dtypeAs).append(".dateFinish <= to_date('").append(date).append("','dd.mm.yyyy')");
+    				}
+    				if (denied!=null && denied.equals("1")) {
+    					where.append(" and sls.deniedHospitalizating_id is not null") ;
+    				} else if (denied!=null && denied.equals("0")) {
+        					where.append(" and sls.deniedHospitalizating_id is null") ;
+    				}
+    				if (emergency!=null && emergency.equals("1")) {
+    					where.append(" and ").append(dtypeAs).append(".emergency='1'") ;
+    				} else if (emergency!=null && emergency.equals("0")) {
+        					where.append(" and (").append(dtypeAs).append(".emergency='0' or ").append(dtypeAs).append(".emergency is null)") ;
+    				}
+    				if (patient==null) {
+    				} else if (patient.equals("village")) {
+    					where.append("and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and adr.addressisvillage='1'");
+    				} else if (patient.equals("city")) {
+    					where.append("and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and adr.addressiscity='1'");
+    				} else if (patient.equals("inostr")) {
+    					where.append("and oo.voc_code!='643' and oo.id is not null") ;
+    				} else if (patient.equals("inog")) {
+    					where.append("and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)!='30'");
+    				} else if (patient.equals("other")) {
+    					where.append("and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)") ;
+    				}
+    				request.setAttribute("whereSql", where.toString()) ;
+    				
+    			%>
+    <ecom:webQuery name="
+    select * from MedCase slo
+    left join MedCase sls on sls.id=slo.parent_id
+    left join Patient pat on pat.id=slo.patient_id
+    left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+	left join Address2 adr on adr.addressid=pat.address_addressid
+	left join Mislpu ml on m.department_id=ml.id
+	left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+	left join Omc_Oksm ok on pat.nationality_id=ok.id
+	left join SurgicalOperation so on so.medcase_id=m.id
+	left join Omc_Oksm ok on pat.nationality_id=ok.id
+	left join Diary d on d.medcase_id=m.id
+	where ${whereSql}
+    "/>
+    			<%
+    			}} else if (view!=null && (view.equals("1"))) {
     		
     	%>
     
@@ -494,13 +479,13 @@ order by ml.name
 ,count(distinct case when so.operationdate=to_date('${param.dateBegin}','dd.mm.yyyy') and (m.emergency='0' or m.emergency is null) then m.id else null end) as cntOperPl
 ,count(distinct case when d.date=to_date('${param.dateBegin}','dd.mm.yyyy') and d.state_id=3 then m.id else null end) as cntOperPl
 from medcase m
-left join SurgicalOperation so on so.medcase_id=m.id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Patient pat on pat.id=m.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Mislpu ml on m.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+left join SurgicalOperation so on so.medcase_id=m.id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
 left join Diary d on d.medcase_id=m.id
 where m.datestart <= to_date('${param.dateBegin}','dd.mm.yyyy') 
