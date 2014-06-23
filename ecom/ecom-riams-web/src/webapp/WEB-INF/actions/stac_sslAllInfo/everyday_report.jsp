@@ -20,12 +20,14 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <%
-  	String noViewForm = request.getParameter("noViewForm") ;
-
-	String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
-	String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
-	String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
-	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
+    String typeReestr = request.getParameter("typeReestr") ;
+    if (typeReestr==null) {
+	  	String noViewForm = request.getParameter("noViewForm") ;
+		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
+		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
+		String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
+		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
+    }
   	%>
     <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
@@ -173,7 +175,7 @@
     
     if (date!=null && !date.equals(""))  {
     	String view = (String)request.getAttribute("typeView") ;
-    	String typeReestr = request.getParameter("typeReestr") ;
+    	
     	//String fldDepartment = "ml.id" ;
     	
     	String pigeonHole="" ;
@@ -250,20 +252,21 @@
 				request.setAttribute("period1",period) ;
 		    }*/
     	
-    	if (view!=null && (view.equals("1"))) {
-    		if (typeReestr!=null && typeReestr.equals("1")) {
+		    if (typeReestr!=null && typeReestr.equals("1")) {
     			String table=request.getParameter("table") ;
     			String tableCell=request.getParameter("tableCell") ;
+    			String patient=request.getParameter("patient") ;
+    			String dateinfo=request.getParameter("dateinfo") ;
+    			String age=request.getParameter("age") ;
+    			String discharge=request.getParameter("discharge") ;
+    			String denied=request.getParameter("denied") ;
+    			String emergency=request.getParameter("emergency") ;
+    			String orderType=request.getParameter("orderType") ;
+    			String stream=request.getParameter("stream") ;
+    			String operation=request.getParameter("operation") ;
     			
-    			if (table!=null&&table.equals("1")) {
-    				
-    			} else if (table!=null&&table.equals("2")) {
-    				
-    			} else {
-    				
-    			}
-    			
-    		} else {
+		    } else if (view!=null && (view.equals("1"))) {
+    		
     	%>
     
     <msh:section>
@@ -275,7 +278,7 @@
    select vph.id,vph.name
 ,count(*) as cntAll
 ,count(distinct case when pat.newborn_id is not null then m.id else null end) as cntNewBorn
-,count(distinct case when (current_date-pat.birthday)<(17*355) then m.id else null end) as cntChild
+,count(distinct case when (current_date-pat.birthday)<(14*355) then m.id else null end) as cntChild
 ,count(distinct case when adr.addressisvillage='1' then m.id else null end) as cntVill
 ,count(distinct case when adr.addressiscity='1' then m.id else null end) as cntCity
 ,count(distinct case when adr.kladr is not null and adr.kladr not like '30%' then m.id else null end) as cntInog
@@ -298,16 +301,16 @@ group by vph.id,vph.name
 order by vph.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table cellFunction="true" name="journal_priem" 
-    viewUrl="stac_everyday_report.do?${paramHref}&table=1" 
-    action="stac_everyday_report.do?${paramHref}&table=1" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    viewUrl="stac_everyday_report.do?${paramHref}&table=1&dateinfo=dateCurrent" 
+    action="stac_everyday_report.do?${paramHref}&table=1&dateinfo=dateCurrent" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во новорожд." property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во детей" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Кол-во с.ж." property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иног." property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во иноcn." property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Кол-во новорожд." addParam="&age=0-0" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Кол-во детей" addParam="&age=0-14" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      <msh:tableColumn columnName="Кол-во с.ж." addParam="&patient=village" property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Кол-во иног." addParam="&patient=inog" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Кол-во иноcn." addParam="&patient=inostr" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -359,21 +362,21 @@ and ( m.noActuality is null or m.noActuality='0')
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     	    <msh:table cellFunction="true" name="journal_priem" 
-    	    viewUrl="stac_everyday_report.do?${paramHref}&table=2" 
-    	    action="stac_everyday_report.do?${paramHref}&table=2" idField="1">
-    	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-    	      <msh:tableColumn columnName="Приемник" property="2"/>
-    	      <msh:tableColumn columnName="Кол-во обрат." property="3"/>
-    	      <msh:tableColumn columnName="Кол-во госп" property="4"/>
-    	      <msh:tableColumn columnName="с.ж." property="5"/>
-    	      <msh:tableColumn columnName="гор." property="6"/>
-    	      <msh:tableColumn columnName="иног." property="7"/>
-    	      <msh:tableColumn columnName="иност." property="8"/>
-    	      <msh:tableColumn columnName="др." property="9"/>
-    	      <msh:tableColumn columnName="Кол-во экстр." property="10" />
-    	      <msh:tableColumn columnName="самообр." property="11" />
-    	      <msh:tableColumn columnName="ск. пом." property="12" />
-    	      <msh:tableColumn columnName="Кол-во план." property="13" />
+    	    viewUrl="stac_everyday_report.do?${paramHref}&table=2&dateinfo=dateStart" 
+    	    action="stac_everyday_report.do?${paramHref}&table=2&dateinfo=dateStart" idField="1">
+    	      <msh:tableColumn columnName="#" property="sn" addParam="" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
+    	      <msh:tableColumn columnName="Приемник" addParam="" property="2"/>
+    	      <msh:tableColumn columnName="Кол-во обрат." addParam="" property="3"/>
+    	      <msh:tableColumn columnName="Кол-во госп" addParam="&denied=0" property="4"/>
+    	      <msh:tableColumn columnName="с.ж." addParam="&denied=0&patient=village" property="5"/>
+    	      <msh:tableColumn columnName="гор." addParam="&denied=0&patient=city" property="6"/>
+    	      <msh:tableColumn columnName="иног." addParam="&denied=0&patient=inog" property="7"/>
+    	      <msh:tableColumn columnName="иност." addParam="&denied=0&patient=inostr" property="8"/>
+    	      <msh:tableColumn columnName="др." addParam="&denied=0&patient=other" property="9"/>
+    	      <msh:tableColumn columnName="Кол-во экстр." addParam="&denied=0&emergency=1" property="10" />
+    	      <msh:tableColumn columnName="самообр." addParam="&denied=0&orderType=О" property="11" />
+    	      <msh:tableColumn columnName="ск. пом." addParam="&denied=0&orderType=К" property="12" />
+    	      <msh:tableColumn columnName="Кол-во план." addParam="&denied=0&emergency=0" property="13" />
     	    </msh:table>
     	    </msh:sectionContent>
     	    </msh:section>
@@ -406,18 +409,18 @@ and ( m.noActuality is null or m.noActuality='0')
     	group by vph.id,vph.name
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	    <msh:table cellFunction="true" name="journal_priem" action="stac_everyday_report.do?${paramHref}&table=3" idField="1">
-    	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-    	      <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-    	      <msh:tableColumn columnName="Кол-во выбывших" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-    	      <msh:tableColumn columnName="выписан. в др. ЛПУ" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-    	      <msh:tableColumn columnName="Кол-во умер." property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-    	      <msh:tableColumn columnName="Список умерших пациентов" property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    	    <msh:table cellFunction="true" name="journal_priem" action="stac_everyday_report.do?${paramHref}&table=3&dateinfo=dateFinish" idField="1">
+    	      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateFinish"/>
+    	      <msh:tableColumn columnName="Приемник" property="2" addParam="&dateinfo=dateFinish" />
+    	      <msh:tableColumn columnName="Кол-во выбывших" property="3" addParam="&dateinfo=dateFinish" />
+    	      <msh:tableColumn columnName="выписан. в др. ЛПУ" property="4" addParam="&dateinfo=dateFinish&discharge=otherLpu" />
+    	      <msh:tableColumn columnName="Кол-во умер." property="5"  addParam="&dateinfo=dateFinish&discharge=death" />
+    	      <msh:tableColumn columnName="Список умерших пациентов" property="6"  addParam="&dateinfo=dateFinish&discharge=death"/>
     	    </msh:table>
     	    </msh:sectionContent>
     	    </msh:section>
     <%
-    		}
+    		
     	}  else if (view!=null && (view.equals("2"))) {
     		%>
     <msh:section>
@@ -455,11 +458,15 @@ order by ml.name
     viewUrl="stac_everyday_report.do?${paramHref}" 
     action="stac_everyday_report.do?${paramHref}" 
     idField="1">
-      <msh:tableColumn columnName="#" property="sn" />
-      <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="5" />
+      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn columnName="Отделение" property="2" addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" 
+      addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" 
+      addParam="&dateinfo=dateStart"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="5" 
+      addParam="&dateinfo=coalesce(transferDate,dateFinish)"
+      />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -511,17 +518,17 @@ order by ml.name
     action="stac_everyday_report.do?${paramHref}" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" />
-      <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" />
-      <msh:tableColumn isCalcAmount="true" columnName="внебюдж./ДМС" property="5" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="6" />
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="7" />
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="8" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="9" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="10" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="11" />
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="12" />
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="13" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" addParam="&dateinfo=dateCurrent" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="внебюдж./ДМС" property="5" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE,DOGOVOR,FCB"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="6" addParam="&dateinfo=dateStart"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="7" addParam="&dateinfo=dateStart&emergency=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="8" addParam="&dateinfo=dateStart&emergency=0"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="9" addParam="&dateinfo=transferDate"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="10" addParam="&dateinfo=dateFinish"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="11" addParam="&dateinfo=dateCurrent&operation=all"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="12" addParam="&dateinfo=dateCurrent&operation=emergency"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="13" addParam="&dateinfo=dateCurrent&operation=plan"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
