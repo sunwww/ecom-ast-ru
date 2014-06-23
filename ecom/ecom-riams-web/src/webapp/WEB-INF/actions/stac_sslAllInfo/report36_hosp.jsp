@@ -505,7 +505,8 @@ case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
 else 
 ahr.dischargeDate24-ahr.entranceHospDate24+cast(ahr.addbeddays as int)
 end as beddays
-
+,case when ahr.isFirstCurrentYear='1' then 'Да' else null end as isFirstCurrentYear
+,case when ahr.isFirstLife='1' then 'Да' else null end as isFirstLife
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -520,7 +521,7 @@ ${departmentSql}
 group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
-,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency
+,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency,ahr.isFirstCurrentYear,ahr.isFirstLife
 order by p.lastname,p.firstname,p.middlename " />
     <msh:sectionTitle>
     <form action="print-stac_report36_3.do" method="post" target="_blank">
@@ -553,6 +554,8 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Лет. исход" property="12"/>
       <msh:tableColumn columnName="Показания" property="13"/>
       <msh:tableColumn columnName="К.дн" property="14"/>
+      <msh:tableColumn columnName="Впервые в этом году" property="15"/>
+      <msh:tableColumn columnName="Впервые в жизни" property="16"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
