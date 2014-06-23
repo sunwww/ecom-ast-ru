@@ -43,6 +43,30 @@ public class ReportParameterForm  extends IdEntityForm {
 	public String getStrCode() {return theStrCode;}
 	public void setStrCode(String aStr) {theStrCode = aStr;}
 
+	/** Наименование */
+	@Comment("Наименование")
+	public String getName() {
+		return theName;
+	}
+
+	public void setName(String aName) {
+		theName = aName;
+	}
+
+	/** Код МКБ */
+	@Comment("Код МКБ")
+	public String getCode() {
+		return theCode;
+	}
+
+	public void setCode(String aCode) {
+		theCode = aCode;
+	}
+
+	/** Код МКБ */
+	private String theCode;
+	/** Наименование */
+	private String theName;
 	/** Строка */
 	private String theStrCode;
 	/** Пол */
