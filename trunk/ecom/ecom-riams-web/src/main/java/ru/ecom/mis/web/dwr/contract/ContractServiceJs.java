@@ -72,7 +72,7 @@ public class ContractServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String actionNext="" ;
 		System.out.println("action="+aAction+"=") ;
-		Collection<WebQueryResult> listAge = service.executeNativeSql("select veda.id,veda.name from VocExtDispAgeGroup veda ") ;
+		Collection<WebQueryResult> listAge = service.executeNativeSql("select veda.id,veda.name from VocExtDispAgeGroup veda left join ExtDispPlan edp on edp.dispType_id=veda.dispType_id where edp.id="+aPlan) ;
 		if (aAction!=null && (aAction.equals("+"))) {
 			for (WebQueryResult wqrAge:listAge) {
 			String aAgeGroup=""+wqrAge.get1() ;
