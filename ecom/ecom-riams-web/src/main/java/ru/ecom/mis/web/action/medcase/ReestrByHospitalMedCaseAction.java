@@ -76,7 +76,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 				timeSql= "07:00" ;timeInfo="(7 часов)" ;
 		    } else if (typeHour!=null && typeHour.equals("2")) {
 		    	timeSql= "08:00" ;timeInfo="(8 часов)" ;
-	    	} else if (typeHour!=null && typeHour.equals("2")) {
+	    	} else if (typeHour!=null && typeHour.equals("3")) {
 	    		timeSql= "09:00" ;timeInfo="(9 часов)" ;
 	    	} 
 		    if (typeDate!=null && typeDate.equals("1")) {
