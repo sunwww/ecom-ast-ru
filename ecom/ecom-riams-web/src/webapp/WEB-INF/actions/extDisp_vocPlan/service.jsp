@@ -98,7 +98,7 @@ for (int i=0;i<cntResult;i++) {
 			String obj = "" ;
 			if (ai<22) {
 				obj = (String)PropertyUtil.getPropertyValue(wqr1, ""+(ai+4)) ;
-			} else  {
+			} else if (ai<44) {
 				obj = (String)PropertyUtil.getPropertyValue(wqr2, ""+(ai-18)) ;
 			}
 			String age = ageList[ai] ;
