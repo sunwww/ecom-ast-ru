@@ -35,6 +35,8 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
 import org.w3c.dom.Element;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.sequence.service.ISequenceService;
@@ -105,10 +107,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" ,slo.datestart as f4entrancedate") ;
 	    	sql.append(" ,coalesce(slo.datefinish,slo.transferdate) as f5dischargedate") ;
 	    	sql.append(" ,case when a.addressisvillage='1' then cast('1' as int) else null end as f6isvillage") ;
-	    	sql.append(" ,case when sls.admissionInHospital_id=1 then cast('1' as int) else null end as f7isFirstLife") ;
-	    	sql.append(" ,case when sls.hospitalization_id=1 then cast('1' as int) else null end as f8isFirstCurrentYear") ;
+	    	sql.append(" ,case when sls.admissionInHospital_id='1' then cast('1' as int) else null end as f7isFirstLife") ;
+	    	sql.append(" ,case when (vh.code='1' or vh.code='2' or sls.admissionInHospital_id='1') then cast('1' as int) else null end as f8isFirstCurrentYear") ;
 	    	sql.append(" ,case when sls.admissionOrder_id in (2,4,5,6,7,8,9) then cast('1' as int) else null end as f9isIncompetent") ;
-	    	sql.append(" ,case when vhr.code='6' then cast('1' as int) else null end as f10isDeath") ;
+	    	sql.append(" ,case when vhr.code='11' then cast('1' as int) else null end as f10isDeath") ;
 	    	sql.append(" ,slo.department_id as f11slodepartment") ;
 	    	sql.append(" ,nextslo.department_id as f12nextslodepartment") ;
 	    	sql.append(" ,prevslo.department_id as f13prevslodepartment") ;
@@ -133,6 +135,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" , firstSlo.datestart as f32entrancedate") ;
 	    	sql.append(" , case when vbst.code='1' then '0' else '1' end  as f33isdayhosp") ;
 	    	sql.append(" ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' then prevMkbD.code else null end) as f34prevdepDiag") ;
+	    	sql.append(" , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f35ageDischarge") ;
+	    	sql.append(" , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f36ageEntranceSls") ;
+	    	sql.append(" , cast(to_char(slo.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(slo.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(slo.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f37ageEntranceSlo") ;
+	    	sql.append(" , pat.birthday as f38birthday") ;
 	    	sql.append(" from medcase sls") ;
 	    	sql.append(" left join medcase slo on sls.id=slo.parent_id") ;
 	    	sql.append(" left join medcase prevSlo on prevSlo.id=slo.prevMedCase_id") ;
@@ -161,6 +167,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" left join VocDiagnosisRegistrationType vdrtD on vdrtD.id=diagD.registrationType_id") ;
 	    	sql.append(" left join VocPriorityDiagnosis vpdD on vpdD.id=diagD.priority_id") ;
 	    	sql.append(" left join VocHospitalizationResult  vhr on vhr.id=sls.result_id") ;
+	    	sql.append(" left join VocHospitalization  vh on vh.id=sls.hospitalization_id") ;
 	    	sql.append(" left join VocHospType vht on vht.id=sls.targetHospType_id") ;
 	    	sql.append(" left join VocHospType vhtHosp on vhtHosp.id=sls.hospType_id") ;
 	    	sql.append(" where sls.dtype='HospitalMedCase' and firstSlo.dtype='DepartmentMedCase'  and firstSlo.dtype='DepartmentMedCase' and sls.dateStart <= (to_date('").append(aDischargeDate).append("','dd.mm.yyyy')-1)") ;
@@ -168,11 +175,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	sql.append(" and sls.deniedHospitalizating_id is null") ;
 	    	sql.append(" group by vs.omccode,vs.id,slo.datestart,slo.datefinish,slo.transferdate") ;
 	    	sql.append(" ,pat.id,sls.id,slo.id,a.addressisvillage") ;
-	    	sql.append(" ,sls.admissionInHospital_id,sls.hospitalization_id,firstSlo.datestart,firstSlo.entranceTime") ;
+	    	sql.append(" ,sls.admissionInHospital_id,vh.code,firstSlo.datestart,firstSlo.entranceTime") ;
 	    	sql.append(" ,sls.admissionOrder_id,vhr.code") ;
 	    	sql.append(" ,slo.department_id,nextslo.department_id,prevslo.department_id") ;
-	    	sql.append(" ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id") ;
-	    	sql.append(" ,slo.entranceTime, slo.dischargeTime,sls.emergency,vht.code,slo.transferTime,vhtHosp.id,vbst.code ") ;
+	    	sql.append(" ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id, pat.birthday") ;
+	    	sql.append(" ,slo.entranceTime, slo.dischargeTime,sls.emergency,vht.code,slo.transferTime,vhtHosp.id,vbst.code,sls.datefinish,pat.birthday,sls.datestart ") ;
 	    	sql.append(" order by sls.id") ;
 	    	monitor.advice(20) ;
 	    	
@@ -186,9 +193,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	            }
 	    		AggregateHospitalReport ahr = new AggregateHospitalReport() ;
 	    		//ahr.setAgeDischargeSlo(ConvertSql.parseLong(0));
-	    		ahr.setAgeDischargeSls(ConvertSql.parseLong(0));
-	    		//ahr.setAgeEntranceSlo(ConvertSql.parseLong(0));
-	    		ahr.setAgeEntranceSls(ConvertSql.parseLong(0));
+	    		ahr.setAgeDischargeSls(ConvertSql.parseLong(obj[35]));
+	    		ahr.setAgeEntranceSlo(ConvertSql.parseLong(obj[37]));
+	    		ahr.setAgeEntranceSls(ConvertSql.parseLong(obj[36]));
 	    		ahr.setBedSubType(ConvertSql.parseLong(obj[19])) ;
 	    		ahr.setBedType(ConvertSql.parseLong(obj[18])) ;
 	    		ahr.setCntDaysSls(ConvertSql.parseLong(0)) ;
@@ -224,6 +231,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		ahr.setHospType(ConvertSql.parseLong(obj[28])) ;
 	    		ahr.setSex(ConvertSql.parseLong(obj[29])) ;
 	    		ahr.setAddBedDays(ConvertSql.parseLong(obj[33])) ;
+	    		ahr.setBirthday(ConvertSql.parseDate(obj[38]));
 	    		theManager.persist(ahr);
 	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(ConvertSql.parseLong(obj[0])).append(" ").append(ConvertSql.parseLong(obj[2])).append("...").toString());
 	    		if(i%size==0) monitor.advice(1);
@@ -1528,31 +1536,47 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	}
 	
 	public List<IEntityForm> listAll(Long aParentId) throws EntityFormException {
-		Collection<HospitalMedCase> results = null ;
+		//Collection<HospitalMedCase> results = null ;
 		//Patient patient = theManager.find(Patient.class, aParentId) ;
 		StringBuilder query = new StringBuilder() ;
-		query.append("from MedCase c where (DTYPE='HospitalMedCase' or DTYPE='ExtHospitalMedCase') and patient_id=:patient order by dateStart");
-		 Query query2 = theManager.createQuery(query.toString()) ;
-         query2.setParameter("patient", aParentId) ;
-         results = query2.setMaxResults(1000).getResultList();
+		query.append("select sls.id as f0slsid,case when sls.dtype='ExtHospitalMedCase' then sls.dtype else null end as f1isexthosp");
+		query.append(",to_char(sls.dateStart,'dd.mm.yyyy') as f2dateStart,to_char(sls.dateFinish,'dd.mm.yyyy') as f3dateFinish") ;
+		query.append(" ,vdh.id as f4vhdid,sls.username as f5slsusername,case when sls.emergency='1' then 'да' else null end as f6emergency") ;
+		query.append(" ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard");
+		query.append(" ,ml.name as f8entdep,mlLast.name as f9mlLastdep") ;
+		query.append(" ,case when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays") ;
+		query.append(" from MedCase sls");
+		query.append(" left join VocHospType vht on vht.id=sls.hospType_id");
+		query.append(" left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id");
+		query.append(" left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.dtype='DepartmentMedCase'");
+		query.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
+		query.append(" left join MisLpu mlLast on mlLast.id=sloLast.department_id");
+		query.append(" left join MisLpu ml on ml.id=sls.department_id");
+		query.append(" where (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and sls.patient_id=:patient and (sloLast.id is null or sloLast.transferDate is null) order by sls.dateStart");
+		 //Query query2 = theManager.createQuery(query.toString()) ;
+        // query2.setParameter("patient", aParentId) ;
+         //results = query2.setMaxResults(1000).getResultList();
+		List<Object[]> list = theManager.createNativeQuery(query.toString()).setParameter("patient", aParentId).getResultList() ;
          //System.out.println("RESULT == "+results.size()) ;
          LinkedList<IEntityForm> ret = new LinkedList<IEntityForm>();
-         for (HospitalMedCase hospit : results) {
+         for (Object[] hospit : list) {
              HospitalMedCaseForm form ;
-        	 if (hospit instanceof ExtHospitalMedCase) {
+        	 if (hospit[1]!=null) {
         		 form = new ExtHospitalMedCaseForm() ;
 			} else {
 				form = new HospitalMedCaseForm() ;
 			}
-             form.setId(hospit.getId()) ;
-             form.setIsDeniedHospitalizating(hospit.getIsDeniedHospitalizating()) ;
-             form.setDateStart(DateFormat.formatToDate(hospit.getDateStart()));
-             form.setDateFinish(DateFormat.formatToDate(hospit.getDateFinish()));
+             form.setId(ConvertSql.parseLong(hospit[0])) ;
+             form.setIsDeniedHospitalizating(hospit[4]!=null?Boolean.TRUE:Boolean.FALSE) ;
+             form.setDateStart(ConvertSql.parseString(hospit[2]));
+             form.setDateFinish(ConvertSql.parseString(hospit[3]));
              //form.setFinishWorkerText(hospit.getFinishWorkerText());
-             form.setUsername(hospit.getUsername());
-             form.setDaysCount(hospit.getDaysCount()) ;
-             form.setStatCardNumber(hospit.getStatCardNumber()) ;
-             form.setEmergency(hospit.getEmergency());
+             form.setUsername(ConvertSql.parseString(hospit[5]));
+             form.setDaysCount(ConvertSql.parseString(hospit[10])) ;
+             form.setStatCardNumber(ConvertSql.parseString(hospit[7])) ;
+             form.setEmergency(hospit[6]!=null?Boolean.TRUE:Boolean.FALSE);
+             form.setDischargeEpicrisis(ConvertSql.parseString(hospit[9]));
+             form.setDepartmentInfo(ConvertSql.parseString(hospit[8]));
              ret.add(form);
              
          }
