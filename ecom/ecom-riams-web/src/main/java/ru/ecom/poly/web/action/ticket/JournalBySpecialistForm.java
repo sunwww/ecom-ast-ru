@@ -189,4 +189,17 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** доп. статус */
 	private Long theAdditionStatus;
+	
+	/** Цель визита */
+	@Comment("Цель визита")
+	public Long getVisitReason() {
+		return theVisitReason;
+	}
+
+	public void setVisitReason(Long aVisitReason) {
+		theVisitReason = aVisitReason;
+	}
+
+	/** Цель визита */
+	private Long theVisitReason;
 }
