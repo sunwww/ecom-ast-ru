@@ -17,10 +17,10 @@
   <tiles:put name="body" type="string">
     <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" decorator="decorator">
       <msh:tableColumn columnName="Номер" property="id" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
-      <msh:tableColumn columnName="Дата открытия" property="dateStart" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Дата поступления" property="dateStart" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Экстренность" property="emergency" guid="e98f6bbc96" />
       <msh:tableColumn columnName="Кем открыт" property="username" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Дата закрытия" property="dateFinish" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Дата выбытия" property="dateFinish" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
       <msh:tableColumn columnName="Кем закрыт" property="finishWorkerText" guid="6b562107-5017-4559-9b94-ab525b579202" />
       <msh:tableColumn columnName="Стат.карта" property="statCardNumber" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Количество дней" property="daysCount" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />

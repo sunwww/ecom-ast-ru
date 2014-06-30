@@ -26,7 +26,7 @@
 		    		<msh:separator label="Согласия" colSpan="2"/>
 		    	</msh:row>
 	            <msh:row>
-		        	<msh:checkBox property="${name}Consent1" label="с обшим планом лечения и обследования"/>
+		        	<msh:checkBox property="${name}Consent1" label="с обшим планом лечения и обследования (мед. вмешательство)"/>
 		        </msh:row>
 	            <msh:row>
 		        	<msh:checkBox property="${name}Consent2" label="на медицинское (оперативное) вмешательство"/>
@@ -35,11 +35,11 @@
 		        	<msh:checkBox property="${name}Consent3" label="на переливание крови"/>
 		        </msh:row>
 	            <msh:row>
-		        	<msh:checkBox property="${name}Consent4" label="на установку импланта"/>
+		        	<msh:checkBox property="${name}Consent4" label="на виды медицинских вмешательств..."/>
 		        </msh:row>
-<%-- 	            <msh:row>
-		        	<msh:checkBox property="${name}Consent5" label="на обработку перс. данных"/>
-		        </msh:row>--%>
+	            <msh:row>
+		        	<msh:checkBox property="${name}Consent5" label="на установку импланта"/>
+		        </msh:row>
 		    	<msh:row>
 		    		<msh:separator label="Направления" colSpan="2"/>
 		    	</msh:row>
@@ -54,6 +54,9 @@
 		        </msh:row>
 		        <msh:row>
 		            <msh:checkBox property="${name}Rejection2" label="от оперативного вмешательства"/>
+		        </msh:row>
+		        <msh:row>
+		            <msh:checkBox property="${name}Rejection3" label="от видов медицинских вмешательств..."/>
 		        </msh:row>
 		    </msh:panel>
 		        <msh:row>
@@ -95,9 +98,11 @@
 				+"&consent2="+($('${name}Consent2').checked?1:0)
 				+"&consent3="+($('${name}Consent3').checked?1:0)
 				+"&consent4="+($('${name}Consent4').checked?1:0)
+				+"&consent5="+($('${name}Consent5').checked?1:0)
 				+"&direct1="+($('${name}Direct1').checked?1:0)
 				+"&rejection1="+($('${name}Rejection1').checked?1:0)
-				+"&rejection2="+($('${name}Rejection2').checked?1:0);
+				+"&rejection2="+($('${name}Rejection2').checked?1:0)
+				+"&rejection3="+($('${name}Rejection3').checked?1:0);
 		cancel${name}Documents() ;
      }
      
