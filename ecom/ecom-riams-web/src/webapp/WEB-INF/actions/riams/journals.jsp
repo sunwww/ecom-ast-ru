@@ -135,7 +135,7 @@
 	                        </msh:link></li>
 						<li><msh:link action="journal_surOperation.do" roles="/Policy/Mis/Journal/SurgicalOperation">
 	                            Журнал хирургических операций
-	                        </msh:link></li>
+	                        </msh:link></l`i>
 						<li><msh:link action="stac_journal_surgical_help.do" roles="/Policy/Mis/Journal/SurgicalHelp">
 	                            Журнал экстренной хирургической помощи (Форма 30), операции по поводу злокачественных новообразований
 	                        </msh:link></li>

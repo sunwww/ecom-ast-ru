@@ -73,6 +73,10 @@
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>        
         <msh:row>
+        	<msh:autoComplete property="visitReason" label="Цель визита" vocName="vocReason"
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>        
+        <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="1">  датам
@@ -205,6 +209,7 @@
     		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
     		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+    		ActionUtil.setParameterFilterSql("visitReason","smo.visitReason_id", request) ;
     		if (typeDtype.equals("1")) {
     			request.setAttribute("dtypeSql", "smo.dtype='Visit'") ;
     		} else if (typeDtype.equals("2")) {
@@ -347,7 +352,7 @@ left join medservice ms on ms.id=mssmo.medservice_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 
@@ -376,7 +381,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     <msh:section>
 <ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
 ,count(case when (vwpt.code='POLYCLINIC') then 1 else null end) as cntAllPoly
@@ -467,7 +472,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -533,7 +538,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,count(*) as cntAll
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntPAll
@@ -660,7 +665,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
@@ -725,7 +730,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(*) as cntAll 
@@ -843,7 +848,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -907,7 +912,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntAllPoly
@@ -980,7 +985,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1032,7 +1037,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(case when vwpt.code='POLYCLINIC' then 1 else null end) as cntAllPoly
@@ -1105,7 +1110,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1157,7 +1162,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(*) as cntAll 
@@ -1187,7 +1192,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1234,7 +1239,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:section>
 <ecom:webQuery name="journal_ticket" nativeSql="
 select
-''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
 ,count(distinct smo.id) as cntSmoAll 
@@ -1301,7 +1306,7 @@ Left join Omc_oksm oo on oo.id=p.nationality_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 

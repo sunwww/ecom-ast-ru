@@ -83,7 +83,7 @@ public class AllHospitalMedCasesListAction extends ListAction {
         		if (form instanceof ExtHospitalMedCaseForm) {
         			style.append("otherLpu") ;
         		}
-        		if(form.getIsDeniedHospitalizating()) style.append("deniedHospitalizating") ;
+        		if (form.getIsDeniedHospitalizating()) style.append("deniedHospitalizating") ;
         		if (form.getId()==aSlsId) style.append( " current") ; 
         		return style.toString() ;
         	}
