@@ -101,7 +101,7 @@
         <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
-            <input type="button" onclick="refresh()" value="Пересчет" />
+            <input type="submit" onclick="refresh();this.forms[0].target='';" value="Пересчет" />
           </td>
       </msh:row>
     </msh:panel>
@@ -132,18 +132,12 @@
     }
     function refresh() {
     	var frm = document.forms[0] ;
-    	frm.target='' ;
-    	frm.action='refresh' ;
-    }
-    function print() {
-    	var frm = document.forms[0] ;
-    	frm.m.value="printHistology" ;
     	frm.target='_blank' ;
-    	frm.action='print-stac_histology.do' ;
-    	$('id').value = $('dateBegin').value+":"
-    		+$('dateBegin').value+":"
-    		+$('department').value;
+    	frm.action='stac_report_refresh_save.do' ;
+    	
+    	
     }
+    
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
     }
@@ -154,6 +148,7 @@
     
     String date = request.getParameter("dateBegin") ;
     String dateEnd = request.getParameter("dateEnd") ;
+    
     //String id = (String)request.getParameter("id") ;
     String period = request.getParameter("period") ;
     String reportStr =request.getParameter("reportStr") ;
@@ -163,7 +158,10 @@
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
-    
+	request.setAttribute("dateEnddd", dateEnd.substring(0,2)) ;
+	request.setAttribute("dateEndmm", dateEnd.substring(3,5)) ;
+	request.setAttribute("dateEndyyyy", dateEnd.substring(6)) ;
+
     String view = (String)request.getAttribute("typeView") ;
     if (date!=null) {
     if (view.equals("1")) { %>
@@ -214,12 +212,14 @@ then ahr.sls else null end) as cntEntranceAll
 ,count(case when 
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and ahr.transferDepartmentFrom is null
 ${departmentSql}
 and
 ahr.ageEntranceSls between 0 and 14 then ahr.sls else null end)  as cntEntrance0_14
 ,count(case when 
 
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.transferDepartmentFrom is null
 ${departmentSql}
 and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 
@@ -227,16 +227,19 @@ and
 ahr.ageEntranceSls between 15 and 17 then ahr.sls else null end)  as cntEntrance15_17
 ,count(case when
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isFirstCurrentYear='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceAdmHosp
 ,count(case when
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isFirstLife='1' ${departmentSql}
-then ahr.sls else null end) as cntEntranceHosp
+then ahr.sls else null end) as cntEntranceFirstLife
 ,count(case when
 ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isIncompetent='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceHospNeDobr
@@ -328,7 +331,7 @@ and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy')
 or ahr.dischargeDate24 is null
 )
 ${departmentSql}
-and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntFinishPeriodAll
 ,count(case when
  ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
@@ -336,8 +339,8 @@ and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy')
 or ahr.dischargeDate24 is null
 )
 ${departmentSql}
-and ahr.ageDischargeSlo between 0 and 14
-and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
+and cast('${dateEndyyyy}' as int)-cast(to_char(ahr.birthday,'yyyy') as int) +(case when (cast('${dateEndmm}' as int)-cast(to_char(ahr.birthday, 'mm') as int) +(case when (cast('${dateEnddd}' as int) - cast(to_char(ahr.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between 0 and 14
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntFinishPeriod0_14
 
 ,count(case when
@@ -346,8 +349,8 @@ and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy')
 or ahr.dischargeDate24 is null
 )
 ${departmentSql}
-and ahr.ageDischargeSlo between 15 and 17
-and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
+and cast('${dateEndyyyy}' as int)-cast(to_char(ahr.birthday,'yyyy') as int) +(case when (cast('${dateEndmm}' as int)-cast(to_char(ahr.birthday, 'mm') as int) +(case when (cast('${dateEnddd}' as int) - cast(to_char(ahr.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between 15 and 17
+and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntFinishPeriod15_17
 
 ,count(case when
@@ -401,34 +404,35 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="Report36HOSPswod" 
-    viewUrl="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=1&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}" 
-     action="stac_report_36.do?${paramHref}&typeAge=${typeAge}&typeView=5&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1" 
+     
+     action="stac_report_36.do?${paramHref}&noViewForm=1&typeAge=${typeAge}&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1"
+    cellFunction="true"  
      >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
-      <msh:tableColumn columnName="Начало всего" property="5"/>
-      <msh:tableColumn columnName="Начало 0-14" property="6"/>
-      <msh:tableColumn columnName="Начало 15-17" property="7"/>
-      <msh:tableColumn columnName="Поступ. всего" property="8"/>
-      <msh:tableColumn columnName="Поступ. 0-14" property="9"/>
-      <msh:tableColumn columnName="Поступ.15-17" property="10"/>
-      <msh:tableColumn columnName="Поступ. вп.в д.г" property="11"/>
-      <msh:tableColumn columnName="Поступ. втч вп. в жизни" property="12"/>
-      <msh:tableColumn columnName="Пост. недобр." property="13"/>
-      <msh:tableColumn columnName="Выбыло" property="14"/>
-      <msh:tableColumn columnName="к.д" property="15"/>
-      <msh:tableColumn columnName="умерло" property="16"/>
-      <msh:tableColumn columnName="к.д" property="17"/>
-      <msh:tableColumn columnName="0-14" property="18"/>
-      <msh:tableColumn columnName="к.д." property="19"/>
-      <msh:tableColumn columnName="15-17" property="20"/>
-      <msh:tableColumn columnName="к.д." property="21"/>
-      <msh:tableColumn columnName="сост. всего" property="22"/>
-      <msh:tableColumn columnName="сост. 0-14" property="23"/>
-      <msh:tableColumn columnName="сост. 15-17" property="24"/>
-      <msh:tableColumn columnName="перевед. из др." property="25"/>
-      <msh:tableColumn columnName="перевед. в др." property="26"/>
+      <msh:tableColumn columnName="Начало всего" property="5" addParam="&typeView=6"/>
+      <msh:tableColumn columnName="Начало 0-14" property="6" addParam="&typeView=6&beginAge=0-14"/>
+      <msh:tableColumn columnName="Начало 15-17" property="7" addParam="&typeView=6&beginAge=15-17"/>
+      <msh:tableColumn columnName="Поступ. всего" property="8" addParam="&typeView=4"/>
+      <msh:tableColumn columnName="Поступ. 0-14" property="9" addParam="&typeView=4&entranceAge=0-14"/>
+      <msh:tableColumn columnName="Поступ.15-17" property="10" addParam="&typeView=4&entranceAge=15-17"/>
+      <msh:tableColumn columnName="Поступ. вп.в д.г" property="11" addParam="&typeView=4&entrance=isFirstCurrentYear"/>
+      <msh:tableColumn columnName="Поступ. втч вп. в жизни" property="12" addParam="&typeView=4&entrance=isFirstLife"/>
+      <msh:tableColumn columnName="Пост. недобр." property="13" addParam="&typeView=4&entrance=isIncompetent"/>
+      <msh:tableColumn columnName="Выбыло" property="14" addParam="&typeView=5"/>
+      <msh:tableColumn columnName="к.д" property="15" addParam="&typeView=5"/>
+      <msh:tableColumn columnName="умерло" property="16" addParam="&typeView=5&discharge=death"/>
+      <msh:tableColumn columnName="к.д" property="17" addParam="&typeView=5&discharge=death"/>
+      <msh:tableColumn columnName="0-14" property="18" addParam="&typeView=5&dischargeAge=0-14"/>
+      <msh:tableColumn columnName="к.д." property="19" addParam="&typeView=5&dischargeAge=0-14"/>
+      <msh:tableColumn columnName="15-17" property="20" addParam="&typeView=5&dischargeAge=15-17"/>
+      <msh:tableColumn columnName="к.д." property="21" addParam="&typeView=5&dischargeAge=15-17"/>
+      <msh:tableColumn columnName="сост. всего" property="22" addParam="&typeView=7&endAge=15-17"/>
+      <msh:tableColumn columnName="сост. 0-14" property="23" addParam="&typeView=7&endAge=0-14"/>
+      <msh:tableColumn columnName="сост. 15-17" property="24" addParam="&typeView=7&endAge=15-17"/>
+      <msh:tableColumn columnName="перевед. из др." property="25" addParam="&typeView=8"/>
+      <msh:tableColumn columnName="перевед. в др." property="26" addParam="&typeView=9"/>
     </msh:table>
     
     </msh:sectionContent>
@@ -443,9 +447,7 @@ order by vrspt.strCode
         	if (view.equals("4")) {
         		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
         			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is null" ;
-        	    if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
-        	    	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr.idcEntranceCode between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
-        	    }
+
         	    request.setAttribute("titleReestr","Список поступивших пациентов") ;
         		request.setAttribute("dateSql", sql) ;
         		request.setAttribute("diagnosField","idcEntranceCode") ;
@@ -455,17 +457,15 @@ order by vrspt.strCode
         		request.setAttribute("titleReestr","Список выбывших пациентов") ;
         		request.setAttribute("diagnosField","idcDischarge") ;
         	} else if (view.equals("6")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
-            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        		sql="ahr.entranceDate24 < to_date('"+date+"','dd.mm.yyyy') and (ahr.dischargeDate24 > to_date('"+date+"','dd.mm.yyyy') or ahr.dischargeDate24 is null)";
         		request.setAttribute("titleReestr","Список пациентов, состоящих на начало периода") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("7")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
-            			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
+        		sql="ahr.entranceDate24 <= to_date('"+dateEnd+"','dd.mm.yyyy') and (ahr.dischargeDate24 > to_date('"+dateEnd+"','dd.mm.yyyy') or ahr.dischargeDate24 is null)";
         		request.setAttribute("titleReestr","Список пациентов, состоящих на конец периода") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	
-		} else if (view.equals("8")) {
+			} else if (view.equals("8")) {
         		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is not null" ;
         		request.setAttribute("titleReestr","Список пациентов, переведенных из другого отделения") ;
@@ -476,6 +476,51 @@ order by vrspt.strCode
         		request.setAttribute("titleReestr","Список пациентов, переведенных в другое отделение") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	}
+    	    if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
+    	    	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr."+request.getAttribute("diagnosField")+" between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
+    	    }
+        	
+        	/*
+        	entrance=firstYear"/>
+      <msh:tableColumn columnName="Поступ. втч вп. в жизни" property="12" addParam="&typeView=4&entrance=firstLife"/>
+      <msh:tableColumn columnName="Пост. недобр." property="13" addParam="&typeView=4&entrance=involuntarily
+        	*/
+        	String entrance=request.getParameter("entrance") ;String discharge=request.getParameter("discharge");
+        	if (entrance!=null) {
+        		if (entrance.equals("isFirstCurrentYear")) {
+        			sql=sql+" and ahr.isFirstCurrentYear='1'" ;
+        		} else if (entrance.equals("isFirstLife")) {
+        			sql=sql+" and ahr.isFirstLife='1'" ;
+        		} else if (entrance.equals("isIncompetent")) {
+        			sql=sql+" and ahr.isIncompetent='1'" ;
+        		}
+        	}
+        	if (discharge!=null) {
+        		if (discharge.equals("death")) {
+        			sql=sql+" and ahr.isDeath='1'" ;
+        		}
+        	}
+        	String beginAge=request.getParameter("beginAge") ;
+        	String entranceAge=request.getParameter("entranceAge") ;
+        	String dischargeAge=request.getParameter("dischargeAge") ;
+        	String endAge=request.getParameter("endAge") ;
+        	
+        	if (beginAge!=null) {
+        		sql=sql+" and ahr.ageEntranceSls between "+beginAge.replaceAll("-", " and ");
+        	} else if (entranceAge!=null){
+        		sql=sql+" and ahr.ageEntranceSls between "+entranceAge.replaceAll("-", " and ");
+        	} else if (dischargeAge!=null) {
+        		sql=sql+" and ahr.ageDischargeSls between "+dischargeAge.replaceAll("-", " and ");
+        	} else if (endAge!=null) {
+        		
+        		sql=sql+" and cast('"+dateEnd.substring(6)+"' as int)-cast(to_char(ahr.birthday,'yyyy') as int) +(case when (cast('";
+        		sql=sql+dateEnd.substring(3,5)+"' as int)-cast(to_char(ahr.birthday, 'mm') as int) +(case when (cast('";
+        		sql=sql+dateEnd.substring(0,2)+"' as int) - cast(to_char(ahr.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between ";
+        		sql=sql+endAge.replaceAll("-", " and ");
+        	}
+        	
+        	
+        	
         	request.setAttribute("dateSql", sql) ;
     	%>
     <msh:section>
@@ -536,7 +581,7 @@ order by p.lastname,p.firstname,p.middlename " />
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    
+    ${reestr_sql}
     <msh:table name="reestr" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
