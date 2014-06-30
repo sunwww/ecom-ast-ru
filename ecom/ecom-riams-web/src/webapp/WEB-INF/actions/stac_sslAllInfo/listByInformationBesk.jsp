@@ -97,18 +97,20 @@
     <msh:sectionContent>
     <ecom:webQuery  name="staclist" nativeSql="select sls.id
     ,sls.dateStart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-    ,pat.birthday,sc.code,d.name as dname  ,to_char(sls.dateFinish,'dd.mm.yyyy')
+    ,pat.birthday,coalesce(sc.code,vdh.name),d.name as dname  ,to_char(sls.dateFinish,'dd.mm.yyyy')
     ||' '||coalesce(cast(sls.dischargeTime as varchar(5)),'') as slsdateFinish
     , vht.name as vhtname 
     from medCase sls 
     left join VocHospType vht on vht.id=sls.hospType_id
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left join MisLpu d on d.id=sls.department_id
-    left outer join Patient pat on sls.patient_id = pat.id 
-    where sls.DTYPE='HospitalMedCase' 
+    left join Patient pat on sls.patient_id = pat.id 
+    left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
+    where (sls.DTYPE='HospitalMedCase' 
       ${dateFinish} 
-      ${isDenied}
-      ${lastname} ${firstname} ${middlename} and (sls.noActuality is null or cast(sls.noActuality as integer)=0)"
+      ${isDenied} or sls.DTYPE='HospitalMedCase' and sls.dateStart between current_date-1 and current_date 
+      and sls.deniedHospitalizating_id is not null)
+      ${lastname} ${firstname} ${middlename} and (sls.noActuality is null or sls.noActuality='0')"
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/InformationBesk">
 	    <msh:table selection="multiply"  
@@ -159,7 +161,10 @@
     where m.DTYPE='DepartmentMedCase' 
     and m.transferDate is null and m.dateFinish is null ${lastname} ${firstname} ${middlename} and (sls.noActuality is null or cast(sls.noActuality as integer)=0)"
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table disableKeySupport="true" name="datelist" action="entitySublassView-stac_ssl.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table disableKeySupport="true" name="datelist" action="entitySubclassView-mis_medCase.do"
+    viewUrl="entitySubclassShortView-mis_medCase.do" 
+    
+    idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
