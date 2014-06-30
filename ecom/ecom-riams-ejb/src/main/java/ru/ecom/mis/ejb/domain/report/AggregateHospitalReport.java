@@ -296,4 +296,12 @@ public class AggregateHospitalReport extends BaseEntity {
 	/** Доп. койко день */
 	private Long theAddBedDays;
 	
+	/** Дата рождения */
+	@Comment("Дата рождения")
+	public Date getBirthday() {return theBirthday;}
+	public void setBirthday(Date aBirthday) {theBirthday = aBirthday;}
+
+	/** Дата рождения */
+	private Date theBirthday;
+	
 }
