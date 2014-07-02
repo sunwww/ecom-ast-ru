@@ -526,9 +526,9 @@ public class TableTag extends AbstractGuidSupportTag {
                             Column column = (Column) iterator.next();
                             Object valueC ;
                             if (theCellFunction) {
-                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId);
+                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
                             } else {
-                            	valueC = column.printCell(out, row, goFunctionMainName, currentId);
+                            	valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
                             }
                         	if (!isFirstRow) {
                         		if (valueC!=null) {
@@ -737,8 +737,9 @@ public class TableTag extends AbstractGuidSupportTag {
         	aOut.print(aValue);
         	aOut.println("</td>");
         }
-        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle) throws IOException {
         	String styleClass = "";
+        	
         	Object value;
         	Object valueSum = null ;
         	try {
@@ -774,7 +775,13 @@ public class TableTag extends AbstractGuidSupportTag {
         	if (theCssClass != null) {
         		styleClass += " " + theCssClass;
         	}
-        	aOut.print("<td onclick=\"");
+        	aOut.print("<td ");
+        	if (aTitle!=null) {
+	        	aOut.print("title=\"");
+	        	aOut.print(aTitle) ;
+	        	aOut.print("\" ");
+        	}
+        	aOut.print("onclick=\"");
         	aOut.print(aGoFunctionName) ;
         	//aOut.print("('") ;
 //            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
