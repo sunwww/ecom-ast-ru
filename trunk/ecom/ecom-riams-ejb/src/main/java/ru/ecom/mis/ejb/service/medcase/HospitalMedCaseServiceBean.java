@@ -1545,6 +1545,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append(" ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard");
 		query.append(" ,ml.name as f8entdep,mlLast.name as f9mlLastdep") ;
 		query.append(" ,case when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays") ;
+		query.append(" ,list(vpd.name||' '||mkb.code) as f11diagDisch") ;
+		query.append(" ,list(vpd1.name||' '||mkb1.code) as f12diagClinic") ;
 		query.append(" from MedCase sls");
 		query.append(" left join VocHospType vht on vht.id=sls.hospType_id");
 		query.append(" left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id");
@@ -1552,7 +1554,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
 		query.append(" left join MisLpu mlLast on mlLast.id=sloLast.department_id");
 		query.append(" left join MisLpu ml on ml.id=sls.department_id");
-		query.append(" where (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and sls.patient_id=:patient and (sloLast.id is null or sloLast.transferDate is null) order by sls.dateStart");
+		query.append("	left join Diagnosis diag on sls.id=diag.medCase_id");
+		query.append("	left join VocIdc10 mkb on mkb.id=diag.idc10_id");
+		query.append("	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='3'");
+		query.append("	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id");
+		query.append("	left join Diagnosis diag1 on sloLast.id=diag1.medCase_id");
+		query.append("	left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id");
+		query.append("	left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'");
+		query.append("	left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id");
+
+		query.append(" where (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and sls.patient_id=:patient and (sloLast.id is null or sloLast.transferDate is null) ");
+		query.append(" group by sls.id,sls.dtype,sls.dateStart,sls.dateFinish,vdh.id ,sls.username ,sls.emergency, ss.code,vdh.id,vdh.name ,ml.name,mlLast.name,vht.code");
+		query.append(" order by sls.dateStart");
 		 //Query query2 = theManager.createQuery(query.toString()) ;
         // query2.setParameter("patient", aParentId) ;
          //results = query2.setMaxResults(1000).getResultList();
@@ -1577,6 +1590,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
              form.setEmergency(hospit[6]!=null?Boolean.TRUE:Boolean.FALSE);
              form.setDischargeEpicrisis(ConvertSql.parseString(hospit[9]));
              form.setDepartmentInfo(ConvertSql.parseString(hospit[8]));
+             form.setClinicalDiagnos(ConvertSql.parseString(hospit[12])) ;
+             form.setConcludingDiagnos(ConvertSql.parseString(hospit[11])) ;
              ret.add(form);
              
          }
