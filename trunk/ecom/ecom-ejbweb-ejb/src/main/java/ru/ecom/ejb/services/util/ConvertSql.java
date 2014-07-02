@@ -29,7 +29,7 @@ public class ConvertSql {
 		return aValue==null?"":String.valueOf(aValue);
 	}
 	public static String parseString(Object aValue) {
-		return String.valueOf(aValue) ;
+		return aValue!=null?String.valueOf(aValue):null ;
 	}
 	public static boolean parseBoolean(Object aValue) {
 		if (aValue==null) return false;
