@@ -260,6 +260,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     ,case when max(vis.dateStart) is not null then current_date-max(vis.dateStart) else null end as cntdaymax
     ,to_char(max(case when vis.dateStart is null then wcd.calendarDate else null end),'dd.mm.yyyy') as maxPlanDate
     ,list(distinct vvr.name) as vvrname,list(distinct mkb.code||' '||vpd.name) as diag
+    ,list(distinct vr.name) as vrname
     from medCase spo 
     left join MedCase vis on vis.parent_id=spo.id 
     left join Diagnosis diag on diag.medcase_id=vis.id
@@ -271,6 +272,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 	left join Worker ow on owf.worker_id=ow.id 
 	left join Patient owp on ow.person_id=owp.id 
+	LEFT JOIN VocReason vr on vr.id=vis.visitReason_id 
 	${additionJoinSql}
     where spo.ownerFunction_id='${curator}' 
  and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
@@ -291,6 +293,7 @@ select spo.id,spo.dateStart,spo.dateFinish
       <msh:tableColumn columnName="Дата окончания СПО" property="3" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Кол-во дней" property="6"/>
       <msh:tableColumn columnName="Диагнозы" property="11"/>
+      <msh:tableColumn columnName="Цель визита" property="12"/>
       <msh:tableColumn columnName="Результаты визитов" property="10"/>
       <msh:tableColumn columnName="Дата последнего посещения" property="7"/>
       <msh:tableColumn columnName="Кол-во дней после посл. посещения" property="8"/>

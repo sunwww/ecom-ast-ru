@@ -147,10 +147,11 @@
     <%
     
     String date = request.getParameter("dateBegin") ;
+    if (date!=null) {
     String dateEnd = request.getParameter("dateEnd") ;
     
     //String id = (String)request.getParameter("id") ;
-    String period = request.getParameter("period") ;
+    
     String reportStr =request.getParameter("reportStr") ;
     if (reportStr!=null && !reportStr.equals("") &&!reportStr.equals("0")) {
     	request.setAttribute("reportStrLeftJoin","left join ReportSetTYpeParameterType rspt on ahr.idcDischarge between rspt.codefrom and rspt.codeto left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id") ;
@@ -291,12 +292,12 @@ ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
-and ahr.ageDischargeSlo between 0 and 14 then ahr.sls else null end)  as cntDischarge0_14
+and ahr.ageDischargeSls between 0 and 14 then ahr.sls else null end)  as cntDischarge0_14
 
 ,sum(case when
 ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
-and ahr.ageDischargeSlo between 0 and 14
+and ahr.ageDischargeSls between 0 and 14
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
@@ -310,12 +311,12 @@ ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
-and ahr.ageDischargeSlo between 15 and 17 then ahr.sls else null end)  as cntDischarge15_17
+and ahr.ageDischargeSls between 15 and 17 then ahr.sls else null end)  as cntDischarge15_17
 
 ,sum(case when
 ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
-and ahr.ageDischargeSlo between 15 and 17
+and ahr.ageDischargeSls between 15 and 17
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
@@ -608,6 +609,7 @@ order by p.lastname,p.firstname,p.middlename " />
     <%
     } 
     	
+    }
     }
     	%>
     
