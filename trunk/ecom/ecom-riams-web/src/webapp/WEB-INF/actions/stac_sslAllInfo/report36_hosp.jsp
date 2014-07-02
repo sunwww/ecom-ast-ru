@@ -429,7 +429,7 @@ order by vrspt.strCode
       <msh:tableColumn columnName="к.д." property="19" addParam="&typeView=5&dischargeAge=0-14"/>
       <msh:tableColumn columnName="15-17" property="20" addParam="&typeView=5&dischargeAge=15-17"/>
       <msh:tableColumn columnName="к.д." property="21" addParam="&typeView=5&dischargeAge=15-17"/>
-      <msh:tableColumn columnName="сост. всего" property="22" addParam="&typeView=7&endAge=15-17"/>
+      <msh:tableColumn columnName="сост. всего" property="22" addParam="&typeView=7"/>
       <msh:tableColumn columnName="сост. 0-14" property="23" addParam="&typeView=7&endAge=0-14"/>
       <msh:tableColumn columnName="сост. 15-17" property="24" addParam="&typeView=7&endAge=15-17"/>
       <msh:tableColumn columnName="перевед. из др." property="25" addParam="&typeView=8"/>
