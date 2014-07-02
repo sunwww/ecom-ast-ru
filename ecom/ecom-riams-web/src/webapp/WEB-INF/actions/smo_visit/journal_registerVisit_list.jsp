@@ -50,9 +50,27 @@
 	} else if (typeDtype.equals("2")) {
 		dtypeSql="t.dtype='ShortMedCase'" ;
 	}
-	
-	String sql = "where "+dtypeSql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
 	String medcard = form.getMedcard() ;
+
+	String sql = "where "+dtypeSql;
+	if (medcard!=null&&!medcard.equals("")&&medcard.length()>1) {
+		
+		String[] fs1=medcard.split(",") ;
+		StringBuilder filtOr = new StringBuilder() ;
+		
+		for (int i=0;i<fs1.length;i++) {
+			String filt1 = fs1[i].trim() ;
+			
+			if (filt1.length()>0) {
+				if (filtOr.length()>0) filtOr.append(",") ;
+	    		filtOr.append("'"+filt1+"'") ;
+
+			}
+		}
+		sql=sql+" and t.person_id in (select medc.person_id from medcard medc left join patient pat on pat.id=medc.person_id where upper(medc.number) in ("
+				+filtOr.toString()+") or upper(pat.patientSync) in ("+filtOr.toString()+"))" ;
+	}
+	sql=sql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
 	if (form.getLpu()!=null && (form.getLpu().intValue()>0)) {
 		sql = sql + " and w.lpu_id='"+form.getLpu()+"'" ;
 	}
@@ -75,6 +93,9 @@
 	if (form.getRayon()!=null && (form.getRayon().intValue()>0)) {
 		sql = sql+" and p.rayon_id='"+form.getRayon()+"'" ;
 	}
+	if (form.getVisitReason()!=null && (form.getVisitReason().intValue()>0)) {
+		sql = sql+" and t.visitReason_id='"+form.getVisitReason()+"'" ;
+	}
 	String isTalkSql = "" ;
 	if (typeIsTalk.equals("1")) {
 		isTalkSql = " and t.isTalk='1'" ;
@@ -93,25 +114,7 @@
 			.append(" then -1 else 0 end) between 0 and 14 ") ;
 	} 
 	sql = sql+isTalkSql ;
-	if (medcard!=null&&!medcard.equals("")&&medcard.length()>1) {
-		
-    		String[] fs1=medcard.split(",") ;
-    		StringBuilder filtOr = new StringBuilder() ;
-    		
-    		for (int i=0;i<fs1.length;i++) {
-    			String filt1 = fs1[i].trim() ;
-    			
-    			if (filt1.length()>0) {
-    				if (filtOr.length()>0) filtOr.append(",") ;
-		    		filtOr.append("'"+filt1+"'") ;
-
-    			}
-    		}
-    		
-    		
-    	
-		sql=sql+" and ((select count(id) from medcard medc where medc.person_id=t.patient_id and upper(medc.number) in ("+filtOr.toString()+"))>0 or upper(p.patientSync) in ("+filtOr.toString()+"))" ;
-	}
+	
 	sql = sql+ageSql.toString() ;
 	request.setAttribute("sql", sql) ;
 	request.setAttribute("order", order) ;
@@ -132,7 +135,7 @@
         	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
-        	<msh:textField property="medcard" fieldColSpan="6" size="30"/>
+        	<msh:textField property="medcard" fieldColSpan="6" size="70"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="lpu" vocName="lpu"
@@ -160,8 +163,8 @@
         	<msh:autoComplete labelColSpan="6" property="primaryInYear" vocName="vocHospitalization" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="rayon" vocName="vocRayon" fieldColSpan="6" horizontalFill="true"/>
-        	
+        	<msh:autoComplete property="rayon" vocName="vocRayon" fieldColSpan="2" horizontalFill="true" />
+        	<msh:autoComplete property="visitReason" label="Цель визита" vocName="vocReason" fieldColSpan="2" horizontalFill="true"/>
         </msh:row>
          <msh:row>
 	        <td class="label" title="База (typeDtype)" colspan="1">

@@ -804,7 +804,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       	<msh:sideLink action="/js-work_personalWorkFunction-listByPerson" params="id" roles="/Policy/Mis/Worker/WorkFunction/View"
       		name="Рабочие функции" title="Просмотреть рабочие функции по персоне"
       	/>
-      	<msh:sideLink action=".javascript:updateColorPatient(${param.id})" params="id" roles="/Policy/Mis/Patient/EditColorType"
+      	<msh:sideLink action=".javascript:updateColorPatient(${param.id})" roles="/Policy/Mis/Patient/EditColorType"
       		name="Изменить цвет" title="Изменить цвет "
       	/>
       </msh:sideMenu>
@@ -856,6 +856,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+      <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <msh:ifInRole roles="/Policy/Mis/Patient/EditColotType">
+    <script type="text/javascript">
+	function updateColorPatient() {
+		PatientService.editColorType($('id').value,$('colorType').value=="true"?"1":"0", {
+            callback: function(aResult) {
+            	 window.document.location.reload();
+            }
+        	});
+		
+	}
+    </script>
+    </msh:ifInRole>
+  
   <msh:ifFormTypeIsCreate formName="mis_patientForm">
   <script type="text/javascript">
   	if ('${param.lastname}'!="") {
@@ -877,19 +891,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
   	}
   </script>
   </msh:ifFormTypeIsCreate>
-    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <msh:ifInRole roles="/Policy/Mis/Patient/EditColotType">
-    <script type="text/javascript">
-	function updateColorPatient() {
-		PatientService.editColorType($('id').value,$('colorType').value=="true"?"1":"0", {
-            callback: function(aResult) {
-            	 window.document.location.reload();
-            }
-        	});
-		
-	}
-    </script>
-    </msh:ifInRole>
+
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
     	function checkPatientByCommonNumber(a) {
