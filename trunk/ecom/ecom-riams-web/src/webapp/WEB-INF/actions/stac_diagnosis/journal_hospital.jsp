@@ -103,12 +103,14 @@
   <ecom:webQuery name="diag_typeReg_ord_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='2'"/>
   <ecom:webQuery name="diag_typeReg_disch_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
+  <ecom:webQuery name="diag_priority_conclud_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='3'"/>
     	
     	<%
       	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
       	ActionUtil.getValueByList("diag_typeReg_ord_sql", "diag_typeReg_ord", request) ;
       	ActionUtil.getValueByList("diag_typeReg_disch_sql", "diag_typeReg_disch", request) ;
       	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
+      	ActionUtil.getValueByList("diag_priority_conclud_sql", "diag_priority_conclud", request) ;
     	
     	//String typeStatus = (String)request.getParameter("typeStatus") ;
     	//String typeMKB = (String)request.getAttribute("typeMKB") ;
@@ -241,7 +243,7 @@
     			}
     		}
     		filtOr.insert(0, " and (").append(")") ;
-    		filtOr.append(" and vdrt").append(addD1).append(".id='").append(request.getAttribute("diag_typeReg_disch")).append("' and vpd").append(addD1).append(".id='").append(request.getAttribute("diag_priority_m")).append("'") ;
+    		filtOr.append(" and vdrt").append(addD1).append(".id='").append(request.getAttribute("diag_typeReg_disch")).append("' and (vpd").append(addD1).append(".id='").append(request.getAttribute("diag_priority_m")).append("' or vpd").append(addD1).append(".id='").append(request.getAttribute("diag_priority_conclud")).append("')") ;
     		request.setAttribute("filter"+addD+"Sql", filtOr.toString()) ;
     	}
     	
@@ -269,8 +271,8 @@
 	,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
-	,cast( (cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
-+case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	,cast( (cast(to_char(${fldDate},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++case when (cast(to_char(${fldDate}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${fldDate},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${fldDate}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) as int) as age,
 	  case 
 			when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 
@@ -280,11 +282,13 @@
 	 ,list(distinct case when vdrt.id='${diag_typeReg_ord}' then mkb.code else null end) as mkbcode
 	 ,list(distinct case when vdrt1.id='${diag_typeReg_cl}' and vpd1.id='${diag_priority_m}' then mkb1.code else null end) as mkb1code
 	 ,list(distinct case when vdrt2.id='${diag_typeReg_disch}' and vpd2.id='${diag_priority_m}' then mkb2.code else null end) as mkb2code
-	 ,ml.name as mlEntrance,ml1.name as mlDischarge,vr.name as vrname ,vhr.name as vhrname
+	 ,ml.name as mlEntrance,ml1.name as mlDischarge,vr.name as vrname ,vhr.name as vhrname,vs.name as vsname
+	 ,list(distinct case when vdrt2.id='${diag_typeReg_disch}' and vpd2.id='${diag_priority_conclud}' then mkb2.code else null end) as mkb2codeconclud
 	from MedCase as sls
 	left join Mislpu ml on ml.id=sls.department_id
 	left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 	left join Patient pat on sls.patient_id = pat.id
+	left join VocSex vs on vs.id=pat.sex_id
 	left join VocRayon vr on vr.id=pat.rayon_id 
 	left join Diagnosis diag on sls.id=diag.medCase_id
 	left join Diagnosis diag2 on sls.id=diag2.medCase_id
@@ -326,7 +330,7 @@
 				,pat.birthday,sc.code,vh.name,a.fullname
 		,pat.houseBuilding,pat.houseNumber
 		,pat.flatNumber,sls.dateFinish,sls.dateStart,bf.addCaseDuration,ml.name,ml1.name
-		,vr.name,vhr.name
+		,vr.name,vhr.name,vs.name
 	order by pat.lastname,pat.firstname,pat.middlename
 	
 	" 
@@ -344,6 +348,7 @@
       <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата рождения" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Пол" property="18" />
       <msh:tableColumn columnName="Возраст" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Район" property="16" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       
@@ -355,6 +360,7 @@
       <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Диагноз клин СЛО" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Диагноз выпис. СЛС" property="13" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Диагноз выпис. СЛС сопут." property="19" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       
       <msh:tableColumn columnName="Отделение пост." property="14" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Отделение выписки" property="15" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
@@ -367,14 +373,16 @@
       <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата рождения" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Возраст" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Пол" property="18" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Госпитализация" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Возраст" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Кол-во к.дней" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Диагноз клин СЛО" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Диагноз выпис. СЛС" property="13" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Диагноз выпис. СЛС сопут." property="19" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Отделение пост." property="14" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Отделение выписки" property="15" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
     </msh:table>
