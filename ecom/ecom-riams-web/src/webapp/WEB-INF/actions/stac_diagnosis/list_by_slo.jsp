@@ -237,8 +237,8 @@
 	,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
-	, (cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
-+case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	, (cast(to_char(${fldDate},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++case when (cast(to_char(${fldDate}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(${fldDate},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(${fldDate}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) as age,
 	  case 
 			when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 

@@ -19,7 +19,8 @@
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
   	String typeAge=ActionUtil.updateParameter("Report36HOSP","typeAge","1", request) ;
-  	String typeView=ActionUtil.updateParameter("Report36HOSP","typeView","1", request) ;
+  	String typeDiagOrder=ActionUtil.updateParameter("Report36HOSP","typeDiagOrder","1", request) ;
+  	String typeView=ActionUtil.updateParameter("Report36HOSP","typeView","2", request) ;
   	String typeDate=ActionUtil.updateParameter("Report36HOSP","typeDate","2", request) ;
   	
   	StringBuilder paramSql= new StringBuilder() ;
@@ -47,7 +48,15 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-
+      <msh:row>
+        <td class="label" title="Какой диагноз учитывать при пост. (typeDiagOrder)" colspan="1"><label for="typeDiagOrderName" id="typeDiagOrderLabel">Диагноз при пост.:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDiagOrder" value="1"> направит.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDiagOrder" value="2"> клинический
+        </td>
+      </msh:row>
       <msh:row>
         <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -112,6 +121,7 @@
            <script type='text/javascript'>
           
            checkFieldUpdate('typeView','${typeView}',1) ;
+           checkFieldUpdate('typeDiagOrder','${typeDiagOrder}',1) ;
            
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
