@@ -21,12 +21,14 @@
       <msh:tableColumn columnName="#" property="sn" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
       <msh:tableColumn columnName="Стат.карта" property="statCardNumber" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Дата поступления" property="dateStart" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Отделение пост." property="departmentInfo" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
-      <msh:tableColumn columnName="Экстренность" property="emergency" guid="e98f6bbc96" />
-      <msh:tableColumn columnName="Кем открыт" property="username" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Отделение выписки (текущее)" property="dischargeEpicrisis" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
       <msh:tableColumn columnName="Дата выписки" property="dateFinish" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Количество дней" property="daysCount" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
+      <msh:tableColumn columnName="Кол-во дней" property="daysCount" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
+      <msh:tableColumn columnName="Экстр.?" property="emergency" guid="e98f6bbc96" />
+      <msh:tableColumn columnName="Отделение пост." property="departmentInfo" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
+      <msh:tableColumn columnName="Отделение выписки (текущее)" property="dischargeEpicrisis" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Диагноз клин. посл. отд." property="clinicalDiagnos" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Диагноз выписной" property="concludingDiagnos" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Кем открыт" property="username" guid="35347247-b552-4154-a82a-ee484a1714ad" />
     </msh:table>
     <msh:tableNotEmpty name="list" guid="189caa95-f200-4b88-ae0f-5669effa19ce">
       <div class="h3">
