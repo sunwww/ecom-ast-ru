@@ -21,19 +21,20 @@
   <tiles:put name="body" type="string">
     <%
     String typeReestr = request.getParameter("typeReestr") ;
-    String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
+    String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","2", request) ;
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
 		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
 		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
 		
-		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
+		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","2", request) ;
     
   	%>
     <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
+    <input type="hidden" name="typeView" id="typeView" value="1"/>
         <input type='hidden' id="sqlText1" name="sqlText1">
         <input type='hidden' id="sqlText2" name="sqlText2">
         <input type='hidden' id="infoText1" name="infoText1">
@@ -48,6 +49,7 @@
       		vocName="vocPigeonHole"
       		/>
       </msh:row>
+      <%--
       <msh:row>
         <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -75,6 +77,7 @@
 	        	<input type="radio" name="typeView" value="3"  >  отделениям
 	        </td>
         </msh:row>
+         --%>
         <msh:row guid="Дата">
         <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
       </msh:row>
@@ -98,8 +101,8 @@
     //checkFieldUpdate('typeDate','${typeDate}',1) ;
     //checkFieldUpdate('typePatient','${typePatient}',4) ;
     //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-    checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeHour','${typeHour}',3) ;
+    //checkFieldUpdate('typeView','${typeView}',1) ;
+    //checkFieldUpdate('typeHour','${typeHour}',3) ;
     //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
     
   
@@ -115,7 +118,9 @@
    }
 
     if ($('dateBegin').value=="") {
-    	$('dateBegin').value=getCurrentDate() ;
+    	var dt = new Date() ;
+    	dt.setDate(dt.getDate()-1);
+    	$('dateBegin').value=format2day(dt.getDate())+"."+format2day(dt.getMonth()+1)+"."+dt.getFullYear() ;
     }
 
 			 
@@ -168,6 +173,7 @@
     			String denied=request.getParameter("denied") ; String emergency=request.getParameter("emergency") ;
     			String orderType=request.getParameter("orderType") ; String stream=request.getParameter("stream") ;
     			String operation=request.getParameter("operation") ; String dtype=request.getParameter("dtype" );
+    			String anesthesia=request.getParameter("anesthesia") ;
     			StringBuilder where = new StringBuilder() ;
     			
     			if (dateinfo==null) {
@@ -176,7 +182,8 @@
     				String dtypeAs = "slo";
     				if (dtype!=null&&dtype.equals("Hosp")) {
     					dtype="HospitalMedCase" ;dtypeAs="sls" ;
-    					
+    				} else if (dtype!=null&&dtype.equals("SurgicalOperation")) {
+    					dtype="SurgicalOperation" ;dtypeAs="so" ;
     				} else {
     					dtype="DepartmentMedCase" ;
     				}
@@ -217,6 +224,10 @@
     					where.append(new StringBuilder() 
      					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.transferDate", "medcase.transferTime", date, timeSql)) 
 		    			.toString().replaceAll("medcase", dtypeAs)); 
+    				} else if (dateinfo.equals("operationDate")) {
+    					where.append(new StringBuilder() 
+     					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.operationDate", "medcase.operationTime", date, timeSql)) 
+		    			.toString().replaceAll("medcase", dtypeAs)); 
     				}
     				where.append(ActionUtil.setParameterFilterSql("pigeonHole", "ml.pigeonHole_id", request)) ;
     				where.append(ActionUtil.setParameterFilterSql("department", "ml.id", request)) ;
@@ -232,6 +243,19 @@
     					where.append(" and ").append(dtypeAs).append(".emergency='1'") ;
     				} else if (emergency!=null && emergency.equals("0")) {
         					where.append(" and (").append(dtypeAs).append(".emergency='0' or ").append(dtypeAs).append(".emergency is null)") ;
+    				}
+    				if (operation!=null) {
+    					if (operation.equals("plan")) {
+    						where.append(" and ").append(dtypeAs).append(".aspect_id='1'") ;
+    					} else if (operation.equals("emergency")) {
+    						where.append(" and ").append(dtypeAs).append(".aspect_id='2'") ;
+    					}
+    				}
+    				if (anesthesia!=null) {
+    					request.setAttribute("leftJoinAdd", "left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id left join MisLpu ml on ml.id=w.lpu_id");
+    					where.append(" and a.id is not null") ;
+    				} else {
+    					request.setAttribute("leftJoinAdd", "left join MisLpu ml on ml.id=so.department_id");
     				}
     				if (orderType!=null) {
     					where.append(" and vof.voc_code='").append(orderType).append("'") ;
@@ -256,13 +280,15 @@
     					where.append(" and (ok.voc_code='643' or ok.id is null) and (adr.addressid is null or adr.domen<3)") ;
     				}
     				if (stream!=null) {
+    					String stIn = "in" ;
+    					if (stream.startsWith("-")) {stIn="not in";stream=stream.substring(1);}
     					String[] st=stream.split(",");
     					StringBuilder s = new StringBuilder() ;
     					for (int i=0;i<st.length;i++) {
     						if (i>0) s.append(",") ;
     						s.append("'").append(st[i]).append("'");
     					}
-    					where.append(" and vss.code in (").append(s.toString()).append(")") ;
+    					where.append(" and vss.code ").append(stIn).append(" (").append(s.toString()).append(")") ;
     				}
     				if (age!=null) {
     					if (age.equals("0")) {
@@ -309,6 +335,54 @@
     	<msh:tableColumn property="5" columnName="Поток обслуживания"/>
     </msh:table>
     			<%
+    				} else if (dtype.equals("SurgicalOperation")) {
+    					//String operation=request.getParameter("operation") ;
+    					
+//&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan
+    					%>
+    <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
+    select so.id as sloid
+    ,to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.Entrancetime as varchar(5)) as slsdatestart
+    ,ss.code as sscode
+    ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
+    ,vss.name as vssname
+    ,to_char(so.operationDate,'dd.mm.yyyy')||' '||cast(so.operationTime as varchar(5)) as sooparetiondate
+     from SurgicalOperation so
+     left join Anesthesia a on a.surgicalOPeration_id=so.id
+     left join MedService ms on ms.id=so.medService_id
+	left join MedCase slo on so.medcase_id=slo.id
+    left join MedCase sls on sls.id=slo.parent_id
+    left join StatisticStub ss on ss.id=sls.statisticStub_id
+    left join Patient pat on pat.id=slo.patient_id
+    left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+	left join Address2 adr on adr.addressid=pat.address_addressid
+	${leftJoinAdd}
+	left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+	left join Omc_Oksm ok on pat.nationality_id=ok.id
+	left join Omc_Frm vof on vof.id=slo.orderType_id
+	left join Diary d on d.medcase_id=slo.id
+	left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
+	left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+	left join VocServiceStream vss on vss.id=slo.serviceStream_id
+	where ${whereSql} 
+	group by so.id,pat.id,pat.lastname,pat.firstname,pat.middlename,ss.code,vss.name
+	,slo.Entrancetime,slo.dateStart,so.operationDate,so.operationTime
+	order by pat.lastname,pat.firstname,pat.middlename
+    "/>
+   
+    <msh:table action="entityView-stac_surOperation.do"
+    viewUrl="entityShortView-stac_surOperation.do"
+     name="reestr" idField="1">
+    	<msh:tableColumn property="sn" columnName="#"/>
+    	<msh:tableColumn property="2" columnName="Дата и время операции"/>
+    	<msh:tableColumn property="3" columnName="ИБ"/>
+    	<msh:tableColumn property="4" columnName="ФИО"/>
+    	<msh:tableColumn property="5" columnName="Поток обслуживания"/>
+    	<msh:tableColumn property="6" columnName="Операция"/>
+    	<msh:tableColumn property="7" columnName="Показания"/>
+    	<msh:tableColumn property="8" columnName="Анестезия"/>
+    </msh:table>
+        			<%
     				} else if (dtype.equals("HospitalMedCase")) {
     					%>
     					
@@ -421,83 +495,9 @@ order by vph.name
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%--
+    
      <msh:section>
-    	    <msh:sectionTitle>Список, поступивших пациентов</msh:sectionTitle>
-    	    <msh:sectionContent>
-    	    
-    	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
-    	   select  
-    '&department='||ml.id as idpar,ml.name
-, count(distinct sls.id) as all1
-,count(distinct case when sls.deniedHospitalizating_id is null then sls.id else null end) as obr
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
-then sls.id else null end) as obrVil
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
-then sls.id else null end) as obrCity
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
-then sls.id else null end) as obrInog
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and oo.voc_code!='643'  then sls.id else null end) as obrInost
-,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then sls.id else null end) as obrOther
-
-
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null then sls.id else null end) as em
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='О' then sls.id else null end) as emSam
-,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null and vof.voc_code='К' then sls.id else null end) as emSkor
-,count(distinct case when (sls.emergency is null or sls.emergency='0') and sls.deniedHospitalizating_id is null then sls.id else null end) as pl
-, count(distinct case when sls.deniedHospitalizating_id is not null then sls.id else null end) as denied 
-, count(distinct case when sls.deniedHospitalizating_id='4' then sls.id else null end) as denied4 
-, count(distinct case when sls.deniedHospitalizating_id='8' then sls.id else null end) as denied8
-, count(distinct case when sls.deniedHospitalizating_id='5' then sls.id else null end) as denied5
-, count(distinct case when sls.deniedHospitalizating_id='2' then sls.id else null end) as denied2
-from medcase sls 
-left join MisLpu as ml on ml.id=sls.department_id
-left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
-left join Patient p on p.id=sls.patient_id
-left join Address2 a on p.address_addressid=a.addressid
-left join Omc_Oksm oo on oo.id=p.nationality_id 
-left join Omc_Frm vof on vof.id=sls.orderType_id
-where ${periodEntranceSls}
-${departmentSql} 
-and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality='0')
-
-    	 ${pigeonHoleSql}  
-    	 ${serviceStreamSql} 
-    	group by ml.id,ml.name
-    	order by ml.name
-    	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	      
-    	    <msh:table cellFunction="true" name="journal_priem" 
-    	    action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateStart" idField="1">
-    	      <msh:tableColumn columnName="#" property="sn" addParam="" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-    	      <msh:tableColumn columnName="Приемник" addParam="" property="2"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во обрат." addParam="" property="3"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госп" addParam="&denied=0" property="4"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="с.ж." addParam="&denied=0&patient=village" property="5"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="гор." addParam="&denied=0&patient=city" property="6"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="иног." addParam="&denied=0&patient=inog" property="7"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="иност." addParam="&denied=0&patient=inostr" property="8"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="др." addParam="&denied=0&patient=other" property="9"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстр." addParam="&denied=0&emergency=1" property="10" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="самообр." addParam="&denied=0&emergency=1&orderType=О" property="11" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="ск. пом." addParam="&denied=0&emergency=1&orderType=К" property="12" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во план." addParam="&denied=0&emergency=0" property="13" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов" addParam="&denied=all" property="14" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="направ. в др. ЛПУ" addParam="&denied=4" property="15" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="отказ больного" addParam="&denied=8" property="16" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Самовольно покинул отделение" addParam="&denied=5" property="17" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Отсутствие показаний" addParam="&denied=2" property="18" />
-    	    </msh:table>
-    	    </msh:sectionContent>
-    	    </msh:section>
-    	    --%>
-     <msh:section>
-    	    <msh:sectionTitle>Список, поступивших пациентов</msh:sectionTitle>
+    	    <msh:sectionTitle>Список, поступивших пациентов по приемному отделению</msh:sectionTitle>
     	    <msh:sectionContent>
     	    
     	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
@@ -571,7 +571,7 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	    </msh:section>
     	    
     	     <msh:section>
-    	    <msh:sectionTitle>Список, выписанных пациентов
+    	    <msh:sectionTitle>Список, выписанных пациентов по приемному отделению
     	    </msh:sectionTitle>
     	    <msh:sectionContent>
     	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
@@ -580,7 +580,7 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
 , count(distinct sls.id) as cntAll
 ,count(distinct case when vho.code!='1' then sls.id else null end) as cntDischargeOtherLpu
 ,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeathPatient
-,list(distinct case when vhr.code='11' then '<br/>'||pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'')||' г.р.'||to_char(pat.birthday,'dd.msls.yyyy') else null end) as listDeathPatient
+,list(distinct case when vhr.code='11' then '<br/>'||pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'')||' г.р.'||to_char(pat.birthday,'dd.mm.yyyy') else null end) as listDeathPatient
 from medcase sls 
 left join Patient pat on pat.id=sls.patient_id
 left join MisLpu as ml on ml.id=sls.department_id
@@ -609,7 +609,7 @@ and ( sls.noActuality is null or sls.noActuality='0')
     	    </msh:section>
     <%
     		
-    	}  else if (view!=null && (view.equals("2"))) {
+    	
     		request.setAttribute("periodCurrentSlo",new StringBuilder() 
    			.append(" (coalesce(medcase.dateFinish,medcase.transferDate) is null ")
     		.append(" or ") 
@@ -629,22 +629,35 @@ and ( sls.noActuality is null or sls.noActuality='0')
 			request.setAttribute("periodEntranceSlo",new StringBuilder() 
 					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", date, timeSql)) 
     			.toString().replaceAll("medcase", "slo")); 
-			request.setAttribute("periodDischargeTransferSlo",new StringBuilder() 
-					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "coalesce(medcase.dateFinish,medcase.transferDate)", "coalesce(medcase.dischargeTime,medcase.transferTime)", date, timeSql)) 
+			request.setAttribute("periodTransferSlo",new StringBuilder() 
+					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.transferDate", "medcase.transferTime", date, timeSql)) 
     			.toString().replaceAll("medcase", "slo")); 
-    		
+			request.setAttribute("periodDischargeSlo",new StringBuilder() 
+					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.dateFinish", "medcase.dischargeTime", date, timeSql)) 
+    			.toString().replaceAll("medcase", "slo")); 
+			request.setAttribute("periodOperation",new StringBuilder() 
+				.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.operationdate", "medcase.operationtime", date, timeSql)) 
+				.toString().replaceAll("medcase", "so")); 
+
     		%>
     <msh:section>
     <msh:sectionTitle>
-    Список разбивка по реанимациям
+    Разбивка по реанимациям
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
    select '&department='||ml.id,ml.name
 ,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
 ,count(distinct case when ${periodEntranceSlo}  then slo.id else null end) as cntEntr
-,count(distinct case when ${periodDischargeTransferSlo}  then slo.id else null end) as cntFinish
+,count(distinct case when ${periodTransferSlo}  then slo.id else null end) as cntTransfer
+,count(distinct case when ${periodDischargeSlo}  then slo.id else null end) as cntFinish
+,count(distinct case when ${periodDischargeSlo} and vhr.code='11'  then slo.id else null end) as cntFinish1
+,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id) as cntOper
+,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id and so.aspect_id='2') as cntOperEmer
+,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id and so.aspect_id='1') as cntOperPlan
+
 from medcase slo
+left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
 left join VocServiceStream vss on vss.id=slo.serviceStream_id
 left join Patient pat on pat.id=slo.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
@@ -652,6 +665,8 @@ left join Address2 adr on adr.addressid=pat.address_addressid
 left join Mislpu ml on slo.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+
 where slo.dtype='DepartmentMedCase'
 and ${periodCurrentSlo1}
 
@@ -670,15 +685,29 @@ order by ml.name
       addParam="&dateinfo=dateCurrent"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" 
       addParam="&dateinfo=dateStart"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших (переведенных)" property="5" 
-      addParam="&dateinfo=coalesce(transferDate,dateFinish)"
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во переведенных" property="5" 
+      addParam="&dateinfo=transferDate"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="6" 
+      addParam="&dateinfo=dateFinish"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших" property="7" 
+      addParam="&dateinfo=dateFinish&discharge=death"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во наркозов" property="8" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=emergency"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan"
       />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
         	   
     	    <%
-    	}  else if (view!=null && (view.equals("3"))) {
+    	
     		request.setAttribute("periodCurrentSlo",new StringBuilder() 
    			.append(" (coalesce(medcase.dateFinish,medcase.transferDate) is null ")
     		.append(" or ") 
@@ -713,23 +742,25 @@ order by ml.name
     		%>
   <msh:section>
     <msh:sectionTitle>
-    Список разбивка по отделениям
+    Разбивка по отделениям
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
    select '&department='||ml.id,ml.name
 ,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
 ,count(distinct case when ${periodCurrentSlo} and vss.code='OBLIGATORYINSURANCE' then slo.id else null end) as cntCurrentOmc
-,count(distinct case when ${periodCurrentSlo} and (vss.code in ('PRIVATEINSURANCE','DOGOVOR','FCB')) then slo.id else null end) as cntCurrentDmc
+,count(distinct case when ${periodCurrentSlo} and (vss.code not in ('PRIVATEINSURANCE','OBLIGATORYINSURANCE','OTHER','BUDGET')) then slo.id else null end) as cntCurrentVnebud
+,count(distinct case when ${periodCurrentSlo} and (vss.code in ('PRIVATEINSURANCE')) then slo.id else null end) as cntCurrentDmc
+,count(distinct case when ${periodCurrentSlo} and (vss.code in ('OTHER')) then slo.id else null end) as cntCurrentOther
 ,count(distinct case when ${periodEntranceSlo} then slo.id else null end) as cntEntr
-,count(distinct case when ${periodEntranceSlo} and  slo.emergency='1' then slo.id else null end) as cntEntrEmergency
-,count(distinct case when ${periodEntranceSlo} and (slo.emergency='0' or slo.emergency is null) then slo.id else null end) as cntEntrPlan
+,count(distinct case when ${periodEntranceSlo} and  sls.emergency='1' then slo.id else null end) as cntEntrEmergency
+,count(distinct case when ${periodEntranceSlo} and (sls.emergency='0' or sls.emergency is null) then slo.id else null end) as cntEntrPlan
 ,count(distinct case when ${periodTransferSlo} then slo.id else null end) as cntTransfer
 ,count(distinct case when ${periodDischargeSlo} then slo.id else null end) as cntFinish
 ,count(distinct case when ${periodDischargeSlo} and vhr.code='11' then slo.id else null end) as cntDeath
 ,(select count(distinct so.id) from SurgicalOperation so where so.department_id=ml.id and ${periodOperation}) as cntOper
-,(select count(distinct case when so.aspect_id='2' then so.id else null end) from SurgicalOperation so where so.department_id=ml.id and ${periodOperation}) as cntOperEmer
-,(select count(distinct case when (so.aspect_id='1') then so.id else null end) from SurgicalOperation so where so.department_id=ml.id and ${periodOperation}) as cntOperPlan
+,(select count(distinct so.id) from SurgicalOperation so where so.department_id=ml.id and ${periodOperation} and so.aspect_id='2') as cntOperEmer
+,(select count(distinct so.id) from SurgicalOperation so where so.department_id=ml.id and ${periodOperation} and so.aspect_id='1') as cntOperPlan
 from medcase slo
 left join VocServiceStream vss on vss.id=slo.serviceStream_id
 left join Patient pat on pat.id=slo.patient_id
@@ -755,16 +786,18 @@ order by ml.name
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" addParam="&dateinfo=dateCurrent" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
-      <msh:tableColumn isCalcAmount="true" columnName="внебюдж./ДМС" property="5" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE,DOGOVOR,FCB"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="6" addParam="&dateinfo=dateStart"/>
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="7" addParam="&dateinfo=dateStart&emergency=1"/>
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="8" addParam="&dateinfo=dateStart&emergency=0"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="9" addParam="&dateinfo=transferDate"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="10" addParam="&dateinfo=dateFinish"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="11" addParam="&dateinfo=dateCurrent&discharge=death"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="12" addParam="&dateinfo=dateCurrent&operation=all"/>
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="13" addParam="&dateinfo=dateCurrent&operation=emergency"/>
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="14" addParam="&dateinfo=dateCurrent&operation=plan"/>
+      <msh:tableColumn isCalcAmount="true" columnName="внебюдж." property="5" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="6" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="без  полиса" property="7" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="8" addParam="&dateinfo=dateStart"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" addParam="&dateinfo=dateStart&emergency=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" addParam="&dateinfo=dateStart&emergency=0"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="11" addParam="&dateinfo=transferDate"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="12" addParam="&dateinfo=dateFinish"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="13" addParam="&dateinfo=dateCurrent&discharge=death"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="14" addParam="&dateinfo=operationDate&dtype=SurgicalOperation"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="15" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=emergency"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="16" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=plan"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
