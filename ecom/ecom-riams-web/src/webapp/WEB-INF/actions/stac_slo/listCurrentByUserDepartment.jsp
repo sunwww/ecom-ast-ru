@@ -123,7 +123,7 @@
      <msh:sectionTitle>
     <form action="print-stac_current_department.do" method="post" target="_blank">
     Журнал состоящих пациентов в отделение  ${departmentInfo} на текущее момент
-    <input type='hidden' name="sqlText" id="sqlText" value="${datelist}"> 
+    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделение  ${departmentInfo} на текущее момент">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
