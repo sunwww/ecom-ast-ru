@@ -32,6 +32,13 @@ public class OmcOksm extends OmcAbstractVoc {
 	public Boolean getIsCompatriot() {return theIsCompatriot;}
 	public void setIsCompatriot(Boolean aIsCompatriot) {theIsCompatriot = aIsCompatriot;}
 
+	/** Текущая страна */
+	@Comment("Текущая страна")
+	public Boolean getIsCurrent() {return theIsCurrent;}
+	public void setIsCurrent(Boolean aIsCurrent) {theIsCurrent = aIsCurrent;}
+
+	/** Текущая страна */
+	private Boolean theIsCurrent;
 	/** СНГ */
 	private Boolean theIsCompatriot;
 	/** alfa3 */
