@@ -314,5 +314,13 @@ public class Address extends BaseEntity {
 
 	/** Регион */
 	private Address theRegion;
+	
+	/** Текущий регион */
+	@Comment("Текущий регион")
+	public Boolean getIsCurrentRegion() {return theIsCurrentRegion;}
+	public void setIsCurrentRegion(Boolean aIsCurrentRegion) {theIsCurrentRegion = aIsCurrentRegion;}
+
+	/** Текущий регион */
+	private Boolean theIsCurrentRegion;
 
 }
