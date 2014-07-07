@@ -269,15 +269,15 @@
     				}
     				if (patient==null) {
     				} else if (patient.equals("village")) {
-    					where.append(" and (ok.voc_code='643' or ok.id is null) and adr.kladr is not null and substring(adr.kladr,1,2)='30' and adr.addressisvillage='1'");
+    					where.append(" and (ok.isCurrent='1' or ok.id is null) and adr.kladr is not null and adr.isCurrentRegion='1' and adr.addressisvillage='1'");
     				} else if (patient.equals("city")) {
-    					where.append(" and (ok.voc_code='643' or ok.id is null) and adr.kladr is not null and substring(adr.kladr,1,2)='30' and adr.addressiscity='1'");
+    					where.append(" and (ok.isCurrent='1' or ok.id is null) and adr.kladr is not null and adr.isCurrentRegion='1' and adr.addressiscity='1'");
     				} else if (patient.equals("inostr")) {
-    					where.append(" and ok.voc_code!='643' and ok.id is not null") ;
+    					where.append(" and ok.isCurrent='0'") ;
     				} else if (patient.equals("inog")) {
-    					where.append(" and (ok.voc_code='643' or ok.id is null) and substring(adr.kladr,1,2)!='30'");
+    					where.append(" and (ok.isCurrent='0' or ok.id is null) and adr.isCurrentRegion is null");
     				} else if (patient.equals("other")) {
-    					where.append(" and (ok.voc_code='643' or ok.id is null) and (adr.addressid is null or adr.domen<3)") ;
+    					where.append(" and (ok.isCurrent='0' or ok.id is null) and (adr.addressid is null or adr.domen<3)") ;
     				}
     				if (stream!=null) {
     					String stIn = "in" ;
@@ -348,7 +348,7 @@
     ,vss.name as vssname
     ,to_char(so.operationDate,'dd.mm.yyyy')||' '||cast(so.operationTime as varchar(5)) as sooparetiondate
      from SurgicalOperation so
-     left join Anesthesia a on a.surgicalOPeration_id=so.id
+     left join Anesthesia adr on a.surgicalOPeration_id=so.id
      left join MedService ms on ms.id=so.medService_id
 	left join MedCase slo on so.medcase_id=slo.id
     left join MedCase sls on sls.id=slo.parent_id
@@ -459,10 +459,10 @@
 ,count(distinct  sls.id ) as cntAll
 ,count(distinct case when pat.newborn_id is not null then sls.id else null end) as cntNewBorn
 ,count(distinct case when (to_date('${param.dateBegin}','dd.mm.yyyy')-pat.birthday)<(17*355) then sls.id else null end) as cntChild
-,count(distinct case when (ok.voc_code is null or ok.voc_code='643') and substring(adr.kladr,1,2)='30' and adr.addressisvillage='1' then sls.id else null end) as cntVill
-,count(distinct case when (ok.voc_code is null or ok.voc_code='643') and substring(adr.kladr,1,2)='30' and adr.addressiscity='1' then sls.id else null end) as cntCity
-,count(distinct case when (ok.voc_code is null or ok.voc_code='643') and adr.kladr is not null and substring(adr.kladr,1,2)!='30' then sls.id else null end) as cntInog
-,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then sls.id else null end) as cntInost
+,count(distinct case when (ok.id is null or ok.isCurrent='1') and adr.isCurrentRegion='1' and adr.addressisvillage='1' then sls.id else null end) as cntVill
+,count(distinct case when (ok.id is null or ok.isCurrent='1') and adr.isCurrentRegion='1' and adr.addressiscity='1' then sls.id else null end) as cntCity
+,count(distinct case when (ok.id is null or ok.isCurrent='1') and adr.kladr is not null and adr.isCurrentRegion is null then sls.id else null end) as cntInog
+,count(distinct case when ok.isCurrent='0' then sls.id else null end) as cntInost
 from medcase sls
 left join Patient pat on pat.id=sls.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
@@ -506,18 +506,18 @@ order by vph.name
 , count(distinct sls.id) as all1
 ,count(distinct case when sls.deniedHospitalizating_id is null then sls.id else null end) as obr
 ,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+and (ok.isCurrent='1' or ok.id is null) and adr.isCurrentRegion='1' and adr.addressIsVillage='1'
 then sls.id else null end) as obrVil
 ,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+and (ok.isCurrent='1' or ok.id is null) and adr.isCurrentRegion='1' and adr.addressIsCity='1'
 then sls.id else null end) as obrCity
 ,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+and (ok.isCurrent='1' or ok.id is null) and adr.addressid is not null and adr.isCurrentRegion is null
 then sls.id else null end) as obrInog
 ,count(distinct case when sls.deniedHospitalizating_id is null 
-and oo.voc_code!='643'  then sls.id else null end) as obrInost
+and ok.isCurrent='0'  then sls.id else null end) as obrInost
 ,count(distinct case when sls.deniedHospitalizating_id is null 
-and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then sls.id else null end) as obrOther
+and (ok.isCurrent='1' or ok.id is null) and (adr.addressid is null or adr.domen<3)  then sls.id else null end) as obrOther
 
 
 ,count(distinct case when sls.emergency='1' and sls.deniedHospitalizating_id is null then sls.id else null end) as em
@@ -533,8 +533,8 @@ from medcase sls
 left join MisLpu as ml on ml.id=sls.department_id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Patient p on p.id=sls.patient_id
-left join Address2 a on p.address_addressid=a.addressid
-left join Omc_Oksm oo on oo.id=p.nationality_id 
+left join Address2 adr on p.address_addressid=adr.addressid
+left join Omc_Oksm ok on ok.id=p.nationality_id 
 left join Omc_Frm vof on vof.id=sls.orderType_id
 where ${periodEntranceSls}
 ${departmentSql} 
