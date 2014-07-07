@@ -78,7 +78,8 @@ import ru.nuzmsh.util.format.DateFormat;
       , @AIndex(unique = false, properties= ("lpuArea"))
       , @AIndex(unique = false, properties= ("lpuAreaAddressText"))
       , @AIndex(unique = false, properties= ("lpu"))
-      , @AIndex(unique = false, properties= ("address"))
+   	    , @AIndex(unique = false, properties= ("address"))
+      , @AIndex(unique = false, properties= ("nationality"))
       // используется при прикреплении при изменении LpuAreaText в AddressPointServiceBean
    	    /*
       , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","birthday"})
