@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import java.util.Calendar;
 import java.util.Collection;
 
 import javax.naming.NamingException;
@@ -38,14 +39,21 @@ public class PatientServiceJs {
 			//String birthDayYear = birthDayS.substring(5) ;
 			java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS) ;
 			java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate) ;
+			Calendar calB = Calendar.getInstance() ;
+			calB.setTime(birthday) ;
+			Calendar calF = Calendar.getInstance() ;
+			calF.setTime(finishDate) ;
+			boolean reMonth = (calF.get(Calendar.MONTH) == calB.get(Calendar.MONTH)) ;
 			String age=AgeUtil.getAgeCache(finishDate, birthday, 1);
 			System.out.println("age:"+age) ;
 			int sb1 = age.indexOf(".") ;
 			int sb2 = age.indexOf(".",sb1+1) ;
+			
 			int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
 			System.out.println("yearDif:"+yearDif) ;
 			int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue() ;
 			System.out.println("monthDif:"+monthDif) ;
+			//int dayDif =  Integer.valueOf(age.substring(sb2+1)).intValue() ;
 			if (yearDif==2){
 				if (monthDif>=6) {
 					return "2.6" ;
@@ -53,14 +61,20 @@ public class PatientServiceJs {
 					return "2" ;
 				}
 			} else if (yearDif==1){
-				if (monthDif<3) return "1" ;
-				else if (monthDif<6) return "1.3" ;
-				else if (monthDif<9) return "1.6" ;
-				return "1.9" ;
+				if (monthDif==0) return "1" ;
+				else if (monthDif==1 && reMonth) return "1" ;
+				else if (monthDif==2 && reMonth) return "1.3" ;
+				else if (monthDif==3) return "1.3" ;
+				else if (monthDif==5 && reMonth) return "1.6" ;
+				else if (monthDif==6) return "1.6" ;
+				else if (monthDif==8 && reMonth) return "1.9" ;
+				else if (monthDif==9) return "1.9" ;
+				else if (monthDif==11 && reMonth) return "2" ;
+				return "1."+monthDif+"" ;
 			} else if (yearDif==0){
 				return ""+yearDif+"."+monthDif ;
-			} else if(yearDif<18) {
-				return ""+yearDif ;
+			//} else if(yearDif<18) {
+			//	return ""+yearDif ;
 			} else {
 				int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
 				int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
