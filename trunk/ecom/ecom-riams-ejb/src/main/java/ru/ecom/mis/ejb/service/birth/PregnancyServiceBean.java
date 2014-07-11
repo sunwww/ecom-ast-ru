@@ -75,11 +75,11 @@ public class PregnancyServiceBean implements IPregnancyService {
   			, Long aSkinColor)  {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select") 
-		.append("     (select isnull(max(ball),0) from VocApgarSkinColor where id=:skinColor)+")
-		.append(" 		(select isnull(max(ball),0) from VocApgarRespiration where id=:respiration)+")
-		.append(" 		(select isnull(max(ball),0) from VocApgarReflexes where id=:reflexes)+")
-		.append(" 		(select isnull(max(ball),0) from VocApgarPalpitation where id=:palpitation)+")
-		.append(" 		(select isnull(max(ball),0) from VocApgarMuscleTone where id=:muscleTone)")
+		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocApgarSkinColor where id=:skinColor)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarRespiration where id=:respiration)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarReflexes where id=:reflexes)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarPalpitation where id=:palpitation)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarMuscleTone where id=:muscleTone)")
 		.append(" 	,id	 from VocSex") ;
 		List<Object[]> row = theManager.createNativeQuery(sql.toString())
 			.setParameter("skinColor",aSkinColor)
@@ -107,11 +107,11 @@ public class PregnancyServiceBean implements IPregnancyService {
   			, Long aAuscultation) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select") 
-		.append("     (select isnull(max(ball),0) from VocDownesRespirationRate where id=:respirationRate)+")
-		.append(" 		(select isnull(max(ball),0) from VocDownesCyanosis where id=:cyanosis)+")
-		.append(" 		(select isnull(max(ball),0) from VocDownesIntercostalRet where id=:intercostalRetraction)+")
-		.append(" 		(select isnull(max(ball),0) from VocDownesDifExhalation where id=:difficultExhalation)+")
-		.append(" 		(select isnull(max(ball),0) from VocDownesAuscultation where id=:auscultation)")
+		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocDownesRespirationRate where id=:respirationRate)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesCyanosis where id=:cyanosis)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesIntercostalRet where id=:intercostalRetraction)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesDifExhalation where id=:difficultExhalation)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesAuscultation where id=:auscultation)")
 		.append(" 	,id	 from VocSex") ;
 		List<Object[]> row = theManager.createNativeQuery(sql.toString())
 			.setParameter("respirationRate",aRespirationRate)
@@ -147,12 +147,12 @@ public class PregnancyServiceBean implements IPregnancyService {
   			, Long aNewBornWeight, Long aMotherInfectiousDiseases){
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select") 
-		.append("     (select isnull(max(ball),0) from VocInfRiskWaterless where id=:waterlessDuration)+")
-		.append(" 		(select isnull(max(ball),0) from VocInfRiskMotherTemperature where id=:motherTemperature)+")
-		.append(" 		(select isnull(max(ball),0) from VocInfRiskWaterNature where id=:waterNature)+")
-		.append(" 		(select isnull(max(ball),0) from VocInfRiskApgar where id=:apgar)+")
-		.append(" 		(select isnull(max(ball),0) from VocInfRiskNewBornWeight where id=:newBornWeight)+")
-		.append(" 		(select isnull(max(ball),0) from VocInfRiskMotherDiseases where id=:motherInfectiousDiseases)")
+		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskWaterless where id=:waterlessDuration)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskMotherTemperature where id=:motherTemperature)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskWaterNature where id=:waterNature)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskApgar where id=:apgar)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskNewBornWeight where id=:newBornWeight)+")
+		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocInfRiskMotherDiseases where id=:motherInfectiousDiseases)")
 		.append(" 	,id	 from VocSex") ;
 		List<Object[]> row = theManager.createNativeQuery(sql.toString())
 			.setParameter("waterlessDuration",aWaterlessDuration)
