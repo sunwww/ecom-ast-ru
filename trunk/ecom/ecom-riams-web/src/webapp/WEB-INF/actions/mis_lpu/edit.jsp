@@ -73,9 +73,7 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isNoViewRemoteUser"/>
-        	<msh:ifFormTypeAreViewOrEdit formName="mis_lpuForm">
-        		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipmentByLpu" horizontalFill="true" parentId="mis_lpuForm.id" label="Принтер"/>
-        	</msh:ifFormTypeAreViewOrEdit>
+       		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipment" horizontalFill="true" label="Принтер"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
