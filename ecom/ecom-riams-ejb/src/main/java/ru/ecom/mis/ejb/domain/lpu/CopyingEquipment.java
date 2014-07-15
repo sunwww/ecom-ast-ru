@@ -60,14 +60,17 @@ public class CopyingEquipment extends BaseEntity {
 	private String theIpaddress;
 	/** Печать в txt файл */
 	@Comment("Печать в txt файл")
-	public Boolean getIsTxtFile() {
-		return theIsTxtFile;
-	}
-
-	public void setIsTxtFile(Boolean aIsTxtFile) {
-		theIsTxtFile = aIsTxtFile;
-	}
+	public Boolean getIsTxtFile() {return theIsTxtFile;}
+	public void setIsTxtFile(Boolean aIsTxtFile) {theIsTxtFile = aIsTxtFile;}
 
 	/** Печать в txt файл */
 	private Boolean theIsTxtFile;
+	
+	/** Команда */
+	@Comment("Команда")
+	public String getCommandPrintTxt() {return theCommandPrintTxt;}
+	public void setCommandPrintTxt(String aCommandPrintTxt) {theCommandPrintTxt = aCommandPrintTxt;}
+
+	/** Команда */
+	private String theCommandPrintTxt;
 }
