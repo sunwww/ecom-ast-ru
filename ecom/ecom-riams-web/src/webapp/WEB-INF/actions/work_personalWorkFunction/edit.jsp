@@ -65,7 +65,8 @@
         </msh:ifFormTypeIsCreate>
         <msh:row>
         	<msh:checkBox property="isNoViewRemoteUser"/>
-        	<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipmentByWorker" horizontalFill="true" parentAutocomplete="work_personalWorkFunctionForm.worker" label="Принтер"/>
+        	<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipment" 
+        	horizontalFill="true" label="Принтер"/>
         </msh:row>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
