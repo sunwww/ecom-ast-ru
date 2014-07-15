@@ -81,4 +81,13 @@ public class CopyingEquipmentForm extends IdEntityForm {
 
 	/** Печать в txt файл */
 	private Boolean theIsTxtFile;
+	/** Команда */
+	@Comment("Команда")
+	@Persist
+	public String getCommandPrintTxt() {return theCommandPrintTxt;}
+	public void setCommandPrintTxt(String aCommandPrintTxt) {theCommandPrintTxt = aCommandPrintTxt;}
+
+	/** Команда */
+	private String theCommandPrintTxt;
+
 }
