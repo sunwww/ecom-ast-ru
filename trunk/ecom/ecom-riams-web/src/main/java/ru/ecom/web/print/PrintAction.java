@@ -34,7 +34,7 @@ public class PrintAction extends BaseAction {
         //aRequest.getParameterValues("id").length ;
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
         StringBuilder sql = new StringBuilder() ;
-        sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'") ;
+        sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=wf.secUser_id left join CopyingEquipment ce on ce.id=wf.copyingEquipmentDefault_id where su.login='").append(login).append("' and ce.id is not null") ;
         IWebQueryService service1 = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString(),1);
 		String print = "no" ;
@@ -43,6 +43,16 @@ public class PrintAction extends BaseAction {
         	WebQueryResult wqr = list.iterator().next() ;
         	if (wqr.get1()!=null) 	print = ""+wqr.get1() ;
         	if (wqr.get3()!=null) isTxtFile = true ;
+        } else {
+            sql = new StringBuilder() ;
+            sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'  and ce.id is not null") ;
+            list = service1.executeNativeSql(sql.toString(),1);
+            if (list.size()>0) {
+            	WebQueryResult wqr = list.iterator().next() ;
+            	if (wqr.get1()!=null) 	print = ""+wqr.get1() ;
+            	if (wqr.get3()!=null) isTxtFile = true ;
+            }
+        	
         }
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
@@ -61,7 +71,7 @@ public class PrintAction extends BaseAction {
         		, aRequest.getParameter("m"), map) ;
         String next = aRequest.getParameter("next") ;
         if (next!=null && !next.equals("") &&filename.toLowerCase().contains(".txt")) {
-        	
+        	if (print!=null && !print.equals("no")) {run("lp -d "+print+" "+filename) ;}
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
         	return new ActionForward(next.replace("__", "?"),true);
         } else {
@@ -77,5 +87,16 @@ public class PrintAction extends BaseAction {
         }
         return ret.toString() ;
     }
-
+	private String run(String Command){
+		try{
+		Runtime.getRuntime().exec(Command);
+		return("0");
+		}
+		catch (Exception e){
+		System.out.println("Error running command: " + Command +
+		"\n" + e.getMessage());
+		return(e.getMessage());
+		}
+	} 
 }
+
