@@ -54,7 +54,7 @@
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
-        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" key="SHIFT+8" params="id" action="/print-ticketshort.do?s=PrintTicketService&amp;m=printInfo" name="Талон" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талон" />
+        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" key="SHIFT+8" params="id" action="/print-ticketshort.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-smo_short_ticket.do__id=${param.id}&noView=1t&id=${param.id}" name="Талон" title="Печатать талон" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

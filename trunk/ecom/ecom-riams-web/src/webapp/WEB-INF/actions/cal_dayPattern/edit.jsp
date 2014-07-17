@@ -10,13 +10,33 @@
 			<msh:hidden property="saveType" />
 			<msh:hidden property="lpu" />
 			<msh:panel>
+
 				<msh:row>
-					<msh:textField property="name" label="Название" size="100"/>
+					<msh:autoComplete property="workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true"  size="100" fieldColSpan="3"/>
 				</msh:row>
+				
+				<msh:ifFormTypeIsCreate formName="cal_dayPatternForm">
+					<msh:row>
+						<msh:autoComplete property="timeInterval.workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true" fieldColSpan="3"/>
+					</msh:row>
+					<msh:row>
+						<msh:textField property="timeIntervalForm.timeFrom" label="Начиная с времени"/>
+						<msh:textField property="timeIntervalForm.timeTo" label="Заканчивая временем"/>
+					</msh:row>
+					<msh:row>
+						<msh:textField property="timeIntervalForm.visitTime" label="Среднее время на визит"/>
+						<td>мин.</td>
+					</msh:row>
+					<msh:row>
+						<td colspan="2">указывается либо среднее время, либо кол-во </td>
+						<msh:textField property="timeIntervalForm.countVisits" label="Кол-во визитов"/>
+	
+					</msh:row>
+				</msh:ifFormTypeIsCreate>
 				<msh:row>
-					<msh:autoComplete property="workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true"  size="100"/>
+					<msh:textField property="name" label="Название" size="100" fieldColSpan="3"/>
 				</msh:row>
-			<msh:submitCancelButtonsRow colSpan="2" />
+				<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="cal_dayPatternForm">

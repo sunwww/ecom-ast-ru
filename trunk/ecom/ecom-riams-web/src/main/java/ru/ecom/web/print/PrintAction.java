@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.print.IPrintService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -34,26 +35,33 @@ public class PrintAction extends BaseAction {
         //aRequest.getParameterValues("id").length ;
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
         StringBuilder sql = new StringBuilder() ;
-        sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=wf.secUser_id left join CopyingEquipment ce on ce.id=wf.copyingEquipmentDefault_id where su.login='").append(login).append("' and ce.id is not null") ;
+        sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=wf.secUser_id left join CopyingEquipment ce on ce.id=wf.copyingEquipmentDefault_id where su.login='").append(login).append("' and ce.id is not null") ;
         IWebQueryService service1 = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString(),1);
 		String print = "no" ;
 		boolean isTxtFile = false ;
+		WebQueryResult printMain = null ;
         if (list.size()>0) {
-        	WebQueryResult wqr = list.iterator().next() ;
-        	if (wqr.get1()!=null) 	print = ""+wqr.get1() ;
-        	if (wqr.get3()!=null) isTxtFile = true ;
+        	printMain = list.iterator().next() ;
         } else {
             sql = new StringBuilder() ;
-            sql.append("select ce.name,wf.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'  and ce.id is not null") ;
+            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'  and ce.id is not null") ;
             list = service1.executeNativeSql(sql.toString(),1);
             if (list.size()>0) {
-            	WebQueryResult wqr = list.iterator().next() ;
-            	if (wqr.get1()!=null) 	print = ""+wqr.get1() ;
-            	if (wqr.get3()!=null) isTxtFile = true ;
+            	printMain = list.iterator().next() ;
             }
-        	
         }
+         
+		if (printMain!=null) {
+            sql = new StringBuilder() ;
+            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='"+printMain.get2()+"' and ce.maskFiles = substring('"+print+"',1,length(ce.maskFiles))") ;
+            list = service1.executeNativeSql(sql.toString(),1);
+            if (list.size()>0) {
+            	printMain = list.iterator().next() ;
+            }
+        	if (printMain.get1()!=null) print = ""+printMain.get1() ;
+        	if (printMain.get3()!=null) isTxtFile = true ;
+		}
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
             if (key.equals("id") && isMultyId) {
@@ -71,7 +79,9 @@ public class PrintAction extends BaseAction {
         		, aRequest.getParameter("m"), map) ;
         String next = aRequest.getParameter("next") ;
         if (next!=null && !next.equals("") &&filename.toLowerCase().contains(".txt")) {
-        	if (print!=null && !print.equals("no")) {run("lp -d "+print+" "+filename) ;}
+        	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
+        	String path=serviceKdl.getDir("tomcat.data.rtf","/opt/tomcat/webapps/rtf") ;
+        	if (print!=null && !print.equals("no")) {run("lp -d "+print+" "+path+"/"+filename) ;}
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
         	return new ActionForward(next.replace("__", "?"),true);
         } else {
@@ -89,13 +99,13 @@ public class PrintAction extends BaseAction {
     }
 	private String run(String Command){
 		try{
-		Runtime.getRuntime().exec(Command);
-		return("0");
+			//System.out.println("command: " + Command );
+			Runtime.getRuntime().exec(Command);
+			return("0");
 		}
 		catch (Exception e){
-		System.out.println("Error running command: " + Command +
-		"\n" + e.getMessage());
-		return(e.getMessage());
+			System.out.println("Error running command: " + Command + "\n" + e.getMessage());
+			return(e.getMessage());
 		}
 	} 
 }

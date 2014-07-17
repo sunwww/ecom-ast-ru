@@ -4,11 +4,11 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Lpu" beginForm="mis_lpuForm" title="Список копировального оборудования"/>
+		<msh:title mainMenu="Lpu" title="Список копировального оборудования"></msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Create" params="id" action="/entityParentPrepareCreate-mis_copyingEquipment" title="Копировальное оборудование" name="Копировальное оборудование" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Create" action="/entityPrepareCreate-mis_copyingEquipment" title="Копировальное оборудование" name="Копировальное оборудование" />
 		</msh:sideMenu>
 	</tiles:put>
 	<tiles:put name='body' type='string' >

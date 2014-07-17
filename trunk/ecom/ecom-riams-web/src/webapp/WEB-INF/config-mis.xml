@@ -121,6 +121,8 @@
 			type="ru.ecom.mis.ejb.form.lpu.TemplateByCopyingEquipmentForm" />
 		<form-bean name="mis_copyingEquipmentForm" 
 			type="ru.ecom.mis.ejb.form.lpu.CopyingEquipmentForm" />
+		<form-bean name="mis_copyingEquipmentMaskFilesForm" 
+			type="ru.ecom.mis.ejb.form.lpu.TemplateFileByPrinterForm" />
 			
 		<!-- Пациент -->
 		
