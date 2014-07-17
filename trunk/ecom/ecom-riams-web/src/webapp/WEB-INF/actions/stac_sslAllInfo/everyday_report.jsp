@@ -275,7 +275,7 @@
     				} else if (patient.equals("inostr")) {
     					where.append(" and ok.isCurrent='0'") ;
     				} else if (patient.equals("inog")) {
-    					where.append(" and (ok.isCurrent='1' or ok.id is null) and adr.kladr is not null and adr.isCurrentRegion is null");
+    					where.append(" and (ok.isCurrent='0' or ok.id is null) and adr.isCurrentRegion is null");
     				} else if (patient.equals("other")) {
     					where.append(" and (ok.isCurrent='0' or ok.id is null) and (adr.addressid is null or adr.domen<3)") ;
     				}
@@ -348,7 +348,7 @@
     ,vss.name as vssname
     ,to_char(so.operationDate,'dd.mm.yyyy')||' '||cast(so.operationTime as varchar(5)) as sooparetiondate
      from SurgicalOperation so
-     left join Anesthesia a on a.surgicalOPeration_id=so.id
+     left join Anesthesia adr on a.surgicalOPeration_id=so.id
      left join MedService ms on ms.id=so.medService_id
 	left join MedCase slo on so.medcase_id=slo.id
     left join MedCase sls on sls.id=slo.parent_id
@@ -432,11 +432,14 @@
     			
     				
     				}} else if (view!=null && (view.equals("1"))) {
-    					
-    					StringBuilder periodCurrent = new StringBuilder() 
-    		   			.append(ReportParamUtil.getDateFromByDtype(Boolean.FALSE, "medcase.dateFinish", "medcase.dischargeTime", date1, timeSql,"medcase.dtype='DtypeMedCase'","medcase.dateStart", "medcase.entranceTime"));
-    					request.setAttribute("periodCurrentSls",periodCurrent.toString().replaceAll("medcase","sls").replaceAll("DtypeMedCase", "HospitalMedCase")) ;
-    		   			
+    					request.setAttribute("periodCurrentSls",new StringBuilder() 
+    		   			.append(" (medcase.dateFinish is null ")
+    		    		.append(" or ") 
+    		    		.append(ReportParamUtil.getDateFrom(Boolean.FALSE, "medcase.dateFinish", "medcase.dischargeTime", timeSql!=null?date1:date, timeSql)) 
+    		    		.append(") and ") 
+    		    		.append(ReportParamUtil.getDateTo(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", timeSql!=null?date1:date1, timeSql)) 
+    		    		.append(" ").toString().replaceAll("medcase", "sls")); 
+    		    		
     					request.setAttribute("periodEntranceSls",new StringBuilder() 
 	     					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", date, timeSql)) 
     		    			.toString().replaceAll("medcase", "sls")); 
@@ -468,10 +471,8 @@ left join Mislpu ml on sls.department_id=ml.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
 where  
-sls.dtype='HospitalMedCase'
-and
  ${periodCurrentSls}
-
+and sls.dtype='HospitalMedCase'
 ${departmentSql}
 and sls.deniedHospitalizating_id is null
 ${pigeonHoleSql} 
@@ -609,16 +610,14 @@ and ( sls.noActuality is null or sls.noActuality='0')
     <%
     		
     	
-    		/*request.setAttribute("periodCurrentSlo",new StringBuilder() 
+    		request.setAttribute("periodCurrentSlo",new StringBuilder() 
    			.append(" (coalesce(medcase.dateFinish,medcase.transferDate) is null ")
     		.append(" or ") 
     		.append(ReportParamUtil.getDateFrom(Boolean.FALSE, "coalesce(medcase.dateFinish,medcase.transferDate)", "coalesce(medcase.dischargeTime,medcase.transferTime)", timeSql!=null?date1:date, timeSql)) 
     		.append(") and ") 
     		.append(ReportParamUtil.getDateTo(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", timeSql!=null?date1:date1, timeSql)) 
     		.append(" ").toString().replaceAll("medcase", "slo")); 
-    		*/
-			request.setAttribute("periodCurrentSlo",periodCurrent.toString().replaceAll("medcase","slo").replaceAll("DtypeMedCase", "DepartmentMedCase")) ;
-
+    		
     		request.setAttribute("periodCurrentSlo1",new StringBuilder() 
    			.append(" (medcase.dateFinish is null ")
     		.append(" or ") 
@@ -627,8 +626,6 @@ and ( sls.noActuality is null or sls.noActuality='0')
     		.append(ReportParamUtil.getDateTo(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", timeSql!=null?date1:date1, timeSql)) 
     		.append(" ").toString().replaceAll("medcase", "slo")); 
     		
-			request.setAttribute("periodCurrentSlo1",periodCurrent.toString().replaceAll("medcase","slo").replaceAll("DtypeMedCase", "DepartmentMedCase")) ;
-
 			request.setAttribute("periodEntranceSlo",new StringBuilder() 
 					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", date, timeSql)) 
     			.toString().replaceAll("medcase", "slo")); 
