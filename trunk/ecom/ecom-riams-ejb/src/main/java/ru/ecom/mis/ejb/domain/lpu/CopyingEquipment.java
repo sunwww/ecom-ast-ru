@@ -73,4 +73,21 @@ public class CopyingEquipment extends BaseEntity {
 
 	/** Команда */
 	private String theCommandPrintTxt;
+	
+	/** Маска файла */
+	@Comment("Маска файла")
+	public String getMaskFiles() {return theMaskFiles;}
+	public void setMaskFiles(String aMaskFiles) {theMaskFiles = aMaskFiles;}
+
+	/** Маска файла */
+	private String theMaskFiles;
+	
+	/** Основной принтер */
+	@Comment("Основной принтер")
+	@OneToOne
+	public CopyingEquipment getParent() {return theParent;}
+	public void setParent(CopyingEquipment aParent) {theParent = aParent;}
+
+	/** Основной принтер */
+	private CopyingEquipment theParent;
 }

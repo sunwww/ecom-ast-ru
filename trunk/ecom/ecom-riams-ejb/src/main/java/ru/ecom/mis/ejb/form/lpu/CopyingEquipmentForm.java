@@ -89,5 +89,23 @@ public class CopyingEquipmentForm extends IdEntityForm {
 
 	/** Команда */
 	private String theCommandPrintTxt;
+	
+	/** Маска файла */
+	@Comment("Маска файла")
+	@Persist
+	public String getMaskFiles() {return theMaskFiles;}
+	public void setMaskFiles(String aMaskFiles) {theMaskFiles = aMaskFiles;}
+
+	/** Маска файла */
+	private String theMaskFiles;
+	/** Родитель */
+	@Comment("Родитель")
+	@Persist
+	public Long getParent() {return theParent;}
+	public void setParent(Long aParent) {theParent = aParent;}
+
+	/** Родитель */
+	private Long theParent;
+
 
 }
