@@ -454,18 +454,18 @@ order by dep.name
               </tr>
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
-      <msh:tableColumn columnName="из них с.ж" property="10"/>
-      <msh:tableColumn columnName="из них гор." property="11"/>
-      <msh:tableColumn columnName="из них иног." property="12"/>
-      <msh:tableColumn columnName="из них иностр." property="13"/>
-      <msh:tableColumn columnName="из них другое" property="14"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="10"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="11"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="12"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="13"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
