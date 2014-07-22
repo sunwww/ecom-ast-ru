@@ -5,9 +5,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+    @AIndex(properties="parent")
+    }) 
 public class CopyingEquipment extends BaseEntity {
 	/** IP адрес */
 	@Comment("IP адрес")

@@ -198,4 +198,12 @@ public class ExtDispCard extends BaseEntity{
 	private Kinsman theKinsman;
 	/** Рабочая функция */
 	private WorkFunction theWorkFunction;
+	
+	/** К оплате не принято */
+	@Comment("К оплате не принято")
+	public Boolean getNotPaid() {return theNotPaid;}
+	public void setNotPaid(Boolean aNotPaid) {theNotPaid = aNotPaid;}
+
+	/** К оплате не принято */
+	private Boolean theNotPaid;
 }

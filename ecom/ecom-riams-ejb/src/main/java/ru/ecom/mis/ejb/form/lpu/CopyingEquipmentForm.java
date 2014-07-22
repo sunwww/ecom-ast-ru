@@ -14,8 +14,8 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = CopyingEquipment.class)
 @Comment("Копировальное оборудование")
-@WebTrail(comment = "Копировальное оборудование", nameProperties= "id", list="entityParentList-mis_copyingEquipment.do", view="entityParentView-mis_copyingEquipment.do")
-@Parent(property="lpu", parentForm=MisLpuForm.class)
+@WebTrail(comment = "Копировальное оборудование", nameProperties= "id", view="entityParentView-mis_copyingEquipment.do")
+//@Parent(property="lpu", parentForm=MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment")
 public class CopyingEquipmentForm extends IdEntityForm {
 	/** IP адрес */
