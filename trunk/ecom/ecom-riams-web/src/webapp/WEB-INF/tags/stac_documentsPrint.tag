@@ -40,6 +40,12 @@
 	            <msh:row>
 		        	<msh:checkBox property="${name}Consent5" label="на установку импланта"/>
 		        </msh:row>
+	            <msh:row>
+		        	<msh:checkBox property="${name}Consent6" label="расписка (удаление импланта)"/>
+		        </msh:row>
+	            <msh:row>
+		        	<msh:checkBox property="${name}Consent7" label="на анестезиологическое обеспечение медицинского вмешательства"/>
+		        </msh:row>
 		    	<msh:row>
 		    		<msh:separator label="Направления" colSpan="2"/>
 		    	</msh:row>
@@ -99,6 +105,8 @@
 				+"&consent3="+($('${name}Consent3').checked?1:0)
 				+"&consent4="+($('${name}Consent4').checked?1:0)
 				+"&consent5="+($('${name}Consent5').checked?1:0)
+				+"&consent6="+($('${name}Consent6').checked?1:0)
+				+"&consent7="+($('${name}Consent7').checked?1:0)
 				+"&direct1="+($('${name}Direct1').checked?1:0)
 				+"&rejection1="+($('${name}Rejection1').checked?1:0)
 				+"&rejection2="+($('${name}Rejection2').checked?1:0)
