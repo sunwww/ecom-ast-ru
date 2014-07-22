@@ -51,10 +51,11 @@ public class PrintAction extends BaseAction {
             	printMain = list.iterator().next() ;
             }
         }
-         
+        //System.out.println("print="+printMain.get1()) ;
 		if (printMain!=null) {
             sql = new StringBuilder() ;
-            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='"+printMain.get2()+"' and ce.maskFiles = substring('"+print+"',1,length(ce.maskFiles))") ;
+            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='"+printMain.get2()+"' and ce.maskFiles = substring('"+reportKey+"',1,length(ce.maskFiles))") ;
+            //System.out.println(sql.toString());
             list = service1.executeNativeSql(sql.toString(),1);
             if (list.size()>0) {
             	printMain = list.iterator().next() ;
@@ -62,6 +63,7 @@ public class PrintAction extends BaseAction {
         	if (printMain.get1()!=null) print = ""+printMain.get1() ;
         	if (printMain.get3()!=null) isTxtFile = true ;
 		}
+		//System.out.println("print="+printMain.get2()) ;
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
             if (key.equals("id") && isMultyId) {

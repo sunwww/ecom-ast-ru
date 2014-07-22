@@ -66,6 +66,9 @@
 				<msh:row>
 					<msh:checkBox property="isDiagnostics" label="Назначена дополнительное диагностическое исследование" fieldColSpan="3"/>
 				</msh:row>
+				<msh:row>
+					<msh:checkBox property="notPaid" label="К оплате не принято" fieldColSpan="3"/>
+				</msh:row>
 			</msh:panel>
 			<msh:panel>
 				<msh:row>

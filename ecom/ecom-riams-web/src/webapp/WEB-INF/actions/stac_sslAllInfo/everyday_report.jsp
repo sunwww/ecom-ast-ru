@@ -275,7 +275,7 @@
     				} else if (patient.equals("inostr")) {
     					where.append(" and ok.isCurrent='0'") ;
     				} else if (patient.equals("inog")) {
-    					where.append(" and (ok.isCurrent='0' or ok.id is null) and adr.isCurrentRegion is null");
+    					where.append(" and (ok.isCurrent='1' or ok.id is null) and adr.kladr is not null and adr.isCurrentRegion is null");
     				} else if (patient.equals("other")) {
     					where.append(" and (ok.isCurrent='0' or ok.id is null) and (adr.addressid is null or adr.domen<3)") ;
     				}
@@ -342,13 +342,14 @@
     					%>
     <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
     select so.id as sloid
-    ,to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.Entrancetime as varchar(5)) as slsdatestart
+    ,to_char(so.operationDate,'dd.mm.yyyy')||' '||cast(so.operationTime as varchar(5)) as sooparetiondate
     ,ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
     ,vss.name as vssname
-    ,to_char(so.operationDate,'dd.mm.yyyy')||' '||cast(so.operationTime as varchar(5)) as sooparetiondate
+    ,ms.code||' '||ms.name as msname,vha.name as vhaname
+    ,case when (count(a.id)>0) then 'Да' else null end as anest 
      from SurgicalOperation so
-     left join Anesthesia adr on a.surgicalOPeration_id=so.id
+     left join Anesthesia a on a.surgicalOPeration_id=so.id
      left join MedService ms on ms.id=so.medService_id
 	left join MedCase slo on so.medcase_id=slo.id
     left join MedCase sls on sls.id=slo.parent_id
@@ -364,9 +365,10 @@
 	left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
 	left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 	left join VocServiceStream vss on vss.id=slo.serviceStream_id
+	left join VocHospitalAspect vha on vha.id=so.aspect_id
 	where ${whereSql} 
 	group by so.id,pat.id,pat.lastname,pat.firstname,pat.middlename,ss.code,vss.name
-	,slo.Entrancetime,slo.dateStart,so.operationDate,so.operationTime
+	,slo.Entrancetime,slo.dateStart,so.operationDate,so.operationTime,ms.name,vha.name,ms.code
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
    
@@ -429,6 +431,8 @@
     				    </msh:table>
     				    			<%    					
     				}
+
+
     			
     				
     				}} else if (view!=null && (view.equals("1"))) {

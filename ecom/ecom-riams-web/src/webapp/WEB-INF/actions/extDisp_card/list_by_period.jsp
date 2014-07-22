@@ -16,6 +16,7 @@
 	<tiles:put name='body' type='string' >
   <%
   	String typeGroup =ActionUtil.updateParameter("ExtDispAction","typeGroup","1", request) ;
+  	String typePaid =ActionUtil.updateParameter("ExtDispAction","typePaid","3", request) ;
 %>
 		<msh:form action="extDisp_journal_card.do" defaultField="beginDate">
 			<msh:panel>
@@ -41,6 +42,21 @@
 			<msh:row>
 				<msh:autoComplete property="workFunction" label="Рабочая функция" vocName="workFunction" fieldColSpan="3" horizontalFill="true"/>
 			</msh:row>
+			<msh:row>
+				<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" fieldColSpan="3" horizontalFill="true"/>
+			</msh:row>
+        <msh:row>
+	        <td class="label" title="Оплата (typePaid)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировки общие:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typePaid" value="1"> оплаченные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typePaid" value="2"> не оплаченные
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typePaid" value="3"> все
+	        </td>
+        </msh:row>
         <msh:row>
 	        <td class="label" title="Группировка (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировки общие:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -84,26 +100,29 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="10"> свод по раб.функции
 	        </td>        
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="11"> свод по ЛПУ
+	        </td>        
         </msh:row>	
         <msh:row>
         	<td>Группировки по отчету</td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="11"> свод по возрастным категориям
+	        	<input type="radio" name="typeGroup" value="12"> свод по возрастным категориям
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="12"> свод по факторам риска
+	        	<input type="radio" name="typeGroup" value="13"> свод по факторам риска
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="13"> свод по группам здоровья
+	        	<input type="radio" name="typeGroup" value="14"> свод по группам здоровья
 	        </td>
         </msh:row>			
         <msh:row>
         	<td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="14"> свод по заболеваниям
+	        	<input type="radio" name="typeGroup" value="15"> свод по заболеваниям
 	        </td>     
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeGroup" value="15"> свод по специалистам и услугам 
+	        	<input type="radio" name="typeGroup" value="16"> свод по специалистам и услугам 
 	        </td>     
         </msh:row>
         <msh:row>
@@ -163,11 +182,17 @@
 		StringBuilder sqlAdd = new StringBuilder() ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("dispType","edc.dispType_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("workFunction","edc.workFunction_id", request)) ;
+		sqlAdd.append(ActionUtil.setParameterFilterSql("lpu","lpu.id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("ageGroup","edc.ageGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("healthGroup","edc.healthGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("socialGroup","edc.socialGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("risk","edr.dispRisk_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("service","eds.serviceType_id", request)) ;
+		if (typePaid!=null &&typePaid.equals("1")) {
+			sqlAdd.append(" and (edc.notPaid is null or edc.notPaid='0')") ;
+		} else if (typePaid!=null &&typePaid.equals("2")) {
+			sqlAdd.append(" and edc.notPaid='1'") ;
+		}
 		request.setAttribute("sqlAppend", sqlAdd.toString()) ;
 		%>
 		<% if (typeGroup!=null && typeGroup.equals("1") ) {%>
@@ -189,6 +214,8 @@ p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,edc.isServiceIndication as cntIsServiceIndication
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
@@ -259,6 +286,7 @@ from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient wp on wp.id=w.person_id
 left join Patient p on p.id=edc.patient_id
 left join Address2 a on a.addressid=p.address_addressid
@@ -329,6 +357,7 @@ from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient wp on wp.id=w.person_id
 left join Patient p on p.id=edc.patient_id
 left join Address2 a on a.addressid=p.address_addressid
@@ -388,6 +417,8 @@ select '&dispType='||ved.id,ved.name,ved.code,count(distinct edc.id) as cntAll
 
  from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
 left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
@@ -405,9 +436,9 @@ order by ved.code
 				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Тип доп.диспансеризации" property="2" />
-					<msh:tableColumn columnName="Код" property="3" />
-					<msh:tableColumn columnName="Кол-во оформленных карт" property="4" />
-					<msh:tableColumn columnName="Кол-во, направ. на след. этап" property="5" />
+					<msh:tableColumn isCalcAmount="true" columnName="Код" property="3" />
+					<msh:tableColumn isCalcAmount="true" columnName="Кол-во оформленных карт" property="4" />
+					<msh:tableColumn isCalcAmount="true" columnName="Кол-во, направ. на след. этап" property="5" />
 				</msh:table>
 
 			</msh:section>
@@ -424,6 +455,8 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id as id
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -461,6 +494,8 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&dispRisk='||vedr.id as id
 from ExtDispRisk edr
 left join ExtDispCard edc on edr.card_id=edc.id
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -508,6 +543,8 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&healthGroup='||coalesce(v
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
@@ -570,6 +607,8 @@ select '&dispType='||ved.id||'&service='||veds.id as id
 ,count(distinct case when (eds.dtype='ExtDispExam' and eds.isPathology='1' or eds.dtype='ExtDispVisit' and eds.recommendation!='')  then edc.id else null end) as cntAll2
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 left join ExtDispService eds on eds.card_id=edc.id
 left join VocExtDispService veds on eds.serviceType_id=veds.id
@@ -621,6 +660,8 @@ select '&dispType='||ved.id||'&ageGroup='||vedag.id||'&mkb='||substring(mkb.code
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join Patient p on p.id=edc.patient_id
@@ -662,6 +703,7 @@ left join ExtDispRisk edr on edr.card_id=edc.id
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient wp on wp.id=w.person_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
@@ -688,13 +730,53 @@ order by wp.lastname
 
 			</msh:section>
 
-
-
-
-
-
-
 	<%} else if (typeGroup!=null&& typeGroup.equals("11")) {%>
+			<msh:section title="Свод по ЛПУ за ${beginDate}-${finishDate} ">
+			<ecom:webQuery name="extDispSwod" nativeSql="
+select '&dispType='||ved.id||'&lpu='||lpu.id as id
+,lpu.name as vedrname
+,count(distinct case when vs.omcCode='1' then edc.id else null end) as cntM
+,count(distinct case when vs.omcCode='2' then edc.id else null end) as cntW
+,count(distinct edc.id) as cntAll
+from ExtDispCard edc
+left join ExtDispRisk edr on edr.card_id=edc.id
+left join WorkFunction wf on wf.id=edc.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
+left join Patient wp on wp.id=w.person_id
+left join Patient p on p.id=edc.patient_id
+left join VocSex vs on vs.id=p.sex_id
+left join VocExtDisp ved on ved.id=edc.dispType_id
+left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
+left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
+left join VocExtDispAgeGroup vedag on vedag.id=edc.ageGroup_id
+left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
+left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
+where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+${sqlAppend}
+group by ved.id,lpu.id,lpu.name
+order by lpu.name
+			"/>
+
+				<msh:table name="extDispSwod" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				idField="1">
+					<msh:tableColumn columnName="Раб.функция" property="2" />
+					<msh:tableColumn columnName="Кол-во мужчин" isCalcAmount="true" property="3" />
+					<msh:tableColumn columnName="Кол-во женщин" isCalcAmount="true" property="4" />
+					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="5" />
+				</msh:table>
+
+			</msh:section>
+
+
+
+
+
+
+
+	<%} else if (typeGroup!=null&& typeGroup.equals("12")) {%>
 			<msh:section title="Свод по группам возрастов за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispAgeSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id as id
@@ -705,6 +787,8 @@ select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id as id
 ,count(distinct edc.id) as cntAll
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -731,7 +815,7 @@ order by vedarg.code
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("12")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("13")) {%>
 			<msh:section title="Свод по факторам риска за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&dispRisk='||vedr.id as id,ved.name as vedname
@@ -744,6 +828,8 @@ from ExtDispRisk edr
 left join ExtDispCard edc on edr.card_id=edc.id
 left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
 left join VocExtDisp ved on ved.id=edc.dispType_id
@@ -770,7 +856,7 @@ order by vedr.id,vedarg.code
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("13")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("14")) {%>
 			<msh:section title="Свод по группам здоровья за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&healthGroup='||coalesce(vedhg.id,'-1') as id,ved.name as vedname
@@ -792,6 +878,8 @@ select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&healthGroup='||coa
 from ExtDispCard edc
 left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join Patient p on p.id=edc.patient_id
 left join VocSex vs on vs.id=p.sex_id
@@ -840,7 +928,7 @@ order by vedhg.name,vedarg.code
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("14")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("15")) {%>
 			<msh:section title="Свод по заболеваниям за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&mkb='||substring(mkb.code,1,3) as id,ved.name as vedname
@@ -852,6 +940,8 @@ select '&dispType='||ved.id||'&ageReportGroup='||vedarg.id||'&mkb='||substring(m
 from ExtDispCard edc
 left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
 left join WorkFunction wf on wf.id=edc.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 left join ExtDispRisk edr on edr.card_id=edc.id
 left join Patient p on p.id=edc.patient_id
@@ -880,7 +970,7 @@ order by substring(mkb.code,1,3),vedarg.name
 
 			</msh:section>
 
-	<%} else if (typeGroup!=null&& typeGroup.equals("15")) {%>
+	<%} else if (typeGroup!=null&& typeGroup.equals("16")) {%>
 			<msh:section title="Свод по услугам за ${beginDate}-${finishDate} ">
 			<ecom:webQuery name="extDispSwod" nativeSql="
 select '&dispType='||ved.id||'&workFunction='||wf.id||'&service='||veds.id as id
@@ -897,6 +987,7 @@ from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
+left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient wp on wp.id=w.person_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 left join ExtDispService eds on eds.card_id=edc.id
