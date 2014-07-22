@@ -51,9 +51,10 @@
 		    	<msh:section title="Палаты" createRoles="/Policy/Mis/WorkPlace/HospitalRoom/Create" 
 		    		createUrl="entityParentPrepareCreate-mis_hospitalRoom.do?id=${param.id}" >
 		    		<ecom:webQuery  name="hospitalRoom" nativeSql="select wp.id
-		    		,wp.name as wpname,ml.name as mlname, wp.bedCapacity as wpbedCapacity
+		    		,wp.name as wpname,ml.name as mlname, cntBed.name as wpbedCapacity
 		    		from WorkPlace wp 
 		    		left join MisLpu ml on ml.id=wp.lpu_id
+		    		left join vocCountBedInHospitalRoom cntBed on cntBed.id=wp.countBed_io
 		    		where wp.parent_id='${param.id}' and wp.dtype='HospitalRoom'"/>
 		    		<msh:table idField="1" name="hospitalRoom"  action="entityParentView-mis_hospitalRoom.do">
 		    			<msh:tableColumn property="3" columnName="Отделение"/>
