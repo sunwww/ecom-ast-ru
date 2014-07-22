@@ -20,6 +20,17 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String getSexByOmccode(String aOmccode,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocSex where omcCode='"+aOmccode+"'",1) ;
+        if (list.isEmpty()) {
+            return "" ;
+        } else {
+            WebQueryResult wqr = list.iterator().next() ;
+            return new StringBuilder().append(wqr.get1()).append("#").append(wqr.get2()).toString() ;
+        }
+    }
+
 	public String editColorType(Long aPatient,String aColorTypeCurrent, HttpServletRequest aRequest) throws NamingException  {
 		String colorType="1" ;
 		if (aColorTypeCurrent!=null && aColorTypeCurrent.trim().equals("1")) {
