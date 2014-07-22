@@ -212,4 +212,12 @@ public class ExtDispCardForm extends IdEntityForm{
 
 	/** Возраст вычисляемый */
 	private String theAge;
+	/** К оплате не принято */
+	@Comment("К оплате не принято")
+	@Persist
+	public Boolean getNotPaid() {return theNotPaid;}
+	public void setNotPaid(Boolean aNotPaid) {theNotPaid = aNotPaid;}
+
+	/** К оплате не принято */
+	private Boolean theNotPaid;
 }

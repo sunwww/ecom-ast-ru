@@ -1245,7 +1245,7 @@ function printConsentBySlo(aCtx,aParams) {
 	var ret = new java.util.ArrayList() ;
 	ret.add(parDep) ;
 	var ret1 = new java.util.ArrayList() ;
-	var params=[["consent",5],["direct",1],["rejection",3]] ;
+	var params=[["consent",10],["direct",3],["rejection",5]] ;
 	//throw +aParams.get("consent4") ;
 	for (var i0=0;i0<params.length;i0++) {
 		var par=params[i0] ;

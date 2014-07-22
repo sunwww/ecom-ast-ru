@@ -274,7 +274,7 @@ public class PatientServiceBean implements IPatientService {
 			String pol[] = aPolicy.split("#") ;
 			sql = new StringBuilder() ;
 			sql.append("select id,omcCode||' '||name from REG_IC where omcCode='").append(pol[0]).append("'" ) ;
-			list.clear() ;
+			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 			if (list.size()>0) {
 				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
