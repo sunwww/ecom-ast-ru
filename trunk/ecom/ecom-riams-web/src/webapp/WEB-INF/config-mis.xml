@@ -209,6 +209,7 @@
 		<form-bean name="mis_workPlaceForm" type="ru.ecom.mis.ejb.form.lpu.WorkPlaceForm" />
 		<form-bean name="mis_phonePlaceForm" type="ru.ecom.mis.ejb.form.lpu.PhonePlaceForm" />
 		<form-bean name="mis_buildingPlaceForm" type="ru.ecom.mis.ejb.form.lpu.BuildingPlaceForm" />
+		<form-bean name="mis_userCompForm" type="ru.ecom.mis.ejb.form.lpu.UserComputerForm" />
 		<form-bean name="mis_floorBuildingForm" type="ru.ecom.mis.ejb.form.lpu.FloorBuildingForm" />
 		<form-bean name="mis_hospitalRoomForm" type="ru.ecom.mis.ejb.form.lpu.HospitalRoomForm" />
 		<form-bean name="mis_hospitalBedForm" type="ru.ecom.mis.ejb.form.lpu.HospitalBedForm" />
