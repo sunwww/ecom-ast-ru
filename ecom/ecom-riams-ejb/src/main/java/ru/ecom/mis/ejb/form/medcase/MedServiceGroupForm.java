@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.MedServiceGroup;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,7 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 @EntityForm
-@EntityFormPersistance(clazz=MedService.class)
+@EntityFormPersistance(clazz=MedServiceGroup.class)
 @Comment("Медицинская услуга")
 @WebTrail(comment = "Медицинская услуга"
 	, nameProperties= "name"
