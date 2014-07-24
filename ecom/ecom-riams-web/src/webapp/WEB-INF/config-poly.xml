@@ -40,6 +40,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_period.jsp"/>
         </action>
+        <action path='doc_list_by_period' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='extDisp_journalForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/doc_discharge/list_by_period.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_discharge/list_by_period.jsp"/>
+        </action>
     
         <action path='/smo_ticketsByUser' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
