@@ -1,9 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
+	<tiles:put name="style" type="string">
+	<style type=text/css>
+	object.hiddenObject
+    {
+        visibility: hidden;
+        width: 0px;
+        height: 0px;
+        margin: 0px;
+        padding: 0px;
+        border-style: none;
+        border-width: 0px;
+        max-width: 0px;
+        max-height: 0px;
+    }
+	</style>
+	</tiles:put>
   <tiles:put name="title" type="string">
     <msh:ifInRole roles="/Policy/MainMenu/Patient">
     	<msh:title mainMenu="Patient" title="Поиск персон" />
@@ -15,7 +31,7 @@
   <tiles:put name="side" type="string">
   <msh:ifInRole roles="/Policy/MainMenu/Patient">
     <msh:sideMenu guid="5120ac2f-43a7-4204-a2e7-187cf4969bcc">
-      <msh:sideLink roles="/Policy/Mis/Patient/Create" key="ALT+N" params="lastname" action="/entityPrepareCreate-mis_patient" name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+      <msh:sideLink roles="/Policy/Mis/Patient/Create" key="ALT+N" params="lastname,hiddendata" action="/entityPrepareCreate-mis_patient" name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
     </msh:sideMenu>
     <msh:sideMenu>
     	<msh:sideLink roles="/Policy/Mis/Patient/SocialCard" key="ALT+2" action="/findSocPat.do" name="Поиск персоны из соц.карты" title="Поиск персоны из соц.карты"/>
@@ -31,6 +47,13 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
+	<object id="cadesplugin"  class="hiddenObject" type="application/x-cades">
+    </object>
+    <applet code="CommRead" archive="js-mis_patient-CommRead.do, js-mis_patient-jssc.do, js-mis_patient-barcode.do" width=1 height=1>
+    <param name = "MAYSCRIPT" value = "TRUE">
+    <param name = "comport" value = "COM3">
+    </applet>
+    
   <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
 	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
 	    	styleId="stac_findSlsByStatCard"
@@ -92,6 +115,8 @@
           <msh:textField property="lastname" label="ФИО, полис или мед. карта" size="40" guid="56502d8a-33ae-463c-910b-59625f2d2778" />
           <td>
             <input type="submit" value="Найти" />
+            <input type="button" onclick="showcmdpasPassword()" value="Найти по УЭК" />
+            <input type="hidden" name="hiddendata" id="hiddendata">
           </td>
         </msh:row>
         <msh:row guid="b729833a-a47b-437e-8d1c-b3362a03ce80">
@@ -99,6 +124,8 @@
         </msh:row>
       </msh:panel>
     </msh:form>
+        <tags:password command="ShowCardData(aObj)" name="cmdpas" title="Ввод пароля"/>
+    
    </msh:ifInRole>
     <%  if(request.getAttribute("list") != null) {  %>
     <msh:ifInRole roles="/Policy/MainMenu/Patient">
@@ -118,12 +145,78 @@
      
   </tiles:put>
   <tiles:put name="javascript" type="string">
-    <script type="text/javascript">// <![CDATA[//
+    <script type="text/javascript">
     	
     	try { lpuAreaAutocomplete.setParent(lpuAutocomplete); } catch (e) {} // FIXME forms
     	$('lastname').focus() ;
     	$('lastname').select() ;
-    //]]></script>
+    
+	
+    var CADESCOM_CADES_X_LONG_TYPE_1 = 0x5d;
+    var CADESCOM_CADES_BES = 1;
+    var CAPICOM_CURRENT_USER_STORE = 2;
+    var CADESCOM_ENCODE_BASE64 = 0;
+    var CADESCOM_ENCODE_BINARY = 1;
+    var CAPICOM_MY_STORE = "My";
+    var CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED = 2;
+    var CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME = 1;
+    var CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME = 0;
+    var CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME = 1;
+    function GetErrorMessage(e) {
+        var err = e.number;
+        if (!err) {
+			err = e;
+        } else if (e.number) {
+            err += " (" + e.number + ")";
+        }
+        return err;
+    }
+	
+    function CreateObject(name) {
+        switch (navigator.appName) {
+            case "Microsoft Internet Explorer":
+                return new ActiveXObject(name);
+            default:
+                var userAgent = navigator.userAgent;
+                if (userAgent.match(/Trident\/./i)) { // IE11
+                    return new ActiveXObject(name);
+                }
+                var cadesobject = document.getElementById("cadesplugin");
+                return cadesobject.CreateObject(name);
+        }
+    }
+    
+
+    function ShowCardData(sPin1) {
+        try {
+            var oCard = CreateObject("CAdESCOM.UECard");
+            
+			
+            oCard.SetPin1(sPin1);
+            var oCardholderData = oCard.CardholderData;
+            oText = document.getElementById("lastname");
+            CardHolderDOB = oCardholderData.DateOfBirth[6]+oCardholderData.DateOfBirth[7]
+            +"."+oCardholderData.DateOfBirth[4]+oCardholderData.DateOfBirth[5]
+            +"."+oCardholderData.DateOfBirth[0]+oCardholderData.DateOfBirth[1]
+            +oCardholderData.DateOfBirth[2]+oCardholderData.DateOfBirth[3];
+            oText.value = oCardholderData.CardholderLastName + " " 
+            + oCardholderData.CardholderFirstName + " " 
+            + oCardholderData.CardholderSecondName + " "
+            + CardHolderDOB;
+            $('hiddendata').value= oCardholderData.CardholderLastName + "#" 
+            + oCardholderData.CardholderFirstName + "#" 
+            + oCardholderData.CardholderSecondName + "#"
+            + CardHolderDOB + "#" + oCardholderData.OMSNumber+"#"
+            + oCardholderData.SocialAccountNumber + "#" + oCardholderData.Sex; 
+            document.forms[0].submit() ;
+            
+
+        } catch (err) {
+            alert("Ошибка: " + GetErrorMessage(err));
+            return;
+        }
+    }
+	</script>
   </tiles:put>
 </tiles:insert>
 
