@@ -19,7 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property = "parent", parentForm = WorkPlaceForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/WorkPlace")
 @Subclasses(value = { ConsultingRoomForm.class, HospitalRoomForm.class
-		,OperatingRoomForm.class,BuildingPlaceForm.class, FloorBuildingForm.class })
+		,OperatingRoomForm.class,BuildingPlaceForm.class, FloorBuildingForm.class,UserComputerForm.class })
 public class WorkPlaceForm extends IdEntityForm {
 	/** Название */
 	@Comment("Название")
