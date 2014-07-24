@@ -124,7 +124,7 @@
         </msh:row>
       </msh:panel>
     </msh:form>
-        <tags:password command="ShowCardData(aObj)" name="cmdpas" title="Ввод пароля"/>
+        <tags:mis_password command="ShowCardData(aObj)" name="cmdpas" title="Ввод пароля"/>
     
    </msh:ifInRole>
     <%  if(request.getAttribute("list") != null) {  %>
