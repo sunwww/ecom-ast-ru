@@ -870,27 +870,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </script>
     </msh:ifInRole>
   
-  <msh:ifFormTypeIsCreate formName="mis_patientForm">
-  <script type="text/javascript">
-  	if ('${param.lastname}'!="") {
-  		var lfm='${param.lastname}' ;
-  		var lfm = subvalue(lfm,' ','lastname');
-  		var lfm = subvalue(lfm,' ','firstname');
-  		var lfm = subvalue(lfm,' ','middlename');
-  		
-  	}
-  	function subvalue(aValue,aDel,aField) {
-  		var ind = lfm.indexOf(aDel) ;
-  		if (ind==-1) {
-  			if ($(aField).value=="") $(aField).value=aValue ;
-  			return "" ;
-  		} else {
-  			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
-  			return lfm.substring(ind+1) ;
-  		}
-  	}
-  </script>
-  </msh:ifFormTypeIsCreate>
+
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
@@ -1211,6 +1191,51 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       </msh:ifFormTypeIsCreate>
       
     </msh:ifInRole>
+      <msh:ifFormTypeIsCreate formName="mis_patientForm">
+  <script type="text/javascript">
+  	if ('${param.lastname}'!="") {
+  		var lfm='${param.lastname}' ;
+  		var lfm1='${param.hiddendata}' ;
+  		if (lfm1!=null && lfm1!='') {
+  	  		var lfm1 = subvalue(lfm1,'#','lastname');
+  	  		var lfm1 = subvalue(lfm1,'#','firstname');
+  	  		var lfm1 = subvalue(lfm1,'#','middlename');
+  	  		var lfm1 = subvalue(lfm1,'#','birthday');
+  	  		var lfm1 = subvalue(lfm1,'#','commonNumber');
+  	  		var lfm1 = subvalue(lfm1,'#','snils');
+  	  		var lfm1 = subvalue(lfm1,'#','sex');
+  	  		if ($('sex').value!='') {
+  	  		PatientService.getSexByOmccode($('sex').value, {
+  	            callback: function(aResult) {
+  	            	aResult=subvalue(aResult,'#','sex');
+  	            	aResult=subvalue(aResult,'#','sexName');
+  	            }});
+  	  		}
+  	  		var lfm1 = subvalue(lfm1,'#','phone');
+  	  		var sex="" ;
+  	  		checkPatientByCommonNumber();
+  	  		
+	
+  		} else {
+  	  		var lfm = subvalue(lfm,' ','lastname');
+  	  		var lfm = subvalue(lfm,' ','firstname');
+  	  		var lfm = subvalue(lfm,' ','middlename');
+  		}
+
+  		
+  	}
+  	function subvalue(aValue,aDel,aField) {
+  		var ind = aValue.indexOf(aDel) ;
+  		if (ind==-1) {
+  			if ($(aField).value=="") $(aField).value=aValue ;
+  			return "" ;
+  		} else {
+  			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
+  			return aValue.substring(ind+1) ;
+  		}
+  	}
+  </script>
+  </msh:ifFormTypeIsCreate>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm" guid="659a5e0c-3949-4788-a96b-846f3104205b" />
