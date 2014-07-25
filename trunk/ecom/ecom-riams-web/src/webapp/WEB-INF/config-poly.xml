@@ -40,13 +40,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_period.jsp"/>
         </action>
-        <action path='doc_list_by_period' type='ru.ecom.web.actions.base.ForwardAction'               
+        <action path='/mis_patient_by_age' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='extDisp_journalForm'
                 validate='true'
                 scope='session'
-                input='/WEB-INF/actions/doc_discharge/list_by_period.jsp'
+                input='/WEB-INF/actions/mis_patient/list_by_age.jsp'
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_discharge/list_by_period.jsp"/>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_patient/list_by_age.jsp"/>
         </action>
     
         <action path='/smo_ticketsByUser' type='ru.ecom.web.actions.base.ForwardAction'
