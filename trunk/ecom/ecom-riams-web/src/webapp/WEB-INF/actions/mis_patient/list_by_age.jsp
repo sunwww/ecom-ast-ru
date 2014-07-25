@@ -13,7 +13,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Ежедневный отчет по стационару</msh:title>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Разбивка пациентов по возрастам</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_everyday"/>
@@ -31,14 +31,6 @@
     
   	%>
     <msh:form action="/mis_patient_by_age.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <input type="hidden" name="s" id="s" value="HospitalPrintService" />
-    <input type="hidden" name="m" id="m" value="printReestrByDay" />
-    <input type="hidden" name="id" id="id" value=""/>
-    <input type="hidden" name="typeView" id="typeView" value="1"/>
-        <input type='hidden' id="sqlText1" name="sqlText1">
-        <input type='hidden' id="sqlText2" name="sqlText2">
-        <input type='hidden' id="infoText1" name="infoText1">
-        <input type='hidden' id="infoText2" name="infoText2">
       <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -46,7 +38,9 @@
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBeginYear" label="Год" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
       </msh:row>
-
+        <msh:row>
+        	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
+        </msh:row>
     </msh:panel>
     </msh:form>
        <script type='text/javascript'>
@@ -116,6 +110,7 @@
     				//request.setAttribute("groupBy", groupBy) ;
     				if (dtype.equals("Patient")) {
     			%>
+    			
     <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
     select pat.id
     ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
@@ -127,7 +122,20 @@
 	where pat.deathDate is null ${whereSql} 
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
-   
+   <msh:section>
+       <msh:sectionTitle>
+    
+    	    <form action="print-mis_patient_by_age.do" method="post" target="_blank">
+	    Реестр пациентов
+	    <input type='hidden' name="sqlText" id="sqlText" value="${reestr_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Список пациентов, рожденных ${param.month}.${param.year}  на ${param.dateBeginYear} год">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    </msh:sectionTitle>
+    <msh:sectionContent>
     <msh:table action="entityView-mis_patient.do"
     viewUrl="entityShortView-mis_patient.do"
      name="reestr" idField="1">
@@ -139,7 +147,8 @@
     	<msh:tableColumn property="6" columnName="Адрес"/>
     	<msh:tableColumn property="7" columnName="Доп. диспансеризации за ${param.dateBeginYear}"/>
     </msh:table>
-    			
+    </msh:sectionContent>
+   </msh:section> 			
     				    			<%    					
     				}
     				} else {
@@ -188,29 +197,8 @@ order by to_char(pat.birthday,'yyyy') desc
     	<% }   %>
     
 		<script type="text/javascript">
-	    function find() {
-	    	var frm = document.forms[0] ;
-	    	frm.target='' ;
-	    	frm.action='stac_everyday_report.do' ;
-	    }
-	    function print(aFile) {
-	    	var frm = document.forms[0] ;
-	    	frm.m.value="printReestrByDay" ;
-	    	frm.s.value="HospitalPrintService" ;
-	    	//frm.sqlText1.value = "${journal_priem_sql}" ;
-	    	//frm.sqlText2.value = "${journal_priem_denied_sql}" ;
-	    	frm.target='_blank' ;
-	    	frm.action='print-'+aFile+'.do' ;
-	    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
-	    		+getCheckedRadio(frm,"typeHour")+":"
-	    		+getCheckedRadio(frm,"typeDate")+":"
-	    		+getCheckedRadio(frm,"typePatient")+":"
-	    		+getCheckedRadio(frm,"typeDepartment")+":"
-	    		+$('dateBegin').value+":"
-	    		+$('pigeonHole').value+":"
-	    		+$('department').value+":"
-	    		+$('serviceStream').value;
-	    }
+	    
+	    
 		</script>
   </tiles:put>
 </tiles:insert>
