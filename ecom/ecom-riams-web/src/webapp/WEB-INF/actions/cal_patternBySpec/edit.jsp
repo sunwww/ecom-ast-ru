@@ -23,6 +23,105 @@
 				<msh:row>
 					<msh:autoComplete size="100" property="calendarType" label="Тип календаря" vocName="vocWorkCalendarType" horizontalFill="true" />
 				</msh:row>
+				<msh:ifFormTypeIsCreate formName="cal_patternBySpecForm">
+					<tr>
+						<td>Выберите алгоритм календаря:</td>
+						<td>профдень</td>
+						<td>определенные даты</td>
+						<td>раб.неделя</td>
+						<td>дни недели</td>
+					</tr>
+					<msh:row>
+						<msh:separator label="Проф.день в зависимости от дня недели" colSpan="4"/>
+					</msh:row>
+				<msh:row>
+					<msh:autoComplete size="40" property="prophDayAlgorithmForm.monthOrder" label="Порядок недели в месяце" vocName="vocWeekMonthOrder" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" size="40" property="prophDayAlgorithmForm.weekDay" label="День недели" vocName="vocWeekDay" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:separator label="Проф.день в зависимости от числа" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="prophDayAlgorithmForm.monthDay" label="Число"/>
+				</msh:row>
+				<msh:row>
+					<msh:separator label="Алгоритм за определенный период" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="datesAlgorithmForm.dateFrom" label="Начиная с даты"/>
+					<msh:textField property="datesAlgorithmForm.dateTo" label="Заканчивая датой"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					 fieldColSpan="3" parentId="cal_datesAlgorithmForm.pattern" property="datesAlgorithmForm.dayPattern" label="Шаблон дня рабочего календаря" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:separator label="Алгоритм по дням недели" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					 size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.monday" label="Понедельник" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.tuesday" label="Вторник" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.wednesday" label="Среда" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.thursday" label="Четверг" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.friday" label="Пятница" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.saturday" label="Суббота" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete 
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					size="100" parentId="cal_weekDaysAlgorithmForm.pattern" property="weekDaysAlgorithmForm.sunday" label="Воскресенье" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="weekDaysAlgorithmForm.parity" label="Тип дня" vocName="vocDayParity" horizontalFill="true"/>
+				</msh:row>
+				<msh:row>
+					<msh:separator label="Алгоритм раб.недели" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="weekAlgorithmForm.workWeek" label="Рабочая недели" vocName="vocWorkWeek" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete
+					 viewAction="entityParentView-cal_dayPattern.do" shortViewAction="entityShortView-cal_dayPattern.do" 
+					 size="100" parentId="cal_weekAlgorithmForm.pattern" property="weekAlgorithmForm.dayPattern" label="Шаблон дня" vocName="workCalendarDayPattern" horizontalFill="true" />
+				</msh:row>
+				
+				<msh:row>
+					<msh:autoComplete property="weekAlgorithmForm.parity" label="Тип дня" vocName="vocDayParity" horizontalFill="true"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="weekAlgorithmForm.calendarParity" label="Тип четности" vocName="vocWorkCalendarParity" horizontalFill="true" />
+				</msh:row>				
+				<msh:row>
+					<msh:autoComplete size="100" property="weekAlgorithmForm.calendarParity" label="Тип четности" vocName="vocWorkCalendarParity" horizontalFill="true" />
+				</msh:row>
+				
+				</msh:ifFormTypeIsCreate>
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
     	</msh:form>
