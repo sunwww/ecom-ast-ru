@@ -376,29 +376,34 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
         	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
         </msh:row>        <!--  ПРИКРЕПЛЕНИЕ -->
-        <!-- Vasiliy start coding here -->
-        <msh:separator colSpan="4" label="test polis and prik" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
-        <msh:row styleId="rowCheckBoxPolisPrik" guid="c17b2812-85c2-4042-9924-ae99dc3f0000">
-          <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" fieldColSpan="3" guid="9988ef1b-490f-4290-996b-e559034784c0" />
-          <msh:checkBox property="createNewAttachment" label="Создать прикрепление" fieldColSpan="3" guid="9988ef1b-490f-4290-996b-e559034784c0" />
-        </msh:row>
         
-        <!-- Vasiliy ends coding here -->
-        <msh:separator colSpan="4" label="Прикрепленное ЛПУ" guid="d4871cf3-d393-47e3-9d7b-9a5625baae82" />
-        <msh:row guid="65c002c9-17f3-4a24-8cf2-774a62d6453b">
+        <!-- ----------------------------------Vasiliy start coding here -->
+       <%--   <msh:ifFormTypeIsView formName="mis_patientForm"> --%>
+        <msh:separator colSpan="4" label="Добавить полис и прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
+        <msh:row styleId="rowCheckBoxPolisPrik" guid="c17b2812-85c2-4042-9924-ae99dc3f0000">
+          <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" guid="9988ef1b-490f-4290-996b-e559034784c0" />
+          <msh:checkBox property="createNewAttachment" label="Создать прикрепление" guid="9988ef1b-490f-4290-996b-e559034784c0" />
+        </msh:row>
+        <%-- </msh:ifFormTypeIsView> --%>
+        <!-- --------------------------------------------Vasiliy ends coding here -->
+ <%--        
+         <msh:separator colSpan="4" label="Прикрепленное ЛПУ" guid="d4871cf3-d393-47e3-9d7b-9a5625baae82" />
+       <msh:row guid="65c002c9-17f3-4a24-8cf2-774a62d6453b">
           <msh:checkBox property="attachedByPolicy" label="Прикреплен по полису" guid="4cf732de-407b-49b7-813d-f9440fd2c7c9" />
           <msh:checkBox property="createAttachedByDepartment" label="Создать новое специальное прикрепление" guid="f5e41829-2a5f-4926-8b5a-48cc79d5f2ed" />
-        </msh:row>
+        </msh:row> 
         <msh:row styleId="rowLpu" guid="c3d89b9f-be12-4923-a9b5-bcfd396b4d37">
           <msh:autoComplete fieldColSpan="3" property="lpu" label="ЛПУ" horizontalFill="true" vocName="mainLpu" guid="7487d6d9-6f9d-491f-a8b6-fa73f32052c3" />
         </msh:row>
         <msh:row styleId="rowLpuArea" guid="ee1200e6-df3d-4c46-ac8f-b5b12b204802">
           <msh:autoComplete fieldColSpan="3" property="lpuArea" label="Участок" horizontalFill="true" vocName="lpuAreaWithParent" guid="8d9ab980-3fe0-44ea-acd2-abb8e95f7fe8" />
         </msh:row>
+        
         <msh:row styleId="rowAttachedOmcPolicy" guid="c4626aba-c909-4976-9326-10f37346f6ff">
           <msh:autoComplete fieldColSpan="3" property="attachedOmcPolicy" label="Полис прикрепления" horizontalFill="true" vocName="policyByPatient" parentId="id" guid="9346f8ff-7500-4710-a057-019719c35826" />
-        </msh:row>
-        <%-- <msh:row styleId="rowCreateNewOmcPolicy" guid="c17b2812-85c2-4042-9924-ae99dc3fcd96">
+        </msh:row> --%>
+        <%-- 
+        <msh:row styleId="rowCreateNewOmcPolicy" guid="c17b2812-85c2-4042-9924-ae99dc3fcd96">
           <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" fieldColSpan="3" guid="9988ef1b-490f-4290-996b-e559034784c0" />
         </msh:row> --%>
         <!--  По какому адресу участка прикреплен -->
@@ -408,16 +413,16 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           </msh:row>
         </msh:ifFormTypeIsView>
         <!-- Вывод прикрепления по адресу -->
-        <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0d5077d7-842c-4d34-a9aa-3fbfd3dfce31">
+<%--         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0d5077d7-842c-4d34-a9aa-3fbfd3dfce31">
           <tr id="rowPatientLpuDiv">
             <td class="label">
-              <label>Прикреплен по адресу:</label>
+             <!--  <label>Прикреплен по адресу:</label> -->
             </td>
             <td colspan="3">
-              <p id="patientLpuDiv" />
+              <p id="patientLpuDiv" /> 
             </td>
           </tr>
-        </msh:ifFormTypeIsNotView>
+        </msh:ifFormTypeIsNotView> --%>
         <!--  Добавление нового полиса -->
         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="817c4185-90ef-4807-ac71-fad06ae151b6">
           <msh:panel colsWidth="15%, 5%, 5%,-" styleId="tableNewOmcPolicy" guid="aada20f1-2321-43bf-a416-ddaf511e15a0">
@@ -447,28 +452,28 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
             </msh:row>
             
           </msh:panel>
-         
-        </msh:ifFormTypeIsNotView>
+        
  <!-- -----------------------------------------------------------Vasiliy start here -->
   
           <msh:panel colsWidth="15%, 5%, 5%,-" styleId="tableNewPrikForm">
-          <msh:separator colSpan="4" label="Прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0010" />
+          <msh:separator colSpan="4" label="Добавление нового прикрепления" guid="d4871cf3-d393-47e3-9d7b-9a5625b0010" />
             	<msh:row>
             		<msh:autoComplete property="attachedForm.attachedType" label="Тип прикрепления" fieldColSpan="3" horizontalFill="true" vocName="vocAttachedType"/>
             	</msh:row>
 				<msh:row styleId='rowLpu'>
-		            <msh:autoComplete fieldColSpan="3" property="lpu" label="ЛПУ2" horizontalFill="true"
+		            <msh:autoComplete fieldColSpan="3" property="attachedForm.lpu" label="ЛПУ" horizontalFill="true"
 		                              vocName="lpu" size="50"/>
 		        </msh:row>
 		        <msh:row styleId='rowLpuArea'>
-		            <msh:autoComplete  fieldColSpan="3" property="area"  label="Участок" horizontalFill="true"
+		            <msh:autoComplete  fieldColSpan="3" property="attachedForm.area"  label="Участок" horizontalFill="true"
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>	 
 		        <msh:row>
-		        	<msh:autoComplete property="attachedForm.dateFrom"  label="Дата прикрепления"/>
-		        	<msh:autoComplete property="attachedForm.dateTo"  label="Дата открепления"/>
+		        	<msh:textField property="attachedForm.dateFrom"  label="Дата прикрепления"/>
+		        	<msh:textField property="attachedForm.dateTo"  label="Дата открепления"/>
 		        </msh:row>
             </msh:panel>
+             </msh:ifFormTypeIsNotView>
           <!-- --------------------------------------------------------------------Vasiliy ends here -->
         <msh:row>
 	        <msh:ifFormTypeIsNotView formName="mis_patientForm">
@@ -1050,19 +1055,22 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
 			}	
 		}
-    	$('tableNewPrikForm').style.display = 'none' ;	    	
-    	$('createAttachedByDepartment').style.visibility = 'hidden' ;
-		$('attachedByDepartmentLabel').style.visibility = 'hidden' ;
+    	    	
+    	//$('createAttachedByDepartment').style.visibility = 'hidden' ;
+		//$('attachedByDepartmentLabel').style.visibility = 'hidden' ;
 	//]]></script>
     <!-- При просмотре -->
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
       <script type="text/javascript">// <![CDATA[//
       		$('buttonShowAddress').style.display = 'none';
-        	showRow('rowCreateNewOmcPolicy',false) ;
-        	$('createAttachedByDepartment').style.display = 'none' ;
-        	$('attachedByDepartmentLabel').style.display = 'none' ;
+        	showRow('tableNewOmcPolicy',false) ;
+        	showRow('tableNewPrikForm',false) ;
+        	//$('tableNewPrikForm').style.display = 'none' ;	
+        	//showRow('rowCreateNewOmcPolicy',false) ;
+        	//$('createAttachedByDepartment').style.display = 'none' ;
+        	//$('attachedByDepartmentLabel').style.display = 'none' ;
         	//alert(!$('attachedByPolicy').checked) ;
-        	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
+        	//showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	
 		//]]>
       if ($('colorType').value) {
@@ -1074,18 +1082,19 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     <!-- Редактирование  -->
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0ac15607-1ca6-4aa0-b9f0-ff3b31cb5a46">
       <script type="text/javascript">// <![CDATA[//
-      	function checkAttached() {
+      showRow('tableNewOmcPolicy',false) ;
+  	showRow('tableNewPrikForm',false) ;
+      	/* function checkAttached() {
 			checkAttachedByDepartment() ;
 			checkAttachedByPolicyOmc() ;
-		}
+		} */
 		
-      	function oncreateNewAttachment() {
+      	function onCreateNewAttachment() {
       		var isCreatedNewAttachment = $('createNewAttachment').checked ;
 			$('tableNewPrikForm').style.display = isCreatedNewAttachment ? 'block' : 'none' ;
-
 		}
       	
-      	function checkAttachedByDepartment() {
+      	/* function checkAttachedByDepartment() {
 			var isAttachedByDepartment = $('createAttachedByDepartment').checked ;
 			if(isAttachedByDepartment) {
 				$('attachedByPolicy').checked = false ;
@@ -1096,18 +1105,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			$('tableNewOmcPolicy').style.display = 'none' ;
 			$('submitButton').disabled = false;
 			showRow('rowAttachedOmcPolicy', false, 'attachedOmcPolicy') ;
-		}
+		} */
 		
 		function checkAttachedByPolicyOmc() {
-			var attachedByPolicy = $('attachedByPolicy').checked ;
-			if(attachedByPolicy) {
+			var attachedByPolicy = $('createNewOmcPolicy').checked ;
+			//var attachedByPolicy = $('attachedByPolicy').checked ;
+			/* if(attachedByPolicy) {
 				$('createAttachedByDepartment').checked = false ;
-			}
-			showRow('rowLpu', attachedByPolicy) ;
-			showRow('rowLpuArea', attachedByPolicy) ;
-			showRow('rowAttachedOmcPolicy', attachedByPolicy) ;
-			showRow('rowPatientLpuDiv', ! attachedByPolicy) ;
-			showRow('rowCreateNewOmcPolicy', attachedByPolicy) ;
+			} */
+			//showRow('rowLpu', attachedByPolicy) ;
+			//showRow('rowLpuArea', attachedByPolicy) ;
+			//showRow('rowAttachedOmcPolicy', attachedByPolicy) ;
+			//showRow('rowPatientLpuDiv', ! attachedByPolicy) ;
+			showRow('tableNewOmcPolicy', attachedByPolicy) ;
+			//showRow('rowCreateNewOmcPolicy', attachedByPolicy) ;
 			onCreateNewOmcPolicyWithFocus(false) ;
 			//$('tableNewOmcPolicy').style.display = attachedByPolicy ? 'block' : 'none' ;
 			$('submitButton').disabled = false;
@@ -1162,13 +1173,13 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 
 		function onCreateNewOmcPolicyWithFocus(aFocus) {
-			var attachedByPolicy = $('attachedByPolicy').checked ;
-			var createdNewAttachment = $('createNewAttachment').checked
+			//var attachedByPolicy = $('attachedByPolicy').checked ;
+			
 			var isCreateNewOmcPolicy = $('createNewOmcPolicy').checked ;//&& attachedByPolicy;
-			showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
+			//showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
 			//if(attachedByPolicy) showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
 			$('tableNewOmcPolicy').style.display = isCreateNewOmcPolicy ? 'block' : 'none' ;
-			$('tableNewPrikForm').style.display = createdNewAttachment ? 'block' : 'none' ;
+			
 			if(aFocus) {
 				showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
 				try {
@@ -1194,23 +1205,23 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			onCreateNewOmcPolicyWithFocus(true) ;
 		}
 		
-        checkPatientLpu();
+        //checkPatientLpu();
 
         //eventutil.addEventListener($('attachedByPolicy'), 'click', checkAttachedByPolicyOmc) ;
-        eventutil.addEventListener($('createAttachedByDepartment'), 'click', checkAttachedByDepartment) ;
+       // eventutil.addEventListener($('createAttachedByDepartment'), 'click', checkAttachedByDepartment) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'click', onCreateNewOmcPolicy) ;
-
-        eventutil.addEventListener($('attachedByPolicy'), 'focus', onCheckBoxFocus) ;
-        eventutil.addEventListener($('attachedByPolicy'), 'blur', onCheckBoxBlur) ;
+        eventutil.addEventListener($('createNewAttachment'), 'click', onCreateNewAttachment) ;
+       // eventutil.addEventListener($('attachedByPolicy'), 'focus', onCheckBoxFocus) ;
+       // eventutil.addEventListener($('attachedByPolicy'), 'blur', onCheckBoxBlur) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'focus', onCheckBoxFocus) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'blur', onCheckBoxBlur) ;
-        eventutil.addEventListener($('createAttachedByDepartment'), 'focus', onCheckBoxFocus) ;
-        eventutil.addEventListener($('createAttachedByDepartment'), 'blur', onCheckBoxBlur) ;
+        //eventutil.addEventListener($('createAttachedByDepartment'), 'focus', onCheckBoxFocus) ;
+        //eventutil.addEventListener($('createAttachedByDepartment'), 'blur', onCheckBoxBlur) ;
 		
 		// проверка по дате рождения для пед. или терап. участков RIAMS-107
         eventutil.addEventListener($('birthday'), 'blur', checkAttachedByPolicyOmc) ;
 
-        checkAttached() ;
+        //checkAttached() ;
         
 		lpuAreaAutocomplete.setParent(lpuAutocomplete);
 		$('tableNewOmcPolicy').style.display = 'none' ;
