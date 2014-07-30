@@ -147,7 +147,7 @@
 			}
 			var policyInfo = "";
 			if (fondPolicy!="") {
-				$('attachedByPolicy').checked =true ;
+				//$('attachedByPolicy').checked =true ;
 				$('createNewOmcPolicy').checked=true ;
 				checkAttachedByPolicyOmc() ;
 				onCreateNewOmcPolicyWithFocus() ;
