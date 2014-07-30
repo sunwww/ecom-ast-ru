@@ -343,8 +343,8 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row>
         
-        <td colspan="2" title="Адрес (nonresidentAddressField)" class="label">
-            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Lheuj адрес:</label>
+        <td colspan="1" title="Адрес (nonresidentAddressField)" class="label">
+            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Другой адрес:</label>
           </td>
           <td colspan="4" class="addressField">
             <input title="АдресNoneField" class=" horizontalFill" id="nonresidentAddressField" name="nonresidentAddressField" size="10" value="Адрес... " type="text" />
@@ -378,13 +378,13 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>        <!--  ПРИКРЕПЛЕНИЕ -->
         
         <!-- ----------------------------------Vasiliy start coding here -->
-       <%--   <msh:ifFormTypeIsView formName="mis_patientForm"> --%>
+         <msh:ifFormTypeIsNotView formName="mis_patientForm"> 
         <msh:separator colSpan="4" label="Добавить полис и прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
         <msh:row styleId="rowCheckBoxPolisPrik" guid="c17b2812-85c2-4042-9924-ae99dc3f0000">
           <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" guid="9988ef1b-490f-4290-996b-e559034784c0" />
           <msh:checkBox property="createNewAttachment" label="Создать прикрепление" guid="9988ef1b-490f-4290-996b-e559034784c0" />
         </msh:row>
-        <%-- </msh:ifFormTypeIsView> --%>
+        </msh:ifFormTypeIsNotView>
         <!-- --------------------------------------------Vasiliy ends coding here -->
  <%--        
          <msh:separator colSpan="4" label="Прикрепленное ЛПУ" guid="d4871cf3-d393-47e3-9d7b-9a5625baae82" />
@@ -462,11 +462,11 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
             	</msh:row>
 				<msh:row styleId='rowLpu'>
 		            <msh:autoComplete fieldColSpan="3" property="attachedForm.lpu" label="ЛПУ" horizontalFill="true"
-		                              vocName="lpu" size="50"/>
+		                              vocName="lpu"/>
 		        </msh:row>
 		        <msh:row styleId='rowLpuArea'>
 		            <msh:autoComplete  fieldColSpan="3" property="attachedForm.area"  label="Участок" horizontalFill="true"
-		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
+		                              parentAutocomplete="attachedForm_lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>	 
 		        <msh:row>
 		        	<msh:textField property="attachedForm.dateFrom"  label="Дата прикрепления"/>
@@ -1094,7 +1094,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			$('tableNewPrikForm').style.display = isCreatedNewAttachment ? 'block' : 'none' ;
 		}
       	
-      	/* function checkAttachedByDepartment() {
+      	function checkAttachedByDepartment() {
 			var isAttachedByDepartment = $('createAttachedByDepartment').checked ;
 			if(isAttachedByDepartment) {
 				$('attachedByPolicy').checked = false ;
@@ -1105,7 +1105,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			$('tableNewOmcPolicy').style.display = 'none' ;
 			$('submitButton').disabled = false;
 			showRow('rowAttachedOmcPolicy', false, 'attachedOmcPolicy') ;
-		} */
+		}
 		
 		function checkAttachedByPolicyOmc() {
 			var attachedByPolicy = $('createNewOmcPolicy').checked ;
@@ -1223,7 +1223,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 
         //checkAttached() ;
         
-		lpuAreaAutocomplete.setParent(lpuAutocomplete);
+		//lpuAreaAutocomplete.setParent(lpuAutocomplete);
 		$('tableNewOmcPolicy').style.display = 'none' ;
 		
 			eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
