@@ -76,13 +76,13 @@ public class ReportParamUtil {
 			 */
 			period.append("(").append(aFieldDate).append(" is null or ").append(aFieldDate).append(">= to_date('").append(aDate).append("','dd.mm.yyyy') )");
 			if (aDtype!=null) period.append(" and ").append(aDtype) ;
-			if (aFieldDate2!=null) period.append("(").append(aFieldDate).append("<= to_date('").append(aDate).append("','dd.mm.yyyy') )");
-			period.append(" (").append(aFieldDate).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
+			if (aFieldDate2!=null) period.append(" and (").append(aFieldDate).append("<= to_date('").append(aDate).append("','dd.mm.yyyy') )");
+			period.append(" and (").append(aFieldDate).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 			period.append(" or ").append(aFieldDate).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 			period.append(" and ").append(aFieldTime).append(">= cast('").append(aTime).append("' as time)");
 			period.append(") ") ;
 			if (aFieldDate2!=null) {
-				period.append(" (").append(aFieldDate2).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
+				period.append(" and (").append(aFieldDate2).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 				period.append(" or ").append(aFieldDate2).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 				period.append(" and ").append(aFieldTime2).append("< cast('").append(aTime).append("' as time)");
 				period.append(") ");
@@ -90,7 +90,7 @@ public class ReportParamUtil {
 		}else {
 			period.append(aFieldDate).append(" > to_date('").append(aDate).append("','dd.mm.yyyy') ");
 			if (aDtype!=null) period.append(" and ").append(aDtype) ;
-			period.append(aFieldDate2).append(" <= to_date('").append(aDate).append("','dd.mm.yyyy') ");
+			period.append(" and ").append(aFieldDate2).append(" <= to_date('").append(aDate).append("','dd.mm.yyyy') ");
 		}
 		return period.toString() ;
 	}
