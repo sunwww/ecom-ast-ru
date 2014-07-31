@@ -49,14 +49,15 @@ public class TemplateWordForm extends IdEntityForm {
 
     /** Пользователь */
     @Comment("Пользователь")
+    @Persist
 	public String getCreateUsername() {return theCreateUsername;}
 	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateCreateDate() {return theCreateDate;}
-	public void setCreateCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
 	
 	/** Дата редактирования */
 	@Comment("Дата редактирования")

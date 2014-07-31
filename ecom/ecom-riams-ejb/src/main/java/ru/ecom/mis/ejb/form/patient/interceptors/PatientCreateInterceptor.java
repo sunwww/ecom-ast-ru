@@ -31,7 +31,7 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 				patient.setPatientSync(new StringBuilder().append("Н").append(patient.getId()).toString()) ;
 			}
 		}
-		if(form.isAttachedByDepartment()) {
+		/*if(form.isAttachedByDepartment()) {
 			// убираем прикрепление по полису, потом SaveInterceptor его прикрепит по адресу
 			patient.setAttachedOmcPolicy(null);
 			patient.setLpu(null);
@@ -49,7 +49,7 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 				throw new IllegalStateException(e);
 			}
 			
-		}
+		}*/
 		
 	}
 }

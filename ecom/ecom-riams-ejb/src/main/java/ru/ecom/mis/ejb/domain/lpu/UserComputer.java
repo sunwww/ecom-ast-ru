@@ -26,6 +26,20 @@ public class UserComputer extends WorkPlace {
 	public SecUser getUser() {return theUser;}
 	public void setUser(SecUser aUser) {theUser = aUser;}
 
+	/** Com порт */
+	@Comment("Com порт")
+	public String getComPort() {return theComPort;}
+	public void setComPort(String aComPort) {theComPort = aComPort;}
+
+	/** Динамический адрес */
+	@Comment("Динамический адрес")
+	public String getDynamicIp() {return theDynamicIp;}
+	public void setDynamicIp(String aDynamicIp) {theDynamicIp = aDynamicIp;}
+
+	/** Динамический адрес */
+	private String theDynamicIp;
+	/** Com порт */
+	private String theComPort;
 	/** Пользователь */
 	private SecUser theUser;
 	/** Адрес */

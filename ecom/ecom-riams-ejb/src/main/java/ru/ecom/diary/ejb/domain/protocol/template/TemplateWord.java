@@ -44,8 +44,8 @@ public class TemplateWord extends BaseEntity {
 
 	/** Дата создания */
 	@Comment("Дата создания")
-	public Date getCreateCreateDate() {return theCreateDate;}
-	public void setCreateCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
 	
 	/** Дата редактирования */
 	@Comment("Дата редактирования")

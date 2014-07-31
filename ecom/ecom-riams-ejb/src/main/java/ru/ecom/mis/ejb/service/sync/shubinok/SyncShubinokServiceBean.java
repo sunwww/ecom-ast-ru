@@ -298,8 +298,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         aPatient.setSex(findEntity(VocSex.class,"omcCode",aEntry.getSex()));
         aPatient.setSocialStatus(findEntity(VocSocialStatus.class,"omcCode",aEntry.getInsuranceType()));
 
-        VocOrg org = findEntity(VocOrg.class, "fondNumber", aEntry.getOrgCodeNew()) ;
-        aPatient.setWorks(org);
+        //VocOrg org = findEntity(VocOrg.class, "fondNumber", aEntry.getOrgCodeNew()) ;
+        //aPatient.setWorks(org);
 
         if(aMedPolicy==null) {
             aMedPolicy = new MedPolicyOmc() ;
@@ -307,7 +307,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         }
         aMedPolicy.setSeries(aEntry.getPolicySeries());
         aMedPolicy.setPolNumber(aEntry.getPolicyNumber());
-        aMedPolicy.setOrg(org);
+        //aMedPolicy.setOrg(org);
         aMedPolicy.setCompany(findEntity(RegInsuranceCompany.class, "omcCode", aEntry.getInsuranceCompanyCode()));
 
         theManager.persist(aPatient);

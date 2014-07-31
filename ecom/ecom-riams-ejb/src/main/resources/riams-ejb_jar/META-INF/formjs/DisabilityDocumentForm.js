@@ -72,12 +72,11 @@ function onCreate(aForm, aEntity, aCtx) {
 	aCtx.manager.persist(aEntity) ;
 	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
 		var pat = aEntity.disabilityCase.patient ;
-		var org = pat.works ;
-		if (org!=null) {
-			org.setCode(aForm.job) ;
-			aCtx.manager.persist(org) ;
+		pat.works  = pat.getWorks();
+		if (pat.works!=null && !pat.works.equals(aForm.getWorks()) {
+			pat.setWorks(aForm.job) ;
+			aCtx.manager.persist(pat) ;
 		}
-	}
 }
 function onSave(aForm, aEntity, aCtx) {
 	if (aEntity.status!=null && +aEntity.status.code>0) {

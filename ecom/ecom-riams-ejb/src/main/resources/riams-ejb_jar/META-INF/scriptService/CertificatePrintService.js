@@ -47,7 +47,7 @@ function printDeathStac(aCtx, aParams) {
 		//12. Образование матери
 		record("pat.ed",deathCase.mother.educationType,1,7,"__");
 		//13. где и кем работала мать
-		recordVocName("pat.works",deathCase.mother.works);
+		map.put("pat.works",deathCase.mother.works!=null?deathCase.mother.works:"");
 		map.put("pat.wPost",deathCase.mother.workPost) ;
 		//5.место рождения
 		map.put("pat.birthPl",deathCase.birthPlace);
@@ -79,7 +79,7 @@ function printDeathStac(aCtx, aParams) {
 		//12. Образование умершего
 		record("pat.ed",medCase.patient.educationType,1,7,"__");
 		//13. где и кем работал умерший
-		recordVocName("pat.works",medCase.patient.works);
+		recordVocName("pat.works",medCase.patient.works!=null?medCase.patient.works:"");
 		map.put("pat.wPost",medCase.patient.workPost) ;
 		map.put("baby.mother","");
 	}

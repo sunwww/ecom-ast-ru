@@ -37,7 +37,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocEthnicity;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMarriageStatus;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
+//import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.patient.voc.VocPassportBirthPlace;
 import ru.ecom.mis.ejb.domain.patient.voc.VocPassportWhomIssue;
 import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
@@ -260,9 +260,8 @@ public class Patient extends BaseEntity{
     
     /** Место работы */
     @Comment("Место работы")
-    @OneToOne
-    public VocOrg getWorks() { return theWorks ; }
-    public void setWorks(VocOrg aWorks) { theWorks = aWorks ; }
+    public String getWorks() { return theWorks ; }
+    public void setWorks(String aWorks) { theWorks = aWorks ; }
     
     /** ИНН */
     @Comment("ИНН")
@@ -774,7 +773,7 @@ public class Patient extends BaseEntity{
     /** Пол */
     private VocSex theSex ;
     /** Место работы */
-    private VocOrg theWorks ;
+    private String theWorks ;
     /** ИНН */
     private Long theInn ;
     /** Тип удостоверения личности */
