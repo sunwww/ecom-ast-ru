@@ -16,8 +16,8 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = UserComputer.class)
 @WebTrail(comment = "Раб. место", nameProperties = "name", view = "entitySubclassView-mis_userComp.do")
-@Parent(property = "parent", parentForm = FloorBuildingForm.class)
-@EntityFormSecurityPrefix("/Policy/Mis/WorkPlace")
+@Parent(property = "parent", parentForm = WorkPlaceForm.class)
+@EntityFormSecurityPrefix("/Policy/Mis/WorkPlace/UserComputer")
 public class UserComputerForm  extends WorkPlaceForm {
 	/** Адрес */
 	@Comment("Адрес")
@@ -28,11 +28,27 @@ public class UserComputerForm  extends WorkPlaceForm {
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public SecUser getUser() {return theUser;}
-	public void setUser(SecUser aUser) {theUser = aUser;}
+	public Long getUser() {return theUser;}
+	public void setUser(Long aUser) {theUser = aUser;}
 
+	/** Com порт */
+	@Comment("Com порт")
+	@Persist
+	public String getComPort() {return theComPort;}
+	public void setComPort(String aComPort) {theComPort = aComPort;}
+
+	/** Динамический адрес */
+	@Comment("Динамический адрес")
+	@Persist
+	public Boolean getDynamicIp() {return theDynamicIp;}
+	public void setDynamicIp(Boolean aDynamicIp) {theDynamicIp = aDynamicIp;}
+
+	/** Динамический адрес */
+	private Boolean theDynamicIp;
+	/** Com порт */
+	private String theComPort;
 	/** Пользователь */
-	private SecUser theUser;
+	private Long theUser;
 	/** Адрес */
 	private String theRemoteAddress;
 }

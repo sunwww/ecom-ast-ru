@@ -1022,7 +1022,7 @@ function recordPatient(medCase,aCtx) {
 	//5. Место работы, профессия или должность
 	map.put("pat.works",patient.works);
 	var workDiv = "" ;
-	if (medCase.patient.works!=null && medCase.patient.workPost!=null && !medCase.patient.workPost.equals("")) workDiv="," ;
+	if (medCase.patient.works!=null&&!medCase.patient.works.equals("") && medCase.patient.workPost!=null && !medCase.patient.workPost.equals("")) workDiv="," ;
 	map.put("pat.workDiv",workDiv) ;
 	map.put("pat.wPost",medCase.patient.workPost) ;
 	//Документ, удостоверяющий личность
@@ -1162,12 +1162,20 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		var lechCode = "" ;
 		var lastotd = "";
 		var lastotdId="" ;
+		var result = medCase.result;
 		for (var i=0; i<otds.size(); i++) {
 			var dep = otds.get([i]) ;
 			if (otd!="") {otd += ", ";}
 			otd += dep[0] +" "+" c "+dep[1]+" по "+dep[2] ;
 			
-			if (dep[7]==null) {
+			if (result!=null && (result.code=="11" || result.code=="15")) {
+				if (dep[7]==null) {
+					lech = dep[3] ;
+					lastotd = dep[4];
+					lastotdId = dep[5] ;
+					lechCode=dep[6] ;
+				}
+			} else{
 				lech = dep[3] ;
 				lastotd = dep[4];
 				lastotdId = dep[5] ;

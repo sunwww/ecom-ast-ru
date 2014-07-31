@@ -3,6 +3,14 @@
  */
 function onCreate(aForm, aEntity, aContext) {
 	saveAdditionData(aForm,aEntity,aContext) ;
+	var date = new java.util.Date() ;
+	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var date = new java.util.Date() ;
+	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 
 /**

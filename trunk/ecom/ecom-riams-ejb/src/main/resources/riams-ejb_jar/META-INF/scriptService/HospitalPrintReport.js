@@ -532,7 +532,18 @@ function getDate(aDateS,aDay) {
 	var dd=new Date(d[2],d[1]-1,+d[0]+aDay) ;
 	return formatDate(dd) ;
 }
+function current_info(aCtx) {
+    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;	
+	var current = new java.util.Date() ;
+	var curDate = new java.sql.Date(current.getTime()) ;
+	var curTime = new java.sql.Time(current.getTime()) ;	
+	map.put("current_date",FORMAT_2.format(curDate)) ;
+	map.put("current_time",FORMAT_3.format(curTime)) ;
+	map.put("current_username",aCtx.sessionContext.callerPrincipal.name ) ;
+}
 function printReport007(aCtx,aParams) {
+	current_info(aCtx) ;
 	var date1 = aParams.get("dateBegin");
 	map.put("dateInfo",date1) ;
 	var department = +aParams.get("department") ;

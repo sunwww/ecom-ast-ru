@@ -9,3 +9,6 @@ function onPreDelete(aEntityId, aContext) {
 		throw "Удалить шаблон может только пользователь, создавший его!!!" ;
 	}
 }
+function onPreSave(aForm,aEntity , aCtx) {
+	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+}

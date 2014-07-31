@@ -1,6 +1,6 @@
 /**
-* @author stkacheva
-*/
+ * @author stkacheva
+ */
 function onPreCreate(aForm, aCtx) {
 	if (aForm.anotherLpu<1) {
 		if(aForm.workFunction<1) throw "Специалист является обязательным полем при создании нового документа нетрудоспособности" ;
@@ -57,7 +57,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		drecord.setWorkFunctionAdd(wfuncadd) ;
 		
 	}
-	//dcase.setJob(aForm.job) ;
+	// dcase.setJob(aForm.job) ;
 	dcase.setEarlyPregnancyRegistration(aForm.earlyPregnancyRegistration) ;
 	dcase.setPlacementService(aForm.placementService) ;
 	dcase.setCreateDate(aEntity.getCreateDate()) ;
@@ -75,10 +75,10 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setDisabilityCase(dcase) ;
 	aCtx.manager.persist(aEntity) ;
 	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
-		var org = pat.works ;
-		if (org!=null) {
-			org.setCode(aForm.job) ;
-			aCtx.manager.persist(org) ;
+		pat.works  = pat.getWorks();
+		if (pat.works!=null && !pat.works.equals(aForm.getWorks()) {
+			pat.setWorks(aForm.job) ;
+			aCtx.manager.persist(pat) ;
 		}
 	}
 }

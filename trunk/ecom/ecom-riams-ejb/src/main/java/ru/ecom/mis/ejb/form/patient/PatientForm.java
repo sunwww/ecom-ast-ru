@@ -196,8 +196,8 @@ public class PatientForm extends IdEntityForm {
     @Comment("Место работы")
     @Persist
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public Long getWorks() { return theWorks ; }
-    public void setWorks(Long aWorks) { theWorks = aWorks ; }
+    public String getWorks() { return theWorks ; }
+    public void setWorks(String aWorks) { theWorks = aWorks ; }
 
     /** Дом */
     @Persist
@@ -242,19 +242,14 @@ public class PatientForm extends IdEntityForm {
 	public MedPolicyOmcForm getPolicyOmcForm () {return thePolicyOmcForm ;}
 	public void setPolicyOmcForm (MedPolicyOmcForm aPolicyOmcForm ) {thePolicyOmcForm  = aPolicyOmcForm ;}
 
-	/** Прикреплен по полису */
-	@Comment("Прикреплен по полису")
-	public boolean isAttachedByPolicy() {return theAttachedByPolicy;}
-	public void setAttachedByPolicy(boolean aAttachedByPolicy) {theAttachedByPolicy = aAttachedByPolicy;}
-
 	/** Создать новый полис ОМС */
 	public boolean getCreateNewOmcPolicy() {return theCreateNewOmcPolicy;}
 	public void setCreateNewOmcPolicy(boolean aCreateNewOmcPolicy) {theCreateNewOmcPolicy = aCreateNewOmcPolicy;}
 	
 	/** Ведомственное прикрепление */
 	@Comment("Ведомственное прикрепление")
-	public boolean isAttachedByDepartment() {return theAttachedByDepartment;}
-	public void setAttachedByDepartment(boolean aAttachedByDepartment) {theAttachedByDepartment = aAttachedByDepartment;}
+	public boolean getCreateAttachedByDepartment() {return theCreateAttachedByDepartment;}
+	public void setCreateAttachedByDepartment(boolean aCreateAttachedByDepartment) {theCreateAttachedByDepartment = aCreateAttachedByDepartment;}
 
 	/** Дата смерти*/
 	@Comment("Дата смерти")
@@ -506,11 +501,9 @@ public class PatientForm extends IdEntityForm {
 	
 	
 	/** Ведомственное прикрепление */
-	private boolean theAttachedByDepartment;
+	private boolean theCreateAttachedByDepartment;
 	/** Создать новый полис ОМС */
 	private boolean theCreateNewOmcPolicy;
-	/** Прикреплен по полису */
-	private boolean theAttachedByPolicy;
 	/** Полис для прикрепления */
 	private MedPolicyOmcForm thePolicyOmcForm = new MedPolicyOmcForm();
 	/** Полис прикрепления */
@@ -526,7 +519,7 @@ public class PatientForm extends IdEntityForm {
     /** Дом */
     private String theHouseNumber ;
     /** Место работы */
-    private Long theWorks ;
+    private String theWorks ;
     /** СНИЛС */
     private String theSnils ;
     /** Кем выдан */
@@ -793,25 +786,15 @@ public class PatientForm extends IdEntityForm {
 	
 	/** Мед.карта */
 	@Comment("Мед.карта")
-	public Long getMedcardLast() {
-		return theMedcardLast;
-	}
-
-	public void setMedcardLast(Long aMedcardLast) {
-		theMedcardLast = aMedcardLast;
-	}
+	public Long getMedcardLast() {return theMedcardLast;}
+	public void setMedcardLast(Long aMedcardLast) {theMedcardLast = aMedcardLast;}
 
 	/** Мед.карта */
 	private Long theMedcardLast;
 	/** Психиатрическая мед.карта */
 	@Comment("Психиатрическая мед.карта")
-	public Long getCareCard() {
-		return theCareCard;
-	}
-
-	public void setCareCard(Long aCareCard) {
-		theCareCard = aCareCard;
-	}
+	public Long getCareCard() {return theCareCard;}
+	public void setCareCard(Long aCareCard) {theCareCard = aCareCard;}
 	
 	/** Возраст */
 	@Comment("Возраст")
@@ -820,7 +803,6 @@ public class PatientForm extends IdEntityForm {
 
 	/** Возраст */
 	private String theAge;
-
 	/** Психиатрическая мед.карта */
 	private Long theCareCard;
 	
@@ -894,5 +876,14 @@ public class PatientForm extends IdEntityForm {
 	public void setColorType(Boolean aColorType) {theColorType = aColorType;}
 
 	/** Цветовая характеристика */
-	private Boolean theColorType;	
+	private Boolean theColorType;
+	
+	/** Прикрепление по участку */
+	@Comment("Прикрепление по участку")
+	public LpuAttachedByDepartmentForm getAttachedForm() {return theAttachedForm;}
+	public void setAttachedForm(LpuAttachedByDepartmentForm aAttachedForm) {theAttachedForm = aAttachedForm;}
+
+	/** Прикрепление по участку */
+	private LpuAttachedByDepartmentForm theAttachedForm = new LpuAttachedByDepartmentForm();
+	
 }

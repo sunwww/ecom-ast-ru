@@ -470,5 +470,13 @@ public class MisLpu extends BaseEntity {
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Автогенерация расписания */
+	@Comment("Автогенерация расписания")
+	public Boolean getAutoGeneration() {return theAutoGeneration;}
+	public void setAutoGeneration(Boolean aAutoGeneration) {theAutoGeneration = aAutoGeneration;}
+
+	/** Автогенерация расписания */
+	private Boolean theAutoGeneration;
 
 }

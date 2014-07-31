@@ -20,11 +20,11 @@ public class PatientViewInterceptor implements IFormInterceptor {
 
 		Patient pat = (Patient) aEntity;
 		PatientForm form = (PatientForm) aForm ;
-		if(pat!=null ){
+		/*if(pat!=null ){
 			if (pat.getAttachedOmcPolicy()!=null) {
 				form.setAttachedByPolicy(true);
 			}
-		}
+		}*/
 		if (form.getBirthday()!=null && !form.getBirthday().equals("")) {
 			String age = AgeUtil.getAgeCache(new java.util.Date(),pat.getBirthday(), 2) ;
 			form.setAge(age) ;

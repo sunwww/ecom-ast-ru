@@ -17,9 +17,8 @@ public class DocumentPreCreate implements IParentFormInterceptor{
     	DisabilityCase dcase = manager.find(DisabilityCase.class, aParentId) ;
     	Patient pat = dcase!=null ?dcase.getPatient():null ;
     	if (pat!=null) {
-    		VocOrg vo = pat.getWorks() ;
-    		String org = DocumentByPatientPreCreate.getShortNameByOrg(vo) ;
-    		form.setJob(org) ;
+    		//String org = DocumentByPatientPreCreate.getShortNameByOrg() ;
+    		form.setJob(pat.getWorks()) ;
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай. Сначала надо определить пациента") ;
     	}

@@ -384,9 +384,9 @@ function recordPatient(medCase,aCtx) {
 	// Квартира
 	wqr.set13(patient.flatNumber) ; //"pat.flatNumber",
 	//5. Место работы, профессия или должность
-	wqr.set14(patient.works!=null?patient.works.name:""); //"pat.works",
+	wqr.set14(patient.works!=null?patient.works:""); //"pat.works",
 	var workDiv = "" ;
-	if (medCase.patient.works!=null && medCase.patient.workPost!=null && !medCase.patient.workPost.equals("")) workDiv="," ;
+	if (medCase.patient.works!=null && !medCase.patient.works.equals("")&& medCase.patient.workPost!=null && !medCase.patient.workPost.equals("")) workDiv="," ;
 	wqr.set15(workDiv) ; //"pat.workDiv",
 	wqr.set16(medCase.patient.workPost) ; //"pat.wPost",
 	//Документ, удостоверяющий личность
@@ -452,13 +452,23 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		var lechCode = "" ;
 		var lastotd = "";
 		var lastotdId="" ;
+		var result = medCase.result;
 		for (var i=0; i<otds.size(); i++) {
 			var dep = otds.get([i]) ;
 			if (otd!="") {otd += ", ";}
 			otd += dep[0] +" "+" c "+dep[1]+" по "+dep[2] ;
 			lech += dep[3] ;
-			if (dep[7]==null) {
-				lastotd += dep[4] ;
+			
+			if (result!=null && (result.code=="11" || result.code=="15")) {
+				if (dep[7]==null) {
+					lech = dep[3] ;
+					lastotd = dep[4];
+					lastotdId = dep[5] ;
+					lechCode=dep[6] ;
+				}
+			} else{
+				lech = dep[3] ;
+				lastotd = dep[4];
 				lastotdId = dep[5] ;
 				lechCode=dep[6] ;
 			}

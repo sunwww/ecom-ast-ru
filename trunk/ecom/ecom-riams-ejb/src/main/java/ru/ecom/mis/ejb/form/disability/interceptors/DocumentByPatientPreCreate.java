@@ -41,8 +41,8 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm;
     			}
 				throw new IllegalStateException(err.toString()) ;    				
     		} 
-    		VocOrg vo = pat.getWorks() ;
-    		form.setJob(getShortNameByOrg(vo)) ;
+    		//String vo =  ;
+    		form.setJob(pat.getWorks()) ;
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай. Сначала надо определить пациента") ;
     	}

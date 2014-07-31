@@ -195,9 +195,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
     		newDoc.setJob(aJob) ;
     		if (aUpdateJob!=null &&aUpdateJob==true) {
     			Patient pat = doc.getDisabilityCase()!=null && doc.getDisabilityCase().getPatient()!=null?doc.getDisabilityCase().getPatient():null ;
-    			VocOrg org= pat.getWorks() ;
-    			org.setCode(aJob) ;
-    			theManager.persist(org) ;
+    			//VocOrg org= pat.getWorks() ;
+    			//org.setCode(aJob) ;
+    			pat.setWorks(aJob) ;
+    			theManager.persist(pat) ;
     		}
         	
     	}

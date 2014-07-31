@@ -460,4 +460,14 @@ public class MisLpuForm extends IdNameEntityForm {
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Автогенерация расписания */
+	@Comment("Автогенерация расписания")
+	@Persist
+	public Boolean getAutoGeneration() {return theAutoGeneration;}
+	public void setAutoGeneration(Boolean aAutoGeneration) {theAutoGeneration = aAutoGeneration;}
+
+	/** Автогенерация расписания */
+	private Boolean theAutoGeneration;
+
 }
