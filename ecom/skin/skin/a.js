@@ -3308,7 +3308,7 @@ function parseDate(inputStr) {
     }
     if (yyyy < 100)
     {
-        if (yyyy >= 15) {
+        if (yyyy >= 25) {
             yyyy += 1900;
         } else {
             yyyy += 2000;
@@ -5121,8 +5121,8 @@ function getDefinition(term,evt){
 	MessageObj.innerHTML = "Загрузка..." ;
 	return false;
 }
-function goToPage(aPage,aId) {
-	
+function goToPage(aPage,aId,aTableCell) {
+	//if (aTableCell==null) aTableCell="" ;
     if (aPage.indexOf('javascript:')!=-1) {
     	
     	var func = aPage.split("javascript:")[1] ;
@@ -5134,13 +5134,17 @@ function goToPage(aPage,aId) {
 	    	} else if (!func.lastIndexOf(',')) {
 	    		func = func + "," ;
 	    	} 
-	    	event(func+"'"+aId+"'"+")") ;
+	    	event(func+"'"+aId+"','"+aTableCell+"')") ;
 	    	alert(func+"'"+aId+"'"+")");
     	}
     } else {
     	var delim = aPage.indexOf('?')==-1 ? '?' : '&' ;
     	var url = aPage+delim+'id='+aId+'&tmp='+Math.random() ;
-        window.location = url ;
+    	if (aTableCell==null) {
+            window.location = url ;
+    	} else {
+    		getDefinition(url+aTableCell+"&short=Short") ;
+    	}
     }
 }
 function onResponse1() {
