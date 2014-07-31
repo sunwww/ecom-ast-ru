@@ -1,7 +1,10 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="style" type="string">
@@ -31,7 +34,7 @@
   <tiles:put name="side" type="string">
   <msh:ifInRole roles="/Policy/MainMenu/Patient">
     <msh:sideMenu guid="5120ac2f-43a7-4204-a2e7-187cf4969bcc">
-      <msh:sideLink roles="/Policy/Mis/Patient/Create" key="ALT+N" params="lastname,hiddendata" action="/entityPrepareCreate-mis_patient" name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+      <msh:sideLink roles="/Policy/Mis/Patient/Create" key="ALT+N" params="lastname,hiddendata" action='/entityPrepareCreate-mis_patient.do' name="Добавить персону" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
     </msh:sideMenu>
     <msh:sideMenu>
     	<msh:sideLink roles="/Policy/Mis/Patient/SocialCard" key="ALT+2" action="/findSocPat.do" name="Поиск персоны из соц.карты" title="Поиск персоны из соц.карты"/>
@@ -47,13 +50,25 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  request.setAttribute("remoteAddress" , request.getRemoteAddr()) ;
+  request.setAttribute("username" , LoginInfo.find(request.getSession(true)).getUsername()) ;
+  %>
+  <ecom:webQuery name="comport_list" nativeSql="
+  select wp.comPort,wp.id from workPlace wp left join SecUser su on su.id=wp.user_id where wp.dtype='UserComputer' and (wp.remoteAddress='${remoteAddress}' or wp.dynamicIp='1' and su.login='${username}')
+  "/>
+  <%
+  ActionUtil.getValueByList("comport_list", "port_com", request) ;
+  %>
+    <msh:ifInRole roles="/Policy/Mis/Patient/FindByBarcode">
+
 	<object id="cadesplugin"  class="hiddenObject" type="application/x-cades">
     </object>
     <applet code="CommRead" archive="js-mis_patient-CommRead.do, js-mis_patient-jssc.do, js-mis_patient-barcode.do" width=1 height=1>
     <param name = "MAYSCRIPT" value = "TRUE">
-    <param name = "comport" value = "COM3">
+    <param name = "comport" value = "${port_com}">
     </applet>
-    
+    </msh:ifInRole>
   <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
 	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
 	    	styleId="stac_findSlsByStatCard"
@@ -115,7 +130,9 @@
           <msh:textField property="lastname" label="ФИО, полис или мед. карта" size="40" guid="56502d8a-33ae-463c-910b-59625f2d2778" />
           <td>
             <input type="submit" value="Найти" />
+            <msh:ifInRole roles="/Policy/Mis/Patient/FindByBarcode">
             <input type="button" onclick="showcmdpasPassword()" value="Найти по УЭК" />
+            </msh:ifInRole>
             <input type="hidden" name="hiddendata" id="hiddendata">
           </td>
         </msh:row>

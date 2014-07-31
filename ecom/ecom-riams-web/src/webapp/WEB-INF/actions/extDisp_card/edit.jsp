@@ -74,6 +74,30 @@
 				<msh:row>
 					<ecom:checkGroup label="Риски" tableName="VocExtDispRisk" tableField="name" tableId="id" property="risks"/>
 				</msh:row>
+				        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>   
+        <msh:row>
+        	<msh:label property="editDateRender" label="Дата ред. услуги"/>
+        	<msh:label property="editTimeRender" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsernameRender" label="пользователь"/>
+        </msh:row>   
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
