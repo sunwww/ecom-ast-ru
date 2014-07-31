@@ -11,7 +11,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @AIndexes({
-	@AIndex(properties={"remoteAddress"},table="WorkPlace")
+	@AIndex(properties={"remoteAddress"},table="WorkPlace"),
+	@AIndex(properties={"user"},table="WorkPlace")
 })
 @Table(schema="SQLUser")
 public class UserComputer extends WorkPlace {
