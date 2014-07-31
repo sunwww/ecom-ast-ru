@@ -19,7 +19,7 @@
 				<msh:row>
 					<msh:autoComplete property="workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true" />
 				</msh:row>
-
+				
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>

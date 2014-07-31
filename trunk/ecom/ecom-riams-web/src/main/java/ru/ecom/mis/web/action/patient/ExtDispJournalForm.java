@@ -86,4 +86,11 @@ public class ExtDispJournalForm extends BaseValidatorForm {
 
 	/** Услуга */
 	private Long theService;
+	/** dateBeginYear */
+	@Comment("dateBeginYear")
+	public String getDateBeginYear() {return theDateBeginYear;}
+	public void setDateBeginYear(String aDateBeginYear) {theDateBeginYear = aDateBeginYear;}
+
+	/** dateBeginYear */
+	private String theDateBeginYear;
 }

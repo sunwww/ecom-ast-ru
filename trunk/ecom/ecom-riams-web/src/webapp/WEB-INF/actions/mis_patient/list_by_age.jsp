@@ -21,13 +21,13 @@
   <tiles:put name="body" type="string">
     <%
     String typeReestr = request.getParameter("typeReestr") ;
-    String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","2", request) ;
+    String typeHour =ActionUtil.updateParameter("mis_patient_by_age","typeHour","2", request) ;
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
-		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
-		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
+		String typeDate =ActionUtil.updateParameter("mis_patient_by_age","typeDate","1", request) ;
+		String typeEmergency =ActionUtil.updateParameter("mis_patient_by_age","typeEmergency","3", request) ;
 		
-		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","2", request) ;
+		String typeView =ActionUtil.updateParameter("mis_patient_by_age","typeView","2", request) ;
     
   	%>
     <msh:form action="/mis_patient_by_age.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">

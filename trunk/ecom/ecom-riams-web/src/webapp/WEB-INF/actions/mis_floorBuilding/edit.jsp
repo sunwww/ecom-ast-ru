@@ -27,6 +27,31 @@
     	<tr>
 			<msh:ifInRole roles="/Policy/Mis/WorkPlace/FloorBuilding/View">
     		<td width="15%" valign="top" style="padding-right: 1em">
+		    	<msh:section title="Компьютеры" createRoles="/Policy/Mis/WorkPlace/UserComputer/Create" 
+		    		createUrl="entityParentPrepareCreate-mis_userComp.do?id=${param.id}" >
+		    		<ecom:webQuery name="UserComputer" nativeSql="
+		    		select wp.id,wp.RemoteAddress,wp.DynamicIp,wp.ComPort,su.login 
+		    		from WorkPlace wp
+		    		left join WorkPlace_WorkFunction wpf on wpf.workPlace_id=wp.id
+		    		left join WorkFunction wf on wf.id=wpf.workFunctions_id
+		    		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+		    		left join Worker w on w.id=wf.worker_id
+		    		left join Patient wpat on wpat.id=w.person_id 
+		    		left join Secuser su on su.id=wp.user_id
+		    		where wp.parent_id='${param.id}' and wp.dtype='UserComputer'
+		    		group by wp.id,wp.RemoteAddress,wp.DynamicIp,wp.ComPort,su.login"/>
+		    		<msh:table idField="1" name="UserComputer" action="entityParentView-mis_userComp.do">
+		    			<msh:tableColumn property="2" columnName="IP"/>
+		    			<msh:tableColumn property="3" columnName="динам. IP"/>
+		    			<msh:tableColumn property="4" columnName="com порт"/>
+		    			<msh:tableColumn property="5" columnName="пользователь"/>
+		    		</msh:table>
+		    	</msh:section>
+      		</td>
+	        </msh:ifInRole>
+    	<tr>
+			<msh:ifInRole roles="/Policy/Mis/WorkPlace/FloorBuilding/View">
+    		<td width="15%" valign="top" style="padding-right: 1em">
 		    	<msh:section title="Кабинеты" createRoles="/Policy/Mis/WorkPlace/ConsultingRoom/Create" 
 		    		createUrl="entityParentPrepareCreate-mis_consultingRoom.do?id=${param.id}" >
 		    		<ecom:webQuery name="consultingRoom" nativeSql="
@@ -54,7 +79,7 @@
 		    		,wp.name as wpname,ml.name as mlname, cntBed.name as wpbedCapacity
 		    		from WorkPlace wp 
 		    		left join MisLpu ml on ml.id=wp.lpu_id
-		    		left join vocCountBedInHospitalRoom cntBed on cntBed.id=wp.countBed_io
+		    		left join vocCountBedInHospitalRoom cntBed on cntBed.id=wp.countBed_id
 		    		where wp.parent_id='${param.id}' and wp.dtype='HospitalRoom'"/>
 		    		<msh:table idField="1" name="hospitalRoom"  action="entityParentView-mis_hospitalRoom.do">
 		    			<msh:tableColumn property="3" columnName="Отделение"/>

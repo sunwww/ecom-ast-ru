@@ -90,6 +90,9 @@
 						<li><msh:link action="extDisp_journal_card.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Реестр по диспансеризации
 	                        </msh:link></li>
+						<li><msh:link action="mis_patient_by_age.do" roles="/Policy/Mis/ExtDisp/Card/View">
+	                            Реестр пациентов по возрастам
+	                        </msh:link></li>
 						<li><msh:link action="mis_attachment.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Отчет по прикрепленному населению
 	                        </msh:link></li>
