@@ -231,7 +231,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           	<msh:hidden property="newborn"/>
           </msh:ifNotInRole>
         <msh:row guid="e8f9a2e2-5361-41e6-b486-9c92b5693ac8">
-          <msh:textField property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" />
+          <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" vocName="vocOrg" guid="24e551c0-b185-4361-8364-a93210c7d39d" />
         </msh:row>
         <msh:row guid="b8dbed14-010b-44b5-93b7-3d32ccdc8b35">
           <msh:autoComplete property="categoryChild" fieldColSpan="1" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
@@ -343,8 +343,8 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row>
         
-        <td colspan="1" title="Адрес (nonresidentAddressField)" class="label">
-            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Другой адрес:</label>
+        <td colspan="2" title="Адрес (nonresidentAddressField)" class="label">
+            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Lheuj адрес:</label>
           </td>
           <td colspan="4" class="addressField">
             <input title="АдресNoneField" class=" horizontalFill" id="nonresidentAddressField" name="nonresidentAddressField" size="10" value="Адрес... " type="text" />
@@ -375,54 +375,27 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         <msh:row>
         	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
         	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
+        </msh:row>        
+                <msh:row>
+        	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
+        	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
         </msh:row>        <!--  ПРИКРЕПЛЕНИЕ -->
         
-        <!-- ----------------------------------Vasiliy start coding here -->
          <msh:ifFormTypeIsNotView formName="mis_patientForm"> 
         <msh:separator colSpan="4" label="Добавить полис и прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
         <msh:row styleId="rowCheckBoxPolisPrik" guid="c17b2812-85c2-4042-9924-ae99dc3f0000">
           <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" guid="9988ef1b-490f-4290-996b-e559034784c0" />
-          <msh:checkBox property="createNewAttachment" label="Создать прикрепление" guid="9988ef1b-490f-4290-996b-e559034784c0" />
+         <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
+             <msh:checkBox property="createNewAttachment" label="Создать прикрепление" />
+          </msh:ifInRole>
         </msh:row>
         </msh:ifFormTypeIsNotView>
-        <!-- --------------------------------------------Vasiliy ends coding here -->
- <%--        
-         <msh:separator colSpan="4" label="Прикрепленное ЛПУ" guid="d4871cf3-d393-47e3-9d7b-9a5625baae82" />
-       <msh:row guid="65c002c9-17f3-4a24-8cf2-774a62d6453b">
-          <msh:checkBox property="attachedByPolicy" label="Прикреплен по полису" guid="4cf732de-407b-49b7-813d-f9440fd2c7c9" />
-          <msh:checkBox property="createAttachedByDepartment" label="Создать новое специальное прикрепление" guid="f5e41829-2a5f-4926-8b5a-48cc79d5f2ed" />
-        </msh:row> 
-        <msh:row styleId="rowLpu" guid="c3d89b9f-be12-4923-a9b5-bcfd396b4d37">
-          <msh:autoComplete fieldColSpan="3" property="lpu" label="ЛПУ" horizontalFill="true" vocName="mainLpu" guid="7487d6d9-6f9d-491f-a8b6-fa73f32052c3" />
-        </msh:row>
-        <msh:row styleId="rowLpuArea" guid="ee1200e6-df3d-4c46-ac8f-b5b12b204802">
-          <msh:autoComplete fieldColSpan="3" property="lpuArea" label="Участок" horizontalFill="true" vocName="lpuAreaWithParent" guid="8d9ab980-3fe0-44ea-acd2-abb8e95f7fe8" />
-        </msh:row>
-        
-        <msh:row styleId="rowAttachedOmcPolicy" guid="c4626aba-c909-4976-9326-10f37346f6ff">
-          <msh:autoComplete fieldColSpan="3" property="attachedOmcPolicy" label="Полис прикрепления" horizontalFill="true" vocName="policyByPatient" parentId="id" guid="9346f8ff-7500-4710-a057-019719c35826" />
-        </msh:row> --%>
-        <%-- 
-        <msh:row styleId="rowCreateNewOmcPolicy" guid="c17b2812-85c2-4042-9924-ae99dc3fcd96">
-          <msh:checkBox property="createNewOmcPolicy" label="Добавить новый полис ОМС" fieldColSpan="3" guid="9988ef1b-490f-4290-996b-e559034784c0" />
-        </msh:row> --%>
         <!--  По какому адресу участка прикреплен -->
         <msh:ifFormTypeIsView formName="mis_patientForm" guid="522244be-3721-4db5-94ea-71f98ce9f391">
           <msh:row styleId="rowLpuAreaAddressText" guid="64d1411d-071f-4852-9af1-bde19f84b4f3">
             <msh:autoComplete property="lpuAreaAddressText" label="Адрес" vocName="lpuAreaAddressText" fieldColSpan="3" horizontalFill="true" guid="51ee2cd2-0f6e-477d-967a-eb4e3590bd2b" />
           </msh:row>
         </msh:ifFormTypeIsView>
-        <!-- Вывод прикрепления по адресу -->
-<%--         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0d5077d7-842c-4d34-a9aa-3fbfd3dfce31">
-          <tr id="rowPatientLpuDiv">
-            <td class="label">
-             <!--  <label>Прикреплен по адресу:</label> -->
-            </td>
-            <td colspan="3">
-              <p id="patientLpuDiv" /> 
-            </td>
-          </tr>
-        </msh:ifFormTypeIsNotView> --%>
         <!--  Добавление нового полиса -->
         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="817c4185-90ef-4807-ac71-fad06ae151b6">
           <msh:panel colsWidth="15%, 5%, 5%,-" styleId="tableNewOmcPolicy" guid="aada20f1-2321-43bf-a416-ddaf511e15a0">
@@ -452,10 +425,8 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
             </msh:row>
             
           </msh:panel>
-        
- <!-- -----------------------------------------------------------Vasiliy start here -->
-  
-          <msh:panel colsWidth="15%, 5%, 5%,-" styleId="tableNewPrikForm">
+          <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
+          <msh:panel colsWidth="15%, 5%, 5%,-" styleId="tableNewAttachedByDepartment">
           <msh:separator colSpan="4" label="Добавление нового прикрепления" guid="d4871cf3-d393-47e3-9d7b-9a5625b0010" />
             	<msh:row>
             		<msh:autoComplete property="attachedForm.attachedType" label="Тип прикрепления" fieldColSpan="3" horizontalFill="true" vocName="vocAttachedType"/>
@@ -473,14 +444,14 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		        	<msh:textField property="attachedForm.dateTo"  label="Дата открепления"/>
 		        </msh:row>
             </msh:panel>
+            </msh:ifInRole>
              </msh:ifFormTypeIsNotView>
-          <!-- --------------------------------------------------------------------Vasiliy ends here -->
-        <msh:row>
 	        <msh:ifFormTypeIsNotView formName="mis_patientForm">
+        <msh:row>
 	        	<br/>
 				<msh:submitCancelButtonsRow colSpan="6" guid="457b3fcb-3395-4bd8-881b-b0b167f01b95" />        
-			</msh:ifFormTypeIsNotView>
 		</msh:row>
+			</msh:ifFormTypeIsNotView>
         
       </msh:panel>
     </msh:form>
@@ -905,7 +876,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </msh:ifInRole>
   
 
-
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
     	function checkPatientByCommonNumber(a) {
@@ -980,7 +950,51 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
     </script>
   </msh:ifInRole>
+ <msh:ifFormTypeIsCreate formName="mis_patientForm">
+  <script type="text/javascript">
+  if ('${param.lastname}'!="") {
+		var lfm='${param.lastname}' ;
+		var lfm1='${param.hiddendata}' ;
+		if (lfm1!=null && lfm1!='') {
+	  		var lfm1 = subvalue(lfm1,'#','lastname');
+	  		var lfm1 = subvalue(lfm1,'#','firstname');
+	  		var lfm1 = subvalue(lfm1,'#','middlename');
+	  		var lfm1 = subvalue(lfm1,'#','birthday');
+	  		var lfm1 = subvalue(lfm1,'#','commonNumber');
+	  		var lfm1 = subvalue(lfm1,'#','snils');
+	  		var lfm1 = subvalue(lfm1,'#','sex');
+	  		if ($('sex').value!='') {
+	  		PatientService.getSexByOmccode($('sex').value, {
+	            callback: function(aResult) {
+	            	aResult=subvalue(aResult,'#','sex');
+	            	aResult=subvalue(aResult,'#','sexName');
+	            }});
+	  		}
+	  		var lfm1 = subvalue(lfm1,'#','phone');
+	  		var sex="" ;
+	  		checkPatientByCommonNumber();
+	  		
+	
+		} else {
+	  		var lfm = subvalue(lfm,' ','lastname');
+	  		var lfm = subvalue(lfm,' ','firstname');
+	  		var lfm = subvalue(lfm,' ','middlename');
+		}
 
+		
+	}
+	function subvalue(aValue,aDel,aField) {
+		var ind = aValue.indexOf(aDel) ;
+		if (ind==-1) {
+			if ($(aField).value=="") $(aField).value=aValue ;
+			return "" ;
+		} else {
+			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
+			return aValue.substring(ind+1) ;
+		}
+	}
+  </script>
+  </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="mis_patientForm">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript">// <![CDATA[//
@@ -1052,50 +1066,108 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			} catch (e) {
 				// for IE
 				//alert(aCanShow ? 'block' : 'none') ;
+				try{
 				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
+				}catch(e) {}
 			}	
 		}
-    	    	
-    	//$('createAttachedByDepartment').style.visibility = 'hidden' ;
+		//$('attachedByDepartment').style.visibility = 'hidden' ;
 		//$('attachedByDepartmentLabel').style.visibility = 'hidden' ;
 	//]]></script>
     <!-- При просмотре -->
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
       <script type="text/javascript">// <![CDATA[//
+		$('buttonShowAddress').style.display = 'none';
+    	showRow('tableNewOmcPolicy',false) ;
+    	showRow('tableNewAttachedByDepartment',false) ;
+    	/*
       		$('buttonShowAddress').style.display = 'none';
-        	showRow('tableNewOmcPolicy',false) ;
-        	showRow('tableNewPrikForm',false) ;
-        	//$('tableNewPrikForm').style.display = 'none' ;	
-        	//showRow('rowCreateNewOmcPolicy',false) ;
-        	//$('createAttachedByDepartment').style.display = 'none' ;
-        	//$('attachedByDepartmentLabel').style.display = 'none' ;
+        	showRow('rowCreateNewOmcPolicy',false) ;
+        	$('attachedByDepartment').style.display = 'none' ;
+        	$('attachedByDepartmentLabel').style.display = 'none' ;
         	//alert(!$('attachedByPolicy').checked) ;
-        	//showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
-        	
+        	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
+        	*/
 		//]]>
-      if ($('colorType').value) {
-    	  $()
-      }
       </script>
     </msh:ifFormTypeIsView>
     
     <!-- Редактирование  -->
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0ac15607-1ca6-4aa0-b9f0-ff3b31cb5a46">
+        <script type="text/javascript">// <![CDATA[//
+            var isTableNewAttachedByDepartment = null ;                                       
+        //]]>
+        </script>
+        <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
+        <script type="text/javascript">// <![CDATA[//
+           isTableNewAttachedByDepartment = 1 ;                                       
+        //]]>
+        </script>
+    	</msh:ifInRole>
       <script type="text/javascript">// <![CDATA[//
-      showRow('tableNewOmcPolicy',false) ;
-  	showRow('tableNewPrikForm',false) ;
-      	/* function checkAttached() {
-			checkAttachedByDepartment() ;
-			checkAttachedByPolicyOmc() ;
-		} */
+        showRow('tableNewOmcPolicy',false) ;
+    	if (isTableNewAttachedByDepartment) showRow('tableNewAttachedByDepartment',false) ;
 		
       	function onCreateNewAttachment() {
       		var isCreatedNewAttachment = $('createNewAttachment').checked ;
-			$('tableNewPrikForm').style.display = isCreatedNewAttachment ? 'block' : 'none' ;
+			$('tableNewAttachedByDepartment').style.display = isCreatedNewAttachment ? 'block' : 'none' ;
+			try {
+				
+				$('attachedForm.attachedTypeName').select() ;
+				$('attachedForm.attachedTypeName').focus() ;
+			
+			} catch (e) {}
+			
 		}
-      	
-      	function checkAttachedByDepartment() {
-			var isAttachedByDepartment = $('createAttachedByDepartment').checked ;
+      	function onCheckBoxFocus() {
+			try {
+				$(this.id+'Label').style.border='1px dotted black' ;
+			} catch(e) {}
+		}
+		function onCheckBoxBlur() {
+			try {
+				$(this.id+'Label').style.border='none' ;
+			} catch(e) {}
+		}
+
+		function onCreateNewOmcPolicy() {
+			//var attachedByPolicy = $('attachedByPolicy').checked ;
+			
+			var isCreateNewOmcPolicy = $('createNewOmcPolicy').checked ;//&& attachedByPolicy;
+			//showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
+			//if(attachedByPolicy) showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
+			$('tableNewOmcPolicy').style.display = isCreateNewOmcPolicy ? 'block' : 'none' ;
+			
+			
+				//showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
+				try {
+				
+					$('policyOmcForm.typeName').select() ;
+					$('policyOmcForm.typeName').focus() ;
+				
+				} catch (e) {}
+			
+		}
+		if (isTableNewAttachedByDepartment) {
+	        eventutil.addEventListener($('createNewAttachment'), 'click', onCreateNewAttachment) ;
+	        eventutil.addEventListener($('createNewAttachment'), 'focus', onCheckBoxFocus) ;
+	        eventutil.addEventListener($('createNewAttachment'), 'blur', onCheckBoxBlur) ;
+	    }
+		eventutil.addEventListener($('createNewOmcPolicy'), 'click', onCreateNewOmcPolicy) ;
+        eventutil.addEventListener($('createNewOmcPolicy'), 'focus', onCheckBoxFocus) ;
+        eventutil.addEventListener($('createNewOmcPolicy'), 'blur', onCheckBoxBlur) ;
+
+        eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
+		eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
+		eventutil.addEnterSupport('foreignRegistrationAddress', 'buttonShowrealAddressAddress') ;
+/*
+      	function checkAttached() {
+			checkAttachedByDepartment() ;
+			checkAttachedByPolicyOmc() ;
+		}
+		
+		function checkAttachedByDepartment() {
+			var isAttachedByDepartment = $('attachedByDepartment').checked ;
 			if(isAttachedByDepartment) {
 				$('attachedByPolicy').checked = false ;
 				checkAttachedByPolicyOmc() ;
@@ -1108,17 +1180,15 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 		
 		function checkAttachedByPolicyOmc() {
-			var attachedByPolicy = $('createNewOmcPolicy').checked ;
-			//var attachedByPolicy = $('attachedByPolicy').checked ;
-			/* if(attachedByPolicy) {
-				$('createAttachedByDepartment').checked = false ;
-			} */
-			//showRow('rowLpu', attachedByPolicy) ;
-			//showRow('rowLpuArea', attachedByPolicy) ;
-			//showRow('rowAttachedOmcPolicy', attachedByPolicy) ;
-			//showRow('rowPatientLpuDiv', ! attachedByPolicy) ;
-			showRow('tableNewOmcPolicy', attachedByPolicy) ;
-			//showRow('rowCreateNewOmcPolicy', attachedByPolicy) ;
+			var attachedByPolicy = $('attachedByPolicy').checked ;
+			if(attachedByPolicy) {
+				$('attachedByDepartment').checked = false ;
+			}
+			showRow('rowLpu', attachedByPolicy) ;
+			showRow('rowLpuArea', attachedByPolicy) ;
+			showRow('rowAttachedOmcPolicy', attachedByPolicy) ;
+			showRow('rowPatientLpuDiv', ! attachedByPolicy) ;
+			showRow('rowCreateNewOmcPolicy', attachedByPolicy) ;
 			onCreateNewOmcPolicyWithFocus(false) ;
 			//$('tableNewOmcPolicy').style.display = attachedByPolicy ? 'block' : 'none' ;
 			$('submitButton').disabled = false;
@@ -1173,13 +1243,10 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 
 		function onCreateNewOmcPolicyWithFocus(aFocus) {
-			//var attachedByPolicy = $('attachedByPolicy').checked ;
-			
-			var isCreateNewOmcPolicy = $('createNewOmcPolicy').checked ;//&& attachedByPolicy;
-			//showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
-			//if(attachedByPolicy) showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
+			var attachedByPolicy = $('attachedByPolicy').checked ;
+			var isCreateNewOmcPolicy = $('createNewOmcPolicy').checked && attachedByPolicy;
+			if(attachedByPolicy) showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
 			$('tableNewOmcPolicy').style.display = isCreateNewOmcPolicy ? 'block' : 'none' ;
-			
 			if(aFocus) {
 				showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
 				try {
@@ -1195,7 +1262,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 		
 		function setSubmitButtonDisabled(aDisabled) {
-			var alwaysSave = $('attachedByPolicy').checked || $('createNewOmcPolicy').checked || $('createAttachedByDepartment').checked;
+			var alwaysSave = $('attachedByPolicy').checked || $('createNewOmcPolicy').checked || $('attachedByDepartment').checked;
 			if(!alwaysSave) {
 				// $('submitButton').disabled = aDisabled;
 			}
@@ -1205,26 +1272,25 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			onCreateNewOmcPolicyWithFocus(true) ;
 		}
 		
-        //checkPatientLpu();
+        checkPatientLpu();
 
-        //eventutil.addEventListener($('attachedByPolicy'), 'click', checkAttachedByPolicyOmc) ;
-       // eventutil.addEventListener($('createAttachedByDepartment'), 'click', checkAttachedByDepartment) ;
+        eventutil.addEventListener($('attachedByPolicy'), 'click', checkAttachedByPolicyOmc) ;
+        eventutil.addEventListener($('attachedByDepartment'), 'click', checkAttachedByDepartment) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'click', onCreateNewOmcPolicy) ;
-        eventutil.addEventListener($('createNewAttachment'), 'click', onCreateNewAttachment) ;
-       // eventutil.addEventListener($('attachedByPolicy'), 'focus', onCheckBoxFocus) ;
-       // eventutil.addEventListener($('attachedByPolicy'), 'blur', onCheckBoxBlur) ;
+
+        eventutil.addEventListener($('attachedByPolicy'), 'focus', onCheckBoxFocus) ;
+        eventutil.addEventListener($('attachedByPolicy'), 'blur', onCheckBoxBlur) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'focus', onCheckBoxFocus) ;
         eventutil.addEventListener($('createNewOmcPolicy'), 'blur', onCheckBoxBlur) ;
-        //eventutil.addEventListener($('createAttachedByDepartment'), 'focus', onCheckBoxFocus) ;
-        //eventutil.addEventListener($('createAttachedByDepartment'), 'blur', onCheckBoxBlur) ;
+        eventutil.addEventListener($('attachedByDepartment'), 'focus', onCheckBoxFocus) ;
+        eventutil.addEventListener($('attachedByDepartment'), 'blur', onCheckBoxBlur) ;
 		
 		// проверка по дате рождения для пед. или терап. участков RIAMS-107
         eventutil.addEventListener($('birthday'), 'blur', checkAttachedByPolicyOmc) ;
 
-        //checkAttached() ;
-        
+        checkAttached() ;
+        */
 		//lpuAreaAutocomplete.setParent(lpuAutocomplete);
-		$('tableNewOmcPolicy').style.display = 'none' ;
 		
 			eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
 			eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
@@ -1232,60 +1298,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			
     //]]></script>
     </msh:ifFormTypeIsNotView>
-    <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
-      <msh:ifFormTypeIsCreate formName="mis_patientForm" insideJavascript="true" guid="c49dd20d-c406-466d-9904-f62c2be7a636">
-        <script type="text/javascript">// <![CDATA[//
-        		$('createAttachedByDepartment').style.visibility = 'visible' ;
-				$('attachedByDepartmentLabel').style.visibility = 'visible' ;
-	    	//]]></script>
-      </msh:ifFormTypeIsCreate>
-      
-    </msh:ifInRole>
-      <msh:ifFormTypeIsCreate formName="mis_patientForm">
-  <script type="text/javascript">
-  	if ('${param.lastname}'!="") {
-  		var lfm='${param.lastname}' ;
-  		var lfm1='${param.hiddendata}' ;
-  		if (lfm1!=null && lfm1!='') {
-  	  		var lfm1 = subvalue(lfm1,'#','lastname');
-  	  		var lfm1 = subvalue(lfm1,'#','firstname');
-  	  		var lfm1 = subvalue(lfm1,'#','middlename');
-  	  		var lfm1 = subvalue(lfm1,'#','birthday');
-  	  		var lfm1 = subvalue(lfm1,'#','commonNumber');
-  	  		var lfm1 = subvalue(lfm1,'#','snils');
-  	  		var lfm1 = subvalue(lfm1,'#','sex');
-  	  		if ($('sex').value!='') {
-  	  		PatientService.getSexByOmccode($('sex').value, {
-  	            callback: function(aResult) {
-  	            	aResult=subvalue(aResult,'#','sex');
-  	            	aResult=subvalue(aResult,'#','sexName');
-  	            }});
-  	  		}
-  	  		var lfm1 = subvalue(lfm1,'#','phone');
-  	  		var sex="" ;
-  	  		checkPatientByCommonNumber();
-  	  		
-	
-  		} else {
-  	  		var lfm = subvalue(lfm,' ','lastname');
-  	  		var lfm = subvalue(lfm,' ','firstname');
-  	  		var lfm = subvalue(lfm,' ','middlename');
-  		}
 
-  		
-  	}
-  	function subvalue(aValue,aDel,aField) {
-  		var ind = aValue.indexOf(aDel) ;
-  		if (ind==-1) {
-  			if ($(aField).value=="") $(aField).value=aValue ;
-  			return "" ;
-  		} else {
-  			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
-  			return aValue.substring(ind+1) ;
-  		}
-  	}
-  </script>
-  </msh:ifFormTypeIsCreate>
+ 
+    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm" guid="659a5e0c-3949-4788-a96b-846f3104205b" />

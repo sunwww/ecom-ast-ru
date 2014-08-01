@@ -58,7 +58,7 @@
   select wp.comPort,wp.id from workPlace wp left join SecUser su on su.id=wp.user_id where wp.dtype='UserComputer' and (wp.remoteAddress='${remoteAddress}' or wp.dynamicIp='1' and su.login='${username}')
   "/>
   <%
-  ActionUtil.getValueByList("comport_list", "port_com", request) ;
+  ActionUtil.getValueByListDef("comport_list", "port_com","COM3", request) ;
   %>
     <msh:ifInRole roles="/Policy/Mis/Patient/FindByBarcode">
 
