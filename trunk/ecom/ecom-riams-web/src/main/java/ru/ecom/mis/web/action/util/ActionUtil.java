@@ -34,6 +34,10 @@ public class ActionUtil {
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
 		aRequest.setAttribute(aNameSet,col.isEmpty()?"0":""+col.iterator().next().get1()) ;
 	}
+	public static void getValueByListDef(String aNameGet,String aNameSet,String aDefault,HttpServletRequest aRequest) {
+		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
+		aRequest.setAttribute(aNameSet,col.isEmpty()?aDefault:""+col.iterator().next().get1()) ;
+	}
 	public static String setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
 		return setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
 	}
