@@ -41,7 +41,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/PasswordService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}PasswordDialogInitialized = false ;
      var the${name}PasswordDialog = new msh.widget.Dialog($('${name}PasswordDialog')) ;
@@ -82,8 +81,8 @@
 
      // инициализация диалогового окна
      function init${name}PasswordDialog() {
-     	
      	theIs${name}PasswordDialogInitialized = true ;
      }
+     -->
      </script>
      
