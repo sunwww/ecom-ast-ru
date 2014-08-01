@@ -149,8 +149,8 @@
 			if (fondPolicy!="") {
 				//$('attachedByPolicy').checked =true ;
 				$('createNewOmcPolicy').checked=true ;
-				checkAttachedByPolicyOmc() ;
-				onCreateNewOmcPolicyWithFocus() ;
+				//checkAttachedByPolicyOmc() ;
+				onCreateNewOmcPolicy() ;
 				var pol = fondPolicy.split("&") ;
 				var ind = 0 ;
 				var policy="";
