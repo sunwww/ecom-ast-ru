@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -25,7 +28,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	EntityManager manager = aContext.getEntityManager();
     	DepartmentMedCaseForm form = (DepartmentMedCaseForm) aForm ;
     	HospitalMedCase parentSSL = manager.find(HospitalMedCase.class, aParentId) ;
-    	
+    	boolean isOwnerFunction = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
     	if (parentSSL!=null) {
     		if (parentSSL.getDeniedHospitalizating()!=null) {
     			throw new IllegalStateException("При отказе от госпитализации случай лечения в отделении (СЛО) не заводится!!! ВСЕ осмотры и назначения оформляются в госпитализации (СЛС)");
@@ -46,13 +49,13 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     			.setParameter("parentId", aParentId)
     			.getSingleResult() ;
     		if (listDep!=null && ConvertSql.parseLong(listDep).equals(Long.valueOf(0))) {
-    			prepareForCreationFirstSlo(form, parentSSL,manager) ;
+    			prepareForCreationFirstSlo(form, parentSSL,manager,isOwnerFunction) ;
     		} else {
     			prepareForCreationNextSlo(form,parentSSL,manager) ;
     		}
     		if (parentSSL.getLpu()!=null) form.setLpu(parentSSL.getLpu().getId());
     		form.setTypeCreate() ;
-    		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
+    		if (isOwnerFunction
     				&&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
         		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
             	List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null") 
@@ -73,9 +76,21 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     /**
      * Новый первый случай лечения в отделении
      * */
-    private void prepareForCreationFirstSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCase ,EntityManager aManager) {
-        aForm.setDateStart(DateFormat.formatToDate(aMedCase.getDateStart()));
-        aForm.setEntranceTime(DateFormat.formatToTime(aMedCase.getEntranceTime()));
+    private void prepareForCreationFirstSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCase ,EntityManager aManager,boolean aIsOwnerFunction) {
+
+    	if (aIsOwnerFunction) {
+    		Date date = new Date();
+    		aForm.setDateStart(DateFormat.formatToDate(date));
+        	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            aForm.setEntranceTime(timeFormat.format(date));
+            //aForm.addDisabledField("dateStart");
+            //aForm.addDisabledField("entranceTime");
+    	} else {
+        	aForm.setDateStart(DateFormat.formatToDate(aMedCase.getDateStart()));
+            aForm.setEntranceTime(DateFormat.formatToTime(aMedCase.getEntranceTime()));
+            aForm.addDisabledField("dateStart");
+            aForm.addDisabledField("entranceTime");
+    	}
         aForm.setPatient(aMedCase.getPatient().getId());
         if (aMedCase.getDepartment()!=null) {
         	aForm.setDepartment(aMedCase.getDepartment().getId());
@@ -87,8 +102,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         aForm.setlpuAndDate(new StringBuilder().append(aForm.getDepartment()).append(":")
         		.append(aForm.getDateStart())
         		.toString()) ;
-        aForm.addDisabledField("dateStart");
-        aForm.addDisabledField("entranceTime");
     }
     
     /**
