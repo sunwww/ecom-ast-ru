@@ -27,7 +27,7 @@
 		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
 		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
 		
-		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","2", request) ;
+		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
     
   	%>
     <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -65,19 +65,17 @@
         	<input type="radio" name="typeHour" value="4">  календар. день
         </td>
       </msh:row>
+      --%>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить информацию:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="1">  приемному отделению
+	        	<input type="radio" name="typeView" value="1">  общий отчет на 8 часов
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="2"  >  реанимациям
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="3"  >  отделениям
+	        	<input type="radio" name="typeView" value="2"  >  иностранцам
 	        </td>
         </msh:row>
-         --%>
+         
         <msh:row guid="Дата">
         <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
       </msh:row>
@@ -162,6 +160,8 @@
 		    	timeSql= "08:00" ;timeInfo="(8 часов)" ;
 	    	} else if (typeHour!=null && typeHour.equals("3")) {
 	    		timeSql= "09:00" ;timeInfo="(9 часов)" ;
+	    	} else if (typeHour!=null && typeHour.equals("4")) {
+	    		timeSql= "15:00" ;timeInfo="(15 часов)" ;
 	    	}
 		    
 		    %>
@@ -508,6 +508,11 @@ order by vph.name
     	   select  
     '&department=${param.department}&pigeonHole='||vph.id as idpar,vph.name
 , count(distinct sls.id) as all1
+,count(distinct case when sls.emergency='1' then sls.id else null end) as obrem
+,count(distinct case when sls.emergency='1' and vof.voc_code='О' then sls.id else null end) as allEmSam
+,count(distinct case when sls.emergency='1' and vof.voc_code='К' then sls.id else null end) as allEmSkor
+,count(distinct case when (sls.emergency is null or sls.emergency='0') then sls.id else null end) as allPl
+
 ,count(distinct case when sls.deniedHospitalizating_id is null then sls.id else null end) as obr
 ,count(distinct case when sls.deniedHospitalizating_id is null 
 and (ok.isCurrent='1' or ok.id is null) and adr.isCurrentRegion='1' and adr.addressIsVillage='1'
@@ -555,19 +560,24 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	      <msh:tableColumn columnName="#" property="sn" addParam="" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
     	      <msh:tableColumn columnName="Приемник" addParam="" property="2"/>
     	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во обрат." addParam="" property="3"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госп" addParam="&denied=0" property="4"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="с.ж." addParam="&denied=0&patient=village" property="5"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="гор." addParam="&denied=0&patient=city" property="6"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="иног." addParam="&denied=0&patient=inog" property="7"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="иност." addParam="&denied=0&patient=inostr" property="8"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="др." addParam="&denied=0&patient=other" property="9"/>
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстр." addParam="&denied=0&emergency=1" property="10" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="самообр." addParam="&denied=0&emergency=1&orderType=О" property="11" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="ск. пом." addParam="&denied=0&emergency=1&orderType=К" property="12" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во план." addParam="&denied=0&emergency=0" property="13" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов" addParam="&denied=all" property="14" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="направ. в др. ЛПУ" addParam="&denied=4" property="15" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="отказ больного" addParam="&denied=8" property="16" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="кол-во экстр." addParam="&emergency=1" property="4" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="самообр." addParam="&emergency=1&orderType=О" property="5" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="ск. пом." addParam="&emergency=1&orderType=К" property="6" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="кол-во план." addParam="&emergency=0" property="7" />
+
+    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госп" addParam="&denied=0" property="8"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="с.ж." addParam="&denied=0&patient=village" property="9"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="гор." addParam="&denied=0&patient=city" property="10"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="иног." addParam="&denied=0&patient=inog" property="11"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="иност." addParam="&denied=0&patient=inostr" property="12"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="др." addParam="&denied=0&patient=other" property="13"/>
+    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстр." addParam="&denied=0&emergency=1" property="14" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="самообр." addParam="&denied=0&emergency=1&orderType=О" property="15" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="ск. пом." addParam="&denied=0&emergency=1&orderType=К" property="16" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во план." addParam="&denied=0&emergency=0" property="17" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов" addParam="&denied=all" property="18" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="направ. в др. ЛПУ" addParam="&denied=4" property="19" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="отказ больного" addParam="&denied=8" property="20" />
     	      <msh:tableColumn isCalcAmount="true" columnName="Самовольно покинул отделение" addParam="&denied=5" property="17" />
     	      <msh:tableColumn isCalcAmount="true" columnName="Отсутствие показаний" addParam="&denied=2" property="18" />
     	    </msh:table>
@@ -798,7 +808,7 @@ order by ml.name
       <msh:tableColumn isCalcAmount="true" columnName="план." property="10" addParam="&dateinfo=dateStart&emergency=0"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="11" addParam="&dateinfo=transferDate"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="12" addParam="&dateinfo=dateFinish"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="13" addParam="&dateinfo=dateCurrent&discharge=death"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="13" addParam="&dateinfo=dateFinish&discharge=death"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="14" addParam="&dateinfo=operationDate&dtype=SurgicalOperation"/>
       <msh:tableColumn isCalcAmount="true" columnName="экстр." property="15" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=emergency"/>
       <msh:tableColumn isCalcAmount="true" columnName="план." property="16" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=plan"/>
@@ -806,7 +816,61 @@ order by ml.name
     </msh:sectionContent>
     </msh:section>    	   
     	    <%
-    	} else {
+    	}  else if (view!=null && (view.equals("2"))) {
+    		%>
+<msh:section>
+    <msh:sectionTitle>
+    Обратились за мед.помощью
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
+   select '&department='||ml.id,ml.name
+,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
+,count(distinct case when ${periodCurrentSlo} and vss.code='OBLIGATORYINSURANCE' then slo.id else null end) as cntCurrentOmc
+,count(distinct case when ${periodCurrentSlo} and (vss.code not in ('PRIVATEINSURANCE','OBLIGATORYINSURANCE','OTHER','BUDGET')) then slo.id else null end) as cntCurrentVnebud
+from medcase slo
+left join VocServiceStream vss on vss.id=slo.serviceStream_id
+left join Patient pat on pat.id=slo.patient_id
+left join Omc_Oksm vn on vn.id=pat.nationality_id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join Address2 adr on adr.addressid=pat.address_addressid
+left join Mislpu ml on slo.department_id=ml.id
+left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+where slo.dtype='DepartmentMedCase'
+and ${periodCurrentSlo1} 
+and (ml.isNoOmc='0' or ml.isNoOmc is null)
+and slo.deniedHospitalizating_id is null
+${pigeonHoleSql} ${departmentSql} ${serviceStreamSql} 
+group by ml.id,ml.name
+order by ml.name
+      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      
+    <msh:table cellFunction="true" name="journal_priem" 
+     action="stac_everyday_report.do?${paramHref}" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" addParam="&dateinfo=dateCurrent" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="внебюдж." property="5" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="6" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="без  полиса" property="7" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="8" addParam="&dateinfo=dateStart"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" addParam="&dateinfo=dateStart&emergency=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" addParam="&dateinfo=dateStart&emergency=0"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="11" addParam="&dateinfo=transferDate"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="12" addParam="&dateinfo=dateFinish"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="13" addParam="&dateinfo=dateFinish&discharge=death"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="14" addParam="&dateinfo=operationDate&dtype=SurgicalOperation"/>
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="15" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=emergency"/>
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="16" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=plan"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>    	       		<%
+    		
+    	}else {
     		
     		
     
