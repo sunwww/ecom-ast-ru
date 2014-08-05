@@ -231,7 +231,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
           	<msh:hidden property="newborn"/>
           </msh:ifNotInRole>
         <msh:row guid="e8f9a2e2-5361-41e6-b486-9c92b5693ac8">
-          <msh:autoComplete property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" vocName="vocOrg" guid="24e551c0-b185-4361-8364-a93210c7d39d" />
+          <msh:textField property="works" fieldColSpan="3" label="Место работы" horizontalFill="true" />
         </msh:row>
         <msh:row guid="b8dbed14-010b-44b5-93b7-3d32ccdc8b35">
           <msh:autoComplete property="categoryChild" fieldColSpan="1" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
@@ -376,10 +376,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
         	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
         </msh:row>        
-                <msh:row>
-        	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
-        	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
-        </msh:row>        <!--  ПРИКРЕПЛЕНИЕ -->
+        <!--  ПРИКРЕПЛЕНИЕ -->
         
          <msh:ifFormTypeIsNotView formName="mis_patientForm"> 
         <msh:separator colSpan="4" label="Добавить полис и прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
