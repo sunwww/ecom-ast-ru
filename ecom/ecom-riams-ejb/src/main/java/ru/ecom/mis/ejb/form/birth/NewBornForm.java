@@ -375,4 +375,27 @@ public class NewBornForm extends IdEntityForm{
 	private String theHemorrhageVolume;
 	/** СМО */
 	private Long theMedCase;
+	
+	/** №истории болезни */
+	@Comment("№истории болезни")
+	public String getStatisticStub() {return theStatisticStub;}
+	public void setStatisticStub(String aStatisticStub) {theStatisticStub = aStatisticStub;}
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+
+	/** Экстренное поступление */
+	@Comment("Экстренное поступление")
+	public Boolean getEmergency() {return theEmergency;}
+	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
+
+	
+	/** Экстренное поступление */
+	private Boolean theEmergency;
+	/** Поток обслуживания */
+	private Long theServiceStream;
+	/** №истории болезни */
+	private String theStatisticStub;
 }
