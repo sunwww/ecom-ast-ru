@@ -817,10 +817,11 @@ order by ml.name
     </msh:section>    	   
     	    <%
     	}  else if (view!=null && (view.equals("2"))) {
+    		
     		%>
 <msh:section>
     <msh:sectionTitle>
-    Обратились за мед.помощью
+    Обратились за мед.помощью иностранцы
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
