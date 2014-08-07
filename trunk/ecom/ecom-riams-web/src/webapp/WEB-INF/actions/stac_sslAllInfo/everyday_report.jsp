@@ -22,19 +22,18 @@
     <%
     String typeReestr = request.getParameter("typeReestr") ;
     String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","2", request) ;
+	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
 		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
 		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
 		
-		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
     
   	%>
     <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
-    <input type="hidden" name="typeView" id="typeView" value="1"/>
         <input type='hidden' id="sqlText1" name="sqlText1">
         <input type='hidden' id="sqlText2" name="sqlText2">
         <input type='hidden' id="infoText1" name="infoText1">
@@ -99,7 +98,7 @@
     //checkFieldUpdate('typeDate','${typeDate}',1) ;
     //checkFieldUpdate('typePatient','${typePatient}',4) ;
     //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-    //checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeView','${typeView}',1) ;
     //checkFieldUpdate('typeHour','${typeHour}',3) ;
     //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
     
@@ -128,13 +127,14 @@
     String date = request.getParameter("dateBegin") ;
     
     if (date!=null && !date.equals(""))  {
-    	String view = (String)request.getAttribute("typeView") ;
+    	//request.setAttribute("date", date) ;
+    	//String view = (String)request.getAttribute("typeView") ;
     	
     	String pigeonHole="" ;
     	String pigeonHole1="" ;
     	StringBuilder paramHref = new StringBuilder();
     	paramHref.append("typeReestr=1");
-    	paramHref.append("&typeView=").append(view);
+    	paramHref.append("&typeView=").append(typeView);
     	
     	ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request);
     	ActionUtil.setParameterFilterSql("department", "ml.id", request);
@@ -435,7 +435,7 @@
 
     			
     				
-    				}} else if (view!=null && (view.equals("1"))) {
+    				}} else if (typeView!=null && (typeView.equals("1"))) {
     					request.setAttribute("periodCurrentSls",new StringBuilder() 
     		   			.append(" (medcase.dateFinish is null ")
     		    		.append(" or ") 
@@ -816,57 +816,63 @@ order by ml.name
     </msh:sectionContent>
     </msh:section>    	   
     	    <%
-    	}  else if (view!=null && (view.equals("2"))) {
+    	}  else if (typeView!=null && (typeView.equals("2"))) {
     		
+    		Date dt = DateFormat.parseDate(date) ;
+    		Calendar c = Calendar.getInstance() ;
+    		c.setTime(dt) ;
+    		c.add(Calendar.DAY_OF_MONTH, -1) ;
+    		SimpleDateFormat f=new SimpleDateFormat("dd.MM.yyyy") ;
+    		String datePrev=format.format(c.getTime()) ;
+    		request.setAttribute("datePrev", datePrev) ;
+			request.setAttribute("periodSmo",new StringBuilder() 
+				.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.dateStart", "coalesce(medcase.entranceTime,medcase.timeExecute)", datePrev, "15:00")) 
+				.toString().replaceAll("medcase", "smo"));
+			
     		%>
 <msh:section>
     <msh:sectionTitle>
-    Обратились за мед.помощью иностранцы
+    Обратились за мед.помощью иностранцы ${datePrev} 15:00 - ${param.dateBegin} 14:59
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
-   select '&department='||ml.id,ml.name
-,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
-,count(distinct case when ${periodCurrentSlo} and vss.code='OBLIGATORYINSURANCE' then slo.id else null end) as cntCurrentOmc
-,count(distinct case when ${periodCurrentSlo} and (vss.code not in ('PRIVATEINSURANCE','OBLIGATORYINSURANCE','OTHER','BUDGET')) then slo.id else null end) as cntCurrentVnebud
-from medcase slo
-left join VocServiceStream vss on vss.id=slo.serviceStream_id
-left join Patient pat on pat.id=slo.patient_id
+   select '&nationality='||vn.id,vn.name
+,count(distinct case when smo.dtype='Visit'  and (vwf.isNoDiagnosis='0' or vwf.isNoDiagnosis is null) then smo.id else null end) as cntVisitMain
+,count(distinct case when smo.dtype='Visit' and smo.dateStart=to_date('${param.dateBegin}','dd.mm.yyyy') and smo.timeExecute between cast('07:00' as time) and cast('14:59' as time) and (vwf.isNoDiagnosis='0' or vwf.isNoDiagnosis is null) then smo.id else null end) as cntVisitMain2
+,count(distinct case when smo.dtype='Visit' and vwf.isNoDiagnosis='1' then smo.id else null end) as cntVisitDiag
+,count(distinct case when smo.dtype='Visit' and smo.dateStart=to_date('${param.dateBegin}','dd.mm.yyyy') and smo.timeExecute between cast('07:00' as time) and cast('14:59' as time) and vwf.isNoDiagnosis='1' then smo.id else null end) as cntVisitDiag2
+,count(distinct case when smo.dtype='HospitalMedCase' and smo.deniedHospitalizating_id is null then smo.id else null end) as cntHosp
+,count(distinct case when smo.dtype='HospitalMedCase' and smo.dateStart=to_date('${param.dateBegin}','dd.mm.yyyy') and smo.entranceTime between cast('07:00' as time) and cast('14:59' as time) and smo.deniedHospitalizating_id is null then smo.id else null end) as cntHosp2
+,count(distinct case when smo.dtype='HospitalMedCase' and smo.deniedHospitalizating_id is not null then smo.id else null end) as cntDenied
+,count(distinct case when smo.dtype='HospitalMedCase' and smo.dateStart=to_date('${param.dateBegin}','dd.mm.yyyy') and smo.entranceTime between cast('07:00' as time) and cast('14:59' as time) and smo.deniedHospitalizating_id is not null then smo.id else null end) as cntDenied2
+
+from medcase smo
+left join WorkFunction wf on wf.id=smo.workFunctionExecute_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join VocServiceStream vss on vss.id=smo.serviceStream_id
+left join Patient pat on pat.id=smo.patient_id
 left join Omc_Oksm vn on vn.id=pat.nationality_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
-left join Address2 adr on adr.addressid=pat.address_addressid
-left join Mislpu ml on slo.department_id=ml.id
-left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
-left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-where slo.dtype='DepartmentMedCase'
-and ${periodCurrentSlo1} 
-and (ml.isNoOmc='0' or ml.isNoOmc is null)
-and slo.deniedHospitalizating_id is null
-${pigeonHoleSql} ${departmentSql} ${serviceStreamSql} 
-group by ml.id,ml.name
-order by ml.name
+where smo.dtype in('HospitalMedCase','Visit')
+and ${periodSmo} 
+
+group by vn.id,vn.name
+order by vn.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
       
     <msh:table cellFunction="true" name="journal_priem" 
      action="stac_everyday_report.do?${paramHref}" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
-      <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" addParam="&dateinfo=dateCurrent" property="3" />
-      <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
-      <msh:tableColumn isCalcAmount="true" columnName="внебюдж." property="5" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
-      <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="6" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
-      <msh:tableColumn isCalcAmount="true" columnName="без  полиса" property="7" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во пост." property="8" addParam="&dateinfo=dateStart"/>
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" addParam="&dateinfo=dateStart&emergency=1"/>
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" addParam="&dateinfo=dateStart&emergency=0"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во перев. в др.отд" property="11" addParam="&dateinfo=transferDate"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="12" addParam="&dateinfo=dateFinish"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них умерло" property="13" addParam="&dateinfo=dateFinish&discharge=death"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во опер." property="14" addParam="&dateinfo=operationDate&dtype=SurgicalOperation"/>
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="15" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=emergency"/>
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="16" addParam="&dateinfo=operationDate&dtype=SurgicalOperation&operation=plan"/>
+      <msh:tableColumn columnName="Гражданство" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ." property="3" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ. 07:00-14:59" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ." property="5" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ. 07:00-14:59" property="6" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит." property="7" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит. 07:00-14:59" property="8" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп." property="9" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп. 07:00-14:59" property="10" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	       		<%
