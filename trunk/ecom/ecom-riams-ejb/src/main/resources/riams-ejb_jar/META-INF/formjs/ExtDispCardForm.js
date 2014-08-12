@@ -1,16 +1,12 @@
 /**
  * При создании
  */
-function onCreate(aForm, aEntity, aContext) {
-	saveAdditionData(aForm,aEntity,aContext) ;
+function onCreate(aForm, aEntity, aCtx) {
+	saveAdditionData(aForm,aEntity,aCtx) ;
 	var date = new java.util.Date() ;
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	var date = new java.util.Date() ;
-	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 
 /**
@@ -18,12 +14,10 @@ function onCreate(aForm, aEntity, aContext) {
  */
 function onSave(aForm, aEntity, aCtx) {
 	aCtx.manager.persist(aEntity) ;
-	/*
-	 var date = new java.util.Date() ;
-	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
-	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	*/
+	var date = new java.util.Date() ;
+	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
+	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	saveAdditionData(aForm,aEntity,aCtx) ;
 	
 }
