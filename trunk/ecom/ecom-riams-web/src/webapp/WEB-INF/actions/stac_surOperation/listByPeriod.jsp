@@ -488,10 +488,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 
     if (view!=null&&view.equals("8")) {
     %>
-    <msh:section>
-    <msh:sectionTitle>Реестр хирургических операций</msh:sectionTitle>
-    <msh:sectionContent>
-	    <ecom:webQuery name="journal_surOperation1" nativeSql="select so.id as id
+	    <ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(${typeDateSql},'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(${typeDateSql}To,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
 	    , vo.name as voname
 	    ,(select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id ) as surgOper 
@@ -528,6 +525,19 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	          ${typeEndoscopyUseSql} ${serviceStreamSql}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:section>
+    <msh:sectionTitle>
+    
+    <form action="print-stac_journal_surOperationByDate_8.do" method="post" target="_blank">
+    Реестр хирургических операций с ${dateBegin} по ${dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_surOperation1_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр хирургических операций с ${dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form></msh:sectionTitle>
+    <msh:sectionContent>
 	    <msh:table name="journal_surOperation1" 
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
