@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -105,5 +106,65 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	/** Тип прикрепления */
 	private VocAttachedType theAttachedType;
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Дата редактирования услуги */
+	@Comment("Дата редактирования услуги")
+	public Date getEditDateRender() {return theEditDateRender;}
+	public void setEditDateRender(Date aEditDateRender) {theEditDateRender = aEditDateRender;}
+
+	/** Время редактирование услуги */
+	@Comment("Время редактирование услуги")
+	public Time getEditTimeRender() {return theEditTimeRender;}
+	public void setEditTimeRender(Time aEditTimeRender) {theEditTimeRender = aEditTimeRender;}
+
+	/** Пользователь редактировавший услуги */
+	@Comment("Пользователь редактировавший услуги")
+	public String getEditUsernameRender() {return theEditUsernameRender;}
+	public void setEditUsernameRender(String aEditUsernameRender) {theEditUsernameRender = aEditUsernameRender;}
+
+	/** Пользователь редактировавший услуги */
+	private String theEditUsernameRender;
+	/** Время редактирование услуги */
+	private Time theEditTimeRender;
+	/** Дата редактирования услуги */
+	private Date theEditDateRender;
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private Time theEditTime;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Дата создания */
+	private Date theCreateDate;
 
 }
