@@ -67,10 +67,11 @@
 
 			}
 		}
-		sql=sql+" and t.person_id in (select medc.person_id from medcard medc left join patient pat on pat.id=medc.person_id where upper(medc.number) in ("
-				+filtOr.toString()+") or upper(pat.patientSync) in ("+filtOr.toString()+"))" ;
+		request.setAttribute("medcardAddJoin", "left join  medcard medc on p.id=medc.person_id") ;
+		sql=sql+" and ( upper(medc.number) in ("
+				+filtOr.toString()+") or upper(p.patientSync) in ("+filtOr.toString()+"))" ;
 	}
-	sql=sql+" and patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
+	sql=sql+" and t.patient_id is not null and t.dateStart between to_date('"+startDate+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy')" ;
 	if (form.getLpu()!=null && (form.getLpu().intValue()>0)) {
 		sql = sql + " and w.lpu_id='"+form.getLpu()+"'" ;
 	}
@@ -237,7 +238,8 @@
     	,case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else '' end as directHosp
     	, oml.name as omlname 
     	from Medcase t  
-    	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id  
+    	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id
+    	${medcardAddJoin}  
     	left join workfunction wf on wf.id=t.workFunctionExecute_id  left join worker w on w.id=wf.worker_id 
     	left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join patient wp on wp.id=w.person_id 
     	left join vocsex vs on vs.id=p.sex_id 
@@ -290,6 +292,7 @@
 	select case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else 'Нет' end as direct,count(t.id) as cnt
 	 from MedCase t 
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id  
+    	${medcardAddJoin}
     	left join workfunction wf on wf.id=t.workFunctionExecute_id  left join worker w on w.id=wf.worker_id 
     	left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join patient wp on wp.id=w.person_id 
     	left join vocsex vs on vs.id=p.sex_id
