@@ -116,7 +116,7 @@
     ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
-	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
+	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
      from  Patient pat
      left join Address2 a on a.addressid=pat.address_addressid
 	where pat.deathDate is null ${whereSql} 
