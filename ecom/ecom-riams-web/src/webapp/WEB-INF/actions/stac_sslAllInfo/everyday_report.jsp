@@ -865,14 +865,14 @@ order by vn.name
      action="stac_everyday_report.do?${paramHref}" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Гражданство" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ." property="3" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ. 07:00-14:59" property="4" addParam="&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ." property="5" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ. 07:00-14:59" property="6" addParam="&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит." property="7" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит. 07:00-14:59" property="8" addParam="&dateinfo=dateCurrent&stream=PRIVATEINSURANCE"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп." property="9" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп. 07:00-14:59" property="10" addParam="&dateinfo=dateCurrent&stream=OTHER"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ." property="3" addParam="&dtype=Visit&isdiag=0&dateinfo=dateStart&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во амб. посещ. 07:00-14:59" property="4" addParam="&hours=07:00-14:59&dtype=Visit&isdiag=0&dateinfo=dateStart&stream=OBLIGATORYINSURANCE" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ." property="5" addParam="&dtype=Visit&isdiag=1&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во диаг. посещ. 07:00-14:59" property="6" addParam="&hours=07:00-14:59&dtype=Visit&isdiag=1&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит." property="7" addParam="&dateinfo=dateStart&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во госпит. 07:00-14:59" property="8" addParam="&hours=07:00-14:59&dateinfo=dateStart&stream=PRIVATEINSURANCE"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп." property="9" addParam="&dateinfo=dateStart&stream=OTHER"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во отказов от госп. 07:00-14:59" property="10" addParam="&hours=07:00-14:59&dateinfo=dateCurrent&stream=OTHER"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	       		<%
