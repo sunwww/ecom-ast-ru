@@ -91,6 +91,10 @@
 	        	<input type="radio" name="typeView" value="2">  пациенты без адресов
 	        </td>
        </msh:row>
+       <msh:row>
+        <msh:textField  property="сhangedDateFrom" label="Измененные с" />
+      </msh:row>
+       
        
        <msh:row>
        	<msh:hidden property="filename"/>
