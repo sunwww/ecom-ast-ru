@@ -179,4 +179,21 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Период дефекта */
+	@Comment("Период дефекта")
+	@Persist
+	public String getDefectPeriod() {return theDefectPeriod;}
+	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
+
+	/** Текст дефекта */
+	@Comment("Текст дефекта")
+	@Persist
+	public String getDefectText() {return theDefectText;}
+	public void setDefectText(String aDefectText) {theDefectText = aDefectText;}
+
+	/** Текст дефекта */
+	private String theDefectText;
+	/** Период дефекта */
+	private String theDefectPeriod;
 }
