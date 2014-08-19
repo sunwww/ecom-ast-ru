@@ -41,8 +41,13 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public Boolean getNoCheckLpu() {return theNoCheckLpu;}
 	public void setNoCheckLpu(Boolean aNoCheckLpu) {theNoCheckLpu = aNoCheckLpu;}
 
+	/** Созданные с даты */
+	public Boolean getChangedDateFrom() {return theChangedDateFrom;}
+	public void setChangedDateFrom(Boolean aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
 	/** НЕ проверять ЛПУ */
-	private Boolean theNoCheckLpu;/** Файл */
+	private Boolean theNoCheckLpu;
+	private Boolean theChangedDateFrom;
+	/** Файл */
 	private String theFilename;
 	/** NumberReestr */
 	private String theNumberReestr;
