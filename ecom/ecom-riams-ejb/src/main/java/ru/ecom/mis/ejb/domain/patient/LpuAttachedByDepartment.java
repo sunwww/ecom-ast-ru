@@ -32,35 +32,20 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	/** Участок */
 	@Comment("Участок")
 	@OneToOne
-	public LpuArea getArea() {
-		return theArea;
-	}
-
-	public void setArea(LpuArea aArea) {
-		theArea = aArea;
-	}
+	public LpuArea getArea() {return theArea;}
+	public void setArea(LpuArea aArea) {theArea = aArea;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@ManyToOne
-	public Patient getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Patient aPatient) {
-		thePatient = aPatient;
-	}
+	public Patient getPatient() {return thePatient;}
+	public void setPatient(Patient aPatient) {thePatient = aPatient;}
 
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
-	}
+	public MisLpu getLpu() {return theLpu;}
+	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
 
 	@Transient
 	public String getLpuFullname() {
@@ -166,5 +151,20 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Период дефекта */
+	@Comment("Период дефекта")
+	public String getDefectPeriod() {return theDefectPeriod;}
+	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
+
+	/** Текст дефекта */
+	@Comment("Текст дефекта")
+	public String getDefectText() {return theDefectText;}
+	public void setDefectText(String aDefectText) {theDefectText = aDefectText;}
+
+	/** Текст дефекта */
+	private String theDefectText;
+	/** Период дефекта */
+	private String theDefectPeriod;
 
 }
