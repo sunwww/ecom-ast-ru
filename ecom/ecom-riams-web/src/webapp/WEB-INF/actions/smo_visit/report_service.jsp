@@ -307,8 +307,25 @@ then -1 else 0 end) as age
 ,case when (ad1.addressisvillage='1') then 'сел' else null end as cntVil
 ,vr.name as vrname
 ,vwpt.name as vwptname 
-,vss.name as vssname
+,vss.name ||' '|| case when vss.code='HOSPITAL' or vss.code='OTHER' then 
+coalesce(' - '||(select 
+list(case when sls.deniedHospitalizating_id is null then slsml.name||' '||
+to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),
+'по тек.мом.') else ' ОТКАЗ '||slsml.name ||' '||to_char(sls.dateStart,'dd.mm.yyyy') end)
+from medcase sls 
+left join mislpu slsml on slsml.id=sls.department_id
+where sls.patient_id=smo.patient_id and sls.dtype='HospitalMedCase'
+and (
+sls.deniedHospitalizating_id is null and smo.datestart between sls.dateStart and coalesce(sls.datefinish,current_date)
+or
+sls.deniedHospitalizating_id is not null and smo.datestart between sls.dateStart and sls.datestart+1
+)
+),'нет данных') 
+else '' end as vssname
 ,list(mkb.code) as mkblist,list(ms.code||' '||ms.name) as servecilist
+,olpu.name as olpuname
+,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename||' ('||owflpu.name||')' as owfinfo
+
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -327,12 +344,19 @@ left join diagnosis diag on diag.medcase_id=smo.id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join medcase mssmo on mssmo.parent_id=smo.id and mssmo.dtype='ServiceMedCase'
 left join medservice ms on ms.id=mssmo.medservice_id
+left join mislpu olpu on olpu.id=smo.orderLpu_id
+LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id 
+LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
+LEFT JOIN Worker ow on ow.id=owf.worker_id 
+left join mislpu owflpu on owflpu.id=ow.lpu_id
+LEFT JOIN Patient owp on owp.id=ow.person_id 
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
+,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -348,6 +372,8 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="поток обсл." property="9"/>
             <msh:tableColumn columnName="диагноз" property="10"/>
             <msh:tableColumn columnName="услуга" property="11"/>
+            <msh:tableColumn columnName="напр. ЛПУ" property="12"/>
+            <msh:tableColumn columnName="напр. внутр." property="13"/>
         </msh:table>
     </msh:sectionContent>
 
