@@ -67,6 +67,7 @@
     <applet code="CommRead" archive="js-mis_patient-CommRead.do, js-mis_patient-jssc.do, js-mis_patient-barcode.do" width=1 height=1>
     <param name = "MAYSCRIPT" value = "TRUE">
     <param name = "comport" value = "${port_com}">
+    <param name = "initial_focus" value = "false">
     </applet>
     </msh:ifInRole>
   <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
