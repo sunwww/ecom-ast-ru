@@ -70,6 +70,7 @@
 	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
+    ,pat.passportSeries||' '||pat.passportNumber as passportshort
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
