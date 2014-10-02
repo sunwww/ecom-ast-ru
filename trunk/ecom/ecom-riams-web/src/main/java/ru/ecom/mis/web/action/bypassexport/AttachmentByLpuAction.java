@@ -31,6 +31,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
     		String typeAge = ActionUtil.updateParameter("PatientAttachment","typeAge","3", aRequest) ; 
     		String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
+    		String typeDefect = ActionUtil.updateParameter("PatientAttachment","typeDefect","3", aRequest) ; 
     		String typeChange = ActionUtil.updateParameter("PatientAttachment","typeChange","1", aRequest) ; 
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -64,12 +65,18 @@ public class AttachmentByLpuAction extends BaseAction {
 	        	sqlAdd.append(" and (lp.dateFrom between to_date('")
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
-	        	
-	        } 
+	        } else {
+	        	sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
+	        }
     		if (form.getChangedDateFrom()!=null&&!form.getChangedDateFrom().equals("")) {
- 	        	sqlAdd.append(" and (coalesce(lp.createDate,lp.editDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )") ;
+ 	        	sqlAdd.append(" and (coalesce(lp.editDate,lp.createDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )") ;
  	        	
 	        } 
+    		if (typeDefect!=null&&typeDefect.equals("1")) {
+    			sqlAdd.append(" and lp.defectText!='' and lp.defectText is not null") ;
+    		} else if (typeDefect!=null&&typeDefect.equals("2")) {
+    			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
+    		}
 	    	filename = service.exportAll(age,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 	        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 	        		, form.getNumberPackage());

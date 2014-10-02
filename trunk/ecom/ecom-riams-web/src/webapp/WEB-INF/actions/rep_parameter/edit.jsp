@@ -33,6 +33,7 @@
   	select tpt.id, tpt.codeFrom,tpt.codeTo 
   	from ReportSetTypeParameterType tpt
 where tpt.parameterType_id='${param.id}'
+order by tpt.codeFrom
 
 "/>
   	<msh:table name="list" 
@@ -58,6 +59,13 @@ where tpt.parameterType_id='${param.id}'
       <msh:sideLink roles="/Policy/Voc/ReportConfig/Create" key="ALT+2" params="id" action="/entityParentPrepareCreate-rep_parameterVariety" name="Диапазон" title="Добавить диапазон" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="repconfig"/>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsCreate formName="rep_parameterForm">
+  	<script type="text/javascript">
+  	$('className').value='${param.id}'
+  	</script>
+  </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
 

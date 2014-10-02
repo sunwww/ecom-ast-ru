@@ -26,15 +26,9 @@
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
-	String person = request.getParameter("person") ;
-	
-	if (person!=null && !person.equals("") && !person.equals("0")) {
-		request.setAttribute("personClear", "<input type='button' name='clearPerson' value='Очистить инф. о сотруднике' onclick=\"$('person').value='';this.style.display='none'\">") ;
-	}
+
   %>
     <msh:form action="/visit_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <input type="hidden" name="m" id="m" value="f039"/>
-    <input type="hidden" name="s" id="s" value="TicketService"/>
     <input type="hidden" name="id" id="id"/>
     <input type="hidden" name="ticketIs" id="ticketIs" value="0"/>
     <input type="hidden" name="typeReestr" id="typeReestr" value="2"/>
@@ -54,6 +48,10 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="additionStatus" vocName="vocAdditionStatus" 
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="person" vocName="patient" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
@@ -187,7 +185,7 @@
 	        </td>
 	        <td colspan="2">
 	        	<input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_f039_list.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
-	        	${personClear}
+	        	
 	        </td>
         </msh:row>
         <msh:row>
@@ -233,6 +231,7 @@
     			request.setAttribute("dateSql", "smo.dateStart") ;
     		}
     		if (typeGroup.equals("1")) {
+    			request.setAttribute("printPrefix", "_date");
     			// Группировка по дате
     			if (typeDate.equals("2")) {
 	       			request.setAttribute("groupSql", "to_char(smo.dateStart,'dd.mm.yyyy')") ;
@@ -381,13 +380,15 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
 
     <msh:sectionTitle>
-        <form action="print-f039_reestr.do" method="post" target="_blank">
+        <form action="print-f039_reestr${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -514,13 +515,15 @@ ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
-    <form action="print-f039_stand.do" method="post" target="_blank">
+    <form action="print-f039_stand${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -707,13 +710,15 @@ ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
     <msh:sectionTitle>
-    <form action="print-f039_bis.do" method="post" target="_blank">
+    <form action="print-f039_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -890,13 +895,15 @@ ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
-    <form action="print-f039_bis.do" method="post" target="_blank">
+    <form action="print-f039_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -1034,6 +1041,8 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -1152,13 +1161,15 @@ ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
-    <form action="print-f039_30rep_bis.do" method="post" target="_blank">
+    <form action="print-f039_30rep_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -1241,6 +1252,8 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
@@ -1355,6 +1368,8 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
     <input type="submit" value="Печать"> 
     </form>
     </msh:sectionTitle>
