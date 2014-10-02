@@ -44,6 +44,7 @@ function onCreate(aForm, aEntity, aContext) {
 				exam.setCalendarTime(sqlTime) ;
 				exam.setDayPattern(aEntity.dayPattern) ;
 				aContext.manager.persist(exam) ;
+				cal1.add(java.util.Calendar.MINUTE, interval) ;
 				if (dop>0) {
 					--dop;
 					cal1.add(java.util.Calendar.MINUTE, 1) ;

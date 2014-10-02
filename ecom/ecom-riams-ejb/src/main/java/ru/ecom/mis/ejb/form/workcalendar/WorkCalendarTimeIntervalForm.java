@@ -71,13 +71,8 @@ public class WorkCalendarTimeIntervalForm extends WorkCalendarTimePatternForm{
 	/** Кол-во визитов */
 	@Comment("Кол-во визитов")
 	@Persist
-	public Integer getCountVisits() {
-		return theCountVisits;
-	}
-
-	public void setCountVisits(Integer aCountVisits) {
-		theCountVisits = aCountVisits;
-	}
+	public Integer getCountVisits() {return theCountVisits;}
+	public void setCountVisits(Integer aCountVisits) {theCountVisits = aCountVisits;}
 
 	/** Кол-во визитов */
 	private Integer theCountVisits;

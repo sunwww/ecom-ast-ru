@@ -1,5 +1,69 @@
 var map = new java.util.HashMap() ;
 
+function printNativeQuery_date(aCtx,aParams) {
+	var sqlText = aParams.get("sqlText");
+	var sqlInfo = aParams.get("sqlInfo");
+	var cntBegin = +aParams.get("cntBegin");
+	var sqlColumn = aParams.get("sqlColumn");
+	var beginDate = aParams.get("date1") ;
+	var endDate = aParams.get("date2") ;
+	if (cntBegin<1) cntBegin=1 ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	var retAll = new java.util.ArrayList() ;
+	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	var cal1 = java.util.Calendar.getInstance() ;
+	cal1.setTime(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(beginDate)) ;
+	var cal2 = java.util.Calendar.getInstance() ;
+	cal2.setTime(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(endDate)) ;
+	cal = java.util.Calendar.getInstance() ;
+	var i=0;
+	while (cal1.getTime().getTime()<=cal2.getTime().getTime()) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		par.set1(""+cntBegin) ;
+		++cntBegin ;
+		var dt=""+obj[1] ;
+		cal.setTime(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dt)) ;
+		if (cal.getTime().getTime()==cal1.getTime().getTime()) {
+			for (var j=2;j<=obj.length;j++) {
+				var val = obj[j-1] ;
+				eval("par.set"+(j)+"(val);") ;
+				if (val==null) val=0 ;
+				
+				eval("var val1=parAll.get"+j+"()") ;
+				if (val1==null) val1=0 ;
+				var val11 = new java.math.BigDecimal(''+val1) ;
+				var val12=  new java.math.BigDecimal(''+0) ;
+				try {
+					val12 =  new java.math.BigDecimal(''+val) ;
+				} catch(e) {
+					
+				}
+				var val=val12.add(val11) ;
+				
+				eval("parAll.set"+(j)+"(val);") ;
+				
+			}
+			i++ ;
+		} else {
+			par.set2(FORMAT_2.format(cal1.getTime()));
+			for (var j=3;j<=obj.length;j++) {
+				eval("par.set"+(j)+"('');") ;
+				
+			}
+		}
+		ret.add(par) ;
+		cal1.add(java.util.Calendar.DAY_OF_MONTH, 1) ;
+	}
+	retAll.add(parAll) ;
+	map.put("list",ret) ;
+	map.put("sqlInfo",sqlInfo) ;
+	map.put("sqlColumn",sqlColumn) ;
+	map.put("listAll",retAll) ;
+	return map ;
+}
 function printNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");

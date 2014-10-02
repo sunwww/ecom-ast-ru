@@ -51,4 +51,12 @@ public class WorkCalendarTimePatternForm extends IdEntityForm{
 	 * Тип занятости
 	 */
 	private Long theWorkBusy;
+	
+	/** Список времен */
+	@Comment("Список времен")
+	public String getListTimes() {return theListTimes;}
+	public void setListTimes(String aListTimes) {theListTimes = aListTimes;}
+
+	/** Список времен */
+	private String theListTimes;
 }
