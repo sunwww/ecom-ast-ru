@@ -24,6 +24,13 @@ public class VocServiceStream extends VocIdNameOmcCode {
 	public VocFinanceSource getFinanceSource() {return theFinanceSource;}
 	public void setFinanceSource(VocFinanceSource aFinanceSource) {theFinanceSource = aFinanceSource;}
 
+	/** Двойная печать выписок по поликлинике */
+	@Comment("Двойная печать выписок по поликлинике")
+	public Boolean getIsDoublePrintPolic() {return theIsDoublePrintPolic;}
+	public void setIsDoublePrintPolic(Boolean aIsDoublePrintPolic) {theIsDoublePrintPolic = aIsDoublePrintPolic;}
+
+	/** Двойная печать выписок по поликлинике */
+	private Boolean theIsDoublePrintPolic;
 	/** Источник финансирования */
 	private VocFinanceSource theFinanceSource;
 }

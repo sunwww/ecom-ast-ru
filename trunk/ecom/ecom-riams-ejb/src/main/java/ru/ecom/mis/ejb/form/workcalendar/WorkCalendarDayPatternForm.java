@@ -77,9 +77,9 @@ public class WorkCalendarDayPatternForm extends IdEntityForm{
 	
 	/** Форма времен */
 	@Comment("Форма времен")
-	public WorkCalendarTimePatternForm getTimeIntervalForm() {return theTimeIntervalForm;}
-	public void setTimeIntervalForm(WorkCalendarTimePatternForm aTimeIntervalForm) {theTimeIntervalForm = aTimeIntervalForm;}
+	public WorkCalendarTimeIntervalForm getTimeIntervalForm() {return theTimeIntervalForm;}
+	public void setTimeIntervalForm(WorkCalendarTimeIntervalForm aTimeIntervalForm) {theTimeIntervalForm = aTimeIntervalForm;}
 
 	/** Форма времен */
-	private WorkCalendarTimePatternForm theTimeIntervalForm;
+	private WorkCalendarTimeIntervalForm theTimeIntervalForm = new WorkCalendarTimeIntervalForm();
 }

@@ -45,6 +45,7 @@ public class ReportParameterForm  extends IdEntityForm {
 
 	/** Наименование */
 	@Comment("Наименование")
+	@Persist
 	public String getName() {
 		return theName;
 	}
@@ -55,6 +56,7 @@ public class ReportParameterForm  extends IdEntityForm {
 
 	/** Код МКБ */
 	@Comment("Код МКБ")
+	@Persist
 	public String getCode() {
 		return theCode;
 	}
