@@ -5,36 +5,35 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entityParentSaveGoView-cal_dayPattern.do" defaultField="name">
+		<msh:form action="/entityParentSaveGoView-cal_dayPattern.do" defaultField="name" >
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="lpu" />
 			<msh:panel>
 
 				<msh:row>
-					<msh:autoComplete property="workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true"  size="100" fieldColSpan="3"/>
+					<msh:autoComplete property="workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true"  fieldColSpan="3"/>
 				</msh:row>
 				
 				<msh:ifFormTypeIsCreate formName="cal_dayPatternForm">
-					<msh:row>
-						<msh:autoComplete property="timeInterval.workBusy" label="Тип занятости" vocName="vocWorkBusy" horizontalFill="true" fieldColSpan="3"/>
-					</msh:row>
 					<msh:row>
 						<msh:textField property="timeIntervalForm.timeFrom" label="Начиная с времени"/>
 						<msh:textField property="timeIntervalForm.timeTo" label="Заканчивая временем"/>
 					</msh:row>
 					<msh:row>
-						<msh:textField property="timeIntervalForm.visitTime" label="Среднее время на визит"/>
-						<td>мин.</td>
+						<msh:textField property="timeIntervalForm.visitTime" label="Ср. время (мин)"/>
+						<msh:textField property="timeIntervalForm.countVisits" label="Кол-во визитов"/>
 					</msh:row>
 					<msh:row>
-						<td colspan="2">указывается либо среднее время, либо кол-во </td>
-						<msh:textField property="timeIntervalForm.countVisits" label="Кол-во визитов"/>
-	
+						<td colspan="5">указывается либо среднее время, либо кол-во </td>
 					</msh:row>
 				</msh:ifFormTypeIsCreate>
 				<msh:row>
-					<msh:textField property="name" label="Название" size="100" fieldColSpan="3"/>
+					<msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:textArea property="timeIntervalForm.listTimes" fieldColSpan="4" hideLabel="true"
+						horizontalFill="true" rows="4" />
 				</msh:row>
 				<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
@@ -69,6 +68,30 @@
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+		<msh:ifFormTypeIsCreate formName="cal_dayPatternForm">
+			<script type="text/javascript">
+			function updateName(){
+				
+				var add =' ' ;
+				if (+$('timeIntervalForm.visitTime').value>0) {
+					add = add+"("+$('timeIntervalForm.visitTime').value+" мин.)" ;
+				} else if (+$('timeIntervalForm.countVisits').value>0) {
+					add = add+"("+$('timeIntervalForm.countVisits').value+" виз.)" ;
+				}
+				$('name').value=$('timeIntervalForm.timeFrom').value +'-'+$('timeIntervalForm.timeTo').value+add ;
+				getListTimes() ;
+			}
+			function getListTimes() {
+				$('timeIntervalForm.listTimes').name = $('timeIntervalForm.timeFrom').value +', '+$('timeIntervalForm.timeTo').value ;
+			}
+			eventutil.addEventListener($('timeIntervalForm.visitTime'),'blur',function(){updateName();});
+			eventutil.addEventListener($('timeIntervalForm.countVisits'),'blur',function(){updateName();});
+			eventutil.addEventListener($('timeIntervalForm.timeFrom'),'blur',function(){updateName();});
+			eventutil.addEventListener($('timeIntervalForm.timeTo'),'blur',function(){updateName();});
+			</script>
+		</msh:ifFormTypeIsCreate>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="cal_dayPatternForm" />

@@ -220,7 +220,7 @@
 		<msh:sideLink params="id" action="/js-smo_visit-closeSpo" 
 		name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" 
 			key="ALT+4" roles="/Policy/Poly/Ticket/Edit" />        
-			<msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
+			<msh:sideLink roles="/Policy/Poly/Ticket/CreateTalk,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-doNotAddTalk" name="Сделать обычным посещением" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         
         <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm" guid="7f581b0a-a8b3-4d57-9cff-6dc6db1c85e3">

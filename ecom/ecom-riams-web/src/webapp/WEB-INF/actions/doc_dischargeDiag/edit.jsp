@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -38,10 +39,35 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="doc_dischargeDiagForm">
+  <ecom:webQuery name="vssPrint_sql" nativeSql="select 
+case 
+when vssV.isDoublePrintPolic='1' then '_2c'
+when vssV.code='HOSPITAL' then (
+    select list(distinct case when vssSls.isDoublePrintPolic='1' then '_2c' else '' end)
+    from medcase sls 
+    left join VocServiceStream vssSls on vssSls.id=sls.serviceStream_id
+    where sls.patient_id=vis.patient_id and sls.dtype='HospitalMedCase'
+    and ( vis.dateStart between 
+        sls.dateStart and 
+        case when sls.deniedHospitalizating_id is not null then sls.dateStart else coalesce(sls.dateFinish,current_date) end 
+        )
+    )
+    else ''
+end as typeprint,vssV.code
+from document doc
+left join medcase vis on vis.id=doc.medcase_id
+left join vocservicestream vssV on vssV.id=vis.serviceStream_id
+where doc.id=${param.id}"/>
+</msh:ifFormTypeIsView>
+<%
+if (request.getAttribute("vssPrint_sql")!=null) {ActionUtil.getValueByList("vssPrint_sql", "vssPrint", request);}
+%>
+
+<msh:ifFormTypeIsView formName="doc_dischargeDiagForm">
   <script type="text/javascript">
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
-      		window.location.href = "print-documentDischargeDiag.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
+      		window.location.href = "print-documentDischargeDiag${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
       	}
   }
     printDocument();

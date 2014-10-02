@@ -42,11 +42,12 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public void setNoCheckLpu(Boolean aNoCheckLpu) {theNoCheckLpu = aNoCheckLpu;}
 
 	/** Созданные с даты */
-	public Boolean getChangedDateFrom() {return theChangedDateFrom;}
-	public void setChangedDateFrom(Boolean aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
+	@DateString @DoDateString @Required
+	public String getChangedDateFrom() {return theChangedDateFrom;}
+	public void setChangedDateFrom(String aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
 	/** НЕ проверять ЛПУ */
 	private Boolean theNoCheckLpu;
-	private Boolean theChangedDateFrom;
+	private String theChangedDateFrom;
 	/** Файл */
 	private String theFilename;
 	/** NumberReestr */

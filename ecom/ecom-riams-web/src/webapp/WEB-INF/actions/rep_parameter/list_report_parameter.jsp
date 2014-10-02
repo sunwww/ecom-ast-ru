@@ -30,7 +30,7 @@ order by pt.strcode
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить">
-      <msh:sideLink roles="/Policy/Voc/ReportConfig/Create" key="ALT+2" params="id" action="/entityParentPrepareCreate-rep_parameter" name="Параметр" title="Добавить параметр" />
+      <msh:sideLink roles="/Policy/Voc/ReportConfig/Create" key="ALT+2" action="/entityPrepareCreate-rep_parameter" name="Параметр" title="Добавить параметр" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="repconfig"/>
   </tiles:put>  

@@ -21,6 +21,7 @@
 	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
 	String typeAttachment=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
 	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
+	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -74,6 +75,19 @@
 	        
        </msh:row>
       <msh:row>
+        <td class="label" title="Отобразить  (typeDefect)" colspan="1"><label for="typeDefectName" id="typeDefectLabel">Отображать:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDefect" value="1">  дефектные
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDefect" value="2">  без дефектов 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDefect" value="3">  все прикрепления
+	        </td>
+	        
+       </msh:row>
+      <msh:row>
         <td class="label" title="Список  (typeChange)" colspan="1"><label for="typeChangeName" id="typeChangeLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeChange" value="1">  изменения за период
@@ -92,7 +106,7 @@
 	        </td>
        </msh:row>
        <msh:row>
-        <msh:textField  property="сhangedDateFrom" label="Измененные с" />
+        <msh:textField  property="changedDateFrom" label="Измененные с" />
       </msh:row>
        
        
@@ -111,6 +125,7 @@
       checkFieldUpdate('typeAttachment','${typeAttachment}',3) ;
       checkFieldUpdate('typeView','${typeView}',1) ;
       checkFieldUpdate('typeAge','${typeAge}',3) ;
+      checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       
       function checkFieldUpdate(aField,aValue,aDefaultValue) {

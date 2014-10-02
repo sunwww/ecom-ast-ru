@@ -202,4 +202,12 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Цель визита */
 	private Long theVisitReason;
+	
+	/** Персона */
+	@Comment("Персона")
+	public Long getPerson() {return thePerson;}
+	public void setPerson(Long aPerson) {thePerson = aPerson;}
+
+	/** Персона */
+	private Long thePerson;
 }

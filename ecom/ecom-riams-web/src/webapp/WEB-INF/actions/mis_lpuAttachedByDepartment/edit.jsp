@@ -30,6 +30,17 @@
 			</msh:panel>
 			<msh:panel>
 		 <msh:row>
+        	<msh:separator label="Информация о дефекте" colSpan="6"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="defectPeriod"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="defectText" fieldColSpan="200"/>
+        </msh:row>
+		</msh:panel>
+			<msh:panel>
+		 <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="6"/>
         </msh:row>
         <msh:row>
