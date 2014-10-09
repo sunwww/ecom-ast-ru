@@ -403,7 +403,7 @@ order by vrspt.strCode
 " />
     <msh:sectionTitle>
     
-    	    <form action="print-report_14_2.do" method="post" target="_blank">
+    	    <form action="print-stac_report_36_2.do" method="post" target="_blank">
 	    Свод по нозоологиям (выписанные)
 	    <input type='hidden' name="sqlText" id="sqlText" value="${Report36HOSPswod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
