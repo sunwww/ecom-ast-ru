@@ -21,6 +21,7 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 		// Превышает ли регистрация разрешенный интервал
 		var sql = "select to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5)),case when wf.registrationInterval>0 then wf.registrationInterval when lpu1.registrationInterval>0 then lpu1.registrationInterval else lpu2.registrationInterval end from workCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join worker w on wf.worker_id=w.id left join MisLpu lpu2 on lpu2.id=w.lpu_id left join MisLpu lpu1 on lpu1.id=wf.lpu_id where wct.id='"+
 			aTimePlan+"' and wcd.id='"+aDatePlan+"' and wf.id='"+aWorkFunctionPlan+"'" ;
+		//throw sql ;
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		if (list.size()>0) {
 			var obj=list.get(0) ;
@@ -86,9 +87,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 		}
 		
 	}
-	if (aForm.isPreRecord!=null && aForm.isPreRecord) {
+	
+	if ((aForm.isPreRecord!=null && aForm.isPreRecord.equals(java.lang.Boolean.TRUE)) || aEntity.dateStart!=null) {
 	} else {
-
+		//throw ""+aForm.isPreRecord;
 		if (!checkIntervalRegistration(aCtx,aForm.workFunctionPlan,aForm.datePlan,aForm.timePlan,aForm.id)) {
 			throw "У Вас стоит ограничение на интервал разрешенной регистрации" ;
 		}
