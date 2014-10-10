@@ -11,9 +11,7 @@
 			<msh:hidden property="saveType" />
 			<msh:hidden property="pricePosition" />
 			<msh:panel colsWidth="1%,1%,1%">
-				<msh:row>
-					<msh:textField property="medService"/>
-				</msh:row>
+
 				<msh:row>
 					<msh:autoComplete fieldColSpan="3" property="medService" label="Медицинская услуга" 
 					vocName="medServiceAll" horizontalFill="true" 
@@ -22,7 +20,7 @@
 					/>
 				</msh:row>
 				<msh:ifFormTypeIsNotView formName="contract_priceMedServiceForm">
-					<msh:row>
+					<msh:row styleId="styleCategId">
 						<msh:checkBox property="medServiceIsCreate" label="Добавить мед.услугу" fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
 					<msh:row styleId="styleCateg">
@@ -51,6 +49,7 @@
 			        </msh:row>
 			        <msh:row styleId="styleCateg">
 			        	<msh:checkBox property="medServiceForm.isPoliclinic" label="В поликлинике"/>
+			        	<msh:checkBox property="medServiceForm.vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
 			        </msh:row>
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
