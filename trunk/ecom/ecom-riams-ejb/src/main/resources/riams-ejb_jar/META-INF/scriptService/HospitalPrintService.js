@@ -1319,25 +1319,26 @@ function printConsentBySlo(aCtx,aParams) {
 	
 	return map ;
 }
-function checkAllDiagnosis (aContext, aSlsId) {
-	var sql = "select sls.id,slo.id from medcase sls "
-	 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
-	 +" left join mislpu ml on ml.id=slo.department_id"
-	 +" left join diagnosis d on slo.id = d.medcase_id"
-	 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
-	 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
-	 +" group by sls.id,slo.id	"
-	 +" having count(case when vdrt.code='3' or vdrt.code='4' then 1 else null end)=0  "
-	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
-	if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}		
+function checkAllDiagnosis (aCxt, aSlsId) {
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
+		var sql = "select sls.id,slo.id from medcase sls "
+		 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
+		 +" left join mislpu ml on ml.id=slo.department_id"
+		 +" left join diagnosis d on slo.id = d.medcase_id"
+		 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
+		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
+		 +" group by sls.id,slo.id	"
+		 +" having count(case when vdrt.code='3' or vdrt.code='4' then 1 else null end)=0  "
+		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+		if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}	
+	}
 }
 function printStatCardInfo(aCtx, aParams) {
 	var slsId=aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
-	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
-			checkAllDiagnosis (aCtx, slsId) ;
-	}
+	checkAllDiagnosis (aCtx, slsId) ;
+	
 	recordPolicy(medCase.policies) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
