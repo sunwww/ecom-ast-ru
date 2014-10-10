@@ -20,13 +20,19 @@ function printNativeQuery_date(aCtx,aParams) {
 	cal = java.util.Calendar.getInstance() ;
 	var i=0;
 	while (cal1.getTime().getTime()<=cal2.getTime().getTime()) {
-		var obj = list.get(i) ;
-		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		var obj,dt;
+		if (list.size()>0 && i<=list.size()) {
+			obj = list.get(i) ;
+			dt=""+obj[1] ;
+		} else {
+			dt=null ;
+		}
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult() ;
 		par.set1(""+cntBegin) ;
 		++cntBegin ;
-		var dt=""+obj[1] ;
-		cal.setTime(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dt)) ;
-		if (cal.getTime().getTime()==cal1.getTime().getTime()) {
+		if (dt!=null){cal.setTime(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dt)) ;}
+		
+		if (dt!=null && cal.getTime().getTime()==cal1.getTime().getTime()) {
 			for (var j=2;j<=obj.length;j++) {
 				var val = obj[j-1] ;
 				eval("par.set"+(j)+"(val);") ;
