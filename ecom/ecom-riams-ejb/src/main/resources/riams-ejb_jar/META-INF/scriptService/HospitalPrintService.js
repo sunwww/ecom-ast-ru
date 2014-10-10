@@ -1335,7 +1335,9 @@ function printStatCardInfo(aCtx, aParams) {
 	var slsId=aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
-	checkAllDiagnosis (aCtx, slsId) ;
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
+			checkAllDiagnosis (aCtx, slsId) ;
+	}
 	recordPolicy(medCase.policies) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
