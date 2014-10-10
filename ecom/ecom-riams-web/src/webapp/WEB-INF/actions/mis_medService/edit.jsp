@@ -68,6 +68,7 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isPoliclinic" label="В поликлинике"/>
+        	<msh:checkBox property="vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
         </msh:row>
 
         <msh:row>
