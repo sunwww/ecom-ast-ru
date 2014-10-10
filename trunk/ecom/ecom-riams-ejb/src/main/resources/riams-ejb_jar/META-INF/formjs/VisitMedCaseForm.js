@@ -16,6 +16,7 @@ function onCreate(aForm, aVisit, aCtx) {
 }
 function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aId) {
 	var check = true ;
+	var interval ;
 	// Надо ли проверять ограничение по интервалу разрешенной регистрации
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionInterval")){
 		// Превышает ли регистрация разрешенный интервал
@@ -27,21 +28,27 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 			var obj=list.get(0) ;
 			var date = ""+obj[0] ;
 			var time=""+obj[1] ;
-			var interval = obj[2]!=null?+obj[2]:1440 ;
-			var curDate = new java.util.Date() ;
-			var calFrom = java.util.Calendar.getInstance() ;
-			var calTo = java.util.Calendar.getInstance() ;
-			var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(date,time) ;
-			calFrom.setTime(dateVisit) ;
-			calTo.setTime(dateVisit) ;
-			calTo.set(java.util.Calendar.MINUTE,interval) ;
-			calFrom.set(java.util.Calendar.MINUTE,-interval) ;
-			
-			if (calTo.getTime().getTime()<curDate.getTime()) {
-				check=false ;
+			interval = obj[2]!=null?+obj[2]:1440 ;
+			if (+interval<1) {
+				//check=true;
 			} else {
-				if (calFrom.getTime().getTime()>curDate.getTime()) {
-					check=false ;
+				var curDate = new java.util.Date() ;
+				var calFrom = java.util.Calendar.getInstance() ;
+				var calTo = java.util.Calendar.getInstance() ;
+				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(date,time) ;
+				calFrom.setTime(dateVisit) ;
+				calTo.setTime(dateVisit) ;
+				calTo.set(java.util.Calendar.MINUTE,interval) ;
+				calFrom.set(java.util.Calendar.MINUTE,-interval) ;
+				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoBottom")){
+					if (calTo.getTime().getTime()<curDate.getTime()) {
+						check=false ;
+					}
+				}
+				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoUp")){
+					if (calFrom.getTime().getTime()>curDate.getTime()) {
+						check=false ;
+					}
 				}
 			}
 			// Есть ли разрешение регистрировать в запрещенном периоде
@@ -55,6 +62,9 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 			}
 		}
 	} 
+	if (!check) {
+		throw "У Вас стоит ограничение на интервал разрешенной регистрации" ;
+	}
 	return check ;
 }
 function onPreSave(aForm,aEntity, aCtx) {
@@ -92,7 +102,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 	} else {
 		//throw ""+aForm.isPreRecord;
 		if (!checkIntervalRegistration(aCtx,aForm.workFunctionPlan,aForm.datePlan,aForm.timePlan,aForm.id)) {
-			throw "У Вас стоит ограничение на интервал разрешенной регистрации" ;
+			
 		}
 	}
 	
