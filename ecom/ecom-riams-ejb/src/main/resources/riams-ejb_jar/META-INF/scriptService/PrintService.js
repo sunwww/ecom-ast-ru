@@ -21,7 +21,7 @@ function printNativeQuery_date(aCtx,aParams) {
 	var i=0;
 	while (cal1.getTime().getTime()<=cal2.getTime().getTime()) {
 		var obj,dt;
-		if (list.size()>0 && i<=list.size()) {
+		if (list.size()>0 && i<list.size()) {
 			obj = list.get(i) ;
 			dt=""+obj[1] ;
 		} else {
