@@ -192,4 +192,12 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Не входит в ОМС */
 	private Boolean theIsNoOmc;
+	
+	/** Создать услугу во внеш. справочник */
+	@Comment("Создать услугу во внеш. справочник")
+	public Boolean getVocMedServiceIsCreate() {return theVocMedServiceIsCreate;}
+	public void setVocMedServiceIsCreate(Boolean aVocMedServiceIsCreate) {theVocMedServiceIsCreate = aVocMedServiceIsCreate;}
+
+	/** Создать услугу во внеш. справочник */
+	private Boolean theVocMedServiceIsCreate;
 }
