@@ -1319,11 +1319,23 @@ function printConsentBySlo(aCtx,aParams) {
 	
 	return map ;
 }
+function checkAllDiagnosis (aContext, aSlsId) {
+	var sql = "select sls.id,slo.id from medcase sls "
+	 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
+	 +" left join mislpu ml on ml.id=slo.department_id"
+	 +" left join diagnosis d on slo.id = d.medcase_id"
+	 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
+	 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
+	 +" group by sls.id,slo.id	"
+	 +" having count(case when vdrt.code='3' or vdrt.code='4' then 1 else null end)=0  "
+	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
+	if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}		
+}
 function printStatCardInfo(aCtx, aParams) {
 	var slsId=aParams.get("id") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
-	
+	checkAllDiagnosis (aCtx, slsId) ;
 	recordPolicy(medCase.policies) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
@@ -1355,24 +1367,6 @@ function printStatCardInfo(aCtx, aParams) {
 	map.put("sls.preAdmissionTime",medCase.preAdmissionTime) ;
 	//10. Диагноз клинический
 	getDiagnos("sls.diagnosisClinical",medCase.diagnosClinical) ;
-	//11. Диагноз заключительный клинический
-	//11а основной
-	//?getDiagnos("sls.diagnosisConcluding",medCase.diagnosConcluding);
-	//11б осложнение основного
-	//?getDiagnos("sls.diagnosisComplication",medCase.diagnosComplication);
-	//11в сопутствующий
-	//?getDiagnos("sls.diagnosisConcominant",medCase.diagnosConcominant);
-	/*
-	recordDiagnosis(aCtx,slsId,"1","2","diagnosis.order.main") ;
-	recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
-	recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
-	recordDiagnosis(aCtx,slsId,"4","3","diagnosis.clinic.related") ;
-	recordDiagnosis(aCtx,slsId,"4","4","diagnosis.clinic.complication") ;
-	recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
-	recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
-	recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
-	recordDisability(aCtx,slsId,"dis") ;
-	*/
 	recordSloBySls(aCtx,slsId,"listSlo") ;
 	recordSurgicalOperationBySls(aCtx,slsId,"listOper") ;
 	
