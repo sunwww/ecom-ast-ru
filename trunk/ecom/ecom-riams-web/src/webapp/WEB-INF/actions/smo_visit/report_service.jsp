@@ -110,6 +110,12 @@
 	        </td>
         </msh:row>
         <msh:row>
+        	<td></td>
+        	<td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="11">по отделению направителя  
+	        </td>
+        </msh:row>
+        <msh:row>
 	        <td class="label" title="Трудоспособный возраст считать с (typeAgeWork)" colspan="1"><label for="typeAgeWorkName" id="typeAgeWorkLabel">Трудоспособный возраст с:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeAgeWork" value="1">  16 лет
@@ -181,6 +187,7 @@
     		ActionUtil.setParameterFilterSql("workFunction","wf.workFunction_id", request) ;
     		ActionUtil.setParameterFilterSql("specialist","smo.workFunctionExecute_id", request) ;
     		ActionUtil.setParameterFilterSql("lpu","w.lpu_id", request) ;
+    		ActionUtil.setParameterFilterSql("directLpuByOWF","ow.lpu_id", request) ;
     		ActionUtil.setParameterFilterSql("serviceStream","smo.serviceStream_id", request) ;
     		ActionUtil.setParameterFilterSql("workPlaceType","smo.workPlaceType_id", request) ;
     		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
@@ -288,6 +295,13 @@
        			request.setAttribute("groupName", "Доп.статус") ;
        			request.setAttribute("groupGroup", "vas.id,vas.name") ;
        			request.setAttribute("groupOrder", "vas.name") ;
+    		} else if (typeGroup.equals("11")) {
+    			// Группировка по ЛПУ направителя (внутр)
+       			request.setAttribute("groupSql", "owflpu.name") ;
+       			request.setAttribute("groupSqlId", "'&directLpuByOWF='||owflpu.id") ;
+       			request.setAttribute("groupName", "отделение направ. специалиста") ;
+       			request.setAttribute("groupGroup", "owflpu.id,owflpu.name") ;
+       			request.setAttribute("groupOrder", "owflpu.name") ;
     		}
     		if (typeReestr!=null && (typeReestr.equals("1"))) {
     	%>
@@ -337,7 +351,7 @@ LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id
 LEFT JOIN VocSocialStatus pvss on pvss.id=p.socialStatus_id
 LEFT JOIN WorkFunction wf on wf.id=smo.workFunctionExecute_id 
 LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-LEFT JOIN Worker w on w.id=wf.worker_id 
+LEFT JOIN Worker w on w.id=wf.worker_id  
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
 left join diagnosis diag on diag.medcase_id=smo.id
@@ -426,6 +440,10 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id 
+LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
+LEFT JOIN Worker ow on ow.id=owf.worker_id 
+LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id 
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
@@ -531,6 +549,10 @@ LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id
 LEFT JOIN Worker w on w.id=wf.worker_id 
 LEFT JOIN Patient wp on wp.id=w.person_id 
 LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id 
+LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
+LEFT JOIN Worker ow on ow.id=owf.worker_id 
+LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id 
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
