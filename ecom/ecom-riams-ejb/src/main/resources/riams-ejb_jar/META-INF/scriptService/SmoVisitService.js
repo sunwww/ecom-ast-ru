@@ -1,3 +1,10 @@
+function deleteEmptySpo(aCtx,aParams) {
+	var sql="delete from medcase spo where"
+		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id and v.dtype='Visit')=0"
+	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+}
+
+
 function printDirectionByTime(aCtx,aParams) {
 	var map = new java.util.HashMap() ;
 	var currentDate = new java.util.Date() ;
