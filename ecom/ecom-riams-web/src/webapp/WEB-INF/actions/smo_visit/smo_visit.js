@@ -216,3 +216,4 @@ function replaceWF(aForm,aCtx) {
 		return aCtx.createForward("/js-smo_visit-findPolyAdmissions.do?id="+id) ;
 	}
 }
+

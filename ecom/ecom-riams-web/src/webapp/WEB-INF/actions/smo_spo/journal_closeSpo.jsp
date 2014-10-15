@@ -74,6 +74,7 @@
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
 	          </td>
+	          <td><msh:link action="js-smo_spo-deleteEmptySpo.do" roles="/Policy/Mis/MedCase/Visit/DeleteEmptySpo">Удалить пустые СПО</msh:link></td>
         </msh:row>
     </msh:panel>
     </msh:form>

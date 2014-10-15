@@ -416,6 +416,13 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_priceList/listAnalisisByMedService.jsp" />
 		</action>
+		<!-- Услуги -->	
+		<action path='/contract_policlinic_render'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_reports/list_policlinic.jsp" />
+		</action>
 		<!-- Реестры по договорам -->	
 		<action path='/contract_reports_finance'
 			type='ru.ecom.web.actions.base.ForwardAction' 

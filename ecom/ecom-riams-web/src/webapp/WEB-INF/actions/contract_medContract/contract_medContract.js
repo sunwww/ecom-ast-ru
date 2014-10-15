@@ -15,3 +15,8 @@ function issueRefund(aForm, aCtx) {
 			, aCtx.request.getParameter("id")) ;
 	return aCtx.createForward("/entityParentView-contract_accountOperationAccrual.do?id="+id) ;
 }
+function updateCAOSbyCharged(aForm,aCtx){
+	aCtx.invokeScript("Contractreport", "updateCAOSbyCharged",aCtx.request.getParameter("dateFrom")
+			,aCtx.request.getParameter("dateTo")) ;
+	return aCtx.createForward("/contract_policlinic_render.do")
+}
