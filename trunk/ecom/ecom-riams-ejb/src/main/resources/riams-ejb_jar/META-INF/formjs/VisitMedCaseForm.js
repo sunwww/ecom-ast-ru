@@ -15,8 +15,8 @@ function onCreate(aForm, aVisit, aCtx) {
 
 }
 function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aId) {
-	var check = true ;
-	var interval ;
+	var check = true ;var message="";
+	var interval = 0 ;
 	// Надо ли проверять ограничение по интервалу разрешенной регистрации
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionInterval")){
 		// Превышает ли регистрация разрешенный интервал
@@ -32,7 +32,7 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 			if (+interval<1) {
 				//check=true;
 			} else {
-				var curDate = new java.util.Date() ;
+				var curDate = java.util.Calendar.getInstance() ;
 				var calFrom = java.util.Calendar.getInstance() ;
 				var calTo = java.util.Calendar.getInstance() ;
 				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(date,time) ;
@@ -40,14 +40,16 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 				calTo.setTime(dateVisit) ;
 				calTo.add(java.util.Calendar.MINUTE,interval) ;
 				calFrom.add(java.util.Calendar.MINUTE,-interval) ;
-				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoBottom")){
-					if (calTo.getTime().getTime()<curDate.getTime()) {
+				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoBefore")){
+					if (curDate.before(calFrom)) {
 						check=false ;
+						message="У Вас стоит ограничение "+interval+" мин. разрешенной регистрации до начала приема" ;
 					}
 				}
-				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoUp")){
-					if (calFrom.getTime().getTime()>curDate.getTime()) {
+				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoAfter")){
+					if (curDate.after(calTo)) {
 						check=false ;
+						message="У Вас стоит ограничение "+interval+" мин. разрешенной регистрации после начала приема" ;
 					}
 				}
 			}
@@ -63,7 +65,7 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 		}
 	} 
 	if (!check) {
-		throw "У Вас стоит ограничение на интервал разрешенной регистрации" ;
+		throw message ;
 	}
 	return check ;
 }
@@ -95,7 +97,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 				throw "У Вы можете оформлять только направленных к Вам пациентов!! "+exec ;
 			}
 		}
-		
 	}
 	
 	if ((aForm.isPreRecord!=null && aForm.isPreRecord.equals(java.lang.Boolean.TRUE)) || aEntity.dateStart!=null) {
