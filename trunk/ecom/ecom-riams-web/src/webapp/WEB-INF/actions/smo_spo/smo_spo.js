@@ -1,3 +1,13 @@
+/* Удалить пустые СПО */
+function deleteEmptySpo(aForm,aCtx) {
+	try {
+		aCtx.invokeScript("SmoVisitService", "deleteEmptySpo", wf) ;
+		return aCtx.createForward("/smo_journal_closeSpo.do") ;
+	} catch(e) {
+		return aCtx.createForward("/smo_journal_closeSpo.do") ;
+	}
+
+}
 /**
  * Закрыть СПО
  */
