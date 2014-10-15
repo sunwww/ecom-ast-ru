@@ -50,6 +50,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="нозологических групп" roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/View"
 		title="Список нозологических групп по договорам"
 		/>
+
 		
 </msh:sideMenu>
 <msh:sideMenu title="Отчеты">
@@ -72,6 +73,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		action="/contract_reports_finance" 
 		name="финансовый отчет" roles="/Policy/Mis/Contract/Journals/Finance,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Финансовый отчет"
+		/>
+	<msh:sideLink styleId="contract_policlinic_render" 
+		action="/contract_policlinic_render" 
+		name="Отчет по поликлинике" roles="/Policy/Mis/Contract/Journals/ContractPolicRender"
+		title="Отчет по поликлинике"
 		/>
 	<msh:sideLink styleId="analisisMedServices"
 		action="/contact_analisis_by_medServices.do" 
