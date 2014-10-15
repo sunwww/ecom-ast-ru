@@ -38,8 +38,8 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(date,time) ;
 				calFrom.setTime(dateVisit) ;
 				calTo.setTime(dateVisit) ;
-				calTo.set(java.util.Calendar.MINUTE,interval) ;
-				calFrom.set(java.util.Calendar.MINUTE,-interval) ;
+				calTo.add(java.util.Calendar.MINUTE,interval) ;
+				calFrom.add(java.util.Calendar.MINUTE,-interval) ;
 				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoBottom")){
 					if (calTo.getTime().getTime()<curDate.getTime()) {
 						check=false ;
