@@ -22,6 +22,7 @@
   	String typeDiagOrder=ActionUtil.updateParameter("Report36HOSP","typeDiagOrder","1", request) ;
   	String typeView=ActionUtil.updateParameter("Report36HOSP","typeView","2", request) ;
   	String typeDate=ActionUtil.updateParameter("Report36HOSP","typeDate","2", request) ;
+  	String typeHour=ActionUtil.updateParameter("Report36HOSP","typeHour","3", request) ;
   	
   	StringBuilder paramSql= new StringBuilder() ;
   	StringBuilder paramHref= new StringBuilder() ;
@@ -34,7 +35,13 @@
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
-  	
+  	String timeAdd = "24" ;
+  	if (typeHour!=null&&typeHour.equals("1")) {
+  		timeAdd="7";
+  	} else if (typeHour!=null&&typeHour.equals("2")) {
+  		timeAdd="9";
+  	}
+  	request.setAttribute("timeAdd", timeAdd) ;
   	//request.setAttribute("diag_typeReg_cl", "4") ;
   	//request.setAttribute("diag_typeReg_pat", "5") ;
   	//request.setAttribute("diag_priority_m", "1") ;
@@ -47,6 +54,18 @@
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeHour" value="1">  7 часов
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeHour" value="2" >  9 часов
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeHour" value="3">  календар. день
+        </td>
       </msh:row>
       <msh:row>
         <td class="label" title="Какой диагноз учитывать при пост. (typeDiagOrder)" colspan="1"><label for="typeDiagOrderName" id="typeDiagOrderLabel">Диагноз при пост.:</label></td>
@@ -122,6 +141,7 @@
           
            checkFieldUpdate('typeView','${typeView}',1) ;
            checkFieldUpdate('typeDiagOrder','${typeDiagOrder}',1) ;
+           checkFieldUpdate('typeHour','${typeHour}',1) ;
            
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -188,16 +208,16 @@
 select
 vrspt.id||'&reportStr='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
 ,count(case when
-ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ahr.entranceDate${timeAdd} < to_date('${dateBegin}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateBegin}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 ) ${departmentSql}
 and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntBeginPeriodAll
 ,count(case when
-ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ahr.entranceDate${timeAdd} < to_date('${dateBegin}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateBegin}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 ) ${departmentSql}
 and
 ahr.ageEntranceSlo between 0 and 14
@@ -205,9 +225,9 @@ and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto
 then ahr.sls else null end) as cntBeginPeriod0_14
 
 ,count(case when
-ahr.entranceDate24 < to_date('${dateBegin}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateBegin}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ahr.entranceDate${timeAdd} < to_date('${dateBegin}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateBegin}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 ) ${departmentSql}
 and
 ahr.ageEntranceSlo between 15 and 17
@@ -215,13 +235,13 @@ and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto
 then ahr.sls else null end) as cntBeginPeriod15_17
 
 ,count(case when
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
 and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntEntranceAll
 ,count(case when 
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
@@ -229,7 +249,7 @@ and
 ahr.ageEntranceSls between 0 and 14 then ahr.sls else null end)  as cntEntrance0_14
 ,count(case when 
 
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
 and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
@@ -237,19 +257,19 @@ and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto
 and
 ahr.ageEntranceSls between 15 and 17 then ahr.sls else null end)  as cntEntrance15_17
 ,count(case when
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isFirstCurrentYear='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceAdmHosp
 ,count(case when
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isFirstLife='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceFirstLife
 ,count(case when
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
 and ahr.isIncompetent='1' ${departmentSql}
@@ -258,25 +278,25 @@ then ahr.sls else null end) as cntEntranceHospNeDobr
 
 
 ,count(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 then ahr.sls else null end) as cntDischargeAll
 
 ,sum(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
 and ahr.transferDepartmentIn is null
 ${departmentSql}
-then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+then case when (ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd})=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+ahr.addbeddays
 end else null end)
 as sumDayAllDischarge
 
 ,count(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
 and ahr.isDeath='1'
 and ahr.transferDepartmentIn is null
@@ -285,69 +305,69 @@ then ahr.sls else null end) as cntDischargeDeath
 
 ,
 sum(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
 and ahr.isDeath='1'
 and ahr.transferDepartmentIn is null
 ${departmentSql}
-then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+then case when (ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd})=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+ahr.addbeddays
 end else null end)
 as sumDayDeathDischarge
 
 
 ,count(case when 
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
 and ahr.ageDischargeSls between 0 and 14 then ahr.sls else null end)  as cntDischarge0_14
 
 ,sum(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
 and ahr.ageDischargeSls between 0 and 14
 and ahr.transferDepartmentIn is null
 ${departmentSql}
-then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+then case when (ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd})=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+ahr.addbeddays
 end else null end)
 as sumDayDischarge0_14
 
 ,count(case when 
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentIn is null
 ${departmentSql}
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto 
 and ahr.ageDischargeSls between 15 and 17 then ahr.sls else null end)  as cntDischarge15_17
 
 ,sum(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDischarge between rspt.codefrom and rspt.codeto
 and ahr.ageDischargeSls between 15 and 17
 and ahr.transferDepartmentIn is null
 ${departmentSql}
-then case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+then case when (ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd})=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+ahr.addbeddays
+ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+ahr.addbeddays
 end else null end)
 as sumDayDischarge15_17
 
 
 ,count(case when
- ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ ahr.entranceDate${timeAdd} <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateEnd}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 )
 ${departmentSql}
 and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntFinishPeriodAll
 ,count(case when
- ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ ahr.entranceDate${timeAdd} <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateEnd}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 )
 ${departmentSql}
 and cast('${dateEndyyyy}' as int)-cast(to_char(ahr.birthday,'yyyy') as int) +(case when (cast('${dateEndmm}' as int)-cast(to_char(ahr.birthday, 'mm') as int) +(case when (cast('${dateEnddd}' as int) - cast(to_char(ahr.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between 0 and 14
@@ -355,9 +375,9 @@ and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto
 then ahr.sls else null end) as cntFinishPeriod0_14
 
 ,count(case when
- ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
-and (ahr.dischargeDate24 > to_date('${dateEnd}','dd.mm.yyyy') 
-or ahr.dischargeDate24 is null
+ ahr.entranceDate${timeAdd} <= to_date('${dateEnd}','dd.mm.yyyy') 
+and (ahr.dischargeDate${timeAdd} > to_date('${dateEnd}','dd.mm.yyyy') 
+or ahr.dischargeDate${timeAdd} is null
 )
 ${departmentSql}
 and cast('${dateEndyyyy}' as int)-cast(to_char(ahr.birthday,'yyyy') as int) +(case when (cast('${dateEndmm}' as int)-cast(to_char(ahr.birthday, 'mm') as int) +(case when (cast('${dateEnddd}' as int) - cast(to_char(ahr.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between 15 and 17
@@ -365,14 +385,14 @@ and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto
 then ahr.sls else null end) as cntFinishPeriod15_17
 
 ,count(case when
-ahr.entranceDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentFrom is not null
 ${departmentSql}
 then ahr.sls else null end) as cntTransferFrom
 
 ,count(case when
-ahr.dischargeDate24 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ahr.dischargeDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentIn is not null
 ${departmentSql}
@@ -384,9 +404,9 @@ left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=ahr.patient
 
 where ( 
- ahr.dischargeDate24>=to_date('${dateBegin}','dd.mm.yyyy')
-or ahr.dischargeDate24 is null)
-and (ahr.entranceDate24 <= to_date('${dateEnd}','dd.mm.yyyy') 
+ ahr.dischargeDate${timeAdd}>=to_date('${dateBegin}','dd.mm.yyyy')
+or ahr.dischargeDate${timeAdd} is null)
+and (ahr.entranceDate${timeAdd} <= to_date('${dateEnd}','dd.mm.yyyy') 
 ) 
 
 and (ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
@@ -416,7 +436,7 @@ order by vrspt.strCode
     <msh:sectionContent>
     <msh:table name="Report36HOSPswod" 
      
-     action="stac_report_36.do?${paramHref}&noViewForm=1&typeAge=${typeAge}&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1"
+     action="stac_report_36.do?${paramHref}&noViewForm=1&typeHour=${typeHour}&typeAge=${typeAge}&department=${param.department}&typeAge=${typeAge}&noViewForm=0&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1"
     cellFunction="true"  
      >
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -456,33 +476,33 @@ order by vrspt.strCode
         		||view.equals("7")||view.equals("8")||view.equals("9")) {
         	String sql ="" ;
         	if (view.equals("4")) {
-        		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        		sql="ahr.entranceDate"+timeAdd+" between to_date('"+date+"','dd.mm.yyyy') and to_date('"
         			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is null" ;
 
         	    request.setAttribute("titleReestr","Список поступивших пациентов") ;
         		request.setAttribute("dateSql", sql) ;
         		request.setAttribute("diagnosField","idcEntranceCode") ;
         	} else if (view.equals("5")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        		sql="ahr.dischargeDate"+timeAdd+" between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
         		request.setAttribute("titleReestr","Список выбывших пациентов") ;
         		request.setAttribute("diagnosField","idcDischarge") ;
         	} else if (view.equals("6")) {
-        		sql="ahr.entranceDate24 < to_date('"+date+"','dd.mm.yyyy') and (ahr.dischargeDate24 > to_date('"+date+"','dd.mm.yyyy') or ahr.dischargeDate24 is null)";
+        		sql="ahr.entranceDate"+timeAdd+" < to_date('"+date+"','dd.mm.yyyy') and (ahr.dischargeDate"+timeAdd+" > to_date('"+date+"','dd.mm.yyyy') or ahr.dischargeDate"+timeAdd+" is null)";
         		request.setAttribute("titleReestr","Список пациентов, состоящих на начало периода") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("7")) {
-        		sql="ahr.entranceDate24 <= to_date('"+dateEnd+"','dd.mm.yyyy') and (ahr.dischargeDate24 > to_date('"+dateEnd+"','dd.mm.yyyy') or ahr.dischargeDate24 is null)";
+        		sql="ahr.entranceDate"+timeAdd+" <= to_date('"+dateEnd+"','dd.mm.yyyy') and (ahr.dischargeDate"+timeAdd+" > to_date('"+dateEnd+"','dd.mm.yyyy') or ahr.dischargeDate"+timeAdd+" is null)";
         		request.setAttribute("titleReestr","Список пациентов, состоящих на конец периода") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	
 			} else if (view.equals("8")) {
-        		sql="ahr.entranceDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        		sql="ahr.entranceDate"+timeAdd+" between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentFrom is not null" ;
         		request.setAttribute("titleReestr","Список пациентов, переведенных из другого отделения") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
         	} else if (view.equals("9")) {
-        		sql="ahr.dischargeDate24 between to_date('"+date+"','dd.mm.yyyy') and to_date('"
+        		sql="ahr.dischargeDate"+timeAdd+" between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is not null" ;
         		request.setAttribute("titleReestr","Список пациентов, переведенных в другое отделение") ;
         		request.setAttribute("diagnosField","idcDepartmentCode") ;
@@ -548,25 +568,30 @@ where ahr.${diagnosField} between rspt1.codefrom and rspt1.codeto
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
-,to_char(ahr.entranceHospDate24,'dd.mm.yyyy') as slsdateStart
-,to_char(ahr.entranceDate24,'dd.mm.yyyy') as slodateStart
-,to_char(ahr.dischargeDate24,'dd.mm.yyyy') as slodateFinish
+,to_char(ahr.entranceHospDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceHospDate24!=ahr.entranceHospDate${timeAdd} then '(кал. день '||to_char(ahr.entranceHospDate24,'dd.mm.yyyy')||')' else '' end as slsdateStart
+,to_char(ahr.entranceDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceDate24!=ahr.entranceDate${timeAdd} then '(кал. день '||to_char(ahr.entranceDate24,'dd.mm.yyyy')||')' else '' end as slodateStart
+,ml1.name as ml1name,ml2.name as ml2name,as ml3.name
+,to_char(ahr.dischargeDate${timeAdd},'dd.mm.yyyy')||case when ahr.dischargeDate24!=ahr.dischargeDate${timeAdd} then '(кал. день '||to_char(ahr.dischargeDate24,'dd.mm.yyyy')||')' else '' end as slodateFinish
 ,ahr.idcEntranceCode as idcEntranceCode
 ,ahr.idcDepartmentCode as idcDepartmentCode
 ,ahr.idcDischarge as idcDischarge
 ,case when ahr.isDeath='1' then 'Да' else null end as death
 ,case when ahr.isEmergency='1' then 'Экстр.' else 'План.' end as emer
 ,
-case when (ahr.dischargeDate24-ahr.entranceHospDate24)=0 then 1
+case when (ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd})=0 then 1
 else 
-ahr.dischargeDate24-ahr.entranceHospDate24+cast(ahr.addbeddays as int)
+ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+cast(ahr.addbeddays as int)
 end as beddays
 ,case when ahr.isFirstCurrentYear='1' then 'Да' else null end as isFirstCurrentYear
 ,case when ahr.isFirstLife='1' then 'Да' else null end as isFirstLife
+,ml1.name as ml1name,ml2.name as ml2name,ml3.name as ml3name
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+left join MisLpu ml1 on ml1.id=ahr.department
+left join MisLpu ml2 on ml2.id=ahr.TransferDepartmentFrom
+left join MisLpu ml3 on ml3.id=ahr.TransferDepartmentIn
 ${reportStrLeftJoin}
 left join Patient p on p.id=sls.patient_id
 where ${dateSql}   ${reportStrSql}
@@ -574,10 +599,11 @@ where ${dateSql}   ${reportStrSql}
 ${paramSql}
 ${departmentSql}
 
-group by ahr.sls,ahr.dischargeDate24,ahr.entranceDate24,ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate24,ahr.addbeddays
+group by ahr.sls,ahr.dischargeDate${timeAdd},ahr.entranceDate${timeAdd},ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
+,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname,ahr.dischargeDate24,ahr.entranceDate24
+,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate${timeAdd},ahr.entranceHospDate24,ahr.addbeddays
 ,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency,ahr.isFirstCurrentYear,ahr.isFirstLife
+,ml1.name ,ml2.name ,ml3.name
 order by p.lastname,p.firstname,p.middlename " />
     <msh:sectionTitle>
     <form action="print-stac_report36_3.do" method="post" target="_blank">
@@ -592,7 +618,6 @@ order by p.lastname,p.firstname,p.middlename " />
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    ${reestr_sql}
     <msh:table name="reestr" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
@@ -603,15 +628,18 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Возраст" property="5" />
       <msh:tableColumn columnName="Дата поступления в стац." property="6"/>
       <msh:tableColumn columnName="Дата поступления в отд." property="7"/>
-      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="8"/>
-      <msh:tableColumn columnName="МКБ напр." property="9"/>
-      <msh:tableColumn columnName="МКБ отд. кл." property="10"/>
-      <msh:tableColumn columnName="МКБ вып." property="11"/>
-      <msh:tableColumn columnName="Лет. исход" property="12"/>
-      <msh:tableColumn columnName="Показания" property="13"/>
-      <msh:tableColumn columnName="К.дн" property="14"/>
-      <msh:tableColumn columnName="Впервые в этом году" property="15"/>
-      <msh:tableColumn columnName="Впервые в жизни" property="16"/>
+      <msh:tableColumn columnName="Отделение" property="8"/>
+      <msh:tableColumn columnName="Переведен из отд." property="9"/>
+      <msh:tableColumn columnName="Переведен в отд." property="10"/>
+      <msh:tableColumn columnName="Дата выписки (перевода из отделения)" property="11"/>
+      <msh:tableColumn columnName="МКБ напр." property="12"/>
+      <msh:tableColumn columnName="МКБ отд. кл." property="13"/>
+      <msh:tableColumn columnName="МКБ вып." property="14"/>
+      <msh:tableColumn columnName="Лет. исход" property="15"/>
+      <msh:tableColumn columnName="Показания" property="16"/>
+      <msh:tableColumn columnName="К.дн" property="17"/>
+      <msh:tableColumn columnName="Впервые в этом году" property="18"/>
+      <msh:tableColumn columnName="Впервые в жизни" property="19"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
