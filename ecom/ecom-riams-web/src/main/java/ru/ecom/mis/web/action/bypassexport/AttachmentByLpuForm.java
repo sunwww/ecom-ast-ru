@@ -42,7 +42,7 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public void setNoCheckLpu(Boolean aNoCheckLpu) {theNoCheckLpu = aNoCheckLpu;}
 
 	/** Созданные с даты */
-	@DateString @DoDateString @Required
+	@DateString @DoDateString
 	public String getChangedDateFrom() {return theChangedDateFrom;}
 	public void setChangedDateFrom(String aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
 	/** НЕ проверять ЛПУ */
