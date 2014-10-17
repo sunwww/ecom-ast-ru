@@ -41,8 +41,7 @@
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
-       	<msh:hidden property="judgment35"/>
-       	<msh:hidden property="lawCourtDesicionDate"/>
+
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
         
@@ -162,6 +161,10 @@
 	        <msh:row>
 	        	<msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="1" vocName="vocAdmissionOrder" horizontalFill="true"/>
 		        <msh:autoComplete label="Откуда поступил" vocName="vocHospitalizationWhereAdmission" property="whereAdmission" labelColSpan="1" horizontalFill="true"/>
+	        </msh:row>
+	         <msh:row>
+	        	<msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
+	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
 	        </msh:row>
         </msh:ifInRole>
         <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">

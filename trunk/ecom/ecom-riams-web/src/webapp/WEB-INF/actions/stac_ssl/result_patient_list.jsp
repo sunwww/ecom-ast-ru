@@ -149,9 +149,9 @@
     hmc.id as hmcid
     ,ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'') as fio
-    ,	cast(to_char(hmc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
-+(case when (cast(to_char(hmc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
-+(case when (cast(to_char(hmc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+    ,	cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
++(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end) as age
     ,case when hmc.emergency='1' then 'Э' else 'П' end
     

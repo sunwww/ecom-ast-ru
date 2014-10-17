@@ -17,6 +17,12 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  String d=request.getParameter("d") ;
+  if (d!=null&&d.equals("1")) {
+	  request.setAttribute("diagSql", " and vwf.isNo039='1'");
+  }
+  %>
   	<ecom:webQuery name="listByMedcard" nativeSql="select t.id
 ,t.dateStart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
@@ -35,7 +41,8 @@ left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join medcard m on m.id=t.medcard_id
-where m.id='${param.id}' and t.dtype='ShortMedCase' and t.dateStart is not null"/>
+where m.id='${param.id}' and t.dtype='ShortMedCase' and t.dateStart is not null
+${diagSql}"/>
     <msh:table name="listByMedcard" action="entityView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />

@@ -257,17 +257,17 @@
 			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
 			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
 		  end as cnt1
-    ,to_char(h.dateStart,'dd.mm.yyyy') as hdateStart
-    ,to_char(h.dateFinish,'dd.mm.yyyy') as hdateFinish
+    ,to_char(hmc.dateStart,'dd.mm.yyyy') as hdateStart
+    ,to_char(hmc.dateFinish,'dd.mm.yyyy') as hdateFinish
     ,	  case 
-			when (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)=0 then 1 
-			when bf.addCaseDuration='1' then ((coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)+1) 
-			else (coalesce(h.dateFinish,CURRENT_DATE)-h.dateStart)
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end as cnt2
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
     ,vhr.name as vhrname
     from MedCase as m 
-    left join medcase as h on h.id=m.parent_id 
+    left join medcase as hmc on hmc.id=m.parent_id 
     left join VocHospitalizationResult vhr on vhr.id=h.result_id
     left join statisticstub as ss on ss.id=h.statisticstub_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
