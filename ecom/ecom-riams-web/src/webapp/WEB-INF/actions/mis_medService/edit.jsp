@@ -68,22 +68,15 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isPoliclinic" label="В поликлинике"/>
-        	<msh:checkBox property="vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
+        	<msh:ifFormTypeIsNotView formName="mis_medServiceForm">
+        		<msh:checkBox property="vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
+        	</msh:ifFormTypeIsNotView>
         </msh:row>
 
         <msh:row>
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
          	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
         </msh:row>
-        <%-- 
-        <msh:row guid="1d3be9-8db1-a421709f4470">
-          <ecom:oneToManyOneAutocomplete label="Потоки обслуживания" property="serviceStream" vocName="vocServiceStream" colSpan="2" guid="ce032745-62b7-4d1d-abc9-a8c283ccc0c2" />
-        </msh:row>
-        --%>
-<%--         <msh:row>
-        	<ecom:treeAutoComplete property="probaTree" label="Проба дерева" vocName="vocMedService" fieldColSpan="3"/>
-        </msh:row>
-        --%>
         <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>

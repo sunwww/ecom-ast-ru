@@ -74,10 +74,19 @@
         <msh:row>
         <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
          <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeAge" value="7"  >  взрослые труд. возраста
+        	<input type="radio" name="typeAge" value="7"  >  взрослые труд. возраста с 16 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeAge" value="8"  >  взрослые труд. возраста с 18 лет
+        </td>
+       </msh:row>
+        <msh:row>
+        <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
+         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeAge" value="9"  >  взрослые старше 60 лет (вкл)
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="8"  >  все
+        	<input type="radio" name="typeAge" value="10"  >  все
         </td>
        </msh:row>
       
@@ -194,7 +203,7 @@
       				.append(" <0)")
       				.append(" then -1 else 0 end) < 18 ") ;
       		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("age_info", "В. Дети") ;
+      		request.setAttribute("age_info", "Дети") ;
       	} else if (typeAge!=null &&typeAge.equals("2")) {
       		StringBuilder age = new StringBuilder() ;
       		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
@@ -204,9 +213,9 @@
     			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
     			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
     			.append(" <0)")
-    			.append(" then -1 else 0 end) > case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+    			.append(" then -1 else 0 end) >= case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
     		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
+      		request.setAttribute("reportInfo", "Взрослые старше трудоспособного возраста") ;
       	} else if (typeAge!=null &&typeAge.equals("1")) {
       		StringBuilder age = new StringBuilder() ;
       		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
@@ -219,7 +228,7 @@
     			.append(" then -1 else 0 end) >= 18 ") ;
       		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
     		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "А. Взрослые") ;
+      		request.setAttribute("reportInfo", "Взрослые") ;
       	} else if (typeAge!=null &&typeAge.equals("7")) {
       		StringBuilder age = new StringBuilder() ;
       		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
@@ -229,10 +238,35 @@
     			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
     			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
     			.append(" <0)")
-      			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
-      			.append(sexWoman).append("' then 55 else 60 end ") ;
+      			.append(" then -1 else 0 end) between 16 and case when p.sex_id='")
+      			.append(sexWoman).append("' then 54 else 59 end ") ;
     		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста") ;
+      		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста c 16 лет") ;
+      	} else if (typeAge!=null &&typeAge.equals("8")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+      			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
+      			.append(sexWoman).append("' then 54 else 59 end ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста с 18 лет") ;
+      	} else if (typeAge!=null &&typeAge.equals("9")) {
+      		StringBuilder age = new StringBuilder() ;
+      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
+    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
+    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
+    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+    			.append(" <0)")
+      			.append(" then -1 else 0 end) >= 60 ") ;
+    		request.setAttribute("age_sql", age.toString()) ;
+      		request.setAttribute("reportInfo", "Взрослые старше 60 лет (вкл)") ;
       	} else if (typeAge!=null &&typeAge.equals("4")) {
       		StringBuilder age = new StringBuilder() ;
       		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")

@@ -211,7 +211,8 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   		<msh:sideMenu title="Дополнительно">
-	        <msh:sideLink action="/javascript:viewProtocolByMedcard('.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:viewProtocolByMedcard(1,'.do')" name='Заключения диаг. служб<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:viewProtocolByMedcard(0,'.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
 	        <msh:sideLink action="/javascript:infoDiagByMedcard('.do')" name='Диагнозы<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
   		</msh:sideMenu>
     <msh:ifFormTypeIsView formName="smo_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
@@ -266,7 +267,7 @@
     <script type="text/javascript">
     function viewProtocolByMedcard(d) {
     	var m = document.forms[0].medcard ;
-  	  getDefinition("js-smo_visitProtocol-infoByMedcardShort.do?id="+m.value, null); 
+  	  getDefinition("js-smo_visitProtocol-infoByMedcardShort.do?diag="+d+"&id="+m.value, null); 
     }    
     function infoDiagByMedcard(d) {
     	var m = document.forms[0].medcard ;
