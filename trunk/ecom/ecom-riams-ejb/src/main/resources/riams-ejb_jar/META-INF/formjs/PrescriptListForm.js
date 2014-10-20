@@ -18,11 +18,8 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var addMedServicies = aForm.labList.split("#") ;
 	if (addMedServicies.length>0 && aForm.labList!=null && aForm.labList !="") {
-		//var id = aEntity.id ;
-		//var account = aEntity.account ;
 		for (var i=0; i<addMedServicies.length; i++) {
 			var param = addMedServicies[i].split(":") ;
-			//throw ""+ addMedServicies[i] ;
 			var par1 = java.lang.Long.valueOf(param[0]) ;
 			var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseDate(param[1]):null ;
 			var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
