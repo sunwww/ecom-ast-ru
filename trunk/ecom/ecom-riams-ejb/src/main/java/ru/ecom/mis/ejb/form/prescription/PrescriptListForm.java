@@ -159,6 +159,34 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	public DrugPrescriptionForm getDrugForm11() {return theDrugForm11;}
 	public void setDrugForm11(DrugPrescriptionForm aDrugForm11) {theDrugForm11 = aDrugForm11;}
 
+	/** Лабораторные исследования */
+	@Comment("Лабораторные исследования")
+	public String getLabServicies() {
+		return theLabServicies;
+	}
+
+	public void setLabServicies(String aLabServicies) {
+		theLabServicies = aLabServicies;
+	}
+	
+	/** Лабораторные исследования */
+	private String theLabServicies;
+	
+	/** Дата по лаб. исследованию */
+	@Comment("Дата по лаб. исследованию")
+	@DateString @DoDateString
+	public String getDateLab() {
+		return theDateLab;
+	}
+
+	public void setDateLab(String aDateLab) {
+		theDateLab = aDateLab;
+	}
+
+	/** Дата по лаб. исследованию */
+	private String theDateLab;
+
+	
 	/** Лек. ср-во 1 */
 	private DrugPrescriptionForm theDrugForm11= new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
