@@ -175,17 +175,19 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	/** Дата по лаб. исследованию */
 	@Comment("Дата по лаб. исследованию")
 	@DateString @DoDateString
-	public String getDateLab() {
-		return theDateLab;
-	}
-
-	public void setDateLab(String aDateLab) {
-		theDateLab = aDateLab;
-	}
+	public String getLabDate() {return theLabDate;}
+	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
 
 	/** Дата по лаб. исследованию */
-	private String theDateLab;
+	private String theLabDate;
+	
+	/** Список услуг по лаборатории */
+	@Comment("Список услуг по лаборатории")
+	public String getLabList() {return theLabList;}
+	public void setLabList(String aLabList) {theLabList = aLabList;}
 
+	/** Список услуг по лаборатории */
+	private String theLabList;
 	
 	/** Лек. ср-во 1 */
 	private DrugPrescriptionForm theDrugForm11= new DrugPrescriptionForm();
