@@ -11,35 +11,36 @@
 		$('mainForm').action="javascript:checkLabs()";
 		var num=0;
 		function checkLabs() {
-			var tComment = document.getElementById("comments");
-            var allData="";
+			var allLabData="";
+            var isDoubble=0;
 			while (num>0) {
 				if (document.getElementById("LabElement"+num)) {
 					
 					var curLabService = document.getElementById('labService'+num);
 					var curLabDate = document.getElementById('dateLab'+num);
-					if (curLabService.value != "" & curLabDate.value != "") {
-						tComment.value+=curLabService.value;
-			            tComment.value+=":";
-			            tComment.value+=curLabDate.value;
-			            tComment.value+=";";
-			            
-			            allData+=curLabService.value;
-			            allData+=":";
-			            allData+=curLabDate.value;
-			            allData+=";";
+					if (curLabService.value != "" & curLabDate.value != "") {			            
+			            allLabData+=curLabService.value;
+			            allLabData+=":";
+			            allLabData+=curLabDate.value;
+			            allLabData+=";";
+			            // Проверка на дубли 
+			            if (($('labServicies').value==curLabService.value) & ($('dateLab').value==curLabDate.value)) {
+			            	isDoubble=1;	
+			            }
 					}
 					
 				}
 	            num-=1;
 			 }
-			if ($('labServicies').value != "" & $('dateLab').value != "") {
-	        	allData+=$('labServicies').value;
-	            allData+=":";
-	            allData+=$('dateLab').value;
-	            allData+=";";
+			if (!isDoubble) {
+				if ($('labServicies').value != "" & $('dateLab').value != "") {
+				   	allLabData+=$('labServicies').value;
+		            allLabData+=":";
+		            allLabData+=$('dateLab').value;
+		            allLabData+="";
+		         }
         	}
-			alert(allData);
+			alert(allLabData);
 			//return;
 		}
 		
