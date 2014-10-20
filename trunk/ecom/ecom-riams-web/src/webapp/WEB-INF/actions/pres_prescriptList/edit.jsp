@@ -46,9 +46,24 @@
 		
 		function addRow() {
 		if (document.getElementById('labServicies').value==""){
-			return;
+			throw "Выбирите услугу!";
 		}
-			 num+=1;
+		
+		// Проверим на дубли 
+		var checkNum = 1;
+		if (num>0){
+			while (checkNum<=num) {
+				if ($('labServicies').value==document.getElementById('labService'+checkNum).value){
+					if ($('dateLab').value==document.getElementById('dateLab'+checkNum).value) {
+						alert("Уже существует такое исследование с такой датой!!!");
+						return;
+					}
+				}
+				checkNum+=1;
+			}
+		}
+		
+			num+=1;
 		    // Считываем значения с формы 
 		    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>"; 
 		    var nameId = document.getElementById('labServicies').value;
