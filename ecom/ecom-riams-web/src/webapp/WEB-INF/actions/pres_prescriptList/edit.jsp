@@ -10,19 +10,15 @@
 		<script type="text/javascript">
 		$('mainForm').action="javascript:checkLabs()";
 		var num=0;
-		function checkLabs() 
-			{
+		function checkLabs() {
 			var tComment = document.getElementById("comments");
             var allData="";
-			while (num>0)
-				{
-				if (document.getElementById("LabElement"+num))
-					{
+			while (num>0) {
+				if (document.getElementById("LabElement"+num)) {
 					
 					var curLabService = document.getElementById('labService'+num);
 					var curLabDate = document.getElementById('dateLab'+num);
-					if (curLabService.value != "" & curLabDate.value != "")
-						{
+					if (curLabService.value != "" & curLabDate.value != "") {
 						tComment.value+=curLabService.value;
 			            tComment.value+=":";
 			            tComment.value+=curLabDate.value;
@@ -37,22 +33,21 @@
 				}
 	            num-=1;
 			 }
-			if ($('labServicies').value != "" & $('dateLab').value != "")
-        	{
-        	allData+=$('labServicies').value;
-            allData+=":";
-            allData+=$('dateLab').value;
-            allData+=";";
+			if ($('labServicies').value != "" & $('dateLab').value != "") {
+	        	allData+=$('labServicies').value;
+	            allData+=":";
+	            allData+=$('dateLab').value;
+	            allData+=";";
         	}
 			alert(allData);
 			//return;
 		}
-		function remRow(rId) {
-			var tr = "LabElement"+rId;
-			var element = document.getElementById(tr);
-			element.parentNode.removeChild(element);
-		}
+		
+		
 		function addRow() {
+		if (document.getElementById('labServicies').value==""){
+			return;
+		}
 			 num+=1;
 		    // Считываем значения с формы 
 		    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>"; 
@@ -86,11 +81,12 @@
 						    row.appendChild(td2);
 						    row.appendChild(td3);
 						    
-						    // Наполняем ячейки
-						    var dt="<input id='labService"+num+"' value='"+$('labServicies').value+"' type='hidden' name='labService' horizontalFill='true' size='90' readonly='true' />";
+						    // Наполняем ячейки 
+						    var dt="<input id='labService"+num+"' value='"+$('labServicies').value+"' type='hidden' name='labService"+num+"' horizontalFill='true' size='90' readonly='true' />";
 						    td1.innerHTML = dt+"<span>"+$('labServiciesName').value+"</span>" ;
-						  	td2.innerHTML = "<input id='dateLab"+num+"' name='dateLab' label='Дата' value='"+$('dateLab').value+"' size = '10' />";
-						   	td3.innerHTML = "<input type='button' name='subm"+num+"' onclick='remRow("+num+");' value='Удалить строку' />";
+						  	td2.innerHTML = "<input id='dateLab"+num+"' name='dateLab"+num+"' label='Дата' value='"+$('dateLab').value+"' size = '10' />";
+						   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить строку' />";
+						   	new dateutil.DateField($('dateLab'+num));
 						   
 		}
 		</script>
