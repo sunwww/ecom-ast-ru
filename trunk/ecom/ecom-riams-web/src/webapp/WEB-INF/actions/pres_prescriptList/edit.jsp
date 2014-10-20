@@ -11,20 +11,20 @@
 		$('mainForm').action="javascript:checkLabs()";
 		var num=0;
 		function checkLabs() {
-			var allLabData="";
+			var labList="";
             var isDoubble=0;
 			while (num>0) {
 				if (document.getElementById("LabElement"+num)) {
 					
 					var curLabService = document.getElementById('labService'+num);
-					var curLabDate = document.getElementById('dateLab'+num);
+					var curLabDate = document.getElementById('labDate'+num);
 					if (curLabService.value != "" & curLabDate.value != "") {			            
-			            allLabData+=curLabService.value;
-			            allLabData+=":";
-			            allLabData+=curLabDate.value;
-			            allLabData+=";";
+			            labList+=curLabService.value;
+			            labList+=":";
+			            labList+=curLabDate.value;
+			            labList+=";";
 			            // Проверка на дубли 
-			            if (($('labServicies').value==curLabService.value) & ($('dateLab').value==curLabDate.value)) {
+			            if (($('labServicies').value==curLabService.value) & ($('labDate').value==curLabDate.value)) {
 			            	isDoubble=1;	
 			            }
 					}
@@ -33,21 +33,21 @@
 	            num-=1;
 			 }
 			if (!isDoubble) {
-				if ($('labServicies').value != "" & $('dateLab').value != "") {
-				   	allLabData+=$('labServicies').value;
-		            allLabData+=":";
-		            allLabData+=$('dateLab').value;
-		            allLabData+="";
+				if ($('labServicies').value != "" & $('labDate').value != "") {
+				   	labList+=$('labServicies').value;
+		            labList+=":";
+		            labList+=$('labDate').value;
+		            labList+="";
 		         }
         	}
-			alert(allLabData);
+			alert(labList);
 			//return;
 		}
 		
 		
 		function addRow() {
 		if (document.getElementById('labServicies').value==""){
-			throw "Выбирите услугу!";
+			alert("Выбирите услугу!");
 		}
 		
 		// Проверим на дубли 
@@ -55,7 +55,7 @@
 		if (num>0){
 			while (checkNum<=num) {
 				if ($('labServicies').value==document.getElementById('labService'+checkNum).value){
-					if ($('dateLab').value==document.getElementById('dateLab'+checkNum).value) {
+					if ($('labDate').value==document.getElementById('labDate'+checkNum).value) {
 						alert("Уже существует такое исследование с такой датой!!!");
 						return;
 					}
@@ -100,9 +100,9 @@
 						    // Наполняем ячейки 
 						    var dt="<input id='labService"+num+"' value='"+$('labServicies').value+"' type='hidden' name='labService"+num+"' horizontalFill='true' size='90' readonly='true' />";
 						    td1.innerHTML = dt+"<span>"+$('labServiciesName').value+"</span>" ;
-						  	td2.innerHTML = "<input id='dateLab"+num+"' name='dateLab"+num+"' label='Дата' value='"+$('dateLab').value+"' size = '10' />";
-						   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить строку' />";
-						   	new dateutil.DateField($('dateLab'+num));
+						  	td2.innerHTML = "<input id='labDate"+num+"' name='labDate"+num+"' label='Дата' value='"+$('labDate').value+"' size = '10' />";
+						   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+						   	new dateutil.DateField($('labDate'+num));
 						   
 		}
 		</script>
@@ -201,15 +201,12 @@
 			</td>
 			<td colspan='1'>
 			<div>
-			<msh:textField property="dateLab" label="Дата " size="10"/>
+			<msh:textField property="labDate" label="Дата " size="10"/>
 			</div>
 			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
             <input type="button" name="subm" onclick="addRow();" value="+" tabindex="4" />
-            
-            <input type="button" name="subm" onclick="checkLabs();" value="123"  />
-           <!--  <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />  -->
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
