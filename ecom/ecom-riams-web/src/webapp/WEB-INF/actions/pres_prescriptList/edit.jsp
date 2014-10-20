@@ -5,7 +5,97 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="javascript" type="string">
 
+		<script type="text/javascript">
+		$('mainForm').action="javascript:checkLabs()";
+		var num=0;
+		function checkLabs() 
+			{
+			var tComment = document.getElementById("comments");
+            var allData="";
+			while (num>0)
+				{
+				if (document.getElementById("LabElement"+num))
+					{
+					
+					var curLabService = document.getElementById('labService'+num);
+					var curLabDate = document.getElementById('dateLab'+num);
+					if (curLabService.value != "" & curLabDate.value != "")
+						{
+						tComment.value+=curLabService.value;
+			            tComment.value+=":";
+			            tComment.value+=curLabDate.value;
+			            tComment.value+=";";
+			            
+			            allData+=curLabService.value;
+			            allData+=":";
+			            allData+=curLabDate.value;
+			            allData+=";";
+					}
+					
+				}
+	            num-=1;
+			 }
+			if ($('labServicies').value != "" & $('dateLab').value != "")
+        	{
+        	allData+=$('labServicies').value;
+            allData+=":";
+            allData+=$('dateLab').value;
+            allData+=";";
+        	}
+			alert(allData);
+			//return;
+		}
+		function remRow(rId) {
+			var tr = "LabElement"+rId;
+			var element = document.getElementById(tr);
+			element.parentNode.removeChild(element);
+		}
+		function addRow() {
+			 num+=1;
+		    // Считываем значения с формы 
+		    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>"; 
+		    var nameId = document.getElementById('labServicies').value;
+		    	//var cnt=+$('cnt').value+1 ;
+	   			//		$('cnt').value = cnt;
+	                   //alert(aPosition) ;
+					    //var name = document.getElementById('priceMedServiceName').value;
+					   // nameId = document.getElementById('priceMedService').value;
+					    //cost = document.getElementsByName("cost"+nameId)[0].value;
+					    
+					    // Находим нужную таблицу
+					    var tbody = document.getElementById('addLabElements');
+						//if(nameId!="")if(nameId!=null)
+						    // Создаем строку таблицы и добавляем ее
+						    var row = document.createElement("TR");
+							row.id = "LabElement"+num;
+						    tbody.appendChild(row);
+						
+						    // Создаем ячейки в вышесозданной строке
+						    // и добавляем тх
+						    var td1 = document.createElement("TD");
+						    var td2 = document.createElement("TD");
+						    var td3 = document.createElement("TD");
+						    
+						    row.appendChild(document.createElement("TD"));
+						    row.appendChild(document.createElement("TD"));
+						    row.appendChild(td1);
+						    row.appendChild(document.createElement("TD"));
+						    row.appendChild(document.createElement("TD"));
+						    row.appendChild(td2);
+						    row.appendChild(td3);
+						    
+						    // Наполняем ячейки
+						    var dt="<input id='labService"+num+"' value='"+$('labServicies').value+"' type='hidden' name='labService' horizontalFill='true' size='90' readonly='true' />";
+						    td1.innerHTML = dt+"<span>"+$('labServiciesName').value+"</span>" ;
+						  	td2.innerHTML = "<input id='dateLab"+num+"' name='dateLab' label='Дата' value='"+$('dateLab').value+"' size = '10' />";
+						   	td3.innerHTML = "<input type='button' name='subm"+num+"' onclick='remRow("+num+");' value='Удалить строку' />";
+						   
+		}
+		</script>
+			</tiles:put>
+		
   <tiles:put name="title" type="string">
     <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="StacJournal" guid="29345263-7743-4455-879e-130b73690294" />
   </tiles:put>
@@ -87,6 +177,35 @@
         </td></tr>
         
         </msh:ifFormTypeIsCreate>
+       <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
+        <msh:row>
+        	<msh:separator label="Лабораторные анализы" colSpan="10"/>
+        </msh:row>
+        <table id="labTable">
+        <tbody id="addLabElements">
+    		<tr>
+    		<td>
+			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			</td>
+			<td colspan='1'>
+			<div>
+			<msh:textField property="dateLab" label="Дата " size="10"/>
+			</div>
+			</td>
+			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
+			<td>        	
+            <input type="button" name="subm" onclick="addRow();" value="+" tabindex="4" />
+            
+            <input type="button" name="subm" onclick="checkLabs();" value="123"  />
+           <!--  <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />  -->
+            </td>
+            </msh:ifFormTypeIsNotView>
+            </tr>
+            
+
+    		</tbody>
+    		</table>
+        <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
@@ -103,6 +222,7 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
+    <tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:ifInRole roles="/Policy/Mis/Prescription/DrugPrescription/View" guid="bf331972-44d3-4b35-9f3e-627a9be109e8">
     	<tags:pres_prescriptByList field="pl.id='${param.id}'" />
