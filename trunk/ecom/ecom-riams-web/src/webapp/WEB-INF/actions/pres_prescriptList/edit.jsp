@@ -22,7 +22,7 @@
 			            labList+=curLabService.value;
 			            labList+="#";
 			            labList+=curLabDate.value;
-			            labList+=";";
+			            labList+=":";
 			            // Проверка на дубли 
 			            if ($('labServicies').value==curLabService.value & $('labDate').value==curLabDate.value) {
 			            	isDoubble=1;	
