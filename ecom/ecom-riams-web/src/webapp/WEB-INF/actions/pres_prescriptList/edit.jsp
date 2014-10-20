@@ -20,11 +20,11 @@
 					var curLabDate = document.getElementById('labDate'+num);
 					if (curLabService.value != "" & curLabDate.value != "") {			            
 			            labList+=curLabService.value;
-			            labList+=":";
+			            labList+="#";
 			            labList+=curLabDate.value;
 			            labList+=";";
 			            // Проверка на дубли 
-			            if (($('labServicies').value==curLabService.value) & ($('labDate').value==curLabDate.value)) {
+			            if ($('labServicies').value==curLabService.value & $('labDate').value==curLabDate.value) {
 			            	isDoubble=1;	
 			            }
 					}
@@ -32,12 +32,11 @@
 				}
 	            num-=1;
 			 }
-			if (!isDoubble) {
+			if (isDoubble==0) {
 				if ($('labServicies').value != "" & $('labDate').value != "") {
 				   	labList+=$('labServicies').value;
 		            labList+=":";
 		            labList+=$('labDate').value;
-		            labList+="";
 		         }
         	}
 			alert(labList);
