@@ -3,7 +3,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="ms.dtype = 'MedService'" join="" order=""
+		queryAppend="vst.code = 'LABSURVEY'" join=" left join VocServiceType vst on vst.id=ms.serviceType_id" order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
