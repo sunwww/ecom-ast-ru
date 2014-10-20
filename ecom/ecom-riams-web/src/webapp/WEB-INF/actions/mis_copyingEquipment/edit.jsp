@@ -38,6 +38,13 @@
 			<msh:tableColumn property="4" columnName="Приоритет текстового файла"/>
 		</msh:table>
 		</msh:section>
+		<msh:section title="Список отделений, использующие принтер">
+        <ecom:webQuery name="child" nativeSql="select id,name from mislpu where copyingEquipmentDefault_id=${param.id}"/>
+        <msh:table name="child" action="entityView-mis_lpu.do" idField="1">
+            <msh:tableColumn property="sn" columnName="в„–"/>
+            <msh:tableColumn property="2" columnName="РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїСЂРёРЅС‚РµСЂР°"/>
+        </msh:table>
+        </msh:section>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
