@@ -189,6 +189,58 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	/** Список услуг по лаборатории */
 	private String theLabList;
 	
+	/** Функциональные исследования */
+	@Comment("Функциональные исследования")
+	public String getFuncServicies() {
+		return theFuncServicies;
+	}
+
+	public void setFuncServicies(String aFuncServicies) {
+		theFuncServicies = aFuncServicies;
+	}
+
+	/** Функциональные исследования */
+	private String theFuncServicies;
+	
+	/** Дата функционального исследования */
+	@Comment("Дата функционального исследования")
+	@DateString @DoDateString
+	public String getFuncDate() {
+		return theFuncDate;
+	}
+
+	public void setFuncDate(String aFuncDate) {
+		theFuncDate = aFuncDate;
+	}
+
+	/** Дата функционального исследования */
+	private String theFuncDate;
+	/** Кабинет для функ. исследования */
+	@Comment("Кабинет для функ. исследования")
+	public String getFuncCabinet() {
+		return theFuncCabinet;
+	}
+
+	public void setFuncCabinet(String aFuncCabinet) {
+		theFuncCabinet = aFuncCabinet;
+	}
+
+	/** Кабинет для функ. исследования */
+	private String theFuncCabinet;
+	
+	/** Список функциональных исследований */
+	@Comment("Список функциональных исследований")
+	public String getFuncList() {
+		return theFuncList;
+	}
+
+	public void setFuncList(String aFuncList) {
+		theFuncList = aFuncList;
+	}
+
+	/** Список функциональных исследований */
+	private String theFuncList;
+	
 	/** Лек. ср-во 1 */
 	private DrugPrescriptionForm theDrugForm11= new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
