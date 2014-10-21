@@ -12,7 +12,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.mis.web.action.psych.AreaReportForm;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.web.struts.BaseAction;
 
