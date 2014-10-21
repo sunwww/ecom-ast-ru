@@ -1328,7 +1328,7 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 		 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
 		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
 		 +" group by sls.id,slo.id	"
-		 +" having count(case when vdrt.code='3' or vdrt.code='4' then 1 else null end)=0  "
+		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and d.idc10_id is not null then 1 else null end)=0  "
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}	
 	}
