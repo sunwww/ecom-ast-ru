@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.util.query.ReportParamUtil;

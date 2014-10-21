@@ -15,7 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;

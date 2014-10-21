@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.ejb.services.script.IScriptService;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.poly.web.action.ticket.JournalBySpecialistForm;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;

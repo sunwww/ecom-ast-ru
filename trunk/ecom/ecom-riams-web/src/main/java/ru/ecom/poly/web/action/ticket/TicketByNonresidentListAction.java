@@ -8,7 +8,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class TicketByNonresidentListAction   extends BaseAction {

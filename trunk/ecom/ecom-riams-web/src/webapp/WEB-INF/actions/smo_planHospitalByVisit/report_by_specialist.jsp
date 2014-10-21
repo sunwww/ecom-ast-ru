@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 

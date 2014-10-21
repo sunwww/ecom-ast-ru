@@ -15,7 +15,7 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IReportsService;
 //import ru.ecom.mis.ejb.service.worker.IWorkerService;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;

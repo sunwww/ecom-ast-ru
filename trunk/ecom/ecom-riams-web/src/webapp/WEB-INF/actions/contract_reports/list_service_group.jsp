@@ -3,7 +3,7 @@
 <%@page import="java.math.BigDecimal"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

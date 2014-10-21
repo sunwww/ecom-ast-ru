@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.hibernate.hql.classic.WhereParser;
 
 import ru.ecom.mis.ejb.service.medcase.IReportsService;
-import ru.ecom.mis.web.action.util.ActionUtil;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.poly.web.action.ticket.JournalBySpecialistForm;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;

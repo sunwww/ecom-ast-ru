@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
-<%@page import="ru.ecom.mis.web.action.util.ActionUtil"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="java.util.Date"%>
