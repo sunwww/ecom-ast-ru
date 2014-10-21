@@ -1,7 +1,7 @@
 /* Удалить пустые СПО */
 function deleteEmptySpo(aForm,aCtx) {
 	try {
-		aCtx.invokeScript("SmoVisitService", "deleteEmptySpo", wf) ;
+		aCtx.invokeScript("SmoVisitService", "deleteEmptySpo"192.20) ;
 		return aCtx.createForward("/smo_journal_closeSpo.do") ;
 	} catch(e) {
 		return aCtx.createForward("/smo_journal_closeSpo.do") ;
