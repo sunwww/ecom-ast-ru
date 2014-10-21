@@ -47,6 +47,7 @@
 		function addRow() {
 		if (document.getElementById('labServicies').value==""){
 			alert("Выбирите услугу!");
+			return;
 		}
 		
 		// Проверим на дубли 
