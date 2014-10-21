@@ -22,6 +22,7 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptFulfilState;
+import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -276,4 +277,12 @@ public abstract class Prescription extends BaseEntity{
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Тип назначения */
+	@Comment("Тип назначения")
+	@OneToOne
+	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
+	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
+	/** Тип назначения */
+	private VocPrescriptType thePrescriptType;
 }
