@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
+import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -257,5 +260,12 @@ public class PrescriptionForm extends IdEntityForm{
 //
 //	/** Стационарный? */
 //	private boolean theInHospitalMedCase;
+	/** Тип назначения */
+	@Comment("Тип назначения")
+	@Persist
+	public Long getPrescriptType() {return thePrescriptType;}
+	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
+	/** Тип назначения */
+	private Long thePrescriptType;
 }
 
