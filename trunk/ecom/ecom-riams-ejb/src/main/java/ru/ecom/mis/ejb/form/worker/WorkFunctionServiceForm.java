@@ -15,7 +15,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
 @EntityFormPersistance(clazz=WorkFunctionService.class)
@@ -31,13 +35,8 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist
-	public Long getVocWorkFunction() {
-		return theVocWorkFunction;
-	}
-
-	public void setVocWorkFunction(Long aVocWorkFunction) {
-		theVocWorkFunction = aVocWorkFunction;
-	}
+	public Long getVocWorkFunction() {return theVocWorkFunction;}
+	public void setVocWorkFunction(Long aVocWorkFunction) {theVocWorkFunction = aVocWorkFunction;}
 
 	/** Рабочая функция */
 	private Long theVocWorkFunction;
@@ -45,13 +44,8 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@Persist @Required
-	public Long getMedService() {
-		return theMedService;
-	}
-
-	public void setMedService(Long aMedService) {
-		theMedService = aMedService;
-	}
+	public Long getMedService() {return theMedService;}
+	public void setMedService(Long aMedService) {theMedService = aMedService;}
 
 	/** Мед. услуга */
 	private Long theMedService;
@@ -92,5 +86,58 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 	/** Уровень палат */
 	private Long theRoomType;
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	@DateString @DoDateString @Persist
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@DateString @DoDateString @Persist
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	@TimeString @DoTimeString @Persist
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	@TimeString @DoTimeString @Persist
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private String theEditTime;
+	/** Время создания */
+	private String theCreateTime;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Дата создания */
+	private String theCreateDate;
+	/** Неактивно для назначений */
+	@Comment("Неактивно для назначений")
+	@Persist
+	public Boolean getNoActiveByPrescript() {return theNoActiveByPrescript;}
+	public void setNoActiveByPrescript(Boolean aNoActiveByPrescript) {theNoActiveByPrescript = aNoActiveByPrescript;}
+
+	/** Неактивно для назначений */
+	private Boolean theNoActiveByPrescript;
 
 }
