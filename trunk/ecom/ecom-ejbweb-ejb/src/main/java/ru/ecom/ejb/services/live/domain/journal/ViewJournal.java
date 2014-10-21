@@ -13,8 +13,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @AIndexes({
-    @AIndex(unique = false,properties= {"classObject","viewDate","username"})
-  , @AIndex(unique = false, properties= {"classObject","username"})
+    @AIndex(unique = false, properties= {"classObject","username"})
+    , @AIndex(unique = false, properties= {"idObject"})
 })
 @Table(schema="SQLUser")
 public class ViewJournal extends BaseEntity {
