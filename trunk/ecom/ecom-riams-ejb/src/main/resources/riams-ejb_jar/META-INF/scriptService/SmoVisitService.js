@@ -1,6 +1,6 @@
 function deleteEmptySpo(aCtx,aParams) {
 	var sql="delete from medcase spo where"
-		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id and v.dtype='Visit')=0"
+		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0"
 	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 }
 
