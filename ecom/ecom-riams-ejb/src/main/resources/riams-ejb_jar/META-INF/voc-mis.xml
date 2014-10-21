@@ -14,8 +14,8 @@
 		from="WorkFunction wf "
 		parent=" wfs.medservice_id = :parent "
 		nameId="wf.id"
-		queryAppend="wf.dtype = 'GroupWorkFunction' and wf.workfunction_id=wfs.vocworkfunction_id " join=" 
-			   left join WorkFunctionService wfs on wfs.medservice_id = wfs.medservice_id " order=""
+		queryAppend="wf.dtype = 'GroupWorkFunction' " 
+		join=" left join WorkFunctionService wfs on  wf.workfunction_id=wfs.vocworkfunction_id " order=""
 		names="wf.id||' '|| wf.groupname"
 		queried=" upper(wf.groupname) like upper(:query) "
 	/>
