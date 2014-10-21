@@ -10,14 +10,16 @@
 		<script type="text/javascript">
 		$('mainForm').action="javascript:checkLabs()";
 		var num=0;
+		var labNum=0;
+		var funcNum=0;
 		function checkLabs() {
 			var labList="";
             var isDoubble=0;
-			while (num>0) {
-				if (document.getElementById("LabElement"+num)) {
+			while (labNum>0) {
+				if (document.getElementById("LabElement"+labNum)) {
 					
-					var curLabService = document.getElementById('labService'+num);
-					var curLabDate = document.getElementById('labDate'+num);
+					var curLabService = document.getElementById('labService'+labNum);
+					var curLabDate = document.getElementById('labDate'+labNum);
 					if (curLabService.value != "" & curLabDate.value != "") {			            
 			            labList+=curLabService.value;
 			            labList+="#";
@@ -30,7 +32,7 @@
 					}
 					
 				}
-	            num-=1;
+	            labNum-=1;
 			 }
 			if (isDoubble==0) {
 				if ($('labServicies').value != "" & $('labDate').value != "") {
@@ -44,8 +46,13 @@
 		}
 		
 		
-		function addRow() {
-		if (document.getElementById('labServicies').value==""){
+		function addRow(type) {
+		if (type=='lab') {
+			num = labNum;
+		} else {
+			num = funcNum;
+		}
+		if (document.getElementById(type+'Servicies').value==""){
 			alert("Выбирите услугу!");
 			return;
 		}
@@ -54,11 +61,11 @@
 		var checkNum = 1;
 		if (num>0){
 			while (checkNum<=num) {
-				if ($('labServicies').value==document.getElementById('labService'+checkNum).value){
-					if ($('labDate').value==document.getElementById('labDate'+checkNum).value) {
-						alert("Уже существует такое исследование с такой датой!!!");
+				if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+				//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
+						alert("Уже существует такое исследование!!!");
 						return;
-					}
+				//	}
 				}
 				checkNum+=1;
 			}
@@ -67,7 +74,7 @@
 			num+=1;
 		    // Считываем значения с формы 
 		    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>"; 
-		    var nameId = document.getElementById('labServicies').value;
+		    var nameId = document.getElementById(type+'Servicies').value;
 		    	//var cnt=+$('cnt').value+1 ;
 	   			//		$('cnt').value = cnt;
 	                   //alert(aPosition) ;
@@ -76,11 +83,11 @@
 					    //cost = document.getElementsByName("cost"+nameId)[0].value;
 					    
 					    // Находим нужную таблицу
-					    var tbody = document.getElementById('addLabElements');
+					    var tbody = document.getElementById('add'+type+'Elements');
 						//if(nameId!="")if(nameId!=null)
 						    // Создаем строку таблицы и добавляем ее
 						    var row = document.createElement("TR");
-							row.id = "LabElement"+num;
+							row.id = type+"Element"+num;
 						    tbody.appendChild(row);
 						
 						    // Создаем ячейки в вышесозданной строке
@@ -88,6 +95,7 @@
 						    var td1 = document.createElement("TD");
 						    var td2 = document.createElement("TD");
 						    var td3 = document.createElement("TD");
+						    var td4 = document.createElement("TD");
 						    
 						    row.appendChild(document.createElement("TD"));
 						    row.appendChild(document.createElement("TD"));
@@ -95,16 +103,24 @@
 						    row.appendChild(document.createElement("TD"));
 						    row.appendChild(document.createElement("TD"));
 						    row.appendChild(td2);
+						    row.appendChild(document.createElement("TD"));
+						    row.appendChild(document.createElement("TD"));
 						    row.appendChild(td3);
+						    row.appendChild(td4);
 						    
 						    // Наполняем ячейки 
-						    var dt="<input id='labService"+num+"' value='"+$('labServicies').value+"' type='hidden' name='labService"+num+"' horizontalFill='true' size='90' readonly='true' />";
-						    td1.innerHTML = dt+"<span>"+$('labServiciesName').value+"</span>" ;
-						  	td2.innerHTML = "<input id='labDate"+num+"' name='labDate"+num+"' label='Дата' value='"+$('labDate').value+"' size = '10' />";
-						   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
-						   	new dateutil.DateField($('labDate'+num));
+						    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+						    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+						    
+						    td1.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
+						  	td2.innerHTML = "<input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+						   	td3.innerHTML = dt2+"<span>"+$(type+'CabinetName').value+"</span>" ;
+						   	td4.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+						   	new dateutil.DateField($(type+'Date'+num));
 						   
 		}
+		
+		
 		</script>
 			</tiles:put>
 		
@@ -194,7 +210,7 @@
         	<msh:separator label="Лабораторные анализы" colSpan="10"/>
         </msh:row>
         <table id="labTable">
-        <tbody id="addLabElements">
+        <tbody id="addlabElements">
     		<tr>
     		<td>
 			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
@@ -206,7 +222,7 @@
 			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
-            <input type="button" name="subm" onclick="addRow();" value="+" tabindex="4" />
+            <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
@@ -215,6 +231,34 @@
     		</tbody>
     		</table>
         <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
+        <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
+        <msh:row>
+        	<msh:separator label="Функциональные исследования" colSpan="10"/>
+        </msh:row>
+        <table id="funcTable">
+        <tbody id="addfuncElements">
+    		<tr>
+    		<td>
+			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
+			</td>
+			<td colspan='1'>
+			<div>
+			<msh:textField property="funcDate" label="Дата " size="10"/>
+			</div>
+			</td>
+			<td>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			</td>
+			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
+			<td>        	
+            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+            </td>
+            </msh:ifFormTypeIsNotView>
+            </tr>
+       		</tbody>
+    		</table>
+        <!-- --------------------------------------------------Конец блока "Функциональная диагностика" ------ -->
+         
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
