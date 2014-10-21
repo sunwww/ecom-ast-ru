@@ -1,5 +1,8 @@
 package ru.ecom.mis.ejb.domain.worker;
 
+import java.sql.Date;
+import java.sql.Time;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -97,4 +100,52 @@ public class WorkFunctionService extends BaseEntity{
 
 	/** Уровень палат */
 	private VocRoomType theRoomType;
+	
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {return theEditDate;}
+	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	/** Пользователь, который создал запись */
+	@Comment("Пользователь, который создал запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, который последний редактировал запись */
+	@Comment("Пользователь, который последний редактировал запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, который последний редактировал запись */
+	private String theEditUsername;
+	/** Пользователь, который создал запись */
+	private String theCreateUsername;
+	/** Время редактрования */
+	private Time theEditTime;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Дата создания */
+	private Date theCreateDate;
+	
+	/** Неактивно для назначений */
+	@Comment("Неактивно для назначений")
+	public Boolean getNoActiveByPrescript() {return theNoActiveByPrescript;}
+	public void setNoActiveByPrescript(Boolean aNoActiveByPrescript) {theNoActiveByPrescript = aNoActiveByPrescript;}
+
+	/** Неактивно для назначений */
+	private Boolean theNoActiveByPrescript;
 }
