@@ -14,19 +14,21 @@
 		var funcNum=0;
 		function checkLabs() {
 			var labList="";
-            var isDoubble=0;
+			var isDoubble=0;
 			while (labNum>0) {
-				if (document.getElementById("LabElement"+labNum)) {
-					
+				if (document.getElementById("labElement"+labNum)) {
 					var curLabService = document.getElementById('labService'+labNum);
 					var curLabDate = document.getElementById('labDate'+labNum);
+					var curLabCabinet = document.getElementById('labCabinet'+labNum);
 					if (curLabService.value != "" & curLabDate.value != "") {			            
 			            labList+=curLabService.value;
-			            labList+="#";
+			            labList+=":";
 			            labList+=curLabDate.value;
 			            labList+=":";
+			            labList+=curLabCabinet.value;
+			            labList+="#";
 			            // Проверка на дубли 
-			            if ($('labServicies').value==curLabService.value & $('labDate').value==curLabDate.value) {
+			            if ($('labServicies').value==curLabService.value) {
 			            	isDoubble=1;	
 			            }
 					}
@@ -39,17 +41,30 @@
 				   	labList+=$('labServicies').value;
 		            labList+=":";
 		            labList+=$('labDate').value;
+		            labList+=":";
+		            labList+=$('labCabinet').value;
 		         }
         	}
-			alert(labList);
-			//return;
+			$('labList').value=labList ;
+			$('mainForm').action="entityParentSaveGoView-pres_prescriptList.do";
+			//alert(document.forms['pres_prescriptListForm']);
+			var sm =$('submitButton') ;
+			sm.disable = false ;
+			sm.readonly = false ;
+			alert(sm);
+			//sm.onclick() ;
+			sm.form.onSubmit() ;
+			document.getElementById("submitButton").onclick();
+			
+			
+			
 		}
 		
 		
 		function addRow(type) {
 		if (type=='lab') {
 			num = labNum;
-		} else {
+		} else if (type=='func') {
 			num = funcNum;
 		}
 		if (document.getElementById(type+'Servicies').value==""){
@@ -68,57 +83,52 @@
 				//	}
 				}
 				checkNum+=1;
-			}
+		}
 		}
 		
-			num+=1;
-		    // Считываем значения с формы 
-		    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>"; 
-		    var nameId = document.getElementById(type+'Servicies').value;
-		    	//var cnt=+$('cnt').value+1 ;
-	   			//		$('cnt').value = cnt;
-	                   //alert(aPosition) ;
-					    //var name = document.getElementById('priceMedServiceName').value;
-					   // nameId = document.getElementById('priceMedService').value;
-					    //cost = document.getElementsByName("cost"+nameId)[0].value;
-					    
-					    // Находим нужную таблицу
-					    var tbody = document.getElementById('add'+type+'Elements');
-						//if(nameId!="")if(nameId!=null)
-						    // Создаем строку таблицы и добавляем ее
-						    var row = document.createElement("TR");
-							row.id = type+"Element"+num;
-						    tbody.appendChild(row);
-						
-						    // Создаем ячейки в вышесозданной строке
-						    // и добавляем тх
-						    var td1 = document.createElement("TD");
-						    var td2 = document.createElement("TD");
-						    var td3 = document.createElement("TD");
-						    var td4 = document.createElement("TD");
-						    
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(td1);
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(td2);
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(document.createElement("TD"));
-						    row.appendChild(td3);
-						    row.appendChild(td4);
-						    
-						    // Наполняем ячейки 
-						    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
-						    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
-						    
-						    td1.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-						  	td2.innerHTML = "<input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
-						   	td3.innerHTML = dt2+"<span>"+$(type+'CabinetName').value+"</span>" ;
-						   	td4.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
-						   	new dateutil.DateField($(type+'Date'+num));
-						   
+		num+=1;
+	    // Считываем значения с формы 
+	    
+	    var nameId = document.getElementById(type+'Servicies').value;
+ 			var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке
+	    // и добавляем тх
+	    var td1 = document.createElement("TD");
+	    var td2 = document.createElement("TD");
+	    var td3 = document.createElement("TD");
+	    var td4 = document.createElement("TD");
+	    
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td1);
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td2);
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td3);
+	    row.appendChild(td4);
+	    
+	    // Наполняем ячейки 
+	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+	    
+	    td1.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
+	  	td2.innerHTML = "<input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+	   	td3.innerHTML = dt2+"<span>"+$(type+'CabinetName').value+"</span>" ;
+	   	td4.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+	   	new dateutil.DateField($(type+'Date'+num));
+					   
+		if (type=='lab') {
+			labNum = num;
+		} else if (type=='func'){
+			funcNum = num;
 		}
+	}
 		
 		
 		</script>
@@ -131,18 +141,23 @@
     <!-- 
     	  -  лист назначений
     	  -->
-    <msh:form action="/entityParentSaveGoView-pres_prescriptList.do" defaultField="workFunctionName" guid="ea411ae6-6822-4cbd-a7f3-b8f6cfa1beba">
+   <msh:form action="/entityParentSaveGoView-pres_prescriptList.do" defaultField="workFunctionName" guid="ea411ae6-6822-4cbd-a7f3-b8f6cfa1beba">
       <msh:hidden property="id" guid="ba8ca3c4-0044-44ab-bb12-a75e3441fae2" />
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
       <msh:hidden property="medCase" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,1%,1%">
         <msh:row guid="154fb2a0-a3ac-4034-9cbb-087444dbe299">
           <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="9" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="9" horizontalFill="true" />
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="9" horizontalFill="true" viewOnlyField="true"/>
         </msh:row>
+        <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+          <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="9" horizontalFill="true" />
+        </msh:row>
+        
         <msh:row>
         	<msh:separator label="Режим" colSpan="10"/>
         </msh:row>
@@ -220,6 +235,11 @@
 			<msh:textField property="labDate" label="Дата " size="10"/>
 			</div>
 			</td>
+			</tr>
+			<tr>
+			<td>
+			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
@@ -246,6 +266,8 @@
 			<msh:textField property="funcDate" label="Дата " size="10"/>
 			</div>
 			</td>
+			</tr>
+			<tr>
 			<td>
 			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</td>
