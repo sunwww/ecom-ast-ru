@@ -204,15 +204,15 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
                 out.print("<input id='submitButton' class='default' type='button' value='");
                 String label = isTypeCreate() ? getLabelCreate() : getLabelSave() ;
                 out.print(label) ;
-                out.print("' onclick='this.value=\"");
+                out.print("' onclick=\"this.value='");
                 String labelIng = isTypeCreate() ? getLabelCreating() : getLabelSaving() ;
 
                 out.print(labelIng) ;
-                out.print("\"; this.form.submit(); ");
+                out.print("'; this.form.submit(); ");
                 if(!theDoNotDisableButtons) {
                     out.print(" this.disabled=true; ");
                 }
-                out.print("return true ;'\"");
+                out.print("return true ;\"");
                 out.print(" title=\"") ;
                 out.print(label) ;
                 out.print(" [CTRL+ENTER]") ;
