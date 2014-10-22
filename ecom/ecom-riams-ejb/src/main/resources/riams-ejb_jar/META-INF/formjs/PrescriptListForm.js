@@ -19,15 +19,18 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
 	aEntity.setCreateUsername(username) ;
-	if (aForm.labList!=null) {
+	//throw ""+aForm.labList;
+	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
 		var prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
 	
-		if (addMedServicies.length>0 && aForm.labList!=null && aForm.labList !="") {
+		if (addMedServicies.length>0  ) {
+			//throw "All OK"+addMedServicies.length;
 			for (var i=0; i<addMedServicies.length; i++) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
-				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseDate(param[1]):null ;
+				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
+				var par3 = param[2]?java.lang.Long.valueOf(param[2]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
 				if (medService!=null && par2!=null) {
@@ -35,10 +38,13 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setPrescriptionList(aEntity) ;
 					adMedService.setMedService(medService) ;
 					adMedService.setPlanStartDate(par2) ;
-					adMedServise.setPrescriptType(prescriptType) ;
+					adMedService.setPrescriptType(prescriptType) ;
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
+					if (par3!=null) {
+						adMedService.setPrescriptCabinet(par3);	
+					}
 					aCtx.manager.persist(adMedService) ;
 				}
 			}
