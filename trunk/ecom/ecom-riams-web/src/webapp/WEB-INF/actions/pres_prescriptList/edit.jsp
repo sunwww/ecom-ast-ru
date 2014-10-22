@@ -9,51 +9,60 @@
 
 		<script type="text/javascript">
 		var oldaction = document.forms['pres_prescriptListForm'].action ;
-		document.forms[1].action="javascript:checkLabs()";
+		document.forms['pres_prescriptListForm'].action="javascript:checkLabs()";
 		var num=0;
 		var labNum=0;
 		var funcNum=0;
-		function checkLabs() {
-			alert(document.forms[1].name);
-			document.forms[1].action=oldaction ;
-			document.forms[1].submit();
-			var labList="";
-			var isDoubble=0;
-			while (labNum>0) {
-				if (document.getElementById("labElement"+labNum)) {
-					var curLabService = document.getElementById('labService'+labNum);
-					var curLabDate = document.getElementById('labDate'+labNum);
-					var curLabCabinet = document.getElementById('labCabinet'+labNum);
-					if (curLabService.value != "" & curLabDate.value != "") {			            
-			            labList+=curLabService.value;
-			            labList+=":";
-			            labList+=curLabDate.value;
-			            labList+=":";
-			            labList+=curLabCabinet.value;
-			            labList+="#";
-			            // Проверка на дубли 
-			            if ($('labServicies').value==curLabService.value) {
-			            	isDoubble=1;	
-			            }
-					}
-					
+		var labList="";
+		
+		function writeServicesToList(type) {
+			var typeNum = 0;
+		if (type=='lab') {
+			typeNum = labNum;
+		} else if (type=='func') {
+			typeNum = funcNum;
+		}
+		var isDoubble=0;
+		while (typeNum>0) {
+			if (document.getElementById(type+"Element"+typeNum)) {
+				var curService = document.getElementById(type+'Service'+typeNum);
+				var curDate = document.getElementById(type+'Date'+typeNum);
+				var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
+				if (curService.value != "" & curDate.value != "") {			            
+		            labList+=curService.value;
+		            labList+=":";
+		            labList+=curDate.value;
+		            labList+=":";
+		            labList+=curCabinet.value;
+		            labList+="#";
+		            // Проверка на дубли 
+		            if ($(type+'Servicies').value==curService.value) {
+		            	isDoubble=1;	
+		            }
 				}
-	            labNum-=1;
-			 }
-			if (isDoubble==0) {
-				if ($('labServicies').value != "" & $('labDate').value != "") {
-				   	labList+=$('labServicies').value;
-		            labList+=":";
-		            labList+=$('labDate').value;
-		            labList+=":";
-		            labList+=$('labCabinet').value;
-		         }
-        	}
+					
+			}
+       		typeNum-=1;
+	 	}
+		if (isDoubble==0) {
+			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
+			   	labList+=$(type+'Servicies').value;
+	            labList+=":";
+	            labList+=$(type+'Date').value;
+	            labList+=":";
+	            labList+=$(type+'Cabinet').value;
+	            labList+="#";
+	         }
+	     }
+		}
+		
+		function checkLabs() {
+			writeServicesToList('lab');
+			writeServicesToList('func');
 			$('labList').value=labList ;
-			
-			
-			
-			
+		//	alert (labList);
+			document.forms['pres_prescriptListForm'].action=oldaction ;
+			document.forms['pres_prescriptListForm'].submit();
 		}
 		
 		
@@ -72,11 +81,13 @@
 		var checkNum = 1;
 		if (num>0){
 			while (checkNum<=num) {
-				if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
-				//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
-						alert("Уже существует такое исследование!!!");
-						return;
-				//	}
+				if (document.getElementById(type+'Service'+checkNum)) {
+					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+					//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
+							alert("Уже существует такое исследование!!!");
+							return;
+					//	}
+					}
 				}
 				checkNum+=1;
 		}
@@ -143,7 +154,7 @@
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,1%,1%">
         <msh:row guid="154fb2a0-a3ac-4034-9cbb-087444dbe299">
-          <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="9" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
+          <msh:textArea rows="2" property="comments" label="Комментарии11111" fieldColSpan="9" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
