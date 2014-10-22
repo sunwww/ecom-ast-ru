@@ -198,7 +198,18 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	public void setFuncServicies(String aFuncServicies) {
 		theFuncServicies = aFuncServicies;
 	}
+	/** Кабинет для лабораторных исследования*/
+	@Comment("Кабинет для лабораторных исследования")
+	public String getLabCabinet() {
+		return theLabCabinet;
+	}
 
+	public void setLabCabinet(String aLabCabinet) {
+		theLabCabinet = aLabCabinet;
+	}
+
+	/** Кабинет для лабораторных исследования */
+	private String theLabCabinet;
 	/** Функциональные исследования */
 	private String theFuncServicies;
 	
