@@ -8,11 +8,15 @@
 	<tiles:put name="javascript" type="string">
 
 		<script type="text/javascript">
-		$('mainForm').action="javascript:checkLabs()";
+		var oldaction = document.forms['pres_prescriptListForm'].action ;
+		document.forms[1].action="javascript:checkLabs()";
 		var num=0;
 		var labNum=0;
 		var funcNum=0;
 		function checkLabs() {
+			alert(document.forms[1].name);
+			document.forms[1].action=oldaction ;
+			document.forms[1].submit();
 			var labList="";
 			var isDoubble=0;
 			while (labNum>0) {
@@ -46,15 +50,7 @@
 		         }
         	}
 			$('labList').value=labList ;
-			$('mainForm').action="entityParentSaveGoView-pres_prescriptList.do";
-			//alert(document.forms['pres_prescriptListForm']);
-			var sm =$('submitButton') ;
-			sm.disable = false ;
-			sm.readonly = false ;
-			alert(sm);
-			//sm.onclick() ;
-			sm.form.onSubmit() ;
-			document.getElementById("submitButton").onclick();
+			
 			
 			
 			
@@ -129,7 +125,6 @@
 			funcNum = num;
 		}
 	}
-		
 		
 		</script>
 			</tiles:put>
@@ -298,19 +293,20 @@
       </msh:panel>
     </msh:form>
     <tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
+    
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:ifInRole roles="/Policy/Mis/Prescription/DrugPrescription/View" guid="bf331972-44d3-4b35-9f3e-627a9be109e8">
     	<tags:pres_prescriptByList field="pl.id='${param.id}'" />
       </msh:ifInRole>
       
-    </msh:ifFormTypeIsView>
+    </msh:ifFormTypeIsView> 
   </tiles:put>
   <tiles:put name="side" type="string">
   	<msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
   		<msh:sideMenu title="Шаблоны">
   			<msh:sideLink action=" javascript:showaddTemplatePrescription(1,&quot;.do&quot;)" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f4e12" title="Добавить назначения из шаблона" />
   		</msh:sideMenu>
-  		<tags:templatePrescription record="1" parentId="${param.id}" name="add" />
+  		<%--<tags:templatePrescription record="1" parentId="${param.id}" name="add" /> --%>
   	</msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="d4c560e9-6ddb-4cf2-9375-4caf7f0d3fb8">
       <msh:sideMenu title="Лист назначений" guid="2742309d-41bf-4fbe-9238-2f895b5f79a9">
