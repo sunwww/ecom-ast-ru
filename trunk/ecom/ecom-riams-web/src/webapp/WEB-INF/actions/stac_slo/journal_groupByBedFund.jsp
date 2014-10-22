@@ -268,8 +268,8 @@
     ,vhr.name as vhrname
     from MedCase as m 
     left join medcase as hmc on hmc.id=m.parent_id 
-    left join VocHospitalizationResult vhr on vhr.id=h.result_id
-    left join statisticstub as ss on ss.id=h.statisticstub_id 
+    left join VocHospitalizationResult vhr on vhr.id=hmc.result_id
+    left join statisticstub as ss on ss.id=hmc.statisticstub_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
