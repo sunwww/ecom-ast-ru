@@ -30,9 +30,9 @@ function onCreate(aForm, aEntity, aCtx) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
-				var par3 = param[2]?java.lang.Long.valueOf(param[2]):null ;
+				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
-				
+								
 				if (medService!=null && par2!=null) {
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
@@ -43,7 +43,8 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
 					if (par3!=null) {
-						adMedService.setPrescriptCabinet(par3);	
+						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
 					aCtx.manager.persist(adMedService) ;
 				}
