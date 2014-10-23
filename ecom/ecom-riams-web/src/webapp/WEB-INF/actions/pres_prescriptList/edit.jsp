@@ -152,16 +152,15 @@
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
       <msh:hidden property="medCase" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
-      <msh:panel colsWidth="1%,1%,1%,1%,1%">
+      <msh:panel colsWidth="1%,1%,1%,97%">
         <msh:row guid="154fb2a0-a3ac-4034-9cbb-087444dbe299">
-          <msh:textArea rows="2" property="comments" label="Комментарии11111" fieldColSpan="9" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
+          <msh:textArea rows="2" property="comments" label="Комментарии11111" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
-        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
-        <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="9" horizontalFill="true" viewOnlyField="true"/>
+                <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="9" horizontalFill="true" />
+          <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         
         <msh:row>
@@ -169,7 +168,7 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="modeForm.planStartDate" label="Дата начала" size="7"/>
-          <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="9" />
+          <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Диета" colSpan="10"/>
@@ -177,15 +176,17 @@
         <msh:row guid="b556ehb-b971-441e-9a90-53217">
         	<msh:textField property="dietForm.planStartDate" label="Дата начала" size="7"/>
           <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
-          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="9" />
+          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
+        </msh:panel>
+         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
+        <msh:panel styleId="border">
         <msh:row>
-        	<msh:separator label="Лекарственные назначения" colSpan="10"/>
+        	<msh:separator label="Лекарственные назначения" colSpan="20"/>
         </msh:row>
         
        
-        <tr><td colspan="10">
-        <msh:panel styleId="border">
+
         	<msh:row>
         		<td>Дата начала</td>
         		<td>Лек.ср-во и способ введения</td>
@@ -215,7 +216,7 @@
 	          <msh:textField property="drugForm2.duration" label="Продолжительность"  size="3" hideLabel="true"/>
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        <td></td>
+	        
 	          <msh:autoComplete vocName="vocDrugMethod" label="Способ введ." property="drugForm2.method" guid="3adk3e4d1b-8802-467d-b205-715fb379b018" horizontalFill="true"  hideLabel="true"/>
 	          <msh:autoComplete hideLabel="true" vocName="vocFrequencyUnit" label="раза в " property="drugForm2.frequencyUnit" size="10"/>
 	          <msh:autoComplete hideLabel="true" vocName="vocDrugAmountUnit" label="ед." property="drugForm2.amountUnit" size="10" />
@@ -223,13 +224,17 @@
 	        </msh:row>
 	        
         </msh:panel>
-        </td></tr>
         
-        </msh:ifFormTypeIsCreate>
+        
+        
+        
+        <msh:panel>
        <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
         <msh:row>
         	<msh:separator label="Лабораторные анализы" colSpan="10"/>
         </msh:row>
+        <msh:row>
+        <tr><td>
         <table id="labTable">
         <tbody id="addlabElements">
     		<tr>
@@ -256,11 +261,17 @@
 
     		</tbody>
     		</table>
+    		</td></tr>
+        </msh:row>
+        </msh:panel>
+        <msh:panel>
         <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
         <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
         <msh:row>
         	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
+        <msh:row>
+        <tr><td>
         <table id="funcTable">
         <tbody id="addfuncElements">
     		<tr>
@@ -285,6 +296,10 @@
             </tr>
        		</tbody>
     		</table>
+    		</td></tr></msh:row>
+        </msh:panel>
+        </msh:ifFormTypeIsCreate>
+        <msh:panel>
         <!-- --------------------------------------------------Конец блока "Функциональная диагностика" ------ -->
          
           <msh:row>
