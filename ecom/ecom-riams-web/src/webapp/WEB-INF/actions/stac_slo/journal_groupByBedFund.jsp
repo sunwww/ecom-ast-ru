@@ -29,6 +29,7 @@
 	String typeViewServiceStream =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeViewServiceStream","1", request) ;
 	String typeView =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeView","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeEmergency","3", request) ;
+	String typeResult =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeResult","3", request) ;
   %>
   <%
   	String shortI = request.getParameter("short") ;
@@ -56,6 +57,18 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="3">  перевода
         </td>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Результат госпитализации (typeResult)" colspan="1"><label for="typeResultName" id="typeResultLabel">Результат госпитализации:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeResult" value="1">  перевод ЛПУ
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+	        	<input type="radio" name="typeResult" value="2"  >  смерть
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeResult" value="3">  все
+	        </td>
         </msh:row>
         <msh:row>
 	        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
@@ -149,6 +162,7 @@
     checkFieldUpdate('typeViewAddStatus','${typeViewAddStatus}',2) ;
     checkFieldUpdate('typeViewServiceStream','${typeViewServiceStream}',1) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
+    checkFieldUpdate('typeResult','${typeResult}',2) ;
     
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
@@ -184,6 +198,12 @@
     	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
     		request.setAttribute("emergencySql", " and (hmc.emergency is null or hmc.emergency='0') ") ;
     	} 
+    	if (typeResult!=null && typeResult.equals("1")) {
+    		request.setAttribute("result_dateSql"," and hmc.moveToAnotherLPU_id is not null") ;
+    	} else if (typeResult!=null && typeResult.equals("2")) {
+    		request.setAttribute("result_dateSql"," and vhr.code='11'") ;
+    	}
+    			
     	if (typePatient.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
@@ -265,7 +285,7 @@
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end as cnt2
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
-    ,vhr.name as vhrname
+    ,vhr.name as vhrname,tml.name
     from MedCase as m 
     left join medcase as hmc on hmc.id=m.parent_id 
     left join VocHospitalizationResult vhr on vhr.id=hmc.result_id
@@ -278,10 +298,11 @@
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id 
     left join VocServiceStream vss on vss.id=m.serviceStream_id
+    left join MisLpu tml on tml.id=hmc.moveToAnotherLPU_id
     where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
     ${departmentSql} ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
-    ${patientSql} ${additionStatusSql} 
+    ${patientSql} ${additionStatusSql} ${result_dateSql}
     
     order by  p.lastname,p.firstname,p.middlename
     	"/>
@@ -309,6 +330,7 @@
 		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="К.Д по стац" property="11"/>
 		      <msh:tableColumn columnName="Диагноз" property="12"/>
 		      <msh:tableColumn columnName="Результат госпитализации" property="13"/>
+		      <msh:tableColumn columnName="Переведен в ЛПУ" property="14"/>
     	</msh:table>
     	<%
     	} else {
@@ -385,7 +407,7 @@
     where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
     ${departmentSql}  ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
-    ${patientSql} ${additionStatusSql} 
+    ${patientSql} ${additionStatusSql} ${result_dateSql}
     group by  
 		m.department_id , d.name,
 		${viewDateGroup} ${viewServiceStreamGroup} ${viewAddStatusGroup} 
@@ -393,7 +415,7 @@
     order by  ${viewDateOrder} d.name,${viewServiceStreamOrder} ${viewAddStatusOrder} vbt.name,vbst.name
     	"/>
     	<msh:table name="swod_by_standart"  selection="multiply"
-    	viewUrl="stac_groupByBedFundList.do?short=Short&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1"
+    	viewUrl="stac_groupByBedFundList.do?short=Short&typeResult=${typeResult}&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1"
     	action="stac_groupByBedFundList.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1" idField="1">
     		<msh:tableColumn property="2" cssClass="noDate" columnName="Дата"/>
     		<msh:tableColumn property="3" cssClass="noAddStatus" columnName="Доп. статус"/>
