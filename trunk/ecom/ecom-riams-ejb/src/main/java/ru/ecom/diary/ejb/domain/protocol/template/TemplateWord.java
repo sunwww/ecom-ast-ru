@@ -66,4 +66,12 @@ public class TemplateWord extends BaseEntity {
 	private Date theCreateDate;
 	/** Пользователь */
 	private String theCreateUsername;
+	
+	/** Пользователь, отредактировающий запись */
+	@Comment("Пользователь, отредактировающий запись")
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, отредактировающий запись */
+	private String theEditUsername;
 }
