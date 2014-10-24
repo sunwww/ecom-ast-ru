@@ -36,6 +36,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				if (medService!=null && par2!=null) {
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
+					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
 					adMedService.setPlanStartDate(par2) ;
 					adMedService.setPrescriptType(prescriptType) ;
