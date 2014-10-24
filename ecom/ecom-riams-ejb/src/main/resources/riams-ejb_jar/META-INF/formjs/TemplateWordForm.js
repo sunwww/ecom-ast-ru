@@ -10,5 +10,6 @@ function onPreDelete(aEntityId, aContext) {
 	}
 }
 function onPreSave(aForm,aEntity , aCtx) {
+	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }

@@ -37,7 +37,7 @@ public class TemplateWordForm extends IdEntityForm {
     public void setDecryption(String aDecryption ) {  theDecryption = aDecryption ; }
 
     /** Сокращение */
-    @Persist @Required 
+    @Persist @Required @DoUpperCase
     @Comment("Сокращение")
     public String getReduction() {    return theReduction ;}
     public void setReduction(String aReduction ) {  theReduction = aReduction ; }
@@ -79,5 +79,14 @@ public class TemplateWordForm extends IdEntityForm {
 	private String theCreateDate;
 	/** Пользователь */
 	private String theCreateUsername;
+	
+	/** Пользователь, отредактировающий запись */
+	@Comment("Пользователь, отредактировающий запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Пользователь, отредактировающий запись */
+	private String theEditUsername;
 
 }
