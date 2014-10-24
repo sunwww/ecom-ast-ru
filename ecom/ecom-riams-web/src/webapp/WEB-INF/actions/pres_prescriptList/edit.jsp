@@ -154,10 +154,10 @@
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
         <msh:row guid="154fb2a0-a3ac-4034-9cbb-087444dbe299">
-          <msh:textArea rows="2" property="comments" label="Комментарии11111" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
+          <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
                 <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"  />
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" />
