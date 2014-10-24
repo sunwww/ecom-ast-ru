@@ -43,7 +43,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
-					if (par3!=null) {
+					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
 						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
