@@ -21,17 +21,23 @@
 
     <msh:section>
     <ecom:webQuery name="list" nativeSql="
-    select pl.id,p.id,ml.id as mlid,ml.name as ml.name,ms.name as ms.name from prescription p
+    select pl.id,p.id,ml.id as mlid,ml.name as ml.name,ms.name as ms.name 
+    from prescription p
     left join PrescriptList pl on pl.id=p.prescriptList_id
+    left join MedCase slo on slo.id=pl.medCase_id
+    left join MedCase sls on sls.id=slo.parent_id
+    left join Patient pat on pat.id=slo.patient_id
     left join MedService ms on ms.id=p.medService_id
+    left join VocServiceType vst on vst.id=ms.serviceType_id
     left join WorkFunction wf on wf.id=p.prescriptSpecial_id
     left join Worker w on w.id=wf.worker_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
     
     where p.dtype='ServicePrescription'
-    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${endDate}','dd.mm.yyyy')
-      
+    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and to_date('${endDate}','dd.mm.yyyy')
+     
     "/>
     <msh:sectionTitle>Список листов назначений</msh:sectionTitle>
     <msh:sectionContent>
