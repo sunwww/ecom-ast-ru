@@ -312,6 +312,13 @@ public abstract class Prescription extends BaseEntity{
 	public String getIntakeUsername() {return theIntakeUsername;}
 	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
 
+	/** Идентификатор материала */
+	@Comment("Идентификатор материала")
+	public String getMaterialId() {return theMaterialId;}
+	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
+
+	/** Идентификатор материала */
+	private String theMaterialId;
 	/** Пользователь, осуществившей забор */
 	private String theIntakeUsername;
 	/** Время забора */
