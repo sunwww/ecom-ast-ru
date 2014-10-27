@@ -239,17 +239,18 @@
         <tbody id="addlabElements">
     		<tr>
     		<td>
-			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</td>
+    		</tr>
+			<tr>
 			<td colspan='1'>
 			<div>
 			<msh:textField property="labDate" label="Дата " size="10"/>
 			</div>
 			</td>
-			</tr>
-			<tr>
+			
 			<td>
-			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
 			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
