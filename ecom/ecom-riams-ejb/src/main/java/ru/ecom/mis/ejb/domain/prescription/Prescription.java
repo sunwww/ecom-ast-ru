@@ -296,4 +296,26 @@ public abstract class Prescription extends BaseEntity{
 	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
 	/** Тип назначения */
 	private VocPrescriptType thePrescriptType;
+
+	/** Дата забора */
+	@Comment("Дата забора")
+	public Date getIntakeDate() {return theIntakeDate;}
+	public void setIntakeDate(Date aIntakeDate) {theIntakeDate = aIntakeDate;}
+
+	/** Время забора */
+	@Comment("Время забора")
+	public Time getIntakeTime() {return theIntakeTime;}
+	public void setIntakeTime(Time aIntakeTime) {theIntakeTime = aIntakeTime;}
+
+	/** Пользователь, осуществившей забор */
+	@Comment("Пользователь, осуществившей забор")
+	public String getIntakeUsername() {return theIntakeUsername;}
+	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
+
+	/** Пользователь, осуществившей забор */
+	private String theIntakeUsername;
+	/** Время забора */
+	private Time theIntakeTime;
+	/** Дата забора */
+	private Date theIntakeDate;
 }
