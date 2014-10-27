@@ -70,7 +70,7 @@
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id 
  where ${field } and p.DTYPE='ServicePrescription' 
- and vms.code='LABSURVEY'
+ and vms.code='DIAGNOSTIC'
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на диагностические исследования</msh:sectionTitle>
     	<msh:sectionContent>
@@ -90,7 +90,7 @@
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id 
  where ${field } and p.DTYPE='ServicePrescription' 
- and vms.code='DIAGNOSTIC'
+ and vms.code='LABSURVEY'
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на лабораторные исследования</msh:sectionTitle>
     	<msh:sectionContent>
