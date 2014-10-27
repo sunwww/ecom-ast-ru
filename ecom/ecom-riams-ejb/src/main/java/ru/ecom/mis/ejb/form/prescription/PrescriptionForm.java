@@ -1,5 +1,8 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import java.sql.Date;
+import java.sql.Time;
+
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
@@ -267,5 +270,37 @@ public class PrescriptionForm extends IdEntityForm{
 	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
 	/** Тип назначения */
 	private Long thePrescriptType;
+	
+	/** Метка назначения */
+	@Comment("Метка назначения")
+	public String getLabelPrescript() {return theLabelPrescript;}
+	public void setLabelPrescript(String aLabelPrescript) {theLabelPrescript = aLabelPrescript;}
+
+	/** Метка назначения */
+	private String theLabelPrescript;
+	
+	/** Дата забора */
+	@Comment("Дата забора")
+	@Persist @DateString @DoDateString
+	public String getIntakeDate() {return theIntakeDate;}
+	public void setIntakeDate(String aIntakeDate) {theIntakeDate = aIntakeDate;}
+
+	/** Время забора */
+	@Comment("Время забора")
+	@Persist @DoTimeString @TimeString 
+	public String getIntakeTime() {return theIntakeTime;}
+	public void setIntakeTime(String aIntakeTime) {theIntakeTime = aIntakeTime;}
+
+	/** Пользователь, осуществившей забор */
+	@Comment("Пользователь, осуществившей забор")
+	public String getIntakeUsername() {return theIntakeUsername;}
+	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
+
+	/** Пользователь, осуществившей забор */
+	private String theIntakeUsername;
+	/** Время забора */
+	private String theIntakeTime;
+	/** Дата забора */
+	private String theIntakeDate;
 }
 
