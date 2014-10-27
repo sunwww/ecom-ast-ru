@@ -16,6 +16,7 @@ import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
+import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -148,4 +149,21 @@ public class WorkFunctionService extends BaseEntity{
 
 	/** Неактивно для назначений */
 	private Boolean theNoActiveByPrescript;
+	
+	/** Список диагнозов */
+	@Comment("Список диагнозов")
+	public String getListIdc10() {return theListIdc10;}
+	public void setListIdc10(String aListIdc10) {theListIdc10 = aListIdc10;}
+
+	/** Список диагнозов */
+	private String theListIdc10;
+	
+	/** Тип назначений */
+	@Comment("Тип назначений")
+	@OneToOne
+	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
+	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
+
+	/** Тип назначений */
+	private VocPrescriptType thePrescriptType;
 }

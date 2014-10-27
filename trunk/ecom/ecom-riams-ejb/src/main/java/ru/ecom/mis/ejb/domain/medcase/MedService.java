@@ -16,6 +16,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
 //import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
@@ -191,4 +192,13 @@ public class MedService extends BaseEntity{
 
 	/** Не входит в ОМС */
 	private Boolean theIsNoOmc;
+	
+	/** Подтип назначения */
+	@Comment("Подтип назначения")
+	@OneToOne
+	public VocServiceSubType getServiceSubType() {return theServiceSubType;}
+	public void setServiceSubType(VocServiceSubType aServiceSubType) {theServiceSubType = aServiceSubType;}
+
+	/** Подтип назначения */
+	private VocServiceSubType theServiceSubType;
 }

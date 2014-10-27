@@ -7,6 +7,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
+import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -139,5 +140,24 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 
 	/** Неактивно для назначений */
 	private Boolean theNoActiveByPrescript;
+
+	/** Список диагнозов */
+	@Comment("Список диагнозов")
+	@Persist 
+	public String getListIdc10() {return theListIdc10;}
+	public void setListIdc10(String aListIdc10) {theListIdc10 = aListIdc10;}
+
+	/** Список диагнозов */
+	private String theListIdc10;
+	
+	
+	/** Тип назначений */
+	@Comment("Тип назначений")
+	@Persist
+	public Long getPrescriptType() {return thePrescriptType;}
+	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
+
+	/** Тип назначений */
+	private Long thePrescriptType;
 
 }
