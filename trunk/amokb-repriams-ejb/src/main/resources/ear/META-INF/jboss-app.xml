@@ -1,0 +1,5 @@
+<jboss-app>
+    <loader-repository>asset.ecom-ast.ru:loader=asset-ejb.jar</loader-repository>
+</jboss-app>
+
+
