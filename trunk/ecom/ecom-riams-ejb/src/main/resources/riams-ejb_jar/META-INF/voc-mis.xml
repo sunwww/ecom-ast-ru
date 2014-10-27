@@ -29,6 +29,16 @@
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
 </voc>
+<voc id="vocServiceSubType" type="NativeVocService">
+	<NativeVocService
+		from="VocServiceSubType vsst"
+		parent="vst.id = :parent"
+		nameId="vsst.id"
+		queryAppend="" join="left join VocServiceType vst on vst.code=vsst.serviceType" order=""
+		names="vsst.name"
+		queried="upper(vsst.name) like upper(:query)"
+	/>
+</voc>
 <voc id="vocTransfusionReason" type="NativeVocService">
 	<NativeVocService
 		from="VocTransfusionReason vtr"
