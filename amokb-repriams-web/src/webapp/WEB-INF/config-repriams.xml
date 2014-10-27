@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+	<form-beans>
+		<form-bean name="poly_journalBySpecForm"      type="ru.amokb.web.policlinic.form.JournalBySpecialistForm" />
+        
+		
+	</form-beans>
+
+	<global-forwards />
+
+	<action-mappings>
+
+        <action path="/start" type='ru.ecom.web.actions.base.ForwardAction'
+            scope='request' validate="false" name="">
+            <forward name="success" path="/reports/list.jsp" />
+        </action>
+	    
+	    <action path='/visit_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/f039_new.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_new.jsp"/>
+        </action>
+	</action-mappings>
+</struts-config>
+

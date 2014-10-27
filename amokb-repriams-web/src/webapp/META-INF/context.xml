@@ -1,0 +1,17 @@
+<Context path="/repriams" docBase="repriams" crossContext="true" reloadable="true" antiJARLocking="true" antiResourceLocking="true">
+         
+    <Resource
+            name   = "bean/IVocHelper"
+            auth   = "Container"
+            type   = "ru.nuzmsh.web.vochelper.IVocHelper"
+            factory= "ru.ecom.web.util.voc.VocHelperFactory"
+    />
+            
+	<Resource
+            name   = "bean/IFormCustomizeService"
+            auth   = "Container"
+            type   = "ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService"
+            factory= "ru.nuzmsh.web.struts.forms.customize.impl.xml.XmlFormCustomizeServiceFactory"
+    />
+            
+</Context>
