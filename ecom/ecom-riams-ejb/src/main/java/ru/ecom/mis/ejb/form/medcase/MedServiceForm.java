@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -7,6 +9,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -200,4 +203,12 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Создать услугу во внеш. справочник */
 	private Boolean theVocMedServiceIsCreate;
+	
+	@Comment("Подтип назначения")
+	@Persist
+	public Long getServiceSubType() {return theServiceSubType;}
+	public void setServiceSubType(Long aServiceSubType) {theServiceSubType = aServiceSubType;}
+
+	/** Подтип назначения */
+	private Long theServiceSubType;
 }
