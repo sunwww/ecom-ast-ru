@@ -2,8 +2,10 @@ package ru.ecom.web.util;
 
 import java.util.Collection;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 
 public class ActionUtil {
@@ -37,6 +39,25 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 	public static void getValueByListDef(String aNameGet,String aNameSet,String aDefault,HttpServletRequest aRequest) {
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
 		aRequest.setAttribute(aNameSet,col.isEmpty()?aDefault:""+col.iterator().next().get1()) ;
+	}
+	public static void getValueBySql(String aSql,String aFieldId, String aFieldName, HttpServletRequest aRequest) {
+		IWebQueryService service;
+		try {
+			service = Injection.find(aRequest).getService(IWebQueryService.class);
+			Collection<WebQueryResult> col = service.executeNativeSql(aSql,1) ;
+			if (!col.isEmpty()) {
+				WebQueryResult obj = col.iterator().next() ;
+				aRequest.setAttribute(aFieldId, obj.get1()) ;
+				aRequest.setAttribute(aFieldName, obj.get2()) ;
+			} else {
+				
+			}
+		} catch (NamingException e) {
+			aRequest.setAttribute(aFieldId, "") ;
+			aRequest.setAttribute(aFieldName, "ОШИБКА SQL: "+aSql) ;
+			e.printStackTrace();
+		}
+		
 	}
 	public static String setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
 		return setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
