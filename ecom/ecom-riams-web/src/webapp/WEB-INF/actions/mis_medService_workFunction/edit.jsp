@@ -48,6 +48,15 @@
         <msh:row>
           <msh:autoComplete vocName="vocRoomType" property="roomType" label="Уровень палат" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="prescriptType" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" label="Тип назначения"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="noActiveByPrescript" fieldColSpan="3" label="Не отображать в назначениях"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textArea property="listIdc10" label="Список диагнозов" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>

@@ -42,7 +42,10 @@
           <msh:autoComplete vocName="vocMedService" property="vocMedService" label="Услуга" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
         </msh:row>
         <msh:row guid="1d32ce-a421709f4470">
-          <msh:autoComplete vocName="vocServiceType" property="serviceType" label="Тип услуги" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
+          <msh:autoComplete vocName="vocServiceType" property="serviceType" label="Тип услуги" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete parentAutocomplete="serviceType" vocName="vocServiceSubType" property="serviceSubType" label="Подтип" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
           <msh:textField property="code" label="Код"  horizontalFill="true" />

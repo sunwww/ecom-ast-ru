@@ -18,6 +18,7 @@
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceGroupForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
       <msh:sideMenu title="Добавить" guid="adding">
+        <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create" />
         <msh:sideLink action="/entityParentPrepareCreate-mis_medServiceGroup_workFunction" name="Прикрепление раб.функции" params="id" roles="/Policy/Mis/MedService/VocWorkFunction/Create" />
         <msh:sideLink action="/entityParentPrepareCreate-mis_medServiceGroup" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create"  />
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
@@ -53,19 +54,13 @@
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
          	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
         </msh:row>
-        <%-- 
-        <msh:row guid="1d3be9-8db1-a421709f4470">
-          <ecom:oneToManyOneAutocomplete label="Потоки обслуживания" property="serviceStream" vocName="vocServiceStream" colSpan="2" guid="ce032745-62b7-4d1d-abc9-a8c283ccc0c2" />
-        </msh:row>
-        --%>
-<%--         <msh:row>
-        	<ecom:treeAutoComplete property="probaTree" label="Проба дерева" vocName="vocMedService" fieldColSpan="3"/>
-        </msh:row>
-        --%>
+        
         <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
+    
       <msh:ifFormTypeIsView formName="mis_medServiceGroupForm">
+      <%--
     <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
     	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
     		createUrl="entityParentPrepareCreate-mis_medServiceGroup_workFunction.do?id=${param.id}"
@@ -77,9 +72,9 @@
     	from WorkFunctionService wfs 
     	left join MisLpu lpu on lpu.id=wfs.lpu_id 
     	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
-     	 left join VocBedType vbt on vbt.id=wfs.bedType_id
-     	 left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
-     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
+     	left join VocBedType vbt on vbt.id=wfs.bedType_id
+     	left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
+     	left join VocRoomType vrt on vrt.id=wfs.roomType_id
     	
     	where wfs.medService_id='${param.id}'
     	"/>
@@ -96,6 +91,7 @@
     	
     	</msh:section>
     </msh:ifInRole>
+     --%>
     <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
         <msh:section title="Подкатегории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medServiceGroup.do?id=${param.id}">
           <ecom:webQuery  name="childMedService" nativeSql="
@@ -120,7 +116,9 @@
 		    <msh:tableColumn columnName="Дата окончания" property="5"/>
      </msh:table>
         </msh:section>
-        <msh:section title="Услуги" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medService.do?id=${param.id}">
+        
+        
+        <msh:section title="Услуги категории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medService.do?id=${param.id}">
           <ecom:webQuery  name="childMedService" nativeSql="
           	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
           	 (
@@ -130,7 +128,8 @@
 	     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
           	 where wfs.medService_id=ms.id
           	 )
-          	 ,ms.code 
+          	 ,ms.code as mscode,ms.complexity as mscomplexity
+          	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
           	 from MedService ms 
           	 left join VocMedService vms on vms.id=ms.vocMedService_id 
           	 where ms.parent_id='${param.id}' and ms.dtype='MedService'
@@ -165,6 +164,8 @@
 		    <msh:tableColumn columnName="Дата начала" property="4"/>
 		    <msh:tableColumn columnName="Дата окончания" property="5"/>
 		    <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
+		    <msh:tableColumn columnName="Уровень сложности" property="8"/>
+		    <msh:tableColumn columnName="ОМС?" property="9"/>
      </msh:table>
         </msh:section>
     </msh:ifInRole>
