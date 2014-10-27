@@ -86,15 +86,19 @@ public class SecPolicy {
             }
         }
     }
-
+    
     public static boolean isDateLessThen24Hour(Date aDate) {
+    	return isDateLessThenHour(aDate,24)  ;
+    }
+
+    public static boolean isDateLessThenHour(Date aDate,int aHours) {
         Date currentDate = new Date();
         if(currentDate.getTime() < aDate.getTime()) {
             throw new IllegalStateException("Введенная дата не может быть больше текущей");
         }
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentDate);
-        cal.add(Calendar.HOUR_OF_DAY, -24);
+        cal.add(Calendar.HOUR_OF_DAY, (-1)*aHours);
         if(CAN_TRACE) {
             logDate("startDate", aDate) ;
             logDate("currentDate  ",  currentDate);
