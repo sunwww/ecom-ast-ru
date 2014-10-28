@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,6 +77,38 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	
 
+	public boolean checkMedCase(Long aPrescriptionListId) {
+		//var date = new java.sql.Date() ;
+		boolean isEmergency =false ;
+		
+		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
+		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, case when mc.emergency='1' then '1' else null end, mc.dtype from prescriptionList pl " +
+				"left join medcase mc on pl.medcase_id = mc.id " +
+				"left join medcase mcs on mcs.id = mc.parent_id " +
+				"where pl.id ='"+aPrescriptionListId+"' and mcs.dtype='HospitalMedCase' " ;
+
+		List<Object[]> list = theManager.createNativeQuery(sqlquery).getResultList() ;
+		if (list.size()>0) {
+			Object[] obj = list.get(0);
+			
+			java.util.Date date;
+			try {
+				date = sdf.parse(obj[0].toString());
+				boolean check = ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThenHour(date,2);
+				if (obj[1]!=null && check) { // Если экстренно
+					isEmergency=true;
+				}
+			} catch (ParseException e) {
+				System.out.println ("Error parsing date. Obj= "+obj);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+			
+		}
+		return isEmergency ;
+	}
 	/**
 	 * Добавить все назначения в новый лист
 	 * @param aIdTemplateList - ИД шаблона листа назначений
