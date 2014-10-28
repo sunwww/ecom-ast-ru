@@ -11,10 +11,16 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+	
 	public String getDescription(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
+	}
+	public boolean checkMedCase(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
+		
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		return service.checkMedCaseEmergency(aIdTemplateList) ;
 	}
 	
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {
