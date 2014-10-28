@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
-<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib uri="/WEB-INF/repriams.tld" prefix="repriams"%>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
@@ -10,6 +11,12 @@
 	</tiles:put>
 
 	<tiles:put name='body' type='string'>
+	<repriams:webQueryReportTest name="test" nativeSql="select id,name from ReportJournal
+	"/>
+	<msh:table name="test" action="" idField="1">
+    	<msh:tableColumn property="1" columnName="1" />
+    	<msh:tableColumn property="2" columnName="2"/>
+    </msh:table>
 		<table class='mainMenu'>
 			<tr>
 				<td class='col1'>
