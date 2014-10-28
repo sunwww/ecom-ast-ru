@@ -6,11 +6,11 @@ package ru.ecom.mis.ejb.service.prescription;
  */
 public interface IPrescriptionService {
 	/**
-	 * Проверить, можно ли создавать направление с типом "экстренно"
+	 * Проверка на возможность создавать направление с типом "экстренно".
 	 * @param aPrescriptionListId - номер листа назначения
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
-	public boolean checkMedCase(Long aPrescriptionListId) ;
+	public boolean checkMedCaseEmergency(Long aPrescriptionListId) ;
 	
 	/**
 	 * Добавить все назначения в существующий лист
