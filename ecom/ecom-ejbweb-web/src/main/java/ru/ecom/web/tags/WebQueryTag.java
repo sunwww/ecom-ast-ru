@@ -15,6 +15,7 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.AbstractGuidSimpleSupportTag;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 /**
  * Выполнить запрос
@@ -28,8 +29,14 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
         //JspWriter out = getJspContext().getOut() ;
         PageContext ctx = (PageContext) getJspContext() ;
         HttpServletRequest request = (HttpServletRequest) ctx.getRequest() ;
+        String isReportBase = null ;
+        if (theIsReportBase!=null &&theIsReportBase.equals(Boolean.TRUE)
+        		&& RolesHelper.checkRoles("/Policy/Config/IsReportBase", ctx)) {
+        	isReportBase = Injection.getWebName(request, null) ;
+        	isReportBase = isReportBase.substring(0,1)+"rep"+isReportBase.substring(1) ;
+        }
         try {
-			IWebQueryService service = Injection.find(request).getService(IWebQueryService.class) ;
+			IWebQueryService service = Injection.find(request,isReportBase).getService(IWebQueryService.class) ;
 			Integer maxResult = null;
 			if (theMaxResult!=null && !theMaxResult.equals("")) {
 				maxResult = Integer.valueOf(theMaxResult) ;
@@ -107,7 +114,14 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
 	public void setNameFldSql(String aNameFldSql) {
 		theNameFldSql = aNameFldSql;
 	}
+	
+	/** Брать данные из отчетной базы */
+	@Comment("Брать данные из отчетной базы")
+	public Boolean getIsReportBase() {return theIsReportBase;}
+	public void setIsReportBase(Boolean aIsReportBase) {theIsReportBase = aIsReportBase;}
 
+	/** Брать данные из отчетной базы */
+	private Boolean theIsReportBase;
 	/** Куда сохранять запрос */
 	private String theNameFldSql;
 	/** Куда выводить результат */
