@@ -5,6 +5,113 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/mis" prefix="mis" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
+	<tiles:put name="javascript" type="string">
+	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+	<script type="text/javascript">
+	var num=0;
+	var labNum=0;
+	var funcNum=0;
+	var labList="";
+	
+		function isChecked(num) {
+			if (num==1) {
+				$('prescriptTypeLabel').style.display="none";
+				$('prescriptTypeName').style.display="none";
+			} else {
+				$('prescriptTypeLabel').style.display="block";
+				$('prescriptTypeName').style.display="block";
+			}
+	}
+		onload =function test() {
+	//	alert ("plID = "+$('prescriptionList').value);
+	//	PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, { 
+     //       callback: function(aResult) { 
+            	if(1==1) { //!aResult) { 
+            	$('presType1').disabled = "true";
+            	$('presType2').checked = "true";
+            	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
+            	$('tdPresType1').style.display = "none";
+
+            	} 
+            	//alert ("aResult"+aResult); 
+       //      } 
+	//	} 
+    //  	); 
+		
+	}
+	
+	function addRow(type) { 
+		if (type=='lab') {
+			num = labNum;
+		} else if (type=='func') {
+			num = funcNum;
+		}
+		if (document.getElementById(type+'Servicies').value==""){
+			alert("Выбирите услугу!");
+			return;
+		}
+		
+		// Проверим на дубли 
+		var checkNum = 1;
+		if (num>0){
+			while (checkNum<=num) {
+				if (document.getElementById(type+'Service'+checkNum)) {
+					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+					//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) { 
+							alert("Уже существует такое исследование!!!");
+							return;
+					//	} 
+					}
+				}
+				checkNum+=1;
+		}
+		}
+		
+		num+=1;
+	    // Считываем значения с формы 
+	    
+	    var nameId = document.getElementById(type+'Servicies').value;
+ 			var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке 
+	    // и добавляем тх 
+	    var td1 = document.createElement("TD");
+	    var td2 = document.createElement("TD");
+	    var td3 = document.createElement("TD");
+	    var td4 = document.createElement("TD");
+	    
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td1);
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td2);
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(document.createElement("TD"));
+	    row.appendChild(td3);
+	    row.appendChild(td4);
+	    
+	    // Наполняем ячейки 
+	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+	    td1.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
+	  	td2.innerHTML = "<input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+	   	td3.innerHTML = dt2+"<span>"+$(type+'CabinetName').value+"</span>" ;
+	   	td4.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+	   	new dateutil.DateField($(type+'Date'+num));
+					   
+		if (type=='lab') {
+			labNum = num;
+		} else if (type=='func'){
+			funcNum = num;
+		}
+	}
+			</script>
+			</tiles:put>
+
   <tiles:put name="body" type="string">
     <!-- 
     	  - Назначение медицинской услуги
@@ -15,32 +122,93 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:panel guid="panel" colsWidth="3">
         <msh:row guid="b5srehb-b971-441e-9a90-53217">
-          <msh:autoComplete vocName="medService" property="medService" label="Медицинская услуга" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="50" />
+        <td>
+        <label>Тип назначения: </label>
+        </td>
+        <td id="ifEmergencyDisabled">
+        </td>
+        <td id="tdPresType1">
+        <input type="radio" id = "presType1" name="presType" value="1" onclick="isChecked(1)">Экстренное
+        </td>
+        <td id="tdPresType2">
+        <input type="radio" id = "presType2" name="presType" value="2" onclick="isChecked(2)" >Плановое
+        </td>
+      	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" />
+      </msh:row>
+
+        
+        <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
+        <msh:row>
+        	<msh:separator label="Лабораторные анализы" colSpan="10"/>
         </msh:row>
-        <msh:row guid="bwhb-b971-441e-9a90-53217">
-          <msh:separator colSpan="6" label="График приема" guid="5r7v-7fee-45e5-96ec-7753b" />
+        <msh:row>
+        
+        <table id="labTable">
+        <tbody id="addlabElements">
+
+    		<tr>
+    		<td>
+   		    <msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			</td>
+			<td colspan='1'>
+			<div>
+			<msh:textField property="labDate" label="Дата " size="10"/>
+			</div>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			</td>
+			<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+			<td>        	
+            <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
+            </td>
+            </msh:ifFormTypeIsNotView>
+            </tr>
+            
+
+    		</tbody>
+    		</table>
         </msh:row>
-        <msh:row guid="breb-b971-441e-9a90-5258c07">
-          <msh:textField label="Дата начала" property="planStartDate" guid="3at4d1b-8802-467d-b205-714658" horizontalFill="true" />
-          <msh:textField label="Время" property="planStartTime" guid="3eb-8802-467d-b205-71r5fb3" horizontalFill="true" />
+        </msh:panel>
+        <msh:panel>
+        <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
+        <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
+        <msh:row>
+        	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
-        <msh:row guid="byb-b971-441e-9a90-58257">
-          <msh:textField label="Дата окончания" property="planEndDate" guid="3a357b-8802-467d-b205-7f18" horizontalFill="true" />
-          <msh:textField label="Время" property="planEndTime" guid="3d5b-8802-467d-b205-71r5fb3" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="3deb-b971-441e-9a90-513217">
-          <msh:autoComplete vocName="workFunction" label="Назначил" property="prescriptSpecial" guid="30gfn-8802-467d-b205-798518" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
-        <msh:row guid="33d4b-b971-441e-9a90-5951">
-          <msh:textField label="Дата отмены" property="cancelDate" guid="34sd1b-8802-467d-b205-764518" horizontalFill="true" />
-          <msh:textField label="Время" property="cancelTime" guid="3aa3-8802-467d-b205-7312" horizontalFill="true" />
-        </msh:row>
-        <msh:row guid="06efb-b971-441e-9a90-591507">
-          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" guid="d35f495n-8802-467d-b205-7159b018" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
-        <msh:row guid="32fvs6eb-b971-441e-9a90-584627">
-          <msh:autoComplete vocName="workFunction" label="Отменил" property="cancelSpecial" guid="303s6541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
-        </msh:row>
+        <msh:row>
+        <tr><td>
+        <table id="funcTable">
+        <tbody id="addfuncElements">
+    		<tr>
+    		<td>
+			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
+			</td>
+			<td colspan='1'>
+			<div>
+			<msh:textField property="funcDate" label="Дата " size="10"/>
+			</div>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			</td>
+			<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+			<td>        	
+            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+            </td>
+            </msh:ifFormTypeIsNotView>
+            </tr>
+       		</tbody>
+    		</table>
+    		</td></tr></msh:row>
+        </msh:panel>
+        <msh:panel>
+        <!-- --------------------------------------------------Конец блока "Функциональная диагностика" ------ -->
+        
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
@@ -75,7 +243,7 @@
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Prescription" beginForm="pres_servicePrescriptionForm" />
+    <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_servicePrescriptionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
