@@ -358,7 +358,14 @@
         <tag-class>ru.ecom.web.tags.WebQueryTag</tag-class>
         <body-content>empty</body-content>
 
+      <attribute>
+         <description>Брать данные из базы для отчетов.</description>
+         <name>isReportBase</name>
+         <required>false</required>
 
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
         <attribute>
             <description>Куда сохранять запрос</description>
             <name>nameFldSql</name>
