@@ -1,5 +1,5 @@
 <jboss-app>
-    <loader-repository>asset.ecom-ast.ru:loader=asset-ejb.jar</loader-repository>
+    <loader-repository>repriams.ecom-ast.ru:loader=repriams-ejb.jar</loader-repository>
 </jboss-app>
 
 

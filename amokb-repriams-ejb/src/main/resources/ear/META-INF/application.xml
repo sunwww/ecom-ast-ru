@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <application>
-  <display-name>Asset App</display-name>
+  <display-name>Repriams App</display-name>
 
   <module>
-    <ejb>asset-ejb.jar</ejb>
+    <ejb>repriams-ejb.jar</ejb>
   </module>
 
 
