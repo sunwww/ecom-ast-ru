@@ -10,4 +10,8 @@ public interface IWebQueryService {
 	Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) ;
 	
 	public int executeUpdateNativeSql(String aQuery) ;
+	
+	Collection<Object[]> executeNativeSqlGetObj(String aQuery,Integer aMaxResult) ;
+	Collection<Object[]> executeNativeSqlGetObj(String aQuery) ;
+
 }
