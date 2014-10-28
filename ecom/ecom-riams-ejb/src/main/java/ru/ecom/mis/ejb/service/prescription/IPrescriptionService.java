@@ -1,9 +1,17 @@
 package ru.ecom.mis.ejb.service.prescription;
+
 /**
  * Интерфейс сервиса для работы с назначениями
  * @author STkacheva
  */
 public interface IPrescriptionService {
+	/**
+	 * Проверить, можно ли создавать направление с типом "экстренно"
+	 * @param aPrescriptionListId - номер листа назначения
+	 * @return true - может быть создано назначение с типом "экстренно"
+	 */
+	public boolean checkMedCase(Long aPrescriptionListId) ;
+	
 	/**
 	 * Добавить все назначения в существующий лист
 	 * @param aIdTemplateList - ИД шаблона листа назначений
