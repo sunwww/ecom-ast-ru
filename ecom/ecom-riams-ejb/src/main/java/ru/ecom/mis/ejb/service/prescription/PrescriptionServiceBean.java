@@ -89,7 +89,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				"left join medcase mc on pl.medcase_id = mc.id " +
 				"left join medcase mcs on mcs.id = mc.parent_id " +
 				"where pl.id ='"+aPrescriptionListId+"' and mcs.dtype='HospitalMedCase' " ;
-
 		List<Object[]> list = theManager.createNativeQuery(sqlquery).getResultList() ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0);
@@ -102,13 +101,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
-				System.out.println ("Error parsing date. Obj= "+obj);
+							
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-
-
-			
+			}	
 		}
 		return isEmergency ;
 	}
