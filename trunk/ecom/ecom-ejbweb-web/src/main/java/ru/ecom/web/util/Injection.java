@@ -29,12 +29,13 @@ public class Injection {
     private final static Log LOG = LogFactory.getLog(Injection.class);
     private final static boolean CAN_TRACE = LOG.isTraceEnabled();
 
-    public static final String KEY = Injection.class.getName();
+    private static String KEY;
 
-    private Injection(String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) throws NamingException {
-        LOG.info("new Injection(" + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
+    private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) throws NamingException {
+        System.out.println("new Injection("+aWebName+"," + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
         theAppName = aAppName;
-
+        theWebName = aWebName;
+        KEY = Injection.class.getName()+aWebName ;
         Properties env = new Properties();
         // java.naming.factory.initial
         env.put(Context.INITIAL_CONTEXT_FACTORY,
@@ -56,12 +57,17 @@ public class Injection {
 //        theInitialContext = new InitialContext(env);
         theEnv = env;
     }
+    public static String getWebName(HttpServletRequest aRequest, String aWebName) {
+    	if (aWebName==null || aWebName.equals("")) {aWebName=aRequest.getContextPath();}
+    	return aWebName ;
+    }
 
-    public static Properties loadAppProperties(HttpServletRequest aRequest) throws IOException {
+    public static Properties loadAppProperties(String aWebName) throws IOException {
             Properties prop = new Properties();
+            
             String catalinaBase = System.getProperty("catalina.base", ".");
-            File filePropXml = new File(catalinaBase + "/ecom/" + aRequest.getContextPath() + ".xml");
-            File fileProp = new File(catalinaBase + "/ecom/" + aRequest.getContextPath() + ".properties");
+            File filePropXml = new File(catalinaBase + "/ecom/" + aWebName + ".xml");
+            File fileProp = new File(catalinaBase + "/ecom/" + aWebName + ".properties");
             if (filePropXml.exists() && fileProp.exists()) {
                 throw new IllegalStateException("Сразу два файла с настроками доступны :"
                         + filePropXml.getAbsolutePath() + " и " + fileProp.getAbsolutePath()
@@ -91,30 +97,44 @@ public class Injection {
     }
 
     public static Injection find(HttpServletRequest aRequest) {
-        Injection injection = (Injection) aRequest.getSession().getAttribute(KEY);
-        if (injection == null) {
-            HttpSession session = aRequest.getSession();
-            if (session == null) throw new IllegalStateException("Нет сессии");
-            LoginInfo loginInfo = LoginInfo.find(session);
-            if (loginInfo == null) throw new IllegalStateException("Нет информации о пользователе");
-
-            try {
-
-                Properties prop = loadAppProperties(aRequest);
-
-                injection = new Injection(prop.getProperty("ejb-app-name")
-                        , prop.getProperty("java.naming.provider.url")
-                        , loginInfo
-                        , prop.getProperty("java.naming.factory.initial")
-                        , prop.getProperty("java.naming.security.protocol", "other")
-                );
-                aRequest.getSession().setAttribute(KEY, injection);
-            } catch (IOException e) {
-                throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
-            } catch (NamingException e) {
-                throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
-            }
-        }
+    	return find(aRequest,null);
+    }
+    public static String getKeyDefault(HttpServletRequest aRequest, String aWebName) {
+    	aWebName = getWebName(aRequest, aWebName) ;
+    	return Injection.class.getName()+aWebName ;
+    }
+    public static Injection find(HttpServletRequest aRequest, String aWebName) {
+    	aWebName = getWebName(aRequest, aWebName) ;
+    	Injection injection = (Injection) aRequest.getSession().getAttribute(getKeyDefault(aRequest,aWebName));
+    	try {
+	    	Properties prop = loadAppProperties(aWebName);
+	        if (injection == null) {
+	            HttpSession session = aRequest.getSession();
+	            if (session == null) throw new IllegalStateException("Нет сессии");
+	            LoginInfo loginInfo = LoginInfo.find(session);
+	            if (loginInfo == null) throw new IllegalStateException("Нет информации о пользователе");
+	
+	            try {
+	
+	            	System.out.println("------webName="+aWebName) ;
+	                System.out.println("---appName="+prop.getProperty("ejb-app-name")) ;
+	
+	                injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
+	                        , prop.getProperty("java.naming.provider.url")
+	                        , loginInfo
+	                        , prop.getProperty("java.naming.factory.initial")
+	                        , prop.getProperty("java.naming.security.protocol", "other")
+	                );
+	                aRequest.getSession().setAttribute(KEY, injection);
+	            } catch (NamingException e) {
+	                throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
+	            }
+	        } else {
+	        	
+	        }
+    	} catch (IOException e) {
+            throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
+    	}
         return injection;
     }
 
@@ -148,6 +168,7 @@ public class Injection {
     	if(service==null) {
         	InitialContext initialContext = new InitialContext(theEnv);
         	try {
+        		System.out.println("theAppName="+theAppName+"---"+aServiceName) ;
                 String serviceUrl = new StringBuilder().append(theAppName).append("/").append(aServiceName).append("Bean/remote").toString();
                 service = initialContext.lookup(serviceUrl);
                 services.put(aServiceName, service);
@@ -168,6 +189,8 @@ public class Injection {
 	public static void clearThreadLocalServices() {
 		THREAD_SERVICES.remove();
 	}
+	public String getWebName() {return theWebName ;} 
+	private final String theWebName;
     private final String theAppName;
     private final Properties theEnv;
 }
