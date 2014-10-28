@@ -76,8 +76,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return true ;
 	}
 	
-
-	public boolean checkMedCase(Long aPrescriptionListId) {
+	/** Проверка на возможность создавать направление с типом "экстренно".
+	 * @param aPrescriptionListId - ИД листа назначения
+	 * @return true - может быть создано назначение с типом "экстренно"
+	 */
+	public boolean checkMedCaseEmergency(Long aPrescriptionListId) {
 		//var date = new java.sql.Date() ;
 		boolean isEmergency =false ;
 		
@@ -95,7 +98,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			try {
 				date = sdf.parse(obj[0].toString());
 				boolean check = ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThenHour(date,2);
-				if (obj[1]!=null && check) { // Если экстренно
+				if (obj[1]!=null && check) { 
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
