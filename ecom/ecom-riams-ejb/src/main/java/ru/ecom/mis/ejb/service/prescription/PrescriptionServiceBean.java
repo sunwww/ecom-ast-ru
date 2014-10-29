@@ -81,11 +81,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
 	public boolean checkMedCaseEmergency(Long aPrescriptionListId) {
-		//var date = new java.sql.Date() ;
 		boolean isEmergency =false ;
 		
 		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
-		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, case when mc.emergency='1' then '1' else null end, mc.dtype from prescriptionList pl " +
+		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, case when mcs.emergency='1' then '1' else null end, mc.dtype from prescriptionList pl " +
 				"left join medcase mc on pl.medcase_id = mc.id " +
 				"left join medcase mcs on mcs.id = mc.parent_id " +
 				"where pl.id ='"+aPrescriptionListId+"' and mcs.dtype='HospitalMedCase' " ;
@@ -97,7 +96,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			try {
 				date = sdf.parse(obj[0].toString());
 				boolean check = ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThenHour(date,2);
-				if (obj[1]!=null && check) { 
+				if (obj[1]!=null && !check) { 
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
