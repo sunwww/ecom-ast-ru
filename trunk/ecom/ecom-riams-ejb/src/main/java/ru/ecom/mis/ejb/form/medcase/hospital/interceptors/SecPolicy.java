@@ -103,7 +103,7 @@ public class SecPolicy {
             logDate("startDate", aDate) ;
             logDate("currentDate  ",  currentDate);
             logDate("cal.getTime()", cal.getTime());
-            LOG.debug("cal.getTime().getTime() < aDate.getTime() = " + (cal.getTime().getTime() < aDate.getTime()));
+            LOG.debug("aDate.getTime() < cal.getTime().getTime() = " + (aDate.getTime() < cal.getTime().getTime()));
         }
         return aDate.getTime() < cal.getTime().getTime()  ;
     }
