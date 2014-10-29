@@ -23,20 +23,24 @@
 			}
 	}
 		onload =function test() {
-	//	alert ("plID = "+$('prescriptionList').value);
-	//	PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, { 
-     //       callback: function(aResult) { 
-            	if(1==1) { //!aResult) { 
+//		alert ("plID = "+$('prescriptionList').value);
+		PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, { 
+            callback: function(aResult) { 
+//           	alert("aResult = "+aResult);
+            	if(!aResult) { 
             	$('presType1').disabled = "true";
             	$('presType2').checked = "true";
             	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
             	$('tdPresType1').style.display = "none";
 
-            	} 
-            	//alert ("aResult"+aResult); 
-       //      } 
-	//	} 
-    //  	); 
+            	} else {
+            		$('presType1').checked = "true";
+            		isChecked(1);
+            		$('prescriptType').value=5; //5 - экстренно 
+            	}
+           } 
+		} 
+      	); 
 		
 	}
 	
@@ -133,7 +137,7 @@
         <td id="tdPresType2">
         <input type="radio" id = "presType2" name="presType" value="2" onclick="isChecked(2)" >Плановое
         </td>
-      	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" />
+      	<msh:autoComplete vocName="prescriptTypeNotEmergency" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" />
       </msh:row>
 
         
