@@ -17,7 +17,8 @@ public class PrescriptionServiceJs {
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
 	}
-	public boolean checkMedCase(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
+	
+	public boolean checkMedCaseEmergency(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		return service.checkMedCaseEmergency(aIdTemplateList) ;
