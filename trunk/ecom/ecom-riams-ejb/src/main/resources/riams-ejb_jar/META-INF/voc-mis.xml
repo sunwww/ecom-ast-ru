@@ -1,4 +1,14 @@
 <vocconfig>
+<voc id="prescriptTypeNotEmergency" type="NativeVocService">
+	<NativeVocService
+		from="vocPrescriptType vpt"
+		nameId="vpt.id"
+		queryAppend="vpt.id != '5'" 
+		join="" order=""
+		names="vpt.code||' '|| vpt.name"
+		queried=" upper(vpt.name) like upper(:query) or upper(vpt.code) like upper(:query) "
+	/>
+</voc>
 <voc id="funcMedService" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
