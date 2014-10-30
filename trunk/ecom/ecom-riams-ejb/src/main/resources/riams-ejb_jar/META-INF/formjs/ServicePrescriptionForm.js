@@ -11,39 +11,54 @@ function onSave(aForm, aEntity, aCtx) {
 /**
  * Перед сохранением
  */
-function onSave(aForm, aEntity, aCtx) {
-	
-}
-
-/*function Remove_Load(aForm, aEntity, aCtx) {
+function onCreate(aForm, aEntity, aCtx) {
 	var date = new java.util.Date() ;
-	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
-	var isEmergency = 0;
-	var isLess2Hours = 0;
-	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+	var date = new java.sql.Date(date.getTime());
+	var time = new java.sql.Time (date.getTime());
+	aEntity.setCreateDate(date) ;
+	aEntity.setCreateTime(time) ;
+	aEntity.setCreateUsername(username) ;
+	var check1S = 0 ;
+//	throw ""+aForm.labList;	
+	if (aForm.labList!=null && aForm.labList !="") {
+		var addMedServicies = aForm.labList.split("#") ;
+		var prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
 	
-	var sdf =java.text.SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
-	var prescriptList = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList,aForm.prescriptionList) ;
-	var sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, mc.emergency, mc.dtype from prescriptionList pl " +
-			"left join medcase mc on pl.medcase_id = mc.id " +
-			"left join medcase mcs on mcs.id = mc.parent_id " +
-			"where pl.id ='"+prescriptList.id+"' and mcs.dtype='HospitalMedCase' " ;
-
-	var list = aCtx.manager.createNativeQuery(sqlquery).getResultList() ;
-	if (list.size()>0) {
-		var obj = list.get(0);
-		var date = sdf.parse(obj[0].toString());
-
-		var check = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThenHour(date,2);
-		if (obj[1]=="true") { // Если экстренно
-			isEmergency=1;
+		if (addMedServicies.length>0  ) {
+//			throw "All OK"+addMedServicies.length;
+			for (var i=0; i<addMedServicies.length; i++) {
+				var param = addMedServicies[i].split(":") ;
+				var par1 = java.lang.Long.valueOf(param[0]) ;
+				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
+				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
+				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
+//				throw "AAA"+par2;				
+				if (medService!=null && par2!=null) {
+					var adMedService ;
+					if (check1S==0) {
+						adMedService = aEntity ;
+						check1S=1;
+					} else {
+						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
+					}
+					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ; // ?
+					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
+					adMedService.setMedService(medService) ;
+//					throw ""+par2;
+					adMedService.setPlanStartDate(par2) ;
+					adMedService.setPrescriptType(prescriptType) ;
+					adMedService.setCreateUsername(username) ;
+					adMedService.setCreateTime(time) ;
+					adMedService.setCreateDate(date) ;
+					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
+						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+						adMedService.setPrescriptCabinet(medServiceCabinet);	
+					}
+					aCtx.manager.persist(adMedService) ;
+				}
+			}
 		}
-		if (check) { //Если меньше 2х часов
-			isLess2Hours = 1;
-		}	
 	}
+}	
 
-	aEntity.setIsEmergency(isEmergency) ;
-	aEntity.setIsLess2Hours(isLess2Hours) ;
-}*/
