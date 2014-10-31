@@ -10,7 +10,7 @@ public interface IPrescriptionService {
 	 * @param aPrescriptionListId - номер листа назначения
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
-	public boolean checkMedCaseEmergency(Long aPrescriptionListId) ;
+	public boolean checkMedCaseEmergency(Long aId, String idType) ;
 	
 	/**
 	 * Добавить все назначения в существующий лист
