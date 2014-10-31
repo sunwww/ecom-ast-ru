@@ -202,6 +202,7 @@ public abstract class Prescription extends BaseEntity{
 	public void setCancelSpecial(WorkFunction aCancelSpecial) {theCancelSpecial = aCancelSpecial;}
 	/** Кабинет назначения */
 	@Comment("Кабинет назначения")
+	@OneToOne
 	public WorkFunction getPrescriptCabinet() {
 		return thePrescriptCabinet;
 	}
