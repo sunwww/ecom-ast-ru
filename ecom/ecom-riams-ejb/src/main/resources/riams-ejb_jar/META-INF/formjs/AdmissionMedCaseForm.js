@@ -165,7 +165,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 	
 	if (stat) {
 		var check = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThen24Hour(dateStart);
-		if (check) throw "У Вас стоит ограничение на дату поступления. Дата поступления меньше на 24 часа, чем текущая дата" ;
+		if (!check) throw "У Вас стоит ограничение на дату поступления. Дата поступления меньше на 24 часа, чем текущая дата" ;
 	}
 	
 
