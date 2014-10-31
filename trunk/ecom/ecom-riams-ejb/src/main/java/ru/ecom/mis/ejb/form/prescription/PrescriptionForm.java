@@ -10,6 +10,7 @@ import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -196,7 +197,114 @@ public class PrescriptionForm extends IdEntityForm{
 	@Persist
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	
+	/** Лабораторные исследования */
+	@Comment("Лабораторные исследования")
+	public String getLabServicies() {
+		return theLabServicies;
+	}
 
+	public void setLabServicies(String aLabServicies) {
+		theLabServicies = aLabServicies;
+	}
+	
+	/** Лабораторные исследования */
+	private String theLabServicies;
+	
+	/** Дата по лаб. исследованию */
+	@Comment("Дата по лаб. исследованию")
+	@DateString @DoDateString
+	public String getLabDate() {return theLabDate;}
+	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
+
+	/** Дата по лаб. исследованию */
+	private String theLabDate;
+	
+	/** Список услуг по лаборатории */
+	@Comment("Список услуг по лаборатории")
+	public String getLabList() {return theLabList;}
+	public void setLabList(String aLabList) {theLabList = aLabList;}
+
+	/** Список услуг по лаборатории */
+	private String theLabList;
+	
+	/** Функциональные исследования */
+	@Comment("Функциональные исследования")
+	public String getFuncServicies() {
+		return theFuncServicies;
+	}
+
+	public void setFuncServicies(String aFuncServicies) {
+		theFuncServicies = aFuncServicies;
+	}
+	/** Кабинет назначения */
+	@Comment("Кабинет назначения")
+	@Persist
+	public Long getPrescriptCabinet() {
+		return thePrescriptCabinet;
+	}
+
+	public void setPrescriptCabinet(Long aPrescriptCabinet) {
+		thePrescriptCabinet = aPrescriptCabinet;
+	}
+
+	/** Кабинет назначения */
+	private Long thePrescriptCabinet;
+	/** Функциональные исследования */
+	private String theFuncServicies;
+	
+	/** Дата функционального исследования */
+	@Comment("Дата функционального исследования")
+	@DateString @DoDateString
+	public String getFuncDate() {
+		return theFuncDate;
+	}
+
+	public void setFuncDate(String aFuncDate) {
+		theFuncDate = aFuncDate;
+	}
+
+	/** Дата функционального исследования */
+	private String theFuncDate;
+	
+	/** Кабинет для лабораторного исследования */
+	@Comment("Кабинет для лабораторного исследования")
+	public String getLabCabinet() {
+		return theLabCabinet;
+	}
+
+	public void setLabCabinet(String aLabCabinet) {
+		theLabCabinet = aLabCabinet;
+	}
+
+	/** Кабинет для лабораторного исследования */
+	private String theLabCabinet;
+	
+	/** Кабинет для функ. исследования */
+	@Comment("Кабинет для функ. исследования")
+	public String getFuncCabinet() {
+		return theFuncCabinet;
+	}
+
+	public void setFuncCabinet(String aFuncCabinet) {
+		theFuncCabinet = aFuncCabinet;
+	}
+
+	/** Кабинет для функ. исследования */
+	private String theFuncCabinet;
+	
+	/** Список функциональных исследований */
+	@Comment("Список функциональных исследований")
+	public String getFuncList() {
+		return theFuncList;
+	}
+
+	public void setFuncList(String aFuncList) {
+		theFuncList = aFuncList;
+	}
+
+	/** Список функциональных исследований */
+	private String theFuncList;
 	/** Пользователь, который последний редактировал запись */
 	private String theEditUsername;
 	/** Пользователь, который создал запись */
