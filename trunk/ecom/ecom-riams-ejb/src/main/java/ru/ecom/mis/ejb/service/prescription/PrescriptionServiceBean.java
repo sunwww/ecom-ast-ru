@@ -80,14 +80,21 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @param aPrescriptionListId - ИД листа назначения
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
-	public boolean checkMedCaseEmergency(Long aPrescriptionListId) {
+	public boolean checkMedCaseEmergency(Long aId, String idType) {
 		boolean isEmergency =false ;
 		
 		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
-		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, case when mcs.emergency='1' then '1' else null end, mc.dtype from prescriptionList pl " +
-				"left join medcase mc on pl.medcase_id = mc.id " +
-				"left join medcase mcs on mcs.id = mc.parent_id " +
-				"where pl.id ='"+aPrescriptionListId+"' and mcs.dtype='HospitalMedCase' " ;
+		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, " +
+				"case when mcs.emergency='1' then '1' else null end " +
+				" from medCase mc " +
+				"left join medcase mcs on mcs.id = mc.parent_id ";
+				
+		if (idType.equals("prescriptionList")) {
+			sqlquery+="left join prescriptionList pl on pl.medcase_id = mc.id " +
+					"where pl.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
+		} else if (idType.equals("medCase")) {
+			sqlquery+="where mc.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
+		} 
 		List<Object[]> list = theManager.createNativeQuery(sqlquery).getResultList() ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0);
