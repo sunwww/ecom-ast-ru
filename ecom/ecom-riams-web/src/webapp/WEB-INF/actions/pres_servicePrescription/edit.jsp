@@ -7,12 +7,73 @@
 
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+	<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
 	<script type="text/javascript">
+	var oldaction = document.forms['pres_servicePrescriptionForm'].action ;
+	document.forms['pres_servicePrescriptionForm'].action="javascript:checkLabs()";
+	
 	var num=0;
 	var labNum=0;
 	var funcNum=0;
 	var labList="";
 	
+	function checkLabs() {
+		if ($('labServicies')) {
+			writeServicesToList('lab');
+		}
+		if ($('funcServicies')) {
+			writeServicesToList('func');
+		}
+		
+		$('labList').value=labList ;
+//		alert (labList); 
+		document.forms['pres_servicePrescriptionForm'].action=oldaction ;
+		document.forms['pres_servicePrescriptionForm'].submit();
+	}
+	
+	function writeServicesToList(type) {
+		var typeNum = 0;
+	if (type=='lab') {
+		typeNum = labNum;
+	} else if (type=='func') {
+		typeNum = funcNum;
+	}
+	var isDoubble=0;
+	while (typeNum>0) {
+		if (document.getElementById(type+"Element"+typeNum)) {
+			var curService = document.getElementById(type+'Service'+typeNum);
+			var curDate = document.getElementById(type+'Date'+typeNum);
+			var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
+			if (curService.value != "" & curDate.value != "") {			            
+	            labList+=curService.value;
+	            labList+=":";
+	            labList+=curDate.value;
+	            labList+=":";
+	            labList+=curCabinet.value;
+	            labList+="#";
+	            // Проверка на дубли 
+	            if ($(type+'Servicies').value==curService.value) {
+	            	isDoubble=1;	
+	            }
+			}
+				
+		}
+   		typeNum-=1;
+ 	}
+	if (isDoubble==0) {
+		
+			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
+			   	labList+=$(type+'Servicies').value;
+	            labList+=":";
+	            labList+=$(type+'Date').value;
+	            labList+=":";
+	            labList+=$(type+'Cabinet').value;
+	            labList+="#";
+	         }
+		 
+     }
+	}
+		
 		function isChecked(num) {
 			if (num==1) {
 				$('prescriptTypeLabel').style.display="none";
@@ -114,6 +175,7 @@
 		}
 	}
 			</script>
+			</msh:ifFormTypeIsNotView>
 			</tiles:put>
 
   <tiles:put name="body" type="string">
@@ -124,7 +186,14 @@
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
+      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel guid="panel" colsWidth="3">
+        <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+          <msh:autoComplete property="prescriptSpecial" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="5" horizontalFill="true"  />
+        <td></td>
+        </msh:row>
+        
+      	<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
         <msh:row guid="b5srehb-b971-441e-9a90-53217">
         <td>
         <label>Тип назначения: </label>
@@ -139,14 +208,21 @@
         </td>
       	<msh:autoComplete vocName="prescriptTypeNotEmergency" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" />
       </msh:row>
+     </msh:ifFormTypeIsNotView>
+     <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
+     	<msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+          <msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" viewOnlyField="true"/>
+        </msh:row>
+     </msh:ifFormTypeIsView>
 
         
         <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
+        <msh:ifFormTypeIsCreate formName="pres_servicePrescriptionForm">
         <msh:row>
         	<msh:separator label="Лабораторные анализы" colSpan="10"/>
         </msh:row>
         <msh:row>
-        
+       
         <table id="labTable">
         <tbody id="addlabElements">
 
@@ -164,21 +240,16 @@
 			<td>
 			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</td>
-			<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
 			<td>        	
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
             </td>
-            </msh:ifFormTypeIsNotView>
             </tr>
-            
-
-    		</tbody>
+           </tbody>
     		</table>
+    		
+
         </msh:row>
-        </msh:panel>
-        <msh:panel>
-        <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
-        <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
+         <msh:panel>
         <msh:row>
         	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
@@ -200,16 +271,29 @@
 			<td>
 			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</td>
-			<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+			
 			<td>        	
             <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
             </td>
-            </msh:ifFormTypeIsNotView>
             </tr>
        		</tbody>
     		</table>
     		</td></tr></msh:row>
         </msh:panel>
+        </msh:ifFormTypeIsCreate>
+         <msh:ifFormTypeAreViewOrEdit formName="pres_servicePrescriptionForm">
+         <msh:row>
+        	<msh:separator label="Наименование исследования" colSpan="10"/>
+        </msh:row>
+  		<msh:autoComplete property="medService" vocName="labMedService"  label="Наименование исследования" horizontalFill="true" size="90" />
+  		<msh:textField property="planStartDate" label="Дата " size="10"/>
+		<msh:row>
+		<%-- <msh:textArea property="prescriptCabinet" label="Кабинет" /> --%>
+		<msh:autoComplete property="prescriptCabinet" vocName="funcMedServiceRoom" parentAutocomplete="medService" label="Кабинет" size='20' horizontalFill="true" />
+  		</msh:row>
+		</msh:ifFormTypeAreViewOrEdit>
+        </msh:panel>
+
         <msh:panel>
         <!-- --------------------------------------------------Конец блока "Функциональная диагностика" ------ -->
         
