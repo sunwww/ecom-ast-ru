@@ -17,6 +17,27 @@
 	var funcNum=0;
 	var labList="";
 	
+	onload =function test() {
+//		alert ("plID = "+$('prescriptionList').value);
+		PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, "prescriptionList", { 
+            callback: function(aResult) { 
+//           	alert("aResult = "+aResult);
+            	if(!aResult) { 
+            	$('presType1').disabled = "true";
+            	$('presType2').checked = "true";
+            	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
+            	$('tdPresType1').style.display = "none";
+
+            	} else {
+            		$('presType1').checked = "true";
+            		isChecked(1);
+ //           		$('prescriptType').value=5; //5 - экстренно 
+            	}
+           } 
+		} 
+      	); 
+		
+	}	
 	function checkLabs() {
 		if ($('labServicies')) {
 			writeServicesToList('lab');
@@ -78,31 +99,11 @@
 			if (num==1) {
 				$('prescriptTypeLabel').style.display="none";
 				$('prescriptTypeName').style.display="none";
+				$('prescriptType').value=5;
 			} else {
 				$('prescriptTypeLabel').style.display="block";
 				$('prescriptTypeName').style.display="block";
 			}
-	}
-		onload =function test() {
-//		alert ("plID = "+$('prescriptionList').value);
-		PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, { 
-            callback: function(aResult) { 
-//           	alert("aResult = "+aResult);
-            	if(!aResult) { 
-            	$('presType1').disabled = "true";
-            	$('presType2').checked = "true";
-            	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
-            	$('tdPresType1').style.display = "none";
-
-            	} else {
-            		$('presType1').checked = "true";
-            		isChecked(1);
-            		$('prescriptType').value=5; //5 - экстренно 
-            	}
-           } 
-		} 
-      	); 
-		
 	}
 	
 	function addRow(type) { 
