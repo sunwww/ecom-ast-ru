@@ -94,7 +94,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"where pl.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
 		} else if (idType.equals("medCase")) {
 			sqlquery+="where mc.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
-		} 
+		} else {
+			return false; 
+		}
 		List<Object[]> list = theManager.createNativeQuery(sqlquery).getResultList() ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0);
@@ -103,7 +105,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			try {
 				date = sdf.parse(obj[0].toString());
 				boolean check = ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.isDateLessThenHour(date,2);
-				if (obj[1]!=null && !check) { 
+				if (obj[1]!=null && check) { 
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
