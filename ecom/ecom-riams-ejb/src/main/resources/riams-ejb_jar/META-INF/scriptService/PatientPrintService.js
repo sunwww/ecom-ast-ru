@@ -37,7 +37,13 @@ function printInfoByPatient(aPatient,aCtx) {
 		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
 	var priv = listPriv.size()>0?aPatient.privileges.get(0):null ;
 	map.put("priv.info","") ;
-	map.put("strax",null) ;
+	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
+		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
+	if (listPolicy.size()>0) {
+		map.put("strax",listPolicy.get(0)) ;
+	} else {
+		map.put("strax",null) ;
+	}
 	map.put("priv.doc",priv!=null?priv.document:null) ;
 	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
 	var date = new java.util.Date() ;
