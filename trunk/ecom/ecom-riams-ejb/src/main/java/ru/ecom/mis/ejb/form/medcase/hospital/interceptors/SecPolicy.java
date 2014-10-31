@@ -54,7 +54,7 @@ public class SecPolicy {
      * @throws IllegalStateException
      */
     private static void checkPolicyCreateHour(Date aEnteredDate) {
-        if(isDateLessThen24Hour(aEnteredDate)) {
+        if(!isDateLessThen24Hour(aEnteredDate)) {
             throw new IllegalStateException("Дата поступления меньше на 24 часа, чем текущая дата") ;
         }
     }
@@ -78,7 +78,7 @@ public class SecPolicy {
             Date admissionDate = DateConverter.createDateTime(aSls.getDateStart(), DateFormat.formatToTime(aSls.getEntranceTime()));
             if (CAN_TRACE) LOG.debug(" Дата поступления = " + admissionDate);
             if (admissionDate != null) {
-                if(isDateLessThen24Hour(admissionDate)) {
+                if(!isDateLessThen24Hour(admissionDate)) {
                     throw new IllegalStateException("Дата поступления меньше 24 часа, чем текущая. Изменять информацию нельзя") ;
                 }
             } else {
@@ -105,7 +105,7 @@ public class SecPolicy {
             logDate("cal.getTime()", cal.getTime());
             LOG.debug("aDate.getTime() < cal.getTime().getTime() = " + (aDate.getTime() < cal.getTime().getTime()));
         }
-        return aDate.getTime() < cal.getTime().getTime()  ;
+        return aDate.getTime() >= cal.getTime().getTime()  ;
     }
 
 
