@@ -18,10 +18,10 @@ public class PrescriptionServiceJs {
 		return service.getDescription(aIdTemplateList) ;
 	}
 	
-	public boolean checkMedCaseEmergency(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
+	public boolean checkMedCaseEmergency(Long aIdTemplateList, String idType, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
-		return service.checkMedCaseEmergency(aIdTemplateList) ;
+		return service.checkMedCaseEmergency(aIdTemplateList, idType) ;
 	}
 	
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {
