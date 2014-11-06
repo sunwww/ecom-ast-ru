@@ -120,12 +120,13 @@ function onPreSave(aForm,aEntity, aCtx) {
 			}
 		}
 	} else {
+		
 		var sql = "select m.id, ss.code from MedCase  m "
 			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
 			+" where m.patient_id='"+aForm.patient
 			+"' and m.dateStart=to_date('"+aForm.dateStart+"','dd.mm.yyyy')"
 			+" and m.dtype='HospitalMedCase' and m.department_id='"+aForm.department
-			+"' and m.deniedHospitalizating_id is null " ;
+			+"' and m.deniedHospitalizating_id is null and m.dateFinish!=to_date('"+aForm.dateStart+"','dd.mm.yyyy')" ;
 		if (+aForm.id>0) {
 			sql = sql+" and m.id!='"+aForm.id+"'" ;
 		}	
