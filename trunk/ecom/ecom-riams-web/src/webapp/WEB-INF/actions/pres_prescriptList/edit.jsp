@@ -17,11 +17,9 @@
 		var funcNum=0;
 		var labList="";
 
-		onload=function test() {
-//			alert ("medCase = "+$('medCase').value);
+		onload=function () {
 			PrescriptionService.checkMedCaseEmergency($('medCase').value, "medCase", { 
 	            callback: function(aResult) { 
-//	           	alert("aResult = "+aResult);
 	            	if(!aResult) { 
 	            	$('presType1').disabled = "true";
 	            	$('presType2').checked = "true";
@@ -80,6 +78,7 @@
 		}
 		
 		function checkLabs() {
+			labList="";
 			if ($('presType1').checked) {
 				$('prescriptType').value=5; 
 			} 
@@ -135,29 +134,24 @@
 	    // Создаем ячейки в вышесозданной строке
 	    // и добавляем тх
 	    var td1 = document.createElement("TD");
+	   	td1.colSpan="2";
+	   	td1.align="right";
 	    var td2 = document.createElement("TD");
+	    td2.colSpan="2";
 	    var td3 = document.createElement("TD");
-	    var td4 = document.createElement("TD");
 	    
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(td1);
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(td2);
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(document.createElement("TD"));
-	    row.appendChild(td3);
-	    row.appendChild(td4);
+		 row.appendChild(td1);
+		 row.appendChild(td2);
+		 row.appendChild(td3);
 	    
 	    // Наполняем ячейки 
 	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
 	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
 	    
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-	  	td1.innerHTML = "<input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
-	   	td3.innerHTML = dt2+"<span>"+$(type+'CabinetName').value+"</span>" ;
-	   	td4.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"   ' size = '10' />";
+	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
 	   	new dateutil.DateField($(type+'Date'+num));
 					   
 		if (type=='lab') {
@@ -290,7 +284,7 @@
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
         <msh:panel>
         <msh:row>
-        	<msh:separator label="Лабораторные анализы" colSpan="10"/>
+        	<msh:separator label="Лабораторные исследования" colSpan="10"/>
         </msh:row>
         <msh:row>
         <tr><td>
@@ -298,15 +292,8 @@
         <tbody id="addlabElements">
     		
 			<tr>
-			<td colspan='1'>
-			<div>
 			<msh:textField property="labDate" label="Дата " size="10"/>
-			</div>
-			</td>
-			
-			<td>
 			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
-			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
@@ -314,10 +301,9 @@
             </msh:ifFormTypeIsNotView>
             </tr>
             <tr>
-    		<td>
-			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
-			</td>
-    		</tr>
+    		
+			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+			</tr>
            </tbody>
     		</table>
     		</td></tr>
@@ -336,27 +322,18 @@
         <table id="funcTable">
         <tbody id="addfuncElements">
     		<tr>
-    		<td>
-			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
-			</td>
-			<td colspan='1'>
-			<div>
-			<msh:textField property="funcDate" label="Дата " size="10"/>
-			</div>
-			</td>
+    			<msh:textField property="funcDate" label="Дата " size="10"/>
+    			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
+    			<td>        	
+	            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+	            </td>
+			 </tr>
+			 <tr>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</tr>
-			<tr>
-			<td></td><td></td><td></td><td></td>
-			<td>
-			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
-			</td>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
-			<td>        	
-            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
-            </td>
-            </msh:ifFormTypeIsNotView>
-            </tr>
-       		</tbody>
+			</msh:ifFormTypeIsNotView>
+           </tbody>
     		</table>
     		</td></tr></msh:row>
         </msh:panel>
