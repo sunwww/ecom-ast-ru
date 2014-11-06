@@ -95,9 +95,10 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 		 +" left join mislpu ml on ml.id=slo.department_id"
 		 +" left join diagnosis d on slo.id = d.medcase_id"
 		 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
+		 +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id"
 		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
 		 +" group by sls.id,slo.id	"
-		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and d.idc10_id is not null then 1 else null end)=0  "
+		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  "
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}	
 	}
