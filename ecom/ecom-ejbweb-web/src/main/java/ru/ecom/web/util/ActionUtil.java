@@ -1,14 +1,52 @@
 package ru.ecom.web.util;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class ActionUtil {
+	public static String isReportBase(String aBeginDate,String aEndDate,HttpServletRequest aRequest) {
+		String isRepBase = "true" ;
+		try {
+			if (!RolesHelper.checkRoles("/Policy/Config/IsReportBase", aRequest)) {
+				isRepBase="false" ;
+			} else {
+				try {
+					java.util.Date d1 = DateFormat.parseDate(aBeginDate) ;
+					Calendar c1 = Calendar.getInstance() ;c1.setTime(d1) ;
+					c1.set(Calendar.AM_PM, 0) ;
+					java.util.Date d2 = DateFormat.parseDate(aEndDate) ;
+					Calendar c2 = Calendar.getInstance() ;c2.setTime(d2) ;
+					c2.set(Calendar.AM_PM, 0) ;
+					java.util.Date d3 = new java.sql.Date(new java.util.Date().getTime()) ;
+					Calendar c3 = Calendar.getInstance() ;c3.setTime(d3) ;
+					c3.set(Calendar.SECOND, 0) ;
+					c3.set(Calendar.HOUR_OF_DAY, 0) ;
+					c3.set(Calendar.MINUTE, 0) ;
+					c3.set(Calendar.MILLISECOND, 0) ;
+					c1.add(Calendar.DAY_OF_MONTH, 7) ;
+					if (c2.getTime().getTime() == c3.getTime().getTime() && c1.after(c3)) {
+						isRepBase = "false";
+					}
+				} catch (ParseException e) {
+					
+				}
+			}
+		} catch (JspException e1) {
+			e1.printStackTrace();
+		}
+		
+		return isRepBase ;
+	}
 public static String updateParameter(String aSession, String aNameParameter, String aDefaultValue ,HttpServletRequest aRequest) {
 		
 		String typePat = "" ;
@@ -58,6 +96,36 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static String setParameterInfoFilterSql(String aSqlValue, String aParameter,String aFldId,HttpServletRequest aRequest) {
+		String aAttributeName=aParameter ;
+		String param = (String)aRequest.getParameter(aParameter) ;
+		String sql ="" ;
+    	if (param!=null && !param.equals("") && !param.equals("0")) {
+    		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
+    		sql=" and "+aFldId+"='"+param+"'";
+    		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
+    		aRequest.setAttribute(aAttributeName,param) ;
+    		IWebQueryService service;
+    		try {
+    			service = Injection.find(aRequest).getService(IWebQueryService.class);
+    			Collection<WebQueryResult> col = service.executeNativeSql(aSqlValue.replaceAll(":id", "'"+param+"'"),1) ;
+    			if (!col.isEmpty()) {
+    				WebQueryResult obj = col.iterator().next() ;
+    				aRequest.setAttribute(aAttributeName+"Info", obj.get2()) ;
+    			} else {
+    				
+    			}
+    		} catch (NamingException e) {
+    			aRequest.setAttribute(aAttributeName+"Info", "ОШИБКА SQL: "+aSqlValue) ;
+    			e.printStackTrace();
+    		}
+    	} else {
+    		aRequest.setAttribute(aAttributeName,"0") ;
+    		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
+    	}
+    	return sql ;
 	}
 	public static String setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
 		return setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
