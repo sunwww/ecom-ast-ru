@@ -90,16 +90,22 @@ function onPreSave(aForm,aEntity, aCtx) {
 
 function checkAllDiagnosis (aCtx, aSlsId) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
-		var sql = "select sls.id,slo.id from medcase sls "
+		var sql = "select slo.id as sloid,ml.name||' '||to_char(slo.dateStart,'dd.mm.yyyy')||coalesce('-'||to_char(slo.transferDate,'dd.mm.yyyy'),'') as info from medcase sls "
 		 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
 		 +" left join mislpu ml on ml.id=slo.department_id"
 		 +" left join diagnosis d on slo.id = d.medcase_id"
 		 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
 		 +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id"
 		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
-		 +" group by sls.id,slo.id	"
+		 +" group by sls.id,slo.id,ml.name,slo.dateStart,slo.transferDate	"
 		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  "
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
-		if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}	
+		if (list.size()>0) {
+			var slo ="" ;
+			for (var i=0; i<list.size(); i++) {
+				slo = slo+" <a href='entitySubclassView-mis_medCase.do?id="+list.get(0)[0]+"'>" +list.get(0)[1]+"</a>" ;
+			}
+			throw "Не полностью заполнены данные по диагнозам в отделениях!!! "+ slo ;
+		}	
 	}
 }
