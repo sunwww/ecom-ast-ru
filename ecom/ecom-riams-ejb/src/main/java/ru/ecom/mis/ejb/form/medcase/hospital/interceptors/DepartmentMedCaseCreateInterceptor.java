@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -77,17 +78,21 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
      * Новый первый случай лечения в отделении
      * */
     private void prepareForCreationFirstSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCase ,EntityManager aManager,boolean aIsOwnerFunction) {
-
+    	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     	if (aIsOwnerFunction) {
     		Date date = new Date();
     		aForm.setDateStart(DateFormat.formatToDate(date));
-        	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             aForm.setEntranceTime(timeFormat.format(date));
             //aForm.addDisabledField("dateStart");
             //aForm.addDisabledField("entranceTime");
     	} else {
-        	aForm.setDateStart(DateFormat.formatToDate(aMedCase.getDateStart()));
-            aForm.setEntranceTime(DateFormat.formatToTime(aMedCase.getEntranceTime()));
+        	
+        	Calendar cal = Calendar.getInstance() ;
+        	cal.setTime(aMedCase.getDateStart()) ;
+        	cal.setTime(aMedCase.getEntranceTime()) ;
+        	cal.add(Calendar.MINUTE,1) ;
+        	aForm.setDateStart(DateFormat.formatToDate(cal.getTime()));
+            aForm.setEntranceTime(timeFormat.format(cal.getTime()));
             aForm.addDisabledField("dateStart");
             aForm.addDisabledField("entranceTime");
     	}
