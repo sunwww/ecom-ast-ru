@@ -115,13 +115,14 @@
     String period = request.getParameter("period") ;
     String strcode =request.getParameter("strcode") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+    
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     
     String view = (String)request.getAttribute("typeView") ;
     
     if (date!=null && !date.equals("")) {
-        
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
     
     <msh:section>
@@ -131,7 +132,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по возрастам ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report13swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report13swod" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode ,vrspt.code as vrsptcode,count(distinct so.id) as cntAll
 ,count(distinct case when (
 cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -241,7 +242,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
 ,list(vrspt1.strCode)

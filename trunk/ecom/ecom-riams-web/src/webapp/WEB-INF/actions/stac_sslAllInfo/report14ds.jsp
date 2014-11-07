@@ -15,11 +15,11 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
-  <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
-  <ecom:webQuery name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
-  <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
-  <ecom:webQuery name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
-  <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
+  <ecom:webQuery isReportBase="${isReportBase}" name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
+  <ecom:webQuery isReportBase="${isReportBase}" name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
+  <ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
+  <ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
+  <ecom:webQuery isReportBase="${isReportBase}" name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
   	String sexWoman = "1" ;
@@ -290,6 +290,7 @@
     String period = request.getParameter("period") ;
     String strcode =request.getParameter("strcode") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+    
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     
@@ -297,7 +298,7 @@
     
     if (view.equals("1")) {
     if (date!=null && !date.equals("")) {
-        
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
     
     <msh:section>
@@ -307,7 +308,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report14swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
 select 
 '&department='||sloa.department_id,ml.name as mlname
 ,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
@@ -367,7 +368,7 @@ order by ml.name
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
 select 
 sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
@@ -453,7 +454,7 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:section>
    
     <msh:section>
-    <ecom:webQuery name="report14swod" nameFldSql="report14swod_sql" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nameFldSql="report14swod_sql" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
 ,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
 ,count(case when sls.result_id!=${result_death} and vht.code='ALLTIMEHOSP' then sls.id else null end) as cntDirectAllTimeHosp
@@ -535,7 +536,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
 select 
 sls.id as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
@@ -623,7 +624,7 @@ order by p.lastname,p.firstname,p.middlename " />
         <msh:section>
         <msh:sectionTitle>Свод по нозоологиям (умершие)</msh:sectionTitle>
         <msh:sectionContent>
-        <ecom:webQuery name="report14swod" nativeSql="
+        <ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
     ,count(sls.id) as cntDeath
     ,count(
@@ -703,7 +704,7 @@ order by p.lastname,p.firstname,p.middlename " />
         
         </msh:sectionTitle>
         <msh:sectionContent>
-        <ecom:webQuery name="journal_surOperation" nativeSql="
+        <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
     select 
     sls.id as slsid
     ,ss.code as sscode
@@ -820,7 +821,7 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:section>
     <msh:sectionTitle>Свод по операциям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report14swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
 
 select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode 
 ,count(distinct so.id) as cntOper
@@ -884,7 +885,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
 ,list(vrspt1.strCode)

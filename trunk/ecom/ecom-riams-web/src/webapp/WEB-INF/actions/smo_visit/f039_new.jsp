@@ -211,7 +211,11 @@
     </msh:form>
     
     <%
-    	if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null) {
+    	if (request.getParameter("beginDate")!=null  
+    			&& !request.getParameter("beginDate").equals("") 
+    			&& request.getParameter("finishDate")!=null
+    			&& !request.getParameter("finishDate").equals("")) {
+    		request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
     		ActionUtil.setParameterFilterSql("workFunction","wf.workFunction_id", request) ;
     		ActionUtil.setParameterFilterSql("specialist","smo.workFunctionExecute_id", request) ;
     		ActionUtil.setParameterFilterSql("lpu","w.lpu_id", request) ;
@@ -332,7 +336,7 @@
     	%>
     
     <msh:section>
-<ecom:webQuery maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -390,7 +394,7 @@ LEFT JOIN Patient owp on owp.id=ow.person_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
@@ -434,8 +438,9 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     	if (typeView!=null && (typeView.equals("1"))) {
     
     	%>
+    	
     <msh:section>
-<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -528,7 +533,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -594,7 +599,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("2"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -723,7 +728,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
@@ -788,7 +793,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("3"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -908,7 +913,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -972,7 +977,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("4"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1047,7 +1052,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1099,7 +1104,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("5"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1174,7 +1179,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1226,7 +1231,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("6"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1258,7 +1263,7 @@ LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
@@ -1305,7 +1310,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <%} else if (typeView!=null && (typeView.equals("7"))) {
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1374,7 +1379,7 @@ Left join Omc_oksm oo on oo.id=p.nationality_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
-${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 

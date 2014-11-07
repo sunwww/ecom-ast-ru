@@ -195,6 +195,7 @@
 
     String view = (String)request.getAttribute("typeView") ;
     if (date!=null) {
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     if (view.equals("1")) { %>
 
     <%} else if (view.equals("2")) { %>
@@ -204,7 +205,7 @@
     </msh:section>
    
     <msh:section>
-    <ecom:webQuery name="Report36HOSPswod" nameFldSql="Report36HOSPswod_sql" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="Report36HOSPswod" nameFldSql="Report36HOSPswod_sql" nativeSql="
 select
 vrspt.id||'&reportStr='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
 ,count(case when
@@ -558,7 +559,7 @@ order by vrspt.strCode
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
    
-    <msh:section><ecom:webQuery maxResult="5000" name="reestr" nameFldSql="reestr_sql" nativeSql="
+    <msh:section><ecom:webQuery isReportBase="${isReportBase}" maxResult="5000" name="reestr" nameFldSql="reestr_sql" nativeSql="
 select ahr.sls as slsid
 ,(select list(vrspt1.strCode) from ReportSetTYpeParameterType rspt1 
 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id 
@@ -570,7 +571,7 @@ where ahr.${diagnosField} between rspt1.codefrom and rspt1.codeto
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,to_char(ahr.entranceHospDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceHospDate24!=ahr.entranceHospDate${timeAdd} then '(кал. день '||to_char(ahr.entranceHospDate24,'dd.mm.yyyy')||')' else '' end as slsdateStart
 ,to_char(ahr.entranceDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceDate24!=ahr.entranceDate${timeAdd} then '(кал. день '||to_char(ahr.entranceDate24,'dd.mm.yyyy')||')' else '' end as slodateStart
-,ml1.name as ml1name,ml2.name as ml2name,as ml3.name
+,ml1.name as ml1name,ml2.name as ml2name,ml3.name as ml3.name
 ,to_char(ahr.dischargeDate${timeAdd},'dd.mm.yyyy')||case when ahr.dischargeDate24!=ahr.dischargeDate${timeAdd} then '(кал. день '||to_char(ahr.dischargeDate24,'dd.mm.yyyy')||')' else '' end as slodateFinish
 ,ahr.idcEntranceCode as idcEntranceCode
 ,ahr.idcDepartmentCode as idcDepartmentCode
@@ -584,7 +585,6 @@ ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+cast(ahr.addbeddays a
 end as beddays
 ,case when ahr.isFirstCurrentYear='1' then 'Да' else null end as isFirstCurrentYear
 ,case when ahr.isFirstLife='1' then 'Да' else null end as isFirstLife
-,ml1.name as ml1name,ml2.name as ml2name,ml3.name as ml3name
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
 left join StatisticStub ss on ss.id=sls.statisticStub_id

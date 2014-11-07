@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -115,15 +116,18 @@
     </msh:form>
     
     <%
+    
     String date = (String)request.getParameter("dateBegin") ;
     String view = (String)request.getAttribute("typeView") ;
     if (date!=null && !date.equals("") )  {
+    	
     	String dateEnd = (String)request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
-    		request.setAttribute("dateEnd", date) ;
-    	} else {
-    		request.setAttribute("dateEnd", dateEnd) ;
+    		dateEnd=date ;
     	}
+		request.setAttribute("dateEnd", dateEnd) ;
+		
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	String dep = (String) request.getParameter("department") ; 
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("dep", " and dmc.department_id='"+dep+"'");
@@ -136,7 +140,7 @@
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list" nativeSql="
     
 select 
 soDep.id as soDepid,dep.name as depname
@@ -226,7 +230,7 @@ order by dep.name
     
     <msh:section title="Реестр хир. операций, где разные отделения выписки и где проводилась операция. ${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_suroper" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper" nativeSql="
     
 select 
 soDep.id as soDepid,dep.name as depname
@@ -310,7 +314,7 @@ order by dep.name
     %>
     <msh:section title="Анализ хирургической работы учреждения">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_swod" nativeSql="
     select
 dmc.department_id,dep.name
 ,count(distinct hmc.id) as cntDischarge
@@ -635,7 +639,7 @@ order by dep.name
     %>
     <msh:section title="Свод хир. операций по отделениям, где отличаются отд.выписки и отд, где проводилась операция">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_oper_otd_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_oper_otd_swod" nativeSql="
 select ldmc.department_id as depid
 ,operdep.name as operdepname,dischdep.name as dischdepname
 ,count(distinct hmc.id) as cntDischarge
@@ -690,7 +694,7 @@ order by operdep.name, dischdep.name
     	if (view!=null && view.equals("6")) { 
     %>
     <msh:section>
-    <ecom:webQuery nameFldSql="journal_list_otd_rayon_swod_sql" name="journal_list_otd_rayon_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_list_otd_rayon_swod_sql" name="journal_list_otd_rayon_swod" nativeSql="
     select
 dmc.department_id as depid,dep.name as depname
 ,count(distinct hmc.id) as cntDischarge
@@ -796,7 +800,7 @@ order by dep.name
     %>
     <msh:section title="Свод по леч. врачам">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_otd_owner" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_otd_owner" nativeSql="
     select
 '7:'||dmc.department_id||':'||dmc.ownerFunction_id as depid,dep.name as depname,ovwf.name,owp.lastname||' '||owp.firstname||' '||owp.middlename
 ,count(distinct hmc.id) as cntStatCard
@@ -846,7 +850,7 @@ order by dep.name   ,ovwf.name
     %>
     <msh:section title="Сводный отчет отделений по работе хирургам">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_otd_surgeon" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_otd_surgeon" nativeSql="
      select
 so.department_id ||':'||so.surgeon_id as depid,dep.name as depname
 ,svwf.name as svwfname,swp.lastname||' '||swp.firstname||' '||swp.middlename as fiodoctor
@@ -929,7 +933,7 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
     %>
     <msh:section title="Свод по хирургам">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_surgeon" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_surgeon" nativeSql="
      select
 swf.workFunction_id||':'||sw.person_id as depid
 ,svwf.name as svwfname,swp.lastname||' '||swp.firstname||' '||swp.middlename as fiodoctor
@@ -1001,7 +1005,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
     %>
     <msh:section title="Реестр операций с 0 уровнем сложности">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_oper" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_oper" nativeSql="
     select
 vo.id,vo.code,vo.name,count(distinct so.id),list(dep.name) as dep
 from SurgicalOperation so
@@ -1046,7 +1050,7 @@ order by vo.id,vo.code,vo.name
     %>
     <msh:section title="Свод по отделениям общий">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_otd_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_otd_swod" nativeSql="
     select
 dmc.department_id,dep.name
 ,count(distinct hmc.id) as cntDischarge
