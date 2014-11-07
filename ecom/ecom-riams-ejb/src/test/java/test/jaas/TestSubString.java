@@ -14,44 +14,44 @@ import ru.nuzmsh.util.format.DateFormat;
 
 public class TestSubString {
 	public static void main(String[] args) throws ParseException {
-		long MILLION = 1000*1000;
-	      long MILLIARD = MILLION*1000;
-	      long[] values = new long[] {
-	          777777,
-	          1001,
-	          MILLION + 298,
-	          2*MILLIARD + 56*MILLION + 3200,
-	          2*MILLIARD,
-	      };
-	      
-	      for (long value : values) {
-	        System.out.println(toWords(new BigDecimal(value)));
-	      }/*
-	      System.out.println(toWords(new BigDecimal(938000)));
-	    	
-	      System.out.println(toWords(new BigDecimal(99999999)));
-		//System.out.println(getParent("par1  hat par1 jjj", "par1","par2")) ;
-		/*getInterval("08:30","08:35",Long.valueOf(5)) ;
-		getInterval("08:30","10:00",Long.valueOf(7)) ;
-		getInterval("08:30","10:00",Long.valueOf(11)) ;
-		getInterval("11:30","10:00",Long.valueOf(10)) ;
-		/*
-		Time timeFrom = DateFormat.parseSqlTime("12:00") ;
-		Time timeTo = DateFormat.parseSqlTime("14:00") ;
-		int minute = 15 ; 
-		getTimes(timeFrom, timeTo, minute) ;
-		java.sql.Date dat1 = DateFormat.parseSqlDate("01.01.2011") ;
-		java.sql.Date dat2 = DateFormat.parseSqlDate("11.02.2011") ;
-		getWeek(dat1,dat2) ;
-		String test = "ghjhg=:parent and jklajfkl=:parent" ;
-		test.replace(":parent", "value") ;
-		System.out.println(test) ;
-		System.out.println(test.replace(":parent", "value")) ;
-		Calendar cal = Calendar.getInstance() ;
-		cal.setTime(dat1) ;
-		System.out.println("weekmonthlast="+cal.getActualMaximum(Calendar.WEEK_OF_MONTH) );
-		System.out.println("weekmonthlast="+cal.getActualMaximum(Calendar.DAY_OF_MONTH) );
-		*/
+		//System.out.println(isReportBase("29.10.2014","30.10.2014")) ;
+		System.out.println(isReportBase("29.10.2014","29.10.2014")) ;
+		System.out.println(isReportBase("22.10.2014","29.10.2014")) ;
+		System.out.println(isReportBase("23.10.2014","29.10.2014")) ;
+		System.out.println(isReportBase("01.10.2014","29.10.2014")) ;
+		System.out.println(isReportBase("01.01.2014","28.10.2014")) ;
+		
+	}
+	public static String isReportBase(String aBeginDate,String aEndDate) {
+		System.out.println("beginDate="+aBeginDate+" endDate="+aEndDate);
+		
+		String isRepBase = "true" ;
+		try {
+			java.util.Date d1 = DateFormat.parseDate(aBeginDate) ;
+			Calendar c1 = Calendar.getInstance() ;c1.setTime(d1) ;
+			c1.set(Calendar.AM_PM, 0) ;
+			java.util.Date d2 = DateFormat.parseDate(aEndDate) ;
+			Calendar c2 = Calendar.getInstance() ;c2.setTime(d2) ;
+			c2.set(Calendar.AM_PM, 0) ;
+			java.util.Date d3 = new java.sql.Date(new java.util.Date().getTime()) ;
+			Calendar c3 = Calendar.getInstance() ;c3.setTime(d3) ;
+			c3.set(Calendar.SECOND, 0) ;
+			c3.set(Calendar.HOUR_OF_DAY, 0) ;
+			c3.set(Calendar.MINUTE, 0) ;
+			c3.set(Calendar.MILLISECOND, 0) ;
+			
+			System.out.println("d1="+c1.getTime()) ;
+			System.out.println("d2="+c2.getTime()) ;
+			System.out.println("d3="+c3.getTime()) ;
+			System.out.println("d3="+(c3.getTime().getTime()==c2.getTime().getTime())) ;
+			c1.add(Calendar.DAY_OF_MONTH, 7) ;
+			if (c2.getTime().getTime() == c3.getTime().getTime() && c1.after(c3)) {
+				isRepBase = "false";
+			}
+		} catch (ParseException e) {
+			
+		}
+		return isRepBase ;
 	}
 	public final static int DG_POWER=10;
 	  

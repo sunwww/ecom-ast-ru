@@ -31,12 +31,12 @@ function onPreDelete(aId, aCtx) {
 	var isClosedPeriod=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 	if (+isClosedPeriod==1) {
 		var param1 = new java.util.HashMap() ;
-		param1.put("obj","Ticket") ;
+		param1.put("obj","ShortMedCase") ;
 		param1.put("permission" ,"deleteDataInClosePeriod") ;
 		param1.put("id", aId) ;
 		var isDeleteClose = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
 		//throw isDeleteClose ;
-		if (+isDeleteClose!=1) throw "У вас стоит запрет на удаление данных в закрытом периоде";
+		if (+isDeleteClose==1) {}else{throw "У вас стоит запрет на удаление данных в закрытом периоде";}
 	}
 	aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
 }

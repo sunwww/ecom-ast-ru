@@ -103,9 +103,16 @@ function printInfo(aCtx, aParams) {
     var prs = mc.person;
     var plc = null;
     record("pat",prs) ;
+    var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
+	.setParameter("pat",prs).setMaxResults(1).getResultList() ;
+	var priv = listPriv.size()>0?listPriv.get(0):null ;
+	map.put("priv.info",priv) ;
+	map.put("priv.doc",priv!=null?priv.document:null) ;
+	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
+
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var policy_list_sql = "select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end"
-       +" , ri.name as riname,coalesce('серия '||mp.series,'')||' '||coalesce(' №'||mp.polnumber,'')"
+       +" , ri.name as riname,coalesce('серия '||mp.series,'')||' '||coalesce(' №'||mp.polnumber,'')||coalesce(' RZ'||mp.commonNumber,'')"
        +" ,mp.actualDateFrom,mp.actualDateTo ,mp.commonNumber,vmo.name as vmoname"
        +" from MedPolicy as mp "
        +"  left join reg_ic as ri on ri.id=mp.company_id" 
