@@ -71,11 +71,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
         sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
     	sql.append(" from Patient p") ;
+    	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
     	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+    	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
         sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
     	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
     	sql.append(" where ") ;
-    	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("') and ") ;
+    	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
     	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
     	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
     	sql.append(" ").append(addSql) ;

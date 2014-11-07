@@ -35,8 +35,10 @@ function printInfoByPatient(aPatient,aCtx) {
 	map.put("groupInv",groupInv) ;
 	var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
 		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
-	var priv = listPriv.size()>0?aPatient.privileges.get(0):null ;
-	map.put("priv.info","") ;
+	var priv = listPriv.size()>0?listPriv.get(0):null ;
+	map.put("priv.info",priv) ;
+	map.put("priv.doc",priv!=null?priv.document:null) ;
+	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
 	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
 		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
 	if (listPolicy.size()>0) {
@@ -44,8 +46,6 @@ function printInfoByPatient(aPatient,aCtx) {
 	} else {
 		map.put("strax",null) ;
 	}
-	map.put("priv.doc",priv!=null?priv.document:null) ;
-	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
 	var date = new java.util.Date() ;
 	var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(date) ;
