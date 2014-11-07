@@ -14,9 +14,9 @@
 	<tiles:put name='body' type='string' >
 	<ecom:webQuery name="list" />
 		<ecom:webQuery name="child" nativeSql="select id,name,ipaddress,isTxtFile from copyingEquipment where parent_id is null"/>
-		<msh:table name="list" action="entityView-mis_copyingEquipment.do" idField="id">
+		<msh:table name="child" action="entityView-mis_copyingEquipment.do" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />
-			<msh:tableColumn columnName="1" property="id" />
+			<msh:tableColumn columnName="id" property="1" />
 			<msh:tableColumn columnName="Наименование" property="2" />
 			<msh:tableColumn columnName="IP адрес" property="3" />
 			<msh:tableColumn property="4" columnName="Приоритет текстового файла"/>

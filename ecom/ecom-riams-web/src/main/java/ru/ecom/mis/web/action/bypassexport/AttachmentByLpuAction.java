@@ -65,7 +65,7 @@ public class AttachmentByLpuAction extends BaseAction {
 	        	sqlAdd.append(" and (lp.dateFrom between to_date('")
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
-	        } else {
+	        } else if (typeChange!=null&&typeChange.equals("2")) {
 	        	sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
 	        }
     		if (form.getChangedDateFrom()!=null&&!form.getChangedDateFrom().equals("")) {

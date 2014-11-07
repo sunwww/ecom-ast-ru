@@ -93,7 +93,10 @@
         	<input type="radio" name="typeChange" value="1">  изменения за период
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeChange" value="2">  полностью база пациентов
+        	<input type="radio" name="typeChange" value="2">  без ограничения нач.периода
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeChange" value="3">  полностью база пациентов
         </td>
       </msh:row>
       <msh:row>

@@ -28,12 +28,64 @@
   	request.setAttribute("endDate", "01.12.2014") ;
   	if (lpu!=null && !lpu.equals("")) {
   	%>
+  	  <msh:form action="/pres_journal_by_department.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+        <msh:separator label="Параметры поиска" colSpan="7" />
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeIntake" value="1"> был
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" >
+        	<input type="radio" name="typeIntake" value="2"> не был
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeIntake" value="2"> отобразить все данные
+        </td>
+
+       </msh:row>
+      
+        
+      <msh:row>
+        <msh:textField property="beginDate" label="Период с" />
+        <msh:textField property="endDate" label="по" />
+           <td>
+            <input type="submit" value="Отобразить данные" />
+          </td>
+      </msh:row>
+    </msh:panel>
+    </msh:form>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+           <script type='text/javascript'>
+           checkFieldUpdate('typeIntake','${typeIntake}',1) ;
+           checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+
+   function checkFieldUpdate(aField,aValue,aDefaultValue) {
+   	eval('var chk =  document.forms[0].'+aField) ;
+   	var aMax=chk.length ;
+   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+   		chk[+aDefaultValue-1].checked='checked' ;
+   	} else {
+   		chk[+aValue-1].checked='checked' ;
+   	}
+   }
+    if ($('beginDate').value=="") {
+    	$('beginDate').value=getCurrentDate() ;
+    }
+
+			 
+    </script>
     <msh:section>
     <ecom:webQuery name="list" nativeSql="
-    select pat.id,pat.lastname,pat.firstname,pat.middlename
-    ,vsst.name as vsstname,list(ms.code||' '||ms.name)
-    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)||'#'||pl.id
-    , list(p.materialId)
+    select pat.id, coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    ,pat.lastname,pat.firstname,pat.middlename
+    ,coalesce(vsst.name,'---') as vsstname
+    , coalesce(case when list(p.materialId)='' then max(p.id)||'|'||coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    ||'#'||pat.lastname else list(p.materialId) end) as material
+    ,list(ms.code||' '||ms.name) as medServicies
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -59,11 +111,14 @@
     "/>
     <msh:sectionTitle>Список пациентов по отделению ${lpu_name}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="id" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
-	      <msh:tableColumn columnName="Назначил" property="workFunctionInfo" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
-	      <msh:tableColumn columnName="Комментарии" property="comments" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
-	      <msh:tableColumn columnName="Дата создания" property="date" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
-	      <msh:tableColumn columnName="Период актуальности" property="periodActual"/>
+	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="1">
+	      <msh:tableColumn columnName="Стат.карта" property="2"  />
+	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />
+	      <msh:tableColumn columnName="Имя" property="4" />
+	      <msh:tableColumn columnName="Отчетство" property="5"/>
+	      <msh:tableColumn columnName="Метка биоматериала" property="6"/>
+	      <msh:tableColumn columnName="Код биоматериала" property="7"/>
+	      <msh:tableColumn columnName="Список услуг" property="8"/>
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>

@@ -124,10 +124,10 @@
     	ActionUtil.setParameterFilterSql("result","vhr.id", request) ;
     	String dateEnd = (String)request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
-    		request.setAttribute("dateEnd", date) ;
-    	} else {
-    		request.setAttribute("dateEnd", dateEnd) ;
+    		dateEnd=date ;
     	}
+    	request.setAttribute("dateEnd", dateEnd) ;
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	String dep = (String) request.getParameter("department") ; 
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("depIsNoOmc", " and (dmc.department_id='"+dep+"' or d.isNoOmc='1' and pdmc.department_id='"+dep+"')");
@@ -143,7 +143,7 @@
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
     <msh:sectionContent>
-    <ecom:webQuery maxResult="2000" name="journal_list" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" maxResult="2000" name="journal_list" nativeSql="
     
     select  
     hmc.id as hmcid
@@ -240,7 +240,7 @@ then -1 else 0 end) as age
     %>
     <msh:section title="Свод по отделениям">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_swod" nativeSql="
     
     select  '&department='||d.id||'&result='||vhr.id as id
     ,d.name as depname,vhr.name as vhrname
@@ -302,7 +302,7 @@ then -1 else 0 end) as age
     %>
     <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_swod" nativeSql="
     
     select  
     '&department='||case when d.isNoOmc='1' and pd.id is not null then pd.id else d.id end
@@ -374,7 +374,7 @@ then -1 else 0 end) as age
     %>
     <msh:section title="Общий свод">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_swod_all" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_swod_all" nativeSql="
     
     select  
     '&result='||vhr.id as id

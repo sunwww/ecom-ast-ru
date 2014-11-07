@@ -144,7 +144,7 @@
     </script>
   </msh:ifNotInRole>
   </msh:ifFormTypeIsView>
-  <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisit">
+  <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisitForm">
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	
   	<script type="text/javascript">

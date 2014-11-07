@@ -8,5 +8,5 @@ function list_by_department(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/list_lab_prescript_by_department.jsp") ;
 }
 function journal_by_control(aForm, aCtx) {
-	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/journal_lab_prescript.jsp") ;
+	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/list_lab_prescript.jsp") ;
 }
