@@ -101,8 +101,8 @@
     </script>
   	<%
   	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
-  	ActionUtil.getValueBySql("select lpu.id,lpu.name from mislpu lpu left join worker w on w.lpu_id=lpu.id left join workfunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "lpu_id","lpu_name",request) ;
-  	Object lpu = request.getAttribute("lpu_id") ;
+  	//ActionUtil.getValueBySql("select lpu.id,lpu.name from mislpu lpu left join worker w on w.lpu_id=lpu.id left join workfunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "lpu_id","lpu_name",request) ;
+  	//Object lpu = request.getAttribute("lpu_id") ;
   	String beginDate = request.getParameter("beginDate") ;
   	String endDate = request.getParameter("endDate") ;
   	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}
@@ -112,18 +112,17 @@
   		StringBuilder title = new StringBuilder() ;
   		StringBuilder sqlAdd = new StringBuilder() ;
   		StringBuilder href = new StringBuilder() ;
-  		ActionUtil.getValueBySql("select lpu.id,lpu.name from mislpu lpu where lpu", "lpu_id","lpu_name",request) ;
   		
   		if (typeIntake!=null && typeIntake.equals("1")) {
   			sqlAdd.append(" and p.intakeDate is not null ") ;
   		} else if (typeIntake!=null && typeIntake.equals("2")) {
   			sqlAdd.append(" and p.intakeDate is null ") ;
   		}
-  		sqlAdd.append(ActionUtil.setParameterInfoFilterSql("select id, name from mislpu where id=:id"
+  		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
   				,"deparment","ml.id", request)) ;
-  		sqlAdd.append(ActionUtil.setParameterInfoFilterSql("select id, name from vocPrescriptType where id=:id"
+  		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
   				,"prescriptType","vpt.id", request)) ;
-  		sqlAdd.append(ActionUtil.setParameterInfoFilterSql("select id, code||' '||name from medservice where id=:id"
+  		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
   				,"service","ms.id", request)) ;
   		title.append(request.getAttribute("departmentInfo"))
   			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
@@ -197,8 +196,8 @@
     
     order by ${groupOrder}
     "/>
-    <msh:sectionTitle>Список пациентов по отделению ${lpu_name}
-    ${list_sql}
+    <msh:sectionTitle>Свод. ${departmentInfo}
+    
     </msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="pres_journal.do?typeReestr=1&beginDate=${beginDate}&endDate=${endDate}${href}" idField="1" >
