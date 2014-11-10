@@ -99,11 +99,12 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		
 	}
 	public static String getValueInfoById(String aSql, String aParameter, String aFldId, HttpServletRequest aRequest) {
-		return getValueInfoById(aSql, aParameter, aParameter, aFldId, aRequest) ;
-		
-		
+		return getValueInfoById(aSql, null, aParameter, aParameter, aFldId, aRequest) ;
 	}
-	public static String getValueInfoById(String aSql, String aParameter, String aAttributeName, String aFldId, HttpServletRequest aRequest) {
+	public static String getValueInfoById(String aSql, String aTitle, String aParameter, String aFldId, HttpServletRequest aRequest) {
+		return getValueInfoById(aSql, aTitle, aParameter, aParameter, aFldId, aRequest) ;
+	}
+	public static String getValueInfoById(String aSql,String aTitle, String aParameter, String aAttributeName, String aFldId, HttpServletRequest aRequest) {
 		IWebQueryService service;
 		String sql ="" ;
 		try {
@@ -116,7 +117,8 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 				Collection<WebQueryResult> col = service.executeNativeSql(aSql,1) ;
 				if (!col.isEmpty()) {
 					WebQueryResult obj = col.iterator().next() ;
-					aRequest.setAttribute(aAttributeName+"Info", obj.get2()) ;
+					String title = aTitle!=null && !aTitle.equals("")?aTitle+": ":"" ;
+					aRequest.setAttribute(aAttributeName+"Info", title+obj.get2()) ;
 				} else {
 					
 				}
