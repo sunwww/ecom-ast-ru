@@ -151,7 +151,7 @@
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
 	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"   ' size = '10' />";
 	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
-	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 	   	new dateutil.DateField($(type+'Date'+num));
 					   
 		if (type=='lab') {
@@ -296,7 +296,7 @@
 			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
-            <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
+            <input type="button" name="subm" onclick="addRow('lab');" value="Добавить" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
@@ -325,7 +325,7 @@
     			<msh:textField property="funcDate" label="Дата " size="10"/>
     			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
     			<td>        	
-	            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+	            <input type="button" name="subm" onclick="addRow('func');" value="Добавить" tabindex="4" />
 	            </td>
 			 </tr>
 			 <tr>
