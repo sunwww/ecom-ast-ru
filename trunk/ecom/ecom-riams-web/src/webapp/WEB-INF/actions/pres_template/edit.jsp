@@ -5,6 +5,141 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+	<tiles:put name="javascript" type="string">
+	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+
+<msh:ifFormTypeIsNotView formName="pres_templateForm">
+<script type="text/javascript">
+		var oldaction = document.forms['pres_templateForm'].action ;
+		document.forms['pres_templateForm'].action="javascript:checkLabs()";
+		var num=0;
+		var labNum=0;
+		var funcNum=0;
+		var labList="";
+		
+		function checkLabs() {
+			labList="";
+			if ($('labServicies')) {
+				writeServicesToList('lab');
+			}
+			if ($('funcServicies')) {
+				writeServicesToList('func');
+			}
+			$('labList').value=labList ;
+			alert (labList);
+			document.forms['pres_templateForm'].action=oldaction ;
+			document.forms['pres_templateForm'].submit();
+		}
+		function writeServicesToList(type) {
+			var typeNum = 0;
+		if (type=='lab') {
+			typeNum = labNum;
+		} else if (type=='func') {
+			typeNum = funcNum;
+		}
+		var isDoubble=0;
+		while (typeNum>0) {
+			if (document.getElementById(type+"Element"+typeNum)) {
+				var curService = document.getElementById(type+'Service'+typeNum);
+				var curDate = document.getElementById(type+'Date'+typeNum);
+				var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
+				if (curService.value != "" & curDate.value != "") {			            
+		            labList+=curService.value;
+		            labList+=":";
+		            labList+=curDate.value;
+		            labList+=":";
+		            labList+=curCabinet.value;
+		            labList+="#";
+		            // Проверка на дубли 
+		            if ($(type+'Servicies').value==curService.value) {
+		            	isDoubble=1;	
+		            }
+				}
+					
+			}
+       		typeNum-=1;
+	 	}
+		if (isDoubble==0) {
+			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
+			   	labList+=$(type+'Servicies').value;
+	            labList+=":";
+	            labList+=$(type+'Date').value;
+	            labList+=":";
+	            labList+=$(type+'Cabinet').value;
+	            labList+="#";
+	         }
+	     }
+		}
+		
+		function addRow(type) {
+		if (type=='lab') {
+			num = labNum;
+		} else if (type=='func') {
+			num = funcNum;
+		}
+		if (document.getElementById(type+'Servicies').value==""){
+			alert("Выбирите услугу!");
+			return;
+		}
+		
+		// Проверим на дубли 
+		var checkNum = 1;
+		if (num>0){
+			while (checkNum<=num) {
+				if (document.getElementById(type+'Service'+checkNum)) {
+					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+						alert("Уже существует такое исследование!!!");
+						return;
+					
+					}
+				}
+				checkNum+=1;
+		}
+		}
+		
+		num+=1;
+	    // Считываем значения с формы 
+	    
+	    var nameId = document.getElementById(type+'Servicies').value;
+ 		var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке
+	    // и добавляем тх
+	    var td1 = document.createElement("TD");
+	   	td1.colSpan="2";
+	   	td1.align="right";
+	    var td2 = document.createElement("TD");
+	    td2.colSpan="2";
+	    var td3 = document.createElement("TD");
+	    
+		 row.appendChild(td1);
+		 row.appendChild(td2);
+		 row.appendChild(td3);
+	    
+	    // Наполняем ячейки 
+	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+	    
+	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"   ' size = '10' />";
+	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
+	   	new dateutil.DateField($(type+'Date'+num));
+					   
+		if (type=='lab') {
+			labNum = num;
+		} else if (type=='func'){
+			funcNum = num;
+		}
+	}
+		
+		
+		</script>
+		</msh:ifFormTypeIsNotView>
+		</tiles:put>
 
   <tiles:put name="body" type="string">
     <!-- 
@@ -13,6 +148,7 @@
     <msh:form action="/entitySaveGoView-pres_template.do" defaultField="name" guid="ea411ae6-6822-4cbd-a7f3-b8f6cfa1beba">
       <msh:hidden property="id" guid="ba8ca3c4-0044-44ab-bb12-a75e3441fae2" />
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
+      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel>
         <msh:row>
         	<msh:textField property="name" label="Название"  horizontalFill="true" fieldColSpan="3"/>
@@ -127,7 +263,64 @@
         </td></tr>
         </msh:ifInRole>
         </msh:ifFormTypeIsCreate>
-
+      <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
+       <msh:ifFormTypeIsCreate formName="pres_templateForm"> 
+        <msh:panel>
+        <msh:row>
+        	<msh:separator label="Лабораторные исследования" colSpan="10"/>
+        </msh:row>
+        <msh:row>
+        <tr><td>
+        <table id="labTable">
+        <tbody id="addlabElements">
+    		
+			<tr>
+			<msh:textField property="labDate" label="Дата " size="10"/>
+			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			<msh:ifFormTypeIsNotView formName="pres_templateForm">
+			<td>        	
+            <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
+            </td>
+            </msh:ifFormTypeIsNotView>
+            </tr>
+            <tr>
+    		
+			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+			</tr>
+           </tbody>
+    		</table>
+    		</td></tr>
+        </msh:row>
+        </msh:panel>
+        </msh:ifFormTypeIsCreate>
+         <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
+        <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
+         <msh:ifFormTypeIsCreate formName="pres_templateForm"> 
+        <msh:panel>
+       	 <msh:row>
+        	<msh:separator label="Функциональные исследования" colSpan="10"/>
+        </msh:row>
+        <msh:row>
+        <tr><td>
+        <table id="funcTable">
+        <tbody id="addfuncElements">
+    		<tr>
+    			<msh:textField property="funcDate" label="Дата " size="10"/>
+    			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
+    			<td>        	
+	            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+	            </td>
+			 </tr>
+			 <tr>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			</tr>
+			<msh:ifFormTypeIsNotView formName="pres_templateForm">
+			</msh:ifFormTypeIsNotView>
+           </tbody>
+    		</table>
+    		</td></tr></msh:row>
+        </msh:panel>
+        </msh:ifFormTypeIsCreate>
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
