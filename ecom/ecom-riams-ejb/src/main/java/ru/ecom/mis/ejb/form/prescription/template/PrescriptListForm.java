@@ -19,6 +19,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
@@ -151,4 +153,97 @@ public class PrescriptListForm extends AbstractPrescriptionListForm {
 	private ModePrescriptionForm theModeForm = new ModePrescriptionForm();
 	/** Форма диеты */
 	private DietPrescriptionForm theDietForm = new DietPrescriptionForm();
+	
+	/** Лабораторные исследования */
+	@Comment("Лабораторные исследования")
+	public String getLabServicies() {
+		return theLabServicies;
+	}
+
+	public void setLabServicies(String aLabServicies) {
+		theLabServicies = aLabServicies;
+	}
+	
+	/** Лабораторные исследования */
+	private String theLabServicies;
+	
+	/** Дата по лаб. исследованию */
+	@Comment("Дата по лаб. исследованию")
+	@DateString @DoDateString
+	public String getLabDate() {return theLabDate;}
+	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
+
+	/** Дата по лаб. исследованию */
+	private String theLabDate;
+	
+	/** Список услуг по лаборатории */
+	@Comment("Список услуг по лаборатории")
+	public String getLabList() {return theLabList;}
+	public void setLabList(String aLabList) {theLabList = aLabList;}
+
+	/** Список услуг по лаборатории */
+	private String theLabList;
+	
+	/** Функциональные исследования */
+	@Comment("Функциональные исследования")
+	public String getFuncServicies() {
+		return theFuncServicies;
+	}
+
+	public void setFuncServicies(String aFuncServicies) {
+		theFuncServicies = aFuncServicies;
+	}
+	/** Кабинет для лабораторных исследования*/
+	@Comment("Кабинет для лабораторных исследования")
+	public String getLabCabinet() {
+		return theLabCabinet;
+	}
+
+	public void setLabCabinet(String aLabCabinet) {
+		theLabCabinet = aLabCabinet;
+	}
+
+	/** Кабинет для лабораторных исследования */
+	private String theLabCabinet;
+	/** Функциональные исследования */
+	private String theFuncServicies;
+	
+	/** Дата функционального исследования */
+	@Comment("Дата функционального исследования")
+	@DateString @DoDateString
+	public String getFuncDate() {
+		return theFuncDate;
+	}
+
+	public void setFuncDate(String aFuncDate) {
+		theFuncDate = aFuncDate;
+	}
+
+	/** Дата функционального исследования */
+	private String theFuncDate;
+	/** Кабинет для функ. исследования */
+	@Comment("Кабинет для функ. исследования")
+	public String getFuncCabinet() {
+		return theFuncCabinet;
+	}
+
+	public void setFuncCabinet(String aFuncCabinet) {
+		theFuncCabinet = aFuncCabinet;
+	}
+
+	/** Кабинет для функ. исследования */
+	private String theFuncCabinet;
+	
+	/** Список функциональных исследований */
+	@Comment("Список функциональных исследований")
+	public String getFuncList() {
+		return theFuncList;
+	}
+
+	public void setFuncList(String aFuncList) {
+		theFuncList = aFuncList;
+	}
+
+	/** Список функциональных исследований */
+	private String theFuncList;
 }
