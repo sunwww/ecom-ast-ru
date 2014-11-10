@@ -78,6 +78,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aNameGet) ;
 		aRequest.setAttribute(aNameSet,col.isEmpty()?aDefault:""+col.iterator().next().get1()) ;
 	}
+	
 	public static void getValueBySql(String aSql,String aFieldId, String aFieldName, HttpServletRequest aRequest) {
 		IWebQueryService service;
 		try {
@@ -97,36 +98,47 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		}
 		
 	}
-	
-	public static String setParameterInfoFilterSql(String aSqlValue, String aParameter,String aFldId,HttpServletRequest aRequest) {
-		String aAttributeName=aParameter ;
-		String param = (String)aRequest.getParameter(aParameter) ;
-		String sql ="" ;
-    	if (param!=null && !param.equals("") && !param.equals("0")) {
-    		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
-    		sql=" and "+aFldId+"='"+param+"'";
-    		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
-    		aRequest.setAttribute(aAttributeName,param) ;
-    		IWebQueryService service;
-    		try {
-    			service = Injection.find(aRequest).getService(IWebQueryService.class);
-    			Collection<WebQueryResult> col = service.executeNativeSql(aSqlValue.replaceAll(":id", "'"+param+"'"),1) ;
-    			if (!col.isEmpty()) {
-    				WebQueryResult obj = col.iterator().next() ;
-    				aRequest.setAttribute(aAttributeName+"Info", obj.get2()) ;
-    			} else {
-    				
-    			}
-    		} catch (NamingException e) {
-    			aRequest.setAttribute(aAttributeName+"Info", "ОШИБКА SQL: "+aSqlValue) ;
-    			e.printStackTrace();
-    		}
-    	} else {
-    		aRequest.setAttribute(aAttributeName,"0") ;
-    		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
-    	}
-    	return sql ;
+	public static String getValueInfoById(String aSql, String aParameter, String aFldId, HttpServletRequest aRequest) {
+		return getValueInfoById(aSql, aParameter, aParameter, aFldId, aRequest) ;
+		
+		
 	}
+	public static String getValueInfoById(String aSql, String aParameter, String aAttributeName, String aFldId, HttpServletRequest aRequest) {
+		IWebQueryService service;
+		String sql ="" ;
+		try {
+			if (aAttributeName==null) aAttributeName=aParameter ;
+			String param = (String)aRequest.getParameter(aParameter) ;
+			
+	    	if (param!=null && !param.equals("") && !param.equals("0")) {
+	    		service = Injection.find(aRequest).getService(IWebQueryService.class);
+	    		aSql = aSql.replaceAll(":id", param) ;
+				Collection<WebQueryResult> col = service.executeNativeSql(aSql,1) ;
+				if (!col.isEmpty()) {
+					WebQueryResult obj = col.iterator().next() ;
+					aRequest.setAttribute(aAttributeName+"Info", obj.get2()) ;
+				} else {
+					
+				}
+	    		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
+	    		sql=" and "+aFldId+"='"+param+"'";
+	    		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
+	    		aRequest.setAttribute(aAttributeName,param) ;
+		    	
+	    	} else {
+	    		aRequest.setAttribute(aAttributeName,"0") ;
+	    		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
+	    	}
+    	
+		} catch (NamingException e) {
+			
+		}
+		return sql ;
+			
+		
+		
+	}
+	
 	public static String setParameterFilterSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
 		return setParameterFilterSql(aParameter, aParameter, aFldId, aRequest) ;
 	}
