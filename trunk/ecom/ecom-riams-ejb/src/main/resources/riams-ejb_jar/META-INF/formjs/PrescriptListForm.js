@@ -19,7 +19,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
 	aEntity.setCreateUsername(username) ;
-	//throw ""+aForm.labList;
+	
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
 		var prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
@@ -38,8 +38,11 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setPrescriptionList(aEntity) ;
 					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
+					if (!aForm.instanceOf('template'))
+						{
 					adMedService.setPlanStartDate(par2) ;
 					adMedService.setPrescriptType(prescriptType) ;
+						}
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
