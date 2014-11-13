@@ -38,11 +38,19 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class PrescriptListForm extends AbstractPrescriptionListForm {
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
-	@Persist
+	@Persist 
 	public Long getWorkFunction() {return theWorkFunction;}
 	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
 	private Long theWorkFunction ;
+	
+	/** Тип назначения */
+	@Comment("Тип назначения")
+	@Persist 
+	public Long getPrescriptType() {return thePrescriptType;}
+	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
+
+	private Long thePrescriptType;
 	
 	/** Категории классификатора */
 	@Comment("Категории классификатора")
