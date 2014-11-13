@@ -23,6 +23,7 @@ public class PrescriptionServiceJs {
 	 */
 	public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		aPresIDs = aPresIDs.substring(0,aPresIDs.length()-1); // Обрезаем # 
 		StringBuilder sqlMS = new StringBuilder() ;
 		StringBuilder sqlCab = new StringBuilder();
 		StringBuilder res = new StringBuilder() ;
@@ -33,7 +34,7 @@ public class PrescriptionServiceJs {
 				String msID = param.length>0&&param[0]!=null? param[0] : null;
 				String date = param.length>1&&param[1]!=null ? param[1]: "";
 				String cabID = param.length>2&&param[2]!=null? param[2] : null;
-				if (msID!=null){
+				if (msID!=null && msID!=""){
 					sqlMS.setLength(0);
 					sqlMS.append("select ms.id, ms.code ||' ' ||ms.name, vst.code from medservice ms ")
 					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
