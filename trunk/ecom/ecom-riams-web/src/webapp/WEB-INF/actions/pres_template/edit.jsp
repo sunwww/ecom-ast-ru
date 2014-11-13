@@ -41,9 +41,9 @@
 		while (typeNum>0) {
 			if (document.getElementById(type+"Element"+typeNum)) {
 				var curService = document.getElementById(type+'Service'+typeNum);
-				var curDate = document.getElementById(type+'Date'+typeNum);
+				var curDate = document.getElementById(type+'Date'+typeNum)!=null?document.getElementById(type+'Date'+typeNum):"";
 				var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
-				if (curService.value != "" & curDate.value != "") {			            
+				if (curService.value != "") {			            
 		            labList+=curService.value;
 		            labList+=":";
 		            labList+=curDate.value;
@@ -60,7 +60,7 @@
        		typeNum-=1;
 	 	}
 		if (isDoubble==0) {
-			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
+			if ($(type+'Servicies').value != "" ) {
 			   	labList+=$(type+'Servicies').value;
 	            labList+=":";
 	            labList+=$(type+'Date').value;
@@ -124,7 +124,7 @@
 	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
 	    
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"   ' size = '10' />";
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
 	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
 	   	new dateutil.DateField($(type+'Date'+num));
@@ -150,6 +150,9 @@
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel>
+     	<msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+          <msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" viewOnlyField="true"/>
+        </msh:row>
         <msh:row>
         	<msh:textField property="name" label="Название"  horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
