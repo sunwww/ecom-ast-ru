@@ -189,6 +189,18 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	/** Список услуг по лаборатории */
 	private String theLabList;
 	
+	/** Список лекарственных назначений */
+	@Comment("Список лекарственных назначений")
+	public String getDrugList() {
+		return theDrugList;
+	}
+
+	public void setDrugList(String aDrugList) {
+		theDrugList = aDrugList;
+	}
+
+	/** Список лекарственных назначений */
+	private String theDrugList;
 	/** Функциональные исследования */
 	@Comment("Функциональные исследования")
 	public String getFuncServicies() {
