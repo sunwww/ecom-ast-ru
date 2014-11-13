@@ -80,7 +80,7 @@
       </msh:row>
     </msh:panel>
     </msh:form>
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+    
            <script type='text/javascript'>
            checkFieldUpdate('typeIntake','${typeIntake}',1) ;
            checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;

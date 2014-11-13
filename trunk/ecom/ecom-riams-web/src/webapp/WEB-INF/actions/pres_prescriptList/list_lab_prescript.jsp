@@ -243,7 +243,7 @@
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="1">
+	    <msh:table name="reestr" action="entityParentView-pres_prescriptList.do" idField="1">
 	      <msh:tableColumn columnName="Стат.карта" property="2"  />
 	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />
 	      <msh:tableColumn columnName="Имя" property="4" />
