@@ -17,7 +17,7 @@
 		var funcNum=0;
 		var labList="";
 
-		onload=function () {
+ 		onload=function () {
 			PrescriptionService.checkMedCaseEmergency($('medCase').value, "medCase", { 
 	            callback: function(aResult) { 
 	            	if(!aResult) { 
@@ -30,11 +30,43 @@
 	            		$('presType1').checked = "true";
 	            		isChecked(1);
 	            		}
+	            	
+	            	
+ 	            	if ($('labList').value!="")
+	            		{
+	            		PrescriptionService.getPresLabTypes($('labList').value, {
+	            			callback: function(aResult2) {
+	            				alert ("aResult is : " +aResult2);
+	            				if (aResult2) {
+	            					
+	            					var resultList = aResult2.split('#');
+	            					if (resultList.length>0) {
+	            						for (var i=0; i<resultList.length;i++) {
+	            							var resultRow = resultList[i].split(':');
+	            							if (resultRow[0]!="" && resultRow[0]!=null)
+	            								{	            	
+	            								/*
+	            								0 - ms.ID
+	            								1 - ms. code+name
+	            								2 - ms.type
+	            								3 - date
+	            								4 - cabinetcode+name
+	            								*/
+	            								addRow(resultRow);
+	            								
+	            								}
+	            						}
+	            					}
+	            				}
+	            			}
+	            		}
+	            				);
+	            		} 
 	           } 
 			} 
 	      	); 
 			
-		} 
+		}  
 		
 		function writeServicesToList(type) {
 			var typeNum = 0;
@@ -89,50 +121,111 @@
 				writeServicesToList('func');
 			}
 			$('labList').value=labList ;
-		//	alert (labList);
+			alert($('labList').value);
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
 		
-		
-		function addRow(type) {
-		if (type=='lab') {
-			num = labNum;
-		} else if (type=='func') {
-			num = funcNum;
-		}
-		if (document.getElementById(type+'Servicies').value==""){
-			alert("Выбирите услугу!");
-			return;
-		}
-		
-		// Проверим на дубли 
-		var checkNum = 1;
-		if (num>0){
-			while (checkNum<=num) {
-				if (document.getElementById(type+'Service'+checkNum)) {
-					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
-					//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
-							alert("Уже существует такое исследование!!!");
-							return;
-					//	}
+		function addRowType(type) {
+			if (type=='lab') {
+				num = labNum;
+			} else if (type=='func') {
+				num = funcNum;
+			}
+			if (document.getElementById(type+'Servicies').value==""){
+				alert("Выбирите услугу!");
+				return;
+			}
+			
+			// Проверим на дубли 
+			var checkNum = 1;
+			if (num>0){
+				while (checkNum<=num) {
+					if (document.getElementById(type+'Service'+checkNum)) {
+						if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+						//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
+								alert("Уже существует такое исследование!!!");
+								return;
+						//	}
+						}
 					}
-				}
-				checkNum+=1;
-		}
+					checkNum+=1;
+			}
+			}
+			
+			num+=1;
+		    // Считываем значения с формы 
+		    
+		    var nameId = document.getElementById(type+'Servicies').value;
+	 			var tbody = document.getElementById('add'+type+'Elements');
+		    var row = document.createElement("TR");
+			row.id = type+"Element"+num;
+		    tbody.appendChild(row);
+		
+		    // Создаем ячейки в вышесозданной строке
+		    // и добавляем тх
+		    var td1 = document.createElement("TD");
+		   	td1.colSpan="2";
+		   	td1.align="right";
+		    var td2 = document.createElement("TD");
+		    td2.colSpan="2";
+		    var td3 = document.createElement("TD");
+		    
+			 row.appendChild(td1);
+			 row.appendChild(td2);
+			 row.appendChild(td3);
+		    
+		    // Наполняем ячейки 
+		    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+		    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+		    
+		    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
+		  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+		   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
+		   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+		   	new dateutil.DateField($(type+'Date'+num));
+						   
+			if (type=='lab') {
+				labNum = num;
+			} else if (type=='func'){
+				funcNum = num;
+			}
 		}
 		
+		function addRow(resultRow) {
+			/*
+			0 - ms.ID
+			1 - ms. code+name
+			2 - ms.type
+			3 - date
+			4 - cabinetcode+name
+			*/
+			//alert ("addRow, "+resultRow);
+			var aID = resultRow[0]; 
+			var thisServiceName = resultRow[1];
+			var type = resultRow[2];
+			var thisDate = resultRow[3];
+			var thisCabinetName = resultRow[4];
+			var thisCabinet = thisCabinetName.split(" ");
+			
+			
+		if (type=='LABSURVEY') {
+			type='lab';
+			num = labNum;
+		} else if (type=='DIAGNOSTIC') {
+			num = funcNum;
+			type='func';
+		}
+			
 		num+=1;
-	    // Считываем значения с формы 
 	    
-	    var nameId = document.getElementById(type+'Servicies').value;
- 			var tbody = document.getElementById('add'+type+'Elements');
+ 		var tbody = document.getElementById('add'+type+'Elements');
 	    var row = document.createElement("TR");
 		row.id = type+"Element"+num;
 	    tbody.appendChild(row);
 	
-	    // Создаем ячейки в вышесозданной строке
-	    // и добавляем тх
+	    // Создаем ячейки в вышесозданной строке 
+	    // и добавляем тх 
 	    var td1 = document.createElement("TD");
 	   	td1.colSpan="2";
 	   	td1.align="right";
@@ -143,14 +236,14 @@
 		 row.appendChild(td1);
 		 row.appendChild(td2);
 		 row.appendChild(td3);
-	    
+	    var thisDate, thisCabinet;
 	    // Наполняем ячейки 
-	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
-	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
+	    var dt="<input id='"+type+"Service"+num+"' value='"+aID+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+thisCabinet[0]+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
 	    
-	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
-	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
+	    td2.innerHTML = dt+"<span>"+thisServiceName+"</span>" ;
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+thisDate+"' size = '10' />";
+	   	td2.innerHTML += dt2+"<span>. Кабинет: "+thisCabinetName+"</span>" ;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 	   	new dateutil.DateField($(type+'Date'+num));
 					   
@@ -296,7 +389,7 @@
 			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
-            <input type="button" name="subm" onclick="addRow('lab');" value="Добавить" tabindex="4" />
+            <input type="button" name="subm" onclick="addRowType('lab');" value="Добавить" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
@@ -325,7 +418,7 @@
     			<msh:textField property="funcDate" label="Дата " size="10"/>
     			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
     			<td>        	
-	            <input type="button" name="subm" onclick="addRow('func');" value="Добавить" tabindex="4" />
+	            <input type="button" name="subm" onclick="addRowType('func');" value="Добавить" tabindex="4" />
 	            </td>
 			 </tr>
 			 <tr>
