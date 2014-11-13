@@ -44,6 +44,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	var bedFund = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.BedFund, aForm.bedFund) ;
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
+	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
 	
 
 	if (prev!=null) {
@@ -78,7 +79,11 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 		//var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 		//var dateTsql = new java.sql.Date(dateTransfer.getTime()) ;
-		if (!(dateEntrHosp.getTime() < dateStart.getTime())) throw "Дата поступления в отделение должна быть больше, чем дата поступления в стационар";
+		if (isDoc) {
+			if (!(dateEntrHosp.getTime() < dateStart.getTime())) throw "Дата поступления в отделение должна быть больше, чем дата поступления в стационар";
+		} else {
+			if (!(dateEntrHosp.getTime() <= dateStart.getTime())) throw "Дата поступления в отделение должна быть больше или равна, чем дата поступления в стационар";
+		}
 		
 		
 	}
@@ -109,7 +114,6 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 	}
 	*/
-	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
 	if (isDoc && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
 		throw "При госпитализации в отделение необходимо указывать палату и койку" ;
 	}
