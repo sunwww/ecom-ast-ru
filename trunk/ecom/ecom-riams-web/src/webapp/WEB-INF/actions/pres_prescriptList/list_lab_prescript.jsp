@@ -23,7 +23,7 @@
   <%
   String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
   String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","3", request) ;
-  String typeReestr =ActionUtil.updateParameter("PrescriptJournal","typeReestr","0", request) ;
+  String typeReestr =request.getParameter("typeReestr") ;
 	 %>
   <msh:form action="/pres_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
