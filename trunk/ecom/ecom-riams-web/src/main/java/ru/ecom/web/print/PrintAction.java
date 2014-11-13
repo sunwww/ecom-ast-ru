@@ -2,12 +2,14 @@ package ru.ecom.web.print;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.TreeMap;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.ecs.xhtml.area;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -16,19 +18,33 @@ import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.print.IPrintService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PrintAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		String reportKey = aMapping.getParameter() ;
-		IPrintService service = Injection.find(aRequest).getService(IPrintService.class);
-        TreeMap<String, String> map = new TreeMap<String, String>();
+		String appName = null ;
+		String ispRepBase = aRequest.getParameter("isReportBase") ;
+		String servJs = aRequest.getParameter("s") ;
+		String methodJs = aRequest.getParameter("m") ;
+		if (ispRepBase!=null &&ispRepBase.toUpperCase().equals("TRUE") 
+	        		&& RolesHelper.checkRoles("/Policy/Config/IsReportBase",aRequest) 
+	        		&& servJs!=null && servJs.equals("PrintService")) {
+	        	appName = Injection.getWebName(aRequest, null) ;
+	        	appName = appName.substring(0,1)+"rep"+appName.substring(1) ;
+	        } else {
+	        	appName = Injection.getWebName(aRequest, null) ;
+	        }
+		IPrintService service  = Injection.find(aRequest).getService(IPrintService.class);
+	    TreeMap<String, String> map = new TreeMap<String, String>();
         Enumeration en = aRequest.getParameterNames() ;
         boolean isMultyId = !(aRequest.getParameter("multy")==null?true:aRequest.getParameter("multy").equals("")) ;
         //System.out.println("multy="+isMultyId) ;
@@ -37,6 +53,7 @@ public class PrintAction extends BaseAction {
         StringBuilder sql = new StringBuilder() ;
         sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=wf.secUser_id left join CopyingEquipment ce on ce.id=wf.copyingEquipmentDefault_id where su.login='").append(login).append("' and ce.id is not null") ;
         IWebQueryService service1 = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        IScriptService serviceScr = Injection.find(aRequest,appName).getService(IScriptService.class) ;
 		Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString(),1);
 		String print = "no" ;
 		boolean isTxtFile = false ;
@@ -75,10 +92,11 @@ public class PrintAction extends BaseAction {
 //            System.out.println("key = " + key);
 //            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
+        //Map<String,Object> values =  ;
         String filename = service.print(new StringBuilder().append(print).append("-").append(login).toString()
-        		,isTxtFile,reportKey
-        		, aRequest.getParameter("s")
-        		, aRequest.getParameter("m"), map) ;
+        		,isTxtFile,reportKey,
+        		serviceScr,servJs, methodJs, map) ;
+        
         String next = aRequest.getParameter("next") ;
         if (next!=null && !next.equals("") &&filename.toLowerCase().contains(".txt")) {
         	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;

@@ -708,7 +708,7 @@ order by vrspt.strCode
 	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
@@ -887,7 +887,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (умершие) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
@@ -1016,7 +1016,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_reestr_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр пациентов ${param.strname} по нозоологиям (умершие) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     

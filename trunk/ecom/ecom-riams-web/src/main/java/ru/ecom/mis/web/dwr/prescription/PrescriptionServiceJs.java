@@ -30,9 +30,9 @@ public class PrescriptionServiceJs {
 		if (labListArr.length>0) {
 			for (int i=0; i<labListArr.length;i++) {
 				String[] param = labListArr[i].split(":");
-				String msID = param[0]!=null? param[0] : null;
-				String date = param[1]!=null ? param[1]: "";
-				String cabID = param[2]!=null? param[2] : null;
+				String msID = param.length>0&&param[0]!=null? param[0] : null;
+				String date = param.length>1&&param[1]!=null ? param[1]: "";
+				String cabID = param.length>2&&param[2]!=null? param[2] : null;
 				if (msID!=null){
 					sqlMS.setLength(0);
 					sqlMS.append("select ms.id, ms.code ||' ' ||ms.name, vst.code from medservice ms ")

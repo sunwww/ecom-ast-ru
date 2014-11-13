@@ -362,10 +362,10 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			}
 		} else if (aType.equals("invalidity")) {
 			if (aInt==0) {
-				return ",'i1' as i1,'i2' as i2,'i3' as i3" ;
+				return ",'i1' as i1,'i2' as i2,'i3' as i3,'i4' as i4,'i5' as i5" ;
 				//return ",' ' as i1,' ' as i2,' ' as i3" ;
 			} else {
-				return ",case when inv.incapable='1' then 'Недеесп. '||coalesce(to_char(inv.lawCourtDate,'dd.mm.yyyy'),'-')||' '||invvlc.name else '' end as invincapable, to_char(dateFrom,'dd.mm.yyyy')||'-'||case when inv.withoutExam='1' then 'Без переосвид.' else to_char(inv.nextRevisionDate,'dd.mm.yyyy') end as invwithoutexam, vi.name as viname " ;
+				return ",case when inv.incapable='1' then 'Недеесп. '||coalesce(to_char(inv.lawCourtDate,'dd.mm.yyyy'),'-')||' '||invvlc.name else '' end as invincapable, to_char(dateFrom,'dd.mm.yyyy')||'-'||case when inv.withoutExam='1' then 'Без переосвид.' else to_char(inv.nextRevisionDate,'dd.mm.yyyy') end as invwithoutexam, vi.name as viname, vivr.code as vivrid, vihr.code as vihrid " ;
 			}
 		}
 		return "" ;

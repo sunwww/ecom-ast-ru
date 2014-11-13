@@ -429,7 +429,7 @@ order by vrspt.strCode
 	    <input type='hidden' name="sqlText" id="sqlText" value="${Report36HOSPswod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
@@ -571,7 +571,7 @@ where ahr.${diagnosField} between rspt1.codefrom and rspt1.codeto
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,to_char(ahr.entranceHospDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceHospDate24!=ahr.entranceHospDate${timeAdd} then '(кал. день '||to_char(ahr.entranceHospDate24,'dd.mm.yyyy')||')' else '' end as slsdateStart
 ,to_char(ahr.entranceDate${timeAdd},'dd.mm.yyyy')||case when ahr.entranceDate24!=ahr.entranceDate${timeAdd} then '(кал. день '||to_char(ahr.entranceDate24,'dd.mm.yyyy')||')' else '' end as slodateStart
-,ml1.name as ml1name,ml2.name as ml2name,ml3.name as ml3.name
+,ml1.name as ml1name,ml2.name as ml2name,ml3.name as ml3name
 ,to_char(ahr.dischargeDate${timeAdd},'dd.mm.yyyy')||case when ahr.dischargeDate24!=ahr.dischargeDate${timeAdd} then '(кал. день '||to_char(ahr.dischargeDate24,'dd.mm.yyyy')||')' else '' end as slodateFinish
 ,ahr.idcEntranceCode as idcEntranceCode
 ,ahr.idcDepartmentCode as idcDepartmentCode
@@ -611,7 +611,7 @@ order by p.lastname,p.firstname,p.middlename " />
     <input type='hidden' name="sqlText" id="sqlText" value="${reestr_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Список поступивших пациентов ${param.strname}">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
     </form>

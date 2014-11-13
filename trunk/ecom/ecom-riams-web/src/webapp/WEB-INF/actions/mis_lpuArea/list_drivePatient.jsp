@@ -315,6 +315,8 @@ as age
    left join VocPsychStrikeOffReason vpsor on vpsor.id=area.stikeOffReason_id
    left join Invalidity inv on inv.patient_id=p.id
    left join VocInvalidity vi on vi.id=inv.group_id
+   left join VocInvalidityVitalRestriction vivr on vivr.id=inv.vitalRestriction_id
+   left join VocInvalidityHealthViolation vihr on vihr.id=inv.healthViolation_id
     left join VocLawCourt invvlc on invvlc.id=inv.lawCourt_id
 	left join Address2 a on a.addressId=p.${addressAdd}address_addressId
 	left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
@@ -342,17 +344,19 @@ as age
 			<msh:tableColumn columnName="Группа инвалидности" property="14" cssClass="invAddField"/>
 			<msh:tableColumn columnName="Инв. недеесп. дата суда и суд " property="12" cssClass="invAddField"/>
 			<msh:tableColumn columnName="Дата устан. - дата след. пересмотра (без переосвид.)" property="13" cssClass="invAddField"/>
-			<msh:tableColumn columnName="Дата суицида" property="15" cssClass="suicideAddField"/>
-			<msh:tableColumn columnName="Суицид завершен?" property="16" cssClass="suicideAddField"/>
-			<msh:tableColumn columnName="Характер суицида" property="17" cssClass="suicideAddField"/>
-			<msh:tableColumn columnName="Дата решения суда" property="18" cssClass="compulsoryAddField"/>
-			<msh:tableColumn columnName="Суд" property="19" cssClass="compulsoryAddField"/>
-			<msh:tableColumn columnName="Статья угол. кодекса" property="20" cssClass="compulsoryAddField"/>
-			<msh:tableColumn columnName="Кол-во дней" property="21" cssClass="compulsoryAddField"/>
-			<msh:tableColumn columnName="Дата взятия (АДН)" property="22" cssClass="groupAddField"/>
-			<msh:tableColumn columnName="Дата снятия (АДН)" property="23" cssClass="groupAddField"/>
-			<msh:tableColumn columnName="Кол-во дней (АДН)" property="24" cssClass="groupAddField"/>
-			<msh:tableColumn columnName="Статья (АДН)" property="25" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Ведущее ограничение жизнедеятельности" property="15" cssClass="invAddField"/>
+			<msh:tableColumn columnName="Главное нарушение состояния здоровья" property="16" cssClass="invAddField"/>
+			<msh:tableColumn columnName="Дата суицида" property="17" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Суицид завершен?" property="18" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Характер суицида" property="19" cssClass="suicideAddField"/>
+			<msh:tableColumn columnName="Дата решения суда" property="20" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Суд" property="21" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Статья угол. кодекса" property="22" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Кол-во дней" property="23" cssClass="compulsoryAddField"/>
+			<msh:tableColumn columnName="Дата взятия (АДН)" property="24" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Дата снятия (АДН)" property="25" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Кол-во дней (АДН)" property="26" cssClass="groupAddField"/>
+			<msh:tableColumn columnName="Статья (АДН)" property="27" cssClass="groupAddField"/>
         </msh:table>
     <%-- 
    ,(select list(mkb.code) from Diagnosis dd left join vocidc10 mkb on mkb.id=dd.idc10_id where dd.patient_id=pcc.patient_id and dd.establishDate between area.startDate and area.finishDate)
