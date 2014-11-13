@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.prescription;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import javax.naming.NamingException;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 
 /**
@@ -68,7 +70,24 @@ public class PrescriptionServiceJs {
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
 	}
-	
+	public String intakeService(String aListPrescript,String aMaterialId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		sql.append("update Prescription set materialId='").append(aMaterialId).append("',intakeDate='").append(formatD.format(date)).append("',intakeTime='").append(formatT.format(date)).append("',intakeUsername='").append(username).append("' where id in (").append(aListPrescript).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "1" ;
+	}
+	public String intakeServiceRemove(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("update Prescription set intakeDate=null,intakeTime=null,intakeUsername=null where id in (").append(aListPrescript).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "1" ;
+	}
 	public boolean checkMedCaseEmergency(Long aIdTemplateList, String idType, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
