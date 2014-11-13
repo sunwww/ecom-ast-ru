@@ -66,7 +66,9 @@ public class WebQueryServiceBean implements IWebQueryService {
 		if(row.length>23) {result.set24(row[23]) ;
 		if(row.length>24) {result.set25(row[24]) ;
 		if(row.length>25) {result.set26(row[25]) ;
-		}}}}}}}}}}}}}}}}}}}}}}}}
+		if(row.length>26) {result.set27(row[26]) ;
+		if(row.length>27) {result.set28(row[27]) ;
+		}}}}}}}}}}}}}}}}}}}}}}}}}}
 		
 		result.setSn(++i) ;
 		ret.add(result) ;

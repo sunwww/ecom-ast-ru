@@ -3,11 +3,24 @@ package ru.ecom.ejb.util.injection;
 import javax.naming.InitialContext;
 
 import ru.ecom.ejb.services.script.IScriptService;
+import sun.awt.windows.ThemeReader;
 
 public class EjbInjection {
 
+	public static EjbInjection getInstance(String aAppName) {
+		return new EjbInjection(aAppName); 
+	}
 	public static EjbInjection getInstance() {
-		return new EjbInjection();
+		return new EjbInjection(null); 
+	}
+	public EjbInjection(String aAppname) {
+		if (aAppname!=null && !aAppname.equals("")) {
+			theAppname=aAppname;
+		} else {
+			EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
+			theAppname=theConfig.get("default.appname","riams-app");
+			
+		}
 	}
 
 
@@ -29,8 +42,9 @@ public class EjbInjection {
 			try {
 				// FIXME получение названия приложения
 				
-				String appName = theConfig.get("default.appname","riams-app"); 
-				String jndi = appName + "/" + name + "Bean/"+aSuffix ;
+				//String appName = theConfig.get("default.appname","riams-app");
+				
+				String jndi = theAppname + "/" + name + "Bean/"+aSuffix ;
 				//System.out.println("jndi = "+jndi) ;
 				return ctx.lookup(jndi);
 			} finally {
@@ -58,5 +72,6 @@ public class EjbInjection {
 		return scriptService.invoke(aServiceName, aMethodName, args);
 	}
 	
-	private final EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
+	//private final EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
+	private final String theAppname ;
 }
