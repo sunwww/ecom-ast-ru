@@ -37,7 +37,7 @@ public class PrescriptionServiceJs {
 					sqlMS.setLength(0);
 					sqlMS.append("select ms.id, ms.code ||' ' ||ms.name, vst.code from medservice ms ")
 					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
-					.append("where ms.id='"+msID+"'");
+					.append("where ms.id='").append(msID).append("'");
 					
 					Collection<WebQueryResult> listMS = service.executeNativeSql(sqlMS.toString()) ;
 					for (WebQueryResult wqr :listMS) {
@@ -49,8 +49,8 @@ public class PrescriptionServiceJs {
 					res.append(date).append(":");
 					if (cabID!=null && cabID !=""){
 						sqlCab.setLength(0);
-						sqlCab.append("Select wf.id || ' ' || wf.groupname from workfunction wf ")
-							.append("where wf.id='"+cabID+"'");
+						sqlCab.append("Select wf.id || ' ' || wf.groupname,wf.id from workfunction wf where wf.id='")
+							.append(cabID).append("'");
 						
 						Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString()) ;
 						for (WebQueryResult wqr :listCab) {
@@ -60,7 +60,7 @@ public class PrescriptionServiceJs {
 				}
 			}
 		}
-		return res.toString();
+		return res.length()>0?res.substring(0,res.length()-1):"";
 	}
 	public String getDescription(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
