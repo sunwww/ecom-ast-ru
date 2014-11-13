@@ -36,7 +36,8 @@ function printInfoByPatient(aPatient,aCtx) {
 	var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
 		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
 	var priv = listPriv.size()>0?listPriv.get(0):null ;
-	map.put("priv.info",priv) ;
+	map.put("priv.info","") ;
+	map.put("priv.obj",priv) ;
 	map.put("priv.doc",priv!=null?priv.document:null) ;
 	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
 	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
@@ -60,6 +61,43 @@ function printInfoByPatient(aPatient,aCtx) {
 		areaText = area.getName() + ",  "+area.getComment()  ;
 	}
 	map.put("areaText", areaText) ;
+	var ddD = null;var ddMkb=null ;
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
+		var sqlD = "select to_char(min(po.startDate),'dd.mm.yyyy') as ddmin,case when vpac.code='Д' then vpac.code else null end as pocode"
+			+" ,(select mkb.code from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.patient_id='"+aPatient.id+"' and d.medcase_id is null"
+			+" and d.establishDate<=current_date) as mkbcode"
+			+" from psychiaticObservation po"
+			+" left join VocpsychambulatoryCare vpac on vpac.id=po.ambulatoryCare_id"
+			+" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id"
+			+" where pcc.patient_id='"+aPatient.id+"' "
+			+"  group by (select max(po1.startDate) from psychiaticObservation po1"
+			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
+			+" and vpac1.code!='Д'"
+			+" ), case when vpac.code='Д' then vpac.code else null end"
+			+" having (select max(po1.startDate) from psychiaticObservation po1"
+			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
+			+" and vpac1.code!='Д'"
+			+" ) is null or (select max(po1.startDate) from psychiaticObservation po1"
+			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
+			+" and vpac1.code!='Д'"
+			+" ) > max(po.startDate)"
+			 ;
+		var listD = aCtx.manager.createNativeQuery(sqlD).setMaxResults(1).getResultList() ;
+		if (listD.size()>0) {
+			var objD = listD.get(0) ;
+			if (objD[1]!=null ) {
+				ddD=objD[0] ;
+				ddMkb=objD[2] ;
+			}
+			
+		}
+				
+	} 
+	map.put("ddiag",ddD) ;
+	map.put("ddates",ddMkb) ;
 	return map ;
 }
 function printInfo(aCtx, aParams) {

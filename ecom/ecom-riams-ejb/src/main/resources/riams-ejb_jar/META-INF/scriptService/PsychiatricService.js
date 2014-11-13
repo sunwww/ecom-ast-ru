@@ -316,6 +316,8 @@ function printArea(aCtx, aParams) {
 	sql = sql + " left join VocPsychStrikeOffReason vpsor on vpsor.id=area.stikeOffReason_id" ;
 	sql = sql + " left join Invalidity inv on inv.patient_id=p.id" ;
 	sql = sql + " left join VocInvalidity vi on vi.id=inv.group_id" ;
+	sql = sql + " left join VocInvalidityVitalRestriction vivr on vivr.id=inv.vitalRestriction_id";
+	sql = sql + " left join VocInvalidityHealthViolation vihr on vihr.id=inv.healthViolation_id";
 	sql = sql + " left join VocLawCourt invvlc on invvlc.id=inv.lawCourt_id" ;
 	sql = sql + " left join Address2 a on a.addressId=p."+addressAdd+"address_addressId" ;
 	sql = sql + " left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id";
@@ -372,10 +374,10 @@ function addField(aType,aInt) {
 		}
 	} else if (aType=="invalidity") {
 		if (aInt==0) {
-			return ",'i1' as i1,'i2' as i2,'i3' as i3,'i4' as i4" ;
+			return ",'i1' as i1,'i2' as i2,'i3' as i3,'i4' as i4,'i5' as i5,'i6' as i6" ;
 			//return ",' ' as i1,' ' as i2,' ' as i3,' ' as i4" ;
 		} else {
-			return ",case when inv.incapable='1' then 'Недеесп. '||coalesce(to_char(inv.lawCourtDate,'dd.mm.yyyy'),'-')||' '||invvlc.name else '' end as invincapable, to_char(inv.dateFrom,'dd.mm.yyyy') as invdatefrom,case when inv.withoutExam='1' then 'Без переосвид.' else to_char(inv.nextRevisionDate,'dd.mm.yyyy') end as invwithoutexam, vi.name as viname " ;
+			return ",case when inv.incapable='1' then 'Недеесп. '||coalesce(to_char(inv.lawCourtDate,'dd.mm.yyyy'),'-')||' '||invvlc.name else '' end as invincapable, to_char(inv.dateFrom,'dd.mm.yyyy') as invdatefrom,case when inv.withoutExam='1' then 'Без переосвид.' else to_char(inv.nextRevisionDate,'dd.mm.yyyy') end as invwithoutexam, vi.name as viname, vivr.code as vivrid, vihr.code as vihrid " ;
 		}
 	}
 	return "" ;

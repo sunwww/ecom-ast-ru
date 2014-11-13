@@ -9,6 +9,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
+import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
@@ -30,10 +31,17 @@ public class PrintServiceBean implements IPrintService {
 	public String print(String aLogin,boolean aIsTxtFirst, String aKey
 			, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
+		// получение данных
+		EjbInjection theInjection = EjbInjection.getInstance();
+		IScriptService serv = theInjection.getLocalService(IScriptService.class) ;
+		return print(aLogin, aIsTxtFirst, aKey,serv ,aServiceName,aMethodName, aParams);
+	}
+	public String print(String aLogin,boolean aIsTxtFirst, String aKey
+			,IScriptService aServiceScr, String aServiceName
+			, String aMethodName, Map<String,String> aParams) {
+	
 		try {
-			// получение данных
-			Map<String, Object> values = (Map<String, Object>) theInjection
-					.invoke(aServiceName, aMethodName, new Object[] { aParams });
+			Map<String,Object> values = (Map<String, Object>)aServiceScr.invoke(aServiceName, aMethodName,new Object[] {aParams});
 			// печать
             EjbEcomConfig config = EjbEcomConfig.getInstance() ;
             //Long maxLengthLine = ConvertSql.parseLong(config.get("text.line.length.max", "77")) ;
@@ -51,7 +59,6 @@ public class PrintServiceBean implements IPrintService {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-
 	}
 
 	public static class ValueInit implements IValueInit {
@@ -72,5 +79,5 @@ public class PrintServiceBean implements IPrintService {
 	private @EJB
 	IJbossGetFileLocalService theJbossGetFileLocalService;
 
-	private EjbInjection theInjection = EjbInjection.getInstance();
+	//private EjbInjection theInjection = EjbInjection.getInstance();
 }

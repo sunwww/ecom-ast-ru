@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,6 +17,7 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
+import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
 
 
@@ -86,15 +88,20 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             //aForm.addDisabledField("dateStart");
             //aForm.addDisabledField("entranceTime");
     	} else {
-        	
-        	Calendar cal = Calendar.getInstance() ;
-        	cal.setTime(aMedCase.getDateStart()) ;
-        	cal.setTime(aMedCase.getEntranceTime()) ;
-        	cal.add(Calendar.MINUTE,1) ;
-        	aForm.setDateStart(DateFormat.formatToDate(cal.getTime()));
-            aForm.setEntranceTime(timeFormat.format(cal.getTime()));
-            aForm.addDisabledField("dateStart");
-            aForm.addDisabledField("entranceTime");
+    		try {
+	        	Calendar cal = Calendar.getInstance() ;
+	        	cal.setTime(DateConverter.createDateTime(aMedCase.getDateStart(),aMedCase.getEntranceTime())) ;
+	        	cal.add(Calendar.MINUTE,1) ;
+	        	aForm.setDateStart(DateFormat.formatToDate(cal.getTime()));
+	            aForm.setEntranceTime(timeFormat.format(cal.getTime()));
+	            aForm.addDisabledField("dateStart");
+	            aForm.addDisabledField("entranceTime");
+			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new IllegalStateException("Неправильно заведена дата поступления в стационар");
+	    		// TODO Auto-generated catch block
+				
+			}
     	}
         aForm.setPatient(aMedCase.getPatient().getId());
         if (aMedCase.getDepartment()!=null) {
