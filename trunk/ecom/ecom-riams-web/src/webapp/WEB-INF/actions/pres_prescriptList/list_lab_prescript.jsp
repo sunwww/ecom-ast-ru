@@ -129,7 +129,9 @@
   			.append(" ").append(request.getAttribute("serviceInfo")) ;
   		
 		href.append("&typeIntake=").append(typeIntake) ;
-		
+		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
+		request.setAttribute("href", href.toString()) ;
+		request.setAttribute("title", title.toString()) ;
 		if (typeGroup!=null && (typeReestr==null || typeReestr.equals("0"))) {
 			if (typeGroup.equals("1")) {
 				request.setAttribute("groupSql", "ml.name as mlname,ms.name as msname") ;
@@ -160,9 +162,7 @@
        			request.setAttribute("groupGroup", "vpt.id,vpt.name,ms.id,ms.name") ;
        			request.setAttribute("groupOrder", "vpt.name,ms.name") ;
 			}
-		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
-		request.setAttribute("href", href.toString()) ;
-		request.setAttribute("title", title.toString()) ;
+		
   		if (typeGroup!=null &&
   				(typeGroup.equals("1")|| typeGroup.equals("2")
   						|| typeGroup.equals("3")|| typeGroup.equals("4"))
@@ -233,6 +233,7 @@
     left join Worker w on w.id=wf.worker_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+    left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
