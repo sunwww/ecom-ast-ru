@@ -629,7 +629,7 @@ if (date!=null && !date.equals("")) {
 	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="16 форма ${param.dateBegin}-${param.dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
@@ -1257,7 +1257,7 @@ if (date!=null && !date.equals("")) {
 	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="16 форма ${param.dateBegin}-${param.dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${queryName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
@@ -1270,7 +1270,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="${queryName}" property="2" />
 	      <msh:tableColumn columnName="тип коек" property="3" />
 	      <msh:tableColumn columnName="потоки обслуживания" property="4" />
-	      <msh:tableColumn columnName="число коек" property="20" />
+	      <msh:tableColumn columnName="число коек" property="21" />
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="поступило всего" property="6" />
 	      <msh:tableColumn isCalcAmount="true" columnName="пост. из дн. стац." property="7" />
@@ -1572,7 +1572,7 @@ if (date!=null && !date.equals("")) {
 	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="16 форма ${param.dateBegin}-${param.dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     

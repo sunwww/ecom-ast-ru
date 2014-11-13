@@ -39,7 +39,7 @@
         	<input type="radio" name="typeIntake" value="2"> не был
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeIntake" value="2"> отобразить все данные
+        	<input type="radio" name="typeIntake" value="3"> отобразить все данные
         </td>
 
        </msh:row>
@@ -119,11 +119,11 @@
   			sqlAdd.append(" and p.intakeDate is null ") ;
   		}
   		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
-  				,"deparment","ml.id", request)) ;
+  				, "отделение","deparment","ml.id", request)) ;
   		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
-  				,"prescriptType","vpt.id", request)) ;
+  				, "тип назначения","prescriptType","vpt.id", request)) ;
   		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
-  				,"service","ms.id", request)) ;
+  				, "исследование","service","ms.id", request)) ;
   		title.append(request.getAttribute("departmentInfo"))
   			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
   			.append(" ").append(request.getAttribute("serviceInfo")) ;
@@ -239,7 +239,7 @@
      ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    ,p.id,ms.id,ms.name,ms.code,p.intakedate
+    ,p.id,ms.id,ms.name,ms.code,p.intakedate,p.materialId
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>

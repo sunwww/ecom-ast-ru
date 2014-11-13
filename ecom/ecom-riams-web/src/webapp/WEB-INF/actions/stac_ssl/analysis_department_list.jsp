@@ -750,7 +750,7 @@ order by dep.name
 	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_list_otd_rayon_swod_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="период с ${param.dateBegin} по ${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     

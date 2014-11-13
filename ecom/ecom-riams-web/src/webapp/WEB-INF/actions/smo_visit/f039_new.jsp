@@ -128,7 +128,7 @@
 	        	<input type="radio" name="typeView" value="1">  039 форма
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="2" >  039 bis
+	        	<input type="radio" name="typeView" value="2" >  039 по возрастам - заб.
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="3">  039 cons
@@ -141,7 +141,7 @@
 	        	<input type="radio" name="typeView" value="4">  30 форма
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="5">  30 форма bis
+	        	<input type="radio" name="typeView" value="5">  30 - ст. трудосп.
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="6">  62 форма
@@ -366,6 +366,7 @@ else '' end as vssname
 ,list(mkb.code) as mkblist,list(ms.code||' '||ms.name) as servecilist
 ,olpu.name as olpuname
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename||' ('||owflpu.name||')' as owfinfo
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename||' ('||lpu.name||')' as wfinfo
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -402,12 +403,12 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
 
     <msh:sectionTitle>
-        <form action="print-f039_reestr${printPrefix}.do" method="post" target="_blank">
+        <form action="print-f039_reestr.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -430,6 +431,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="услуга" property="11"/>
             <msh:tableColumn columnName="напр. ЛПУ" property="12"/>
             <msh:tableColumn columnName="напр. внутр." property="13"/>
+            <msh:tableColumn columnName="специалист" property="14"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -543,7 +545,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -738,7 +740,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -923,7 +925,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -1062,7 +1064,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -1189,7 +1191,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -1273,7 +1275,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">
@@ -1389,7 +1391,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type='hidden' name="date1" id="date1" value="${beginDate}">
     <input type='hidden' name="date2" id="date2" value="${finishDate}">

@@ -1,3 +1,5 @@
+<%@page import="java.util.Date"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -24,11 +26,20 @@
   	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
   	ActionUtil.getValueBySql("select lpu.id,lpu.name from mislpu lpu left join worker w on w.lpu_id=lpu.id left join workfunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "lpu_id","lpu_name",request) ;
   	Object lpu = request.getAttribute("lpu_id") ;
-  	request.setAttribute("beginDate", "01.01.2014") ;
-  	request.setAttribute("endDate", "01.12.2014") ;
+  	String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
+  	String typeMaterial =ActionUtil.updateParameter("PrescriptJournal","typeMaterial","1", request) ;
+    
   	if (lpu!=null && !lpu.equals("")) {
+  		String beginDate = request.getParameter("beginDate") ;
+  		if (beginDate==null || beginDate.equals("")) {
+  			beginDate=DateFormat.formatToDate(new Date()) ;
+  		}
+  		String endDate = request.getParameter("endDate") ;
+  	  	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}
+  		request.setAttribute("beginDate", beginDate) ;
+  		request.setAttribute("endDate", endDate) ;
   	%>
-  	  <msh:form action="/pres_journal_by_department.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+  	  <msh:form action="/pres_journal_by_department.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
@@ -42,7 +53,19 @@
         	<input type="radio" name="typeIntake" value="2"> не был
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeIntake" value="2"> отобразить все данные
+        	<input type="radio" name="typeIntake" value="3"> отобразить все данные
+        </td>
+     </msh:row>
+      
+        
+     
+      <msh:row>
+        <td class="label" title="Наименование пробирки (typeMaterial)" colspan="2"><label for="typeMaterial" id="typeMaterialLabel">Пробирка:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeMaterial" value="1"> №стат.карты, Фамилия пациента
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" >
+        	<input type="radio" name="typeMaterial" value="2"> штрих-код
         </td>
 
        </msh:row>
@@ -60,7 +83,8 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
            <script type='text/javascript'>
            checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-           checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+           checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
+           //checkFieldUpdate('typeGroup','${typeGroup}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -78,12 +102,28 @@
 
 			 
     </script>
+    <%
+    request.setAttribute("j", "<input type=\"button\" value=\"Забор осуществлен\" onclick=\""
+    +"checkService(\\\''||list(''||p.id)||'\\\',\\\''||coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)||'\\\')\"/>") ;
+    
+    request.setAttribute("r", "<input type=\"button\" value=\"Очистить данные о заборе\" onclick=\""
+    +"removeService(\\\''||list(''||p.id)||'\\\')\"/>") ;
+    StringBuilder sqlAdd = new StringBuilder() ;
+    if (typeIntake!=null && typeIntake.equals("1")) {
+		sqlAdd.append(" and p.intakeDate is not null ") ;
+	} else if (typeIntake!=null && typeIntake.equals("2")) {
+		sqlAdd.append(" and p.intakeDate is null ") ;
+	}
+    request.setAttribute("sqlAdd", sqlAdd.toString()) ;
+    %>
     <msh:section>
-    <ecom:webQuery name="list" nativeSql="
-    select pat.id, coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
+    select pat.id
+    ,case when p.intakeDate is null then '${j}' else '${r}' end as js
+    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     ,pat.lastname,pat.firstname,pat.middlename
     ,coalesce(vsst.name,'---') as vsstname
-    , coalesce(case when list(p.materialId)='' then max(p.id)||'|'||coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     ||'#'||pat.lastname else list(p.materialId) end) as material
     ,list(ms.code||' '||ms.name) as medServicies
     from prescription p
@@ -103,22 +143,24 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and w.lpu_id='${lpu_id}'
+    and w.lpu_id='${lpu_id}' 
+    and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    
+    ,p.intakedate
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
-    <msh:sectionTitle>Список пациентов по отделению ${lpu_name}</msh:sectionTitle>
+    <msh:sectionTitle>Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="1">
-	      <msh:tableColumn columnName="Стат.карта" property="2"  />
-	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />
-	      <msh:tableColumn columnName="Имя" property="4" />
-	      <msh:tableColumn columnName="Отчетство" property="5"/>
-	      <msh:tableColumn columnName="Метка биоматериала" property="6"/>
-	      <msh:tableColumn columnName="Код биоматериала" property="7"/>
-	      <msh:tableColumn columnName="Список услуг" property="8"/>
+	    <msh:table name="list" action="javascript:void(0)" idField="1">
+	      <msh:tableColumn columnName="Управление" property="2"  />
+	      <msh:tableColumn columnName="Стат.карта" property="3"  />
+	      <msh:tableColumn columnName="Фамилия пациента" property="4"  />
+	      <msh:tableColumn columnName="Имя" property="5" />
+	      <msh:tableColumn columnName="Отчетство" property="6"/>
+	      <msh:tableColumn columnName="Метка биоматериала" property="7"/>
+	      <msh:tableColumn columnName="Код биоматериала" property="8"/>
+	      <msh:tableColumn columnName="Список услуг" property="9"/>
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -131,6 +173,41 @@
   	}
   	
 	%>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+  	<script type="text/javascript">
+  		function getMaterialId(aMaterialId) {
+			aMaterialId=prompt('Введите наименование пробирки:', aMaterialId) ;
+			if (aMaterialId==null || aMaterialId=="") {
+				if (confirm('Неопределено наименование пробирки. Хотите ввести еще раз?')) {
+					return getMaterialId(aMaterialId) ;
+				}
+			} else {
+				return aMaterialId ;
+			}
+			return null ;
+  		}
+  		function checkService(aListPrescript, aMaterialId) {
+  			var mat = getCheckedRadio(document.forms['mainForm'],"typeMaterial") ;
+  			if (mat && mat==2) aMaterialId = getMaterialId() ;
+  			if (aMaterialId!=null) {
+  				PrescriptionService.intakeService(aListPrescript, aMaterialId, { 
+		            callback: function(aResult) {
+		            	window.document.location.reload();
+		            }
+				}); 
+  			}
+  		}
+  		function removeService(aListPrescript, aMaterialId) {
+  				PrescriptionService.intakeServiceRemove(aListPrescript, { 
+		            callback: function(aResult) {
+		            	window.document.location.reload();
+		            }
+				}); 
+  			
+  		}
+  	</script>
   </tiles:put>
 </tiles:insert>
 
