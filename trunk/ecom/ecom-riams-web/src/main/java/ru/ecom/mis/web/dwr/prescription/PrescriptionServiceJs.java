@@ -31,8 +31,11 @@ public class PrescriptionServiceJs {
 		StringBuilder res = new StringBuilder() ;
 		String[] labListArr = aPresIDs.split("#");
 		if (labListArr.length>0) {
+			
 			for (int i=0; i<labListArr.length;i++) {
 				String[] param = labListArr[i].split(":");
+			//	System.out.println("For="+i+" data ID= "+param[0]);
+			//	System.out.println("For="+i+" RES "+res.toString());
 				String msID = param.length>0&&param[0]!=null? param[0] : null;
 				String date = param.length>1&&param[1]!=null ? param[1]: "";
 				String cabID = param.length>2&&param[2]!=null? param[2] : null;
@@ -46,14 +49,14 @@ public class PrescriptionServiceJs {
 					for (WebQueryResult wqr :listMS) {
 						res.append(wqr.get1()).append(":")
 						.append(wqr.get2()).append(":")
-						.append(wqr.get3()).append(":");
-					}
+						.append(wqr.get3()).append(":")
+						.append(date).append(":");
+					}					
 					
-					res.append(date).append(":");
 					if (cabID!=null && cabID !=""){
 						sqlCab.setLength(0);
 						sqlCab.append("Select wf.id || ' ' || wf.groupname,wf.id from workfunction wf where wf.id='")
-							.append(cabID).append("'");
+							.append(cabID).append("' ");
 						
 						Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString()) ;
 						for (WebQueryResult wqr :listCab) {
