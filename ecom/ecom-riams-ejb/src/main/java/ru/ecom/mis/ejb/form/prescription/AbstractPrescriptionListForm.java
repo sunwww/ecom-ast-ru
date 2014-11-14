@@ -112,6 +112,97 @@ public class AbstractPrescriptionListForm extends IdEntityForm {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** Список услуг по лаборатории */
+	@Comment("Список услуг по лаборатории")
+	public String getLabList() {return theLabList;}
+	public void setLabList(String aLabList) {theLabList = aLabList;}
+
+	/** Список услуг по лаборатории */
+	private String theLabList;
+	
+	/** Список лекарственных назначений */
+	@Comment("Список лекарственных назначений")
+	public String getDrugList() {
+		return theDrugList;
+	}
+
+	public void setDrugList(String aDrugList) {
+		theDrugList = aDrugList;
+	}
+
+	/** Список лекарственных назначений */
+	private String theDrugList;
+	/** Лабораторные исследования */
+	@Comment("Лабораторные исследования")
+	public String getLabServicies() {
+		return theLabServicies;
+	}
+
+	public void setLabServicies(String aLabServicies) {
+		theLabServicies = aLabServicies;
+	}
+	
+	/** Лабораторные исследования */
+	private String theLabServicies;
+	
+	/** Дата по лаб. исследованию */
+	@Comment("Дата по лаб. исследованию")
+	@DateString @DoDateString
+	public String getLabDate() {return theLabDate;}
+	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
+
+	/** Дата по лаб. исследованию */
+	private String theLabDate;
+
+	/** Функциональные исследования */
+	@Comment("Функциональные исследования")
+	public String getFuncServicies() {
+		return theFuncServicies;
+	}
+
+	public void setFuncServicies(String aFuncServicies) {
+		theFuncServicies = aFuncServicies;
+	}
+	/** Кабинет для лабораторных исследования*/
+	@Comment("Кабинет для лабораторных исследования")
+	public String getLabCabinet() {
+		return theLabCabinet;
+	}
+
+	public void setLabCabinet(String aLabCabinet) {
+		theLabCabinet = aLabCabinet;
+	}
+
+	/** Кабинет для лабораторных исследования */
+	private String theLabCabinet;
+	/** Функциональные исследования */
+	private String theFuncServicies;
+	
+	/** Дата функционального исследования */
+	@Comment("Дата функционального исследования")
+	@DateString @DoDateString
+	public String getFuncDate() {
+		return theFuncDate;
+	}
+
+	public void setFuncDate(String aFuncDate) {
+		theFuncDate = aFuncDate;
+	}
+
+	/** Дата функционального исследования */
+	private String theFuncDate;
+	/** Кабинет для функ. исследования */
+	@Comment("Кабинет для функ. исследования")
+	public String getFuncCabinet() {
+		return theFuncCabinet;
+	}
+
+	public void setFuncCabinet(String aFuncCabinet) {
+		theFuncCabinet = aFuncCabinet;
+	}
+
+	/** Кабинет для функ. исследования */
+	private String theFuncCabinet;
 	/** Пользователь, который последний редактировал запись */
 	private String theEditUsername;
 	/** Пользователь, который создал запись */

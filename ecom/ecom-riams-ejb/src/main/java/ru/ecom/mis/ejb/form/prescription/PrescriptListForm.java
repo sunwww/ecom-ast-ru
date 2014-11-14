@@ -180,27 +180,7 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 
 	/** Дата по лаб. исследованию */
 	private String theLabDate;
-	
-	/** Список услуг по лаборатории */
-	@Comment("Список услуг по лаборатории")
-	public String getLabList() {return theLabList;}
-	public void setLabList(String aLabList) {theLabList = aLabList;}
-
-	/** Список услуг по лаборатории */
-	private String theLabList;
-	
-	/** Список лекарственных назначений */
-	@Comment("Список лекарственных назначений")
-	public String getDrugList() {
-		return theDrugList;
-	}
-
-	public void setDrugList(String aDrugList) {
-		theDrugList = aDrugList;
-	}
-
-	/** Список лекарственных назначений */
-	private String theDrugList;
+		
 	/** Функциональные исследования */
 	@Comment("Функциональные исследования")
 	public String getFuncServicies() {
@@ -252,7 +232,9 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	private String theFuncCabinet;
 	
 	/** Список функциональных исследований */
-	@Comment("Список функциональных исследований")
+
+	//Проверем, вроде как, этот список нигде не используем
+	/*	@Comment("Список функциональных исследований")
 	public String getFuncList() {
 		return theFuncList;
 	}
@@ -260,9 +242,9 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	public void setFuncList(String aFuncList) {
 		theFuncList = aFuncList;
 	}
-
+*/
 	/** Список функциональных исследований */
-	private String theFuncList;
+/*	private String theFuncList;*/
 	
 	/** Лек. ср-во 1 */
 	private DrugPrescriptionForm theDrugForm11= new DrugPrescriptionForm();
