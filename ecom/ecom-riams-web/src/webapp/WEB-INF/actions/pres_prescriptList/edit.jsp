@@ -15,7 +15,9 @@
 		var num=0;
 		var labNum=0;
 		var funcNum=0;
+		var drugNum=0;
 		var labList="";
+		var drugList="";
 
  		onload=function () {
 			PrescriptionService.checkMedCaseEmergency($('medCase').value, "medCase", { 
@@ -109,6 +111,83 @@
 	     }
 		}
 		
+		function writeDrugsToList() {
+			drugList="";
+			var type = "drug";
+			var typeNum = 0;
+		if (type=='lab') {
+			typeNum = labNum;
+		} else if (type=='func') {
+			typeNum = funcNum;
+		} else if (type=="drug") {
+			typeNum = drugNum;
+		}
+		var isDoubble=0;
+		while (typeNum>0) {
+			if (document.getElementById(type+"Element"+typeNum)) {
+				var curDrug = $(type+'Drug'+typeNum).value;
+				var curDate = document.getElementById(type+'Date'+typeNum);
+				var curMethod = document.getElementById(type+'Method'+typeNum);
+				var curAmount = document.getElementById(type+'Amount'+typeNum);
+				var curDuration = document.getElementById(type+'Duration'+typeNum);
+				var curFrequency = document.getElementById(type+'Frequency'+typeNum);
+				var curAmountUnit = document.getElementById(type+'AmountUnit'+typeNum);
+				var curDurationUnit = document.getElementById(type+'DurationUnit'+typeNum);
+				var curFrequencyUnit = document.getElementById(type+'FrequencyUnit'+typeNum);
+				if (curDrug.value != "" & curDate.value != "") {	
+					//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
+		            drugList+=curDrug;
+		            drugList+=":";
+		            drugList+=curDate.value;
+		            drugList+=":";
+		            drugList+=curMethod.value;
+		            drugList+=":";
+		            drugList+=curFrequency.value;
+		            drugList+=":";
+		            drugList+=curFrequencyUnit.value;
+		            drugList+=":";
+		            drugList+=curAmount.value;
+		            drugList+=":";
+		            drugList+=curAmountUnit.value;
+		            drugList+=":";
+		            drugList+=curDuration.value;
+		            drugList+=":";
+		            drugList+=curDurationUnit.value;
+		            drugList+="#";
+		            // Проверка на дубли 
+		            if ($('drugForm1.drug').value==curDrug.value) {
+		            	isDoubble=1;	
+		            }
+				}
+					
+			}
+       		typeNum-=1;
+	 	}
+		if (isDoubble==0) {
+			if ($('drugForm1.drug').value != "" & $('drugForm1.planStartDate').value != "") {
+				drugList+=$('drugForm1.drug').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.planStartDate').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.method').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.frequency').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.frequencyUnit').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.amount').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.amountUnit').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.duration').value;
+	            drugList+=":";
+	            drugList+=$('drugForm1.durationUnit').value;
+	            drugList+="#";
+	         }
+	     }
+	//	alert("DrugList = "+drugList);
+		}
+		
 		function checkLabs() {
 			labList="";
 			if ($('presType1').checked) {
@@ -120,13 +199,16 @@
 			if ($('funcServicies')) {
 				writeServicesToList('func');
 			}
+			writeDrugsToList();
 			$('labList').value=labList ;
-			alert($('labList').value);
+			$('drugList').value = drugList;
+		//	alert("labList = "+$('labList').value);
+		//	alert("drugList = "+$('drugList').value);
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
 		
-		function addRowType(type) {
+		function addRowLabs(type) { //Добавление исследования 
 			if (type=='lab') {
 				num = labNum;
 			} else if (type=='func') {
@@ -191,6 +273,7 @@
 				funcNum = num;
 			}
 		}
+		
 		
 		function addRow(resultRow) {
 			/*
@@ -262,8 +345,68 @@
 				$('prescriptTypeLabel').style.display="block";
 				$('prescriptTypeName').style.display="block";
 			}
-	}		
+	}	
+		function addDrugRow() { // Добавляем лек. обеспечение 
+			var type = "drug";
+			num = drugNum;
 		
+		num+=1;
+	    
+ 		var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке 
+	    // и добавляем тх 
+	    var td1 = document.createElement("TD");
+	  // 	td1.colSpan="2";
+	  // 	td1.align="right";
+	    var td2 = document.createElement("TD");
+	  //  td2.colSpan="2";
+	    var td3 = document.createElement("TD");
+	    var td4 = document.createElement("TD");
+	    var td5 = document.createElement("TD");
+	    var td6 = document.createElement("TD");
+	    
+		 row.appendChild(td1);
+		 row.appendChild(td2);
+		 tbody.appendChild(row);
+		 row.appendChild(td3);
+		 row.appendChild(td4);
+		 row.appendChild(td5);
+		 row.appendChild(td6);
+	    
+	    // Наполняем ячейки 
+	    //drug 
+	    var dt2="<input id='"+type+"Drug"+num+"' value='"+$('drugForm1.drug').value+"' type='hidden' name='"+type+"Drug"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    //method 
+	    dt2+="<input id='"+type+"Method"+num+"' value='"+$('drugForm1.method').value+"' type='hidden' name='"+type+"Method"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    //frequency 
+	    var dt3="<input id='"+type+"Frequency"+num+"' value='"+$('drugForm1.frequency').value+"' type='hidden' name='"+type+"Frequency"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    // frequency unit 
+	    dt3+="<input id='"+type+"FrequencyUnit"+num+"' value='"+$('drugForm1.frequencyUnit').value+"' type='hidden' name='"+type+"FrequencyUnit"+num+"' size='10' readonly='true' />";
+	    // Amount 
+	    var dt4="<input id='"+type+"Amount"+num+"' value='"+$('drugForm1.amount').value+"' type='hidden' name='"+type+"Amount"+num+"' horizontalFill='true' size='20' readonly='true' />";
+	    //Amount unit 
+	    dt4+="<input id='"+type+"AmountUnit"+num+"' value='"+$('drugForm1.amountUnit').value+"' type='hidden' name='"+type+"AmountUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    //Duration 
+	    var dt5="<input id='"+type+"Duration"+num+"' value='"+$('drugForm1.duration').value+"' type='hidden' name='"+type+"Duration"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    //Duration unit 
+	    dt5+="<input id='"+type+"DurationUnit"+num+"' value='"+$('drugForm1.durationUnit').value+"' type='hidden' name='"+type+"DurationUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    	   
+	    td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$('drugForm1.planStartDate').value+"' size = '10' />";	    
+	    td2.innerHTML = dt2+"<span>. "+$('drugForm1.drugName').value+"</span> Способ введения: <span>"+$('drugForm1.methodName').value+"</span>" ;
+	  	td3.innerHTML = dt3+"<span>. Частота: "+$('drugForm1.frequency').value +" "+$('drugForm1.frequencyUnitName').value+"</span>";
+	    td4.innerHTML = dt4+"<span>. Дозировка: "+$('drugForm1.amount').value+" "+$('drugForm1.amountUnitName').value+"</span>" ;
+	   	td5.innerHTML = dt5+"<span>. Продолжительность: "+$('drugForm1.duration').value+" "+$('drugForm1.durationUnitName').value+"</span>";
+	    td6.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+	   	new dateutil.DateField($(type+'Date'+num));
+					   
+	   	drugNum = num;
+	   	writeDrugsToList();
+	}
+	
 		</script>
 		</msh:ifFormTypeIsNotView>
 			</tiles:put>
@@ -280,6 +423,7 @@
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
       <msh:hidden property="medCase" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
        <msh:row> 
@@ -306,7 +450,7 @@
           <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
 <%--         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" />
@@ -328,20 +472,19 @@
           property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         </msh:panel>
+        <!-- -------------------------Начало блока "ЛЕкарственное обеспечение" -->
+          <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">  
         <msh:panel styleId="border">
         <msh:row>
         	<msh:separator label="Лекарственные назначения" colSpan="20"/>
         </msh:row>
-        
-       
-
-        	<msh:row>
+        <msh:row>
         		<td>Дата начала</td>
         		<td>Лек.ср-во и способ введения</td>
         		<td>Частота</td>
         		<td>Дозировка</td>
         		<td>Продолжительность</td>
-        	</msh:row>
+        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
 	        	<msh:textField property="drugForm1.planStartDate" label="Дата начала" size="7" hideLabel="true"/>
 	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm1.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
@@ -355,24 +498,20 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocFrequencyUnit" label="раза в " property="drugForm1.frequencyUnit" size="10"/>
 	          <msh:autoComplete hideLabel="true" vocName="vocDrugAmountUnit" label="ед." property="drugForm1.amountUnit" size="10" />
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm1.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
+	          
+	         
+	          <td>        	
+            <input type="button" name="subm" onclick="addDrugRow();" value="Добавить" tabindex="4" />
+            </td>
+          
 	        </msh:row>
-	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<msh:textField property="drugForm2.planStartDate" label="Дата начала" size="7" hideLabel="true"/>
-	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm2.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
-	          <msh:textField property="drugForm2.frequency" label="Частота" size="7" hideLabel="true" />
-	          <msh:textField label="Прием" property="drugForm2.amount"   size="3" hideLabel="true"/>
-	          <msh:textField property="drugForm2.duration" label="Продолжительность"  size="3" hideLabel="true"/>
-	        </msh:row>
-	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        
-	          <msh:autoComplete vocName="vocDrugMethod" label="Способ введ." property="drugForm2.method" guid="3adk3e4d1b-8802-467d-b205-715fb379b018" horizontalFill="true"  hideLabel="true"/>
-	          <msh:autoComplete hideLabel="true" vocName="vocFrequencyUnit" label="раза в " property="drugForm2.frequencyUnit" size="10"/>
-	          <msh:autoComplete hideLabel="true" vocName="vocDrugAmountUnit" label="ед." property="drugForm2.amountUnit" size="10" />
-	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm2.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
-	        </msh:row>
-	        
-        </msh:panel>
-        
+	     <table id="drugTable">
+        <tbody id="adddrugElements">
+        </tbody>
+        </table>
+	    </msh:panel>
+	    </msh:ifFormTypeIsNotView>
+        <!-- --------------------------------------------------Конец блока "Лекарственное обеспечение" -->
         <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
         <msh:panel>
@@ -389,7 +528,7 @@
 			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
-            <input type="button" name="subm" onclick="addRowType('lab');" value="Добавить" tabindex="4" />
+            <input type="button" name="subm" onclick="addRowLabs('lab');" value="Добавить" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
@@ -418,7 +557,7 @@
     			<msh:textField property="funcDate" label="Дата " size="10"/>
     			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
     			<td>        	
-	            <input type="button" name="subm" onclick="addRowType('func');" value="Добавить" tabindex="4" />
+	            <input type="button" name="subm" onclick="addRowLabs('func');" value="Добавить" tabindex="4" />
 	            </td>
 			 </tr>
 			 <tr>
