@@ -63,28 +63,45 @@ function printInfoByPatient(aPatient,aCtx) {
 	map.put("areaText", areaText) ;
 	var ddD = null;var ddMkb=null ;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
-		var sqlD = "select to_char(min(po.startDate),'dd.mm.yyyy') as ddmin,case when vpac.code='Д' then vpac.code else null end as pocode"
-			+" ,(select mkb.code from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.patient_id='"+aPatient.id+"' and d.medcase_id is null"
-			+" and d.establishDate<=current_date) as mkbcode"
-			+" from psychiaticObservation po"
-			+" left join VocpsychambulatoryCare vpac on vpac.id=po.ambulatoryCare_id"
-			+" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id"
-			+" where pcc.patient_id='"+aPatient.id+"' "
-			+"  group by (select max(po1.startDate) from psychiaticObservation po1"
-			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
-			+" and vpac1.code!='Д'"
-			+" ), case when vpac.code='Д' then vpac.code else null end"
-			+" having (select max(po1.startDate) from psychiaticObservation po1"
-			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
-			+" and vpac1.code!='Д'"
-			+" ) is null or (select max(po1.startDate) from psychiaticObservation po1"
-			+" left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" where po.careCard_id=po1.careCard_id and po.startDate<po1.startDate"
-			+" and vpac1.code!='Д'"
-			+" ) > max(po.startDate)"
-			 ;
+		var sqlD = "select to_char(case when (select max(po1.startDate) from psychiaticObservation po1"
+			+" 				 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" 				 where po.careCard_id=po1.careCard_id and vpac1.code!='Д') is null"
+			+" 				then"
+			+" 				(select min(po2.startDate) from psychiaticObservation po2 where" 
+			+" 				po.careCard_id=po2.careCard_id)"
+			+" 					else"
+			+" 					(select min(po2.startDate) from psychiaticObservation po2 where"
+			+" 					po.careCard_id=po2.careCard_id and po2.startDate>"
+			+" 					 (select max(po1.startDate) from psychiaticObservation po1"
+			+" 					 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" 					 where po.careCard_id=po1.careCard_id and vpac1.code!='Д')"
+			+" 					)"
+			+" 					end,'dd.mm.yyyy')"
+			+" 					as ddmin"
+
+			+" 					,case when vpac.code='Д' then vpac.code else null end as pocode"
+
+			+" 					 ,(select mkb.code from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id "
+			+" 							 left join vocprioritydiagnosis vpd on vpd.id=d.priority_id "
+			+" 							 where d.patient_id='"+aPatient.id+"' and d.medcase_id is null and vpd.code='1'"
+			+" 					 and d.establishDate=(select max(d1.establishDate) from diagnosis d1 "
+			+" 							 left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id "
+			+" 							 where d1.patient_id='"+aPatient.id+"' and d1.medcase_id is null and vpd1.code='1'"
+			+" 					 and d1.establishDate<=current_date)) as mkbcode"
+
+			+" 					 from psychiaticObservation po"
+			+" 					 left join VocpsychambulatoryCare vpac on vpac.id=po.ambulatoryCare_id"
+			+" 					 left join PsychiatricCareCard pcc on pcc.id=po.careCard_id"
+			+" 					 where pcc.patient_id='"+aPatient.id+"'"
+				 
+			+" 					 having (select max(po1.startDate) from psychiaticObservation po1"
+			+" 					 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
+			+" 					 where po.careCard_id=po1.careCard_id"
+			+" 					 )=po.startdate";
+
+			
+			
+			
 		var listD = aCtx.manager.createNativeQuery(sqlD).setMaxResults(1).getResultList() ;
 		if (listD.size()>0) {
 			var objD = listD.get(0) ;
