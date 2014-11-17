@@ -80,7 +80,7 @@ public class PrescriptionServiceJs {
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		sql.append("update Prescription set materialId='").append(aMaterialId).append("',intakeDate='").append(formatD.format(date)).append("',intakeTime='").append(formatT.format(date)).append("',intakeUsername='").append(username).append("' where id in (").append(aListPrescript).append(")");
+		sql.append("update Prescription set materialId='").append(aMaterialId).append("',intakeDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),intakeTime=cast('").append(formatT.format(date)).append("' as time),intakeUsername='").append(username).append("' where id in (").append(aListPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
