@@ -20,7 +20,15 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="shortName"  label="Короткое название"/>
+        	<msh:checkBox property="isRadiationDiagnosis" label="Лучевая диагностика"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isFuncDiag" label="Функциональная диагностика"/>
+        	<msh:checkBox property="isLab" label="Лаборатория"/>
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isNoDiagnosis" label="Не заполняется диагноз"/>
+        	<msh:checkBox property="isNo039" label="Не включать в 039 форму"/>
         </msh:row>
         <msh:row guid="10e684ef-5a8d-45dd-ab3d-c5bae516a73e">
           <msh:autoComplete horizontalFill="true" property="vocPost" vocName="vocPost" label="Должность" fieldColSpan="3" viewAction="entityView-voc_post.do" guid="351c87de-9b9a-46ee-80c9-b65d6256fd0c" />
