@@ -214,7 +214,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		if (aPrescOld instanceof DietPrescription) {
 			DietPrescription presNew = new DietPrescription() ;
-			DietPrescription presOld = new DietPrescription() ;
+			DietPrescription presOld = (DietPrescription)aPrescOld ;
 			presNew.setDiet(presOld.getDiet()) ;
 			presNew.setPrescriptSpecial(aSpecialist) ;
 			return presNew ;
