@@ -82,7 +82,7 @@
        		typeNum-=1;
 	 	}
 		if (isDoubble==0) {
-			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
+			if ($(type+'Servicies').value != "") {
 			   	labList+=$(type+'Servicies').value;
 	            labList+=":";
 	            labList+=$(type+'Date').value;
@@ -167,7 +167,7 @@
 	            drugList+="#";
 	         }
 	     }
-		alert("In addRow DrugList = "+drugList);
+	//	alert("In addRow DrugList = "+drugList);
 		}
 		
 		function checkLabs() {
@@ -467,7 +467,9 @@
 	          <td>        	
             <input type="button" name="subm" onclick="addDrugRow();" value="Добавить" tabindex="4" />
             </td>
-          
+          <td>        	
+            <input type="button" name="subm" onclick="showtmpTemplateProtocol();" value="Добавить" tabindex="4" />
+            </td>
 	        </msh:row>
 	     <table id="drugTable">
         <tbody id="adddrugElements">
@@ -585,10 +587,12 @@
         <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-pres_template_drugPrescription" name="Лекарственное средство" roles="/Policy/Mis/Prescription/Template/DrugPrescription/View" guid="f5549341-6246-4cc4-8369-6f7b04931f2a" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-pres_template_dietPrescription" name="Диету" guid="71dca8ec-ccdf-4f2a-88c7-750cbc00b045" roles="/Policy/Mis/Prescription/Template/DietPrescription/View" />
         <msh:sideLink roles="/Policy/Mis/Prescription/Template/ModePrescription/View" params="id" action="/entityParentPrepareCreate-pres_template_modePrescription" name="Режим" />
-        <msh:sideLink action=" javascript:shownewTemplatePrescription(1,&quot;.do&quot;)" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_servicePrescription" name="Медицинскую услугу" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
+        <msh:sideLink action=" javascript:shownewTemplatePrescription(1,&quot;.&quot;)" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
       </msh:sideMenu>
       <tags:template_menu currentAction="prescriptions"/>
     </msh:ifFormTypeIsView>
+    <msh:sideLink action=" javascript:shownewTemplatePrescription()" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
   </tiles:put>
   <tiles:put name="style" type="string">
   	<style type="text/css">
