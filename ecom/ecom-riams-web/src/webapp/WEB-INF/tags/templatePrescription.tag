@@ -47,15 +47,16 @@
 
      // Показать
      function show${name}TemplatePrescription() {
+//	alert ("showTemplatePrescription started. ");
 
-         // устанавливается инициализация для диалогового окна
+          // устанавливается инициализация для диалогового окна
          if (!theIs${name}TempPrescriptionDialogInitialized) {
          	init${name}TemplatePrescription() ;
           }
          the${name}TempPrescriptionDialog.show() ;
          $("${name}templateCategory").focus() ;
 
-     }
+     } 
 
 
 
@@ -69,16 +70,27 @@
      	if ($('${name}templatePrescription').value==0) {
      		alert("Не выбран шаблон назначения") ;
      	} else {
-     		
-		    PrescriptionService.savePrescription(
-	     		${parentId},$('${name}templatePrescription').value, ${record}
-	     		 ,{
-	                   callback: function(aString) {
-	                       alert(aString) ;
-	                       window.document.location.reload()  ;
-	                    }
-	                }
-	         ) ;
+     		if (1!=1) { // Если надо создать новый ЛН, или добавить назначения в уже существующий ЛН 
+			    PrescriptionService.savePrescription(
+		     		${parentId},$('${name}templatePrescription').value, ${record}
+		     		 ,{
+		                   callback: function(aString) {
+		                       alert(aString) ;
+		                       window.document.location.reload()  ;
+		                    }
+		                }
+		         ) ;
+     		} else { // Если надо добавить назначения в текущий (открытый, без ИД, ЛН)
+     			PrescriptionService.getLabListFromTemplate(
+     					$('${name}templatePrescription').value , {
+     						callback: function(aLabList) {
+     						//	alert (aLabList);
+     						the${name}TempPrescriptionDialog.hide() ;
+     							fillFormFromTemplate(aLabList);
+     						}
+     					}
+     					);
+     		}
          }
          //window.document.location.reload()  ;
          //theTempProtDialog.hide() ;
