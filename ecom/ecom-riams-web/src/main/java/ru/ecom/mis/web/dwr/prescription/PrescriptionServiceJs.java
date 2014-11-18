@@ -41,7 +41,7 @@ public class PrescriptionServiceJs {
 				String cabID = param.length>2&&param[2]!=null? param[2] : null;
 				if (msID!=null && msID!=""){
 					sqlMS.setLength(0);
-					sqlMS.append("select ms.id, ms.code ||' ' ||ms.name, vst.code from medservice ms ")
+					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
 					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
 					.append("where ms.id='").append(msID).append("'");
 					
@@ -55,12 +55,13 @@ public class PrescriptionServiceJs {
 					
 					if (cabID!=null && cabID !=""){
 						sqlCab.setLength(0);
-						sqlCab.append("Select wf.id || ' ' || wf.groupname,wf.id from workfunction wf where wf.id='")
+						sqlCab.append("Select wf.id,wf.groupname from workfunction wf where wf.id='")
 							.append(cabID).append("' ");
 						
 						Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString()) ;
 						for (WebQueryResult wqr :listCab) {
-							res.append(wqr.get1()).append("#");
+							res.append(wqr.get1()).append(":");
+							res.append(wqr.get2()).append("#");
 						}
 					} else res.append("#");
 				}
@@ -95,6 +96,12 @@ public class PrescriptionServiceJs {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		return service.checkMedCaseEmergency(aIdTemplateList, idType) ;
+	}
+	
+	public String getLabListFromTemplate(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
+		
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		return service.getLabListFromTemplate(aIdTemplateList) ;
 	}
 	
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {
