@@ -17,12 +17,14 @@ import javax.persistence.PersistenceContext;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.prescription.AbstractPrescriptionList;
 import ru.ecom.mis.ejb.domain.prescription.DietPrescription;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptList;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
+import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.nuzmsh.util.format.DateFormat;
@@ -115,6 +117,87 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}	
 		}
 		return isEmergency ;
+	}
+	
+	public String getLabListFromTemplate(Long aIdTemplateList) {
+	//	System.out.println("in PSB_getLabList, tmplt id = "+aIdTemplateList);
+		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
+		StringBuilder labList = new StringBuilder();
+		for (Prescription presc: template.getPrescriptions()) {
+			labList.append(getPrescriptionInfo(presc));
+		}
+		 
+		return labList.length()>0?labList.substring(0, labList.length()-1):"";
+	}
+	/**
+	 * 
+	 * @param aPresc - ID шаблона листа назначения
+	 * @return список исследований по шаблону
+	 */
+	private String getPrescriptionInfo (Prescription aPresc)
+	{
+		StringBuilder list = new StringBuilder();
+		System.out.println("in getPrescriptioninfo, aPresc = "+aPresc);
+		if (aPresc instanceof DrugPrescription) {
+			try{
+			DrugPrescription presNew = (DrugPrescription) aPresc;
+			list.setLength(0);
+			list.append("DRUG@");
+			list.append(presNew.getDrug().getId()).append(":");
+			list.append(presNew.getDrug().getName()).append("::"); //: Date 
+			list.append(presNew.getMethod().getId()).append(":");
+			list.append(presNew.getMethod().getName()).append(":");
+			list.append(presNew.getFrequency()).append(":");
+			list.append(presNew.getFrequencyUnit().getId()).append(":");
+			list.append(presNew.getFrequencyUnit().getName()).append(":");
+			list.append(presNew.getAmount()).append(":");
+			list.append(presNew.getAmountUnit().getId()).append(":");
+			list.append(presNew.getAmountUnit().getName()).append(":");
+			list.append(presNew.getDuration()).append(":");
+			list.append(presNew.getDurationUnit().getId()).append(":");
+			list.append(presNew.getDurationUnit().getName()).append("#");
+			
+			return list.toString() ;
+			}
+			catch (Exception e) {
+				System.out.println("catch Drug "+e);
+				e.printStackTrace();
+			}
+		}
+		if (aPresc instanceof DietPrescription) {
+			try{
+			DietPrescription presNew = (DietPrescription) aPresc;
+			list.setLength(0);
+			list.append("DIET@");
+			list.append(presNew.getDiet().getId()).append(":") ;
+			list.append(presNew.getDiet().getName()).append("#") ;
+			return list.toString();
+			}
+			catch (Exception e) {
+				System.out.println("catch DIET "+e);
+				e.printStackTrace();
+			}
+		}
+		if (aPresc instanceof ServicePrescription) {
+			try{
+			ServicePrescription presNew = (ServicePrescription) aPresc;
+			list.setLength(0);
+			list.append("SERVICE@");
+			list.append(presNew.getMedService().getServiceType().getCode()).append(":");
+			list.append(presNew.getMedService().getId()).append(":");
+			list.append(presNew.getMedService().getCode()).append(" ");
+			list.append(presNew.getMedService().getName()).append("::"); //: aLabDate 
+			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getId():"").append(":");
+			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getName():"").append("#");
+			return list.toString();
+			}
+			catch (Exception e) {
+				System.out.println("catch Service "+e);
+				e.printStackTrace();
+			}
+		}
+		System.out.println("_----------------Some shit happens!!!"+aPresc);
+		return "";
 	}
 	/**
 	 * Добавить все назначения в новый лист
@@ -218,6 +301,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			presNew.setDiet(presOld.getDiet()) ;
 			presNew.setPrescriptSpecial(aSpecialist) ;
 			return presNew ;
+		}
+		if (aPrescOld instanceof ServicePrescription) {
+			ServicePrescription presNew = new ServicePrescription();
+			ServicePrescription presOld = (ServicePrescription) aPrescOld;
+			presNew.setMedService(presOld.getMedService());
+			presNew.setPrescriptCabinet(presOld.getPrescriptCabinet());
+			presNew.setPrescriptSpecial(presOld.getPrescriptSpecial());
+			return presNew;
 		}
 		
 		return null ;
