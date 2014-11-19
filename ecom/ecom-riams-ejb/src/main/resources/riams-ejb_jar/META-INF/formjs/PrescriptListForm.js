@@ -110,16 +110,17 @@ function onCreate(aForm, aEntity, aCtx) {
 						if (!isTemp) {
 							matId = labMap.get(""+par2);
 							if (matId==null) {
-							var lPl =aCtx.manager("select p.materialId from prescription p left join PrescriptList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy')").getResultsList();
-							if (lPl.size()>0) {
-								matId = lPl.get(0) ;
-							}
-							if (matId==null) {
-								var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
-							}
-							if (matId!=null) {
-								labMap.put(""+par2,matId) ;
+								var lPl =aCtx.manager("select p.materialId from prescription p left join PrescriptList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy')").getResultsList();
+								if (lPl.size()>0) {
+									matId = lPl.get(0) ;
+								}
+								if (matId==null) {
+									var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
+									matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
+								}
+								if (matId!=null) {
+									labMap.put(""+par2,matId) ;
+								}
 							}
 						
 						}
@@ -128,7 +129,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setPrescriptionList(aEntity) ;
 					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
-					adMedService.setMaterialId(matId) ;
+					adMedService.setMaterialId(matId!=null?""+matId:"") ;
 
 					adMedService.setPlanStartDate(par2) ;
 					adMedService.setPrescriptType(prescriptType) ;
