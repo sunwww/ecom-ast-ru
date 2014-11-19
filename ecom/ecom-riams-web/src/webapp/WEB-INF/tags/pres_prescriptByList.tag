@@ -84,7 +84,7 @@
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select 
     	p.id as pid,pl.id as plid,ms.name as drname
- ,p.planStartDate,p.planEndDate
+ ,p.planStartDate,p.planEndDate,p.materialId
  from Prescription p 
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
  left join medservice ms on ms.id=p.medService_id
@@ -98,6 +98,7 @@
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
+    			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
