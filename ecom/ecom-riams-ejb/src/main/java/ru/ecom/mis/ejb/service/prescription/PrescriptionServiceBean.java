@@ -147,15 +147,21 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			list.append(presNew.getDrug().getName()).append("::"); //: Date 
 			list.append(presNew.getMethod().getId()).append(":");
 			list.append(presNew.getMethod().getName()).append(":");
-			list.append(presNew.getFrequency()).append(":");
-			list.append(presNew.getFrequencyUnit().getId()).append(":");
-			list.append(presNew.getFrequencyUnit().getName()).append(":");
-			list.append(presNew.getAmount()).append(":");
-			list.append(presNew.getAmountUnit().getId()).append(":");
-			list.append(presNew.getAmountUnit().getName()).append(":");
-			list.append(presNew.getDuration()).append(":");
-			list.append(presNew.getDurationUnit().getId()).append(":");
-			list.append(presNew.getDurationUnit().getName()).append("#");
+			if (presNew.getFrequency()!=null){
+				list.append(presNew.getFrequency()).append(":");
+				list.append(presNew.getFrequencyUnit().getId()).append(":");
+				list.append(presNew.getFrequencyUnit().getName()).append(":");
+			} else list.append(":::");
+			if (presNew.getAmount()!=null) {
+				list.append(presNew.getAmount()).append(":");
+				list.append(presNew.getAmountUnit().getId()).append(":");
+				list.append(presNew.getAmountUnit().getName()).append(":");
+			} else list.append(":::");
+			if (presNew.getDuration()!=null) {
+				list.append(presNew.getDuration()).append(":");
+				list.append(presNew.getDurationUnit().getId()).append(":");
+				list.append(presNew.getDurationUnit().getName()).append("#");
+			} else list.append("::#");
 			
 			return list.toString() ;
 			}
