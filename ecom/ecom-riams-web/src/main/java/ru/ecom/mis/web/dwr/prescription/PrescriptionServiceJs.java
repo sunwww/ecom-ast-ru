@@ -98,6 +98,11 @@ public class PrescriptionServiceJs {
 		return service.checkMedCaseEmergency(aIdTemplateList, idType) ;
 	}
 	
+	public String getPrescriptionTypes(boolean isEmergency, HttpServletRequest aRequest) throws NamingException {
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		return service.getPrescriptionTypes(isEmergency) ;
+	}
+	
 	public String getLabListFromTemplate(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
