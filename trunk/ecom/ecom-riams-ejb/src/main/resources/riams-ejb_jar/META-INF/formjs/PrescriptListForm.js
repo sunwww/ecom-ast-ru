@@ -27,7 +27,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	} else {
 		isTemp = true ;
 	}
-	// Доделать!
+	
 	
 	if (aForm.drugList!=null && aForm.drugList !="") {
 		var addDrugs= aForm.drugList.split("#") ;
@@ -129,10 +129,9 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
 					adMedService.setMaterialId(matId) ;
-					
+
 					adMedService.setPlanStartDate(par2) ;
 					adMedService.setPrescriptType(prescriptType) ;
-						
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
