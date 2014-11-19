@@ -129,6 +129,28 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		 
 		return labList.length()>0?labList.substring(0, labList.length()-1):"";
 	}
+
+	/**
+	 *  Получение списка типов назначений
+	 */
+	public String getPrescriptionTypes(boolean isEmergency) {
+		StringBuilder req = new StringBuilder();
+		StringBuilder res = new StringBuilder();
+		req.append("select vpt.id, vpt.name from vocprescripttype vpt ");
+		if(!isEmergency) {
+			req.append("where vpt.code!='EMEGRENCY' ");
+		}
+		List<Object[]> list = theManager.createNativeQuery(req.toString()).getResultList() ;
+		if (list.size()>0) {
+			for (int i=0;i<list.size();i++) {
+				Object[] obj = list.get(i);
+				res.append(obj[0]).append(":").append(obj[1]).append("#");
+			}
+			
+		}
+		return res.length()>0?res.substring(0,res.length()-1):"";
+	}
+	
 	/**
 	 * 
 	 * @param aPresc - ID шаблона листа назначения
