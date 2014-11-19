@@ -508,7 +508,7 @@ order by p.lastname,p.firstname,p.middlename " />
         <msh:sectionContent>
     ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
 select 
-'&additionStatus='||vas.id,vas.name as mlname
+'&additionStatus='||vas.id as vasid,vas.name as mlname
 ,count(distinct sls.patient_id) as cntPat
 ,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
 ,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
@@ -551,12 +551,13 @@ order by vas.name
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="4"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="5"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших (госпитал.)" property="6"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных иног. (госпитал.)" property="7"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных иностр. (госпитал.)" property="8"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="9"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="10"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="11"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Умерло (чел.)" property="12"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших иног. (госпитал.)" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших иностр. (госпитал.)" property="8"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="9"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="10"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="11"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="12"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Умерло (чел.)" property="13"/>
     </msh:table>
     
     </msh:sectionContent>
