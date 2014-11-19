@@ -13,6 +13,11 @@ public interface IPrescriptionService {
 	public boolean checkMedCaseEmergency(Long aId, String idType) ;
 	
 	/**
+	 *  Получение списка типов назначений
+	 */
+	public String getPrescriptionTypes(boolean isEmergency);
+	
+	/**
 	 * Создаем список назначений для нового ЛН
 	 * @param aID - номер шаблона листа назначения
 	 * @return - список назначений
