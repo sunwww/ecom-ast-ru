@@ -22,18 +22,18 @@ function onCreate(aForm, aEntity, aCtx) {
 	var isTemp = false ;
 	var prescriptType = null;
 	var pat = aEntity.medCase.patient ;
-	if (!aForm instanceof Packages.ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm) {
+	if (aForm.getClass().getName().equals("ru.ecom.mis.ejb.form.prescription.PrescriptListForm")) {
 		prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
 	} else {
 		isTemp = true ;
 	}
+	//throw isTemp ;
 	
 	
 	if (aForm.drugList!=null && aForm.drugList !="") {
 		var addDrugs= aForm.drugList.split("#") ;
 		var prescriptType =null;
-		if (!aForm instanceof Packages.ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm)
-		{
+		if (!isTemp) {
 			prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
 		}
 	
@@ -105,23 +105,25 @@ function onCreate(aForm, aEntity, aCtx) {
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
 				if (medService!=null) {
-					var isLab = false ;
-					if (medService.serviceType!=null && medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						if (!isTemp) {
-							matId = labMap.get(""+par2);
-							if (matId==null) {
-								var lPl =aCtx.manager("select p.materialId from prescription p left join PrescriptList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy')").getResultsList();
-								if (lPl.size()>0) {
-									matId = lPl.get(0) ;
-								}
-								if (matId==null) {
-									var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-									matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
-								}
-								if (matId!=null) {
-									labMap.put(""+par2,matId) ;
-								}
+					//throw ""+(isTemp) ;
+					if (!isTemp&&medService.serviceType!=null && medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
+						matId = labMap.get(""+par2);
+						//throw ""+matId ; 
+						if (matId==null) {
+							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null").getResultList();
+							if (lPl.size()>0) {
+								matId = lPl.get(0) ;
 							}
+							if (matId==null) {
+								var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
+								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
+							}
+							if (matId!=null) {
+								labMap.put(""+par2,matId) ;
+							} 
+								throw ""+matId;
+							
+							
 						
 						}
 					}
