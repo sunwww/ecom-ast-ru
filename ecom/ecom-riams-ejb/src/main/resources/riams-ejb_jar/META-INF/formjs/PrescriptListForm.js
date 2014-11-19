@@ -96,7 +96,6 @@ function onCreate(aForm, aEntity, aCtx) {
 		var matId=null ;
 
 		if (addMedServicies.length>0  ) {
-			//throw "All OK"+addMedServicies.length;
 			for (var i=0; i<addMedServicies.length; i++) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
@@ -105,9 +104,9 @@ function onCreate(aForm, aEntity, aCtx) {
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
 				if (medService!=null) {
-					//throw ""+(isTemp) ;
-					if (!isTemp&&medService.serviceType!=null && medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						matId = labMap.get(""+par2);
+					if (!isTemp&&medService.serviceType!=null 
+							&& medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
+						matId = labMap.get(""+param[1]);
 						//throw ""+matId ; 
 						if (matId==null) {
 							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null").getResultList();
@@ -119,9 +118,9 @@ function onCreate(aForm, aEntity, aCtx) {
 								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
 							}
 							if (matId!=null) {
-								labMap.put(""+par2,matId) ;
+								labMap.put(""+param[1],matId) ;
 							} 
-								throw ""+matId;
+								//throw ""+matId;
 							
 							
 						
