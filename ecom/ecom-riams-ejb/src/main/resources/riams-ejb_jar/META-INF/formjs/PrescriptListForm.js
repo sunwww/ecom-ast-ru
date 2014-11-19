@@ -19,7 +19,14 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
 	aEntity.setCreateUsername(username) ;
-	
+	var isTemp = false ;
+	var prescriptType = null;
+	var pat = aEntity.medCase.patient ;
+	if (!aForm instanceof Packages.ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm) {
+		prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
+	} else {
+		isTemp = true ;
+	}
 	// Доделать!
 	
 	if (aForm.drugList!=null && aForm.drugList !="") {
@@ -84,12 +91,10 @@ function onCreate(aForm, aEntity, aCtx) {
 	
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
-		var prescriptType =null;
-		if (!aForm instanceof Packages.ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm)
-		{
-			prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
-		}
-	
+		
+		var labMap = new java.util.HashMap() ; ;
+		var matId=null ;
+
 		if (addMedServicies.length>0  ) {
 			//throw "All OK"+addMedServicies.length;
 			for (var i=0; i<addMedServicies.length; i++) {
@@ -98,12 +103,32 @@ function onCreate(aForm, aEntity, aCtx) {
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
 				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
-								
+				
 				if (medService!=null) {
+					var isLab = false ;
+					if (medService.serviceType!=null && medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
+						if (!isTemp) {
+							matId = labMap.get(""+par2);
+							if (matId==null) {
+							var lPl =aCtx.manager("select p.materialId from prescription p left join PrescriptList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy')").getResultsList();
+							if (lPl.size()>0) {
+								matId = lPl.get(0) ;
+							}
+							if (matId==null) {
+								var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
+								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
+							}
+							if (matId!=null) {
+								labMap.put(""+par2,matId) ;
+							}
+						
+						}
+					}
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
 					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
+					adMedService.setMaterialId(matId) ;
 					
 					adMedService.setPlanStartDate(par2) ;
 					adMedService.setPrescriptType(prescriptType) ;
@@ -116,6 +141,7 @@ function onCreate(aForm, aEntity, aCtx) {
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
 					aCtx.manager.persist(adMedService) ;
+					matId=null ;
 				}
 			}
 		}
