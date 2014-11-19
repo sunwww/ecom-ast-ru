@@ -13,6 +13,12 @@ public interface IPrescriptionService {
 	public boolean checkMedCaseEmergency(Long aId, String idType) ;
 	
 	/**
+	 * Создаем список назначений для нового ЛН
+	 * @param aID - номер шаблона листа назначения
+	 * @return - список назначений
+	 */
+	public String getLabListFromTemplate(Long aID) ;
+	/**
 	 * Добавить все назначения в существующий лист
 	 * @param aIdTemplateList - ИД шаблона листа назначений
 	 * @param aIdParent - ИД листа назначений
