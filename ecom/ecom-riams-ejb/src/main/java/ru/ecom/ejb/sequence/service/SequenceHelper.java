@@ -81,7 +81,7 @@ public class SequenceHelper {
 				throw new IllegalStateException("Ошибка получение следу") ;
 			}
 			info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
-			
+			aManager.persist(info) ;
 			return value ;
 		}
 	}
@@ -117,7 +117,7 @@ public class SequenceHelper {
 			info.setNextValue("0");
 			aManager.persist(info) ;
 			
-			return getSequenceInfo(aKey, aManager) ;
+			return info ;
 			//throw new IllegalStateException(aKey+" ошибка  = "+list.size()) ;
 		}
 		
