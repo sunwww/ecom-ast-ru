@@ -20,7 +20,7 @@
 		var drugList="";
 		var currentDate = new Date;
 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-		var textMonth = currentDate.getMonth()<10?'0'+currentDate.getMonth():currentDate.getMonth();
+		var textMonth = (currentDate.getMonth()+1)<10?'0'+(1+currentDate.getMonth()):currentDate.getMonth()+1;
 		var textYear =currentDate.getFullYear();
 		var textDate = textDay+'.'+textMonth+'.'+textYear;
 		
