@@ -64,25 +64,26 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateDate(date) ;
 					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
 						adMedService.setMethod(aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugMethod,par3));
-						if (par4!=null&&!par4.equals(java.lang.Long(0))) {
-							adMedService.setFrequency(par4);
-						}
-						if (par4u!=null&&!par4u.equals(java.lang.Long(0))) {
-							adMedService.setFrequencyUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocFrequencyUnit,par4u));
-						}
-						if (par5!=null&&!par5.equals(java.lang.Long(0))) {
-							adMedService.setAmount(par5);
-						}
-						if (par5u!=null&&!par5u.equals(java.lang.Long(0))) {
-							adMedService.setAmountUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocDrugAmountUnit,par5u));
-						}
-						if (par6!=null&&!par6.equals(java.lang.Long(0))) {
-							adMedService.setDuration(par6);
-						}
-						if (par6u!=null&&!par6u.equals(java.lang.Long(0))) {
-							adMedService.setDurationUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocDurationUnit,par6u));
-						}
-						}
+					}
+					if (par4!=null&&!par4.equals(java.lang.Long(0))) {
+						adMedService.setFrequency(par4);
+					}
+					if (par4u!=null&&!par4u.equals(java.lang.Long(0))) {
+						adMedService.setFrequencyUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocFrequencyUnit,par4u));
+					}
+					if (par5!=null&&!par5.equals(java.lang.Long(0))) {
+						adMedService.setAmount(par5);
+					}
+					if (par5u!=null&&!par5u.equals(java.lang.Long(0))) {
+						adMedService.setAmountUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocDrugAmountUnit,par5u));
+					}
+					if (par6!=null&&!par6.equals(java.lang.Long(0))) {
+						adMedService.setDuration(par6);
+					}
+					if (par6u!=null&&!par6u.equals(java.lang.Long(0))) {
+						adMedService.setDurationUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocDurationUnit,par6u));
+					}
+					
 					aCtx.manager.persist(adMedService) ;
 				}
 			}
@@ -120,10 +121,7 @@ function onCreate(aForm, aEntity, aCtx) {
 							if (matId!=null) {
 								labMap.put(""+param[1],matId) ;
 							} 
-								//throw ""+matId;
-							
-							
-						
+
 						}
 					}
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
