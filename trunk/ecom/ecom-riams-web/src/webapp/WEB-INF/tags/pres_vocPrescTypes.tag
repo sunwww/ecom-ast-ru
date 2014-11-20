@@ -4,7 +4,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
-<%@ attribute name="medcase" required="true" description="MedCase ID" %>
+<%@ attribute name="parentID" required="true" description="ИД родителя" %>
+<%@ attribute name="parentType" required="true" description="Тип родителя (для родителя)" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
 
 <style type="text/css">
@@ -32,8 +33,8 @@
      var theIs${name}PrescTypesDialogInitialized = false ;
      var the${name}PrescTypesDialog = new msh.widget.Dialog($('${name}PrescTypesDialog')) ;
      // Показать
-     function show${name}PrescTypes(aText) {
-    	 // устанавливается инициализация для диалогового окна
+     function show${name}PrescTypes() {
+    	 // устанавливается инициализация для диалогового окна 
          if (!theIs${name}PrescTypesDialogInitialized) {
          	init${name}PrescTypesDialog() ;
           }
@@ -42,7 +43,7 @@
 
      }
 
-     // Отмена
+     // Отмена 
      function cancel${name}PrescTypes() {
     	
         the${name}PrescTypesDialog.hide() ;
@@ -55,11 +56,10 @@
 		$('prescriptTypeName').disabled='true';
 		the${name}PrescTypesDialog.hide() ;
 	}
-     // инициализация диалогового окна
+     // инициализация диалогового окна 
      function init${name}PrescTypesDialog() {
 	//	alert ("In TAG, $medcase = ="+${medcase}); 
-		 var isEmergency=true ;
-		 PrescriptionService.checkMedCaseEmergency('${medcase}', "medCase",{
+		 PrescriptionService.checkMedCaseEmergency('${parentID}', '${parentType}',{
 			 callback: function(aResult) {
 				 PrescriptionService.getPrescriptionTypes(aResult, {
 					 callback: function(getPresTypes) {
