@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/mis" prefix="mis" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
 	<tiles:put name="javascript" type="string">
@@ -18,23 +19,9 @@
 	var labList="";
 	
 	onload =function () {
-		PrescriptionService.checkMedCaseEmergency($('prescriptionList').value, "prescriptionList", { 
-            callback: function(aResult) { 
-            	if(!aResult) { 
-            	$('presType1').disabled = "true";
-            	$('presType2').checked = "true";
-            	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
-            	$('tdPresType1').style.display = "none";
-
-            	} else {
-            		$('presType1').checked = "true";
-            		isChecked(1);
- //           		$('prescriptType').value=5; //5 - экстренно 
-            	}
-           } 
-		} 
-      	); 
-		
+			if ($('prescriptType').value=="" || $('prescriptType').value==null){
+ 				showcheckPrescTypes();
+ 			}	
 	}	
 	function checkLabs() {
 		labList="";
@@ -187,19 +174,8 @@
 
         
       <msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
-       <msh:row> 
-		<td id="ifEmergencyDisabled">
-        <label>Тип назначения: </label>
-        </td>
-        <td id="tdPresType1">
-        <input type="radio" id = "presType1" name="presType" value="1" onclick="isChecked(1)">Экстренное
-        </td>
-        <td id="tdPresType2">
-        <input type="radio" id = "presType2" name="presType" value="2" onclick="isChecked(2)" >Плановое
-        </td>
-		</msh:row>
       <msh:row>
-       	<msh:autoComplete vocName="prescriptTypeNotEmergency" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="100" />
+       	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="100" />
       </msh:row>
  </msh:ifFormTypeIsNotView>
          <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
@@ -315,6 +291,7 @@
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_servicePrescriptionForm" />
+    <tags:pres_vocPrescTypes title="Выбор типа назначения" name="check" parentType="prescriptionList" parentID="${param.id}"/>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
