@@ -140,13 +140,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		if(!isEmergency) {
 			req.append("where vpt.code!='EMEGRENCY' ");
 		}
+		req.append("order by vpt.id ");
 		List<Object[]> list = theManager.createNativeQuery(req.toString()).getResultList() ;
+		System.out.println("----------in getPrescriptionTypes, isBool = "+isEmergency);
 		if (list.size()>0) {
 			for (int i=0;i<list.size();i++) {
 				Object[] obj = list.get(i);
 				res.append(obj[0]).append(":").append(obj[1]).append("#");
 			}
-			
 		}
 		return res.length()>0?res.substring(0,res.length()-1):"";
 	}
