@@ -25,47 +25,34 @@
 		var textDate = textDay+'.'+textMonth+'.'+textYear;
 		
  		onload=function () {
-			PrescriptionService.checkMedCaseEmergency($('medCase').value, "medCase", { 
-	            callback: function(aResult) { 
-	            	if(!aResult) { 
-	            	$('presType1').disabled = "true";
-	            	$('presType2').checked = "true";
-	            	$('ifEmergencyDisabled').innerHTML="<p style=color:red>В данном случае запрещено создавать экстренные назначения!</p>"
-	            	$('tdPresType1').style.display = "none";
+ 			if ($('prescriptType').value=="" || $('prescriptType').value==null){
+ 				showcheckPrescTypes();
+ 			}
+ 			if ($('labList').value.length>0)
+           		{
+ 			//	alert ("labList.value= "+$('labList').value);
+           		PrescriptionService.getPresLabTypes($('labList').value, {
+           			callback: function(aResult2) {
+           			//	alert ("aResult is : " +aResult2);
+           				if (aResult2) {
+           					var resultList = aResult2.split('#');
+           					if (resultList.length>0) {
+           						for (var i=0; i<resultList.length;i++) {
+           							var resultRow = resultList[i].split(':');
+           							if (resultRow[0]!="" && resultRow[0]!=null)
+           								{
+           								addRow(resultList[i]);
+           								}
+           						}
+           					}
+           				}
+           			}
+           		}
+           				);
+           		} 
+ 
 
-	            	} else {
-	            		$('presType1').checked = "true";
-	            		isChecked(1);
-	            		}
-	            	
-	            	
- 	            	if ($('labList').value!="")
-	            		{
-	            		PrescriptionService.getPresLabTypes($('labList').value, {
-	            			callback: function(aResult2) {
-	            			//	alert ("aResult is : " +aResult2);
-	            				if (aResult2) {
-	            					
-	            					var resultList = aResult2.split('#');
-	            					if (resultList.length>0) {
-	            						for (var i=0; i<resultList.length;i++) {
-	            							var resultRow = resultList[i].split(':');
-	            							if (resultRow[0]!="" && resultRow[0]!=null)
-	            								{
-	            								addRow(resultList[i]);
-	            								}
-	            						}
-	            					}
-	            				}
-	            			}
-	            		}
-	            				);
-	            		} 
-	           } 
-			} 
-	      	); 
-			
-		}  
+}  
 		
 		function writeServicesToList(type) {
 			var typeNum = 0;
@@ -178,14 +165,29 @@
 	            drugList+="#";
 	         }
 	     }
-	//	alert("DrugList = "+drugList);
+	//	alert("DrugList = "+drugList); 
 		}
 		
 		function checkLabs() {
 			labList="";
-			if ($('presType1').checked) {
-				$('prescriptType').value=5; 
-			} 
+			if ($('drugForm1.frequency').value!="" && $('drugForm1.frequencyUnit').value=="")
+				{
+				alert ("Заполните поле \"Частота\"");
+				$('drugForm1.frequencyUnit').focus();
+				return;
+				}
+			if ($('drugForm1.amount').value!="" && $('drugForm1.amountUnit').value=="")
+			{
+				alert ("Заполните поле \"Дозировка\"");
+				$('drugForm1.amountUnit').focus();
+				return;
+			}
+			if ($('drugForm1.duration').value!="" && $('drugForm1.durationUnit').value=="")
+			{
+				alert ("Заполните поле \"Продолжительность\"");
+				$('drugForm1.durationUnit').focus();
+				return;
+			}
 			if ($('labServicies')) {
 				writeServicesToList('lab');
 			}
@@ -195,8 +197,8 @@
 			writeDrugsToList();
 			$('labList').value=labList ;
 			$('drugList').value = drugList;
-	//		alert("labList = "+$('labList').value);
-	//		alert("drugList = "+$('drugList').value);
+	//		alert("labList = "+$('labList').value); 
+	//		alert("drugList = "+$('drugList').value); 
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
@@ -330,17 +332,6 @@
 			funcNum = num;
 		}
 	}
-		
-		function isChecked(num) {
-			if (num==1) {
-				$('prescriptTypeLabel').style.display="none";
-				$('prescriptTypeName').style.display="none";
-				$('prescriptType').value=5;
-			} else if (num==2){
-				$('prescriptTypeLabel').style.display="block";
-				$('prescriptTypeName').style.display="block";
-			}
-	}	
 		
 		function prepareDrugRow(){
 			var aDrug=$('drugForm1.drug').value;
@@ -482,19 +473,9 @@
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
-       <msh:row> 
-		<td id="ifEmergencyDisabled">
-        <label>Тип назначения: </label>
-        </td>
-        <td id="tdPresType1">
-        <input type="radio" id = "presType1" name="presType" value="1" onclick="isChecked(1)">Экстренное
-        </td>
-        <td id="tdPresType2">
-        <input type="radio" id = "presType2" name="presType" value="2" onclick="isChecked(2)" >Плановое
-        </td>
-		</msh:row>
+    
       <msh:row>
-       	<msh:autoComplete vocName="prescriptTypeNotEmergency" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="30" />
+       	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип планового назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="30" />
       </msh:row>
  </msh:ifFormTypeIsNotView>
       <msh:ifFormTypeIsView formName="pres_prescriptListForm">
@@ -567,10 +548,10 @@
         </table>
 	    </msh:panel>
 	    </msh:ifFormTypeIsNotView>
-        <!-- --------------------------------------------------Конец блока "Лекарственное обеспечение" -->
-        <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
+        <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
+        <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
-        <msh:panel>
+        <msh:panel styleId="border">
         <msh:row>
         	<msh:separator label="Лабораторные исследования" colSpan="10"/>
         </msh:row>
@@ -598,10 +579,10 @@
         </msh:row>
         </msh:panel>
         </msh:ifFormTypeIsCreate>
-         <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
-        <!-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ -->
+         <%-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ --%>
+        <%-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ --%>
          <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
-        <msh:panel>
+        <msh:panel styleId="border">
        	 <msh:row>
         	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
@@ -627,7 +608,7 @@
         </msh:panel>
         </msh:ifFormTypeIsCreate>
         <msh:panel>
-        <!-- --------------------------------------------------Конец блока "Функциональная диагностика" ------ -->
+        <%-- -- --------------------------------------------------Конец блока "Функциональная диагностика" ------ --%>
          
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
@@ -660,8 +641,8 @@
   			<%-- <msh:sideLink action=" javascript:shownewTemplatePrescription()" name="ЛН на основе шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f4e12" title="ЛН на основе шаблона" /> --%>
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
   		</msh:sideMenu>
-  		<tags:templatePrescription record="2" parentId="${param.id}" name="new" />
   		<tags:templatePrescription record="2" parentId="${param.id}" name="add" />
+  		<tags:pres_vocPrescTypes title="Выбор типа листа назначения" name="check" parentType = "medCase" parentID="${param.id}"/>
   	</msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="d4c560e9-6ddb-4cf2-9375-4caf7f0d3fb8">
       <msh:sideMenu title="Лист назначений" guid="2742309d-41bf-4fbe-9238-2f895b5f79a9">
