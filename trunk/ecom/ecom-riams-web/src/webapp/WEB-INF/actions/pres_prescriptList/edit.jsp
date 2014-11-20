@@ -167,27 +167,22 @@
 	     }
 	//	alert("DrugList = "+drugList); 
 		}
-		
+		function isEmptyUnit(aField,aFieldText) {
+			if ($(aField).value!="" && $(aField+'Unit').value=="") {
+			alert ('Заполните поле" '+aFieldText+'"');
+			$(aField+'UnitName').focus();
+			document.getElementById('submitButton').disabled=false;
+			document.getElementById('submitButton').value='Создать';
+			return 1;
+				}
+			return 0;
+		}
 		function checkLabs() {
 			labList="";
-			if ($('drugForm1.frequency').value!="" && $('drugForm1.frequencyUnit').value=="")
-				{
-				alert ("Заполните поле \"Частота\"");
-				$('drugForm1.frequencyUnit').focus();
-				return;
-				}
-			if ($('drugForm1.amount').value!="" && $('drugForm1.amountUnit').value=="")
-			{
-				alert ("Заполните поле \"Дозировка\"");
-				$('drugForm1.amountUnit').focus();
-				return;
-			}
-			if ($('drugForm1.duration').value!="" && $('drugForm1.durationUnit').value=="")
-			{
-				alert ("Заполните поле \"Продолжительность\"");
-				$('drugForm1.durationUnit').focus();
-				return;
-			}
+			if (isEmptyUnit('drugForm1.frequency', 'Частота')) return;
+			if (isEmptyUnit('drugForm1.amount', 'Дозировка')) return;
+			if (isEmptyUnit('drugForm1.duration', 'Продолжительность')) return;
+			
 			if ($('labServicies')) {
 				writeServicesToList('lab');
 			}
