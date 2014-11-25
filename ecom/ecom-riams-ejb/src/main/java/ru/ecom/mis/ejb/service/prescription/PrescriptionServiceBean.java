@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.EJB;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
+import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
@@ -35,12 +37,51 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-
+	
+	/**
+	 * 
+	 * @param aLabMap - карта (Ключ = ИД пациента+дата назначения)
+	 * @param aKey - Ключ = ИД пациента+дата назначения
+	 * @param aPatientId - ИД пациента
+	 * @param aDate - дата назначения
+	 * @param aManager
+	 * @return Номер дня пациента для исследования
+	 */
+	
+	public static int getPatientDateNumber(HashMap aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
+		int matId = 0;
+		HashMap<java.lang.String, java.lang.Integer> labMap = (HashMap<java.lang.String, java.lang.Integer>) aLabMap ;
+		if (!labMap.isEmpty()) { 
+			matId = labMap.get(aKey);
+		}
+		if (matId==0) {
+			String req = "select p.materialId from prescription p " +
+					"left join PrescriptionList pl on pl.id=p.prescriptionList_id " +
+					"left join medcase mc on mc.id=pl.medCase_id " +
+					"where mc.patient_id='"+aPatientId+"' " +
+							"and p.planStartDate=to_date('"+aDate+"','yyyy-mm-dd') and p.materialId is not null " +
+									"and p.canceldate is null " +
+									"and p.materialId!='' order by p.materialId desc ";
+			System.out.println(req);
+			List<String> lPl = aManager.createNativeQuery(req).getResultList();
+			
+			if (lPl.size()>0) {
+				matId = Integer.parseInt(lPl.get(0)) ;
+			}  
+			if (matId==0) {
+				SequenceHelper seqHelper = ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
+				matId=Integer.parseInt(seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate, aManager));
+			}
+		}
+		return matId;
+	}
+	
 	/**
 	 * Получить описание шаблона листа назначения
 	 * @param aIdTemplateList - ИД листа назначения
 	 * @return описание листа назначений
 	 */
+	
 	public String getDescription(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		StringBuffer description = new StringBuffer();
@@ -125,6 +166,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		StringBuilder labList = new StringBuilder();
 		for (Prescription presc: template.getPrescriptions()) {
 			labList.append(getPrescriptionInfo(presc));
+		}
+		if (template.getComments().length()>0) {
+			labList.append("COMMENT@").append(template.getComments()).append("#");
 		}
 		 
 		return labList.length()>0?labList.substring(0, labList.length()-1):"";
