@@ -21,9 +21,10 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateUsername(username) ;
 	var isTemp = false ;
 	var prescriptType = null;
-	var pat = aEntity.medCase.patient ;
+	var pat = null;
 	if (aForm.getClass().getName().equals("ru.ecom.mis.ejb.form.prescription.PrescriptListForm")) {
 		prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
+		pat = aEntity.medCase!=null?aEntity.medCase.patient:null ;
 	} else {
 		isTemp = true ;
 	}
@@ -93,7 +94,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
 		
-		var labMap = new java.util.HashMap() ; ;
+		var labMap = new java.util.HashMap();
 		var matId=null ;
 
 		if (addMedServicies.length>0  ) {
@@ -105,10 +106,12 @@ function onCreate(aForm, aEntity, aCtx) {
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
 				if (medService!=null) {
-					if (!isTemp&&medService.serviceType!=null 
+					if (!isTemp&&pat!=null&&medService.serviceType!=null 
 							&& medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						matId = labMap.get(""+param[1]);
-						//throw ""+matId ; 
+						var key =""+pat.id+"#"+par2;
+						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
+						labMap.put(key, matId);
+						/*//throw ""+matId ; 
 						if (matId==null) {
 							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null").getResultList();
 							if (lPl.size()>0) {
@@ -119,10 +122,10 @@ function onCreate(aForm, aEntity, aCtx) {
 								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
 							}
 							if (matId!=null) {
-								labMap.put(""+param[1],matId) ;
+								;
 							} 
 
-						}
+						}*/
 					}
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
