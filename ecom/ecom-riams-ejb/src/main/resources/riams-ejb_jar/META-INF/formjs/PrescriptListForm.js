@@ -111,21 +111,6 @@ function onCreate(aForm, aEntity, aCtx) {
 						var key =""+pat.id+"#"+par2;
 						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
 						labMap.put(key, matId);
-						/*//throw ""+matId ; 
-						if (matId==null) {
-							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null").getResultList();
-							if (lPl.size()>0) {
-								matId = lPl.get(0) ;
-							}
-							if (matId==null) {
-								var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
-							}
-							if (matId!=null) {
-								;
-							} 
-
-						}*/
 					}
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
