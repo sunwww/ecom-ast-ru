@@ -159,9 +159,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		return isEmergency ;
 	}
+	/**
+	 * Получение списка назначений из шаблона в добавление их в лист назначений. 
+	 */
 	
 	public String getLabListFromTemplate(Long aIdTemplateList) {
-	//	System.out.println("in PSB_getLabList, tmplt id = "+aIdTemplateList);
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		StringBuilder labList = new StringBuilder();
 		for (Prescription presc: template.getPrescriptions()) {
@@ -175,7 +177,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 
 	/**
-	 *  Получение списка типов назначений
+	 *  Получение списка типов назначений (ИД+название)
 	 */
 	public String getPrescriptionTypes(boolean isEmergency) {
 		StringBuilder req = new StringBuilder();
@@ -197,14 +199,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	
 	/**
-	 * 
-	 * @param aPresc - ID шаблона листа назначения
+	 * Получение данных о назначении (для функции getLabListFromTemplate)
+	 * @param aPresc - ID назначения (шаблона)
 	 * @return список исследований по шаблону
 	 */
 	private String getPrescriptionInfo (Prescription aPresc)
 	{
 		StringBuilder list = new StringBuilder();
-		System.out.println("in getPrescriptioninfo, aPresc = "+aPresc);
+	//	System.out.println("in getPrescriptioninfo, aPresc = "+aPresc);
 		if (aPresc instanceof DrugPrescription) {
 			try{
 			DrugPrescription presNew = (DrugPrescription) aPresc;
