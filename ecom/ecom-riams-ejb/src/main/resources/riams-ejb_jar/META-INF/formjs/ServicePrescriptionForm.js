@@ -44,10 +44,13 @@ function onCreate(aForm, aEntity, aCtx) {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
 					if (medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						matId = labMap.get(""+par2);
+						var key =""+pat.id+"#"+par2;
+						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
+						labMap.put(key, matId);
+						/*matId = labMap.get(""+par2);
 						//throw ""+matId ; 
 						if (matId==null) {
-							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null").getResultList();
+							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null and p.materialId!='' order by p.materialId desc ").getResultList();
 							if (lPl.size()>0) {
 								matId = lPl.get(0) ;
 							}
@@ -61,7 +64,7 @@ function onCreate(aForm, aEntity, aCtx) {
 							} 
 							//	throw "matID"+matId;
 
-						}
+						}*/
 					}
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ; // ?
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
