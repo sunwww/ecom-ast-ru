@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.prescription;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,67 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+	
+	/**
+	 * Поиск СЛО по ИД листа назначения
+	 * @param aPrescList - ИД листа назначения
+	 * @param aRequest
+	 * @return ИД MedCase
+	 * @throws NamingException
+	 */
+	public int getMedcaseByPrescriptionList(int aPrescList, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String req = "Select pl.medcase_id from prescriptionList pl where pl.id='"+aPrescList+"' ";
+		Collection<WebQueryResult> list = service.executeNativeSql(req) ;
+		if (list.size()>0) {
+			for (WebQueryResult res: list) {
+				return Integer.parseInt(res.get1().toString());
+			}
+		}
+		return 0;
+	}
+	/**
+	 * При создании листа назначения, 
+	 * Проверяем, если ли у пациента назначенные назначения
+	 * аналогичные тем, которые сейчас назначаем
+	 */
+	
+	public String getDuplicatePrescriptions(String aMedCase, String aData, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("select distinct p.medservice_id ");
+		req.append(",ms.code ||' ' || ms.name as labName ");
+		//req.append(",count(p.id) as cnt1 ");
+		req.append("from medcase mc ");
+		req.append("left join prescriptionList pl on pl.medcase_id = mc.id ");
+		req.append("left join prescription p on p.prescriptionList_id = pl.id ");
+		req.append("left join patient pat on pat.id = mc.patient_id ");
+		req.append("left join medservice ms on ms.id = p.medservice_id ");
+		req.append("where mc.id ='").append(aMedCase).append("' ");
+		req.append("and p.dtype='ServicePrescription' ");
+		req.append("and p.medservice_id is not null ");
+		req.append("and p.fulfilmentstate_id is null ");
+		req.append("and p.canceldate is null ");
+		req.append("group by p.medservice_id, labName ");
+		//req.append("having count(p.id)>1 ");
+		System.out.println("--------------------getDuplicatePrescriptions Request is = "+req.toString());
+		Collection<WebQueryResult> list = service.executeNativeSql(req.toString().toString()) ;
+	//	System.out.println("-------------in PS - start working!!!");
+		StringBuilder res = new StringBuilder();
+		if (list.size()>0) {
+	//		System.out.println("-------------list_size>0"+list.size());
+			String[] aDataArr  = aData.split(":");
+			for (WebQueryResult obj: list) {
+				for (int i=0; i<aDataArr.length;i++) {
+					if (obj.get1().toString().equals(aDataArr[i])) {
+						res.append(obj.get1().toString()).append(":").append(obj.get2().toString()).append("#");
+					}
+				}
+			}
+		}
+		System.out.println("in getDuplicatePrescriptions Result is = "+res.toString());
+		return res.length()>0?res.substring(0,res.length()-1):"";
+	}
 	
 	/*
 	 * Возвращаем тип исследование, его код и имя, код и имя кабинета
