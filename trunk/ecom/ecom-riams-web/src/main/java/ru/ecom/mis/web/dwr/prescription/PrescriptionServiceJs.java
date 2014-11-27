@@ -38,9 +38,8 @@ public class PrescriptionServiceJs {
 		return 0;
 	}
 	/**
-	 * При создании листа назначения, 
-	 * Проверяем, если ли у пациента назначенные назначения
-	 * аналогичные тем, которые сейчас назначаем
+	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
+	 * исследования в том же СЛО, в котором создается назначение)
 	 */
 	
 	public String getDuplicatePrescriptions(String aMedCase, String aData, HttpServletRequest aRequest) throws NamingException {
@@ -61,7 +60,7 @@ public class PrescriptionServiceJs {
 		req.append("and p.canceldate is null ");
 		req.append("group by p.medservice_id, labName ");
 		//req.append("having count(p.id)>1 ");
-		System.out.println("--------------------getDuplicatePrescriptions Request is = "+req.toString());
+	//	System.out.println("--------------------getDuplicatePrescriptions Request is = "+req.toString());
 		Collection<WebQueryResult> list = service.executeNativeSql(req.toString().toString()) ;
 	//	System.out.println("-------------in PS - start working!!!");
 		StringBuilder res = new StringBuilder();
@@ -76,7 +75,7 @@ public class PrescriptionServiceJs {
 				}
 			}
 		}
-		System.out.println("in getDuplicatePrescriptions Result is = "+res.toString());
+	//	System.out.println("in getDuplicatePrescriptions Result is = "+res.toString());
 		return res.length()>0?res.substring(0,res.length()-1):"";
 	}
 	
@@ -86,6 +85,16 @@ public class PrescriptionServiceJs {
 	 * На входе берем список исследований в формате ID:date:cabinet#
 	 */
 	public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
+		System.out.println(aPresIDs);
+		return getPresLabTypes(aPresIDs, 0,aRequest);
+	}
+	
+	
+	/*
+	 * Проверяем полученные исследования на соответствие типу листа назначения 
+	 * и возвращаем те, которые соответствуют типу ЛН.
+	 */
+	public String getPresLabTypes(String aPresIDs, int aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		aPresIDs = aPresIDs.substring(0,aPresIDs.length()-1); // Обрезаем # 
 		StringBuilder sqlMS = new StringBuilder() ;
@@ -105,7 +114,10 @@ public class PrescriptionServiceJs {
 					sqlMS.setLength(0);
 					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
 					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
-					.append("where ms.id='").append(msID).append("'");
+					.append("where ms.id='").append(msID).append("' ");
+					if (aPrescriptListType>0) {
+					sqlMS.append("and ms.servicesubtype_id='").append(aPrescriptListType).append("' ");
+					}
 					
 					Collection<WebQueryResult> listMS = service.executeNativeSql(sqlMS.toString()) ;
 					for (WebQueryResult wqr :listMS) {
@@ -113,19 +125,21 @@ public class PrescriptionServiceJs {
 						.append(wqr.get2()).append(":")
 						.append(wqr.get3()).append(":")
 						.append(date).append(":");
+						
+						if (cabID!=null && cabID !=""){
+							sqlCab.setLength(0);
+							sqlCab.append("Select wf.id,wf.groupname from workfunction wf where wf.id='")
+								.append(cabID).append("' ");
+							
+							Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString()) ;
+							for (WebQueryResult wqr2 :listCab) {
+								res.append(wqr2.get1()).append(":");
+								res.append(wqr2.get2()).append("#");
+							}
+						} else res.append(":#");
 					}					
 					
-					if (cabID!=null && cabID !=""){
-						sqlCab.setLength(0);
-						sqlCab.append("Select wf.id,wf.groupname from workfunction wf where wf.id='")
-							.append(cabID).append("' ");
-						
-						Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString()) ;
-						for (WebQueryResult wqr :listCab) {
-							res.append(wqr.get1()).append(":");
-							res.append(wqr.get2()).append("#");
-						}
-					} else res.append("#");
+					
 				}
 			}
 		}
