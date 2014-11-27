@@ -32,29 +32,34 @@
 <script type="text/javascript"><!--
      var theIs${name}PrescTypesDialogInitialized = false ;
      var the${name}PrescTypesDialog = new msh.widget.Dialog($('${name}PrescTypesDialog')) ;
-     // Показать
+     // Показать 
      function show${name}PrescTypes() {
     	 // устанавливается инициализация для диалогового окна 
          if (!theIs${name}PrescTypesDialogInitialized) {
          	init${name}PrescTypesDialog() ;
+         	 the${name}PrescTypesDialog.show() ;
+          } else {
+        	  if (confirm("Вы действительно хотите изменить тип листа назначения? Некоторые назначение могу быть удалены!")){
+        		  the${name}PrescTypesDialog.show() ;
+        	  }
           }
          
-         the${name}PrescTypesDialog.show() ;
+         
 
      }
-
+     
      // Отмена 
      function cancel${name}PrescTypes() {
     	
         the${name}PrescTypesDialog.hide() ;
      }
-
      
 	function setType(typeID, typeName) {
 		$('prescriptType').value = typeID;
 		$('prescriptTypeName').value = typeName;
 		$('prescriptTypeName').disabled='true';
 		the${name}PrescTypesDialog.hide() ;
+		changePrescriptionType();
 	}
      // инициализация диалогового окна 
      function init${name}PrescTypesDialog() {
@@ -66,7 +71,6 @@
 						 var presTypes = getPresTypes.split("#");
 						 if (presTypes.length>0) {
 							 var tbody = document.getElementById('tablePresTypes');
-							    
 							for (var i=0;i<presTypes.length;i++) {
 								var row = document.createElement("TR");
 								var param = presTypes[i].split(":");
@@ -76,7 +80,6 @@
 								radio +="<input type='radio' id = 'presType"+i+"' name='presType' value='"+tID+"' onclick='setType("+tID+",\""+tName+"\")'>"+tName+"</td>";
 								tbody.appendChild(row);
 								row.innerHTML=radio;
-						        
 							} 
 						 }
 					 }
@@ -85,7 +88,6 @@
 			 }
 		 }
 		 );
-
-
+		 theIs${name}PrescTypesDialogInitialized=true;
      }
 </script>
