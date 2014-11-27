@@ -3,7 +3,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <%@ attribute name="record" required="true" description="Тип записи: 1-в существующий лист назначений, 2-в новый лист назначений" %>
-<%@ attribute name="parentId" required="true" description="ИД родителя: при record=1-ИД листа назначений, а 2-ИД СМО" %>
+<%@ attribute name="parentId" required="false" description="ИД родителя: при record=1-ИД листа назначений, а 2-ИД СМО" %>
 <%@ attribute name="name" required="true" description="название" %>
 
 <style type="text/css">
@@ -69,28 +69,19 @@
      function save${name}TemplatePrescription() {
      	if ($('${name}templatePrescription').value==0) {
      		alert("Не выбран шаблон назначения") ;
-     	} else {
-     		if (1!=1) { // Если надо создать новый ЛН, или добавить назначения в уже существующий ЛН 
-			    PrescriptionService.savePrescription(
-		     		${parentId},$('${name}templatePrescription').value, ${record}
-		     		 ,{
-		                   callback: function(aString) {
-		                       alert(aString) ;
-		                       window.document.location.reload()  ;
-		                    }
-		                }
-		         ) ;
-     		} else { // Если надо добавить назначения в текущий (открытый, без ИД, ЛН)
+     	} else { 
      			PrescriptionService.getLabListFromTemplate(
      					$('${name}templatePrescription').value , {
      						callback: function(aLabList) {
      						//	alert (aLabList);
      						the${name}TempPrescriptionDialog.hide() ;
+     						if (aLabList!="" && aLabList!=null){
      							fillFormFromTemplate(aLabList);
+     						}
      						}
      					}
      					);
-     		}
+     		
          }
          //window.document.location.reload()  ;
          //theTempProtDialog.hide() ;
