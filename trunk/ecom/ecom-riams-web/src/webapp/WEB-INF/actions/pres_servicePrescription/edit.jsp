@@ -11,7 +11,7 @@
 	<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
 	<script type="text/javascript">
 	var oldaction = document.forms['pres_servicePrescriptionForm'].action ;
-	document.forms['pres_servicePrescriptionForm'].action="javascript:checkLabs()";
+	document.forms['pres_servicePrescriptionForm'].action="javascript:checkDoubles()";
 	
 	var num=0;
 	var labNum=0;
@@ -23,11 +23,49 @@
  				showcheckPrescTypes();
  			}	
 	}	
-	function checkLabs() {
+	function checkDoubles () {
 		labList="";
 		if ($('labServicies')) {
 			writeServicesToList('lab');
 		}
+		
+		var i=0;
+		// Id from aList
+		var str="";
+		var aList =labList;
+		aList = aList.substring(0,aList.length-1);
+		var aListArr = aList.split("#");
+		if (aListArr.length>0) {
+			for (var i=0; i<aListArr.length;i++) {
+				var id = aListArr[i].split(":");
+			str+=id[0]+":";
+			}
+		}
+		str=str.substring(0,str.length-1);
+		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value, {
+			callback: function (aMedCase) {
+				PrescriptionService.getDuplicatePrescriptions(aMedCase, str,{
+					callback: function(aResult) {
+						if (aResult.length>0){
+							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту, все равно назначить?";
+								if (!confirm (aText)) {							
+									document.getElementById('submitButton').disabled=false;
+									document.getElementById('submitButton').value='Создать';
+									return;
+									}
+						}
+						checkLabs();
+						
+						
+					}
+				});		
+			}
+		});
+		 
+	
+
+	}
+	function checkLabs() {
 		if ($('funcServicies')) {
 			writeServicesToList('func');
 		}
@@ -247,7 +285,6 @@
   		<msh:autoComplete property="medService" vocName="labMedService"  label="Наименование исследования" horizontalFill="true" size="90" />
   		<msh:textField property="planStartDate" label="Дата " size="10"/>
 		<msh:row>
-		<%-- <msh:textArea property="prescriptCabinet" label="Кабинет" /> --%>
 		<msh:autoComplete property="prescriptCabinet" vocName="funcMedServiceRoom" parentAutocomplete="medService" label="Кабинет" size='20' horizontalFill="true" />
   		</msh:row>
 		</msh:ifFormTypeAreViewOrEdit>
