@@ -48,8 +48,8 @@ public class Field extends BaseEntity {
     /** Формат */
     @ManyToOne
     @Comment("Формат")
-    public Format getFormat() { return theFormat ; }
-    public void setFormat(Format aFormat) { theFormat = aFormat ; }
+    public AbstractImportFormat getFormat() { return theFormat ; }
+    public void setFormat(AbstractImportFormat aFormat) { theFormat = aFormat ; }
 
     /** Свойство для сохранения */
     @Comment("Свойство для сохранения")
@@ -128,7 +128,7 @@ public class Field extends BaseEntity {
     /** Свойство для сохранения */
     private String theProperty ;
     /** Формат */
-    private Format theFormat ;
+    private AbstractImportFormat theFormat ;
     /** DBF: количество знаков после запятой */
     private int theDbfDecimal ;
     /** DBF: размер поля */

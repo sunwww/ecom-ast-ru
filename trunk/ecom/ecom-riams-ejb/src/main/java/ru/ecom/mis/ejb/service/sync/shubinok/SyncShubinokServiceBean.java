@@ -191,6 +191,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         	aPatient.setPassportNumber(aEntity.getDocNumber()) ;
         	aPatient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
         	aPatient.setPassportType(passportType) ;
+        	aPatient.setPassportWhomIssued(aEntity.getDocWhom()!=null?aEntity.getDocWhom():"") ;
         	aPatient.setBirthPlace(aEntity.getBirthPlace()!=null?aEntity.getBirthPlace():"") ;
         	//Гражданство
         	aPatient.setNationality(nat) ;

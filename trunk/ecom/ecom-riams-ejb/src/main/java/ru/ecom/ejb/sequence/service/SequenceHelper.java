@@ -93,13 +93,13 @@ public class SequenceHelper {
 	}
 
 	private String nextValue(String aKey, String aOldValue) {
-		System.out.println("oldValue="+aOldValue) ;
+		System.out.println("-----------oldValue="+aOldValue) ;
 		if (!aKey.equals("")) {
 			aOldValue = aOldValue.replaceFirst(aKey, "") ;
 		}
 		long l = Long.parseLong(aOldValue)+1;
 		String key = aKey+String.valueOf(l) ;
-		return String.valueOf(key) ;
+		return key ;
 	}
 	private String addValue(String aKey) {
 		return (aKey.equals("Patient"))? "Н":"" ;
