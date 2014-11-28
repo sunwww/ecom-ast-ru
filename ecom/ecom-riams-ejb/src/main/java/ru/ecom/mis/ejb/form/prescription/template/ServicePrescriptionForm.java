@@ -16,7 +16,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = ServicePrescription.class)
 @Comment("Назначение на услугу")
-@WebTrail(comment = "Назначение на услугу", nameProperties= "id", view="entityParentView-pres_template_servicePrescription.do")
+@WebTrail(comment = "Назначение на услугу", nameProperties= "medService", view="entityParentView-pres_template_servicePrescription.do")
 @Parent(property="prescriptionList", parentForm=PrescriptListForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/Template/ServicePrescription")
 public class ServicePrescriptionForm extends ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm {
