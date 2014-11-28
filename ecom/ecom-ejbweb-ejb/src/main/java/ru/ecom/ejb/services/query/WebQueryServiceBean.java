@@ -46,7 +46,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 		if (rowL instanceof Object[]) {
 			
 			Object[] row = (Object[])rowL ;
-			for (int ii =0 ;ii<row.length&&ii<27;i++) {
+			for (int ii =0 ;ii<row.length&&ii<27;ii++) {
 				try {
 					Method ejbSetterMethod = WebQueryResult.class.getMethod("set"+(ii+1), Object.class);
 					ejbSetterMethod.invoke(result, row[ii]) ;
