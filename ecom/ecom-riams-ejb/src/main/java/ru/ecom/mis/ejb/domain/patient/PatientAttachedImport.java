@@ -410,4 +410,17 @@ where city like '%АСТРАХАНЬ%'
 
 	/** Дата открепления */
 	private Date theLpuDateTo;
+	/** Кем выдан паспорт */
+	@Comment("Кем выдан паспорт")
+	public String getDocWhom() {
+		return theDocWhom;
+	}
+
+	public void setDocWhom(String aDocWhom) {
+		theDocWhom = aDocWhom;
+	}
+
+	/** Кем выдан паспорт */
+	private String theDocWhom;
+	
 }

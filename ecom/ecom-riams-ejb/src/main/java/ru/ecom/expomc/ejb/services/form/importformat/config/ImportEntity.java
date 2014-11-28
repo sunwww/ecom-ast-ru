@@ -56,25 +56,7 @@ public class ImportEntity {
         theEntity = entity;
     }
 
-    @Deprecated
-    public List<ImportKey> getKeys(EntityManager aManager)  {
-        List<ImportKey> list = new ArrayList<ImportKey>();
-        List<Element> keys = null;
-        try {
-            keys = XPath.selectNodes(theEntity,"sync-record/key");
-            for (Element key : keys) {
-                ImportKey importKey = new ImportKey();
-                importKey.setImportLogger(theImportLogger);
-                importKey.load(key,aManager);
-                list.add(importKey);
-            }
-        } catch (JDOMException e) {
-        } catch (InvalidFkException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (MissingAttributeException e) {
-        }
-        return list;
-    }
+    
 
 
     List<ImportSyncKey> getKeyQueries(EntityManager aManager) {

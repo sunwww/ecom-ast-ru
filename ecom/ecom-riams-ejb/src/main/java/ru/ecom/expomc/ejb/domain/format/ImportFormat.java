@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @SuppressWarnings("serial")
 @DiscriminatorValue("1")
 @Table(schema="SQLUser")
-public class ImportFormat  extends AbstractImportFormat  {
+public class ImportFormat  extends Format  {
 
 //    /** Дата с которой начинает действовать формат */
 //    public Date getActualDateFrom() { return theActualDateFrom ; }
