@@ -309,7 +309,7 @@ sls.id as slsid
 then -1 else 0 end)
  as age,sls.dateStart,sls.dateFinish
 , ml.name as mlname, dep.name as depname
- ,of.name as ofname, vss.name as vssname
+ ,of_.name as ofname, vss.name as vssname
  ,vht.name as vhtname,case when sls.emergency='1' then 'Экстр.' else 'План.' end as emerg
  , vlf.name as vlfname
 from MedCase sls
