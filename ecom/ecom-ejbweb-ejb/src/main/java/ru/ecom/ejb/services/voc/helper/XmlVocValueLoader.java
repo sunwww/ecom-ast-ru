@@ -139,7 +139,8 @@ public class XmlVocValueLoader {
         	//String split = elm.getAttributeValue("queriedSplit");
         	String splitFields = elm.getAttributeValue("queriedSplitCount");
         	String splitParent = elm.getAttributeValue("parentSplitCount");
-        	NativeVocService service = new NativeVocService(from, names,nameId, join, queryAppend,queried, parent, order,splitFields,splitParent) ;
+        	String groupBy = elm.getAttributeValue("groupBy");
+        	NativeVocService service = new NativeVocService(from, names,nameId, join, queryAppend,queried, parent, order,splitFields,splitParent,groupBy) ;
         	put(aHash, key, service) ;
         } else if("XmlFileVocService".equals(type)){
         	Element elm = aElement.getChild("XmlFileVocService") ;
