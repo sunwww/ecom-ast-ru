@@ -166,5 +166,18 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	private String theDefectText;
 	/** Период дефекта */
 	private String theDefectPeriod;
+	
+	/** ЛПУ открепления */
+	@Comment("ЛПУ открепления")
+	public String getLpuTo() {
+		return theLpuTo;
+	}
+
+	public void setLpuTo(String aLpuTo) {
+		theLpuTo = aLpuTo;
+	}
+
+	/** ЛПУ открепления */
+	private String theLpuTo;
 
 }
