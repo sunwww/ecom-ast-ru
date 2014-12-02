@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.prescription;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
@@ -26,16 +28,17 @@ public class PrescriptionServiceJs {
 	 * @return ИД MedCase
 	 * @throws NamingException
 	 */
-	public int getMedcaseByPrescriptionList(int aPrescList, HttpServletRequest aRequest) throws NamingException {
+	public Long getMedcaseByPrescriptionList(String aPrescList, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.medcase_id from prescriptionList pl where pl.id='"+aPrescList+"' ";
-		Collection<WebQueryResult> list = service.executeNativeSql(req) ;
-		if (list.size()>0) {
-			for (WebQueryResult res: list) {
-				return Integer.parseInt(res.get1().toString());
-			}
-		}
-		return 0;
+		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
+		if (!list.isEmpty()) {
+			WebQueryResult obj = list.iterator().next() ; 
+		//	System.out.println("res.get1 = =============================== "+obj.get1());
+				return ConvertSql.parseLong(obj.get1());
+			
+		} 
+		return Long.valueOf(0);
 	}
 	/**
 	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
