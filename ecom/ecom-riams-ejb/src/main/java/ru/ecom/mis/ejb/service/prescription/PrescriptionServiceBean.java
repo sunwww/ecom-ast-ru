@@ -48,13 +48,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @return Номер дня пациента для исследования
 	 */
 	
-	public static int getPatientDateNumber(HashMap aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
-		int matId = 0;
-		HashMap<java.lang.String, java.lang.Integer> labMap = (HashMap<java.lang.String, java.lang.Integer>) aLabMap ;
+	public static String getPatientDateNumber(HashMap aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
+		String matId = null;
+		HashMap<java.lang.String, java.lang.String> labMap = (HashMap<java.lang.String, java.lang.String>) aLabMap ;
 		if (!labMap.isEmpty()) { 
 			matId = labMap.get(aKey);
 		}
-		if (matId==0) {
+		if (matId == null || matId.equals("")) {
 			String req = "select p.materialId from prescription p " +
 					"left join PrescriptionList pl on pl.id=p.prescriptionList_id " +
 					"left join medcase mc on mc.id=pl.medCase_id " +
@@ -66,11 +66,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			List<String> lPl = aManager.createNativeQuery(req).getResultList();
 			
 			if (lPl.size()>0) {
-				matId = Integer.parseInt(lPl.get(0)) ;
+				matId = ""+lPl.get(0) ;
 			}  
-			if (matId==0) {
+			if (matId == null || matId.equals("")) {
 				SequenceHelper seqHelper = ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-				matId=Integer.parseInt(seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate, aManager));
+				matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate, aManager);
 			}
 		}
 		return matId;
