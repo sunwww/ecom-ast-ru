@@ -26,6 +26,7 @@
 		        <msh:row>
 		        	<msh:textField property="dateFrom" label="Дата прикрепления"/>
 		        	<msh:textField property="dateTo" label="Дата открепления"/>
+		        	<msh:textField property="lpuTo" label="ЛПУ открепления"/>
 		        </msh:row>
 			</msh:panel>
 			<msh:panel>
