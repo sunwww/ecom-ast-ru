@@ -29,10 +29,10 @@ public class SyncServiceBean implements ISyncService {
 //            ctx.setTransactionManager(theUserTransaction);
             sync.sync(ctx);
         } catch (Exception e) {
-            IMonitor monitor = theMonitorService.getMonitor(aMonitorId);
-            if(monitor==null) {
-                monitor = theMonitorService.startMonitor(aMonitorId, "Ошибка синхронизации",10) ;
-            }
+         //   IMonitor monitor = theMonitorService.getMonitor(aMonitorId);
+         //   if(monitor==null) {
+        	IMonitor monitor = theMonitorService.startMonitor(aMonitorId, "Ошибка синхронизации_",10) ;
+         //   }
             monitor.setText(e+"");
             throw new IllegalStateException("Ошибка синхронизации",e) ;
         }
@@ -52,6 +52,10 @@ public class SyncServiceBean implements ISyncService {
         	return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.lpu.LpuSync").newInstance() ;
         } else  if(aDoc.getEntityClassName().equals("ru.ecom.expomc.ejb.domain.registry.RegistryEntry")) {
             return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.synclpufond.LpuFondSync").newInstance() ;
+        } else  if(aDoc.getEntityClassName().equals("ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDetach")) {
+            return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDetach").newInstance() ;
+        } else  if(aDoc.getEntityClassName().equals("ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect")) {
+            return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDefect").newInstance() ;
         }
         throw new IllegalArgumentException("Нет синхронизации для "+aDoc.getEntityClassName()) ;
     }
