@@ -30,8 +30,9 @@ import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachService {
 	/*
 	 * 1. Берем ФИО человека, находим его в базе. 
-	 * 2. По ИД человека ищем, есть ли у него прикрепление (ищем самое молодое прикрепление).
-	 * 3. Если прикрепление есть, обновляем его, добавляя дату открепления (и комментарий?).
+	 * 2. По ИД человека ищем, есть ли у него актуальное прикрепление (ищем самое молодое прикрепление).
+	 * 3. Если прикрепление есть, обновляем его, добавляя дату открепления и ЛПУ открепления.
+	 * 4. Меняет дату и пользователя.
 	 * 
 	 */
 	private @PersistenceContext EntityManager theManager;
