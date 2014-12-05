@@ -26,6 +26,20 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/AttachedByDepartment")
 public class LpuAttachedByDepartmentForm extends IdEntityForm {
 
+	/** ЛПУ открепления */
+	@Comment("ЛПУ открепления")
+	@Persist
+	public String getLpuTo() {
+		return theLpuTo;
+	}
+
+	public void setLpuTo(String aLpuTo) {
+		theLpuTo = aLpuTo;
+	}
+
+	/** ЛПУ открепления */
+	private String theLpuTo;
+	
 	/** Полное имя ЛПУ */
 	@Comment("Полное имя ЛПУ")
 	@Persist
