@@ -23,6 +23,30 @@
  				showcheckPrescTypes();
  			}	
 	}	
+	function changePrescriptionType() {
+		 writeServicesToList('lab');
+			$('labServicies').value="";
+			$('labServiciesName').value="";
+			if (labList.length>0) {
+				 removeRows('lab');
+				PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
+					callback: function(aResult) {
+						if (aResult) {
+	       					var resultList = aResult.split('#');
+	       					if (resultList.length>0) {
+	       						for (var i=0; i<resultList.length;i++) {
+	       							var resultRow = resultList[i].split(':');
+	       							if (resultRow[0]!="" && resultRow[0]!=null)
+	       								{
+	       								addRow(resultList[i]);
+	       								}
+	       						}
+	       					}
+	       				}
+					}
+				});
+			}
+	}
 	function checkDoubles () {
 		labList="";
 		if ($('labServicies')) {
@@ -30,7 +54,7 @@
 		}
 		
 		var i=0;
-		// Id from aList
+		// Id from aList 
 		var str="";
 		var aList =labList;
 		aList = aList.substring(0,aList.length-1);
@@ -44,7 +68,7 @@
 		str=str.substring(0,str.length-1);
 		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value, {
 			callback: function (aMedCase) {
-				PrescriptionService.getDuplicatePrescriptions(aMedCase, str,{
+				PrescriptionService.getDuplicatePrescriptions(""+aMedCase, str,{
 					callback: function(aResult) {
 						if (aResult.length>0){
 							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту, все равно назначить?";
@@ -64,6 +88,47 @@
 		 
 	
 
+	}
+	function changePrescriptionType() {
+		 writeServicesToList('lab');
+			$('labServicies').value="";
+			$('labServiciesName').value="";
+			if (labList.length>0) {
+				 removeRows('lab');
+				PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
+					callback: function(aResult) {
+						if (aResult) {
+	       					var resultList = aResult.split('#');
+	       					if (resultList.length>0) {
+	       						for (var i=0; i<resultList.length;i++) {
+	       							var resultRow = resultList[i].split(':');
+	       							if (resultRow[0]!="" && resultRow[0]!=null)
+	       								{
+	       								addRow(resultList[i]);
+	       								}
+	       						}
+	       					}
+	       				}
+					}
+				});
+			}
+	}
+	function removeRows(type) {
+		var rType;
+		if (type=='lab') {rType=labNum; labNum=0;}
+		else if (type=='func') {rType=funcNum;funcNum=0;}
+		else if (type=='drug') {rType=drugNum;drugNum=0;}
+		else return;
+		 
+		if (rType>0) {
+			for (var i=1; i<=rType;i++) {
+				if (document.getElementById(type+'Element'+i)){
+					var node = document.getElementById(type+'Element'+i);
+					node.parentNode.removeChild(node);
+				}				
+			}
+		}
+		
 	}
 	function checkLabs() {
 		if ($('funcServicies')) {
@@ -213,6 +278,7 @@
         
       <msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
       <msh:row>
+      <input type='button' name='btnChangePrescriptionType' onclick='showcheckPrescTypes();' value='Изменить тип назначения' />
        	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="100" />
       </msh:row>
  </msh:ifFormTypeIsNotView>
