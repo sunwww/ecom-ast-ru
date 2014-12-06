@@ -41,14 +41,17 @@ public class WebQueryServiceBean implements IWebQueryService {
 	}
 	LinkedList<WebQueryResult> ret = new LinkedList<WebQueryResult>() ;
 	long i = 0 ;
+	Class<WebQueryResult> clazz = WebQueryResult.class ;
+	Class<Object> obj_clazz =Object.class ;
 	for (Object rowL : list) {
+		
 		WebQueryResult result = new WebQueryResult() ;
 		if (rowL instanceof Object[]) {
 			
 			Object[] row = (Object[])rowL ;
 			for (int ii =0 ;ii<row.length&&ii<27;ii++) {
 				try {
-					Method ejbSetterMethod = WebQueryResult.class.getMethod("set"+(ii+1), Object.class);
+					Method ejbSetterMethod = clazz.getMethod("set"+(ii+1), obj_clazz);
 					ejbSetterMethod.invoke(result, row[ii]) ;
 				} catch (SecurityException e) {
 					// TODO Auto-generated catch block
