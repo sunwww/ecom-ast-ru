@@ -326,4 +326,19 @@ public abstract class Prescription extends BaseEntity{
 	private Time theIntakeTime;
 	/** Дата забора */
 	private Date theIntakeDate;
+	
+	/** Причина отмены текст */
+	@Comment("Причина отмены текст")
+	public String getCancelReasonText() {return theCancelReasonText;}
+	public void setCancelReasonText(String aCancelReasonText) {theCancelReasonText = aCancelReasonText;}
+
+	/** Пользователь отменивший */
+	@Comment("Пользователь отменивший")
+	public String getCancelUsername() {return theCancelUsername;}
+	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
+
+	/** Пользователь отменивший */
+	private String theCancelUsername;
+	/** Причина отмены текст */
+	private String theCancelReasonText;
 }

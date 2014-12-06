@@ -235,6 +235,7 @@
                 order=""
                 names   = "wcp.name"
 	    		queried=" (cast(wcp.id as varchar(5)) like :querId or wcp.name like :query) "
+	    		groupBy="wcp.id,wcp.name"
 			/>
 	</voc>
 

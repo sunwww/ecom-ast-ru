@@ -93,19 +93,49 @@ public class WorkCalendarPatternForm extends IdEntityForm {
 	
 	/** Алгоритм на недели */
 	@Comment("Алгоритм на недели")
-	public WorkCalendarWeekAlgorithmForm getWeekAlgorithmForm() {return theWeekAlgorithmForm;}
-	public void setWeekAlgorithmForm(WorkCalendarWeekAlgorithmForm aWeekAlgorithmForm) {theWeekAlgorithmForm = aWeekAlgorithmForm;}
+	public WorkCalendarWeekAlgorithmForm getWeekAlgorithmForm0() {return theWeekAlgorithmForm0;}
+	public void setWeekAlgorithmForm0(WorkCalendarWeekAlgorithmForm aWeekAlgorithmForm) {theWeekAlgorithmForm0 = aWeekAlgorithmForm;}
+	
+	/** Алгоритм на недели */
+	private WorkCalendarWeekAlgorithmForm theWeekAlgorithmForm0 = new WorkCalendarWeekAlgorithmForm() ;
+	
+	/** Алгоритм на недели */
+	@Comment("Алгоритм на недели")
+	public WorkCalendarWeekAlgorithmForm getWeekAlgorithmForm1() {return theWeekAlgorithmForm1;}
+	public void setWeekAlgorithmForm1(WorkCalendarWeekAlgorithmForm aWeekAlgorithmForm) {theWeekAlgorithmForm1 = aWeekAlgorithmForm;}
+	
+	/** Алгоритм на недели */
+	private WorkCalendarWeekAlgorithmForm theWeekAlgorithmForm1 = new WorkCalendarWeekAlgorithmForm() ;
+	
+	/** Алгоритм на недели */
+	@Comment("Алгоритм на недели")
+	public WorkCalendarWeekAlgorithmForm getWeekAlgorithmForm2() {return theWeekAlgorithmForm2;}
+	public void setWeekAlgorithmForm2(WorkCalendarWeekAlgorithmForm aWeekAlgorithmForm) {theWeekAlgorithmForm2 = aWeekAlgorithmForm;}
 
 	/** Алгоритм на недели */
-	private WorkCalendarWeekAlgorithmForm theWeekAlgorithmForm = new WorkCalendarWeekAlgorithmForm() ;
+	private WorkCalendarWeekAlgorithmForm theWeekAlgorithmForm2 = new WorkCalendarWeekAlgorithmForm() ;
 	
 	/** Алгоритм по дням недели */
 	@Comment("Алгоритм по дням недели")
-	public WorkCalendarWeekDaysAlgorithmForm getWeekDaysAlgorithmForm() {return theWeekDaysAlgorithmForm;}
-	public void setWeekDaysAlgorithmForm(WorkCalendarWeekDaysAlgorithmForm aWeekDaysAlgorithmForm) {theWeekDaysAlgorithmForm = aWeekDaysAlgorithmForm;}
+	public WorkCalendarWeekDaysAlgorithmForm getWeekDaysAlgorithmForm0() {return theWeekDaysAlgorithmForm0;}
+	public void setWeekDaysAlgorithmForm0(WorkCalendarWeekDaysAlgorithmForm aWeekDaysAlgorithmForm) {theWeekDaysAlgorithmForm0 = aWeekDaysAlgorithmForm;}
+	
+	/** Алгоритм по дням недели */
+	private WorkCalendarWeekDaysAlgorithmForm theWeekDaysAlgorithmForm0 = new WorkCalendarWeekDaysAlgorithmForm();
+	/** Алгоритм по дням недели */
+	@Comment("Алгоритм по дням недели")
+	public WorkCalendarWeekDaysAlgorithmForm getWeekDaysAlgorithmForm1() {return theWeekDaysAlgorithmForm1;}
+	public void setWeekDaysAlgorithmForm1(WorkCalendarWeekDaysAlgorithmForm aWeekDaysAlgorithmForm) {theWeekDaysAlgorithmForm1 = aWeekDaysAlgorithmForm;}
+	
+	/** Алгоритм по дням недели */
+	private WorkCalendarWeekDaysAlgorithmForm theWeekDaysAlgorithmForm1 = new WorkCalendarWeekDaysAlgorithmForm();
+	/** Алгоритм по дням недели */
+	@Comment("Алгоритм по дням недели")
+	public WorkCalendarWeekDaysAlgorithmForm getWeekDaysAlgorithmForm2() {return theWeekDaysAlgorithmForm2;}
+	public void setWeekDaysAlgorithmForm2(WorkCalendarWeekDaysAlgorithmForm aWeekDaysAlgorithmForm) {theWeekDaysAlgorithmForm2 = aWeekDaysAlgorithmForm;}
 
 	/** Алгоритм по дням недели */
-	private WorkCalendarWeekDaysAlgorithmForm theWeekDaysAlgorithmForm = new WorkCalendarWeekDaysAlgorithmForm();
+	private WorkCalendarWeekDaysAlgorithmForm theWeekDaysAlgorithmForm2 = new WorkCalendarWeekDaysAlgorithmForm();
 	
 	/** Рабочий день1 */
 	@Comment("Рабочий день1")
@@ -178,4 +208,33 @@ public class WorkCalendarPatternForm extends IdEntityForm {
 
 	/** Рабочий день 9 */
 	private WorkCalendarDayPatternForm theDayPattern9Form = new WorkCalendarDayPatternForm();
+	
+	/** Используется алгоритм профдня */
+	@Comment("Используется алгоритм профдня")
+	public Boolean getIsProfday() {return theIsProfday;}
+	public void setIsProfday(Boolean aIsProfday) {theIsProfday = aIsProfday;}
+
+	/** Используется алгоритм дней */
+	@Comment("Используется алгоритм дней")
+	public Boolean getIsDays() {return theIsDays;}
+	public void setIsDays(Boolean aIsDays) {theIsDays = aIsDays;}
+
+	/** Используется алгоритм рабочей недели */
+	@Comment("Используется алгоритм рабочей недели")
+	public Boolean getIsWeek() {return theIsWeek;}
+	public void setIsWeek(Boolean aIsWeek) {theIsWeek = aIsWeek;}
+
+	/** Используется алгоритм рабочих дней недели */
+	@Comment("Используется алгоритм рабочих дней недели")
+	public Boolean getIsWeekDays() {return theIsWeekDays;}
+	public void setIsWeekDays(Boolean aIsWeekDays) {theIsWeekDays = aIsWeekDays;}
+
+	/** Используется алгоритм рабочих дней недели */
+	private Boolean theIsWeekDays;
+	/** Используется алгоритм рабочей недели */
+	private Boolean theIsWeek;
+	/** Используется алгоритм дней */
+	private Boolean theIsDays;
+	/** Используется алгоритм профдня */
+	private Boolean theIsProfday;
 }

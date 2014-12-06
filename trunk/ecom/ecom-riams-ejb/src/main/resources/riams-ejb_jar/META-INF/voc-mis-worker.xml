@@ -16,7 +16,21 @@
                 join=" left join WorkCalendarPattern wcp on wcp.lpu_id=wcdp.lpu_id "
                 order=""
                 names   = " wcdp.name "
-	    		queried=" wcdp.name like :querId "
+	    		queried=" wcdp.name like :query "
+	    		groupBy = "wcdp.id,wcdp.name"
+	    		
+			/>
+	</voc>
+	<voc id="workCalendarDayPatternByLpu" type="NativeVocService">
+		<NativeVocService
+                from  = ' WorkCalendarDayPattern wcdp'
+                parent=' wcdp.lpu_id=:parent'
+                nameId="wcdp.id"
+                join=""
+                queryAppend=""
+                order=""
+                names   = " wcdp.name "
+	    		queried=" wcdp.name like :query "
 	    		
 			/>
 	</voc>
