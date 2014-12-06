@@ -2961,7 +2961,7 @@ var _2d2="id="+_2b1.getLastId()+createParentQuery();
 mshaDoRequest(_2b0,_2d2,onResponse);
 }
 function findPrevious(){
-mshaDoRequest(_2b0,"direction=backward&id="+_2b1.getFirstId(),onResponse);
+mshaDoRequest(_2b0,"direction=backward&id="+_2b1.getFirstId()+createParentQuery(),onResponse);
 }
 function __findQuery(){
 if(theTimeout){

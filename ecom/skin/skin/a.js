@@ -4175,7 +4175,7 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
     }
 
     function findPrevious() {
-        mshaDoRequest(theUrl, 'direction=backward&id=' + theView.getFirstId(), onResponse);
+        mshaDoRequest(theUrl, 'direction=backward&id=' + theView.getFirstId()+createParentQuery(), onResponse);
     }
 
     function __findQuery() {
