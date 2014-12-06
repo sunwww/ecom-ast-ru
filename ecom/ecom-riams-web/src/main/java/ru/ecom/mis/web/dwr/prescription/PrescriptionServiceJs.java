@@ -20,7 +20,17 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
-	
+	public String cancelService(String aPrescript,String aReason,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		sql.append("update Prescription set cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id='").append(aPrescript).append("'");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "1" ;
+	}
 	/**
 	 * Поиск СЛО по ИД листа назначения
 	 * @param aPrescList - ИД листа назначения
@@ -34,7 +44,7 @@ public class PrescriptionServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
 		if (!list.isEmpty()) {
 			WebQueryResult obj = list.iterator().next() ; 
-		//	System.out.println("res.get1 = =============================== "+obj.get1());
+		//	System.out.println("res.get1 ================================ "+obj.get1());
 				return ConvertSql.parseLong(obj.get1());
 			
 		} 

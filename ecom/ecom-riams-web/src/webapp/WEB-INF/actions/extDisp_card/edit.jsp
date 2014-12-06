@@ -140,8 +140,6 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	<tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 		<script type="text/javascript">
-		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
-		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
     	function updateAge() {
     		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
         		callback: function(aResult) {
@@ -150,6 +148,13 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
         	});
     	}
     	updateAge() ;
+    	try {
+    		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';});
+    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
+    		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
+    	} catch(e) {
+
+    	}
 		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">

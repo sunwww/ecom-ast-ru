@@ -78,6 +78,7 @@
       </msh:row>
     </msh:panel>
     </msh:form>
+    <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
            <script type='text/javascript'>
            checkFieldUpdate('typeIntake','${typeIntake}',1) ;
@@ -96,10 +97,33 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-
+    function getCancelReason(aMaterialId) {
+		aMaterialId=prompt('Введите причину отмены:', aMaterialId) ;
+		if (aMaterialId==null || aMaterialId=="") {
+			if (confirm('Неопределена причина отмены. Хотите ввести еще раз?')) {
+				return getMaterialId(aMaterialId) ;
+			}
+		} else {
+			return aMaterialId ;
+		}
+		return null ;
+	}
+    function cancelService(aListPrescript, aReason) {
+			var aReason = getCancelReason() ;
+			if (aReason!=null) {
+				PrescriptionService.cancelService(aListPrescript, aReason, { 
+	            callback: function(aResult) {
+	            	window.document.location.reload();
+	            }
+			}); 
+			}
+		}
 			 
     </script>
   	<%
+  	request.setAttribute("j", "<input type=\"button\" value=\"Отмена услуги\" onclick=\""
+  		    +"cancelService('||p.id||')\"/>") ;
+  		    
   	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
   	//ActionUtil.getValueBySql("select lpu.id,lpu.name from mislpu lpu left join worker w on w.lpu_id=lpu.id left join workfunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "lpu_id","lpu_name",request) ;
   	//Object lpu = request.getAttribute("lpu_id") ;
@@ -219,6 +243,7 @@
     ,coalesce(vsst.name,'---') as vsstname
     , p.materialId as material
     ,ms.code||' '||ms.name as medServicies
+    ,'${j}'
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -244,7 +269,8 @@
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="reestr" action="entityParentView-pres_prescriptList.do" idField="1">
+	    <msh:table name="reestr" action="javascript:void(0)" idField="1">
+	      <msh:tableColumn columnName="Управление" property="9"  />
 	      <msh:tableColumn columnName="Стат.карта" property="2"  />
 	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />
 	      <msh:tableColumn columnName="Имя" property="4" />

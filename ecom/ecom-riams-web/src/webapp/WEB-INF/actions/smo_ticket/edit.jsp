@@ -112,6 +112,7 @@
 
 	    <msh:row>
         	<msh:textField label="Пользователь" property="username" viewOnlyField="true" />
+        	<msh:checkBox label="Недействующий талон" property="noActuality"/>
         </msh:row>
         </msh:ifFormTypeAreViewOrEdit>
 	    <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
@@ -120,7 +121,7 @@
     <msh:ifFormTypeIsView formName="smo_ticketForm">
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
     	<msh:section>
-    		<msh:sectionTitle>Талоны беседы с родственниками <msh:link action="/js-smo_ticket-addTalk.do?id=${param.id}" roles="/Policy/Poly/Ticket/Create,/Policy/Mis/MisLpu/Psychiatry">добавить</msh:link> </msh:sectionTitle>
+    		<msh:sectionTitle>Талоны беседы с родственниками <msh:link action="/js-smo_ticket-addTalk.do?id=${param.id}" roles="/Policy/Poly/Ticket/CreateTalk">добавить</msh:link> </msh:sectionTitle>
     		<msh:sectionContent>
     			<ecom:webQuery name="ticketTalk" nativeSql="select t1.id,t1.isTalk 
     			from MedCase t1 
@@ -221,7 +222,7 @@
 		<msh:sideLink params="id" action="/js-smo_visit-closeSpo" 
 		name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" 
 			key="ALT+4" roles="/Policy/Poly/Ticket/Edit" />        
-			<msh:sideLink roles="/Policy/Poly/Ticket/CreateTalk,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
+			<msh:sideLink roles="/Policy/Poly/Ticket/CreateTalk" key="ALT+4" params="id" action="/js-smo_ticket-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_ticket-doNotAddTalk" name="Сделать обычным посещением" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
         
         <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm" guid="7f581b0a-a8b3-4d57-9cff-6dc6db1c85e3">
@@ -238,6 +239,7 @@
         <msh:sideLink roles="/Policy/Poly/Ticket/Create"
          action="/javascript:window.location='entityParentPrepareCreate-smo_ticket.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
          title="Добавить талон пациента на основе текущего" />
+       <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Poly/Ticket/ChangeServiceStream" />

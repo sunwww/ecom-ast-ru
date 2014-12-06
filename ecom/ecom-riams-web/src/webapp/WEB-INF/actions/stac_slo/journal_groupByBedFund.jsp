@@ -22,6 +22,7 @@
   <tiles:put name="body" type="string">
   <%
 	//String typeView =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeView","1", request) ;
+	String typePolicy =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typePolicy","3", request) ;
 	String typePatient =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typePatient","4", request) ;
 	String typeDate =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeDate","2", request) ;
 	String typeStandart =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeStandart","1", request) ;
@@ -97,6 +98,18 @@
         	<input type="radio" name="typePatient" value="4">  все
         </td>
       </msh:row>
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Поиск по полисам (typePolicy)" colspan="1"><label for="typePolicyName" id="typePolicyLabel">Полис:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePolicy" value="1">  региональные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typePolicy" value="2">  иногородные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+        	<input type="radio" name="typePolicy" value="3">  не учитывается параметр
+        </td>
+      </msh:row>
       <msh:row>
         <td class="label" title="Отображать доп. статус (typeViewAddStatus)" colspan="1"><label for="typeViewAddStatusName" id="typeViewAddStatusLabel">Колонку доп.статус:</label></td>
         <td onclick="this.childNodes[1].checked='checked';" >
@@ -157,6 +170,7 @@
   //checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typePatient','${typePatient}',4) ;
+    checkFieldUpdate('typePolicy','${typePolicy}',3) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',4) ;
     //checkFieldUpdate('typeStandart','${typeStandart}',2) ;
     checkFieldUpdate('typeViewAddStatus','${typeViewAddStatus}',2) ;
@@ -204,6 +218,15 @@
     		request.setAttribute("result_dateSql"," and vhr.code='11'") ;
     	}
     			
+    	if (typePolicy.equals("2")) {
+			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
+			request.setAttribute("policySql", " and upper(mp.dtype) like '%FOREIGN'") ;
+			request.setAttribute("infoTypePolicy", "иногородние") ;
+		} else if (typePolicy.equals("1")){
+			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+			request.setAttribute("policySql", " and upper(mp.dtype) not like '%FOREIGN'") ;
+			request.setAttribute("infoTypePolicy", "региональные") ;
+		}
     	if (typePatient.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
@@ -266,53 +289,59 @@
     	if (typeView!=null && typeView.equals("1")) {
     	%>
     		<ecom:webQuery name="swod_by_standart" maxResult="1500" nameFldSql="swod_by_standart_sql" nativeSql="
-    	select m.id
-    	,d.name as depname,ss.code as sscode
-    	,p.lastname||' '||p.firstname||' '||p.middlename as fio
+        select m.id
+        ,d.name as depname,ss.code as sscode
+        ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     ,to_char(p.birthday,'dd.mm.yyyy') as birthday
     ,to_char(m.dateStart,'dd.mm.yyyy') as mdateStart
     ,to_char(coalesce(m.dateFinish,m.transferDate),'dd.mm.yyyy') as mdateFinish
-    ,	  case 
-			when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1 
-			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
-			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
-		  end as cnt1
+    ,      case
+            when (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1)
+            else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
+          end as cnt1
     ,to_char(hmc.dateStart,'dd.mm.yyyy') as hdateStart
     ,to_char(hmc.dateFinish,'dd.mm.yyyy') as hdateFinish
-    ,	  case 
-			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
-			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
-			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
-		  end as cnt2
+    ,      case
+            when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1)
+            else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+          end as cnt2
     ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
-    ,vhr.name as vhrname,tml.name
-    from MedCase as m 
-    left join medcase as hmc on hmc.id=m.parent_id 
+    ,vhr.name as vhrname,tml.name,vs.omcCode as vsomccode,p.lastname as p.lastname, p.firstname as pfirstname, p.middlename as pmiddlename
+    ,mp.commonNumber as mpcommonNumber
+    from MedCase as m
+    left join medcase as hmc on hmc.id=m.parent_id
     left join VocHospitalizationResult vhr on vhr.id=hmc.result_id
-    left join statisticstub as ss on ss.id=hmc.statisticstub_id 
-    left join bedfund as bf on bf.id=m.bedfund_id 
-    left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
-    left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
-    left join mislpu as d on d.id=m.department_id 
-    left join patient as p on p.id=m.patient_id 
+    left join statisticstub as ss on ss.id=hmc.statisticstub_id
+    left join bedfund as bf on bf.id=m.bedfund_id
+    left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id
+    left join vocbedtype as vbt on vbt.id=bf.bedtype_id
+    left join mislpu as d on d.id=m.department_id
+    left join patient as p on p.id=m.patient_id
+left join VocSex vs on vs.id=p.sex_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id
-    left join Omc_Oksm ok on p.nationality_id=ok.id 
+    left join Omc_Oksm ok on p.nationality_id=ok.id
     left join VocServiceStream vss on vss.id=m.serviceStream_id
     left join MisLpu tml on tml.id=hmc.moveToAnotherLPU_id
-    where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
-    to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
-    ${departmentSql} ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
+    left join MedCase_MedPolicy mcmp on mcmp.medCase_id=hmc.id  
+	left join medpolicy mp on mp.id=mcmp.policies_id  
+
+    where m.DTYPE='DepartmentMedCase' and m.${dateSql} between
+    to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
+    ${departmentSql} ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
     ${patientSql} ${additionStatusSql} ${result_dateSql}
-    
+    ${policySql} 
     order by  p.lastname,p.firstname,p.middlename
-    	"/>
+        "/>
    <form action="print-stac_report_bedFund_reestr.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}.
     <input type='hidden' name="sqlText" id="sqlText" value="${swod_by_standart_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
-    <input type="submit" value="Печать всего"> 
+    <input type="submit" value="Печать всего" onclick="this.form.action='print-stac_report_bedFund_reestr.do'"> 
+    <input type="submit" value="Печать для проверки" onclick="this.form.action='print-stac_report_bedFund_reestr_inog.do'"> 
     </form>
  
     	<msh:table name="swod_by_standart" selection="multiply" 
@@ -403,11 +432,14 @@
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
+    left join MedCase_MedPolicy mcmp on mcmp.medCase_id=hmc.id  
+	left join MedPolicy mp on mp.id=mcmp.policies_id  
     
     where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
     ${departmentSql}  ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
     ${patientSql} ${additionStatusSql} ${result_dateSql}
+    ${policySql} 
     group by  
 		m.department_id , d.name,
 		${viewDateGroup} ${viewServiceStreamGroup} ${viewAddStatusGroup} 
@@ -415,8 +447,8 @@
     order by  ${viewDateOrder} d.name,${viewServiceStreamOrder} ${viewAddStatusOrder} vbt.name,vbst.name
     	"/>
     	<msh:table name="swod_by_standart"  selection="multiply"
-    	viewUrl="stac_groupByBedFundList.do?short=Short&typeResult=${typeResult}&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1"
-    	action="stac_groupByBedFundList.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1" idField="1">
+    	viewUrl="stac_groupByBedFundList.do?short=Short&typeResult=${typeResult}&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typePolicy=${typePolicy}&typeView=1"
+    	action="stac_groupByBedFundList.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typePolicy=${typePolicy}&typeView=1" idField="1">
     		<msh:tableColumn property="2" cssClass="noDate" columnName="Дата"/>
     		<msh:tableColumn property="3" cssClass="noAddStatus" columnName="Доп. статус"/>
     		<msh:tableColumn property="4" cssClass="noDepartment" columnName="Отделение"/>
