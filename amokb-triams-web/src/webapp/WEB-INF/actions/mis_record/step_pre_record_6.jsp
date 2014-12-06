@@ -93,5 +93,6 @@ div.button {
   			window.location = "start.do" ;
   		}
   		</script>
+  		<tags:timerGoMain interval="600000"/>
   </tiles:put>
 </tiles:insert>

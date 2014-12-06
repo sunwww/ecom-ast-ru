@@ -47,6 +47,7 @@ padding:5px ;
     <tiles:put name='body' type='string'>
 	    ${tableTime}
 	    <a href='step_table_1.do?vocWorkFunction=${param.vocWorkFunction}' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
+	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>

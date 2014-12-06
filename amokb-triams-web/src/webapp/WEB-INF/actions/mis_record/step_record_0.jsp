@@ -566,6 +566,7 @@
 	       	new dateutil.DateField($('birthday')) ;
 	       	</script>
 	       	<tags:waiting name="w" title="Обработка данных по базе ФОМС"/>
+	       	<tags:timerGoMain interval="600000"/>
 </tiles:put>
 <tiles:put type="string" name="javascript">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>

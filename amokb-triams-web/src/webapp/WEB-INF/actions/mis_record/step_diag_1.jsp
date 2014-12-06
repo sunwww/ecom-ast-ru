@@ -55,7 +55,7 @@ td {
 	    	<msh:tableColumn property="4" columnName="Подготовка к исследованию"/>
 	    </msh:table>
 	    <a href='step_diag_0.do' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
-	    
+	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>

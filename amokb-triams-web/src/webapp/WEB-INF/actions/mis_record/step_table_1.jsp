@@ -53,6 +53,7 @@ a {
     <tiles:put name='body' type='string'>
 	    ${tableSpec}
  	    <a href='step_table_0.do' style='font-size: 2em;font-weight: bolder; text-align: center;'>НАЗАД</a>
+ 	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>

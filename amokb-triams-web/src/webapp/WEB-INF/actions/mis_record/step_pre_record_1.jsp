@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
+
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name="side" type="string">
@@ -25,7 +26,7 @@
 	    <msh:table name="dep listFunctions" action="${path_rec}2.do" idField="1" hideTitle="true">
 	    	<msh:tableColumn property="2" columnName="Название отделения"/>
 	    </msh:table>
-	    
+	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>
