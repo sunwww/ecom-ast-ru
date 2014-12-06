@@ -417,5 +417,22 @@ public class PrescriptionForm extends IdEntityForm{
 	private String theIntakeTime;
 	/** Дата забора */
 	private String theIntakeDate;
+	/** Причина отмены текст */
+	@Comment("Причина отмены текст")
+	@Persist
+	public String getCancelReasonText() {return theCancelReasonText;}
+	public void setCancelReasonText(String aCancelReasonText) {theCancelReasonText = aCancelReasonText;}
+
+	/** Пользователь отменивший */
+	@Comment("Пользователь отменивший")
+	@Persist
+	public String getCancelUsername() {return theCancelUsername;}
+	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
+
+	/** Пользователь отменивший */
+	private String theCancelUsername;
+	/** Причина отмены текст */
+	private String theCancelReasonText;
+
 }
 
