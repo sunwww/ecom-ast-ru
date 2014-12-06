@@ -136,5 +136,6 @@
     			window.location = "${path_rec}4.do?"+aParam ;
     		}
     	</script>
+    	<tags:timerGoMain interval="600000"/>
     </tiles:put>
 </tiles:insert>

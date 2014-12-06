@@ -96,6 +96,7 @@
 	    		
 	    	}
 	    </script>
+	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>

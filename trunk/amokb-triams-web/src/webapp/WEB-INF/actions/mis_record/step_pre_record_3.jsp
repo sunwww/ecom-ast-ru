@@ -20,7 +20,7 @@
 	    	<msh:tableColumn property="2" columnName="ФИО врача"/>
 	    </msh:table>
 
-	    </div>
+	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 
 </tiles:insert>
