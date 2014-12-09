@@ -1,10 +1,13 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+
 /**
  * Интерфейс сервиса для работы с назначениями
  * @author STkacheva
  */
 public interface IPrescriptionService {
+
+	
 	/**
 	 * Проверка на возможность создавать направление с типом "экстренно".
 	 * @param aPrescriptionListId - номер листа назначения
