@@ -1,9 +1,7 @@
 package ru.ecom.mis.web.dwr.prescription;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +28,26 @@ public class PrescriptionServiceJs {
 		sql.append("update Prescription set cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id='").append(aPrescript).append("'");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
+	}
+	/**Возвращает ID листа назначений, если он существует в заданном Medcase 
+	 * 	
+	 * @param aMedcase - ИД СЛО
+	 * @param aRequest
+	 * @return - ИД листа назначений (самый ранний)
+	 * @throws NamingException
+	 */
+	public String isPrescriptListExists(String aMedcase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
+	//	System.out.println("---------------------in isPrescriptListExists, req="+req);
+		Collection <WebQueryResult> wrt = service.executeNativeSql(req, 1);
+		
+		if (wrt.size()>0) {
+			WebQueryResult obj = wrt.iterator().next();
+			//System.out.println("---------------------in isPrescriptListExists, id="+obj.get1().toString());
+			return obj.get1().toString();
+		}
+		return "";
 	}
 	/**
 	 * Поиск СЛО по ИД листа назначения
