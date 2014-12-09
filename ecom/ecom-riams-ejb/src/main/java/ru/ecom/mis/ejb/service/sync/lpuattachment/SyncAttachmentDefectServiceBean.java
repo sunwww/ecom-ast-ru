@@ -69,12 +69,12 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
                 }
 				defect =  lafd.next();
 				patientId = theSyncService.findPatientId(defect.getLastname(), defect.getFirstname(), defect.getMiddlename(), defect.getBirthday());
-				patient = theManager.find(Patient.class, patientId);
 				if (patientId!=null){ 
+					patient = theManager.find(Patient.class, patientId);
 					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType());
 					if (attachment!=null) {
 						attachment.setDefectText(defect.getRefreason());
-						attachment.setDefectPeriod("HELLO");
+						attachment.setDefectPeriod("HELLO"); // Изменить !!! 
 						attachment.setEditUsername("fond_base");
 						attachment.setEditDate(current_date);
 						theManager.persist(attachment);
