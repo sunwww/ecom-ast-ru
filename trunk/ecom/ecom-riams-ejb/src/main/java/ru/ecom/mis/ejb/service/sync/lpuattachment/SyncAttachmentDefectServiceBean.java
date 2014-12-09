@@ -74,7 +74,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType());
 					if (attachment!=null) {
 						attachment.setDefectText(defect.getRefreason());
-						attachment.setDefectPeriod("HELLO"); // Изменить !!! 
+						attachment.setDefectPeriod(""); // Изменить !!! 
 						attachment.setEditUsername("fond_base");
 						attachment.setEditDate(current_date);
 						theManager.persist(attachment);
