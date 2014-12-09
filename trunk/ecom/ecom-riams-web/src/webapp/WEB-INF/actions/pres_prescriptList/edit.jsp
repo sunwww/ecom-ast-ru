@@ -18,6 +18,7 @@
 		var drugNum=0;
 		var labList="";
 		var drugList="";
+		var allDrugList="";
 		var currentDate = new Date;
 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 		var textMonth = currentDate.getMonth()+1;
@@ -25,7 +26,27 @@
 		var textYear =currentDate.getFullYear();
 		var textDate = textDay+'.'+textMonth+'.'+textYear;
 		
- 		onload=function () {
+ 		onload=checkPrescriptExists();
+ 		
+		function checkPrescriptExists() {
+			if ($('prescriptType').value=="" || $('prescriptType').value==null){			
+ 				PrescriptionService.isPrescriptListExists($('medCase').value, {
+					callback: function(plID) {
+						if (plID!="" && plID!=null) {
+						//	alert ("Prescription List in this medcase exists, "+plID);
+							createUrl("В данном СЛО уже заведен лист назначения, хотите в него перейти?",
+									"entityParentView-pres_prescriptList.do?id="+plID,
+									"В данном СЛО уже заведен лист назначения.");
+						//	startLoad(); //Удалить !!! 
+						} else {
+							startLoad();
+						}
+					}
+				});
+			}
+		}
+ 		
+ 			function startLoad() {
  			if ($('prescriptType').value=="" || $('prescriptType').value==null){
  				showcheckPrescTypes(); 				
  			}
@@ -52,12 +73,32 @@
            		}
            				);
            		} 
+ 			if ($('allDrugList').value.length>0) {
+ 				alert ($('allDrugList').value);
+ 				var aDrugArr = $('allDrugList').value.split('#');
+ 				for (var i=0;i<aDrugArr.length;i++) {
+ 					var resultRow = aDrugArr[i].split(':');
+ 					if (resultRow[0]!="" && resultRow[0]!=null){
+ 						addDrugRow(aDrugArr[i]);
+ 					}
+ 				}
+ 			}
+ 			
  
 
 }  
 		//При изменении типа ЛН, удаляем все лаб. исследования, прогоняем через PrescriptionService, 
 		//Заполняем только теми исследованиями, у которых соответствующий тип 
-		
+
+		  function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
+		     	if (confirm(aTitleConfirm)) {
+					window.location.href = aUrlCreate  ;
+				} else {
+					window.history.back();
+				}
+				
+		  }
+		  
 		function changePrescriptionType() {
 			 writeServicesToList('lab');
 				$('labServicies').value="";
@@ -127,6 +168,7 @@
 		// Добавление всех лекарственных назначений в список 
 		function writeDrugsToList() {
 			drugList="";
+			allDrugList="";
 			var type = "drug";
 			var typeNum = 0;
 			if (type=="drug") {
@@ -136,15 +178,20 @@
 		while (typeNum>0) {
 			if (document.getElementById(type+"Element"+typeNum)) {
 				var curDrug = $(type+'Drug'+typeNum).value;
+				var curDrugName = $(type+'DrugName'+typeNum).value;
 				var curDate = document.getElementById(type+'Date'+typeNum);
 				var curMethod = document.getElementById(type+'Method'+typeNum);
+				var curMethodName = document.getElementById(type+'MethodName'+typeNum);
 				var curAmount = document.getElementById(type+'Amount'+typeNum);
 				var curDuration = document.getElementById(type+'Duration'+typeNum);
 				var curFrequency = document.getElementById(type+'Frequency'+typeNum);
 				var curAmountUnit = document.getElementById(type+'AmountUnit'+typeNum);
+				var curAmountUnitName = document.getElementById(type+'AmountUnitName'+typeNum);
 				var curDurationUnit = document.getElementById(type+'DurationUnit'+typeNum);
+				var curDurationUnitName = document.getElementById(type+'DurationUnitName'+typeNum);
 				var curFrequencyUnit = document.getElementById(type+'FrequencyUnit'+typeNum);
-				if (curDrug.value != "" & curDate.value != "") {	
+				var curFrequencyUnitName = document.getElementById(type+'FrequencyUnitName'+typeNum);
+				if (curDrug != "" & curDate.value!= "") {	
 					//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
 		            drugList+=curDrug;
 		            drugList+=":";
@@ -164,8 +211,37 @@
 		            drugList+=":";
 		            drugList+=curDurationUnit.value;
 		            drugList+="#";
+		            // Add into allDrugList 
+		            allDrugList+=curDrug;
+		            allDrugList+=":";
+		            allDrugList+=curDrugName;
+		            allDrugList+=":";
+		            allDrugList+=curDate.value;
+		            allDrugList+=":";
+		            allDrugList+=curMethod.value;
+		            allDrugList+=":";
+		            allDrugList+=curMethodName.value;
+		            allDrugList+=":";
+		            allDrugList+=curFrequency.value;
+		            allDrugList+=":";
+		            allDrugList+=curFrequencyUnit.value;
+		            allDrugList+=":";
+		            allDrugList+=curFrequencyUnitName.value;
+		            allDrugList+=":";
+		            allDrugList+=curAmount.value;
+		            allDrugList+=":";
+		            allDrugList+=curAmountUnit.value;
+		            allDrugList+=":";
+		            allDrugList+=curAmountUnitName.value;
+		            allDrugList+=":";
+		            allDrugList+=curDuration.value;
+		            allDrugList+=":";
+		            allDrugList+=curDurationUnit.value;
+		            allDrugList+=":";
+		            allDrugList+=curDurationUnitName.value;
+		            allDrugList+="#";
 		            // Проверка на дубли 
-		            if ($('drugForm1.drug').value==curDrug.value) {
+		            if ($('drugForm1.drug').value==curDrug) {
 		            	isDoubble=1;	
 		            }
 				}
@@ -193,6 +269,35 @@
 	            drugList+=":";
 	            drugList+=$('drugForm1.durationUnit').value;
 	            drugList+="#";
+	            // allDrugList 
+	            allDrugList+=$('drugForm1.drug').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.drugName').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.planStartDate').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.method').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.methodName').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.frequency').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.frequencyUnit').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.frequencyUnitName').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.amount').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.amountUnit').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.amountUnitName').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.duration').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.durationUnit').value;
+	            allDrugList+=":";
+	            allDrugList+=$('drugForm1.durationUnitName').value;
+	            allDrugList+="#";
 	         }
 	     }
 	//	alert("DrugList = "+drugList); 
@@ -260,7 +365,7 @@
 			$('labList').value=labList ;
 			writeDrugsToList();
 			$('drugList').value = drugList;
-	 
+			$('allDrugList').value = allDrugList;
 	//		alert("labList = "+$('labList').value); 
 	//		alert("drugList = "+$('drugList').value); 
 			document.forms['pres_prescriptListForm'].action=oldaction ;
@@ -453,24 +558,29 @@
 	    // Наполняем ячейки 
 	    //drug 
 	    var dt2="<input id='"+type+"Drug"+num+"' value='"+aDrugID+"' type='hidden' name='"+type+"Drug"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    dt2+="<input id='"+type+"DrugName"+num+"' value='"+aDrugName+"' type='hidden' name='"+type+"DrugName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //method 
 	    dt2+="<input id='"+type+"Method"+num+"' value='"+aDrugMethod+"' type='hidden' name='"+type+"Method"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    dt2+="<input id='"+type+"MethodName"+num+"' value='"+aDrugMethodName+"' type='hidden' name='"+type+"MethodName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //frequency 
 	    var dt3="<input id='"+type+"Frequency"+num+"' value='"+aDrugFrequency+"' type='hidden' name='"+type+"Frequency"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    // frequency unit 
 	    dt3+="<input id='"+type+"FrequencyUnit"+num+"' value='"+aDrugFrequencyUnit+"' type='hidden' name='"+type+"FrequencyUnit"+num+"' size='10' readonly='true' />";
+	    dt3+="<input id='"+type+"FrequencyUnitName"+num+"' value='"+aDrugFrequencyUnitName+"' type='hidden' name='"+type+"FrequencyUnitName"+num+"' size='10' readonly='true' />";
 	    // Amount 
 	    var dt4="<input id='"+type+"Amount"+num+"' value='"+aDrugAmount+"' type='hidden' name='"+type+"Amount"+num+"' horizontalFill='true' size='20' readonly='true' />";
 	    //Amount unit 
 	    dt4+="<input id='"+type+"AmountUnit"+num+"' value='"+aDrugAmountUnit+"' type='hidden' name='"+type+"AmountUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    dt4+="<input id='"+type+"AmountUnitName"+num+"' value='"+aDrugAmountUnitName+"' type='hidden' name='"+type+"AmountUnitName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //Duration 
 	    var dt5="<input id='"+type+"Duration"+num+"' value='"+aDrugDuration+"' type='hidden' name='"+type+"Duration"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //Duration unit 
 	    dt5+="<input id='"+type+"DurationUnit"+num+"' value='"+aDrugDurationUnit+"' type='hidden' name='"+type+"DurationUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
+	    dt5+="<input id='"+type+"DurationUnitName"+num+"' value='"+aDrugDurationUnitName+"' type='hidden' name='"+type+"DurationUnitName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    	   
 	    td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+aDrugDate+"' size = '10' />";	    
-	    td2.innerHTML = dt2+"<span> "+aDrugName+"</span> Способ введения: <span>"+aDrugMethodName+"</span>" ;
-	  	td3.innerHTML = dt3+"<span>. Частота: "+aDrugFrequency +" "+aDrugFrequencyUnitName+"</span>";
+	    td2.innerHTML = dt2+"<span id='"+type+"DrugName"+num+"'> "+aDrugName+"</span> Способ введения: "+aDrugMethodName+"</span>" ;
+	  	td3.innerHTML = dt3+"<span>. Частота: "+aDrugFrequency +" "+aDrugFrequencyUnitName+"</span></span>";
 	    td4.innerHTML = dt4+"<span>. Дозировка: "+aDrugAmount+" "+aDrugAmountUnitName+"</span>" ;
 	   	td5.innerHTML = dt5+"<span>. Продолжительность: "+aDrugDuration+" "+aDrugDurationUnitName+"</span>";
 	    td6.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
@@ -575,10 +685,11 @@
       <msh:hidden property="medCase" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="allDrugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          
+           
           <input type='button' name='btnChangePrescriptionType' onclick='showcheckPrescTypes();' value='Изменить тип назначения' />
         </msh:row>
          </msh:ifFormTypeIsNotView>
