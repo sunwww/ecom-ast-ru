@@ -28,21 +28,24 @@
 		
  		onload=checkPrescriptExists();
  		
+ 		// Проверяем, есть ли другие ЛН в данном СЛО 
 		function checkPrescriptExists() {
 			if ($('prescriptType').value=="" || $('prescriptType').value==null){			
  				PrescriptionService.isPrescriptListExists($('medCase').value, {
 					callback: function(plID) {
 						if (plID!="" && plID!=null) {
 						//	alert ("Prescription List in this medcase exists, "+plID);
-							createUrl("В данном СЛО уже заведен лист назначения, хотите в него перейти?",
+							createUrl(plID+"В данном СЛО уже заведен лист назначения, хотите в него перейти?",
 									"entityParentView-pres_prescriptList.do?id="+plID,
 									"В данном СЛО уже заведен лист назначения.");
-						//	startLoad(); //Удалить !!! 
+						//	startLoad(); //Отладка 
 						} else {
 							startLoad();
 						}
 					}
 				});
+			} else {
+				startLoad();
 			}
 		}
  		
