@@ -121,7 +121,7 @@ public class SurgicalOperation extends BaseEntity {
 	public BigDecimal getAnesthesiaAmount() {return theAnesthesiaAmount;}
 	public void setAnesthesiaAmount(BigDecimal aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
 
-	/** Хирург инфо */
+	/** Хирург инфо 
 	@Comment("Хирург инфо")
 	@Transient
 	public String getSurgeonsInfo() {
@@ -131,7 +131,7 @@ public class SurgicalOperation extends BaseEntity {
 		}
 		return ret.length()>2?ret.substring(2):"" ;
 		//return theSurgeon!=null ? theSurgeon.getDoctorInfo(): "";	
-	}
+	}*/
 	
 	/**Рабочая функция врача, проводившего операцию info */
 	@Comment("Рабочая функция врача, проводившего операцию info")

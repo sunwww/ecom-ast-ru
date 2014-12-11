@@ -96,4 +96,5 @@ public class WorkCalendarProphDayAlgorithm extends WorkCalendarAlgorithm{
 
 	/** День месяца */
 	private Integer theMonthDay;
+	
 }

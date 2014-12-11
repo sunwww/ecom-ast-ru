@@ -67,7 +67,7 @@ function createInterval(aTimeFrom,aTimeTo,aVisitTime,aCountVisits,aWorkCalendarD
 					--dop;
 					cal1.add(java.util.Calendar.MINUTE, 1) ;
 				}
-			}			
+			}
 		}
 		
 		
