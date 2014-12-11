@@ -3,6 +3,8 @@ package ru.ecom.poly.web.dwr;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -271,10 +273,74 @@ public class TicketServiceJs {
         }
 		return ""; 
 	}
-	public String findProvReason(HttpServletRequest aRequest) throws NamingException {
-		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
-		return service.findProvReason();
+	public String findProvReason(Long aReason, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder ret = new StringBuilder() ;
+		Collection<WebQueryResult> l = wservice.executeNativeSql("select id,code from VocReason where id="+aReason+" and code='PROFYLACTIC'");
+		if (l.isEmpty()) {
+			l = wservice.executeNativeSql("select id,name from VocReason where code='PROFYLACTIC' order by id",1) ;
+			if (!l.isEmpty()) {
+				WebQueryResult obj = l.iterator().next() ;
+				ret.append(obj.get1()).append("#").append(obj.get2()) ;
+			}
+		}
+		return ret.toString();
+		
 	}
+    public String findMkbByCode(String aCode,HttpServletRequest aRequest) throws NamingException {
+    	StringBuilder ret = new StringBuilder() ;
+    	if (aCode!=null && !aCode.equals("")) { 
+    		Map<String, String> theMap = enrusCreate();
+			aCode=aCode.toUpperCase() ;
+			char c1 = aCode.charAt(0) ;
+			aCode = aCode.replaceFirst("Ю", ".") ;
+			aCode = aCode.replaceFirst(",", ".") ;
+			aCode = getLat(c1,theMap) + (aCode.length()>1 ? aCode.substring(1) : "") ;
+			IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> l = wservice.executeNativeSql("select id,code||' '||name from VocIdc10 where code='"+aCode+"'");
+			if (!l.isEmpty()) {
+				WebQueryResult obj = l.iterator().next() ;
+				ret.append(obj.get1()).append("#").append(obj.get2()) ;
+			}
+    	}
+    	return ret.toString() ;
+    }
+    public Map<String,String> enrusCreate() {
+    	Map <String,String> map = new HashMap<String, String>();
+    	map.put("Й", "Q" ) ;
+    	map.put("Ц", "W" ) ;
+    	map.put("У","E"  ) ;
+    	map.put( "К", "R" ) ;
+    	map.put("Е", "T"  ) ;
+    	map.put( "Ф","A" ) ;
+    	map.put( "Ы", "S") ;
+    	map.put("В", "D"  ) ;
+    	map.put("А","F" ) ;
+    	map.put("П","G"  ) ;
+    	map.put("Я","Z"  ) ;
+    	map.put("Ч","X"  ) ;
+    	map.put("С","C"  ) ;
+    	map.put( "М", "V" ) ;
+    	map.put("И", "B" ) ;
+    	map.put("Н", "Y"  ) ;
+    	map.put("Г", "U"  ) ;
+    	map.put("Ш", "I"  ) ;
+    	map.put("Щ", "O"  ) ;
+    	map.put("З","P" ) ;
+    	map.put( "Р","H" ) ;
+    	map.put("О", "J"  ) ;
+    	map.put("Л","K"  ) ;
+    	map.put("Д", "L" ) ;
+    	map.put("Т","N" ) ;
+    	map.put( "Ь","M" ) ;
+    	map.put( "Ю","." ) ;
+    	return map ;
+    }
+    private String getLat(char aChar,Map <String,String> aMapSymb) {
+    	String ret =aMapSymb.get(String.valueOf(aChar)) ;
+    	return ret !=null ? ret: String.valueOf(aChar) ;
+    }
+
 	public String checkHospitalByMedcard(String aDateStart, Long aMedcard, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list=service.executeNativeSql("select person_id,id from medcard where id="+aMedcard) ;
