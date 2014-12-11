@@ -219,6 +219,7 @@
 				<msh:hidden property="weekDaysAlgorithmForm0.calendarParity"></msh:hidden>
 				<msh:hidden property="weekAlgorithmForm0.parity"></msh:hidden>
 				<msh:hidden property="weekDaysAlgorithmForm0.parity"></msh:hidden>
+				<msh:hidden property="profType"></msh:hidden>
 				</msh:row>
 				
 				
@@ -395,6 +396,7 @@
   	}
   	function viewProf() {
   		var check = getCheckedRadio(document.forms[0],"typeProfAlgorithm");
+  		$('profType').value=check ;
   		if (+check==1) {
   			showRowList('isProfdayRow',3,4,true) ;
   			showRowList('isProfdayRow',5,5,false) ;
@@ -509,7 +511,7 @@
 		<msh:ifFormTypeAreViewOrEdit formName="cal_patternBySpecForm">
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityEdit-cal_patternBySpec" name="Изменить" title="Изменить" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Specialist/Edit"/>
-				<msh:sideLink key="ALT+DEL" params="id" action="/entityDelete-cal_patternBySpec" name="Удалить" title="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Specialist/Delete"/>
+				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-cal_patternBySpec" name="Удалить" title="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Specialist/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-cal_prophDayAlgorithm" name="алгоритм проф.дня" title="Добавить алгоритм шаблона рабочего календаря по проф.дню" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm"/>

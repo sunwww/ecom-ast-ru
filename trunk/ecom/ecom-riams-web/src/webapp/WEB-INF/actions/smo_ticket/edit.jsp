@@ -67,6 +67,13 @@
         <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
           <msh:autoComplete labelColSpan="3" property="hospitalization" label="Посещение в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        	<msh:ifFormTypeIsCreate formName="smo_ticketForm">
+	        <msh:row>
+	        	<msh:textField property="mkb" label="Код МКБ" />
+	        </msh:row>
+	        </msh:ifFormTypeIsCreate>
+        </msh:ifInRole>
         <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
           <msh:autoComplete vocName="vocIdc10" property="concludingMkb" label="Код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
         </msh:row>
@@ -108,13 +115,11 @@
         	<msh:textField label="Дата" property="createDate" fieldColSpan="1" viewOnlyField="true"/>
         	<msh:textField label="Время" property="createTime" fieldColSpan="1" viewOnlyField="true"/>
         </msh:row>
-        
-
+        </msh:ifFormTypeAreViewOrEdit>
 	    <msh:row>
         	<msh:textField label="Пользователь" property="username" viewOnlyField="true" />
         	<msh:checkBox label="Недействующий талон" property="noActuality"/>
         </msh:row>
-        </msh:ifFormTypeAreViewOrEdit>
 	    <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
       </msh:panel>
     </msh:form>
@@ -260,6 +265,43 @@
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
+      	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+  			<script type="text/javascript">
+  			eventutil.addEventListener($('mkb'), 'change', function(){
+  				if ($('mkb'.value!='')) {
+  				TicketService.findMkbByCode($('mkb').value,{
+	      	 		callback: function(aResult) {
+	      	 			var ind = aResult.indexOf('#') ;
+	      	 			if (ind!=-1) {
+	      	 				$('concludingMkb').value=aResult.substring(0,ind) ;
+	      	 				$('concludingMkbName').value=aResult.substring(ind+1) ;
+	      	 			} else {
+	      	 				$('concludingMkb').value="" ;
+	      	 				$('concludingMkbName').value=$('mkb').value ;
+	      	 			}
+	      	 			setDiagnosisText('concludingMkb','concludingDiagnos') ;
+	      	    		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
+	      		      	 	TicketService.findProvReason($('visitReason').value,{
+	      		      	 		callback: function(aResult) {
+	      		      	 			var ind = aResult.indexOf('#') ;
+	      		      	 			if (ind!=-1) {
+	      		      	 				$('visitReason').value=aResult.substring(0,ind) ;
+	      		      	 				$('visitReasonName').value=aResult.substring(ind+1) ;
+	      		      	 			}
+	      		      	 		}
+	      		      	 	}) ;
+	      		      	 }
+	      	 		}
+	      	 	}) ;
+  				
+  				} else {
+  	 				
+  				}
+  			}) ;
+	      	 	
+  			</script>
+      	
+      	</msh:ifInRole>
   		<msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
   			<script type="text/javascript">
   				if ($('dateStart').value=="") $('dateStart').value=$('dateFinish').value 
@@ -330,7 +372,7 @@
     	concludingMkbAutocomplete.addOnChangeCallback(function() {
     		setDiagnosisText('concludingMkb','concludingDiagnos') ;
     		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
-	      	 	TicketService.findProvReason({
+	      	 	TicketService.findProvReason($('visitReason').value,{
 	      	 		callback: function(aResult) {
 	      	 			var ind = aResult.indexOf('#') ;
 	      	 			if (ind!=-1) {

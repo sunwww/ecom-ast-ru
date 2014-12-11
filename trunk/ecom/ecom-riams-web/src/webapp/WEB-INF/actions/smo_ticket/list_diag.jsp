@@ -13,13 +13,23 @@
 
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  String dtype = request.getParameter("dtype") ;
+  if (dtype==null || dtype.equals("")) {
+	  request.setAttribute("dtypeSql", "t.id is null") ;
+	  request.setAttribute("asPatient", "diag" );
+  } else {
+	  request.setAttribute("dtypeSql", new StringBuilder().append("t.dtype='").append(dtype).append("'"));
+	  request.setAttribute("asPatient", "t" );
+  }
+  %>
   	<msh:section>
   	<table>
   		<tr>
   			<td valign="top">
   		<msh:sectionTitle>Мед.карта</msh:sectionTitle>
   		<msh:sectionContent>
-  			<ecom:webQuery name="medcard" nativeSql="select m.id,m.number from medcard m left join psychiatriccarecard cc on cc.patient_id=m.person_id where cc.id=$piece('${param.id}',':',1)"/>
+  			<ecom:webQuery name="medcard" nativeSql="select m.id,m.number from medcard m left join psychiatriccarecard cc on cc.patient_id=m.person_id where cc.id='${param.card}'"/>
   			<msh:table name="medcard" action="entityParentView-poly_medcard.do" idField="1">
   				<msh:tableColumn property="2" columnName="№карты"/>
   			</msh:table>
@@ -30,7 +40,7 @@
   		<msh:sectionContent>
   			<ecom:webQuery name="psychcard" 
   			nativeSql="select cc.id,cc.cardnumber from psychiatriccarecard cc 
-  			where cc.id=$piece('${param.id}',':',1)"/>
+  			where cc.id='${param.card}'"/>
   			<msh:table name="psychcard" action="entityParentView-psych_careCard.do" idField="1">
   				<msh:tableColumn property="2" columnName="№карты"/>
   			</msh:table>
@@ -42,18 +52,18 @@
   		<msh:sectionContent>
 		    <ecom:webQuery name="list" 
 		    nativeSql=" select t.id as tid,m.number as mnumber, p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||p.birthday,t.dateCreate,t.date as tdate,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo,mkb.code as mkbcode ,vr.name as vrname  
-		    from Medcase t 
-		    left join medcard m on m.id=t.medcard_id     
-		    left join patient p on p.id=m.person_id     
+		    from diagnosis diag 
+		    left join Medcase t on diag.medcase_id=t.id
 		    left join workfunction wf on wf.id=t.workFunction_id    
 		    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    
 		    left join worker  w on w.id=wf.worker_id    
 		    left join patient wp on wp.id=w.person_id
-		    left join diagnosis diag on diag.medcase_id=t.id    
+		        
 		    left join vocIdc10 mkb on mkb.id=diag.idc10_id    
 		    left join vocreason vr on vr.id=t.vocreason_id   
-		    left join PsychiatricCareCard cc on m.person_id=cc.patient_id   
-		    where cc.id=$piece('${param.id}',':',1) and t.dtype='ShortMedCase' and diag.idc10_id=$piece('${param.id}',':',2) 
+		    left join PsychiatricCareCard cc on cc.patient_id=${asPatient}.patient_id   
+		    where cc.id='${param.card}' and ${dtype} and diag.idc10_id='${param.mkb}'
+		    and vpd.id='${param.priority}' 
 		    order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 		    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
 		      <msh:tableColumn columnName="#" property="sn" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
