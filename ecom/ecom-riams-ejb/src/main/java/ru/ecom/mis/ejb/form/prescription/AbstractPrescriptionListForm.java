@@ -120,6 +120,19 @@ public class AbstractPrescriptionListForm extends IdEntityForm {
 	/** Список услуг по лаборатории */
 	private String theLabList;
 	
+	/** Список лаб. назначений (полный, нужен только для edit.jsp) */
+	@Comment("Список лаб. назначений (полный, нужен только для edit.jsp)")
+	public String getAllDrugList() {
+		return theAllDrugList;
+	}
+
+	public void setAllDrugList(String aAllDrugList) {
+		theAllDrugList = aAllDrugList;
+	}
+
+	/** Список лаб. назначений (полный, нужен только для edit.jsp) */
+	private String theAllDrugList;
+	
 	/** Список лекарственных назначений */
 	@Comment("Список лекарственных назначений")
 	public String getDrugList() {
