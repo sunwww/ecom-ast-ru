@@ -28,6 +28,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		if (erros.isEmpty()&&form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))
     			) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
+    		String typeRead = ActionUtil.updateParameter("PatientAttachment","typeRead","1", aRequest) ; 
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
     		String typeAge = ActionUtil.updateParameter("PatientAttachment","typeAge","3", aRequest) ; 
     		String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
@@ -77,14 +78,18 @@ public class AttachmentByLpuAction extends BaseAction {
     		} else if (typeDefect!=null&&typeDefect.equals("2")) {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
-	    	filename = service.exportAll(age,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
-	        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-	        		, form.getNumberPackage());
-	        if (filename!=null) {
-	        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
-	        } else {
-	        	form.setFilename("---") ;
-	        }
+    		if (typeRead!=null&&typeRead.equals("1")) {
+		    	filename = service.exportAll(age,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+		        		, form.getNumberPackage());
+		        if (filename!=null) {
+		        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
+		        } else {
+		        	form.setFilename("---") ;
+		        }
+	    	} else {
+	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
+	    	}
         }}
         return aMapping.findForward("success") ;
     }
