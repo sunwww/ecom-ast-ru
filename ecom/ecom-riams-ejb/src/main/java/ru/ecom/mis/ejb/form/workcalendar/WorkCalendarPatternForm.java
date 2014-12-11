@@ -237,4 +237,12 @@ public class WorkCalendarPatternForm extends IdEntityForm {
 	private Boolean theIsDays;
 	/** Используется алгоритм профдня */
 	private Boolean theIsProfday;
+	
+	/** Тип профосмотра */
+	@Comment("Тип профосмотра")
+	public String getProfType() {return theProfType;}
+	public void setProfType(String aProfType) {theProfType = aProfType;}
+
+	/** Тип профосмотра */
+	private String theProfType;
 }

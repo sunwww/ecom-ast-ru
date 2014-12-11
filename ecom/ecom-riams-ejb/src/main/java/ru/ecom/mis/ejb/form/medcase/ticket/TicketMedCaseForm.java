@@ -249,5 +249,12 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
 	/** Внешний направитель (ЛПУ) */
 	private Long theOrderLpu;	
+	/** МКБ */
+	@Comment("МКБ")
+	public String getMkb() {return theMkb;}
+	public void setMkb(String aMkb) {theMkb = aMkb;}
+
+	/** МКБ */
+	private String theMkb;
 }
 

@@ -881,12 +881,12 @@ function printSurOperation(aCtx,aParams) {
 	surOperation.setPrintTime(curTime) ;
 	surOperation.setPrintUsername(username) ;
 	var list=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename) as anes,list(' '||vam.name||' (кол-во '||a.duration||')') as methodan from Anesthesia a"
-		+" left join WorkFunction awf on awf.id=a.anesthesist_id"
-		+" left join Worker aw on aw.id=awf.worker_id"
-		+" left join Patient awp on awp.id=aw.person_id"
-		+" left join VocWorkFunction avwf on avwf.id=awf.workFunction_id"
-		+" left join VocAnesthesiaMethod vam on vam.id=a.method_id"
-		+" where a.surgicalOperation_id=:id group by a.surgicalOperation_id"
+			+" left join WorkFunction awf on awf.id=a.anesthesist_id"
+			+" left join Worker aw on aw.id=awf.worker_id"
+			+" left join Patient awp on awp.id=aw.person_id"
+			+" left join VocWorkFunction avwf on avwf.id=awf.workFunction_id"
+			+" left join VocAnesthesiaMethod vam on vam.id=a.method_id"
+			+" where a.surgicalOperation_id=:id group by a.surgicalOperation_id"
 	) .setParameter("id",surOperation.id).setMaxResults(1).getResultList() ;
 	var list1=aCtx.manager.createNativeQuery("select "
 		+" coalesce(ss1.code,ss.code) as ss1,ss.code as ss2"
@@ -896,6 +896,15 @@ function printSurOperation(aCtx,aParams) {
 		+" left join StatisticStub ss1 on ss1.id=d.statisticStub_id"
 		+" where d.id=:id"
 	).setParameter("id",medCase.id).setMaxResults(1).getResultList() ;
+	var list2=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename) as asist from SurgicalOperation_WorkFunction sowf"
+			+" left join WorkFunction awf on awf.id=sowf.surgeonfunctions_id"
+			+" left join Worker aw on aw.id=awf.worker_id"
+			+" left join Patient awp on awp.id=aw.person_id"
+			+" left join VocWorkFunction avwf on avwf.id=awf.workFunction_id"
+			+" where sowf.surgicalOperation_id=:id group by sowf.surgicalOperation_id"
+		) .setParameter("id",surOperation.id).setMaxResults(1).getResultList() ;
+	var asist=list2.size()>0?list2.get(0):"" ;
+	map.put("surOper.surgeonsInfo",asist) ;
 	var anes = list.size()>0?list.get(0):null ;
 	map.put("surOper.anesthesist",anes!=null?(anes[0]!=null?anes[0]:""):"") ;
 	map.put("surOper.method",anes!=null?(anes[1]!=null?anes[1]:""):"") ;
@@ -905,12 +914,10 @@ function printSurOperation(aCtx,aParams) {
 		
 		if (card[0]!=null) {card1=card[0];} else {
 			if (card[1]!=null) card1=card[1] ;
-			}
+		}
 	}
 	
-	map.put("surOper.statisticStub",
-			card1
-			) ;
+	map.put("surOper.statisticStub",card1) ;
 	return map ;
 }
 

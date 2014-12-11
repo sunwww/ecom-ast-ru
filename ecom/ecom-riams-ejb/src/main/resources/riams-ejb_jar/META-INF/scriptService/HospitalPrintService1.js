@@ -615,11 +615,19 @@ function printSurOperations(aCtx,aParams) {
 				+" left join StatisticStub ss1 on ss1.id=d.statisticStub_id"
 				+" where d.id=:id"
 			).setParameter("id",medCase.id).setMaxResults(1).getResultList() ;
+		var list2=aCtx.manager.createNativeQuery("select list(' '||avwf.name||' '||awp.lastname||' '||awp.firstname||' '||awp.middlename) as asist from SurgicalOperation_WorkFunction sowf"
+				+" left join WorkFunction awf on awf.id=sowf.surgeonfunctions_id"
+				+" left join Worker aw on aw.id=awf.worker_id"
+				+" left join Patient awp on awp.id=aw.person_id"
+				+" left join VocWorkFunction avwf on avwf.id=awf.workFunction_id"
+				+" where sowf.surgicalOperation_id=:id group by sowf.surgicalOperation_id"
+			) .setParameter("id",surOper.id).setMaxResults(1).getResultList() ;
+		var asist=list2.size()>0?list2.get(0):"" ;
 		var anes = list.size()>0?list.get(0):null ;
 		mapSO.set1(surOper.id);
 		mapSO.set2(surOper.operationDate);
 		mapSO.set3(surOper.operationTime);
-		mapSO.set4(surOper.surgeonsInfo);
+		mapSO.set4(asist);
 		mapSO.set5(surOper.operatingNurse!=null?surOper.operatingNurse.workFunctionInfo:"");
 		mapSO.set6(anes!=null?(anes[0]!=null?anes[0]:""):"") ;
 		mapSO.set7(anes!=null?(anes[1]!=null?anes[1]:""):"") ;

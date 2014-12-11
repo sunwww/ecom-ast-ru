@@ -21,8 +21,6 @@ public interface ITicketService {
 	public String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException;
 	// Поиск дублей по специалисту и дате оказания услуги
 	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpecialist, String aDate);
-	// Поиск Id#name профосмотра из справочника целей посещения
-	public String findProvReason() ;
 	// Поиск незакрытых талонов по медкарте
     List<TicketForm> findActiveMedcardTickets(Long aMedcard);
     // Поиск всех талонов по медкарте

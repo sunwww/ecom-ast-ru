@@ -150,16 +150,6 @@ public class TicketServiceBean implements ITicketService {
     	return "" ;
     }
     
-    public String findProvReason() {
-    	List<Object[]> list = theManager.createNativeQuery("select id,name from VocReason where code='PROFYLACTIC' order by id").setMaxResults(1).getResultList() ;
-    	StringBuilder ret = new StringBuilder() ;
-    	if (list.size()>0) {
-    		Object[] obj = list.get(0) ;
-    		ret.append(obj[0]).append("#").append(obj[1]) ;
-    	}
-    	return ret.toString() ;
-    }
-    
     /**
      * Поиск 
      */
