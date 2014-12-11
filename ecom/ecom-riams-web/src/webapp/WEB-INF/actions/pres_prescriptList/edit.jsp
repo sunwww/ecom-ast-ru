@@ -77,7 +77,6 @@
            				);
            		} 
  			if ($('allDrugList').value.length>0) {
- 				alert ($('allDrugList').value);
  				var aDrugArr = $('allDrugList').value.split('#');
  				for (var i=0;i<aDrugArr.length;i++) {
  					var resultRow = aDrugArr[i].split(':');
@@ -562,22 +561,22 @@
 	    //drug 
 	    var dt2="<input id='"+type+"Drug"+num+"' value='"+aDrugID+"' type='hidden' name='"+type+"Drug"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    dt2+="<input id='"+type+"DrugName"+num+"' value='"+aDrugName+"' type='hidden' name='"+type+"DrugName"+num+"' horizontalFill='true' size='10' readonly='true' />";
-	    //method 
+	    //method+(Name) 
 	    dt2+="<input id='"+type+"Method"+num+"' value='"+aDrugMethod+"' type='hidden' name='"+type+"Method"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    dt2+="<input id='"+type+"MethodName"+num+"' value='"+aDrugMethodName+"' type='hidden' name='"+type+"MethodName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //frequency 
 	    var dt3="<input id='"+type+"Frequency"+num+"' value='"+aDrugFrequency+"' type='hidden' name='"+type+"Frequency"+num+"' horizontalFill='true' size='10' readonly='true' />";
-	    // frequency unit 
+	    // frequency unit+(Name) 
 	    dt3+="<input id='"+type+"FrequencyUnit"+num+"' value='"+aDrugFrequencyUnit+"' type='hidden' name='"+type+"FrequencyUnit"+num+"' size='10' readonly='true' />";
 	    dt3+="<input id='"+type+"FrequencyUnitName"+num+"' value='"+aDrugFrequencyUnitName+"' type='hidden' name='"+type+"FrequencyUnitName"+num+"' size='10' readonly='true' />";
 	    // Amount 
 	    var dt4="<input id='"+type+"Amount"+num+"' value='"+aDrugAmount+"' type='hidden' name='"+type+"Amount"+num+"' horizontalFill='true' size='20' readonly='true' />";
-	    //Amount unit 
+	    //Amount unit+(Name)
 	    dt4+="<input id='"+type+"AmountUnit"+num+"' value='"+aDrugAmountUnit+"' type='hidden' name='"+type+"AmountUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    dt4+="<input id='"+type+"AmountUnitName"+num+"' value='"+aDrugAmountUnitName+"' type='hidden' name='"+type+"AmountUnitName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    //Duration 
 	    var dt5="<input id='"+type+"Duration"+num+"' value='"+aDrugDuration+"' type='hidden' name='"+type+"Duration"+num+"' horizontalFill='true' size='10' readonly='true' />";
-	    //Duration unit 
+	    //Duration unit+(Name) 
 	    dt5+="<input id='"+type+"DurationUnit"+num+"' value='"+aDrugDurationUnit+"' type='hidden' name='"+type+"DurationUnit"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    dt5+="<input id='"+type+"DurationUnitName"+num+"' value='"+aDrugDurationUnitName+"' type='hidden' name='"+type+"DurationUnitName"+num+"' horizontalFill='true' size='10' readonly='true' />";
 	    	   
