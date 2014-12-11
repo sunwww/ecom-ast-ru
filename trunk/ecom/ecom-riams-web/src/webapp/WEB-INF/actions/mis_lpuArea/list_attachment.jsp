@@ -159,18 +159,17 @@
 
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
-    String date1 = (String)request.getParameter("dateEnd") ;
+    String date = (String)request.getParameter("period") ;
+    String date1 = (String)request.getParameter("periodTo") ;
     
     if (date!=null && !date.equals(""))  {
     	if (date1==null ||date1.equals("")) {
-    		request.setAttribute("dateEnd", date);
+    		request.setAttribute("periodTo", date);
     	} else {
-    		request.setAttribute("dateEnd", date1) ;
+    		request.setAttribute("periodTo", date1) ;
     	}
     	
-    %>
-	 <%
+   
     if (typeRead!=null && (typeRead.equals("1"))) {%>
     
     
@@ -181,7 +180,7 @@
     <% 
     }} else {%>
     	<i>Введите данные </i>
-    <%}%>
+   <%}%>
      
   </tiles:put>
 </tiles:insert>
