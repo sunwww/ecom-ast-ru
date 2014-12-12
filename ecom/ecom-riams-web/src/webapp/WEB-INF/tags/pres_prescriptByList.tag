@@ -84,11 +84,13 @@
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select 
     	p.id as pid,pl.id as plid,ms.name as drname
- ,p.planStartDate,p.planEndDate,p.materialId
+    	
+ ,p.planStartDate,p.planEndDate,p.materialId,vpt.name
  from Prescription p 
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id 
+ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
  where ${field } and p.DTYPE='ServicePrescription' 
  and vms.code='LABSURVEY'
  order by p.planStartDate"/>
@@ -96,6 +98,7 @@
     	<msh:sectionContent>
     		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Исследование"/>
+    			<msh:tableColumn property="7" columnName="Тип назначения"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
     			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
