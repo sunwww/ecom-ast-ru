@@ -46,13 +46,21 @@ public class AttachmentByLpuAction extends BaseAction {
 	    	SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
 	    	String filename = null;
 	    	String age = null ;
-	    	if (typeAge!=null&&typeAge.equals("1")) {
-	    		age = "<=18" ;
-	    	} else if (typeAge!=null&&typeAge.equals("2")) {
-	    		age = ">=18" ;
-	    	}
 	    	String prefix="" ;
 	    	StringBuilder sqlAdd=new StringBuilder() ;
+	    	if (typeAge!=null) {
+	    		if (typeAge!=null&&typeAge.equals("1")) {
+		    		age = "<=18" ;
+		    	} else if (typeAge!=null&&typeAge.equals("2")) {
+		    		age = ">=18" ;
+		    	}
+	    		if (typeAge.equals("1")||typeAge.equals("2")) {
+	    			sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
+	    		}
+	    		}
+	    		
+	    	
+	    	
 	        if (typeView!=null && typeView.equals("2")) {
 	        	prefix="_no_addresss" ;
 	        	sqlAdd.append(" and p.address_addressid is null ") ;
@@ -79,7 +87,7 @@ public class AttachmentByLpuAction extends BaseAction {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
     		if (typeRead!=null&&typeRead.equals("1")) {
-		    	filename = service.exportAll(age,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		    	filename = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
 		        if (filename!=null) {
