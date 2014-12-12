@@ -71,7 +71,7 @@
 				PrescriptionService.getDuplicatePrescriptions(""+aMedCase, str,{
 					callback: function(aResult) {
 						if (aResult.length>0){
-							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту, все равно назначить?";
+							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
 								if (!confirm (aText)) {							
 									document.getElementById('submitButton').disabled=false;
 									document.getElementById('submitButton').value='Создать';
