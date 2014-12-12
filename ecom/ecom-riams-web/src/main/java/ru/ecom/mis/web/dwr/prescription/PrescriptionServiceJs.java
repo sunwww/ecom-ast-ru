@@ -71,6 +71,7 @@ public class PrescriptionServiceJs {
 	/**
 	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
 	 * исследования в том же СЛО, в котором создается назначение)
+	 * **** upd 12.12.2014 - Поиск осуществляется во всех СЛО, которые относятся к тому же СЛС, что и указаное СЛО.
 	 */
 	
 	public String getDuplicatePrescriptions(String aMedCase, String aData, HttpServletRequest aRequest) throws NamingException {
@@ -80,16 +81,17 @@ public class PrescriptionServiceJs {
 		req.append(",ms.code ||' ' || ms.name as labName ");
 		//req.append(",count(p.id) as cnt1 ");
 		req.append("from medcase mc ");
-		req.append("left join prescriptionList pl on pl.medcase_id = mc.id ");
+		req.append("left join medcase mc2 on mc2.parent_id = mc.parent_id ");
+		req.append("left join prescriptionList pl on pl.medcase_id = mc2.id ");
 		req.append("left join prescription p on p.prescriptionList_id = pl.id ");
-		req.append("left join patient pat on pat.id = mc.patient_id ");
+	//	req.append("left join patient pat on pat.id = mc.patient_id ");
 		req.append("left join medservice ms on ms.id = p.medservice_id ");
 		req.append("where mc.id ='").append(aMedCase).append("' ");
 		req.append("and p.dtype='ServicePrescription' ");
 		req.append("and p.medservice_id is not null ");
 		req.append("and p.fulfilmentstate_id is null ");
 		req.append("and p.canceldate is null ");
-		req.append("group by p.medservice_id, labName ");
+	//	req.append("group by p.medservice_id, labName ");
 		//req.append("having count(p.id)>1 ");
 	//	System.out.println("--------------------getDuplicatePrescriptions Request is = "+req.toString());
 		Collection<WebQueryResult> list = service.executeNativeSql(req.toString().toString()) ;
