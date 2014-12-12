@@ -46,7 +46,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+
     public String exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
