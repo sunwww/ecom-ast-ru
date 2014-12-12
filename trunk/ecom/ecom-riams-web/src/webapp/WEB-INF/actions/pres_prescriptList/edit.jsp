@@ -35,7 +35,7 @@
 					callback: function(plID) {
 						if (plID!="" && plID!=null) {
 						//	alert ("Prescription List in this medcase exists, "+plID);
-							createUrl(plID+"В данном СЛО уже заведен лист назначения, хотите в него перейти?",
+							createUrl(plID+" В данном СЛО уже заведен лист назначения, хотите в него перейти?",
 									"entityParentView-pres_prescriptList.do?id="+plID,
 									"В данном СЛО уже заведен лист назначения.");
 						//	startLoad(); //Отладка 
@@ -89,9 +89,7 @@
  
 
 }  
-		//При изменении типа ЛН, удаляем все лаб. исследования, прогоняем через PrescriptionService, 
-		//Заполняем только теми исследованиями, у которых соответствующий тип 
-
+		
 		  function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
 		     	if (confirm(aTitleConfirm)) {
 					window.location.href = aUrlCreate  ;
@@ -100,7 +98,9 @@
 				}
 				
 		  }
-		  
+		//При изменении типа ЛН, удаляем все лаб. исследования, прогоняем через PrescriptionService, 
+		//Заполняем только теми исследованиями, у которых соответствующий тип 
+
 		function changePrescriptionType() {
 			 writeServicesToList('lab');
 				$('labServicies').value="";
@@ -338,7 +338,7 @@
 			PrescriptionService.getDuplicatePrescriptions($('medCase').value, str,{
 				callback: function(aResult) {
 					if (aResult.length>0){
-						var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту, все равно назначить?";
+						var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
 							if (!confirm (aText)) {							
 								document.getElementById('submitButton').disabled=false;
 								document.getElementById('submitButton').value='Создать';
