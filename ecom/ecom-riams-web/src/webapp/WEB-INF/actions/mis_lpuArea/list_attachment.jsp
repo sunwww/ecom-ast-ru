@@ -10,10 +10,7 @@
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
-  <tiles:put name="side" type="string">
-  	<tags:style_currentMenu currentAction="stac_criminalMessages" />
-    	<tags:dis_menu currentAction="journalKERByPeriod" />
-  </tiles:put>
+
   <tiles:put name="body" type="string">
   <%
     String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
@@ -112,13 +109,13 @@
         <msh:textField  property="changedDateFrom" label="Измененные с" />
       </msh:row>
       <msh:row>
-        <td class="label" title="Пациенты  (typeRead)" colspan="1"><label for="typeReadwName" id="typeReadLabel">Отображать:</label></td>
+        <td class="label" title="Пациенты  (typeRead)" colspan="1"><label for="typeReadName" id="typeReadLabel">Отображать:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeRead" value="1">  xml-файл
         </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeRead" value="2">  на экране
-	        </td>
+	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	    	<input type="radio" name="typeRead" value="2">  на экране
+	    </td>
        </msh:row>
        
        
@@ -161,22 +158,52 @@
     <%
     String date = (String)request.getParameter("period") ;
     String date1 = (String)request.getParameter("periodTo") ;
-    
-    if (date!=null && !date.equals(""))  {
+    String sqlAdd = (String)request.getAttribute("sqlAdd");
+    if (sqlAdd!=null &&date!=null && !date.equals("") && typeRead!=null)  {
     	if (date1==null ||date1.equals("")) {
     		request.setAttribute("periodTo", date);
     	} else {
     		request.setAttribute("periodTo", date1) ;
     	}
     	
-   
-    if (typeRead!=null && (typeRead.equals("1"))) {%>
+
+    %>
+
     
-    
-    <%} else if (typeRead!=null && (typeRead.equals("2"))) {%>
-    <ecom:webQuery name="" nativeSql=""/>
-   <msh:table name="" action="">
-   </msh:table>
+	 <%    if (typeRead!=null && (typeRead.equals("2"))) {%>
+   <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="100" nativeSql="
+		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday
+    	 , p.commonNumber
+    	 , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik
+    	 , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik
+    	 , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate
+         , case when lp.dateTo is null then 'Прикреплен' else 'Откреплен' end as otkorprik
+         , lp.defectperiod
+         , lp.defecttext
+    	 from LpuAttachedByDepartment lp
+    	 left join Patient p on lp.patient_id=p.id
+    	 left join MisLpu ml1 on ml1.id=p.lpu_id
+    	 left join MisLpu ml2 on ml2.id=lp.lpu_id
+         left join VocAttachedType vat on lp.attachedType_id=vat.id
+
+   		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ${sqlAdd} group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code, lp.defectperiod
+         , lp.defecttext
+    	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+       ${journal_ticket_sql}
+        <msh:table viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
+			<msh:tableColumn columnName="#" property="sn"/>
+			<msh:tableColumn columnName="Фамилия" property="2"/>
+			<msh:tableColumn columnName="Имя" property="3"/>
+			<msh:tableColumn columnName="Отчетство" property="4"/>
+			<msh:tableColumn columnName="Дата рождения" property="5"/>
+			<msh:tableColumn columnName="RZ" property="6"/>
+			<msh:tableColumn columnName="Способ прикрепления" property="7"/>
+			<msh:tableColumn columnName="Дата прикрепления" property="8"/>
+			<msh:tableColumn columnName="Дата открепления" property="9"/>
+			<msh:tableColumn columnName="Прикреплен\откреплен" property="10"/>
+			<msh:tableColumn columnName="Период дефекта" property="11"/>
+			<msh:tableColumn columnName="Код дефекта" property="12"/>
+        </msh:table>
     <% 
     }} else {%>
     	<i>Введите данные </i>
