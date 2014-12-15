@@ -25,7 +25,7 @@
 	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="id" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
 	      <msh:tableColumn columnName="Назначил" property="workFunctionInfo" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
 	      <msh:tableColumn columnName="Комментарии" property="comments" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
-	      <msh:tableColumn columnName="Дата создания" property="date" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
+	      <msh:tableColumn columnName="Дата создания" property="createDate" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
 	      <msh:tableColumn columnName="Период актуальности" property="periodActual"/>
 	    </msh:table>
     </msh:sectionContent>
