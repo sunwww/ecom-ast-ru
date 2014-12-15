@@ -87,7 +87,7 @@ function onCreate(aForm, aEntity, aContext) {
 		var obj = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarProphDayAlgorithm() ;
 		obj.setPattern(aEntity) ;
 		if (+aForm.getProfType()==1) {
-			obj.setWorkWeek(getVoc("ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek",frmAlg.getWorkWeek(),aContext)) ;
+			obj.setMonthOrder(getVoc("ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekMonthOrder",frmAlg.getMonthOrder(),aContext)) ;
 			obj.setWeekDay(getVoc("ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay",frmAlg.getWeekDay(),aContext));
 		} else {
 			obj.setMonthDay(frmAlg.getMonthDay()) ;
