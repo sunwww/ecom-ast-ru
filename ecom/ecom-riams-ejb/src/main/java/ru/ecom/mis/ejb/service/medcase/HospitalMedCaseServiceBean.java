@@ -946,7 +946,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		} else if (dtype.equals("Visit")) {
     				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;	    			
 	    		} else if (dtype.equals("PolyclinicMedCase")) {
-    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where parent_id='"+aSmo+"' and dtype='Visit'").executeUpdate() ;	    			
+    				theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where parent_id='"+aSmo+"' and (dtype='Visit' or dtype='ShortMedCase')").executeUpdate() ;	    			
 	    		}
     		} else {
     			

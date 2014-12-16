@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import javax.persistence.Entity;
@@ -107,8 +108,8 @@ public class BloodTransfusion extends Transfusion{
 
 	/** Температура */
 	@Comment("Температура")
-	public Integer getTemperatureBT() {return theTemperatureBT;}
-	public void setTemperatureBT(Integer aTemperature) {theTemperatureBT = aTemperature;}
+	public BigDecimal getTemperatureBT() {return theTemperatureBT;}
+	public void setTemperatureBT(BigDecimal aTemperature) {theTemperatureBT = aTemperature;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
@@ -169,7 +170,7 @@ public class BloodTransfusion extends Transfusion{
 	/** Артериальное давление (верхнее) */
 	private Integer theBloodPressureTopBT;
 	/** Температура */
-	private Integer theTemperatureBT;
+	private BigDecimal theTemperatureBT;
 	/** Частота пульса */
 	private Integer thePulseRateBT;
 	

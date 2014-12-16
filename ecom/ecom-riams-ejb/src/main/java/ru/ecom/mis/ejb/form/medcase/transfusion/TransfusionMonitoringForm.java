@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import java.math.BigDecimal;
+
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
@@ -13,6 +15,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
+import ru.nuzmsh.forms.validator.validators.IntegerString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
@@ -35,8 +39,9 @@ public class TransfusionMonitoringForm extends IdEntityForm {
 
 	/** Температура */
 	@Comment("Температура")
-	public Integer getTemperature() {return theTemperature;}
-	public void setTemperature(Integer aTemperature) {theTemperature = aTemperature;}
+	@DoIntegerString @IntegerString
+	public String getTemperature() {return theTemperature;}
+	public void setTemperature(String aTemperature) {theTemperature = aTemperature;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
@@ -61,7 +66,7 @@ public class TransfusionMonitoringForm extends IdEntityForm {
 	/** Артериальное давление (верхнее) */
 	private Integer theBloodPressureTop;
 	/** Температура */
-	private Integer theTemperature;
+	private String theTemperature;
 	/** Частота пульса */
 	private Integer thePulseRate;
 	/** Кол-во часов */

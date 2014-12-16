@@ -433,6 +433,31 @@ public class PrescriptionForm extends IdEntityForm{
 	private String theCancelUsername;
 	/** Причина отмены текст */
 	private String theCancelReasonText;
+	
+	/** Дата передачи в лабораторию */
+	@Comment("Дата передачи в лабораторию")
+	@Persist @DoDateString @DateString
+	public String getTransferDate() {return theTransferDate;}
+	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
+
+	/** Время передачи */
+	@Comment("Время передачи")
+	@Persist @DoTimeString @TimeString
+	public String getTransferTime() {return theTransferTime;}
+	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+
+	/** Пользователь, принявший биоматериал */
+	@Comment("Пользователь, принявший биоматериал")
+	@Persist
+	public String getTransferUsername() {return theTransferUsername;}
+	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
+
+	/** Пользователь, принявший биоматериал */
+	private String theTransferUsername;
+	/** Время передачи */
+	private String theTransferTime;
+	/** Дата передачи в лабораторию */
+	private String theTransferDate;
 
 }
 
