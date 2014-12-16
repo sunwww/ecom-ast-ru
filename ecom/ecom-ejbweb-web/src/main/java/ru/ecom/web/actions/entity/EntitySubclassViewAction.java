@@ -24,11 +24,14 @@ public class EntitySubclassViewAction extends AbstractEntityAction {
 
         IEntityForm loadedForm = service.loadBySubclass(form.getClass(), id) ;
         String name = theStrutsConfigUtil.findFormNameByClass(loadedForm.getClass(), aRequest) ;
-
+        String shortP = aRequest.getParameter("short") ;
         StringBuilder sb = new StringBuilder("/entityView-");
         sb.append(name.substring(0, name.length()-"Form".length())) ;
         sb.append(".do?id=") ;
         sb.append(id) ;
+        if (shortP!=null) {
+        	sb.append("&short=Short") ;
+        }
         return new ActionForward(sb.toString(), true);
     }
 
