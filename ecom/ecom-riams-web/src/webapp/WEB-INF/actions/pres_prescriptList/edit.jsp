@@ -702,13 +702,8 @@
           <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="false" />
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row><td></td>
-
-<%--         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="prescriptType" label="Тип назначений" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" />
-        </msh:row> --%>
-        
         <msh:row>
         	<msh:separator label="Режим" colSpan="10"/>
         </msh:row>
@@ -725,8 +720,8 @@
           property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         </msh:panel>
-        <!-- -------------------------Начало блока "ЛЕкарственное обеспечение" -->
-          <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">  
+        <%-- -------------------------Начало блока "ЛЕкарственное обеспечение" --%>
+          <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">  
         <msh:panel styleId="border">
         <msh:row>
         	<msh:separator label="Лекарственные назначения" colSpan="20"/>
@@ -739,11 +734,11 @@
         		<td>Продолжительность</td>
         </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	        	<msh:textField property="drugForm1.planStartDate" label="Дата начала" size="7" hideLabel="true"/>
-	          <msh:autoComplete  vocName="vocDrugClassify" property="drugForm1.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
+	          <msh:textField property="drugForm1.planStartDate" label="Дата начала" size="7" hideLabel="true"/>
+	          <msh:autoComplete vocName="vocDrugClassify" property="drugForm1.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm1.frequency" label="Частота" size="7" hideLabel="true" />
-	          <msh:textField label="Прием" property="drugForm1.amount"   size="3" hideLabel="true"/>
-	          <msh:textField property="drugForm1.duration" label="Продолжительность"  size="3" hideLabel="true"/>
+	          <msh:textField label="Прием" property="drugForm1.amount" size="3" hideLabel="true"/>
+	          <msh:textField property="drugForm1.duration" label="Продолжительность" size="3" hideLabel="true"/>
 	        </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
 	        <td></td>
@@ -751,11 +746,9 @@
 	          <msh:autoComplete hideLabel="true" vocName="vocFrequencyUnit" label="раза в " property="drugForm1.frequencyUnit" size="10"/>
 	          <msh:autoComplete hideLabel="true" vocName="vocDrugAmountUnit" label="ед." property="drugForm1.amountUnit" size="10" />
 	          <msh:autoComplete hideLabel="true" vocName="vocDurationUnit" label="ед." property="drugForm1.durationUnit" guid="32568-8802-467d-b205-715fb379b018" size="10" />
-	          
-	         
 	          <td>        	
-            <input type="button" name="subm" onclick="prepareDrugRow();" value="Добавить" tabindex="4" />
-            </td>
+              <input type="button" name="subm" onclick="prepareDrugRow();" value="Добавить" tabindex="4" />
+              </td>
           
 	        </msh:row>
 	     <table id="drugTable">
@@ -763,7 +756,7 @@
         </tbody>
         </table>
 	    </msh:panel>
-	    </msh:ifFormTypeIsNotView>
+	    </msh:ifFormTypeIsCreate>
         <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
         <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
