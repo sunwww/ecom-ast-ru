@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.Collection"%>
 <%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -21,12 +23,49 @@
   <tiles:put name="body" type="string">
     <%
     String typeReestr = request.getParameter("typeReestr") ;
-    String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","2", request) ;
-	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
+    String typeHour =ActionUtil.updateParameter("EveryDayReport","typeHour","2", request) ;
+	String typeView =ActionUtil.updateParameter("EveryDayReport","typeView","1", request) ;
+	String[][] dep = new String[35][3] ;
+	dep[0][0]="232";dep[0][1] = "РЕАНИМАЦИЯ ОАР№1" ;dep[0][2] = "2" ;
+	dep[1][0]="189";dep[1][1] = "ХИРУРГИЯ" ;dep[1][2] = "1" ;
+	dep[2][0]="238";dep[2][1] = "ТРАВМАТОЛОГИЧЕСКОЕ" ;dep[2][2] = "1" ;
+	dep[3][0]="252";dep[3][1] = "ОТДЕЛЕНИЕ СОЧЕТАННОЙ ТРАВМЫ" ;dep[3][2] = "1" ;
+	dep[4][0]="233";dep[4][1] = "ОЖОГОВОЕ" ;dep[4][2] = "1" ;
+	dep[5][0]="204";dep[5][1] = "ОРТОПЕДИЯ" ;dep[5][2] = "1" ;
+	dep[6][0]="220";dep[6][1] = "УРОЛОГИЯ" ;dep[6][2] = "1" ;
+	dep[7][0]="210";dep[7][1] = "ЛОР" ;dep[7][2] = "1" ;
+	dep[8][0]="197";dep[8][1] = "ОФТАЛЬМОЛОГИЯ" ;dep[8][2] = "1" ;
+	dep[9][0]="199";dep[9][1] = "ТОРАКАЛЬНОЕ" ;dep[9][2] = "1" ;
+	dep[10][0]="190";dep[10][1] = "СОСУДИСТАЯ ХИРУРГИЯ" ;dep[10][2] = "1" ;
+	dep[11][0]="";dep[11][1] = "КАБИНЕТ ЭНДОВАСКУЛЯРНАХ МЕТОДОВ ОБСЛЕДОВАНИЯ И ЛЕЧЕНИЯ" ;dep[11][2] = "0" ;
+	dep[12][0]="196";dep[12][1] = "КОЛОПРОКТОЛОГИЯ" ;dep[12][2] = "1" ;
+	dep[13][0]="191";dep[13][1] = "ЧЕЛЮСТНО-ЛИЦЕВАЯ ХИРУРГИЯ" ;dep[13][2] = "1" ;
+	dep[14][0]="219";dep[14][1] = "НЕЙРОХИРУРГИЯ" ;dep[14][2] = "1" ;
+	dep[15][0]="234";dep[15][1] = "ГИНЕКОЛОГИЯ" ;dep[15][2] = "1" ;
+	dep[16][0]="182";dep[16][1] = "АКУШЕРСКОЕ ОТДЕЛЕНИЕ ПАТОЛОГИИ БЕРЕМЕННОСТИ" ;dep[16][2] = "1" ;
+	dep[17][0]="203";dep[17][1] = "РОДИЛЬНОЕ" ;dep[17][2] = "3" ;
+	dep[18][0]="212";dep[18][1] = "АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ" ;dep[18][2] = "1" ;
+	dep[19][0]="265";dep[19][1] = "ОТДЕЛЕНИЕ НОВОРОЖДЕННЫХ" ;dep[19][2] = "1" ;
+	dep[20][0]="214";dep[20][1] = "ОПНН. 2-Й ЭТАП ВЫХАЖИВАНИЯ" ;dep[20][2] = "1" ;
+	dep[21][0]="235";dep[21][1] = "ОРИТ №3. 2-Й ЭТАП ВЫХАЖИВАНИЯ" ;dep[21][2] = "2" ;
+	dep[22][0]="269";dep[22][1] = "РЕАНИМАЦИЯ НОВОРОЖДЕННЫХ ОРИТ №2" ;dep[22][2] = "2" ;
+	dep[23][0]="230";dep[23][1] = "ОАР №2 РЕАНИМАЦИЯ" ;dep[23][2] = "2" ;
+	dep[24][0]="192";dep[24][1] = "ОРИТ №1" ;dep[24][2] = "2" ;
+	dep[25][0]="183";dep[25][1] = "ГЕМАТОЛОГИЯ" ;dep[25][2] = "1" ;
+	dep[26][0]="194";dep[26][1] = "ПУЛЬМАТОЛОГИЯ" ;dep[26][2] = "1" ;
+	dep[27][0]="222";dep[27][1] = "КАРДИОЛОГИЯ" ;dep[27][2] = "1" ;
+	dep[28][0]="262";dep[28][1] = "НЕОТЛОЖНАЯ КАРДИОЛОГИЯ" ;dep[28][2] = "1" ;
+	dep[29][0]="187";dep[29][1] = "ГАСТРОЭНТЕРОЛОГИЯ" ;dep[29][2] = "1" ;
+	dep[30][0]="211";dep[30][1] = "ЭНДОКРИНОЛОГИЯ" ;dep[30][2] = "1" ;
+	dep[31][0]="217";dep[31][1] = "ТЕРАПИЯ" ;dep[31][2] = "1" ;
+	dep[32][0]="195";dep[32][1] = "НЕВРОЛОГИЯ №1" ;dep[32][2] = "1" ;
+	dep[33][0]="266";dep[33][1] = "НЕВРОЛОГИЯ №2" ;dep[33][2] = "1" ;
+	dep[34][0]="236";dep[34][1] = "РЕВМАТОЛОГИЯ" ;dep[34][2] = "1" ;
+	
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
-		String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", request) ;
-		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
+		String typeDate =ActionUtil.updateParameter("EveryDayReport","typeDate","1", request) ;
+		String typeEmergency =ActionUtil.updateParameter("EveryDayReport","typeEmergency","3", request) ;
 		
     
   	%>
@@ -72,6 +111,9 @@
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="2"  >  иностранцам
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView" value="3">  общий отчет на 8 часов (старый вариант)
 	        </td>
         </msh:row>
          
@@ -435,7 +477,8 @@
 
     			
     				
-    				}} else if (typeView!=null && (typeView.equals("1"))) {
+    				}} else if (typeView!=null && (typeView.equals("1") || (typeView.equals("3")))) {
+    				
     					request.setAttribute("periodCurrentSls",new StringBuilder() 
     		   			.append(" (medcase.dateFinish is null ")
     		    		.append(" or ") 
@@ -500,9 +543,7 @@ order by vph.name
     </msh:sectionContent>
     </msh:section>
     
-     <msh:section>
-    	    <msh:sectionTitle>Список, поступивших пациентов по приемному отделению</msh:sectionTitle>
-    	    <msh:sectionContent>
+
     	    
     	    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
     	   select  
@@ -554,7 +595,9 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	group by vph.id,vph.name
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	     
+    	          <msh:section>
+    	    <msh:sectionTitle>Список, поступивших пациентов по приемному отделению</msh:sectionTitle>
+    	    <msh:sectionContent>
     	    <msh:table cellFunction="true" name="journal_priem" 
     	    action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateStart" idField="1">
     	      <msh:tableColumn columnName="#" property="sn" addParam="" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
@@ -654,12 +697,8 @@ and ( sls.noActuality is null or sls.noActuality='0')
 				.toString().replaceAll("medcase", "so")); 
 
     		%>
-    <msh:section>
-    <msh:sectionTitle>
-    Разбивка по реанимациям
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
+    
+    <ecom:webQuery name="journal_priem_rean" nameFldSql="journal_priem_rean_sql" nativeSql=" 
    select '&department='||ml.id,ml.name
 ,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
 ,count(distinct case when ${periodEntranceSlo}  then slo.id else null end) as cntEntr
@@ -690,35 +729,7 @@ group by ml.id,ml.name
 order by ml.name
       "/>
       
-    <msh:table  cellFunction="true" name="journal_priem" 
-     action="stac_everyday_report.do?${paramHref}" 
-    idField="1">
-      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateCurrent"/>
-      <msh:tableColumn columnName="Отделение" property="2" addParam="&dateinfo=dateCurrent"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" 
-      addParam="&dateinfo=dateCurrent"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" 
-      addParam="&dateinfo=dateStart"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во переведенных" property="5" 
-      addParam="&dateinfo=transferDate"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="6" 
-      addParam="&dateinfo=dateFinish"
-      />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших" property="7" 
-      addParam="&dateinfo=dateFinish&discharge=death"
-      />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во наркозов" property="8" 
-      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation"
-      />
-      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" 
-      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=emergency"
-      />
-      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" 
-      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan"
-      />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
+    
         	   
     	    <%
     	
@@ -754,12 +765,7 @@ order by ml.name
 					.append(ReportParamUtil.getPeriodByDate(Boolean.FALSE, "medcase.transferDate", "medcase.transferTime", date, timeSql)) 
     			.toString().replaceAll("medcase", "slo")); 
     		%>
-  <msh:section>
-    <msh:sectionTitle>
-    Разбивка по отделениям
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql=" 
+    		<ecom:webQuery name="journal_priem_dep" nameFldSql="journal_priem_dep_sql" nativeSql=" 
    select '&department='||ml.id,ml.name
 ,count(distinct case when ${periodCurrentSlo} then slo.id else null end) as cntCurrent
 ,count(distinct case when ${periodCurrentSlo} and vss.code='OBLIGATORYINSURANCE' then slo.id else null end) as cntCurrentOmc
@@ -794,7 +800,50 @@ group by ml.id,ml.name
 order by ml.name
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
       
-    <msh:table cellFunction="true" name="journal_priem" 
+    		<%
+    		if (typeView.equals("3")) {
+    		%>
+    		<msh:section>
+    <msh:sectionTitle>
+    Разбивка по реанимациям
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    		<msh:table  cellFunction="true" name="journal_priem_rean" 
+     action="stac_everyday_report.do?${paramHref}" 
+    idField="1">
+      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn columnName="Отделение" property="2" addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во состоящих" property="3" 
+      addParam="&dateinfo=dateCurrent"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во поступивших" property="4" 
+      addParam="&dateinfo=dateStart"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во переведенных" property="5" 
+      addParam="&dateinfo=transferDate"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выбывших" property="6" 
+      addParam="&dateinfo=dateFinish"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во умерших" property="7" 
+      addParam="&dateinfo=dateFinish&discharge=death"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во наркозов" property="8" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="экстр." property="9" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=emergency"
+      />
+      <msh:tableColumn isCalcAmount="true" columnName="план." property="10" 
+      addParam="&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan"
+      />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+  <msh:section>
+    <msh:sectionTitle>
+    Разбивка по отделениям
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    
+    <msh:table cellFunction="true" name="journal_priem_dep" 
      action="stac_everyday_report.do?${paramHref}" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Отделение" property="2" />
@@ -815,6 +864,65 @@ order by ml.name
     </msh:table>
     </msh:sectionContent>
     </msh:section>    	   
+    <%} else { %>
+    
+    <table border=1>
+    	<%
+    	//""
+    		paramHref.append("&short=Short") ;
+    		for (int i=0; i<dep.length;i++){
+    			//Отделение
+    			if (dep[i][2].equals("1")) {
+    				WebQueryResult wqr =ActionUtil.getElementArrayByCode("department="+dep[i][0], "journal_priem_dep",request) ;
+    				if (wqr!=null) {
+    					out.println("<tr>") ;
+    	    			out.println("<th >") ; out.println(dep[i][1]) ; out.println("</th>") ;
+    	    			out.println("<td colspan=10>") ;
+    	    			out.println("Кол-во состоящих: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent',null)\">") ;out.println(wqr.get3());out.println("</a>") ;
+    					out.println(" ОМС: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE',null)\">") ;out.println(wqr.get4());out.println("</a>") ;
+    					out.println(" внебюджет: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET',null)\">") ;out.println(wqr.get5());out.println("</a>") ;
+    					out.println(" ДМС: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent&stream=PRIVATEINSURANCE',null)\">") ;out.println(wqr.get6());out.println("</a>") ;
+    					out.println(" без полиса: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent&stream=OTHER',null)\">") ;out.println(wqr.get7());out.println("</a>") ;
+    					out.println(". Кол-во поступивших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateStart',null)\">") ;out.println(wqr.get8());out.println("</a>") ;
+    					out.println(" экстр.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateStart&emergency=1',null)\">") ;out.println(wqr.get9());out.println("</a>") ;
+    					out.println(" план.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateStart&emergency=0',null)\">") ;out.println(wqr.get10());out.println("</a>") ;
+    					out.println(". Кол-во перев. в др. отд.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=transferDate',null)\">") ;out.println(wqr.get11());out.println("</a>") ;
+    					out.println(". Кол-во выбывших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateFinish',null)\">") ;out.println(wqr.get12());out.println("</a>") ;
+    					out.println(" из них умерло : <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateFinish&discharge=death',null)\">") ;out.println(wqr.get13());out.println("</a>") ;
+    					out.println(". Кол-во операций: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&dtype=SurgicalOperation',null)\">") ;out.println(wqr.get14());out.println("</a>") ;
+    					out.println(" экстр.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&dtype=SurgicalOperation&operation=emergency',null)\">") ;out.println(wqr.get15());out.println("</a>") ;
+    					out.println(" план.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&dtype=SurgicalOperation&operation=plan',null)\">") ;out.println(wqr.get16());out.println("</a>") ;
+    					out.println("</td>") ;
+    	    			out.println("</tr>") ;
+    				}
+    			// Реанимация	
+    			} else if (dep[i][2].equals("2")) {
+    				WebQueryResult wqr =ActionUtil.getElementArrayByCode("department="+dep[i][0], "journal_priem_rean",request) ;
+    				if (wqr!=null) {
+	    				out.println("<tr>") ;
+	        			out.println("<th >") ; out.println(dep[i][1]) ; out.println("</th>") ;
+	        			out.println("<td colspan=10>") ;
+	        			out.println("Кол-во состоящих: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateCurrent',null)\">") ;out.println(wqr.get3());out.println("</a>") ;
+						out.println(". Кол-во поступивших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateStart',null)\">") ;out.println(wqr.get4());out.println("</a>") ;
+						out.println(". Кол-во переведенных: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=transferDate',null)\">") ;out.println(wqr.get5());out.println("</a>") ;
+						out.println(". Кол-во выбывших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateFinish',null)\">") ;out.println(wqr.get6());out.println("</a>") ;
+						out.println(". Кол-во умерших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=dateFinish&discharge=death',null)\">") ;out.println(wqr.get7());out.println("</a>") ;
+						out.println(". Кол-во наркозов: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation',null)\">") ;out.println(wqr.get8());out.println("</a>") ;
+						out.println(" экстр.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=emergency',null)\">") ;out.println(wqr.get9());out.println("</a>") ;
+						out.println(" план.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan',null)\">") ;out.println(wqr.get10());out.println("</a>") ;
+						out.println("</td>") ;
+		    			out.println("</tr>") ;
+    				}
+    			// Роды	
+    			} else if (dep[i][2].equals("3")) {
+    				
+    			}
+    			
+    		}
+    	%>
+    </table>
+    
+    <%} %>
     	    <%
     	}  else if (typeView!=null && (typeView.equals("2"))) {
     		
