@@ -399,6 +399,7 @@ ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${
 ${personSql}  and smo.dateStart is not null ${emergencySql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
+,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
 

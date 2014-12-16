@@ -28,7 +28,8 @@
   	Object lpu = request.getAttribute("lpu_id") ;
   	String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
   	String typeMaterial =ActionUtil.updateParameter("PrescriptJournal","typeMaterial","1", request) ;
-    
+    String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
+
   	if (lpu!=null && !lpu.equals("")) {
   		String beginDate = request.getParameter("beginDate") ;
   		if (beginDate==null || beginDate.equals("")) {
@@ -57,7 +58,19 @@
         </td>
      </msh:row>
       
-        
+      <msh:row>
+        <td class="label" title="Передача в лабораторию (typeTransfer)"><label for="typeTransferName" id="typeTransferLabel">Передача в лабораторию:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeTransfer" value="1"> осуществлена
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeTransfer" value="2"> не была произведена
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeTransfer" value="3"> все
+        </td>
+
+       </msh:row>
      
       <msh:row>
         <td class="label" title="Наименование пробирки (typeMaterial)" colspan="2"><label for="typeMaterial" id="typeMaterialLabel">Пробирка:</label></td>
@@ -81,10 +94,10 @@
     </msh:panel>
     </msh:form>
     
-           <script type='text/javascript'>
-           checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-           checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
-           //checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+    <script type='text/javascript'>
+    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
+    checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
+    checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -103,16 +116,21 @@
 			 
     </script>
     <%
-    request.setAttribute("j", "<input type=\"button\" value=\"Забор осуществлен\" onclick=\""
-    +"checkService(\\\''||list(''||p.id)||'\\\',\\\''||coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)||'\\\')\"/>") ;
+    request.setAttribute("j", "<input type=\"button\" value=\"Прием осуществлен\" onclick=\""
+    +"checkTransferService(\\\''||list(''||p.id)||'\\\')\"/>") ;
     
-    request.setAttribute("r", "<input type=\"button\" value=\"Очистить данные о заборе\" onclick=\""
-    +"removeService(\\\''||list(''||p.id)||'\\\')\"/>") ;
+    request.setAttribute("r", "<input type=\"button\" value=\"Очистить данные о приеме\" onclick=\""
+    +"removeTransferService(\\\''||list(''||p.id)||'\\\')\"/>") ;
     StringBuilder sqlAdd = new StringBuilder() ;
     if (typeIntake!=null && typeIntake.equals("1")) {
 		sqlAdd.append(" and p.intakeDate is not null ") ;
 	} else if (typeIntake!=null && typeIntake.equals("2")) {
 		sqlAdd.append(" and p.intakeDate is null ") ;
+	}
+    if (typeTransfer!=null && typeTransfer.equals("1")) {
+		sqlAdd.append(" and p.transferDate is not null ") ;
+	} else if (typeTransfer!=null && typeTransfer.equals("2")) {
+		sqlAdd.append(" and p.transferDate is null ") ;
 	}
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
     %>

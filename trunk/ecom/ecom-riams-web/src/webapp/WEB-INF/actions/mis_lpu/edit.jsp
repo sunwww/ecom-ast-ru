@@ -106,6 +106,7 @@
 			        left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 			        where ml.parent_id=${param.id} order by ml.name"/>
 			        <msh:table hideTitle="true" name="subdivisions" action="entityParentView-mis_lpu.do" idField="1" guid="a8d00e09-8ef8-420d-856a-1e3b25ab6cdf">
+			          <msh:tableColumn columnName="" property="1" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="" property="2" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="" property="3" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			        </msh:table>

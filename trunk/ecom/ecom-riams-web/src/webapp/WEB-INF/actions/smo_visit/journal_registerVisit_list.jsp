@@ -237,6 +237,7 @@
     	, vss.name as vssname, (select list (ms.name) from medcase ser left join medservice ms on ms.id=ser.medService_id where ser.parent_id=t.id and ser.dtype='ServiceMedCase') as usl
     	,case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else '' end as directHosp
     	, oml.name as omlname 
+    	,vvr.name as vvrname
     	from Medcase t  
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id
     	${medcardAddJoin}  
@@ -250,6 +251,7 @@
     	left join vochospitalization vh on vh.id=t.hospitalization_id  
     	left join VocServiceStream vss on vss.id=t.serviceStream_id
     	left join MisLpu oml on oml.id=t.orderLpu_id
+    	left join VocReason vvr on t.visitReason_id=vvr.id
     	${sql} 
 		and (t.noActuality is null or t.noActuality='0') order by ${order}
     	
@@ -286,6 +288,7 @@
             <msh:tableColumn columnName="Услуги" property="13"/>
             <msh:tableColumn columnName="Напр. на стац. лечение" property="14"/>
             <msh:tableColumn columnName="ЛПУ направитель" property="15"/>
+            <msh:tableColumn columnName="Цель визита" property="16"/>
         </msh:table>
         
         <ecom:webQuery name="listCount" nativeSql="

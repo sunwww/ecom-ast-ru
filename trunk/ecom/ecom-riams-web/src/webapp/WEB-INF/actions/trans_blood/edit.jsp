@@ -201,7 +201,7 @@
         <msh:row>
         	<msh:textField size="4" property="monitorForm0.bloodPressureTop" label="АД сис."/>
         	<msh:textField size="4" property="monitorForm0.bloodPressureLower" label="АД дис."/>
-        	<msh:textField size="4" property="monitorForm0.pulseRate" label="ЧДД"/>
+        	<msh:textField size="4" property="monitorForm0.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm0.temperature" label="t"/>
         	<msh:autoComplete size="15" property="monitorForm0.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи"/>
         </msh:row>
@@ -211,7 +211,7 @@
         <msh:row>
         	<msh:textField size="4" property="monitorForm1.bloodPressureTop" label="АД сис."/>
         	<msh:textField size="4" property="monitorForm1.bloodPressureLower" label="АД дис."/>
-        	<msh:textField size="4" property="monitorForm1.pulseRate" label="ЧДД"/>
+        	<msh:textField size="4" property="monitorForm1.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm1.temperature" label="t"/>
         	<msh:autoComplete size="15" property="monitorForm1.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи"/>
         </msh:row>
@@ -221,7 +221,7 @@
         <msh:row>
         	<msh:textField size="4" property="monitorForm2.bloodPressureTop" label="АД сис."/>
         	<msh:textField size="4" property="monitorForm2.bloodPressureLower" label="АД дис."/>
-        	<msh:textField size="4" property="monitorForm2.pulseRate" label="ЧДД"/>
+        	<msh:textField size="4" property="monitorForm2.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm2.temperature" label="t"/>
         	<msh:autoComplete size="15" property="monitorForm2.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи" fieldColSpan="2"/>
         </msh:row>
