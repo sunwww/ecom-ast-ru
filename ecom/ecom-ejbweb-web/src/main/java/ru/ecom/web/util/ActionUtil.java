@@ -14,6 +14,21 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class ActionUtil {
+	public static WebQueryResult getElementArrayByCode(String aCode,String aAttribList,HttpServletRequest aRequest) {
+		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aAttribList) ;
+		System.out.println(" --- code="+aCode);
+		WebQueryResult wqr = null ;
+		if (col.isEmpty()) for (WebQueryResult w:col) {
+			String code = ""+w.get1() ;
+			System.out.println("id="+code+" --- code="+aCode);
+			if (code.indexOf(aCode)!=-1) {
+				wqr = w ;
+				break ;
+			}
+		}
+		return wqr ;
+	}
+	
 	public static String isReportBase(String aBeginDate,String aEndDate,HttpServletRequest aRequest) {
 		String isRepBase = "true" ;
 		try {
