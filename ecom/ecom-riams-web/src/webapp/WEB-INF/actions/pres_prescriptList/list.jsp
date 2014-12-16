@@ -13,8 +13,10 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Показать" guid="a47dfc0b-97d1-4cb5-b904-4ff717e612a7" />
     <msh:sideMenu title="Добавить" guid="60616958-11ef-48b0-bec7-f6b1d0b8463f">
+   <%--  <msh:ifFormTypeIsNotView formName="pres_prescriptListForm"> --%>
       <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_prescriptList" name="Сводный  лист назначений" guid="1faa5477-419b-4f77-8379-232e33a61922" params="id" />
       <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+4" action=".javascript:shownewTemplatePrescription(1,&quot;.do&quot;)" name="ЛН из шаблона" guid="2a2c0ab6-4a46-41f7-8221-264de893815c" title="Добавить лист назначений из шаблона" />
+    <%-- </msh:ifFormTypeIsNotView> --%>
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
