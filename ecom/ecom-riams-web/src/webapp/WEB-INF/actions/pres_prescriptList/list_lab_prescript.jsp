@@ -21,6 +21,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
+  String typeCancel =ActionUtil.updateParameter("PrescriptJournal","typeCancel","3", request) ;
   String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
   String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","3", request) ;
   String typeReestr =request.getParameter("typeReestr") ;
@@ -40,6 +41,19 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeIntake" value="3"> отобразить все данные
+        </td>
+
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Назначения (typeCancel)"><label for="typeCancelName" id="typeCancelLabel">Назначения:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeCancel" value="1"> отмененные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeCancel" value="2"> действующие
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeCancel" value="3"> все
         </td>
 
        </msh:row>
@@ -83,6 +97,7 @@
            <script type='text/javascript'>
            checkFieldUpdate('typeIntake','${typeIntake}',1) ;
            checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+           checkFieldUpdate('typeCancel','${typeCancel}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -151,7 +166,13 @@
   		title.append(request.getAttribute("departmentInfo"))
   			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
   			.append(" ").append(request.getAttribute("serviceInfo")) ;
+  		if (typeCancel!=null && typeCancel.equals("1")) {
+  			sqlAdd.append(" and p.cancelDate is not null ") ;
+  		} else if (typeCancel!=null && typeCancel.equals("2")) {
+  			sqlAdd.append(" and p.cancelDate is null ") ;
+  		}
   		
+		href.append("&typeCancel=").append(typeCancel) ;
 		href.append("&typeIntake=").append(typeIntake) ;
 		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
 		request.setAttribute("href", href.toString()) ;

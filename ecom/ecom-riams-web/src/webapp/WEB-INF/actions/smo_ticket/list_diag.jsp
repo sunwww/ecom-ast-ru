@@ -16,10 +16,10 @@
   <%
   String dtype = request.getParameter("dtype") ;
   if (dtype==null || dtype.equals("")) {
-	  request.setAttribute("dtypeSql", "t.id is null") ;
+	  request.setAttribute("dtypeSql", "and t.id is null") ;
 	  request.setAttribute("asPatient", "diag" );
   } else {
-	  request.setAttribute("dtypeSql", new StringBuilder().append("t.dtype='").append(dtype).append("'"));
+	  request.setAttribute("dtypeSql", new StringBuilder().append(" and t.dtype='").append(dtype).append("'"));
 	  request.setAttribute("asPatient", "t" );
   }
   %>
@@ -51,29 +51,36 @@
   		<msh:sectionTitle>Список талонов по данному МКБ</msh:sectionTitle>
   		<msh:sectionContent>
 		    <ecom:webQuery name="list" 
-		    nativeSql=" select t.id as tid,m.number as mnumber, p.lastname||' '|| p.firstname||' '||p.middlename ||' г.р.'||p.birthday,t.dateCreate,t.date as tdate,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo,mkb.code as mkbcode ,vr.name as vrname  
+		    nativeSql=" select t.id as tid
+		    ,t.dateStart as tdate
+		    ,vwf.name||' '||wp.lastname||' '|| wp.firstname||' '||wp.middlename as wfinfo
+		    ,list(vpd.name||' '||mkb.code) as mkbcode 
+		    ,vr.name as vrname  
 		    from diagnosis diag 
+		    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 		    left join Medcase t on diag.medcase_id=t.id
-		    left join workfunction wf on wf.id=t.workFunction_id    
+		    left join workfunction wf on wf.id=t.workFunctionExecute_id    
 		    left join vocworkfunction vwf on vwf.id=wf.workFunction_id    
 		    left join worker  w on w.id=wf.worker_id    
 		    left join patient wp on wp.id=w.person_id
 		        
 		    left join vocIdc10 mkb on mkb.id=diag.idc10_id    
-		    left join vocreason vr on vr.id=t.vocreason_id   
-		    left join PsychiatricCareCard cc on cc.patient_id=${asPatient}.patient_id   
-		    where cc.id='${param.card}' and ${dtype} and diag.idc10_id='${param.mkb}'
-		    and vpd.id='${param.priority}' 
-		    order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+		    left join vocreason vr on vr.id=t.visitReason_id   
+		    left join PsychiatricCareCard cc on cc.patient_id=${asPatient}.patient_id 
+		      
+		    where cc.id='${param.card}' ${dtype} and diag.idc10_id='${param.mkb}'
+		    and vpd.id='${param.priority}'
+		    group by  t.id ,t.dateStart
+		    ,vwf.name,wp.lastname, wp.firstname,wp.middlename
+		    ,vr.name 
+		    order by t.dateStart" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 		    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
 		      <msh:tableColumn columnName="#" property="sn" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
 		      <msh:tableColumn columnName="№талона" property="1" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-		      <msh:tableColumn columnName="№мед.карты" property="2" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-		      <msh:tableColumn columnName="Пациент" property="3" guid="d7955208-4c68-42ce-85d6-684a4b9076a9" />
-		      <msh:tableColumn columnName="Дата приема" property="5" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
-		      <msh:tableColumn columnName="Специалист" property="6" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-		      <msh:tableColumn columnName="Диагноз" property="7" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-		      <msh:tableColumn columnName="Цель посещения" property="8" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
+		      <msh:tableColumn columnName="Дата приема" property="2" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
+		      <msh:tableColumn columnName="Специалист" property="3" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
+		      <msh:tableColumn columnName="Диагноз" property="4" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
+		      <msh:tableColumn columnName="Цель посещения" property="5" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
 		    </msh:table>
   		</msh:sectionContent>
   	</msh:section>

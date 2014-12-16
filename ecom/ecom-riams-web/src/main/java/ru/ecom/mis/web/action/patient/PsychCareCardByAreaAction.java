@@ -278,7 +278,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				" "+str+" ") ;
 			} else {
 				aRequest.setAttribute("typeI",
-				" and (inv.withoutExam='1' or inv.nextRevisionDate>coalesce(area.finishDate,area.transferDate,"+dateEnd+") or inv.dateTo>coalesce(area.finishDate,area.transferDate,"+dateEnd+")) "+str+" ") ;
+				" and (inv.withoutExam='1' or inv.nextRevisionDate>"+dateEnd+" or inv.dateTo>"+dateEnd+") "+str+" ") ;
 				
 			}
 			aRequest.setAttribute("typeInvInfo", " инвалиды "+str1) ;
