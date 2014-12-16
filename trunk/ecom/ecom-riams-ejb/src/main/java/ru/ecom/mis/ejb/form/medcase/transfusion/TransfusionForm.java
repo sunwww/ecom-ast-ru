@@ -1,14 +1,9 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Transfusion;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionDefinitionRhesus;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionPregnancyHang;
-import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;

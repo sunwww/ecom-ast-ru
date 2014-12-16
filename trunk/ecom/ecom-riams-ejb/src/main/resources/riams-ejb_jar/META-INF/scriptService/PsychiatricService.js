@@ -230,7 +230,7 @@ function printArea(aCtx, aParams) {
 		if (typeInv==4) {
 			invSql = " "+str+" " ;
 		} else {
-			invSql = " and (inv.withoutExam='1' or inv.nextRevisionDate>coalesce(area.finishDate,area.transferDate,"+dateEnd+") or inv.dateTo>coalesce(area.finishDate,area.transferDate,"+dateEnd+")) "+str+" " ;
+			invSql = " and (inv.withoutExam='1' or inv.nextRevisionDate>"+dateEnd+" or inv.dateTo>"+dateEnd+") "+str+" " ;
 		}
 		invInfo=" инвалиды "+str1 ;
 	}

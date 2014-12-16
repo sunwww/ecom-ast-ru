@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -29,8 +31,8 @@ public class TransfusionMonitoring extends BaseEntity{
 
 	/** Температура */
 	@Comment("Температура")
-	public Integer getTemperature() {return theTemperature;}
-	public void setTemperature(Integer aTemperature) {theTemperature = aTemperature;}
+	public BigDecimal getTemperature() {return theTemperature;}
+	public void setTemperature(BigDecimal aTemperature) {theTemperature = aTemperature;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
@@ -63,7 +65,7 @@ public class TransfusionMonitoring extends BaseEntity{
 	/** Артериальное давление (верхнее) */
 	private Integer theBloodPressureTop;
 	/** Температура */
-	private Integer theTemperature;
+	private BigDecimal theTemperature;
 	/** Частота пульса */
 	private Integer thePulseRate;
 	/** Кол-во часов */

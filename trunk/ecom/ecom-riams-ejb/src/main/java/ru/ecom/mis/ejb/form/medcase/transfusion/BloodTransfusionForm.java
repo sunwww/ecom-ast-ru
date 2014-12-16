@@ -16,7 +16,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.IntegerString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
@@ -152,9 +154,9 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Температура */
 	@Comment("Температура")
-	@Persist
-	public Integer getTemperatureBT() {return theTemperatureBT;}
-	public void setTemperatureBT(Integer aTemperature) {theTemperatureBT = aTemperature;}
+	@Persist @DoIntegerString @IntegerString
+	public String getTemperatureBT() {return theTemperatureBT;}
+	public void setTemperatureBT(String aTemperature) {theTemperatureBT = aTemperature;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
@@ -221,7 +223,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 	/** Артериальное давление (верхнее) */
 	private Integer theBloodPressureTopBT;
 	/** Температура */
-	private Integer theTemperatureBT;
+	private String theTemperatureBT;
 	/** Частота пульса */
 	private Integer thePulseRateBT;
 	

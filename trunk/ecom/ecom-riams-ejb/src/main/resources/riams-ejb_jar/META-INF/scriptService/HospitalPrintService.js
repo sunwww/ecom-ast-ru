@@ -16,8 +16,8 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	} else {
 		biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
-		biolTest.append(", AD: ").append(trans.getBloodPressureLowerBT()).append("/").append(trans.getBloodPressureTopBT()) ;
-		biolTest.append(", ЧДД: ").append(trans.getRespiratoryRateBT()) ;
+		biolTest.append(", AD: ").append(trans.getBloodPressureTopBT()).append("/").append(trans.getBloodPressureLowerBT()) ;
+		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()) ;
 		biolTest.append(", t: ").append(trans.getTemperatureBT()) ;
 		if (trans.getStateBT()!=null) {
 			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
@@ -58,7 +58,7 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		if (trans.reagentPT2!=null && !trans.reagentPT2.equals("")) {
 			personalTest.append("реактив ").append(trans.reagentPT2)
 				.append(" сер. ").append(trans.reagentSeriesPT2!=null?trans.reagentSeriesPT2:"__________")
-				.append(" годен до ").append(trans.reagentExpDatePT12!=null?Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(trans.reagentExpDatePT12):"_____._____.__________") ;
+				.append(" годен до ").append(trans.reagentExpDatePT2!=null?Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(trans.reagentExpDatePT2):"_____._____.__________") ;
 		}
 		if (trans.resultGoodPT2!=null &&trans.resultGoodPT2.code!=null) {
 			if (trans.resultGoodPT2.code.equals("1")) {
