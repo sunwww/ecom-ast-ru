@@ -374,7 +374,6 @@
                 >
             <forward name="success" redirect="false" path="/entityParentView-contract_contractAccount.do" />
         </action>
-        
         <action path='/smo_doubleVisits_list' type='ru.ecom.poly.web.action.ticket.TicketDoubleListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
