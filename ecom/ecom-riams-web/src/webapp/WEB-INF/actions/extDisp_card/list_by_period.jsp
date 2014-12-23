@@ -125,9 +125,18 @@
 	        	<input type="radio" name="typeGroup" value="16"> свод по специалистам и услугам 
 	        </td>     
         </msh:row>
+       <msh:row>
+       	<msh:hidden property="filename"/>
+       	<td colspan="4">
+       		Файл <span id='aView'></span>
+       	</td>
+       	</msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
+        <msh:row><td colspan="10">
+       		<input type="button" onclick="createForm30();" value="Экспорт карт в систему Минздрава(orph.rosminzdarav.ru)"/>
+       </td></msh:row>
 			</msh:panel>
 		</msh:form>
 <%
@@ -1032,14 +1041,31 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 	<%} %>
 	</tiles:put>
   <tiles:put name="javascript" type="string">
+  	<script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
   	<script type="text/javascript">
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-    checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeDtype','${typeDtype}',3) ;
-    checkFieldUpdate('typeDate','${typeDate}',2) ;
+    checkFieldUpdate('typePaid','${typePaid}',1) ;
+ //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
+  //  checkFieldUpdate('typeDate','${typeDate}',2) ;
     
-    
+    function createForm30() {
+    	if ($('beginDate').value=='' || $('finishDate').value=='') {
+    	alert ("Заполните дату начала и окончания!!") ;
+    	return;
+    	}
+    	alert ("Поиск идет по всем записям, которые подходят по условия:\n"+
+    			"1. указан RZ\n2. Тип документа - паспорт либо свидетельство о рождении. \nВыгружаются только карты с полным кол-вом лет (например "+
+    					"1.5 года выгружены не будут.)");
+    	$('aView').innerHTML="Подождите...";
+    ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",{
+    	callback: function(aResult) {
+    		
+    	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
+    		else $('aView').innerHTML="<a href='../rtf/"+aResult+"''>"+aResult+"</a>" ;
+    	}
+    });	
+    }
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
     	eval('var chk =  document.forms[0].'+aField) ;
