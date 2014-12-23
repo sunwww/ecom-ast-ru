@@ -37,11 +37,18 @@ import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
  */
 public class ExtDispServiceBean implements IExtDispService {
 	StringBuilder error_text=new StringBuilder();
+	StringBuilder badCards =new StringBuilder();
+	public String getBadCards () {
+		if (badCards.length()>0) return badCards.toString();
+		else return null;
+		
+	}
 	
 	public String getErrorText () {
-		return error_text.toString();
+		if (error_text.length()>0)return error_text.toString(); 
+		else return null;
 	}
-
+	
 	public String exportOrph (String aStartDate, String aFinishDate, String aFileNameSuffix ) throws ParseException, NamingException {
 		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
 			return null;
@@ -160,53 +167,65 @@ public class ExtDispServiceBean implements IExtDispService {
 	
 	public Element find_data(String SQLReq)  throws ParseException, NamingException {
 			
-		String badId = "";	
 		Statement statement = null;
-			Element rootElement = new Element("chlidren"); 
+		Element rootElement = new Element("chlidren"); 
 			
 			/*
 			Выбрать все исследования, где card_number - card_num
 			*/
 			
-			try
-			{
-				DataSource ds = findDataSource();
-				Connection dbh = ds.getConnection();
-				statement = dbh.createStatement();
-				
-				ResultSet rs = statement.executeQuery(SQLReq);
-				int numAll = 0;
-				// --------------Значения по умолчания для всех записей.
-				String sex = "1"; // Пол (1=2, 2=1) 
-				String p_idType="3"; //3 - несовершеннолетний. Если сирота - то "1"
-				String p_idCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
-				int card_idType; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
-				
-				String card_height = "150"; //Рост (в см)
-				String card_weight = "40"; //Вес (в см)
-				String card_headSize = "30";  //Окружность головы (в см)
-				String card_reccomend = "_";
-				String card_recommendZOZH = "Режим дня и отдыха - по возрасту, рациональное питание"
-						+ ", закаливание, профилактика вредных привычек."; //Рекомендации
-				String fizkult_G = "1"; //Группа здоровья для физкультуры
-				String card_issl_result = "Без патологий"; // Результат анализов
-				int fiveLet = 5;
-				int tenLet = 10;
+		try
+		{
+			DataSource ds = findDataSource();
+			Connection dbh = ds.getConnection();
+			statement = dbh.createStatement();
+			
+			ResultSet rs = statement.executeQuery(SQLReq);
+			int numAll = 0;
+			// --------------Значения по умолчания для всех записей.
+			String sex = "1"; // Пол (1=2, 2=1) 
+			String p_idType="3"; //3 - несовершеннолетний. Если сирота - то "1"
+			String p_idCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
+			int card_idType; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
+			
+			String card_height = "150"; //Рост (в см)
+			String card_weight = "40"; //Вес (в см)
+			String card_headSize = "30";  //Окружность головы (в см)
+			String card_reccomend = "_";
+			String card_recommendZOZH = "Режим дня и отдыха - по возрасту, рациональное питание"
+					+ ", закаливание, профилактика вредных привычек."; //Рекомендации
+			String fizkult_G = "1"; //Группа здоровья для физкультуры
+			String card_issl_result = "Без патологий"; // Результат анализов
+			int fiveLet = 5;
+			int tenLet = 10;
 			
 			while (rs.next()) 
 				{
 				numAll++;
-				if (numAll%70==0){
+				if (numAll%70==0){ //TODO: кол-во карт в выгрузке
 					
 				}
 				String diagnosis = rs.getString("mkbcode");
 				String health_G = rs.getString("vedhgcode");
+				String card_id = rs.getString("did");
+				String passID = rs.getString("passID");
+				String commonNumber = rs.getString("RZ");
+				
+				if (commonNumber==null || commonNumber.equals("")) {
+					badCards.append(card_id).append(":").append("У пациента не заполено поле RZ").append("#");
+					continue;
+				}
+				if (passID == null || passID.equals("")) {
+					badCards.append(card_id).append(":").append("Неправильный тип документа УЛ (должен быть либо паспорт, либо свид. о рождении)").append("#");
+					continue;
+				}
 				if (!diagnosis.startsWith("Z") && health_G.equals("1")) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
 					error_text.append(" |Расхождение группы здоровья и диагноза, ребенок=").append(rs.getString("lastname")).append(" ").append(rs.getString("firstname")).append(" ").append(rs.getString("middlename"));
+					badCards.append(rs.getString(card_id)).append(":").append("Расхождение группы здоровья и диагноза").append("#");
 					continue;
 				}
 				if (rs.getString("sex").equals("1")) sex = "2"; else sex="1";
-				String card_id = rs.getString("did");
+				
 				
 				switch (Integer.parseInt(rs.getString("socCode"))) { //Определяем тип ДД (socCode: 4-профосмотр, 5-Предварительные, 6-Периодические)
 		            case 5:  card_idType = 3; //Предварительные
@@ -232,8 +251,12 @@ public class ExtDispServiceBean implements IExtDispService {
 				String pid = rs.getString("pid");
 				
 				int monthLet = Integer.parseInt(rs.getString("fullage"));
-				String smonthLet = Integer.toString(monthLet);
+				
 				String InsuranceCompany = getOMCNumber(pid,dbh);
+				if (InsuranceCompany.equals("0")){
+					badCards.append(card_id).append(":").append("У пациента нет действующей страховой компании").append("#");
+					continue;
+				}
 				statement = dbh.createStatement();
 				
 				
@@ -354,12 +377,12 @@ public class ExtDispServiceBean implements IExtDispService {
 				.addContent(new Element("idSex").addContent(sex))
 				.addContent(new Element("dateOfBirth").addContent(toDate(rs.getString("birthday"))))
 				.addContent(new Element("idCategory").addContent(p_idCategory))
-				.addContent(new Element("idDocument").addContent(rs.getString("passID")))
+				.addContent(new Element("idDocument").addContent(passID))
 				.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
 				.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
 				//.addContent(new Element("snils").addContent("000-000-000-00"))//rs.getString("snils")))
 				//.addContent(new Element("polisSer").addContent(""))
-				.addContent(new Element("polisNum").addContent(rs.getString("RZ")))
+				.addContent(new Element("polisNum").addContent(commonNumber))
 				.addContent(new Element("idInsuranceCompany").addContent(InsuranceCompany))
 				.addContent(new Element("medSanName").addContent(rs.getString("lpuName")))
 				.addContent(new Element("medSanAddress").addContent(rs.getString("lpuAddress")))
@@ -389,14 +412,13 @@ public class ExtDispServiceBean implements IExtDispService {
 //								.addContent(new Element("problem").addContent(""))
 //								);
 //							
-				//System.out.println(monthLet);	
 				if (monthLet<fiveLet)
 						{
 							card.addContent(new Element("pshycDevelopment") //Оценка возраста психического развития для детей от 0 до 4 лет в месяцах (по умолчанию - кол-во месяцев)
-									.addContent(new Element("poznav").addContent(smonthLet)) // познавательная функция
-									.addContent(new Element("motor").addContent(smonthLet)) //моторная функция
-									.addContent(new Element("emot").addContent(smonthLet))	//эмоциональная и социальная (контакт с окружающим миром) функции		
-									.addContent(new Element("rech").addContent(smonthLet)) //предречевое и речевое развитие
+									.addContent(new Element("poznav").addContent(String.valueOf(monthLet*12))) // познавательная функция
+									.addContent(new Element("motor").addContent(String.valueOf(monthLet*12))) //моторная функция
+									.addContent(new Element("emot").addContent(String.valueOf(monthLet*12)))	//эмоциональная и социальная (контакт с окружающим миром) функции		
+									.addContent(new Element("rech").addContent(String.valueOf(monthLet*12))) //предречевое и речевое развитие
 								);
 						}
 					else
@@ -457,7 +479,6 @@ public class ExtDispServiceBean implements IExtDispService {
 //										)
 										.addContent(new Element("vmp").addContent("0")) //ВМП рекоменд. и оказана (1), рек+не ок(2), не рек(0)
 									));
-								//System.out.println(health_G);
 									if (health_G.equals("1"))
 									{
 										card.addContent(new Element("healthyMKB").addContent(rs.getString("mkbcode"))); //Код осмотра, если ребёнок здоров (Z00-Z99)
