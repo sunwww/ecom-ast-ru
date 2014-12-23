@@ -26,6 +26,9 @@
 		<create creator="new" javascript="PrescriptionService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.prescription.PrescriptionServiceJs"/>
 		</create>
+		<create creator="new" javascript="ExtDispService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.extdisp.ExtDispServiceJs"/>
+		</create>
 		<create creator="new" javascript="DietService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.diet.DietServiceJs"/>
 		</create>
