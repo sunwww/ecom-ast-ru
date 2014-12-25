@@ -134,9 +134,72 @@
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
-        <msh:row><td colspan="10">
-       		<input type="button" onclick="createForm30();" value="Экспорт карт в систему Минздрава(orph.rosminzdarav.ru)"/>
-       </td></msh:row>
+        <msh:row>
+       <td>
+       	<input type="button" onclick="showForm();" value = "Экспорт карт в систему Минздрава(orph.rosminzdarav.ru)">
+       </td>
+       </msh:row>
+			</msh:panel>
+			<msh:panel styleId="formOrph">
+			<msh:row>
+				<td colspan="10" >
+					<p>Рекомендуется выгружать данные небольшими порциями (за 4-7 дней), иначе сайт Минздрава может не принять файл.</p>
+				</td>
+			</msh:row>
+			<msh:row>
+				<td> Тип диспансеризации:
+				</td> 
+				<td>
+					<input type="checkbox" name="expDispType" value="1" checked="checked" >Профилактические осмотры
+				</td>
+				<td>
+					<input type="checkbox" name="expDispType" value="2" >Предварительные осмотры
+				</td>
+				<td>
+					<input type="checkbox" name="expDispType" value="3" >Периодические осмотры
+				</td>
+			</msh:row>
+			<msh:row>
+				<td>Возраст ДД: 
+				</td>
+				<td onclick="this.childNodes[1].checked='checked';">
+					<input type="radio" name="expDispAge" value="1">Все возраста
+				</td>
+				<td onclick="this.childNodes[1].checked='checked';">
+					<input type="radio" name="expDispAge" value="2" checked="checked" >Только полные года
+				</td>
+			</msh:row>
+			<msh:row>
+				<td>
+					<span>Значения по умолчанию: </span>
+				</td>
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Группа для занятия физ. культурой (цифра)" property="expFizGroup" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Рост (в см)" property="expHeight" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Вес (в кг)" property="expWeight" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Окружность головы (в см)" property="expHeadsize" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Результат анализов (текст)" property="expResearchText" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Рекомендации по ЗОЖ" property="expZOJRecommend" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<msh:textField label="Рекомендации по лечению" property="expRecommend" fieldColSpan="10" horizontalFill="true" />
+			</msh:row>
+			<msh:row>
+				<td>
+	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
+	       		</td>
+			</msh:row>
 			</msh:panel>
 		</msh:form>
 <%
@@ -1048,23 +1111,64 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     checkFieldUpdate('typePaid','${typePaid}',1) ;
  //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
   //  checkFieldUpdate('typeDate','${typeDate}',2) ;
-    
-    function createForm30() {
-    	if ($('beginDate').value=='' || $('finishDate').value=='') {
+   var sqlAdd = ""; 
+   $('formOrph').style.display='none';
+  function showForm() {
+	
+	  if ($('formOrph').style.display=='block') {
+		  $('formOrph').style.display='none';
+	  }else {
+		  $('formOrph').style.display='block';
+	  }
+  }  
+  function test() {
+	  alert ($('expZOJRecommend').value);
+  }
+  
+  function prepareForm30() {
+	  sqlAdd="";
+	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
+		  if (document.getElementsByName("expDispAge")[i].checked){
+			  if (document.getElementsByName("expDispAge")[i].value=="2") {
+				  sqlAdd+="and vedag.code not like '%.%' ";
+			  }  
+		  }		
+	  }
+	  var dispType="";
+	  for (var i=0;i< document.getElementsByName("expDispType").length;i++) {
+		  if (document.getElementsByName("expDispType")[i].checked) {
+			  if (document.getElementsByName("expDispType")[i].value=="1") dispType+="'4',";
+			  if (document.getElementsByName("expDispType")[i].value=="2") dispType+="'5',";
+			  if (document.getElementsByName("expDispType")[i].value=="3") dispType+="'6',";
+		  }
+	  }
+	  
+	  dispType = dispType!=""?" and vedsg.code in ("+dispType.substring(0,dispType.length-1)+") ":" and vedsg.code='4' ";
+	  sqlAdd +=dispType;
+	  createForm30();
+  }
+  
+  function createForm30() {
+  	if ($('beginDate').value=='' || $('finishDate').value=='') {
     	alert ("Заполните дату начала и окончания!!") ;
     	return;
-    	}
-    	alert ("Поиск идет по всем записям, которые подходят по условия:\n"+
-    			"1. указан RZ\n2. Тип документа - паспорт либо свидетельство о рождении. \nВыгружаются только карты с полным кол-вом лет (например "+
-    					"1.5 года выгружены не будут.)");
+    }
+	 
+    //	alert ("Поиск идет по всем записям, которые подходят по условия:\n"+
+    ////			"1. указан RZ\n2. Тип документа - паспорт либо свидетельство о рождении.");
     	$('aView').innerHTML="Подождите...";
-    ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",{
+    	
+     ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
+    		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
+    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",{
     	callback: function(aResult) {
     		
     	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
     		else $('aView').innerHTML="<a href='../rtf/"+aResult+"''>"+aResult+"</a>" ;
     	}
-    });	
+    });	 
+ 
+	
     }
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
