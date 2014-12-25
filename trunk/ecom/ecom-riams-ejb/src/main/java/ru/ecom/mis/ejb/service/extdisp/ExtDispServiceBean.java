@@ -49,7 +49,11 @@ public class ExtDispServiceBean implements IExtDispService {
 		else return null;
 	}
 	
-	public String exportOrph (String aStartDate, String aFinishDate, String aFileNameSuffix ) throws ParseException, NamingException {
+	public String exportOrph(String aStartDate, String aFinishDate,
+			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
+			String aWeight, String aHeadSize, String aAnalysesText,
+			String aZOJReccomend, String aReccomend) throws ParseException,
+			NamingException {
 		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
 			return null;
 		}
@@ -105,10 +109,10 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join (select company_id,patient_id from medpolicy limit 1) mp on mp.patient_id = p.id "
 				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') " 
 				+"and to_date('"+aFinishDate+"','dd.mm.yyyy') "
-				+"and vedsg.code ='4' " //Выбираем тип ДД
+	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
 				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
 				+"and (p.commonnumber is not null and p.commonnumber!='') " 
-				+"and  vedag.code not like '%.%' " //Ищем ДД только полных лет
+				+aSqlAdd 
 /*				+"group by edc.id,p.lastname,p.firstname, p.middlename "
 				+",p.birthday "
 				+",edc.startDate "
@@ -131,7 +135,9 @@ public class ExtDispServiceBean implements IExtDispService {
 		
 			System.out.println("Поиск записей:");
 			System.out.println("sql_orph="+SQLreq);
-			Element root = find_data(SQLreq);
+			Element root = find_data(SQLreq, aFizGroup, aHeight,
+					aWeight, aHeadSize, aAnalysesText,
+					aZOJReccomend, aReccomend);
 			if (root==null) {
 				System.out.println("Document is empty");
 				return null;
@@ -157,7 +163,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			 catch (Exception ex) {
 				 System.out.println(ex.getMessage());
 			}
-			
+			System.out.println("Someshing happened strange!!!");
 			return null;
 			}
 	
@@ -165,7 +171,11 @@ public class ExtDispServiceBean implements IExtDispService {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
 	
-	public Element find_data(String SQLReq)  throws ParseException, NamingException {
+	public Element find_data(String SQLReq,
+			String aFizGroup, String aHeight,
+			String aWeight, String aHeadSize, String aAnalysesText,
+			String aZOJReccomend, String aReccomend) throws ParseException,
+			NamingException {
 			
 		Statement statement = null;
 		Element rootElement = new Element("chlidren"); 
@@ -188,19 +198,18 @@ public class ExtDispServiceBean implements IExtDispService {
 			String p_idCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
 			int card_idType; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
 			
-			String card_height = "150"; //Рост (в см)
-			String card_weight = "40"; //Вес (в см)
-			String card_headSize = "30";  //Окружность головы (в см)
-			String card_reccomend = "_";
-			String card_recommendZOZH = "Режим дня и отдыха - по возрасту, рациональное питание"
-					+ ", закаливание, профилактика вредных привычек."; //Рекомендации
-			String fizkult_G = "1"; //Группа здоровья для физкультуры
-			String card_issl_result = "Без патологий"; // Результат анализов
+			String card_height = String.valueOf(aHeight); //"150"; //Рост (в см)
+			String card_weight = String.valueOf(aWeight); //"40"; //Вес (в см)
+			String card_headSize = String.valueOf(aHeadSize); //"30";  //Окружность головы (в см)
+			String card_reccomend = aReccomend; //"_";
+			String card_recommendZOZH = aZOJReccomend; //"Режим дня и отдыха - по возрасту, рациональное питание"
+				//	+ ", закаливание, профилактика вредных привычек."; //Рекомендации
+			String fizkult_G = String.valueOf(aFizGroup); //"1"; //Группа здоровья для физкультуры
+			String card_issl_result = aAnalysesText;//"Без патологий"; // Результат анализов
 			int fiveLet = 5;
 			int tenLet = 10;
 			
-			while (rs.next()) 
-				{
+			while (rs.next()) {
 				numAll++;
 				if (numAll%70==0){ //TODO: кол-во карт в выгрузке
 					
@@ -552,14 +561,15 @@ public class ExtDispServiceBean implements IExtDispService {
 			dbh.close();
 			System.out.println("Всего записей = " + numAll);
 			System.out.println();
-			System.out.println(error_text);
-			//return rootElement;
+			System.out.println("ErrorText= "+error_text);
+			return rootElement;
 			}
 			
 		catch (SQLException e)
 			{
 			if (CAN_DEBUG) LOG.debug("Find data = ERROR");
 	        System.out.println(e.getMessage());
+	        System.out.println(badCards.toString());
 	        rootElement.addContent(new Element("ERROR!!!!"+e.getMessage()));
 			//return rootElement;
 	        }	
@@ -567,7 +577,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		}
 	public static String getOMCNumber(String patient, Connection dbh)
 	{
-		String ret = "0";
+		String ret = "115";
 		String SQLReq = "SELECT ri.smocode FROM reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id = "+ patient + " order by actualdatefrom desc limit 1";
 		System.out.println("GetOMCNumber sql = "+SQLReq);
 		try{
@@ -575,23 +585,25 @@ public class ExtDispServiceBean implements IExtDispService {
 			
 			Statement statement = dbh.createStatement();
 			ResultSet rs = statement.executeQuery(SQLReq);
-			rs.next();
-			int sk = rs.getInt(1);
-			switch (sk) {
-            case 30002:	ret = "115";
-            	break;
-            case 30004:	ret = "103";
-    			break;
-            default:  	ret = "0";
-    			break;
+			while(rs.next()) {
+				int sk = rs.getInt(1);
+				switch (sk) {
+	            case 30002:	ret = "115";
+	            	break;
+	            case 30004:	ret = "103";
+	    			break;
+	            default:  	ret = "115";
+	            System.out.println("Нет актуального полиса!!!, СК по умолчанию");
+	    			break;
+				}
 			}
-				return ret;
+			return ret;
 
 		}
 		
 		catch (SQLException e)
 		{
-			System.out.println(e.getMessage());
+			System.out.println("in getOMCNumber error="+e.getMessage());
 		}
 		return ret;
 	}
@@ -608,6 +620,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	private @PersistenceContext EntityManager theManager;
     private final static Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	
 
 }	
 		
