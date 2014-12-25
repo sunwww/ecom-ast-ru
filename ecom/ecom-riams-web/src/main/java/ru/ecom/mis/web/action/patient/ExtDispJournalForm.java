@@ -93,4 +93,108 @@ public class ExtDispJournalForm extends BaseValidatorForm {
 
 	/** dateBeginYear */
 	private String theDateBeginYear;
+	
+	/** Файл для экспорта */
+	@Comment("Файл для экспорта")
+	public String getFilename() {
+		return theFilename;
+	}
+
+	public void setFilename(String aFilename) {
+		theFilename = aFilename;
+	}
+
+	/** Файл для экспорта */
+	private String theFilename;
+
+/** Группа для занятия физ. культурой (для экспорта) */
+@Comment("Группа для занятия физ. культурой (для экспорта)")
+public int getExpFizGroup() {
+	return theExpFizGroup;
+}
+
+public void setExpFizGroup(int aExpFizGroup) {
+	theExpFizGroup = aExpFizGroup;
+}
+
+/** Группа для занятия физ. культурой (для экспорта) */
+private int theExpFizGroup;
+	
+	/** Рост (в см) (для экспорта) */
+	@Comment("Рост (в см) (для экспорта)")
+	public int getExpHeight() {
+		return theExpHeight;
+	}
+
+	public void setExpHeight(int aExpHeight) {
+		theExpHeight = aExpHeight;
+	}
+
+	/** Рост (в см) (для экспорта) */
+	private int theExpHeight;
+	
+	/** Вес (в кг) (для экспорта) */
+	@Comment("Вес (в кг) (для экспорта)")
+	public int getExpWeight() {
+		return theExpWeight;
+	}
+
+	public void setExpWeight(int aExpWeight) {
+		theExpWeight = aExpWeight;
+	}
+
+	/** Вес (в кг) (для экспорта) */
+	private int theExpWeight;
+	
+	/** Окружность головы (в см) (для экспорта) */
+	@Comment("Окружность головы (в см) (для экспорта)")
+	public int getExpHeadsize() {
+		return theExpHeadsize;
+	}
+
+	public void setExpHeadsize(int aExpHeadsize) {
+		theExpHeadsize = aExpHeadsize;
+	}
+
+	/** Окружность головы (в см) (для экспорта) */
+	private int theExpHeadsize;
+	
+	/** Результат анализов (для экспорта) */
+	@Comment("Результат анализов (для экспорта)")
+	public String getExpResearchText() {
+		return theExpResearchText;
+	}
+
+	public void setExpResearchText(String aExpResearchText) {
+		theExpResearchText = aExpResearchText;
+	}
+
+	/** Результат анализов (для экспорта) */
+	private String theExpResearchText;
+	
+	/** Рекомендации ЗОЖ (для экспорта) */
+	@Comment("Рекомендации ЗОЖ (для экспорта)")
+	public String getExpZOJRecommend() {
+		return theExpZOJRecommend;
+	}
+
+	public void setExpZOJRecommend(String aExpZOJRecommend) {
+		theExpZOJRecommend = aExpZOJRecommend;
+	}
+
+	/** Рекомендации ЗОЖ (для экспорта) */
+	private String theExpZOJRecommend;
+	
+/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
+@Comment("Рекомендации по дисп. наблюдению, лечению (для экспорта)")
+public String getExpRecommend() {
+	return theExpRecommend;
+}
+
+public void setExpRecommend(String aExpRecommend) {
+	theExpRecommend = aExpRecommend;
+}
+
+/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
+private String theExpRecommend;
 }
