@@ -281,7 +281,7 @@ public class ExtDispServiceBean implements IExtDispService {
 						+ "FROM extdispservice edc "
 						+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
 						+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispExam' "
-						+ "and edc.servicedate is not null "; //Есть ли даты у услуг
+						+ "and edc.servicedate is not null and vedc.orphcode is not null "; //Есть ли даты у услуг
 								
 				ResultSet rs_issled = statement.executeQuery(SQLissled);
 					while (rs_issled.next())
@@ -303,7 +303,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					+ "FROM extdispservice edc "
 					+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
 					+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispVisit' "
-					+ "and edc.servicedate is not null ";
+					+ "and edc.servicedate is not null and vedc.orphcode is not null ";
        			
 				ResultSet rs_osmotri = statement.executeQuery(SQLosmotri);
 					while (rs_osmotri.next())
