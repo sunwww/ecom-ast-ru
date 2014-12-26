@@ -15,6 +15,10 @@ import ru.ecom.web.util.Injection;
  */
 public class ExtDispServiceJs {
 
+	public String setOrphCodes(HttpServletRequest aRequest) throws NamingException {
+		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
+		return service.setOrphCodes();
+	}
 	public String exportOrph(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
