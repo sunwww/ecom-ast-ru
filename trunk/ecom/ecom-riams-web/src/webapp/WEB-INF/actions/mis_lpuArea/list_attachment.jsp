@@ -137,7 +137,7 @@
       checkFieldUpdate('typeAge','${typeAge}',3) ;
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
-      
+      $('aView').innerHTML=$('filename').value ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
     	   	var aMax=chk.length ;
