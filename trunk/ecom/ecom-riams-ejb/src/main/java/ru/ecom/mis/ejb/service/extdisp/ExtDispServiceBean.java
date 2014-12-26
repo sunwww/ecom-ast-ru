@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -112,6 +113,10 @@ public class ExtDispServiceBean implements IExtDispService {
 	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
 				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
 				+"and (p.commonnumber is not null and p.commonnumber!='') " 
+				+"and cast(to_char(edc.finishDate,'yyyy')as int)-cast(to_char(p.birthday,'yyyy')as int)+ "
+				+"case when ((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)<0) or "
+				+"((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)=0 "
+				+ "and ((cast(to_char(edc.finishDate,'dd')as int))-cast(to_char(p.birthday,'dd')as int)<0)) then -1 else 0 end <18 " 
 				+aSqlAdd 
 /*				+"group by edc.id,p.lastname,p.firstname, p.middlename "
 				+",p.birthday "
@@ -204,7 +209,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			String card_reccomend = aReccomend; //"_";
 			String card_recommendZOZH = aZOJReccomend; //"Режим дня и отдыха - по возрасту, рациональное питание"
 				//	+ ", закаливание, профилактика вредных привычек."; //Рекомендации
-			String fizkult_G = String.valueOf(aFizGroup); //"1"; //Группа здоровья для физкультуры
+			String fizkult_G = String.valueOf(aFizGroup)!=null?aFizGroup:"1"; //"1"; //Группа здоровья для физкультуры
 			String card_issl_result = aAnalysesText;//"Без патологий"; // Результат анализов
 			int fiveLet = 5;
 			int tenLet = 10;
@@ -271,110 +276,44 @@ public class ExtDispServiceBean implements IExtDispService {
 				
 				//Ищем все исследования
 				{
-				String SQLissled = "SELECT servicedate as date "
-						+ ", servicetype_id as iss_id "
-						+ "FROM extdispservice "
-						+ "where card_id = " + card_id + " and dtype='ExtDispExam' "
-						+ "and servicedate is not null "; //Есть ли даты у услуг
+				String SQLissled = "SELECT distinct edc.servicedate as date "
+						+ ", vedc.orphcode as iss_id "
+						+ "FROM extdispservice edc "
+						+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
+						+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispExam' "
+						+ "and edc.servicedate is not null "; //Есть ли даты у услуг
 								
 				ResultSet rs_issled = statement.executeQuery(SQLissled);
 					while (rs_issled.next())
-					{
-						int iss_id = Integer.parseInt(rs_issled.getString("iss_id"));
-						switch (iss_id) {
-			            case 133:  iss_id = 1;
-			            	break;
-			            case 134:  iss_id = 2;
-			            	break;
-			            case 137:  iss_id = 3;
-			            	break;
-			            case 136:  iss_id = 4;
-			            	break;
-			            case 139:  iss_id = 5;
-			            	break;
-			            case 127:  iss_id = 6;
-			            	break;
-			            case 128:  iss_id = 7;
-			            	break;
-			            case 129:  iss_id = 8;
-	                     	break;
-			            case 130:  iss_id = 9;
-			            	break;
-			            case 131:  iss_id = 10;
-			            	break;
-			            case 132:  iss_id = 11;
-			            	break;
-			            case 138:  iss_id = 12;
-			            	break;
-			            case 135:  iss_id = 13;
-			            	break;
-			            case 140:  iss_id = 14;
-			            	break;
-			            case 126:  iss_id = 15;
-			            	break;
-			            case 145:  iss_id = 17;
-			            	break;
-			            default: iss_id = 0;
-			            error_text.append(" !Ошибка - код исследования-").append(rs_issled.getString("iss_id"));
-			                     break;
-						}
+					{	
 					card_basic.addContent(new Element("record")
-						.addContent(new Element("id").addContent(Integer.toString(iss_id)))
+						.addContent(new Element("id").addContent(rs_issled.getString("iss_id")))
 							.addContent(new Element("date").addContent(rs_issled.getString("date")))
 							.addContent(new Element("result").addContent(card_issl_result))
 						);
 					}
 				} //Заканчивается поиск услуг
 				
-					card_issled.addContent(card_basic);
+				card_issled.addContent(card_basic);
 					
-					{  //Запускаем поиск осмотров специалистами
+				{  //Запускаем поиск осмотров специалистами
 					
-					String SQLosmotri = "SELECT servicedate as date "
-							+ ", servicetype_id as iss_id "
-							+ "FROM extdispservice "
-							+ "where card_id = " + card_id + " and dtype='ExtDispVisit'";
-	       			
-					
-					ResultSet rs_osmotri = statement.executeQuery(SQLosmotri);
-						while (rs_osmotri.next())
-						{
-							int iss_id = Integer.parseInt(rs_osmotri.getString("iss_id"));
-							switch (iss_id) {
-				            case 113:  iss_id = 1;
-				            	break;
-				            case 114:  iss_id = 2;
-		                    	break;
-				            case 116:  iss_id = 3;
-				            	break;
-				            case 115:  iss_id = 4;
-				            	break;
-				            case 119:  iss_id = 5;
-				            	break;
-				            case 117:  iss_id = 6;
-				             	break;
-				            case 120:  iss_id = 7;
-				            	break;
-				            case 118:  iss_id = 8;
-				            	break;
-				            case 123:  iss_id = 9;
-				            	break;
-				            case 122:  iss_id = 10;
-				            	break;
-				            case 121:  iss_id = 11;
-				            	break;
-				            case 124: iss_id = 7;
-				            	break;
-				            default: iss_id = 0;
-				            	error_text.append(" !Ошибка - код осмотра-").append(rs_osmotri.getString("iss_id"));
-				            	break;
-							}
-						card_osmotri.addContent(new Element("record")
-							.addContent(new Element("id").addContent(Integer.toString(iss_id)))
-								.addContent(new Element("date").addContent(rs_osmotri.getString("date")))
-							);
-						}
-					} //Заканчивается поиск осмотров специалистами
+				String SQLosmotri = "SELECT distinct edc.servicedate as date "
+					+ ", vedc.orphcode as iss_id "
+					+ "FROM extdispservice edc "
+					+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
+					+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispVisit' "
+					+ "and edc.servicedate is not null ";
+       			
+				ResultSet rs_osmotri = statement.executeQuery(SQLosmotri);
+					while (rs_osmotri.next())
+					{
+					card_osmotri.addContent(new Element("record")
+						.addContent(new Element("id").addContent(rs_osmotri.getString("iss_id")))
+							.addContent(new Element("date").addContent(rs_osmotri.getString("date")))
+						);
+					}
+				} //Заканчивается поиск осмотров специалистами
 				
 				Element currPat = new Element ("child")
 				.addContent(new Element("idInternal").addContent(rs.getString("pid")))
@@ -621,6 +560,72 @@ public class ExtDispServiceBean implements IExtDispService {
     private final static Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
+    public String setOrphCodes() throws NamingException {
+    	DataSource ds = findDataSource();
+    	String SQLReq = "select veds.code, veds.id from vocextdispservice veds ";
+		Statement statement;
+		HashMap <String, String> codeMap = new HashMap<String, String>();
+		codeMap.put("N1_021","1"); //Анализ крови
+		codeMap.put("N1_022","2"); //Анали мочи
+		codeMap.put("N1_025","3"); //анализ кала
+		codeMap.put("N1_024","4"); //глюкоза
+		codeMap.put("N1_027","5"); //уровень гормонов
+		codeMap.put("N1_015","6"); //УЗИ брюшной полости
+		codeMap.put("N1_016","7"); //УЗИ сердца
+		codeMap.put("N1_017","8"); //УЗИ щитовидной железы
+		codeMap.put("N1_018","9"); //УЗИ органов репр. сферы
+		codeMap.put("N1_019","10"); //УЗИ тазобедр. суставов
+		codeMap.put("N1_020","11"); //Нейросонография
+		codeMap.put("N1_026","12"); //Флюрография
+		codeMap.put("N1_023","13"); //ЭКГ
+		codeMap.put("N1_028","14"); //Неонатальный скрининг на врожденный гипотериоз
+		codeMap.put("N1_013","14"); //Неонатальный скрининг
+		codeMap.put("N1_029","14"); //Неонатальный скрининг на фенилкетонурию
+		codeMap.put("N1_030","14"); //Неонатальный скрининг на адреногенимальный синдром
+		codeMap.put("N1_031","14"); //Неонатальный скрининг на муковисцедоз
+		codeMap.put("N1_032","14"); //Неонатальный скрининг на галактоземию
+		codeMap.put("N1_014","15"); //Аудиологический скрининг
+									//16 = Анализ кала на яйца глистов
+		codeMap.put("N1_033","17"); //Анализ оскиуглерода
+									//18 - УЗИ почек
+									//19 - УЗИ печени
+		codeMap.put("N1_001","1"); //Педиатр
+		codeMap.put("N1_002","2"); //Невролог
+		codeMap.put("N1_004","3"); //Офтальмолог
+		codeMap.put("N1_003","4"); //Детский хирург
+		codeMap.put("N1_007","5"); //ЛОР 
+		codeMap.put("N1_005","6"); //Травматолог-ортопед
+		codeMap.put("N1_008","7"); //Психиатр до 14 лет
+		codeMap.put("N1_012","7"); //Психиатр с 14 лет
+		codeMap.put("N1_006","8"); //Детский стоматолог
+		codeMap.put("N1_011","9"); //Эндокринолог
+		codeMap.put("N1_010","10"); //Уролог-андролог
+		codeMap.put("N1_009","11"); //Акушер-гинеколог
+
+		
+		
+		try {
+			Connection dbh = ds.getConnection();
+			statement = dbh.createStatement();
+			Statement statement2 = null;
+			ResultSet rs = statement.executeQuery(SQLReq);
+			
+			while (rs.next()) {
+				if (codeMap.get(rs.getString(1))!=null) {
+				 statement2 = dbh.createStatement();
+					String sqlReq="update vocextdispservice set orphcode='"+codeMap.get(rs.getString(1))+"' where code = '"+rs.getString(1) +"' ";
+					System.out.println(sqlReq);
+					statement2.executeUpdate(sqlReq);
+				} 
+			}
+			statement.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Произошла ошибка";
+		}
+		return "Коды для экспорта успешно добавлены.";
+	}
 
 }	
 		
