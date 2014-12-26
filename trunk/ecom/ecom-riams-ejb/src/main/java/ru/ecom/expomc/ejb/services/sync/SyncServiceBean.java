@@ -56,6 +56,8 @@ public class SyncServiceBean implements ISyncService {
             return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDetach").newInstance() ;
         } else  if(aDoc.getEntityClassName().equals("ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect")) {
             return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDefect").newInstance() ;
+        } else  if(aDoc.getEntityClassName().equals("ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo")) {
+            return (ISync) theClassLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.vocomc_sprsmo.VocSprSmo").newInstance() ;
         }
         throw new IllegalArgumentException("Нет синхронизации для "+aDoc.getEntityClassName()) ;
     }
