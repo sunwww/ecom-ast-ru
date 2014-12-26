@@ -18,4 +18,17 @@ public class VocExtDispService extends VocBaseEntity{
 		public void setIsVisit(Boolean aIsVisit) {theIsVisit = aIsVisit;}
 		/** Визит		 */
 		private Boolean theIsVisit;
+		
+		/** Код для экспорта (orph.rosminzdrav.ru) */
+		@Comment("Код для экспорта (orph.rosminzdrav.ru)")
+		public String getOrphCode() {
+			return theOrphCode;
+		}
+
+		public void setOrphCode(String aOrphCode) {
+			theOrphCode = aOrphCode;
+		}
+
+		/** Код для экспорта (orph.rosminzdrav.ru) */
+		private String theOrphCode;
 }
