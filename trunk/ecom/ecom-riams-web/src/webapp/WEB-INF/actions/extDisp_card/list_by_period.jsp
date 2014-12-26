@@ -199,6 +199,9 @@
 				<td>
 	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
 	       		</td>
+				<td>
+	       			<input type="button" onclick="showExpHelp();" value="Подсказка по экспорту"/>
+	       		</td>
 			</msh:row>
 			</msh:panel>
 		</msh:form>
@@ -1124,7 +1127,11 @@ order by vwf.name,wp.lastname,wf.id,veds.id
   function test() {
 	  alert ($('expZOJRecommend').value);
   }
-  
+  function showExpHelp() {
+	  alert ("Выгружаются карты детей, которым на дату осмотра педиатра не исполнилось 18 лет. Выгружаются все исследования, в которых указана дат осмотра\n"
+			  +"Если у ребенка не указан RZ, тип документа, нет актуального полиса ОМС, карта выгружена не будет.\n"
+			  +"Поле \"Группа для занятий физ. культурой\" - обязательное\nРезультат анализов - как пример \"Без патологий\"");
+  }
   function prepareForm30() {
 	  sqlAdd="";
 	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
