@@ -517,7 +517,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	public static String getOMCNumber(String patient, Connection dbh)
 	{
 		String ret = "115";
-		String SQLReq = "SELECT ri.smocode FROM reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id = "+ patient + " order by actualdatefrom desc limit 1";
+		String SQLReq = "SELECT ri.omccode FROM reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id = "+ patient + " order by actualdatefrom desc limit 1";
 		System.out.println("GetOMCNumber sql = "+SQLReq);
 		try{
 			
@@ -527,9 +527,9 @@ public class ExtDispServiceBean implements IExtDispService {
 			while(rs.next()) {
 				int sk = rs.getInt(1);
 				switch (sk) {
-	            case 30002:	ret = "115";
+	            case 15:	ret = "115"; //smocode=30002, omccode=15
 	            	break;
-	            case 30004:	ret = "103";
+	            case 7:	ret = "103"; //smocode=30004, omccode=7
 	    			break;
 	            default:  	ret = "115";
 	            System.out.println("Нет актуального полиса!!!, СК по умолчанию");
