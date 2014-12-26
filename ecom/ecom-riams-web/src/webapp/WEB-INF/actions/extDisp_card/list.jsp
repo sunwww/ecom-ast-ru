@@ -23,7 +23,7 @@
 		,edc.isSpecializedCare,edc.isSanatorium,edc.isSmallNation
 		from ExtDispCard edc
 		left join MisLpu lpu on lpu.id=edc.lpu_id
-		left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socilaGroup_id
+		left join VocExtDispSocialGroup vedsg on vedsg.id=edc.socialGroup_id
 		left join VocExtDisp ved on ved.id=edc.dispType_id
 		left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 		left join VocIdc10 vi on vi.id=edc.idcMain_id
