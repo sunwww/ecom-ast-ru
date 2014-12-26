@@ -9,6 +9,7 @@
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
 			<msh:sideLink key='ALT+N' roles="/Policy/Mis/ExtDisp/Card/Voc/Create" action="/entityPrepareCreate-extDisp_voc" title="Добавить вид диспансеризации" name="Вид диспансеризации" />
+			<input type="button" onclick="javascript:setOrphCodes();" value="Обновить коды" name="Загрузить коды для экспорта" />
 		</msh:sideMenu>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
@@ -67,7 +68,15 @@
 	</msh:section>
 </tiles:put>
 <tiles:put name="javascript" type="string">
+<script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
 <script type="text/javascript">
+	function setOrphCodes() {
+	ExtDispService.setOrphCodes({
+		callback: function (aResult) {
+			if (aResult!=null) alert (aResult);
+		}
+	});	
+	}
 	function exportVED() {
 		var ids = theTableArrow.getInsertedIdsAsParams("id","list") ;
 		if (ids) {
