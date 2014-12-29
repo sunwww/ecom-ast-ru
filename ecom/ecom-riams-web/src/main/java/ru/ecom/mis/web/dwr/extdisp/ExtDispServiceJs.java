@@ -25,8 +25,13 @@ public class ExtDispServiceJs {
 			String aZOJReccomend, String aReccomend, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
 		return service.exportOrph(aStartDate, aFinishDate,
-			aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
-			aWeight, aHeadSize, aAnalysesText,
-			aZOJReccomend, aReccomend);
+				aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
+				aWeight, aHeadSize, aAnalysesText,
+				aZOJReccomend, aReccomend);
 	}
+	public String exportOrphDefaultValues(String aStartDate, String aFinishDate,
+			String aFileNameSuffix, String aSqlAdd, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
+		return service.exportOrphDefaultValues(aStartDate, aFinishDate, aFileNameSuffix, aSqlAdd);
+	} 
 }
