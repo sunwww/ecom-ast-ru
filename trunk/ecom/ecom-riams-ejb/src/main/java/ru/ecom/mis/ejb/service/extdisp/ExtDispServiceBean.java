@@ -67,7 +67,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
 	*/	
 		
-	String SQLreq ="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.sex_id as sex, p.snils "
+	String SQLreq ="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, p.sex_id as sex, p.snils "
 				+", to_char(p.birthday,'dd.mm.yyyy') as birthday "
 				+",to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate "
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "
@@ -111,8 +111,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') " 
 				+"and to_date('"+aFinishDate+"','dd.mm.yyyy') "
 	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
-				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
-				+"and (p.commonnumber is not null and p.commonnumber!='') " 
+//				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
+//				+"and (p.commonnumber is not null and p.commonnumber!='') " 
 				+"and cast(to_char(edc.finishDate,'yyyy')as int)-cast(to_char(p.birthday,'yyyy')as int)+ "
 				+"case when ((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)<0) or "
 				+"((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)=0 "
@@ -162,15 +162,15 @@ public class ExtDispServiceBean implements IExtDispService {
 				outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("UTF-8"));
 				outputter.output(pat, fwrt);
 				fwrt.close();
-				return filename;
+				return filename+"@"+badCards.toString();
 			}
 		
 			 catch (Exception ex) {
 				 System.out.println(ex.getMessage());
-			}
-			System.out.println("Someshing happened strange!!!");
-			return null;
-			}
+				 System.out.println("Someshing happened strange!!!");
+				return null;
+			}			
+		}
 	
 	private DataSource findDataSource() throws NamingException {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
@@ -184,11 +184,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			
 		Statement statement = null;
 		Element rootElement = new Element("chlidren"); 
-			
-			/*
-			Выбрать все исследования, где card_number - card_num
-			*/
-			
+		badCards.setLength(0);
 		try
 		{
 			DataSource ds = findDataSource();
@@ -224,18 +220,33 @@ public class ExtDispServiceBean implements IExtDispService {
 				String card_id = rs.getString("did");
 				String passID = rs.getString("passID");
 				String commonNumber = rs.getString("RZ");
+				String patientInfo = rs.getString("patientinfo");
 				
+				
+				Element card_basic = new Element("basic");
+				Element card_issled = new Element("issled");
+				Element card_osmotri = new Element("osmotri");
+				
+				String vrach_f=rs.getString("vrach_f"); //ФИО врача
+				String vrach_l=rs.getString("vrach_l");
+				String vrach_m=rs.getString("vrach_m");
+				String pid = rs.getString("pid");
 				if (commonNumber==null || commonNumber.equals("")) {
-					badCards.append(card_id).append(":").append("У пациента не заполено поле RZ").append("#");
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента не заполено поле RZ").append("#");
 					continue;
 				}
-				if (passID == null || passID.equals("")) {
-					badCards.append(card_id).append(":").append("Неправильный тип документа УЛ (должен быть либо паспорт, либо свид. о рождении)").append("#");
+				if (passID == null || (!passID.equals("3") && !passID.equals("14"))) {
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Неправильный тип документа УЛ ("+passID+")(должен быть либо паспорт, либо свид. о рождении)").append("#");
 					continue;
 				}
 				if (!diagnosis.startsWith("Z") && health_G.equals("1")) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
-					error_text.append(" |Расхождение группы здоровья и диагноза, ребенок=").append(rs.getString("lastname")).append(" ").append(rs.getString("firstname")).append(" ").append(rs.getString("middlename"));
-					badCards.append(rs.getString(card_id)).append(":").append("Расхождение группы здоровья и диагноза").append("#");
+					error_text.append(" |Расхождение группы здоровья и диагноза, ребенок=").append(patientInfo);
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Расхождение группы здоровья и диагноза").append("#");
+					continue;
+				}
+				String InsuranceCompany = getOMCNumber(pid,dbh);
+				if (InsuranceCompany.equals("0")){
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет действующего полиса ОМС").append("#");
 					continue;
 				}
 				if (rs.getString("sex").equals("1")) sex = "2"; else sex="1";
@@ -255,22 +266,10 @@ public class ExtDispServiceBean implements IExtDispService {
 		            	break;
 				}
 				String s_card_idType = Integer.toString(card_idType);
-				Element card_basic = new Element("basic");
-				Element card_issled = new Element("issled");
-				Element card_osmotri = new Element("osmotri");
-				
-				String vrach_f=rs.getString("vrach_f"); //ФИО врача
-				String vrach_l=rs.getString("vrach_l");
-				String vrach_m=rs.getString("vrach_m");
-				String pid = rs.getString("pid");
 				
 				int monthLet = Integer.parseInt(rs.getString("fullage"));
 				
-				String InsuranceCompany = getOMCNumber(pid,dbh);
-				if (InsuranceCompany.equals("0")){
-					badCards.append(card_id).append(":").append("У пациента нет действующей страховой компании").append("#");
-					continue;
-				}
+				
 				statement = dbh.createStatement();
 				
 				
@@ -514,25 +513,22 @@ public class ExtDispServiceBean implements IExtDispService {
 	        }	
 			return rootElement;
 		}
-	public static String getOMCNumber(String patient, Connection dbh)
-	{
-		String ret = "115";
+	public static String getOMCNumber(String patient, Connection dbh) {
+		String ret = "0";
 		String SQLReq = "SELECT ri.omccode FROM reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id = "+ patient + " order by actualdatefrom desc limit 1";
 		System.out.println("GetOMCNumber sql = "+SQLReq);
-		try{
-			
-			
+		try {
 			Statement statement = dbh.createStatement();
 			ResultSet rs = statement.executeQuery(SQLReq);
 			while(rs.next()) {
 				int sk = rs.getInt(1);
 				switch (sk) {
-	            case 15:	ret = "115"; //smocode=30002, omccode=15
+	            case 15:	ret = "115"; //smocode=30002, omccode=15 makc
 	            	break;
-	            case 7:	ret = "103"; //smocode=30004, omccode=7
+	            case 7:	ret = "103"; //smocode=30004, omccode=7 sogaz
 	    			break;
-	            default:  	ret = "115";
-	            System.out.println("Нет актуального полиса!!!, СК по умолчанию");
+	            default:
+	            	System.out.println("Нет актуального полиса!!!");
 	    			break;
 				}
 			}
