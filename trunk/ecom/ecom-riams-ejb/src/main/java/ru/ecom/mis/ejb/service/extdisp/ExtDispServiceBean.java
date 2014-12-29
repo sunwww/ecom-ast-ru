@@ -50,7 +50,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		else return null;
 	}
 	
-	public String exportOrph(String aStartDate, String aFinishDate,
+	public String exportOrphDefaultValues(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd) throws ParseException,
 			NamingException {
 		String aHeight = "150"; //Рост (в см)
