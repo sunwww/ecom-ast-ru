@@ -143,7 +143,7 @@
 			<msh:panel styleId="formOrph">
 			<msh:row>
 				<td colspan="10" >
-					<p>Рекомендуется выгружать данные небольшими порциями (за 4-7 дней), иначе сайт Минздрава может не принять файл.</p>
+					<p>Рекомендуется выгружать данные небольшими порциями (до 100 записей), иначе сайт Минздрава может не принять файл.</p>
 				</td>
 			</msh:row>
 			<msh:row>
@@ -152,12 +152,12 @@
 				<td>
 					<input type="checkbox" name="expDispType" value="1" checked="checked" >Профилактические осмотры
 				</td>
-				<td>
+				<%-- <td>
 					<input type="checkbox" name="expDispType" value="2" >Предварительные осмотры
 				</td>
 				<td>
 					<input type="checkbox" name="expDispType" value="3" >Периодические осмотры
-				</td>
+				</td> --%>
 			</msh:row>
 			<msh:row>
 				<td>Возраст ДД: 
@@ -203,6 +203,19 @@
 	       			<input type="button" onclick="showExpHelp();" value="Подсказка по экспорту"/>
 	       		</td>
 			</msh:row>
+				<table id="exportTable" border="1" style="padding: 15px">
+       <tr style="color: red">
+        	<td colspan="4">Внимание! Следующие карты не выгружены!</td>
+       </tr>
+       <tr>
+        	<td>Номер карты</td>
+        	<td>Пациент</td>
+        	<td>Диагноз</td>
+        	<td>Ошибка</td>
+        </tr>
+         <tbody id="exportElements" >
+        </tbody>
+        </table>
 			</msh:panel>
 		</msh:form>
 <%
@@ -1105,6 +1118,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 			</msh:section>
 	<%} %>
 	<%} %>
+
 	</tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
@@ -1112,6 +1126,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typePaid','${typePaid}',1) ;
+    $('exportTable').style.display = 'none' ;
  //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
   //  checkFieldUpdate('typeDate','${typeDate}',2) ;
    var sqlAdd = ""; 
@@ -1133,6 +1148,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 			  +"Поле \"Группа для занятий физ. культурой\" - обязательное\nРезультат анализов - как пример \"Без патологий\"");
   }
   function prepareForm30() {
+	  $('exportTable').style.display = 'none' ;
 	  sqlAdd="";
 	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
 		  if (document.getElementsByName("expDispAge")[i].checked){
@@ -1149,9 +1165,13 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 			  if (document.getElementsByName("expDispType")[i].value=="3") dispType+="'6',";
 		  }
 	  }
+	  if (dispType=="") {
+		  alert ("Укажите дип диспансеризации!");
+		  return;
+	  }
 	  
-	  dispType = dispType!=""?" and vedsg.code in ("+dispType.substring(0,dispType.length-1)+") ":" and vedsg.code='4' ";
-	  sqlAdd +=dispType;
+	  
+	  sqlAdd +=" and vedsg.code in ("+dispType.substring(0,dispType.length-1)+") ";
 	  createForm30();
   }
   
@@ -1160,10 +1180,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	alert ("Заполните дату начала и окончания!!") ;
     	return;
     }
-	 
-    //	alert ("Поиск идет по всем записям, которые подходят по условия:\n"+
-    ////			"1. указан RZ\n2. Тип документа - паспорт либо свидетельство о рождении.");
-    	$('aView').innerHTML="Подождите...";
+	 	$('aView').innerHTML="Подождите...";
     	
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
@@ -1171,12 +1188,64 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	callback: function(aResult) {
     		
     	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
-    		else $('aView').innerHTML="<a href='../rtf/"+aResult+"''>"+aResult+"</a>" ;
+    		else {
+    			var aData = aResult.split("@");
+    			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
+    			if (aData[1]!="" && aData[1]!=null) {
+    				$('exportTable').style.display = 'block' ;
+	    			aData[1] = aData[1].substring(0,aData[1].length-1);
+	    			var rows = aData[1].split("#");
+	    			flushTable();
+	    			for (var i=0;i<rows.length;i++) {
+	    				addRow (rows[i]);
+	    			}
+    			}
+    		}
     	}
     });	 
  
 	
     }
+  function flushTable() {
+	  var table = document.getElementById("exportElements");
+	  var aRows = table.childNodes;
+	  if (aRows.length>1) {
+		  for (var i=0;i<aRows.length;i++) {
+			  table.deleteRow(0);
+		  }
+	  }
+	  
+  }
+  var firstRow=1;
+  function addRow (aRow) {
+	  var aData = aRow.split(":"); // ID:fullname:Diagnosis:Comment 
+ 	
+	  var tbody = document.getElementById('exportElements');
+    var row = document.createElement("TR");
+	//row.id = type+"Element"+num;
+    tbody.appendChild(row);
+    
+    // Создаем ячейки в вышесозданной строке 
+    // и добавляем тх 
+    var td1 = document.createElement("TD");
+ 
+    var td2 = document.createElement("TD");
+    ///td2.colSpan="2";
+    var td3 = document.createElement("TD");
+    var td4 = document.createElement("TD");
+    
+	 row.appendChild(td1);
+	 row.appendChild(td2);
+	 row.appendChild(td3);
+	 row.appendChild(td4);
+   
+    // Наполняем ячейки  
+    td1.innerHTML = "<a href='/riams/entityView-extDisp_card.do?id="+aData[0]+"' target='_blank'><span>\t"+aData[0]+"</span></a>";
+    td2.innerHTML = "<span> "+aData[1]+"</span>";
+  	td3.innerHTML = "<span> "+aData[2]+"</span>";
+   	td4.innerHTML = "<span> "+aData[3]+"</span>";
+   
+  }
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
     	eval('var chk =  document.forms[0].'+aField) ;
