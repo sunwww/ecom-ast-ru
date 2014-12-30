@@ -80,7 +80,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
 	*/	
 		
-	String SQLreq ="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, p.sex_id as sex, p.snils "
+	String SQLreq ="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, p.snils "
 				+", to_char(p.birthday,'dd.mm.yyyy') as birthday "
 				+",to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate "
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "
@@ -111,6 +111,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join Patient pwr on pwr.id=w.person_id "
 				+"left join MisLpu lpu on lpu.id=w.lpu_id "
 				+"left join Patient p on p.id=edc.patient_id "
+				+"left join vocsex vs on vs.id=p.sex_id "
 				+"left join vocidentitycard vic on vic.id=p.passporttype_id "
 				+"left join VocExtDisp ved on ved.id=edc.dispType_id "
 				+"left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id "
@@ -207,7 +208,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			ResultSet rs = statement.executeQuery(SQLReq);
 			int numAll = 0;
 			// --------------Значения по умолчания для всех записей.
-			String sex = "1"; // Пол (1=2, 2=1) 
+			 
 			String p_idType="3"; //3 - несовершеннолетний. Если сирота - то "1"
 			String p_idCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
 			int card_idType; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
@@ -234,7 +235,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				String passID = rs.getString("passID");
 				String commonNumber = rs.getString("RZ");
 				String patientInfo = rs.getString("patientinfo");
-				
+				String sex = rs.getString("sex"); 
 				
 				Element card_basic = new Element("basic");
 				Element card_issled = new Element("issled");
@@ -262,7 +263,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет действующего полиса ОМС").append("#");
 					continue;
 				}
-				if (rs.getString("sex").equals("1")) sex = "2"; else sex="1";
+				
 				
 				
 				switch (Integer.parseInt(rs.getString("socCode"))) { //Определяем тип ДД (socCode: 4-профосмотр, 5-Предварительные, 6-Периодические)
