@@ -40,8 +40,13 @@ public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachSer
 	private @EJB ILocalMonitorService theMonitorService;
 	IMonitor monitor = null; 
 	public LpuAttachedByDepartment getAttachment (long aPatientId) {
+		try {
 		LpuAttachedByDepartment list = (LpuAttachedByDepartment) theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null order by datefrom desc ").setParameter("pat", aPatientId).getSingleResult();
 		return list;
+		} catch (Exception e) {
+			return null;
+		}
+		
 	}
 	public void sync(long aMonitorId, long aTimeId) {
 		Patient patient;
@@ -65,8 +70,8 @@ public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachSer
 				dettach = lafd.next();
 				monitor.setText("Working, detach="+dettach.toString());
 				patientId = theSyncService.findPatientId(dettach.getLastname(), dettach.getFirstname(), dettach.getMiddlename(), dettach.getBirthday());
-				patient = theManager.find(Patient.class, patientId);
 				if (patientId!=null){ 
+					patient = theManager.find(Patient.class, patientId);
 					attachment=getAttachment(patientId);
 					if (attachment!=null) {
 						attachment.setDateTo(dettach.getAttachDate());
@@ -78,6 +83,8 @@ public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachSer
 					} else {
 						monitor.setText(i+" Не найдено прикреплений, изменений не произведено, пациент = "+patient.getPatientInfo());
 					}
+				} else {
+					monitor.setText(i+"Пациент не найден в базе. Пропускаем. Пациент: "+dettach.getLastname()+" "+ dettach.getFirstname()+" "+dettach.getMiddlename()+" "+dettach.getBirthday());
 				}
 			}
 			monitor.finish(""+aTimeId);
