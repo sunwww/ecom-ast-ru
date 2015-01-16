@@ -57,6 +57,15 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_statByUser.jsp" />
         </action>
+        
+        <action path='/extDisp_journal_user' type='ru.ecom.web.actions.base.ForwardAction'
+                name='extDisp_journalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/extDisp_card/list_by_user.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_user.jsp" />
+        </action>
 
         <action path='/poly_start' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_medcardForm'
