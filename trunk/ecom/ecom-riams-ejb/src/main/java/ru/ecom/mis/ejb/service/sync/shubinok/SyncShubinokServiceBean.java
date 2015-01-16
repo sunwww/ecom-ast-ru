@@ -32,7 +32,6 @@ import ru.ecom.mis.ejb.domain.patient.PatientAttachedImport;
 import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
