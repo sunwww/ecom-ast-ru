@@ -14,7 +14,6 @@ import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomc;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDetach;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
