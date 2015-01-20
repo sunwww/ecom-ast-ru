@@ -18,7 +18,7 @@
   	String typeGroup =ActionUtil.updateParameter("ExtDispAction","typeGroup","1", request) ;
 	String dateChange =ActionUtil.updateParameter("ExtDispAction","dateChange","1", request) ;
  	String usernameChange =ActionUtil.updateParameter("ExtDispAction","usernameChange","1", request) ;
-
+if (request.getParameter("short")==null) {
 %>
  <msh:form action="extDisp_journal_user.do" defaultField="beginDate" method="GET"> 
 	<msh:panel>
@@ -79,7 +79,7 @@
         </msh:panel>			
 		</msh:form>
 <%
-		String beginDate = request.getParameter("beginDate") ;
+}		String beginDate = request.getParameter("beginDate") ;
 		if (beginDate!=null && !beginDate.equals("")) {
 		String finishDate = request.getParameter("finishDate") ;
 		String dispType = request.getParameter("dispType") ;
@@ -111,7 +111,12 @@
 		
 		if (idPar!=null&&!idPar.equals("")) { 			
 			StringBuilder sqlAdd = new StringBuilder() ;
-			sqlAdd.append(usernameSearch).append("='").append(idPar).append("'");
+			if (idPar.equals("-")) {
+				sqlAdd.append("(").append(usernameSearch).append(" is null or ").append(usernameSearch).append("='')");
+			} else {
+				sqlAdd.append(usernameSearch).append("='").append(idPar).append("'");
+			}
+			
 			sqlAdd.append(" and ").append(dateSearch).append(" between to_date('").append(beginDate).append("','mm.dd.yyyy') and to_date('").append(finishDate).append("','mm.dd.yyyy') ") ;
 			sqlAdd.append(ActionUtil.setParameterFilterSql("dispType","edc.dispType_id", request)) ;
 			request.setAttribute("sqlAdd", sqlAdd.toString()) ;
@@ -139,7 +144,7 @@
 		if (dispType==null || dispType.equals("")||dispType.equals("0")){ %>
 			<msh:section> 																		<!--Группировка по типам ДД  -->
 			<ecom:webQuery name="reestrExtDispCardByType" nameFldSql="reestrExtDispCard_sqlByType" nativeSql="
-select ${usernameSearch}||'&dispType='||edc.disptype_id as idPar, ved.name, ${usernameSearch}, count(edc.id)
+select coalesce(case when ${usernameSearch}='' then null else ${usernameSearch} end,'-')||'&dispType='||edc.disptype_id as idPar, ved.name, coalesce(${usernameSearch},'-'), count(edc.id)
 from ExtDispCard edc
 left join VocExtDisp ved on ved.id=edc.dispType_id
 where ${sqlAdd} 
@@ -150,7 +155,10 @@ order  by ved.name, ${usernameSearch}
 Отчет по картам доп.диспансеризации (по типам ДД) за период ${param.beginDate}-${param.finishDate}
 </msh:sectionTitle>
 <msh:sectionContent>
-				<msh:table name="reestrExtDispCardByType" action="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}" idField="1">
+				<msh:table name="reestrExtDispCardByType"
+				viewUrl="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}&short=Short"
+				action="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}"
+				 idField="1">
 				 <msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Тип диспансеризации" property="2" />
 					<msh:tableColumn columnName="Пользователь" property="3" />
@@ -198,7 +206,8 @@ order by ved.name, ${usernameSearch}
 </msh:sectionTitle>
 <msh:sectionContent>
 				<msh:table name="reestrExtDispCard" 
-				action="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}" idField="1">
+				viewUrl="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}&short=Short" idField="1"
+				action="extDisp_journal_user.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}"  >
 				 <msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Тип диспансеризации" property="2" />
 					<msh:tableColumn columnName="Пользователь" property="3" />
