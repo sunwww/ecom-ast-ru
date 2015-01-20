@@ -57,6 +57,14 @@
 	                   		<msh:link action="mis_report_16vn.do" roles="/Policy/Mis/Journal/Report16vn">
 	                   		Отчет 16ВН</msh:link>
 	                   </li>
+	                   <li>
+	                   		<msh:link action="pres_journal.do" roles="/Policy/Mis/Journal/LabSurvey/OneDepartment">
+	                   		Отчет по направлениям на лаб. исследования</msh:link>
+	                   </li>
+	                   <li>
+	                   		<msh:link action="pres_journal_by_department.do" roles="/Policy/Mis/Journal/LabSurvey">
+	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
+	                   </li>
 					</ul>
 					</div>
 				</td>
