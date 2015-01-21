@@ -2,6 +2,8 @@ package ru.ecom.ejb.services.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ConvertSql {
@@ -36,6 +38,16 @@ public class ConvertSql {
 		if (parseString(aValue).equals("1")) return true ;
 		return false ;
 	}
+	
+	public static java.sql.Time parseTime(Object aValue) {
+		if (aValue==null) return null ;
+		if (aValue instanceof java.sql.Time) {
+			return (java.sql.Time)aValue ;
+		}
+		
+		return null ;
+	}
+	
 	public static java.sql.Date parseDate(Object aValue) {
 		if (aValue==null) return null ;
 		if (aValue instanceof java.sql.Date) {
@@ -46,6 +58,7 @@ public class ConvertSql {
 		}
 		return null ;
 	}
+	
 	public static java.sql.Date parseDate(Object aValue,int aAddDay) {
 		java.sql.Date dat = parseDate(aValue) ;
 		if (dat!=null) {

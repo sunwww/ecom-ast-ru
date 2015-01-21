@@ -127,7 +127,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	
     private @PersistenceContext EntityManager theManager;
 
-	public Collection<Object[]> executeNativeSqlGetObj(String aQuery,
+	public List<Object[]> executeNativeSqlGetObj(String aQuery,
 			Integer aMaxResult) {
 		Query query = theManager.createQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
 		List<Object[]> list ;
@@ -138,7 +138,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}
 		return list ;
 	}
-	public Collection<Object[]> executeNativeSqlGetObj(String aQuery) {
+	public List<Object[]> executeNativeSqlGetObj(String aQuery) {
 		return executeNativeSqlGetObj(aQuery,null) ;
 	}
 

@@ -1,6 +1,7 @@
 package ru.ecom.ejb.services.query;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface IWebQueryService {
 
@@ -11,7 +12,7 @@ public interface IWebQueryService {
 	
 	public int executeUpdateNativeSql(String aQuery) ;
 	
-	Collection<Object[]> executeNativeSqlGetObj(String aQuery,Integer aMaxResult) ;
-	Collection<Object[]> executeNativeSqlGetObj(String aQuery) ;
+	List<Object[]> executeNativeSqlGetObj(String aQuery,Integer aMaxResult) ;
+	List<Object[]> executeNativeSqlGetObj(String aQuery) ;
 
 }
