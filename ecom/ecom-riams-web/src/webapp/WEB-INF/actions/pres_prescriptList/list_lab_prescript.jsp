@@ -285,7 +285,7 @@
     ,coalesce(vsst.name,'---') as vsstname
     , p.materialId as material
     ,ms.code||' '||ms.name as medServicies
-    ,'${j}'
+    ,case when p.canceldate is null then '${j}' else '' end as isCancel
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -307,7 +307,7 @@
      ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    ,p.id,ms.id,ms.name,ms.code,p.intakedate,p.materialId
+    ,p.id,ms.id,ms.name,ms.code,p.intakedate,p.materialId,isCancel
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
