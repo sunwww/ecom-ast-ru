@@ -113,7 +113,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             			//System.out.println("Начало цикла") ;
             			forCount = forCount+1 ;
             			if (forCount>1) {
-            				forText = forText + line ;
+            				forText = forText + line+"\n" ;
             			} else {
             				forParam=line ;
             				forText = "";
@@ -134,12 +134,12 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             					out.println("ОШИБКА!!!!!!!!!!!"+e.getStackTrace()) ;
             				}
             			} else {
-            				forText = forText + line ;
+            				forText = forText + line+"\n" ;
             				//System.out.println("Один из циклов закончился цикла") ;
             			}
             		} else {
             			//System.out.println("Продолжение цикла") ;
-            			forText = forText+line ;
+            			forText = forText+line +"\n";
             		}
             	}
                 
@@ -181,6 +181,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             //System.out.println("ЦИКЛ===========") ;
 			//System.out.println("forText="+aLine) ;
 			//System.out.println("forParam="+aParam) ;
+			//System.out.println("cnt="+strs.length) ;
             
         	for (Object val:list) {
         		//System.out.println(name) ;
@@ -191,12 +192,13 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 	        		boolean isEndFor = OdtPrintFileDriver.isEndFor(str) ;
 	            	if (forCount==0 && !isBeginFor) {
 	            		//System.out.println("Нет цикла") ;
+	            		//System.out.println("=== str="+str) ;
 	            		recordLine(aOut,aReplaceHelper, aValueGetter, str);   
 	            	} else {
 	            		if (isBeginFor) {
 	            			forCount = forCount+1 ;
 	            			if (forCount>1) {
-	            				forText = forText + str ;
+	            				forText = forText + str+"\n" ;
 	            			} else {
 	            				forParam = str ;
 	            				forText = "";
@@ -207,21 +209,20 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 	            			if (forCount==0) {
 	            				try {
 	            					forLine(aOut,aReplaceHelper, aValueGetter,forParam,forText); 
+	            					forText="";
 	            				} catch (Exception e) {
 	            					aOut.println("ОШИБКА FOR!!!!!!!!!!!"+e.getStackTrace()) ;
 	            				}
 	            			} else {
-	            				forText = forText+str ;
+	            				forText = forText+str+"\n" ;
 	            			}
 	            		} else {
-	            			forText = forText+str ;
+	            			forText = forText+str+"\n" ;
 	            		}
 	            	}
 					
 				}
-				//aValueGetter.set(name, null) ;
-				//String outStr = aReplaceHelper.replaceWithValues(aLine, aValueGetter).toString();
-				//getMultyLine(outStr, aOut) ;
+				
         	}
 		} catch (SetValueException e) {
 			e.printStackTrace();
