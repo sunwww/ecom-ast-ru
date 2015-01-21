@@ -15,7 +15,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <%  	
-  String typeAge=ActionUtil.updateParameter("Report14","typeAge","8", request) ;
+  String typeAge=ActionUtil.updateParameter("Report_journalByHosp","typeAge","10", request) ;
  
  %>
    <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>

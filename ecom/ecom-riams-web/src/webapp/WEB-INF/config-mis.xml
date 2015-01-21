@@ -307,6 +307,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_attachment.jsp" />
         </action>
+        <action path='/stac_direct_in_fond_import' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectInFondImportAction'
+                name='serviceImportRolesForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/stac_direct_in_fond.do" />
+        </action>
         <action path='/stac_direct_in_fond' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectDataInFondAction'
                 name='mis_attachmentForm'
                 validate='false'

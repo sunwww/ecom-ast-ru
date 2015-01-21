@@ -107,7 +107,7 @@
   
 		String dateFrom = request.getParameter("dateFrom") ;
 		String dateTo = request.getParameter("dateTo") ;
-		
+		if (dateFrom!=null) {
 	if (dateFrom!=null && !dateTo.equals("")) {
 		
 		if (dateTo==null || dateTo.equals("")) {
@@ -568,7 +568,7 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 		%>
 		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
 		<%
-		}
+		}}
 		%>
 		
 		

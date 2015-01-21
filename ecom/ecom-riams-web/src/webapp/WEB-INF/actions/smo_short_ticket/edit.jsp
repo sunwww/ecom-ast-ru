@@ -12,6 +12,7 @@
       <msh:hidden property="id" guid="e862851f-7390-4fe6-9a37-3b22306138b4" />
       <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
 
       <msh:panel>
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
@@ -25,7 +26,13 @@
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Вид оплаты" horizontalFill="true" guid="e5ac1267-bc69-44b2-8aba-b7455ac064c4" />
-        </msh:row>        
+        </msh:row>   
+        <msh:row guid="a970fa32-6038-4e0b-a0a8-c57b5ebd3a04">
+          <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" viewOnlyField="false" label="Рабочее место" guid="c61023b1-bf59-432f-8764-8a571b1eddf8" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>     
+        <msh:row guid="16db3ed2-4536-4a64-9cac-b73390bf65d6">
+          <msh:autoComplete showId="false" vocName="vocReason" property="visitReason" viewOnlyField="false" label="Цель визита" guid="5f53c276-d7de-423a-86f5-b523ed37e75d" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" fieldColSpan="3"/>
         </msh:row>
@@ -55,6 +62,13 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" key="SHIFT+8" params="id" action="/print-ticketshort.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-smo_short_ticket.do__id=${param.id}&noView=1t&id=${param.id}" name="Талон" title="Печатать талон" />
+        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" params="id" action="/print-ticketshort_ref.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-smo_short_ticket.do__id=${param.id}&noView=1t&id=${param.id}" name="Талон и справка о стоимости пустая" title="Печатать талон и справку о стоимости пустую " />
+         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости 1 вариант"	action='.javascript:printReference("",".do")' title='Печать справки'
+    	/>
+         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости 2 вариант" action='.javascript:printReference("_f5",".do")' title='Печать справки'
+    	/>
+        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости без указания услуг" action='.javascript:printReference("_empty",".do")' title='Печать справки'
+    	/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -62,6 +76,32 @@
     <ecom:titleTrail mainMenu="Medcard" beginForm="smo_short_ticketForm" guid="5c4f3682-e66b-4e0d-b448-4e6a2961a943" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsView formName="smo_short_ticketForm">
+  	<script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+        <script type="text/javascript">
+        function printReference(aFormat) {
+    		TicketService.getDataByReference(
+    			'${param.id}','PREVISIT',{
+    				callback: function(aResult) {
+    					if (aResult!=null) {
+    						window.location.href = "print-doc_reference"+aFormat+".do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
+    						
+    					}
+    				}, errorHandler: function(aMessage) {
+    					if (aMessage!=null) {
+    						alert(aMessage);
+    					} else {
+    				    	alert("Ошибка в обработке данных!!!") ;
+    					}
+    				}
+    			
+    			}
+    		);
+    		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+    	}
+      	
+      	</script>
+  	</msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="smo_short_ticketForm">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
     <script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>

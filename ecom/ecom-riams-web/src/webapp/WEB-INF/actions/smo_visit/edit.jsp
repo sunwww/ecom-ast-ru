@@ -286,6 +286,10 @@
         <msh:sideLink params="id" action="/print-talon_amb_short.do?s=VisitPrintService&amp;m=printTalon"  name="Укороченного талона" title="Печать короткой версии талона" guid="1daf61-0108-4845-86c3-cs3" roles="/Policy/Mis/MedCase/Visit/PrintShortTalon" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Visit/PrintBakExp" params="id" action="/print-BakExp.do?s=VisitPrintService&amp;m=printBakExp" name="Направления на бак.исследование" guid="51g38-f936-45d0-ac70-0g66c" />
         <tags:diary_parameterCreate document="документа" roles="/Policy/Mis/MedCase/Document/Internal/Create" action="doc_create_type.do?id=${param.id}" name="type" title="Документа" vocName="documentType" />
+            <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
+    	name="Печать справки" 
+    	action='.javascript:printReference(".do")' title='Печать справки'
+    	/>
       </msh:sideMenu>
       </msh:tableNotEmpty>
     </msh:ifFormTypeIsView>
@@ -296,6 +300,7 @@
   
   	<script type="text/javascript">
   	var oldValue=$('dateStart').value;
+  	
   	updateService() ;
   	eventutil.addEventListener($('dateStart'),'blur',function(){
   		if (oldValue!=$('dateStart').value) {
@@ -359,6 +364,26 @@
   </msh:ifFormTypeIsNotView>
 
   <script type="text/javascript">
+  function printReference() {
+		TicketService.getDataByReference(
+			'${param.id}','SPO',{
+				callback: function(aResult) {
+					if (aResult!=null) {
+						window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
+						
+					}
+				}, errorHandler: function(aMessage) {
+					if (aMessage!=null) {
+						alert(aMessage);
+					} else {
+				    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
+					}
+				}
+			
+			}
+		);
+		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+	}
 	  function printDischarge() {
 		  if (confirm('Вы хотите распечатать выписку по заключению без изменений?')) {
 			  window.location.href = "print-discharge.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;

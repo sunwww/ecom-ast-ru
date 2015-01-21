@@ -37,15 +37,16 @@
     <msh:ifFormTypeIsView formName="poly_medcardForm" guid="d23e5168-1840-4e42-b681-7d8b84945666">
     	<ecom:webQuery name="lastVisit" nativeSql="select 
     	smc.id,smc.dateStart,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
-    	from MedCase smc
-					
-    	left join medcard m on m.id=smc.medcard_id
+    	from medcard m 
     	left join patient p on p.id=m.person_id
+    	left join MedCase smc on p.id=smc.patient_id
+    	
     	left join workfunction wf on wf.id=smc.workFunctionExecute_id
     	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
     	left join worker w on w.id=wf.worker_id
     	left join patient wp on wp.id=w.person_id
     	where smc.dtype='ShortMedCase' and m.id=${param.id} and smc.dateStart is not null 
+    	and smc.medcard_id=m.id
     	order by smc.dateStart desc
     	" maxResult="1" />
     <msh:tableNotEmpty name="lastVisit">
@@ -67,12 +68,16 @@
 					smc.id as smcid,smc.createDate as smccreateDate,smc.orderDate as smcorderDate
 					,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
 					from MedCase smc
+					left join Patient pat on pat.id=smc.patient_id
+					left join Medcard card on card.person_id=pat.id 
 			    	left join workfunction wf on wf.id=smc.workFunctionExecute_id
 			    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 			    	left join worker w on w.id=wf.worker_id
 			    	left join patient wp on wp.id=w.person_id
-					where smc.dtype='ShortMedCase' and smc.medCard_id='${param.id}'
-					and smc.dateStart is null"
+					where smc.dtype='ShortMedCase' and card.id='${param.id}'
+					and smc.dateStart is null 
+					and smc.medCard_id='${param.id}'
+					"
 			/>
 	          <msh:table name="tickets" printUrl="print-ticketshort.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-poly_medcard.do__id=${param.id}&noView=1" action="entityParentEdit-smo_ticket.do" idField="1" guid="2efa0c8f-b1ce-4046-90bc-2726273449b4">
 	            <msh:tableColumn columnName="Номер" property="1" guid="2a9991-fa0c-4e31-a4d2-3a143b2531bb" />

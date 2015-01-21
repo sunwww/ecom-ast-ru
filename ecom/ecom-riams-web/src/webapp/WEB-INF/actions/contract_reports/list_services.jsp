@@ -106,6 +106,7 @@
 		
 <%  }
 String dateFrom = request.getParameter("dateFrom") ;
+if (dateFrom!=null) {
 		String dFrom = "" ;
 		if (dateFrom==null ||dateFrom.equals("") ) {
 			dFrom=" is null " ;
@@ -536,7 +537,9 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} %>
+	<%} 
+	
+	}%>
 	</tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">

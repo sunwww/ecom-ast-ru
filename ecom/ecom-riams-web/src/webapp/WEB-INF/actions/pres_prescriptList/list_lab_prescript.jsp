@@ -25,6 +25,8 @@
   String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
   String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","3", request) ;
   String typeReestr =request.getParameter("typeReestr") ;
+  String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
+
 	 %>
   <msh:form action="/pres_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
@@ -41,6 +43,19 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeIntake" value="3"> отобразить все данные
+        </td>
+
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Передача в лабораторию (typeTransfer)"><label for="typeTransferName" id="typeTransferLabel">Передача в лабораторию:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeTransfer" value="1"> осуществлена
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeTransfer" value="2"> не была произведена
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeTransfer" value="3"> все
         </td>
 
        </msh:row>
@@ -98,6 +113,7 @@
            checkFieldUpdate('typeIntake','${typeIntake}',1) ;
            checkFieldUpdate('typeGroup','${typeGroup}',1) ;
            checkFieldUpdate('typeCancel','${typeCancel}',1) ;
+           checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -156,6 +172,11 @@
   			sqlAdd.append(" and p.intakeDate is not null ") ;
   		} else if (typeIntake!=null && typeIntake.equals("2")) {
   			sqlAdd.append(" and p.intakeDate is null ") ;
+  		}
+  		if (typeTransfer!=null && typeTransfer.equals("1")) {
+  			sqlAdd.append(" and p.transferDate is not null ") ;
+  		} else if (typeTransfer!=null && typeTransfer.equals("2")) {
+  			sqlAdd.append(" and p.transferDate is null ") ;
   		}
   		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
   				, "отделение","deparment","ml.id", request)) ;

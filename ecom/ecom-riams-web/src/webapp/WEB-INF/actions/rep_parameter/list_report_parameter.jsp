@@ -17,6 +17,7 @@ group by pt.id,pt.strcode,pt.name,pt.code,vs.name
 order by pt.strcode
 "/>
   	<msh:table name="list" viewUrl="entityParentView-rep_parameter.do?short=Short"
+  	editUrl="entityParentEdit-rep_parameter.do"
   	 action="entityParentView-rep_parameter.do" idField="1">
   		<msh:tableColumn property="2" columnName="Строка"/>
   		<msh:tableColumn property="3" columnName="Наименование"/>

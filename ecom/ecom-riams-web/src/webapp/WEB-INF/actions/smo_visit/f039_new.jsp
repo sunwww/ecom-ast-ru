@@ -1,3 +1,4 @@
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -19,6 +20,7 @@
     
   <tiles:put name="body" type="string">
   <%
+  	String typeAge =ActionUtil.updateParameter("Form039Action","typeAge","2", request) ;
   	String typeReestr =ActionUtil.updateParameter("Form039Action","typeReestr","2", request) ;
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
 	String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
@@ -75,6 +77,10 @@
         	<msh:autoComplete property="visitReason" label="Цель визита" vocName="vocReason"
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>        
+      <msh:row>
+        	<msh:textField property="ageFrom" label="Возраст с" />
+        	<msh:textField property="ageTo" label="по" />
+        </msh:row>
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -225,6 +231,28 @@
     		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
     		ActionUtil.setParameterFilterSql("visitReason","smo.visitReason_id", request) ;
+    		String age =null;
+    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+			String ageTo = request.getParameter("ageTo") ;
+			String ageFrom = request.getParameter("ageFrom") ;
+			if (ageFrom!=null && !ageFrom.equals("")) {
+				if (ageTo!=null && !ageTo.equals("")) {
+					age=" between "+ageFrom+" and "+ageTo ;
+				} else {
+					age=">="+ageFrom ;
+				}
+			} else if (ageTo!=null && !ageTo.equals("")) {
+				age="<="+ageTo ;
+			}
+			if (age!=null) {
+				StringBuilder as = new StringBuilder() ;
+				as.append(" and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+				as.append(" +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+				as.append(" +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+				as.append(" then -1 else 0 end) ");
+				as.append(age) ;
+				request.setAttribute("ageSql", as.toString()) ;
+			}
     		if (typeDtype.equals("1")) {
     			request.setAttribute("dtypeSql", "smo.dtype='Visit'") ;
     		} else if (typeDtype.equals("2")) {
@@ -396,7 +424,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 ,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name
@@ -537,7 +565,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
@@ -556,7 +584,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
   
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -732,7 +760,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
     <msh:sectionTitle>
@@ -750,7 +778,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -917,7 +945,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -935,7 +963,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1056,7 +1084,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1074,7 +1102,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1183,7 +1211,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1201,7 +1229,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1267,7 +1295,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql} and smo.dateStart is not null ${emergencySql}
+${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1285,7 +1313,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
                   <msh:tableNotEmpty>
          	<tr>
          		<th></th>
@@ -1383,7 +1411,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql} and smo.dateStart is not null ${emergencySql}
+${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
     <msh:sectionTitle>
@@ -1401,7 +1429,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
-         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Всего посещ." property="3"/>
             <msh:tableColumn isCalcAmount="true" columnName="Иног. посещ." property="4"/>

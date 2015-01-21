@@ -1,6 +1,7 @@
 package ru.ecom.diary.web.action.protocol.template;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,8 @@ import ru.ecom.diary.ejb.service.protocol.IDiaryService;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByGroup;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByParameter;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
@@ -21,9 +24,13 @@ import ru.nuzmsh.web.struts.BaseAction;
 public class TemplateEditAction extends BaseAction{
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 	    IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
-        CheckNode root = service.loadParametersByMedService(getLongId(aRequest, "Идентификатор мед.услуги")) ;
+        IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Long temp = getLongId(aRequest, "Идентификатор мед.услуги") ;
+        Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id where pf.template_id='"+temp+"' order by pf.position") ;  
+        CheckNode root = service.loadParametersByMedService(temp) ;
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("params", root);
+        aRequest.setAttribute("params_table", l) ;
 
         return aMapping.findForward("success") ;
     }
@@ -35,6 +42,8 @@ public class TemplateEditAction extends BaseAction{
             outNode(out, "root", node) ;
             printNodes(out, node);
         }
+        
+        
     }
 	
     private static void printNodes(JspWriter out, CheckNode aNode) throws IOException {

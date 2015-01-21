@@ -135,6 +135,9 @@
         		<msh:separator label="Анестезия" colSpan="4"/>
         	</msh:row>
 	        <msh:row>
+	          <msh:autoComplete property="isAnesthesia" label="Анестезия проводилась?" horizontalFill="true" vocName="vocYesNo" fieldColSpan="3" />
+	        </msh:row>
+	        <msh:row>
 	          <msh:autoComplete property="anesthesia" label="Метод" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3" />
 	        </msh:row>
 	        <msh:row >
@@ -367,6 +370,37 @@
   	changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>
+    <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
+    <script type="text/javascript">
+    isAnesthesiaAutocomplete.addOnChangeCallback(function() {
+    	anest() ;
+    }) ;
+    function anest(){
+    	HospitalMedCaseService.getYesNo($('isAnesthesia').value,{
+    	callback: function(aResult) {
+          	 //alert(aResult);
+             if (+aResult==1) {
+            		$('anesthesiaName').style.display = "block" ;
+              		$('anaesthetistName').style.display = "block" ;
+              } else {
+              		$('anesthesiaName').style.display = "none" ;
+              		$('anaesthetistName').style.display = "none" ;
+              }
+          }
+		});
+    }
+    	anest();
+    </script>
+            <style type="text/css">
+            #anesthesiaLabel,#anaesthetistLabel, #isAnesthesiaLabel
+             {
+                color: blue ;
+            }
+            #isAnesthesiaName,#anaesthetistName, #anesthesiaName {
+                background-color:#FFFFA0;
+            }
+        </style>
+    </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
 

@@ -34,31 +34,7 @@
   		dateAge="dateFinish" ;
   	}
   	request.setAttribute("dateAgeFld", dateAge) ;
-  	if (typeAge!=null &&typeAge.equals("3")) {
-  		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
-  				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
-  				.append(" -cast(to_char(p.birthday, 'mm') as int)")
-  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
-  				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-  				.append(" <0)")
-  				.append(" then -1 else 0 end) < 18 ") ;
-  		request.setAttribute("age_sql", age.toString()) ;
-  		request.setAttribute("age_info", "В. Дети") ;
-  	} else if (typeAge!=null &&typeAge.equals("2")) {
-  		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) >= case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-  		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
-  	} else if (typeAge!=null &&typeAge.equals("1")) {
+  	if (typeAge!=null &&typeAge.equals("1")) {
   		StringBuilder age = new StringBuilder() ;
   		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
@@ -71,7 +47,84 @@
   		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А. Взрослые") ;
+  	} else if (typeAge!=null &&typeAge.equals("2")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) >= case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
+  	} else if (typeAge!=null &&typeAge.equals("3")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+  				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+  				.append(" -cast(to_char(p.birthday, 'mm') as int)")
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+  				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+  				.append(" <0)")
+  				.append(" then -1 else 0 end) < 18 ") ;
+  		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("age_info", "В. Дети") ;
+  	} else if (typeAge!=null &&typeAge.equals("4")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and sls.").append(dateAge).append("-p.birthday < 7 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "до года") ;
+  	} else if (typeAge!=null &&typeAge.equals("5")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) < 1 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "до года") ;
+  	} else if (typeAge!=null &&typeAge.equals("6")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 0 and 14 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "0-14") ;
   	} else if (typeAge!=null &&typeAge.equals("7")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 15 and 17 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "15-17") ;
+  	} else if (typeAge!=null &&typeAge.equals("8")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 0 and 17 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("reportInfo", "0-17") ;
+  	} else if (typeAge!=null &&typeAge.equals("9")) {
   		StringBuilder age = new StringBuilder() ;
   		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
@@ -84,7 +137,7 @@
   			.append(sexWoman).append("' then 54 else 59 end ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 16 лет") ;
-  	} else if (typeAge!=null &&typeAge.equals("8")) {
+  	} else if (typeAge!=null &&typeAge.equals("10")) {
   		StringBuilder age = new StringBuilder() ;
   		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
 			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
@@ -97,42 +150,6 @@
   			.append(sexWoman).append("' then 54 else 59 end ") ;
 		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 18 лет") ;
-  	} else if (typeAge!=null &&typeAge.equals("4")) {
-  		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) < 1 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-  		request.setAttribute("reportInfo", "до года") ;
-  	} else if (typeAge!=null &&typeAge.equals("5")) {
-  		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) between 0 and 14 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-  		request.setAttribute("reportInfo", "0-14") ;
-  	} else if (typeAge!=null &&typeAge.equals("6")) {
-  		StringBuilder age = new StringBuilder() ;
-  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) between 15 and 17 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-  		request.setAttribute("reportInfo", "15-17") ;
   	}
   	//request.setAttribute("result_death", "6") ;
   	//request.setAttribute("orderType_amb", "3") ;
@@ -146,6 +163,8 @@
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("serviceStream", "sls.serviceStream_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("bedType", "bf.bedType_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("bedSubType", "bf.bedSubType_id", request)) ;
   	/*
   	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
   	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
@@ -158,7 +177,9 @@
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
   	paramHref.append("&serviceStream=").append(request.getParameter("serviceStream")!=null?request.getParameter("serviceStream"):"") ;
-  	//paramHref.append("&additionStatus=").append(request.getParameter("additionStatus")!=null?request.getParameter("additionStatus"):"") ;
+  	
+  	paramHref.append("&bedType=").append(request.getParameter("bedType")!=null?request.getParameter("bedType"):"") ;
+  	paramHref.append("&bedSubType=").append(request.getParameter("bedSubType")!=null?request.getParameter("bedSubType"):"") ;
   	request.setAttribute("paramSql", paramSql.toString()) ;
   	request.setAttribute("paramHref", paramHref.toString()) ;
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
@@ -203,28 +224,34 @@
       <msh:row>
         <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="4">  до 1 года
+        	<input type="radio" name="typeAge" value="4">  0-6 дней
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="5"  >  0-14 лет
+        	<input type="radio" name="typeAge" value="5">  до 1 года
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="6"  >  15-17 лет
+        	<input type="radio" name="typeAge" value="6"  >  0-14 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="7"  >  15-17 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAge" value="8"  >  0-17 лет
         </td>
         </msh:row>
         <msh:row>
         <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
          <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-        	<input type="radio" name="typeAge" value="7"  >  взрослые труд. возраста с 16 лет
+        	<input type="radio" name="typeAge" value="9"  >  взрослые труд. возраста с 16 лет
         </td>
         </msh:row>
         <msh:row>
         <td class="label" title="Возрастная группа (typeAge)" colspan="1"></td>
          <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-        	<input type="radio" name="typeAge" value="8"  >  взрослые труд. возраста с 18 лет
+        	<input type="radio" name="typeAge" value="10"  >  взрослые труд. возраста с 18 лет
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeAge" value="9"  >  все
+        	<input type="radio" name="typeAge" value="11"  >  все
         </td>
        </msh:row>
       <msh:row>
@@ -244,8 +271,11 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="4"> по операциям
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="5"> по выбывшие по доп.статусу
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="6"> по операции без кода
         </td>
        </msh:row>
         <msh:row>
@@ -263,6 +293,10 @@
         <msh:row>
         	<msh:autoComplete property="additionStatus" fieldColSpan="4" horizontalFill="true" label="Доп.статус пациента" vocName="vocAdditionStatus"/>
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="bedType" fieldColSpan="2" horizontalFill="true" label="Профиль коек" vocName="vocBedType"/>
+        	<msh:autoComplete property="bedSubType" fieldColSpan="2" horizontalFill="true" label="Тип коек" vocName="vocBedSubType"/>
+        </msh:row>        
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
         <msh:textField property="dateEnd" label="по" />
@@ -365,7 +399,13 @@ else 0 end) as sumDays
 ,count(distinct sls.patient_id) as cntPat
 ,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
 ,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
-
+,sum(case when sls.result_id=${result_death} then
+case 
+ when (sls.dateFinish-sls.dateStart)=0 then 1 
+ when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
+ else (sls.dateFinish-sls.dateStart)
+end
+else 0 end) as sumDaysDeath
  from medcase sls
 left join Patient p on p.id=sls.patient_id
 left join MedCase sloa on sloa.parent_id=sls.id
@@ -390,6 +430,7 @@ order by ml.name
       <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
       <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="6"/>
       <msh:tableColumn isCalcAmount="true" columnName="Умерло" property="7"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Умерло (койко-дней)" property="11"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="8"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="9"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="10"/>
@@ -1050,6 +1091,138 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
         	<i>Нет данных </i>
         	<% }} 
 
+    if (view.equals("6")) {
+    if (date!=null && !date.equals("")) {
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
+    	%>
+    
+    <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Свод по операциям без кода</msh:sectionTitle>
+    <msh:sectionContent>
+    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
+
+select '&medService='||ms.id,ms.code,ms.name 
+,count(distinct so.id) as cntOper
+,count(distinct sls.id) as cntPat
+,count(distinct case when vot.code='1' then so.id else null end) as cntTech
+,count(distinct case when sls.result_id='${result_death}' then sls.id else null end) as cntPatDeath
+
+,count(distinct case when voo.code='2' then so.id else null end) as cntDeathOper
+,count(distinct case when sls.result_id='${result_death}' and vot.code='1' then so.id else null end) as cntDeathTech
+,count(distinct case when vha.code='EMERGENCY' then so.id else null end) as cntEmergencyOper
+,count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyOper
+ from medcase sls
+left join MedCase sloa on sloa.parent_id=sls.id
+left join BedFund bf on bf.id=sloa.bedFund_id
+left join MedCase sloall on sloall.parent_id=sls.id
+left join surgicaloperation so on so.medCase_id=sloall.id
+left join MedService ms on ms.id=so.medService_id
+left join VocOperationTechnology vot on vot.id=so.technology_id
+left join VocOperationOutcome voo on voo.id=so.outcome_id
+left join Patient p on p.id=sls.patient_id
+left join VocHospitalAspect vha on vha.id=so.aspect_id
+where 
+sls.dtype='HospitalMedCase' and sls.dateFinish 
+between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and sloa.dateFinish is not null
+${paramSql}
+and ms.id is not null and  (ms.additioncode ='' or ms.additioncode is null) 
+${age_sql}  
+group by ms.id,ms.code,ms.name
+order by ms.code
+" />
+    <msh:table name="report14swod" 
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Код" property="2" />
+      <msh:tableColumn columnName="Наименование" property="3" />
+      <msh:tableColumn columnName="Кол-во операций" property="4"/>
+      <msh:tableColumn columnName="Кол-во пациентов" property="5"/>
+      <msh:tableColumn columnName="кол-во операций с испол. ВМТ" property="6"/>
+      <msh:tableColumn columnName="Кол-во умерших пациентов" property="7"/>
+      <msh:tableColumn columnName="Отмечено исход операции летальный" property="8"/>
+      <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9"/>
+      <msh:tableColumn columnName="Экстренные" property="10"/>
+      <msh:tableColumn columnName="Эндоскопические" property="11"/>
+    </msh:table>
+    
+    </msh:sectionContent>
+    </msh:section>
+    <%} else if (period!=null && !period.equals("") 
+    ) {
+    	
+    	String[] obj = period.split("-") ;
+    	String dateBegin=obj[0] ;
+    	dateEnd=obj[1];
+    	request.setAttribute("dateBegin", dateBegin);
+    	request.setAttribute("dateEnd", dateEnd);
+    	request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin, dateEnd,request));
+    		%>
+    <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Список пациентов ${param.strname}
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    select 
+so.id as soid
+,ms.id as msid
+,ss.code as sscode
+,p.lastname||' '||p.firstname||' '||p.middlename
+,sls.dateStart,sls.dateFinish
+,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
+-cast(to_char(p.birthday,'yyyy') as int)
++(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
+-cast(to_char(p.birthday, 'mm') as int)
++(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
+- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+<0)
+then -1 else 0 end)
+ as age
+,ms.code as vacode,ms.name as vaname,ms.additionCode as msadditionCode
+from SurgicalOperation so
+left join MedService ms on so.medService_id=ms.id
+left join MedCase slo on slo.id=so.medCase_id
+left join patient p on p.id=slo.patient_id
+left join MedCase sls on sls.id=slo.parent_id
+left join StatisticStub ss on ss.id=sls.statisticStub_id
+where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
+    and to_date('${dateEnd}','dd.mm.yyyy')
+and ms.id='${param.medService}'
+${paramSql} ${age_sql} 
+group by so.id
+,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
+,ms.id,ms.code ,ms.name,ms.additioncode
+order by p.lastname,p.firstname,p.middlename " />
+    <msh:table name="journal_surOperation" 
+    viewUrl="entityShortView-stac_surOperation.do" 
+     action="entityView-stac_surOperation.do" idField="1">
+      <msh:tableColumn columnName="##" property="sn" />
+      <msh:tableColumn columnName="№стат. карт" property="3" />
+      <msh:tableColumn columnName="ФИО пациента" property="4" />
+      <msh:tableColumn columnName="Возраст" property="7" />
+      <msh:tableColumn columnName="Дата поступления" property="5"/>
+      <msh:tableColumn columnName="Дата выписки" property="6"/>
+      <msh:tableColumn columnName="Код операции" property="8"/>
+      <msh:tableColumn columnName="Наименование операции" property="9"/>
+      <msh:tableColumn columnName="Код соответствия для 14 формы" property="10"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>    		
+
+    		<%
+    
+    } 
+    }
     if (view.equals("4")) {
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));

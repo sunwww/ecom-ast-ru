@@ -71,9 +71,12 @@
       </msh:row>
     </msh:panel>
     </msh:form>
-  <ecom:webQuery name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
-  <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
-  <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
+  ${isReportBase}
+		<ecom:webQuery isReportBase="${isReportBase}"  name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
+  ${isReportBase}
+		<ecom:webQuery isReportBase="${isReportBase}"  name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
+  ${isReportBase}
+		<ecom:webQuery isReportBase="${isReportBase}"  name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
     
        <script type='text/javascript'>
     
@@ -110,6 +113,7 @@
 if (date!=null && !date.equals("")) {
 	String dateEnd = (String)request.getParameter("dateEnd") ;
 	if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
 	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
@@ -132,7 +136,9 @@ if (date!=null && !date.equals("")) {
         </style>
 	<msh:section>
 		<msh:sectionTitle>
-		<ecom:webQuery name="list_surgical" nameFldSql="list_surgical_sql"
+		
+		${isReportBase}
+		<ecom:webQuery isReportBase="${isReportBase}"  name="list_surgical" nameFldSql="list_surgical_sql"
 		nativeSql="select vrspt.id||'&strcode='||vrspt.id ${tableIdAdd}
 		,vrspt.name as vrsotname,vrspt.code as vrsptcode
 		
@@ -201,7 +207,8 @@ order by vrspt.strCode ${tableOrder}"
         %>
 	<msh:section>
 		<msh:sectionTitle>
-		<ecom:webQuery name="list_surgical" nameFldSql="list_surgical_sql"
+		${isReportBase}
+		<ecom:webQuery isReportBase="${isReportBase}"  name="list_surgical" nameFldSql="list_surgical_sql"
 		nativeSql="select mkb.id as mkbid,mkb.code as mkbcode,
 		mkb.name as mkbname,count(distinct sls.id) as cntAll
 ,count(distinct case when sls.result_id='${result_death}' then sls.id else null end) as cntDeath

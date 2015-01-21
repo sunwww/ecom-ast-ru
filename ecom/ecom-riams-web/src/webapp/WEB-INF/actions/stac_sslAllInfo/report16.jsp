@@ -94,6 +94,9 @@
         	<msh:autoComplete property="department" fieldColSpan="5" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="bedType" fieldColSpan="2" horizontalFill="true" label="Профиль коек" vocName="vocBedType"/>
         	<msh:autoComplete property="bedSubType" fieldColSpan="2" horizontalFill="true" label="Тип коек" vocName="vocBedSubType"/>
         </msh:row>
@@ -174,6 +177,7 @@ if (date!=null && !date.equals("")) {
 	}
 	request.setAttribute("department", department) ;*/
 	ActionUtil.setParameterFilterSql("department","slo.department_id", request) ;
+	ActionUtil.setParameterFilterSql("serviceStream","slo.serviceStream_id", request) ;
 	ActionUtil.setParameterFilterSql("bedType","bf.bedType_id", request) ;
 	ActionUtil.setParameterFilterSql("bedSubType","bf.bedSubType_id", request) ;
 	Date dat = DateFormat.parseDate(date) ;
@@ -378,7 +382,7 @@ if (date!=null && !date.equals("")) {
 	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
 	where 
 		slo.dtype='DepartmentMedCase' 
-		${departmentSql} 
+		${departmentSql} ${serviceStreamSql} 
 	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
 	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('${timeSql}' as time)>slo.entrancetime
 	)
@@ -433,7 +437,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>
 	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
-	    '&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}&bedFund='||slo.bedfund_id as vbstid,
+	    '&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&bedFund='||slo.bedfund_id as vbstid,
 	    vbt.name||' '||vbst.name as vbstname,vss.name as vssname
 	,count(distinct case when 
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
@@ -618,7 +622,7 @@ if (date!=null && !date.equals("")) {
 	or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy')
 	or to_date('${dateBegin}','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('${timeSql}' as time)
 	)
-	${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	
 	group by slo.bedfund_id,bf.bedsubtype_id,vbst.name,vbt.name,bf.serviceStream_id,vss.name
 	      " />
@@ -686,7 +690,7 @@ if (date!=null && !date.equals("")) {
 	left join patient pat on slo.patient_id=pat.id
 	left join medcase pslo on pslo.id=slo.prevmedcase_id
 	left join mislpu pdep on pdep.id=pslo.department_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	and
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
@@ -731,7 +735,7 @@ if (date!=null && !date.equals("")) {
 	left join patient pat on slo.patient_id=pat.id
 	left join medcase pslo on pslo.id=slo.prevmedcase_id
 	left join mislpu pdep on pdep.id=pslo.department_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
 	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('${timeSql}' as time)>slo.entrancetime
 	)
@@ -793,7 +797,7 @@ if (date!=null && !date.equals("")) {
 	left join medcase pslo on pslo.id=slo.prevmedcase_id
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is null
@@ -832,7 +836,7 @@ if (date!=null && !date.equals("")) {
 	left join medcase pslo on pslo.id=slo.prevmedcase_id
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is not null
@@ -870,7 +874,7 @@ if (date!=null && !date.equals("")) {
 	left join medcase pslo on pslo.id=slo.prevmedcase_id
 	left join mislpu pdep on pdep.id=pslo.department_id
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
 	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is null  
@@ -912,7 +916,7 @@ if (date!=null && !date.equals("")) {
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	 and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
 	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime)
@@ -957,7 +961,7 @@ if (date!=null && !date.equals("")) {
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql} 
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
 	 and (slo.transferDate between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.transferDate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
 	or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transferTime)
@@ -998,7 +1002,7 @@ if (date!=null && !date.equals("")) {
 	left join vochosptype vht on vht.id=sls.sourceHospType_id
 	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
-	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	where  slo.dtype='DepartmentMedCase' ${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	
      and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
@@ -1060,7 +1064,7 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		    <msh:section>
 	    <msh:sectionTitle>	    
-	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeView=${queryGroupNext}&${queryId}||${departmentSqlId} as fldId,${queryField} as fldName,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
+	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}&${queryId}||${departmentSqlId} as fldId,${queryField} as fldName,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
@@ -1247,7 +1251,7 @@ if (date!=null && !date.equals("")) {
 	or to_date('${dateBegin}','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('${timeSql}' as time)
 	)
 
-	${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	group by ${queryGroup}
 	order by ${queryOrder}
 	      " />
@@ -1563,7 +1567,7 @@ if (date!=null && !date.equals("")) {
 	or to_date('${dateBegin}','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('${timeSql}' as time)
 	)
 
-	${departmentSql} ${bedTypeSql} ${bedSubTypeSql}
+	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	group by ${queryGroup}
 	order by ${queryOrder}
 	      " />
@@ -1580,8 +1584,8 @@ if (date!=null && !date.equals("")) {
 	    16/у-02 форма. ${queryTitle}</msh:sectionTitle>
 	    <msh:sectionContent>
 	    <msh:table name="journal_priem" 
-	    viewUrl="stac_report_016.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeView=${queryGroupNext}" 
-	    action="stac_report_016.do?&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeView=${queryGroupNext}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    viewUrl="stac_report_016.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" 
+	    action="stac_report_016.do?&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="${queryName}" property="2" />
 <%--	      <msh:tableColumn columnName="тип коек" property="3" />

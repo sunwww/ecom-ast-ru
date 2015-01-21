@@ -138,12 +138,14 @@
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
     select pat.id
     ,case when p.intakeDate is null then '${j}' else '${r}' end as js
-    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
-    ,pat.lastname,pat.firstname,pat.middlename
-    ,coalesce(vsst.name,'---') as vsstname
+      , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    
     ||'#'||pat.lastname else list(p.materialId) end) as material
-    ,list(ms.code||' '||ms.name) as medServicies
+    ,coalesce(vsst.name,'---') as vsstname
+    ,pat.lastname,pat.firstname,pat.middlename
+    ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+   ,list(ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name) as medServicies
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -165,21 +167,70 @@
     and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    ,p.intakedate
+    ,p.intakedate,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
-    <msh:sectionTitle>Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}</msh:sectionTitle>
+    
+    <msh:sectionTitle>Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}
+    
+    <form action="print-pres_lab_prescript_by_department.do" method="post" target="_blank">
+	    
+	    <input type='hidden' name="sqlText" id="sqlText" value="select pat.id
+    ,case when p.intakeDate is null then '' else '' end as js
+    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
+    
+    ||'#'||pat.lastname else list(p.materialId) end) as material
+    ,coalesce(vsst.name,'---') as vsstname
+    ,pat.lastname,pat.firstname,pat.middlename
+    ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+    ,list(ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name) as medServicies
+   from prescription p
+    left join PrescriptionList pl on pl.id=p.prescriptionList_id
+    left join MedCase slo on slo.id=pl.medCase_id
+    left join MedCase sls on sls.id=slo.parent_id
+    left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id
+    left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id
+    left join Patient pat on pat.id=slo.patient_id
+    left join MedService ms on ms.id=p.medService_id
+    left join VocServiceType vst on vst.id=ms.serviceType_id
+    left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
+    left join WorkFunction wf on wf.id=p.prescriptSpecial_id
+    left join Worker w on w.id=wf.worker_id
+    left join MisLpu ml on ml.id=w.lpu_id
+    left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+    where p.dtype='ServicePrescription'
+    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and to_date('${endDate}','dd.mm.yyyy')
+    and w.lpu_id='${lpu_id}' 
+    and p.cancelDate is null ${sqlAdd}
+    group by pat.id,pat.lastname,pat.firstname,pat.middlename
+    ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
+    ,p.intakedate,pat.birthday
+    order by pat.lastname,pat.firstname,pat.middlename"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printGroupNativeQuery">
+	    <input type='hidden' name="groupField" id="groupField" value="4">
+	    <input type="submit" value="Печать"> 
+	    </form>    
+    </msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1">
 	      <msh:tableColumn columnName="Управление" property="2"  />
 	      <msh:tableColumn columnName="Стат.карта" property="3"  />
-	      <msh:tableColumn columnName="Фамилия пациента" property="4"  />
-	      <msh:tableColumn columnName="Имя" property="5" />
-	      <msh:tableColumn columnName="Отчетство" property="6"/>
-	      <msh:tableColumn columnName="Метка биоматериала" property="7"/>
-	      <msh:tableColumn columnName="Код биоматериала" property="8"/>
+	      <msh:tableColumn columnName="Код биоматериала" property="4"/>
+	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
+	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
+	      <msh:tableColumn columnName="Имя" property="7" />
+	      <msh:tableColumn columnName="Отчетство" property="8"/>
 	      <msh:tableColumn columnName="Список услуг" property="9"/>
+
 	    </msh:table>
+	    <script type="text/javascript">
+	    
+	    </script>
     </msh:sectionContent>
     </msh:section>
   	
