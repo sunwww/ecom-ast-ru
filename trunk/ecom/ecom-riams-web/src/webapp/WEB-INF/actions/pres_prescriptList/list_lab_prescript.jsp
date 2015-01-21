@@ -285,7 +285,7 @@
     ,coalesce(vsst.name,'---') as vsstname
     , p.materialId as material
     ,ms.code||' '||ms.name as medServicies
-    ,case when p.canceldate is null then '${j}' else '' end as isCancel
+    ,case when p.canceldate is null then '${j}' else 'Услуга отменена' end as isCancel
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
