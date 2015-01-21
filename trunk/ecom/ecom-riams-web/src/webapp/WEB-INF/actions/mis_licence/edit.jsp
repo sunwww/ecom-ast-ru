@@ -15,6 +15,7 @@
                 <msh:separator colSpan="4" label="Право на виды деятельности"/>
                 <msh:row>
                     <msh:textField property="numberDoc" label="Номер"  horizontalFill="false" size="20" fieldColSpan="3"/>
+                </msh:row>
                  <msh:row>
                     <msh:textField property="vidal" label='Кто выдал:' horizontalFill="true" fieldColSpan="3" size="50"/>
                 </msh:row>
@@ -22,7 +23,6 @@
                     <msh:autoComplete  property="typeWork" label="Вид Деятельности"  vocName="vocTypeWork" horizontalFill="true" fieldColSpan="3"/>
                 </msh:row>
 
-                </msh:row>
                 <msh:separator colSpan="4" label="Период действия"/>
                 <msh:row>
                     <msh:textField property="dateStart" label="С" />

@@ -103,7 +103,7 @@
 	     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
           	 where wfs.medService_id=ms.id
           	 )
-          	 ,ms.code 
+          	 ,ms.code as mscode
           	 from MedService ms 
           	 left join VocMedService vms on vms.id=ms.vocMedService_id 
           	 where ms.parent_id='${param.id}' and ms.dtype='MedServiceGroup'
@@ -130,6 +130,7 @@
           	 )
           	 ,ms.code as mscode,ms.complexity as mscomplexity
           	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
+          	 , ms.additionCode as msadditionCode
           	 from MedService ms 
           	 left join VocMedService vms on vms.id=ms.vocMedService_id 
           	 where ms.parent_id='${param.id}' and ms.dtype='MedService'
@@ -166,6 +167,7 @@
 		    <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
 		    <msh:tableColumn columnName="Уровень сложности" property="8"/>
 		    <msh:tableColumn columnName="ОМС?" property="9"/>
+		    <msh:tableColumn columnName="Доп. код" property="10"/>
      </msh:table>
         </msh:section>
     </msh:ifInRole>

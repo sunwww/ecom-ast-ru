@@ -137,6 +137,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	action='/print-discharge_hospital.do?m=printBilling&s=HospitalPrintService' title='Печать выписки'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
+    	name="Печать справки" 
+    	action='.javascript:printReference(".do")' title='Печать справки'
+    	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать экс. карты" params="id"  
     	action='/print-expert_card_empty.do?m=printBilling&s=HospitalPrintService' title='Печать экс. карты'
     	/>
@@ -215,7 +219,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete">
 		
 		<script type="text/javascript">
-
+	
   		function deleteDischarge(aId) {
   			HospitalMedCaseService.deleteDischarge(
      		'${param.id}', {
@@ -232,8 +236,30 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   	</script>
   </msh:ifInRole>
 
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   
 <script type="text/javascript">
+
+function printReference() {
+	HospitalMedCaseService.getDataByReference(
+		'${param.id}','HOSP',{
+			callback: function(aResult) {
+				if (aResult!=null) {
+					window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
+					
+				}
+			}, errorHandler: function(aMessage) {
+				if (aMessage!=null) {
+					alert(aMessage);
+				} else{
+			    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
+				}
+			}
+		
+		}
+	);
+	//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+}
 function gotoPregHistory(aMedCase,aUrl) {
  	PregnancyService.getPregHistoryByMedCase(
 			     		'${param.id}' , {

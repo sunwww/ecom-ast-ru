@@ -210,4 +210,19 @@ public class JournalBySpecialistForm extends BaseValidatorForm {
 
 	/** Персона */
 	private Long thePerson;
+	
+	/** Возраст с */
+	@Comment("Возраст с")
+	public Long getAgeFrom() {return theAgeFrom;}
+	public void setAgeFrom(Long aAgeFrom) {theAgeFrom = aAgeFrom;}
+
+	/** Возраст с */
+	private Long theAgeFrom;
+	/** Возраст по */
+	@Comment("Возраст по")
+	public Long getAgeTo() {return theAgeTo;}
+	public void setAgeTo(Long aAgeTo) {theAgeTo = aAgeTo;}
+
+	/** Возраст по */
+	private Long theAgeTo;
 }

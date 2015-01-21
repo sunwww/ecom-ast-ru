@@ -27,24 +27,15 @@
       <msh:row>
       	<msh:textField property="lpu"/>
       </msh:row>
-      <!-- 
-       <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
-        <msh:autoComplete property="lpu" vocName="lpu" label="ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="7" guid="67d2a4af-71bc-4a19-8844-4a59b97fabda" horizontalFill="true" />
-      </msh:row>
-       -->
      <msh:row>
         <msh:textField fieldColSpan="2" property="numberPackage" label="№пакета" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="numberReestr" label="Реестровый номер" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
       <msh:row>
         <msh:textField  property="period" label="Период с" />
-<!--         <msh:textField  property="periodTo" label="до" /> -->
+         <msh:textField  property="periodTo" label="по" /> 
       </msh:row>
-      <%--
-      <msh:row>
-        <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
-       </msh:row>
-        --%>
+
       <msh:row>
         <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -88,6 +79,26 @@
             <input type="submit" value="Найти" />
           </td>
       </msh:row>
+          </msh:panel>
+    </msh:form>
+       <msh:form action="stac_direct_in_fond_import.do"  defaultField="isClear" fileTransferSupports="true">
+			            <msh:hidden property="saveType"/>
+			 			<msh:panel>
+			                <msh:row>
+			                    <td>Файл *.xml</td>
+			                    <td colspan="1">
+			                        <input type="file" name="file" id="file" size="50" value="" onchange="">
+			                        <input type="button" name="run_import" value="Импорт"  onclick="this.form.submit()" />
+			                    </td>
+			                </msh:row>
+			                	<msh:row>
+			                	<td colspan="4" align="center">
+			                		
+			                	</td>
+			                	</msh:row>
+			                	
+			            </msh:panel>
+			        </msh:form>
       <script type="text/javascript">
       checkFieldUpdate('typeView','${typeView}',1) ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -101,8 +112,7 @@
     	   	}
     	   }
       </script>
-    </msh:panel>
-    </msh:form>
+
     <script type='text/javascript'>
     
     //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;

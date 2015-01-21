@@ -3,6 +3,7 @@ package ru.ecom.template.web.dwr;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
@@ -28,6 +29,13 @@ import javax.naming.NamingException;
  * To change this template use File | Settings | File Templates.
  */
 public class TemplateProtocolJs {
+	/** Получить список параметров с номерами полей по шаблону */
+	public String getParameterByTemplate(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select id,name,code from VocSex") ;
+		
+		return "";
+	}
 	public String getText(String aId, HttpServletRequest aRequest) throws NamingException {
 		if (StringUtil.isNullOrEmpty(aId)) {
 			return "" ;
@@ -306,16 +314,17 @@ public class TemplateProtocolJs {
             return service.getTextByProtocol(Long.valueOf(aId)) ;
         }
     }
-    public void saveParametersByMedService(long aProtocol, String[] aAdds, String[] aRemoves, HttpServletRequest aRequest) throws NamingException {
-    	long[] adds = TemplateSaveAction.getLongs(aAdds);
+    public void saveParametersByMedService(long aProtocol, String aAdds, String[] aRemoves, HttpServletRequest aRequest) throws NamingException {
+    	String[] ad = aAdds.split(",") ;
+    	long[] adds = TemplateSaveAction.getLongs(ad);
     	long[] removes = TemplateSaveAction.getLongs(aRemoves);
     	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService");
+    	System.out.println("adds->"+aAdds+"--"+aAdds.split(",").length+" adds="+adds.length) ;
     	service.saveParametersByTemplateProtocol(aProtocol, adds, removes) ;
     }
     public Long getCountSymbolsInProtocol(long aVisit,  HttpServletRequest aRequest) throws NamingException {
     	 ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
     	 return service.getCountSymbolsInProtocol(aVisit) ;
-    	
     }
     public static String getUsername(HttpServletRequest aRequest) {
     	 LoginInfo loginInfo = LoginInfo.find(aRequest.getSession()) ;

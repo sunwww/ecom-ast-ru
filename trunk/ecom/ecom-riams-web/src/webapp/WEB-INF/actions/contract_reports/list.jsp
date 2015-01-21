@@ -52,6 +52,7 @@
 		</msh:form>
 <%
 		String dateFrom = request.getParameter("dateFrom") ;
+		if (dateFrom!=null) {
 		String dFrom = "" ;
 		if (dateFrom==null ||dateFrom.equals("") ) {
 			dFrom=" is null " ;
@@ -393,6 +394,8 @@ order by cao.operationDate,cao.operationTime
 
 			</msh:section>
 
+	<%} 
+	} else {%>
 	<%} %>
 	</tiles:put>
   <tiles:put name="javascript" type="string">

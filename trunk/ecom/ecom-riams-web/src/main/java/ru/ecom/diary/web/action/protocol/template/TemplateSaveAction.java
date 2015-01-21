@@ -29,6 +29,7 @@ public class TemplateSaveAction extends BaseAction{
             }
             return ar;
         } catch (Exception e) {
+        	e.printStackTrace() ;
             return new long[0] ;
         }
 	}

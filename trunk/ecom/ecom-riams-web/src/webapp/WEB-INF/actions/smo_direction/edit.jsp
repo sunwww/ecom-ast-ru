@@ -72,7 +72,7 @@
         </msh:ifInRole>
         </msh:ifFormTypeIsNotView>
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Дополнительные параметры" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+          <msh:separator label="Дополнительные параметры (необходимы для справки о стоимости МО)" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
         </msh:row>
         <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
           <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
@@ -151,13 +151,39 @@
       	<msh:sideLink params="id" action="/print-vis_ticket.do?s=VisitPrintService&amp;m=printTalon1" name="Талона" title="Печать талона"  roles="/Policy/Mis/MedCase/Direction/Print" />
       	<msh:sideLink params="id" action="/print-vis_ticket2.do?s=VisitPrintService&amp;m=printTalon1" name="Талона (верх. часть)" title="Печать талона (верх.часть)"  roles="/Policy/Mis/MedCase/Direction/Print" />
       	<msh:sideLink params="id" action="/print-vis_ticket1.do?s=VisitPrintService&amp;m=printTalon1" name="Повторного талона" title="Печать повторного талона"  roles="/Policy/Mis/MedCase/Direction/Print1" />
+      	<msh:sideLink 
+    		name="Справка о стоимости в формате A4" action='.javascript:printReference("",".do")' title='Печать справки о стоимости в формате A4'
+    	/>
+      	<msh:sideLink 
+    		name="Cправка о стоимости в формате A5" action='.javascript:printReference("_f5",".do")' title='Печать справки о стоимости в формате A4'
+    	/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<msh:ifFormTypeIsView formName="smo_directionForm">
-  	
+  	<script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
+        function printReference(aFormat) {
+    		TicketService.getDataByReference(
+    			'${param.id}','PREVISIT',{
+    				callback: function(aResult) {
+    					if (aResult!=null) {
+    						window.location.href = "print-doc_reference"+aFormat+".do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
+    						
+    					}
+    				}, errorHandler: function(aMessage) {
+    					if (aMessage!=null) {
+    						alert(aMessage);
+    					} else {
+    				    	alert("Ошибка в обработке данных!!!") ;
+    					}
+    				}
+    			
+    			}
+    		);
+    		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+    	}
       	function goNewDirection() {
       		window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&orderLpu="+$('orderLpu').value+"&tmp="+Math.random() ;
       	}

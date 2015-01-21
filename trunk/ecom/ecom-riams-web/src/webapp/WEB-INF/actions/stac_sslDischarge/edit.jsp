@@ -340,7 +340,6 @@
         	</script>
         </msh:ifNotInRole>
         
-     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	<script type="text/javascript">
   		try {
   		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {

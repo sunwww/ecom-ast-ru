@@ -76,6 +76,11 @@
             scope='request' validate="false" name="diary_templateForm">
             <forward name="success" path="/WEB-INF/actions/diary_template/edit.jsp"/>
         </action>
+        <action path="/diary_templatePosition" 
+        	type='ru.ecom.diary.web.action.protocol.template.TemplateViewAction'
+            scope='request' validate="false" name="diary_formInputProtocolForm">
+            <forward name="success" path="/WEB-INF/actions/diary_template/position.jsp"/>
+        </action>
         <action path="/diary_templateParamsEdit" 
         	type='ru.ecom.diary.web.action.protocol.template.TemplateEditAction'
             scope='request' validate="false" name="diary_templateForm">

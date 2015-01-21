@@ -19,8 +19,11 @@
   <% 
   
   String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
+  String typeEmergency = ActionUtil.updateParameter("SurgicalOperation","typeEmergency","3", request) ;
   if (request.getParameter("short")==null) {
+	  //ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeView","1", request) ;
+	  
 	  ActionUtil.updateParameter("SurgicalOperation","typeOrder","1", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
   }
@@ -86,6 +89,18 @@
       </msh:row>
       <msh:row>
       <msh:row>
+        <td class="label" title="Экстренность (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Порядок поступления.:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEmergency" value="1">  экстренно
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEmergency" value="2" >  планово
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeEmergency" value="3">  не учит.параметр
+        </td>
+      </msh:row>      	
+      <msh:row>
         <td class="label" title="Поиск по эндоскопии (typeEndoscopyUse)" colspan="1"><label for="typeEndoscopyUseName" id="typeEndoscopyUseLabel">Операции с испол.:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeEndoscopyUse" value="1">  эндоскопии
@@ -125,6 +140,7 @@
      checkFieldUpdate('typePatient','${typePatient}',3) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
+    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeEndoscopyUse','${typeEndoscopyUse}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeOrder','${typeOrder}',1) ;
@@ -196,9 +212,30 @@
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
     }
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
+	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+	if (typeEmergency.equals("1")) {
+		if (typeDate!=null && typeDate.equals("2")) {
+			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
+    	} else if (typeDate!=null && typeDate.equals("3")) {
+    		request.setAttribute("typeEmergencySql", " and slsHosp.emergency='1')") ;
+    	} else {
+    		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and sls.emergency='1' or slo.datestart is null and slsHosp.emergency='1')") ;
+    	}
+	} else if (typeEmergency.equals("2")) {
+		
+		if (typeDate!=null && typeDate.equals("2")) {
+			request.setAttribute("typeEmergencySql", " and (sls.emergency='0' or sls.emergency is null)") ;
+    	} else if (typeDate!=null && typeDate.equals("3")) {
+    		request.setAttribute("typeEmergencySql", " and (slsHosp.emergency='0' or slsHosp.emergency is null)") ;
+    	} else {
+    		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
+    	}
+		
+	}
+
     if (date!=null && !date.equals("")) {
     	String typeDateSql = "so.operationDate" ;
-    	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+    	//String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
     	if (typeDate!=null && typeDate.equals("2")) {
     		typeDateSql = "sls.dateFinish" ;
     	} else if (typeDate!=null && typeDate.equals("3")) {
@@ -272,11 +309,11 @@
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
      where 
     ${typeDateSql}  between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
     
     group by ${typeDateSql} 
     order by ${typeDateSql}" />
-    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
@@ -305,10 +342,10 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -337,10 +374,10 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1">
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Код" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -369,11 +406,11 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by so.department_id,dep.name
 order by dep.name 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
@@ -390,8 +427,10 @@ order by dep.name
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id as id
     , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
         , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
     
     from SurgicalOperation so
+     
 left join medservice vo on vo.id=so.medService_id
 left join workfunction wf on wf.id=so.surgeon_id
 left join worker w on w.id=wf.worker_id
@@ -401,11 +440,11 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Код" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Операция" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -437,10 +476,10 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Специалист" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
        <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -472,10 +511,10 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
@@ -522,7 +561,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
 	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec} 
-	          ${typeEndoscopyUseSql} ${serviceStreamSql}
+	          ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:section>

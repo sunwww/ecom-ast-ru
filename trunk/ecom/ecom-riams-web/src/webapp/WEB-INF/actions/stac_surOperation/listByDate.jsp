@@ -30,6 +30,7 @@
 	  	request.setAttribute("department", " and so.department_id='"+ids[5]+"'") ;
   	}
   	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+  	String typeEmergency=ActionUtil.updateParameter("SurgicalOperation","typeEmergency","3", request) ;
   	String typeDateSql = "so.operationDate" ;
 	if (typeDate!=null && typeDate.equals("2")) {
 		typeDateSql = "sls.dateFinish" ;
@@ -37,6 +38,25 @@
 		typeDateSql = "slsHosp.dateFinish" ;
 	} 
 	request.setAttribute("typeDateSql", typeDateSql);
+	if (typeEmergency.equals("1")) {
+		if (typeDate!=null && typeDate.equals("2")) {
+			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
+    	} else if (typeDate!=null && typeDate.equals("3")) {
+    		request.setAttribute("typeEmergencySql", " and slsHosp.emergency='1')") ;
+    	} else {
+    		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and sls.emergency='1' or slo.datestart is null and slsHosp.emergency='1')") ;
+    	}
+	} else if (typeEmergency.equals("2")) {
+		
+		if (typeDate!=null && typeDate.equals("2")) {
+			request.setAttribute("typeEmergencySql", " and (sls.emergency='0' or sls.emergency is null)") ;
+    	} else if (typeDate!=null && typeDate.equals("3")) {
+    		request.setAttribute("typeEmergencySql", " and (slsHosp.emergency='0' or slsHosp.emergency is null)") ;
+    	} else {
+    		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
+    	}
+		
+	}
 	ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
     
   %>
@@ -82,7 +102,7 @@
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
-	           ${addParamSql} ${serviceStreamSql}
+	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql}
 	          order by p.lastname,p.firstname,p.middlename
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	    <msh:table name="journal_surOperation1" 

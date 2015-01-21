@@ -253,8 +253,13 @@
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key="SHIFT+8" params="id" 
 	        action="/print-visit.do?s=VisitPrintService&amp;m=printVisit" name="Талона с заключением" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона с заключением" />
+	                <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" 
+    	name="Печать справки" 
+    	action='.javascript:printReference(".do")' title='Печать справки'
+    	/>
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
         <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" guid="5138-f936-45d0-ac70-066c" key="SHIFT+9" title="Печатать направления на бак.исследование" />
+        
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
         <tags:ticket_finds currentAction="ticket"/>
@@ -264,6 +269,7 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+    
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
       	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
   			<script type="text/javascript">
@@ -347,6 +353,28 @@
   </msh:ifFormTypeIsNotView>
   </msh:ifInRole>
   <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
+  <script type="text/javascript">
+  function printReference() {
+		TicketService.getDataByReference(
+			'${param.id}','SPO',{
+				callback: function(aResult) {
+					if (aResult!=null) {
+						window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
+						
+					}
+				}, errorHandler: function(aMessage) {
+					if (aMessage!=null) {
+						alert(aMessage);
+					} else {
+				    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
+					}
+				}
+			
+			}
+		);
+		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+	}
+  </script>
   	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
   	 <script type="text/javascript">
 		TicketService.isEditCheck($('id').value, $('workFunctionExecute').value,

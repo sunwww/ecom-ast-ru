@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
+import ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
 import ru.ecom.web.util.Injection;
@@ -22,6 +23,9 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	public String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
+		return HospitalMedCaseServiceJs.getDataByReference(aMedCase, aType, aRequest) ;
+	}
 	public String getInfoByTicket(Long aTicket, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select vss.id as vssid,vss.name as vssname,vwpt.id as vwptid") ;
