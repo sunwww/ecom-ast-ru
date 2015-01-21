@@ -136,7 +136,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	//		.append(" from MedCase as ms where ms.parent_id = :parentId and ms.DTYPE='DepartmentMedCase'") 
     	//		.append(" and (select count(*) from MedCase as ms1 where ms1.prevMedCase_id=ms.id and DTYPE='DepartmentMedCase')=0")
 		//		.append(" order by ms.transferDate desc,ms.transferTime desc") ;
-    	System.out.println(sql) ;
+    	//System.out.println(sql) ;
     	List<Object[]> list = aManager.createNativeQuery(sql.toString())
     			.setParameter("parentId", aMedCaseParent.getId()).setMaxResults(3).getResultList() ;
     	if (list.size()>0) {

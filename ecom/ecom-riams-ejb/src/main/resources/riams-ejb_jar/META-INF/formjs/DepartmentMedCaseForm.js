@@ -57,7 +57,7 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 		//var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 		//var dateTsql = new java.sql.Date(dateTransfer.getTime()) ;
-		if (!(dateTransfer.getTime() <= dateStart.getTime())) throw "Дата перевода должна быть больше, чем дата поступления";
+		if (!(dateTransfer.getTime() < dateStart.getTime())) throw "Дата перевода должна быть больше, чем дата поступления";
 		//if ((((dateTsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата перевода - сегодняшняя" ;
 		// необходимо проверить заполнено ли поле отделение перевода
 		if (+prev.department.id == (+aForm.department)) {

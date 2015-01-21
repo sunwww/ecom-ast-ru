@@ -17,8 +17,8 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
 		biolTest.append(", AD: ").append(trans.getBloodPressureTopBT()).append("/").append(trans.getBloodPressureLowerBT()) ;
-		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()) ;
-		biolTest.append(", t: ").append(trans.getTemperatureBT()) ;
+		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()!=null?trans.getRespiratoryRateBT():"____") ;
+		biolTest.append(", t: ").append(trans.getTemperatureBT()!=null?trans.getTemperatureBT():"_______") ;
 		if (trans.getStateBT()!=null) {
 			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
 				biolTest.append(". Состояние удовлетворительное.") ;

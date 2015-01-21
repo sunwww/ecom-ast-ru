@@ -2,7 +2,7 @@
 * @author stkacheva
 */
 function onPreCreate(aForm, aCtx) {
-	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+	if (((+aForm.type==3)||(+aForm.type==4)) && aForm.commonNumber.trim()=="") {
 		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
 	}
 	checkPeriod(aForm) ;
@@ -10,7 +10,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
-	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+	if (((+aForm.type==3)||(+aForm.type==4)) && aForm.commonNumber.trim()=="") {
 		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
 	}
 	checkPeriod(aForm) ;

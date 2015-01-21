@@ -24,7 +24,33 @@
     		<field type='row' open='0'/>    		
     	</fields>
 	</parameter>
-    <parameter id='2' type='VocUser' name='Пользовательский справочник' >
+    <parameter id='4' type='String' name='Числовой с плавающей точкой' >
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='name' type='textField' label='Полное название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='cntDecimal' type='textField' label='Кол-во знаков полсе запятой' size='50' required='falser'/>
+    		<field type='row' open='0'/>
+    		<field type='separator' label='Референтный интервал' colSpan='4'/>
+    		<field type='row' open='0'/>    		
+    		<field type='row' open='1'/>
+    		<field property='normMinimumBD' type='textField' label='Минимальное значение'/>
+    		<field property='normMaximumBD' type='textField' label='Максимальное значение'/>
+    		<field type='row' open='0'/>    		
+    		<field type='row' open='1'/>
+    		<field type='separator' label='Границы допустимых значений' colSpan='4'/>
+    		<field type='row' open='0'/>    		
+    		<field type='row' open='1'/>
+    		<field property='minimumBD' type='textField' label='Минимальное значение'/>
+    		<field property='maximumBD' type='textField' label='Максимальное значение'/>
+    		<field type='row' open='0'/>    		
+    	</fields>
+	</parameter>
+	<parameter id='2' type='VocUser' name='Пользовательский справочник' >
     	<fields>
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
@@ -62,5 +88,6 @@
     		<field type='row' open='0'/>    		
     	</fields>
 	</parameter>
+
 	
 </parameterconfig>

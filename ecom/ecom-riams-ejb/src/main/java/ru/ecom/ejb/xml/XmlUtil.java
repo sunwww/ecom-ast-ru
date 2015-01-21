@@ -40,7 +40,8 @@ public class XmlUtil {
 	}
 
 	public static String formatTime(Object aTime) {
-		return (""+aTime).replace(":", "-") ;
+		//return (""+aTime).replace(":", "-") ;
+		return (""+aTime) ;
 	}
 
 	public static String getStringValue(Object aValue) {

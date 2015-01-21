@@ -9,6 +9,7 @@ import javax.xml.transform.TransformerException;
 
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
@@ -20,6 +21,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
 	public String[] exportFondZip(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException;

@@ -15,7 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	    @AIndex(unique = true, properties= {"key"})
-	    	    ,@AIndex(unique = true, properties= {"keyValue"})
+	    	    //,@AIndex(unique = true, properties= {"keyValue"})
 })
 @Table(schema="SQLUser")
 public class SoftConfig extends BaseEntity {
