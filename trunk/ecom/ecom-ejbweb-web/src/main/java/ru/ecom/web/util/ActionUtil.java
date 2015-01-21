@@ -1,5 +1,9 @@
 package ru.ecom.web.util;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,11 +18,28 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class ActionUtil {
+	 public static String getContentOfHTTPPage(String pageAddress, String codePage) throws Exception {
+	        StringBuilder sb = new StringBuilder();
+	        URL pageURL = new URL(pageAddress);
+	        URLConnection uc = pageURL.openConnection();
+	        BufferedReader br = new BufferedReader(
+	                new InputStreamReader(
+	                        uc.getInputStream(), codePage));
+	        try {
+	            String inputLine;
+	            while ((inputLine = br.readLine()) != null) {
+	                sb.append(inputLine);
+	            }         
+	        } finally {
+	        	br.close();
+	        }
+	        return sb.toString();
+	    }
 	public static WebQueryResult getElementArrayByCode(String aCode,String aAttribList,HttpServletRequest aRequest) {
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aAttribList) ;
 		//System.out.println(" --- code="+aCode);
 		WebQueryResult wqr = null ;
-		if (col.isEmpty()) for (WebQueryResult w:col) {
+		if (!col.isEmpty()) for (WebQueryResult w:col) {
 			String code = ""+w.get1() ;
 			//System.out.println("id="+code+" --- code="+aCode);
 			if (code.indexOf(aCode)!=-1) {
