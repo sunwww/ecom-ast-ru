@@ -98,4 +98,44 @@ public class ParameterForm extends IdEntityForm{
 	private Long theMeasureUnit;
 	/** Наименование */
 	private String theName;
+	
+	/** Норма - минимальное значение */
+	@Comment("Норма - минимальное значение")
+	@Persist
+	public String getNormMininumBD() {return theNormMininumBD;}
+	public void setNormMininumBD(String aNormMininumBD) {theNormMininumBD = aNormMininumBD;}
+
+	/** Норма - максимальное значение */
+	@Comment("Норма - максимальное значение")
+	@Persist
+	public String getNormMaximumBD() {return theNormMaximumBD;}
+	public void setNormMaximumBD(String aNormMaximumBD) {theNormMaximumBD = aNormMaximumBD;}
+
+	/** Максимальное значение */
+	@Comment("Максимальное значение")
+	@Persist
+	public String getMaximumBD() {return theMaximumBD;}
+	public void setMaximumBD(String aMaximumBD) {theMaximumBD = aMaximumBD;}
+
+	/** Минимальное значение */
+	@Comment("Минимальное значение")
+	@Persist
+	public String getMinimumBD() {return theMinimumBD;}
+	public void setMinimumBD(String aMinimumBD) {theMinimumBD = aMinimumBD;}
+	/** Кол-во знаков после запятой */
+	@Comment("Кол-во знаков после запятой")
+	@Persist
+	public Long getCntDecimal() {return theCntDecimal;}
+	public void setCntDecimal(Long aCntDecimal) {theCntDecimal = aCntDecimal;}
+
+	/** Кол-во знаков после запятой */
+	private Long theCntDecimal;
+	/** Минимальное значение */
+	private String theMinimumBD;
+	/** Максимальное значение */
+	private String theMaximumBD;
+	/** Норма - максимальное значение */
+	private String theNormMaximumBD;
+	/** Норма - минимальное значение */
+	private String theNormMininumBD;
 }

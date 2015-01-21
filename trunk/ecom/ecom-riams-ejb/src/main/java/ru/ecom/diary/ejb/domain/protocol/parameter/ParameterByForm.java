@@ -1,11 +1,18 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
  * Параметр формы
@@ -13,6 +20,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+    @AIndex(properties="template")
+    }) 
+@EntityListeners(DeleteListener.class)
 public class ParameterByForm extends BaseEntity{
 	/** Параметр */
 	@Comment("Параметр")
@@ -37,4 +48,27 @@ public class ParameterByForm extends BaseEntity{
 	private Long thePosition;
 	/** Параметр */
 	private Parameter theParameter;
+	
+	/** Шаблон */
+	@Comment("Шаблон")
+	@OneToOne
+	public TemplateProtocol getTemplate() {return theTemplate;}
+	public void setTemplate(TemplateProtocol aTemplate) {theTemplate = aTemplate;}
+
+	/** Шаблон */
+	private TemplateProtocol theTemplate;
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+
+	/** Пользователь */
+	@Comment("Пользователь")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+
+	/** Пользователь */
+	private String theCreateUsername;
+	/** Дата создания */
+	private Date theCreateDate;
 }

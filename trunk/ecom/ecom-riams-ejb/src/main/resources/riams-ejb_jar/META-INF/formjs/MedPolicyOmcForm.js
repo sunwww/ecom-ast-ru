@@ -10,7 +10,7 @@ function onPreCreate(aForm, aCtx) {
 	*/
 	checkPeriod(aForm) ;
 	checkNumSerSmo(aCtx,aForm,"") ;
-	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+	if (((+aForm.type==3)||(+aForm.type==4))  && aForm.commonNumber.trim()=="") {
 		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
 	}
 	aForm.setConfirmationDate("") ;
@@ -21,7 +21,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
-	if (+aForm.type==3 && aForm.commonNumber.trim()=="") {
+	if (((+aForm.type==3)||(+aForm.type==4)) && aForm.commonNumber.trim()=="") {
 		throw "При заполнение нового полиса поле ЕДИНЫЙ НОМЕР (RZ) является ОБЯЗАТЕЛЬНЫМ!!!" ; 
 	}
 	var add =" and id!="+aForm.id ;

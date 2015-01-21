@@ -83,7 +83,7 @@ function saveMonitoring(aEntity,aManager,aMonitorForm,aIdMonitor) {
 			  ,"objNew.setPulseRate(aForm.pulseRate);"
 			  ,"objNew.setBloodPressureLower(aForm.bloodPressureLower);"
 			  ,"objNew.setBloodPressureTop(aForm.bloodPressureTop);"
-			  ,"objNew.setTemperature(aForm.temperature);"
+			  ,"objNew.setTemperature(aForm.temperature!=null&&!aForm.temperature.equals(\"\")?new java.math.BigDecimal(aForm.temperature.replaceAll(\",\",\".\")):null);"
 			  ,"objNew.setUrineColor(urineColor);"
 			  ]
 			,"from TransfusionMonitoring where transfusion_id='"+aEntity.getId()+"' and hourAfterTransfusion='"+aIdMonitor+"'") ;

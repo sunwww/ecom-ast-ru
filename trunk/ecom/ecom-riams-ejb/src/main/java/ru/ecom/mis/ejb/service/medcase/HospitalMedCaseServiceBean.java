@@ -45,6 +45,7 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
@@ -59,11 +60,13 @@ import ru.ecom.mis.ejb.domain.medcase.ExtHospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
+import ru.ecom.mis.ejb.domain.medcase.hospital.HospitalDataFond;
 import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
 import ru.ecom.mis.ejb.domain.patient.MedPolicy;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.report.AggregateHospitalReport;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm;
@@ -89,6 +92,94 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    
+    public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
+    	IMonitor monitor = null;
+    	try {
+    		monitor = theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+    		monitor.advice(20) ;
+	    	
+	    	int size = aList.size()/80 ;
+	    	
+	    	for (int i=0;i<aList.size();i++) {
+	    		WebQueryResult wqr=aList.get(i) ;
+	    		if (monitor.isCancelled()) {
+	                throw new IllegalMonitorStateException("Прервано пользователем");
+	            }
+	    		if (wqr.get1()!=null) {
+	    			List<HospitalDataFond> lf = theManager.createQuery("from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
+	    			HospitalDataFond hdf ;
+	    			if (lf.isEmpty()) {
+	    				hdf = new HospitalDataFond() ;
+	    				hdf.setNumberFond(ConvertSql.parseString(wqr.get1())) ;
+			    	} else {
+	    				hdf = lf.get(0) ;
+	    				System.out.println("_napr___"+wqr.get1());
+	    			}
+		    		
+		    		if (wqr.get2()!=null) hdf.setDirectDate(ConvertSql.parseDate(wqr.get2())) ;
+		    		if (wqr.get3()!=null) hdf.setFormHelp(ConvertSql.parseString(wqr.get3())) ;
+		    		if (wqr.get4()!=null) hdf.setOrderLpuCode(ConvertSql.parseString(wqr.get4())) ;
+		    		if (wqr.get5()!=null) hdf.setDirectLpuCode(ConvertSql.parseString(wqr.get5())) ;
+		    		if (wqr.get6()!=null) hdf.setTypePolicy(ConvertSql.parseString(wqr.get6())) ;
+		    		if (wqr.get7()!=null) hdf.setSeriesPolicy(ConvertSql.parseString(wqr.get7())) ;
+		    		if (wqr.get8()!=null) hdf.setNumberPolicy(ConvertSql.parseString(wqr.get8())) ;
+		    		if (wqr.get9()!=null) hdf.setSmo(ConvertSql.parseString(wqr.get9())) ;
+		    		if (wqr.get10()!=null) hdf.setSmoOgrn(ConvertSql.parseString(wqr.get10())) ;
+		    		if (wqr.get11()!=null) hdf.setSmoOkato(ConvertSql.parseString(wqr.get11())) ;
+		    		if (wqr.get12()!=null) hdf.setSmoName(ConvertSql.parseString(wqr.get12())) ;
+		    		if (wqr.get13()!=null) hdf.setLastname(ConvertSql.parseString(wqr.get13())) ;
+		    		if (wqr.get14()!=null) hdf.setFirstname(ConvertSql.parseString(wqr.get14())) ;
+		    		if (wqr.get15()!=null) hdf.setMiddlename(ConvertSql.parseString(wqr.get15())) ;
+		    		if (wqr.get16()!=null) {
+		    			String sex = ""+wqr.get16() ;
+	    				if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
+		    			List<VocSex> l = theManager.createQuery("from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
+		    			hdf.setSex(l.isEmpty()?null:l.get(0)) ;
+		    		}
+	    			if (wqr.get17()!=null) hdf.setBirthday(ConvertSql.parseDate(wqr.get17())) ;
+		    		if (wqr.get18()!=null) hdf.setPhone(ConvertSql.parseString(wqr.get18())) ;
+		    		if (wqr.get19()!=null) hdf.setDiagnosis(ConvertSql.parseString(wqr.get19())) ;
+		    		if (wqr.get20()!=null) hdf.setProfile(ConvertSql.parseString(wqr.get20())) ;
+		    		
+		    		if (wqr.get21()!=null) hdf.setSnils(ConvertSql.parseString(wqr.get21())) ;
+		    		
+		    		
+		    		if (wqr.get22()!=null) hdf.setPreHospDate(ConvertSql.parseDate(wqr.get22())) ;
+		    		if (wqr.get23()!=null) hdf.setHospDate(ConvertSql.parseDate(wqr.get23())) ;
+		    		if (wqr.get24()!=null) hdf.setStatCard(ConvertSql.parseString(wqr.get24())) ;
+		    		if (wqr.get25()!=null) hdf.setHospTime(ConvertSql.parseTime(wqr.get25())) ;
+		    		if (wqr.get26()!=null) hdf.setHospDate(ConvertSql.parseDate(wqr.get26())) ;
+		    		//if (wqr.get27()!=null) hdf.set(wqr.get27()) ;
+		    		//if (wqr.get28()!=null) hdf.set(wqr.get28()) ;
+		    		if (aFileType.equals("N1")) {
+		    			hdf.setIsTable1(Boolean.TRUE) ;
+		    		} else if (aFileType.equals("N2")) {
+		    			hdf.setIsTable2(Boolean.TRUE) ;
+		    		} else if (aFileType.equals("N3")) {
+		    			hdf.setIsTable3(Boolean.TRUE) ;
+		    		} else if (aFileType.equals("N4")) {
+		    			hdf.setIsTable4(Boolean.TRUE) ;
+		    		} else if (aFileType.equals("N5")) {
+		    			hdf.setIsTable5(Boolean.TRUE) ;
+		    		}
+		    		List<Object> list = theManager.createQuery("select mc.id from medcase mc left join statisticstub ss on ss.id=mc.statisticstub_id left join patient pat on pat.id=mc.patient_id where mc.dtype='HospitalMedCase' and (mc.datestart=hdf.hospdate or mc.datestart between hdf.prehospdate-7 and hdf.prehospdate+7 )and upper(hdf.lastname)=pat.lastname and upper(hdf.firstname)=pat.firstname and upper(hdf.middlename)=pat.middlename and hdf.birthday=pat.birthday").getResultList() ;
+		    		theManager.persist(hdf);
+	    		}
+	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
+	    		if(i%size==0) monitor.advice(1);
+
+	            if (i % 300 == 0) {
+	              monitor.setText("Импортировано " + i);
+	          }
+	    	}
+	    	monitor.finish("");
+    	} catch (Exception e) {
+            if(monitor!=null) monitor.setText(e+"");
+            throw new IllegalStateException(e) ;
+        }
+    	return "" ;
+    }
     
     public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) {
     	IMonitor monitor = null;
@@ -467,6 +558,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtomccode");
     	sql.append(" ,ss.code as sscode");
     	sql.append(" ,mkb.code as mkbcode");
+    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
+    	sql.append(" ,coalesce(olpu.codef,oplpu.codef) as olpucodef") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
@@ -474,6 +567,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	sql.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
+    	sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
@@ -503,9 +600,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",null,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO","300001",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO","300001",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[17],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1",null,false,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
@@ -559,6 +656,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtomccode");
     	sql.append(" ,ss.code as sscode");
     	sql.append(" ,mkb.code as mkbcode");
+    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
@@ -566,6 +664,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
@@ -591,7 +691,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	int i=0 ;
     	for (Object[] obj:list) {
     		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO","300001",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
@@ -650,6 +750,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtomccode");
     	sql.append(" ,ss.code as sscode");
     	sql.append(" ,mkb.code as mkbcode");
+    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
@@ -657,6 +758,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
@@ -683,10 +786,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	for (Object[] obj:list) {
     		Element zap = xmlDoc.newElement(root, "NPR", null);
     		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","0",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[0],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[1],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"ISTNPR","2",true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMOLPU","300001",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMOLPU",obj[20],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU_1",null,false,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PRNPR","5",true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
@@ -710,7 +813,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append("select sls.orderNumber as orderNumber");
     	sql.append(" ,case when sls.emergency='1' then to_char(sls.dateFinish,'yyyy-mm-dd') else to_char(sls.orderDate,'yyyy-mm-dd') end as orderDate");
     	sql.append(" ,case when sls.emergency='1' then cast('3' as varchar(1)) else cast('1' as varchar(1)) end as pokaz");
-    	sql.append(" ,cast('300001' as varchar(6)) as lpuSent");
+    	sql.append(" ,coalesce(lpu.codef,plpu.codef)  as lpuSent");
     	sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as datestart");
     	sql.append(" ,to_char(sls.dateFinish,'yyyy-mm-dd') as dateFinish");
     	sql.append(" ,cast(sls.entranceTime as varchar(5)) as entrancetime");
@@ -728,6 +831,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtomccode");
     	sql.append(" ,ss.code as sscode");
     	sql.append(" ,mkb.code as mkbcode");
+    	sql.append(" ") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
@@ -735,6 +839,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
@@ -760,11 +866,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	int i=0 ;
     	for (Object[] obj:list) {
     		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","0",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[0],true,"") ;
     		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[1],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[2],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU","300001",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU",obj[3],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU_1",null,false,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[4],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_2",obj[5],true,"") ;

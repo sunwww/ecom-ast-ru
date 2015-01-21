@@ -445,4 +445,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Пользователь, посл. распечат. документ */
 	private String thePrintUsername;
+	
+	/** Проводилась анестезия */
+	@Comment("Проводилась анестезия")
+	public Long getIsAnesthesia() {return theIsAnesthesia;}
+	public void setIsAnesthesia(Long aIsAnesthesia) {theIsAnesthesia = aIsAnesthesia;}
+
+	/** Проводилась анестезия */
+	private Long theIsAnesthesia;
 }

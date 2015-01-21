@@ -186,6 +186,77 @@ function printPlanHospital(aCtx,aParams) {
 	map.put("department",doc.department!=null?doc.department.name:"") ;
 	return map ;
 }
+function parseInt(aNumeric) {
+	if (+aNumeric>0){} else{ return "0 руб 00 коп" ;}
+	var ret = "" ;
+	var value = new java.math.BigDecimal(aNumeric) ;
+	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
+	var rub = value.intValue();
+	ret = ""+rub+" руб. "+kop+" коп." ;
+	
+	return ret ;
+}
+function parseSymRub(aNumeric) {
+	if (+aNumeric>0){} else{ return "ноль руб 00 коп" ;}
+	var value = new java.math.BigDecimal(aNumeric) ;
+	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
+	//if (kop<10) kop="0"+kop ;
+	 
+	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
+}
+
+
+function refenceSMO(aCtx,aParams) {
+	var map = new java.util.HashMap() ;
+	referenceSMOmap(aCtx,aParams,map)
+	return map ;
+}
+function referenceSMOmap(aCtx,aParams,aMap) {
+	aMap.put("dateFrom",aParams.get("dateFrom")!=null?aParams.get("dateFrom"):"") ;
+	aMap.put("dateTo",aParams.get("dateTo")!=null?aParams.get("dateTo"):"") ;
+	var currentDate = new Date() ;
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var FORMAT_Y = new java.text.SimpleDateFormat("yyyy") ;
+	aMap.put("CURRENT_DATE",FORMAT_2.format(currentDate)) ;
+	aMap.put("CURRENT_WORKFUNCTION","") ;
+	aMap.put("addressLpu",aParams.get("address_lpu")!=null?aParams.get("address_lpu"):"") ;
+	aMap.put("nameLpu",aParams.get("name_lpu")!=null?aParams.get("name_lpu"):"") ;
+	var renders = new java.util.ArrayList() ;
+	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
+			, new java.lang.Long(aParams.get("patient"))) ;
+	aMap.put("pat",patient);
+	var kinsmanPar=aParams.get("kinsman")
+	var kinsman = kinsmanPar!=null?aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
+			, new java.lang.Long(aParams.get("kinsman"))):null ;
+	aMap.put("kinsman",kinsman);
+	//throw ""+aParams.get("render") ;
+	
+	var refNumber =Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance().startUseNextValueNoCheck("Reference#Cost#"+FORMAT_Y.format(currentDate), aCtx.manager);
+	//throw "---"+refNumber ;
+	aMap.put("refNumber",refNumber) ;
+	var sum=0 ;
+	var ren = (""+aParams.get("render")).split("##") ;
+	for (var i=0;i<ren.length;i++) {
+		var r = ren[i].split("#");
+		//throw r[0]+"--------"+r[1] ;
+		var parDep = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		var sr = +r[0] ;
+		sum=sum+sr ;
+		parDep.set1(parseInt(r[0])) ;
+		parDep.set2(parseSymRub(r[0])) ;
+		parDep.set3(r[1]) ;
+		renders.add(parDep) ;
+	}
+	aMap.put("policy",aParams.get("polNumber"));
+	aMap.put("card",aParams.get("card"));
+	aMap.put("renders",renders) ;
+	//throw parseInt(sum) ;
+	aMap.put("cost_short",parseInt(sum)) ;
+	aMap.put("cost_full",parseSymRub(sum)) ;
+	//return map ;
+}
+
+
 function printDocument(aCtx,aParams) {
 	//var map = new java.util.HashMap() ;
 	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.licence.InternalDocuments
@@ -211,6 +282,14 @@ function printDocument(aCtx,aParams) {
 	map.put("history", recordMultiText(doc.history)) ;
 	map.put("servicies", recordMultiText(doc.servicies)) ;
 	map.put("diagnosis", recordMultiText(doc.diagnosis)) ;
+	if (aParams.get("render")!=null&&aParams.get("render")!='') {
+		var l = new java.util.ArrayList() ;
+		l.add(new Packages.ru.ecom.ejb.services.query.WebQueryResult() );
+		map.put("renders1",l) ;
+		referenceSMOmap(aCtx,aParams,map) ;
+	} else {
+		map.put("renders1",new java.util.ArrayList()) ;
+	}
 	var wf = medCase.workFunctionExecute ;
 	var pers = wf.worker!=null?wf.worker.person:null;
 	var spec = "_____________________" ;

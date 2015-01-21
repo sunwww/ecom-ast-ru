@@ -18,4 +18,5 @@ public interface IDiaryService {
     public CheckNode loadParametersByMedService(long aMedServiceId) ;
     
     public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdds, long[] aRemoves) ;
+    public List<Object[]> loadParameterTableByMedService(long aTemplateId) ;
 }

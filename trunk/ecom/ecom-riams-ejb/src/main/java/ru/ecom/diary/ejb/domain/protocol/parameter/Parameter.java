@@ -1,6 +1,7 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -8,6 +9,9 @@ import javax.persistence.Table;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserDomain;
 import ru.ecom.diary.ejb.domain.protocol.parameter.voc.VocMeasureUnit;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
  * Параметр
@@ -16,6 +20,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Параметр")
 @Table(schema="SQLUser")
+@AIndexes({
+    @AIndex(properties="group")
+    }) 
+@EntityListeners(DeleteListener.class)
 public class Parameter extends BaseEntity{
 	/** Наименование */
 	@Comment("Наименование")
@@ -70,6 +78,7 @@ public class Parameter extends BaseEntity{
 	public Long getType() {return theType;}
 	public void setType(Long aType) {theType = aType;}
 
+
 	/** Тип параметра */
 	private Long theType;
 	/** Пользовательский справочник */
@@ -86,6 +95,41 @@ public class Parameter extends BaseEntity{
 	private Long theMinimum;
 	/** Максимальное значение */
 	private Long theMaximum;
+	
+	/** Норма - минимальное значение */
+	@Comment("Норма - минимальное значение")
+	public String getNormMininumBD() {return theNormMininumBD;}
+	public void setNormMininumBD(String aNormMininumBD) {theNormMininumBD = aNormMininumBD;}
+
+	/** Норма - максимальное значение */
+	@Comment("Норма - максимальное значение")
+	public String getNormMaximumBD() {return theNormMaximumBD;}
+	public void setNormMaximumBD(String aNormMaximumBD) {theNormMaximumBD = aNormMaximumBD;}
+
+	/** Максимальное значение */
+	@Comment("Максимальное значение")
+	public String getMaximumBD() {return theMaximumBD;}
+	public void setMaximumBD(String aMaximumBD) {theMaximumBD = aMaximumBD;}
+
+	/** Минимальное значение */
+	@Comment("Минимальное значение")
+	public String getMinimumBD() {return theMinimumBD;}
+	public void setMinimumBD(String aMinimumBD) {theMinimumBD = aMinimumBD;}
+	/** Кол-во знаков после запятой */
+	@Comment("Кол-во знаков после запятой")
+	public Long getCntDecimal() {return theCntDecimal;}
+	public void setCntDecimal(Long aCntDecimal) {theCntDecimal = aCntDecimal;}
+
+	/** Кол-во знаков после запятой */
+	private Long theCntDecimal;
+	/** Минимальное значение */
+	private String theMinimumBD;
+	/** Максимальное значение */
+	private String theMaximumBD;
+	/** Норма - максимальное значение */
+	private String theNormMaximumBD;
+	/** Норма - минимальное значение */
+	private String theNormMininumBD;
 	/** Единица измерения */
 	private VocMeasureUnit theMeasureUnit;
 	/** Наименование */

@@ -70,4 +70,21 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 
 	/** Категория ребенка */
 	private Long theCategoryChild;
+	
+	/** Цель визита */
+	@Comment("Цель визита")
+	@Persist 
+	public Long getVisitReason() {return theVisitReason;	}
+	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+
+	/** Тип рабочего места обслуживания */
+	@Comment("Тип рабочего места обслуживания")
+	@Persist 
+	public Long getWorkPlaceType() {return theWorkPlaceType;}
+	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
+
+    /** Тип рабочего места обслуживания */
+	private Long theWorkPlaceType;
+	/** Цель визита */
+	private Long theVisitReason;	
 }

@@ -66,7 +66,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 			biolTest.append(" PS: ").append(form.getPulseRateBT()) ;
 			biolTest.append(" AD: ").append(form.getBloodPressureLowerBT()).append("/").append(form.getBloodPressureTopBT()) ;
 			biolTest.append(" ЧДД: ").append(form.getRespiratoryRateBT()) ;
-			biolTest.append(" t: ").append(form.getTemperatureBT()) ;
+			if (form.getTemperatureBT()!=null) biolTest.append(" t: ").append(form.getTemperatureBT()) ;
 			if (entity.getStateBT()!=null) {
 				if (entity.getStateBT().getCode()!=null&&entity.getStateBT().getCode().equals("1")) {
 					biolTest.append(" Состояние удовлетворительное.") ;
