@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="Medcard">Статистика по пользователям</msh:title>
@@ -19,6 +19,7 @@
    <%
 	String dateChange =ActionUtil.updateParameter("FormStatByUserAction","dateChange","2", request) ;
 	String usernameChange =ActionUtil.updateParameter("FormStatByUserAction","usernameChange","2", request) ;
+	if (request.getParameter("short")==null) {
    %>
     <msh:form action="/smo_ticketsByUser.do" defaultField="dateBegin" 
     disableFormDataConfirm="true" method="GET">
@@ -58,7 +59,9 @@
     </msh:form>
     
     <%
+	}
     String date = (String)request.getParameter("dateBegin") ;
+    String idPar = request.getParameter("id");
     if (date!=null && !date.equals(""))  {
     	String date1 = (String)request.getParameter("dateEnd") ;
     	if (date1==null || date1.equals("")) {
@@ -79,19 +82,22 @@
     	} else {
     		request.setAttribute("usernameSearch", "editUsername") ;
     	}
+    	if (idPar==null) {    		    				
     	%>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска талонов ${info}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_ticket" nativeSql="select  
-    'dateSearch='||to_CHAR(${dateSearch},'DD.MM.YYYY')||'&username='||coalesce(${usernameSearch},'') as idPar
+    coalesce(case when ${usernameSearch}='' then null else ${usernameSearch} end,'-')||'&dateTicket='||to_CHAR(${dateSearch},'DD.MM.YYYY') as idPar
     ,${dateSearch} as dateSearch,${usernameSearch},count(*) as cnt 
     from MedCase 
     where dtype='ShortMedCase' and ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy')
     	 ${add} group by ${dateSearch},${usernameSearch}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_ticket" action="smo_ticketsByUser.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket" action="smo_ticketsByUser.do?dateBegin=${param.dateBegin}" 
+        viewUrl="smo_ticketsByUser.do?dateBegin=${param.dateBegin}&short=Short"
+        idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
             <msh:tableColumn columnName="Пользователь" property="3"/>
@@ -113,7 +119,48 @@
         </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } else {%>
+    <% } else {
+    	StringBuilder sqlAdd = new StringBuilder();
+		if (idPar.equals("-")) {
+			sqlAdd.append("(m.").append(request.getAttribute("usernameSearch")).append(" is null or m.").append(request.getAttribute("usernameSearch")).append("='')");
+		} else {
+			sqlAdd.append("m.").append(request.getAttribute("usernameSearch")).append("='").append(idPar).append("'");
+		}
+		sqlAdd.append(" and m.").append(request.getAttribute("dateSearch")).append("=to_date('").append(request.getParameter("dateTicket")).append("','dd.mm.yyyy')");
+		request.setAttribute("add", sqlAdd.toString());
+    
+    %>
+       <msh:section>
+    <msh:sectionTitle>Результаты поиска талонов ${info}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_ticket" nameFldSql="nameSldSQL" nativeSql="select  
+        m.id, p.patientinfo
+    	,coalesce(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	,vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename) as worker
+    	from medCase m
+    	left join patient p on p.id=m.patient_id
+    	left join workfunction wf on wf.id=m.workFunctionExecute_id
+    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+    	left join workfunction wf1 on wf1.id=m.workFunctionPlan_id
+    	left join vocworkfunction vwf1 on vwf1.id=wf1.workFunction_id
+    	left join WorkCalendarDay wcd on wcd.id=m.datePlan_id
+    	left join worker w on w.id=wf.worker_id
+    	left join patient wp on wp.id=w.person_id
+    	left join worker w1 on w1.id=wf1.worker_id
+    	left join patient wp1 on wp1.id=w1.person_id
+    	where m.dtype='ShortMedCase'
+    	and ${add} 
+		" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <msh:table name="journal_ticket" action="entityView-smo_ticket.do" viewUrl="entityView-smo_ticket.do?short=Short" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Номер" property="1"/>
+            <msh:tableColumn columnName="Пациент" property="2"/>
+            <msh:tableColumn columnName="Врач" property="3"/>
+		</msh:table>
+    </msh:sectionContent>    
+    
+    </msh:section>
+    <% }} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти"</i>
     	<% }   %>
     <script type='text/javascript'>
