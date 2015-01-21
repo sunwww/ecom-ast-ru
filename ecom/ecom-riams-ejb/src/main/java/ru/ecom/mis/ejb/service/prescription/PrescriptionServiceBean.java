@@ -184,7 +184,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		StringBuilder res = new StringBuilder();
 		req.append("select vpt.id, vpt.name from vocprescripttype vpt ");
 		if(!isEmergency) {
-			req.append("where vpt.code!='EMEGRENCY' ");
+			req.append("where vpt.code!='EMERGENCY' ");
 		}
 		req.append("order by vpt.id ");
 		List<Object[]> list = theManager.createNativeQuery(req.toString()).getResultList() ;
