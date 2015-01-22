@@ -54,8 +54,15 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	filename=service.exportN5(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01",null) ;
 	        } else if (typeView!=null && typeView.equals("6")) {
 	        	filename=service.exportN6(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01",null) ;
-	        } else if (typeView!=null && typeView.equals("7")) {
-	        	String[] filenameList=service.exportFondZip(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01") ;
+	        } else if (typeView!=null && typeView.equals("8")) {
+	        	String[] filenameList=service.exportFondZip13(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01") ;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	for (String fn:filenameList) {
+	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
+	        	}
+	        	form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("9")) {
+	        	String[] filenameList=service.exportFondZip45(format_n.format(cal.getTime()), "", format1.format(cal.getTime()), "01") ;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	for (String fn:filenameList) {
 	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
