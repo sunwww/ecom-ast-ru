@@ -114,7 +114,7 @@
         	<input type="radio" name="typeRead" value="1">  xml-файл
         </td>
 	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	    	<input type="radio" name="typeRead" value="2">  на экране
+	    	<input type="radio" name="typeRead" value="2">  на экране (первые 250 записей)
 	    </td>
        </msh:row>
        
@@ -171,7 +171,7 @@
 
     
 	 <%    if (typeRead!=null && (typeRead.equals("2"))) {%>
-   <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="100" nativeSql="
+   <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="250" nativeSql="
 		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday
     	 , p.commonNumber
     	 , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik
