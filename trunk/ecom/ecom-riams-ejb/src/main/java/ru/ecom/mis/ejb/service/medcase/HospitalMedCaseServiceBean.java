@@ -345,66 +345,50 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String filename = "N"+aReestr+"M"+aLpu+"T30"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
-    public String[] exportFondZip(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public String[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	String[] fileExpList = {exportN1(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN6(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, ""
+    			
     	};
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	fileExpList[6]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
-    	/*
-    	String fileZip = workDir+"/"+fileExpList[6] ;
     	
-    	byte[] readBuf = new byte[2048] ;
-    	FileOutputStream fos =null ;
+    	StringBuilder sb=new StringBuilder();
+    	sb.append("zip -r -9 ") ;
+    	for (int i=6;i>-1;i--){
+    		sb.append(fileExpList[i]).append(" ");
+    	}
+    	System.out.println(sb) ;
     	try {
-    		fos= new FileOutputStream(new File(fileZip)) ;
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			zos.setLevel(Deflater.DEFAULT_COMPRESSION) ;
-			
-			for (int i = 0 ; i<(fileExpList.length-1); i++) {
-				String fileExp = fileExpList[i] ; 
-				FileInputStream fis = null ;
-				try {
-					fis = new FileInputStream(new File(workDir+"/"+fileExp)) ;
-					ZipEntry anEntry = new ZipEntry(fileExp) ;
-					zos.putNextEntry(anEntry) ;
-					
-					int bytesIn;
-					while ((bytesIn = fis.read(readBuf))!=-1){
-						zos.write(readBuf,0,bytesIn) ;
-					}
-				}catch (Exception e) {
-					
-				} finally {
-					if (fis!=null) fis.close() ;
-				}
-				
-			}
-		} catch (IOException e) {
-		} finally {
-			if (fos!=null)
-				try {
-					fos.close() ;
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
-		}
-    	File file = new File(fileZip) ;
-    	file.renameTo(new File(workDir+"/"+fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263")) ;
-    	*/
+    		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
+    		Runtime.getRuntime().exec(arraCmd);
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	return fileExpList ;
+    }
+    public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    		throws ParserConfigurationException, TransformerException {
+    	String nPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    			
+    	};
+    	
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	fileExpList[6]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
+    	
     	StringBuilder sb=new StringBuilder();
     	sb.append("zip -r -9 ") ;
     	for (int i=6;i>-1;i--){
@@ -415,7 +399,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
 			Runtime.getRuntime().exec(arraCmd);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return fileExpList ;
