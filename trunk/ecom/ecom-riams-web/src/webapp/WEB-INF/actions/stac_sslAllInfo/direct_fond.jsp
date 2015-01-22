@@ -16,6 +16,7 @@
   <%
   
 	String typeView=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", request) ;
+	String typeDate=ActionUtil.updateParameter("HospitalDirectDataInFond","typeDate","1", request) ;
   %>
   
     <msh:form action="/stac_direct_in_fond.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -60,6 +61,19 @@
 	        	<input type="radio" name="typeView" value="6">  наличие своб. мест
 	        </td>
        </msh:row>
+       <msh:row>
+               <td class="label" title="Список  (typeDate)" colspan="1"><label for="typeDateName" 
+               id="typeDateLabel">Список:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="1"> проверять по базе импортированных из фонда
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDate" value="2">  брать данные из базы напрямую
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDate" value="3">  отобразить не вошедших в импортированную базу
+	        </td>
+       </msh:row>
       <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -101,6 +115,7 @@
 			        </msh:form>
       <script type="text/javascript">
       checkFieldUpdate('typeView','${typeView}',1) ;
+      checkFieldUpdate('typeDate','${typeDate}',1) ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
     	   	var aMax=chk.length ;
