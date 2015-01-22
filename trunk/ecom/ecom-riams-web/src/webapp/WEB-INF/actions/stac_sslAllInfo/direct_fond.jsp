@@ -40,26 +40,39 @@
       <msh:row>
         <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1">  направления на госп.
+        	<input type="radio" name="typeView" value="1"> (N1) направления на госп.
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="2">  госпитализации по направлению
+	        	<input type="radio" name="typeView" value="2"> (N2) госпитализации по направлению
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="3">  экстр. госпитализация
+	        	<input type="radio" name="typeView" value="3"> (N3) экстр. госпитализация
 	        </td>
        </msh:row>
       <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="4">  аннулирование направ. на госп.
+        	<input type="radio" name="typeView" value="4"> (N4) аннулирование направ. на госп.
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="5">  выбывшие из стац.
+	        	<input type="radio" name="typeView" value="5"> (N5) выбывшие из стац.
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="6">  наличие своб. мест
+	        	<input type="radio" name="typeView" value="6"> (N6) наличие своб. мест
 	        </td>
+       </msh:row>
+       <msh:row>
+        <td></td>
+        
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="7">  список неопред. по N1
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="8">  N1 + N3 таблицы
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="9">  N4 + N5 таблицы
+        </td>
        </msh:row>
        <msh:row>
                <td class="label" title="Список  (typeDate)" colspan="1"><label for="typeDateName" 
@@ -74,13 +87,7 @@
 	        	<input type="radio" name="typeDate" value="3">  отобразить не вошедших в импортированную базу
 	        </td>
        </msh:row>
-      <msh:row>
-        <td></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="7">  все
-        </td>
 
-       </msh:row>
        
        <msh:row>
        	<msh:hidden property="filename"/>
