@@ -55,6 +55,7 @@ function createExtDispVisitService(aCtx,aParams){
 	var serviceDate = param[3] ;
 	var recommendation = param[4] ;
 	var isEtdccSuspicion = param[5] ;
+	var workFunction = param[6] ;
 	if (isEtdccSuspicion=="checked"||isEtdccSuspicion=="true"||isEtdccSuspicion=="on"||isEtdccSuspicion=="1") {isEtdccSuspicion=1 ;} else {isEtdccSuspicion=0;}
 	if (+id>0) {
 		if (serviceDate!=null && serviceDate!="") {
