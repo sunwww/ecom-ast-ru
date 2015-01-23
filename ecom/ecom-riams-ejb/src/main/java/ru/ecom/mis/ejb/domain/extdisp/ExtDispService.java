@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -70,4 +71,18 @@ public class ExtDispService extends BaseEntity{
 
 	/** Врач, оказавший услугу */
 	private WorkFunction theWorkFunction;
+	
+	/** Диагноз по визиту */
+	@Comment("Диагноз по визиту")
+	@OneToOne
+	public VocIdc10 getIdc10() {
+		return theIdc10;
+	}
+
+	public void setIdc10(VocIdc10 aIdc10) {
+		theIdc10 = aIdc10;
+	}
+
+	/** Диагноз по визиту */
+	private VocIdc10 theIdc10;
 }
