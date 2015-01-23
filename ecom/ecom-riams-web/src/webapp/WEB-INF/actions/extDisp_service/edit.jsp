@@ -69,11 +69,13 @@ select case when 0=1 then '1' else null end
 
 ,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
+
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
+
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='0' or veds.isVisit is null)
@@ -94,16 +96,25 @@ veds.id as vedsid
 
 ,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
-,veds.workfunction_id
+,veds.workfunction_id as vedsworkfunction
+,edps.workFunction_id as edpsworkfunction
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfname
+
  from ExtDispCard edc
+ 
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
+left join WorkFunction wf on wf.id=edps.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
-group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit,veds.workfunction_id
+group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit,veds.workfunction_id,edps.workFunction_id
+,vwf.name,wp.lastname,wp.firstname,wp.middlename
 order by veds.id,veds.name"
 />		
 		<%
@@ -113,8 +124,9 @@ order by veds.id,veds.name"
 	int sizeVisit = listVisit.size() ;
 	String[] fldExam = {"examServiceDate","examIsPathology"} ;
 	String[] fldExamDate = {"examServiceDate"} ;
-	String[] fldVisit = {"visitServiceDate","visitRecommendation","visitIsEtdccSuspicion"} ;
+	String[] fldVisit = {"visitServiceDate","visitRecommendation","visitIsEtdccSuspicion","workFunctionName"} ;
 	String[] fldVisitDate = {"visitServiceDate"} ;
+	String[] fldVisitAutocomlete = {"workFunction"} ;
 	out.println("<input type='hidden' id='cntExam' name='cntExam' value='"+listExam.size()+"'>") ;
 	out.println("<input type='hidden' id='cntVisit' name='cntVisit' value='"+listVisit.size()+"'>") ;
 	if (sizeVisit>0||sizeExam>0) {
