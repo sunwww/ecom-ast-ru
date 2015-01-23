@@ -136,11 +136,15 @@
         </msh:row>
         <msh:row>
        <td>
-       	<input type="button" onclick="showForm();" value = "Экспорт карт в систему Минздрава(orph.rosminzdarav.ru)">
+       	<input type="button" onclick="showForm();" value = "Экспорт карт">
        </td>
        </msh:row>
 			</msh:panel>
+			<div id="formOrphDiv" style="display: none">
 			<msh:panel styleId="formOrph">
+			<msh:row>
+				<td>Экспорт карт в систему Минздрава(orph.rosminzdarav.ru)</td>
+			</msh:row>
 			<msh:row>
 				<td colspan="10" >
 					<p>Рекомендуется выгружать данные небольшими порциями (до 100 записей), иначе сайт Минздрава может не принять файл.</p>
@@ -195,6 +199,9 @@
 			<msh:row>
 				<msh:textField label="Рекомендации по лечению" property="expRecommend" fieldColSpan="10" horizontalFill="true" />
 			</msh:row>
+			<%-- <msh:row>
+				<msh:textField label="Число записей в файле " property="expDivideNum" fieldColSpan="10" horizontalFill="true" />
+			</msh:row> --%>
 			<msh:row>
 				<td>
 	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
@@ -206,7 +213,7 @@
 	       			<input type="button" onclick="showExpHelp();" value="Подсказка по экспорту"/>
 	       		</td>
 			</msh:row>
-				<table id="exportTable" border="1" style="padding: 15px">
+				<table id="exportTable" border="1" style="padding: 15px; display: none">
        <tr style="color: red">
         	<td colspan="4">Внимание! Следующие карты не выгружены!</td>
        </tr>
@@ -220,6 +227,7 @@
         </tbody>
         </table>
 			</msh:panel>
+			</div>
 		</msh:form>
 <%
 		String beginDate = request.getParameter("beginDate") ;
@@ -1129,17 +1137,16 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typePaid','${typePaid}',1) ;
-    $('exportTable').style.display = 'none' ;
  //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
   //  checkFieldUpdate('typeDate','${typeDate}',2) ;
    var sqlAdd = ""; 
-   $('formOrph').style.display='none';
+   
   function showForm() {
 	
-	  if ($('formOrph').style.display=='block') {
-		  $('formOrph').style.display='none';
+	  if ($('formOrphDiv').style.display=='block') {
+		  $('formOrphDiv').style.display='none';
 	  }else {
-		  $('formOrph').style.display='block';
+		  $('formOrphDiv').style.display='block';
 	  }
   }  
   function test() {
