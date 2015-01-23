@@ -40,6 +40,7 @@ order by veds.id,veds.name"/>
 , to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
 ,list(case when eds.card_id=edc.id then eds.recommendation else null end) as edsRecommendation
 , case when count(case when eds.card_id=edc.id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
+,veds.workfunction_id
 from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -52,7 +53,7 @@ and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
 and veds.id is not null
 group by veds.id,veds.code,veds.name
-,veds.isVisit
+,veds.isVisit,veds.workfunction_id
 order by veds.id,veds.name
 
 	"/>
@@ -93,6 +94,7 @@ veds.id as vedsid
 
 ,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
+,veds.workfunction_id
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -101,7 +103,7 @@ left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
-group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit
+group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit,veds.workfunction_id
 order by veds.id,veds.name"
 />		
 		<%
@@ -174,6 +176,7 @@ order by veds.id,veds.name"
 	out.print("<th>Дата оказания</th>") ;
 	out.print("<th>Рекомендации</th>") ;
 	out.print("<th>Подозрение на ранее перенесенное нарушение мозгового кровообращения</th>") ;
+	out.print("<th>Рабочая функция</th>") ;
 	out.println("</tr>") ;
 	for (int i=0; i<sizeVisit; i++) {
 		WebQueryResult wqr = (WebQueryResult) listVisit.get(i) ;
@@ -194,6 +197,7 @@ order by veds.id,veds.name"
 		out.print("'>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='checkbox' name='visitIsEtdccSuspicion"+i+"' id='visitIsEtdccSuspicion"+i+"' ");
 		out.print(wqr.get8()!=null?wqr.get8():"");out.print(">") ;out.print("</td>") ;
+		out.print("<td>") ;out.println(wqr.get9()) ;out.print("</td>") ;
 		out.println("</tr>") ;
 	}
 	out.println("</table>") ;
