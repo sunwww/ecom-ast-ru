@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.domain.extdisp;
 import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -10,6 +11,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
@@ -54,4 +56,18 @@ public class ExtDispService extends BaseEntity{
 	 * Тип услуги
 	 */
 	private VocExtDispService theServiceType;
+	
+	/** Врач, оказавший услугу */
+	@Comment("Врач, оказавший услугу")
+	@OneToOne
+	public WorkFunction	getWorkFunction() {
+		return theWorkFunction;
+	}
+
+	public void setWorkFunction(WorkFunction aWorkFunction) {
+		theWorkFunction = aWorkFunction;
+	}
+
+	/** Врач, оказавший услугу */
+	private WorkFunction theWorkFunction;
 }
