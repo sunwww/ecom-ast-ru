@@ -35,7 +35,7 @@ function save(aForm,aCtx) {
 	var fldExam = ["examId","examServiceType","examServiceDate","examIsPathology"] ;
 	var fldPe = "" ;
 	var fldPv = "" ;
-	var fldVisit = ["visitId","visitServiceType","visitServiceDate","visitRecommendation","visitIsEtdccSuspicion"] ;
+	var fldVisit = ["visitId","visitServiceType","visitServiceDate","visitRecommendation","visitIsEtdccSuspicion","workFunction"] ;
 	//var fldPv = ["","","","",""] ;
 	for (var i=0;i<cntExam;i++) {
 		var fldPe=card+":" ;
