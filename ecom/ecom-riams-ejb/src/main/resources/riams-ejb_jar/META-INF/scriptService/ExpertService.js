@@ -56,6 +56,7 @@ function createExtDispVisitService(aCtx,aParams){
 	var recommendation = param[4] ;
 	var isEtdccSuspicion = param[5] ;
 	var workFunction = param[6] ;
+	var Idc10=param[7];
 	if (isEtdccSuspicion=="checked"||isEtdccSuspicion=="true"||isEtdccSuspicion=="on"||isEtdccSuspicion=="1") {isEtdccSuspicion=1 ;} else {isEtdccSuspicion=0;}
 	if (+id>0) {
 		if (serviceDate!=null && serviceDate!="") {
@@ -64,7 +65,14 @@ function createExtDispVisitService(aCtx,aParams){
 			serviceDate="null" ;
 		}
 		var sql = "update ExtDispService set " ;
-		sql=sql+"serviceDate="+serviceDate+",isEtdccSuspicion='"+isEtdccSuspicion+"',recommendation='"+recommendation+"' where id="+id ;
+		sql=sql+"serviceDate="+serviceDate+",isEtdccSuspicion='"+isEtdccSuspicion+"',recommendation='"+recommendation+"' ";
+		if (workFunction!=null && workFunction!="" && workFunction!="null") {
+			sql=sql+", workfunction_id='"+workFunction+"'";
+		}
+		if (Idc10!=null && Idc10!="" && Idc10!="null") {
+			sql+=", idc10_id='"+Idc10+"' ";
+		}
+				sql+="where id="+id ;
 		//throw sql ;
 		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	} else{
@@ -86,6 +94,10 @@ function createExtDispVisitService(aCtx,aParams){
 		serviceO.serviceType = serviceTypeO;
 		serviceO.recommendation = recommendation ;
 		serviceO.isEtdccSuspicion = isEtdccSuspicion>0?true:false ;
+		var Idc10O=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(Idc10)) ;
+		serviceO.idc10=Idc10O;//(Idc10!=null&&Idc10!="0")?Idc10:null;
+		var workFunctionO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,java.lang.Long.valueOf(workFunction)) ;
+		serviceO.workFunction=workFunctionO;
 		//if (serviceO.serviceDate!=null) {
 			aCtx.manager.persist(serviceO) ;
 		//}
