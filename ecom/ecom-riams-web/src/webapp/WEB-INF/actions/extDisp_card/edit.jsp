@@ -124,7 +124,14 @@ select eds.card_id as edsid
 , to_char(eds.serviceDate,'dd.mm.yyyy') as servicedate
 ,eds.recommendation as edsRecommendation
 ,eds.isEtdccSuspicion as edsIsaf
+,vwf.name||' '|| pw.lastname||' '||pw.firstname||' '||pw.middlename as worker
+,mkb.code || ' ' || mkb.name as diagnosis
 from extdispservice eds
+left join workfunction wf on wf.id=eds.workfunction_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join worker wrk on wrk.id=wf.worker_id
+left join patient pw on pw.id=wrk.person_id
+left join vocIdc10 mkb on mkb.id=eds.idc10_id
 left join VocExtDispService veds on veds.id=eds.servicetype_id
 where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			"/>
@@ -132,8 +139,11 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 					<msh:tableColumn columnName="Услуга" property="2"/>
 					<msh:tableColumn columnName="Дата" property="3"/>
 					<msh:tableColumn columnName="Рекомендации" property="4"/>
-					<msh:tableColumn columnName="Подозрение на ранее перенесенное нарушение мозгового кровообращения" property="5"/>
+					<msh:tableColumn columnName="*Подозрение" property="5"/>
+					<msh:tableColumn columnName="Рабочая функция" property="6"/>
+					<msh:tableColumn columnName="Диагноз" property="7"/>
 				</msh:table>
+				*Подозрение на ранее перенесенное нарушение мозгового кровообращения
 			</msh:section>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
