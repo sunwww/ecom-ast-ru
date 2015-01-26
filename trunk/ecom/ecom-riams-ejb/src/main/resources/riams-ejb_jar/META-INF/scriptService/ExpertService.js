@@ -94,10 +94,14 @@ function createExtDispVisitService(aCtx,aParams){
 		serviceO.serviceType = serviceTypeO;
 		serviceO.recommendation = recommendation ;
 		serviceO.isEtdccSuspicion = isEtdccSuspicion>0?true:false ;
+		if (Idc10!=null && Idc10!="" && Idc10!="null") {
 		var Idc10O=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(Idc10)) ;
 		serviceO.idc10=Idc10O;//(Idc10!=null&&Idc10!="0")?Idc10:null;
+		}
+		if (workFunction!=null && workFunction!="" && workFunction!="null") {
 		var workFunctionO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,java.lang.Long.valueOf(workFunction)) ;
 		serviceO.workFunction=workFunctionO;
+		}
 		//if (serviceO.serviceDate!=null) {
 			aCtx.manager.persist(serviceO) ;
 		//}
