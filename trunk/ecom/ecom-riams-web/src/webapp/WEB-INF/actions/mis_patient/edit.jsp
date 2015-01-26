@@ -343,10 +343,10 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row>
         
-        <td colspan="2" title="Адрес (nonresidentAddressField)" class="label">
-            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Lheuj адрес:</label>
+        <td colspan="1" title="Адрес (nonresidentAddressField)" class="label">
+            <label id="nonresidentAddressFieldLabel" for="nonresidentAddressField"> Другой адрес:</label>
           </td>
-          <td colspan="4" class="addressField">
+          <td colspan="5" class="addressField">
             <input title="АдресNoneField" class=" horizontalFill" id="nonresidentAddressField" name="nonresidentAddressField" size="10" value="Адрес... " type="text" />
           </td>
         </msh:row>
