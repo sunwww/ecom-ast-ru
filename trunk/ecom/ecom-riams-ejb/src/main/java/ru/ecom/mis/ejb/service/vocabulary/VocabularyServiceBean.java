@@ -106,12 +106,19 @@ public class VocabularyServiceBean {
     			monitor.setText("Импортируется  услуга: "+wqr.get1());
     			List<VocExtDispService> list = theManager.createQuery("from VocExtDispService where code='"+wqr.get1()+"'").getResultList() ;
     			if (list.size()>0) {
-    				theHashService.put(""+wqr.get1(), list.get(0)) ;
+    				VocExtDispService service = list.get(0);
+    				service.setWorkFunctionCode(""+wqr.get4());
+    				service.setOrphCode(""+wqr.get5());
+    				theManager.persist(service) ;
+    				theHashService.put(""+wqr.get1(), service) ;
+    				
     			} else {
     				VocExtDispService service = new VocExtDispService() ;
     				service.setCode(""+wqr.get1()) ;
     				service.setName(""+wqr.get2()) ;
     				service.setIsVisit(wqr.get3()!=null&&(""+wqr.get3()).equals("1")?true:false) ;
+    				service.setWorkFunctionCode(""+wqr.get4());
+    				service.setOrphCode(""+wqr.get5());
     				theManager.persist(service) ;
     				theHashService.put(""+wqr.get1(), service) ;
     			}
@@ -251,6 +258,8 @@ public class VocabularyServiceBean {
     		xmlDoc.newAttribute(el, "code", serv.getCode());
     		xmlDoc.newAttribute(el, "isVisit", serv.getIsVisit()!=null && serv.getIsVisit()?"1":"0");
     		xmlDoc.newAttribute(el, "name", serv.getName());
+    		xmlDoc.newAttribute(el, "workFunctionCode", serv.getWorkFunctionCode());
+    		xmlDoc.newAttribute(el, "orphCode", serv.getOrphCode());
     		
     	}
     	Element risksEl = xmlDoc.newElement(root, "risks", null);
