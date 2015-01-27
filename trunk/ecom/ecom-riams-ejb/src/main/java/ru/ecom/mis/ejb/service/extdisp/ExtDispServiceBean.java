@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.service.extdisp;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -33,21 +34,19 @@ import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
  * @author VTsybulin 19.12.2014
  * 
  * Формирование XML для импорта на сайте мониторинга ДД Росминздрава (orph.rosminzdrav.ru)
- * Версия формата 201403 ?
+ * Версия формата 20140307
  *
  */
 public class ExtDispServiceBean implements IExtDispService {
-	StringBuilder error_text=new StringBuilder();
 	StringBuilder badCards =new StringBuilder();
+	String theFinishDate="";
+	String theFileSuffix="";
+//	String theArchiveFileName="";
+	String aFileNames = "";
 	public String getBadCards () {
 		if (badCards.length()>0) return badCards.toString();
 		else return null;
 		
-	}
-	
-	public String getErrorText () {
-		if (error_text.length()>0)return error_text.toString(); 
-		else return null;
 	}
 	
 	public String exportOrphDefaultValues(String aStartDate, String aFinishDate,
@@ -61,17 +60,56 @@ public class ExtDispServiceBean implements IExtDispService {
 				+ ", закаливание, профилактика вредных привычек."; //Рекомендации
 		String aFizGroup = "1"; //"1"; //Группа здоровья для физкультуры
 		String aAnalysesText = "Без патологий"; // Результат анализов
-		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend );
+		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend,"200" );
+	}
+	
+	public String createArchive(String archiveName) {
+//		System.out.println("DEBUG ----createArchive='"+archiveName+"'");
+		if (aFileNames.length()>0) {
+			aFileNames = aFileNames.substring(0,aFileNames.length()-1);
+		
+		String[] fileNames = aFileNames.split(":");
+		if (fileNames.length>1) {
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+			StringBuilder sb = new StringBuilder();
+			sb.append("zip -r -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
+			for (int i=0;i<fileNames.length;i++) {
+				sb.append(workDir).append("/").append(fileNames[i]).append(" ");
+			}
+	//		System.out.println(sb) ;
+	    	try {
+	    		Runtime.getRuntime().exec(sb.toString());//arraCmd);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    	aFileNames="";
+			return archiveName;
+			}
+		else {
+				return fileNames[0];
+		}} return "createArchive ERROR, aFileNames.length=0";
 	}
 	public String exportOrph(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend) throws ParseException,
+			String aZOJReccomend, String aReccomend, String divideNum) throws ParseException,
 			NamingException {
+		try{
+//		System.out.println("DEBUG ------------ExportOrph---------------");
+//		System.out.println("DEBUG ----- aHeadSize='"+aHeadSize+"'");
+//		System.out.println("DEBUG ----- divideNum='"+divideNum+"'");
 		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
 			return null;
 		}
-		  
+		if (divideNum==null ||divideNum.equals("")) {
+			divideNum="0";
+		}
+		  theFileSuffix=aFileNameSuffix;
+		  theFinishDate=aFinishDate;
+		String theArchiveFileName="orph-"+theFileSuffix+theFinishDate;
+		  aFileNames="";
 	/** Сделано:
 	 * Проверка на пасп. данные, номер полиса.
 	 * Проверка на наличие даты исследования.	
@@ -86,7 +124,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "
 				+",vedsg.code as socCode "
 				+",mkb.code as mkbcode ,vedag.name as vedagname ,vedsg.name as vedsgname ,vedhg.code as vedhgcode "
-				+",mp.company_id "
+				+",(select ri.smocode from reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id=p.id order by mp.actualdatefrom desc limit 1) as smoCode "
 				+",edc.isObservation as cntDispM "
 				+",edc.isTreatment as cntLechM "
 				+",edc.isDiagnostics as cntDiagM "
@@ -95,8 +133,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				+ "case when ((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)<0) or "
 				+ "((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)=0 "
 				+ "and ((cast(to_char(edc.finishDate,'dd')as int))-cast(to_char(p.birthday,'dd')as int)<0)) then -1 else 0 end as fullage "
-				+",case when (p.passportseries is not null and p.passportseries!='') then p.passportseries else '12 00' end as passSer "
-				+",case when (p.passportnumber is not null and p.passportnumber !='') then p.passportnumber else '123456' end as passNum "
+				+",p.passportseries as passSer "
+				+",p.passportnumber as passNum "
 				+",vic.code as passID "
 				+",pwr.lastname as vrach_l " 
 				+",pwr.firstname as vrach_f "
@@ -121,7 +159,6 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id "
 				+"left join VocIdc10 mkb on mkb.id=edc.idcMain_id "
 				+"left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null "
-				+"left join (select company_id,patient_id from medpolicy limit 1) mp on mp.patient_id = p.id "
 				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') " 
 				+"and to_date('"+aFinishDate+"','dd.mm.yyyy') "
 	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
@@ -154,48 +191,31 @@ public class ExtDispServiceBean implements IExtDispService {
 		
 			System.out.println("Поиск записей:");
 			System.out.println("sql_orph="+SQLreq);
-			Element root = find_data(SQLreq, aFizGroup, aHeight,
+			find_data(SQLreq, aFizGroup, aHeight,
 					aWeight, aHeadSize, aAnalysesText,
-					aZOJReccomend, aReccomend);
-			if (root==null) {
-				System.out.println("Document is empty");
-				return null;
-			}
-			Document pat = new Document(root);
-			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-			workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-			String filename = "orph-"+aFileNameSuffix+aFinishDate+".xml";
-			String outputFile = workDir+"/"+filename;
+					aZOJReccomend, aReccomend, divideNum);
+			
+			return createArchive(theArchiveFileName+"_"+theArchiveFileName.hashCode()+".zip")+"@"+getBadCards();
+		} catch (Exception e) {
+			System.out.println("Exception happens !199_line ");
+			e.printStackTrace();
+			return null;
+			
+		}
 					
-			try {
-				
-				org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
-				FileWriter fwrt = new FileWriter(outputFile);
-				
-				outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("UTF-8"));
-				outputter.output(pat, fwrt);
-				fwrt.close();
-				return filename+"@"+badCards.toString();
-			}
-		
-			 catch (Exception ex) {
-				 System.out.println(ex.getMessage());
-				 System.out.println("Someshing happened strange!!!");
-				return null;
-			}			
+					
 		}
 	
 	private DataSource findDataSource() throws NamingException {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
 	
-	public Element find_data(String SQLReq,
+	public void find_data(String SQLReq,
 			String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend) throws ParseException,
+			String aZOJReccomend, String aReccomend, String divideNum) throws ParseException,
 			NamingException {
-			
+		int divideNumber = Integer.valueOf(divideNum);
 		Statement statement = null;
 		Element rootElement = new Element("chlidren"); 
 		badCards.setLength(0);
@@ -207,6 +227,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			
 			ResultSet rs = statement.executeQuery(SQLReq);
 			int numAll = 0;
+			int numRight = 0;
 			// --------------Значения по умолчания для всех записей.
 			 
 			String p_idType="3"; //3 - несовершеннолетний. Если сирота - то "1"
@@ -226,16 +247,14 @@ public class ExtDispServiceBean implements IExtDispService {
 			
 			while (rs.next()) {
 				numAll++;
-				if (numAll%70==0){ //TODO: кол-во карт в выгрузке
-					
-				}
 				String diagnosis = rs.getString("mkbcode");
 				String health_G = rs.getString("vedhgcode");
 				String card_id = rs.getString("did");
 				String passID = rs.getString("passID");
 				String commonNumber = rs.getString("RZ");
 				String patientInfo = rs.getString("patientinfo");
-				String sex = rs.getString("sex"); 
+				String sex = rs.getString("sex");
+				int smoCode = rs.getInt("smoCode");
 				
 				Element card_basic = new Element("basic");
 				Element card_issled = new Element("issled");
@@ -254,16 +273,30 @@ public class ExtDispServiceBean implements IExtDispService {
 					continue;
 				}
 				if (!diagnosis.startsWith("Z") && health_G.equals("1")) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
-					error_text.append(" |Расхождение группы здоровья и диагноза, ребенок=").append(patientInfo);
 					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Расхождение группы здоровья и диагноза").append("#");
 					continue;
 				}
-				String InsuranceCompany = getOMCNumber(pid,dbh);
+				String InsuranceCompany = "0";
+				
+				switch (smoCode) {
+	            case 30002:	InsuranceCompany = "115"; //smocode=30002, omccode=15 makc
+	            	break;
+	            case 30004:	InsuranceCompany = "103"; //smocode=30004, omccode=7 sogaz
+	            	break;	            
+	            case 30005:	InsuranceCompany = "3690"; //smocode=30005, omccode=? maksimus
+	    			break;
+	    			
+	            default:
+	    			break;
+				}
+				
 				if (InsuranceCompany.equals("0")){
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет действующего полиса ОМС").append("#");
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет действующего полиса ОМС, СМО-").append(smoCode).append("#");
 					continue;
 				}
 				
+				
+				numRight++;
 				
 				
 				switch (Integer.parseInt(rs.getString("socCode"))) { //Определяем тип ДД (socCode: 4-профосмотр, 5-Предварительные, 6-Периодические)
@@ -276,8 +309,8 @@ public class ExtDispServiceBean implements IExtDispService {
 		            case 9999:  card_idType = 2; //сироты+опекаемые (на всяк. случай)
 		            	break;
 		            default: card_idType = 0;
-		            error_text.append(" !Ошибка - код_ДД-").append(rs.getString("dispType_id"));
-		            	break;
+			            badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append(" Обратитесь к разработчику!!!Ошибка - код_ДД-").append(rs.getString("dispType_id")).append("#");
+						break;
 				}
 				String s_card_idType = Integer.toString(card_idType);
 				
@@ -508,13 +541,19 @@ public class ExtDispServiceBean implements IExtDispService {
 									card.addContent(new Element("oms").addContent("0"));
 
 									rootElement.addContent(currPat);
+					if (divideNumber!=0 && numRight%divideNumber==0){ 
+						System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
+						createFile(rootElement);
+						rootElement = new Element("chlidren");
+					}
 				}
-			
 			dbh.close();
+			createFile(rootElement);
 			System.out.println("Всего записей = " + numAll);
-			System.out.println();
-			System.out.println("ErrorText= "+error_text);
-			return rootElement;
+			System.out.println("Всего записей без ошибок= " + numRight);
+//			System.out.println();
+			System.out.println("ErrorText= "+badCards.toString());
+	//		return theArchiveFileName;
 			}
 			
 		catch (SQLException e)
@@ -525,38 +564,34 @@ public class ExtDispServiceBean implements IExtDispService {
 	        rootElement.addContent(new Element("ERROR!!!!"+e.getMessage()));
 			//return rootElement;
 	        }	
-			return rootElement;
+	//		return theArchiveFileName;
 		}
-	public static String getOMCNumber(String patient, Connection dbh) {
-		String ret = "0";
-		String SQLReq = "SELECT ri.omccode FROM reg_ic ri left join medpolicy mp on mp.company_id=ri.id where mp.patient_id = "+ patient + " order by actualdatefrom desc limit 1";
-		System.out.println("GetOMCNumber sql = "+SQLReq);
-		try {
-			Statement statement = dbh.createStatement();
-			ResultSet rs = statement.executeQuery(SQLReq);
-			while(rs.next()) {
-				int sk = rs.getInt(1);
-				switch (sk) {
-	            case 15:	ret = "115"; //smocode=30002, omccode=15 makc
-	            	break;
-	            case 7:	ret = "103"; //smocode=30004, omccode=7 sogaz
-	    			break;
-	            default:
-	            	System.out.println("Нет актуального полиса!!!");
-	    			break;
-				}
-			}
-			return ret;
-
-		}
-		
-		catch (SQLException e)
-		{
-			System.out.println("in getOMCNumber error="+e.getMessage());
-		}
-		return ret;
-	}
 	
+	public void createFile(Element aElement) {
+		
+		try {
+			
+			org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
+			String fileName="orph-"+theFileSuffix+theFinishDate+"_"+aElement.hashCode()+".xml";
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+			String outputFile=workDir+"/"+fileName;
+			FileWriter fwrt = new FileWriter(outputFile);
+			Document pat = new Document(aElement);
+			outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("UTF-8"));
+			outputter.output(pat, fwrt);
+			fwrt.close();
+			aFileNames+=fileName+":";
+
+			//return filename+"@"+badCards.toString();
+		}
+	
+		 catch (Exception ex) {
+			 System.out.println(ex.getMessage());
+			 System.out.println("Someshing happened strange!!!");
+		}	
+	}
 	public static String toDate(String args)throws ParseException
 	{
 		SimpleDateFormat nDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -624,7 +659,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				if (codeMap.get(rs.getString(1))!=null) {
 				 statement2 = dbh.createStatement();
 					String sqlReq="update vocextdispservice set orphcode='"+codeMap.get(rs.getString(1))+"' where code = '"+rs.getString(1) +"' ";
-					System.out.println(sqlReq);
+//					System.out.println(sqlReq);
 					statement2.executeUpdate(sqlReq);
 				} 
 			}
