@@ -148,9 +148,9 @@ public class PrescriptionServiceJs {
 					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
 					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
 					.append("where ms.id='").append(msID).append("' ");
-					if (aPrescriptListType>0) {
+					/*if (aPrescriptListType>0) {
 					sqlMS.append("and ms.servicesubtype_id='").append(aPrescriptListType).append("' ");
-					}
+					}*/
 					
 					Collection<WebQueryResult> listMS = service.executeNativeSql(sqlMS.toString()) ;
 					for (WebQueryResult wqr :listMS) {
