@@ -34,17 +34,17 @@ public class VocExtDispService extends VocBaseEntity{
 		/** Код для экспорта (orph.rosminzdrav.ru) */
 		private String theOrphCode;
 		
-		/** Код специальности врача */
-		@Comment("Код специальности врача")
-		@OneToOne
-		public VocWorkFunction getWorkFunction() {
-			return theWorkFunction;
+		
+		/** Специальность врача */
+		@Comment("Специальность врача")
+		public String getWorkFunctionCode() {
+			return theWorkFunctionCode;
 		}
 
-		public void setWorkFunction(VocWorkFunction aWorkFunction) {
-			theWorkFunction = aWorkFunction;
+		public void setWorkFunctionCode(String aWorkFunctionCode) {
+			theWorkFunctionCode = aWorkFunctionCode;
 		}
 
-		/** Код специальности врача */
-		private VocWorkFunction theWorkFunction;
+		/** Специальность врача */
+		private String theWorkFunctionCode;
 }
