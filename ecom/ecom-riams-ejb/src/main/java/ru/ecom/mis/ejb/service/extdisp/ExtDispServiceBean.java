@@ -45,7 +45,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	String aFileNames = "";
 	public String getBadCards () {
 		if (badCards.length()>0) return badCards.toString();
-		else return null;
+		else return "";
 		
 	}
 	
@@ -244,7 +244,6 @@ public class ExtDispServiceBean implements IExtDispService {
 			String card_issl_result = aAnalysesText;//"Без патологий"; // Результат анализов
 			int fiveLet = 5;
 			int tenLet = 10;
-			
 			while (rs.next()) {
 				numAll++;
 				String diagnosis = rs.getString("mkbcode");
