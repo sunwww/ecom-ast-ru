@@ -40,7 +40,7 @@ order by veds.id,veds.name"/>
 , to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
 ,list(case when eds.card_id=edc.id then eds.recommendation else null end) as edsRecommendation
 , case when count(case when eds.card_id=edc.id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
-,veds.workfunction_id 
+,veds.workfunctioncode 
 ,max(case when (eds.card_id=edc.id and eds.workfunction_id is not null) then cast(eds.workfunction_id as varchar) else '' end) as edsWF
 ,max(case when (eds.card_id=edc.id and eds.workfunction_id is not null) then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename else ' ' end) as wfname
 ,max(case when (eds.card_id=edc.id and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
@@ -62,7 +62,7 @@ and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
 and veds.id is not null
 group by veds.id,veds.code,veds.name
-,veds.isVisit,veds.workfunction_id
+,veds.isVisit,veds.workfunctioncode
 order by veds.id,veds.name
 
 	"/>
@@ -104,7 +104,7 @@ select case when 0=1 then '1' else null end
 ,veds.code as vedscode
 ,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
-,'','','',veds.workfunction_id as vedsworkfunction,'','','',''
+,'','','',veds.workfunctioncode as vedsworkfunction,'','','',''
 
  from ExtDispCard edc
  left join Patient pat on pat.id=edc.patient_id
@@ -116,7 +116,7 @@ left join VocWorkFunction vwf on vwf.id=veds.workFunction_id
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
-group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit,veds.workfunction_id
+group by veds.id,veds.code,veds.name,edps.isVisit,veds.isVisit,veds.workfunctioncode
 order by veds.id,veds.name"
 />		
 		<%
