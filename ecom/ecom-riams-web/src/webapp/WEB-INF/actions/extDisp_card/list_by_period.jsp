@@ -136,7 +136,7 @@
         </msh:row>
         <msh:row>
        <td>
-       	<input type="button" onclick="showForm();" value = "Экспорт карт">
+       	<input type="button" onclick="showForm();" value = "Экспорт для сайта orph.rosminzdarav.ru">
        </td>
        </msh:row>
 			</msh:panel>
@@ -147,7 +147,7 @@
 			</msh:row>
 			<msh:row>
 				<td colspan="10" >
-					<p>Рекомендуется выгружать данные небольшими порциями (до 100 записей), иначе сайт Минздрава может не принять файл.</p>
+					<p>Рекомендуется выгружать данные небольшими порциями (до 200 записей), иначе сайт Минздрава может не принять файл.</p>
 				</td>
 			</msh:row>
 			<msh:row>
@@ -199,9 +199,9 @@
 			<msh:row>
 				<msh:textField label="Рекомендации по лечению" property="expRecommend" fieldColSpan="10" horizontalFill="true" />
 			</msh:row>
-			<%-- <msh:row>
+			<msh:row>
 				<msh:textField label="Число записей в файле " property="expDivideNum" fieldColSpan="10" horizontalFill="true" />
-			</msh:row> --%>
+			</msh:row>
 			<msh:row>
 				<td>
 	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
@@ -1194,14 +1194,14 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
-    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",{
+    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value, {
     	callback: function(aResult) {
     		
     	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
     		else {
     			var aData = aResult.split("@");
     			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
-    			if (aData[1]!="" && aData[1]!=null) {
+    			if (aData[1]!="" && aData[1]!="null" && aData[1]!=null) {
     				$('exportTable').style.display = 'block' ;
 	    			aData[1] = aData[1].substring(0,aData[1].length-1);
 	    			var rows = aData[1].split("#");
