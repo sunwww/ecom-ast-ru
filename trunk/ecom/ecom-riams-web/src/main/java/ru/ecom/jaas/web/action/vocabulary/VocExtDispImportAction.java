@@ -67,6 +67,8 @@ public class VocExtDispImportAction extends BaseAction {
                     			wqr.set1(code);
                     			wqr.set2(polElement.getAttributeValue("name"));
                     			wqr.set3(polElement.getAttributeValue("isVisit"));
+                    			wqr.set4(polElement.getAttributeValue("workFunctionCode"));
+                    			wqr.set5(polElement.getAttributeValue("orphCode"));
                     			listServices.add(wqr) ;
                     			System.out.println("\t услуга ["+code+"]") ;
                     		}
