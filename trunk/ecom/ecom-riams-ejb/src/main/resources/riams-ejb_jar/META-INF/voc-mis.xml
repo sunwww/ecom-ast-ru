@@ -1,9 +1,23 @@
 <vocconfig>
+<voc id="workFunctionByCode" type="NativeVocService">
+	<NativeVocService
+		from="workFunction as wf"
+		parent="vwf.code = :parent"
+		nameId='wf.id'
+		queryAppend="wf.dtype = 'PersonalWorkFunction' " 
+		join="left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id
+		left join Worker as w on w.id=wf.worker_id
+		left join Patient as p on p.id=w.person_id" 
+		order=""
+		names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename"
+    	queried="upper(p.lastname) like upper(:query)"
+	/>
+</voc>
 <voc id="prescriptTypeNotEmergency" type="NativeVocService">
 	<NativeVocService
 		from="vocPrescriptType vpt"
 		nameId="vpt.id"
-		queryAppend="vpt.id != '5'" 
+		queryAppend="vpt.code != 'EMERGENCY'" 
 		join="" order=""
 		names="vpt.code||' '|| vpt.name"
 		queried=" upper(vpt.name) like upper(:query) or upper(vpt.code) like upper(:query) "
@@ -599,7 +613,7 @@
                 queried = 'number,comment'
                 />
     </voc>
-    <voc id='kinsmanByTicket' type='NativeVocService'>
+    <voc id='kinsmanByTicket' type='NativeVocService'>f
 		    <NativeVocService
 		    	from=" Kinsman as k "
 		    	parent='k.person_id=(select m.person_id from medcard m where m.id=:parent)'
