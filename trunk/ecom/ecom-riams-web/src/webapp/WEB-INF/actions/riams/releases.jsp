@@ -16,8 +16,11 @@
 				<div class='menu'>
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
-					<li><msh:link  action="ecom_release-201204.do">
-					Апрель 2012 года
+					<li><msh:link  action="ecom_release-201501.do">
+					Январь 2015 года
+                        </msh:link></li>
+					<li><msh:link  action="ecom_release-201501mkb.do">
+					Изменения в МКБ январь 2015 г.
                         </msh:link></li>
 					
 				</ul>
