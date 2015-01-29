@@ -23,7 +23,7 @@
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-   
+  <%--  <msh:hidden property="filenameDefect"></msh:hidden> --%>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -117,7 +117,12 @@
 	    	<input type="radio" name="typeRead" value="2">  на экране (первые 250 записей)
 	    </td>
        </msh:row>
-       
+       <msh:row>
+      	 <td colspan="1">      	
+            <input type="file" name="filenameDefect" id="filenameDefect" size="50" value="" onchange="importDefects(event)">
+           <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
+       	 </td>
+       </msh:row>
        
        <msh:row>
        	<msh:hidden property="filename"/>
@@ -130,6 +135,20 @@
             <input type="submit" value="Найти" />
           </td>
       </msh:row>
+      <table id="defectTable" border="1" style="padding: 15px; display: none">
+       <tr style="color: black">
+        	<td colspan="4">Протокол импорта дефектов:</td>
+       </tr>
+       <tr>
+        	<td>#</td>
+        	<td>Пациент</td>
+        	<td>Прикрепление</td>
+        	<td>Описание</td>
+        </tr>
+         <tbody id="defectElements" >
+        </tbody>
+        </table>
+      <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
       <script type="text/javascript">
       checkFieldUpdate('typeRead','${typeRead}',1) ;
       checkFieldUpdate('typeAttachment','${typeAttachment}',3) ;
@@ -138,6 +157,75 @@
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       $('aView').innerHTML=$('filename').value ;
+     
+    	var text="";
+      var importDefects = function(event) {
+    	  var input = event.target;
+    	  var reader = new FileReader();
+    	  reader.onload = function() {
+    		  text = reader.result;
+    	//	  alert(text);
+    		  AttachmentService.importDefectsFromXML (text, {
+    			  callback: function(aResult) {
+    				  if (aResult!=null & aResult!="") {
+    					  flushTable();
+    					  aResult=aResult.substring(0,aResult.length-1);
+    					  var arr = aResult.split("#");
+    					  for (var i=0;i<arr.length;i++) {
+    						  addRow(arr[i]);
+    					  }
+    					  $('defectTable').style.display='block';
+    					  
+    				  }
+    			  }
+    		  });
+    	  }
+    	  reader.readAsText(input.files[0],'CP1251');
+    	  
+    	//  AttachmentService.importDefectsFromXML($'file').value;
+      }
+      function flushTable() {
+    	  var table = document.getElementById("defectElements");
+    	  var aRows = table.childNodes;
+    	  if (aRows.length>1) {
+    		  for (var i=0;i<aRows.length;i++) {
+    			  table.deleteRow(0);
+    		  }
+    	  }
+    	  
+      }
+      function addRow (aRow) {
+    	  var aData = aRow.split(":"); // #:pat_id:att_id:Comment 
+     	
+    	  var tbody = document.getElementById('defectElements');
+        var row = document.createElement("TR");
+        row.style.color=""+aData[0];
+        tbody.appendChild(row);
+        
+        // Создаем ячейки в вышесозданной строке 
+        // и добавляем тх 
+        var td1 = document.createElement("TD");
+     
+        var td2 = document.createElement("TD");
+        ///td2.colSpan="2";
+        var td3 = document.createElement("TD");
+        var td4 = document.createElement("TD");
+        
+    	 row.appendChild(td1);
+    	 row.appendChild(td2);
+    	 row.appendChild(td3);
+    	 row.appendChild(td4);
+       
+        // Наполняем ячейки  
+        td1.innerHTML = "<span> "+aData[1]+"</span>";
+        if (aData[2]!=null &&aData[2]!="null"){
+        	td2.innerHTML = "<a href='riams/entityView-mis_patient.do?id="+aData[2]+"' target='_blank'><span>\t"+aData[2]+"</span></a>";
+        }
+        td3.innerHTML = "<a href='riams/entityView-mis_lpuAttachedByDepartment.do?id="+aData[3]+"' target='_blank'><span>\t"+aData[3]+"</span></a>";
+        td4.innerHTML = "<span> "+aData[4]+"</span>";
+       	//td4.innerHTML = "<span> "+aData[3]+"</span>";
+       
+      }
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
     	   	var aMax=chk.length ;
@@ -209,5 +297,8 @@
     	<i>Введите данные </i>
    <%}%>
      
+    <script type="text/javascript">
+   
+   </script> 
   </tiles:put>
 </tiles:insert>
