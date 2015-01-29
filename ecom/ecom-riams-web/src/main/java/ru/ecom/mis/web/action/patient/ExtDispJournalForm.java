@@ -197,4 +197,19 @@ public void setExpRecommend(String aExpRecommend) {
 
 /** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
 private String theExpRecommend;
+
+/** Кол-во записей в файле */
+@Comment("Кол-во записей в файле")
+public String getExpDivideNum() {
+	return theExpDivideNum;
 }
+
+public void setExpDivideNum(String aExpDivideNum) {
+	theExpDivideNum = aExpDivideNum;
+}
+
+/** Кол-во записей в файле */
+private String theExpDivideNum;
+}
+
+
