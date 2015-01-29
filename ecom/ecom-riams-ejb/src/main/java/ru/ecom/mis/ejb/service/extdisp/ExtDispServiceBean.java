@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -74,13 +75,18 @@ public class ExtDispServiceBean implements IExtDispService {
 			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 			StringBuilder sb = new StringBuilder();
-			sb.append("zip -r -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
-			for (int i=0;i<fileNames.length;i++) {
+			sb.append("zip -r -j -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
+			for (int i=0;i<fileNames.length;i++) {				
 				sb.append(workDir).append("/").append(fileNames[i]).append(" ");
+			//	sb.append(fileNames[i]).append(" ");
 			}
-	//		System.out.println(sb) ;
+			//System.out.println("--------dir: "+sb) ;
 	    	try {
+	    //		System.out.println("-------------------EXTDISP_createArchive="+sb.toString());
+	    //		System.out.println(new StringBuilder().append("-------------------EXTDISP_dir=cd ").append(workDir).append("").toString());
+	    //		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
 	    		Runtime.getRuntime().exec(sb.toString());//arraCmd);
+	    	//	Runtime.getRuntime().exec(arraCmd);//arraCmd);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -195,7 +201,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					aWeight, aHeadSize, aAnalysesText,
 					aZOJReccomend, aReccomend, divideNum);
 			
-			return createArchive(theArchiveFileName+"_"+theArchiveFileName.hashCode()+".zip")+"@"+getBadCards();
+			return createArchive(theArchiveFileName+"_"+new Random().nextInt(99999999)+".zip")+"@"+getBadCards();
 		} catch (Exception e) {
 			System.out.println("Exception happens !199_line ");
 			e.printStackTrace();
@@ -541,17 +547,19 @@ public class ExtDispServiceBean implements IExtDispService {
 
 									rootElement.addContent(currPat);
 					if (divideNumber!=0 && numRight%divideNumber==0){ 
-						System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
+						//System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
 						createFile(rootElement);
 						rootElement = new Element("chlidren");
 					}
 				}
 			dbh.close();
-			createFile(rootElement);
-			System.out.println("Всего записей = " + numAll);
-			System.out.println("Всего записей без ошибок= " + numRight);
+			if (!rootElement.getChildren().isEmpty()) {
+				createFile(rootElement);	
+			}
+			System.out.println("ExtDispExport: Всего записей = " + numAll);
+			System.out.println("ExtDispExport: Всего записей без ошибок= " + numRight);
 //			System.out.println();
-			System.out.println("ErrorText= "+badCards.toString());
+			System.out.println("ExtDispExport: ErrorText= "+badCards.toString());
 	//		return theArchiveFileName;
 			}
 			
@@ -582,8 +590,6 @@ public class ExtDispServiceBean implements IExtDispService {
 			outputter.output(pat, fwrt);
 			fwrt.close();
 			aFileNames+=fileName+":";
-
-			//return filename+"@"+badCards.toString();
 		}
 	
 		 catch (Exception ex) {
