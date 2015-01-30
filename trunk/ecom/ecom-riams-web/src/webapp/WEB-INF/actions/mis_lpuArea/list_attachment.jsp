@@ -119,13 +119,13 @@
        </msh:row>
        <msh:row>
       	 <td colspan="1">      	
-            <input type="file" name="filenameDefect" id="filenameDefect" size="50" value="" onchange="importDefects(event)">
+            <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
            <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
        	 </td>
        </msh:row>
        
        <msh:row>
-       	<msh:hidden property="filename"/>
+       	<msh:hidden property="filename" />
        	<td colspan="4">
        		Файл <span id='aView'></span>
        	</td>
@@ -219,9 +219,9 @@
         // Наполняем ячейки  
         td1.innerHTML = "<span> "+aData[1]+"</span>";
         if (aData[2]!=null &&aData[2]!="null"){
-        	td2.innerHTML = "<a href='riams/entityView-mis_patient.do?id="+aData[2]+"' target='_blank'><span>\t"+aData[2]+"</span></a>";
+        	td2.innerHTML = "<a href='/riams/entityView-mis_patient.do?id="+aData[2]+"' target='_blank'><span>\t"+aData[2]+"</span></a>";
         }
-        td3.innerHTML = "<a href='riams/entityView-mis_lpuAttachedByDepartment.do?id="+aData[3]+"' target='_blank'><span>\t"+aData[3]+"</span></a>";
+        td3.innerHTML = "<a href='/riams/entityView-mis_lpuAttachedByDepartment.do?id="+aData[3]+"' target='_blank'><span>\t"+aData[3]+"</span></a>";
         td4.innerHTML = "<span> "+aData[4]+"</span>";
        	//td4.innerHTML = "<span> "+aData[3]+"</span>";
        
