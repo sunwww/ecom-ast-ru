@@ -51,8 +51,8 @@ left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join extdispservice eds on eds.serviceType_id=edps.serviceType_id and eds.dtype='ExtDispVisit'
 left join VocExtDispService veds on veds.id=edps.servicetype_id
-left join WorkFunction wf on wf.id=eds.workFunction_id
-left join VocWorkFunction vwf on vwf.id= wf.workfunction_id
+left join VocWorkFunction vwf on vwf.code= veds.workfunctioncode
+left join WorkFunction wf on wf.workFunction_id=vwf.id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join Vocidc10 mkb on mkb.id=eds.idc10_id
@@ -112,7 +112,7 @@ left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 
-left join VocWorkFunction vwf on vwf.id=veds.workFunction_id
+left join VocWorkFunction vwf on vwf.code=veds.workFunctionCode
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
