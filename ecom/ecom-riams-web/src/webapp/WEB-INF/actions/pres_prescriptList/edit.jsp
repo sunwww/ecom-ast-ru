@@ -338,7 +338,7 @@
 			PrescriptionService.getDuplicatePrescriptions($('medCase').value, str,{
 				callback: function(aResult) {
 					if (aResult.length>0){
-						var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
+						var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, назначить всё равно?";
 							if (!confirm (aText)) {							
 								document.getElementById('submitButton').disabled=false;
 								document.getElementById('submitButton').value='Создать';
@@ -391,7 +391,7 @@
 					if (document.getElementById(type+'Service'+checkNum)) {
 						if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
 						//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
-								if (confirm("В этом листе назначений уже назначено такое исследование, все равно добавить?")) {
+								if (confirm("В этом листе назначений уже назначено это исследование, ВЫ УВЕРЕНЫ, что хотите назначить его еще раз?")) {
 									break; 
 								}else {
 									return;
@@ -466,9 +466,9 @@
 	    var dt="<input id='"+type+"Service"+num+"' value='"+aLabID+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
 	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+aLabCabinet+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
 	    
-	    td2.innerHTML = dt+"<span>"+aLabName+"</span>" ;
+	    td2.innerHTML = dt+"<span>Исследование: <b>"+aLabName+"</b></span>" ;
 	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+aLabDate+"' size = '10' />";
-	   	td2.innerHTML += dt2+"<span>. Кабинет: "+aLabCabinet+" "+aLabCabinetName+"</span>" ;
+	   	td2.innerHTML += dt2+"<span>. Кабинет: "+aLabCabinetName+"</span>" ;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 	   	new dateutil.DateField($(type+'Date'+num));
 					   
@@ -708,19 +708,20 @@
         	<msh:separator label="Режим" colSpan="10"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="modeForm.planStartDate" label="Дата начала" size="7"/>
+        	<msh:textField property="modeForm.planStartDate" label="Дата начала" size="10"/>
           <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Диета" colSpan="10"/>
         </msh:row>
         <msh:row guid="b556ehb-b971-441e-9a90-53217">
-        	<msh:textField property="dietForm.planStartDate" label="Дата начала" size="7"/>
+        	<msh:textField property="dietForm.planStartDate" label="Дата начала" size="10"/>
           <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
           property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         </msh:panel>
-        <%-- -------------------------Начало блока "ЛЕкарственное обеспечение" --%>
+        <%-- -------------------------Начало блока "Лекарственное обеспечение" --%>
+        <msh:ifInRole roles="/Policy/Mis/Prescription/Drugs">
           <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">  
         <msh:panel styleId="border">
         <msh:row>
@@ -734,7 +735,7 @@
         		<td>Продолжительность</td>
         </msh:row>
 	        <msh:row guid="b556ehb-b971-441e-9a90-5194a8019c07">
-	          <msh:textField property="drugForm1.planStartDate" label="Дата начала" size="7" hideLabel="true"/>
+	          <msh:textField property="drugForm1.planStartDate" label="Дата начала" size="10" hideLabel="true"/>
 	          <msh:autoComplete vocName="vocDrugClassify" property="drugForm1.drug" label="Лек. препарат" guid="3a3eg4d1b-8802-467d-b205-715fb379b018" size="40" fieldColSpan="1" hideLabel="true"/>
 	          <msh:textField property="drugForm1.frequency" label="Частота" size="7" hideLabel="true" />
 	          <msh:textField label="Прием" property="drugForm1.amount" size="3" hideLabel="true"/>
@@ -757,6 +758,7 @@
         </table>
 	    </msh:panel>
 	    </msh:ifFormTypeIsCreate>
+	    </msh:ifInRole>
         <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
         <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
@@ -771,7 +773,7 @@
     		
 			<tr>
 			<msh:textField property="labDate" label="Дата " size="10"/>
-			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
@@ -779,8 +781,7 @@
             </msh:ifFormTypeIsNotView>
             </tr>
             <tr>
-    		
-			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+				<msh:autoComplete property="labCabinet" label="Место забора" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
 			</tr>
            </tbody>
     		</table>
