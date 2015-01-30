@@ -223,7 +223,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			NamingException {
 		int divideNumber = Integer.valueOf(divideNum);
 		Statement statement = null;
-		Element rootElement = new Element("chlidren"); 
+		Element rootElement = new Element("children"); 
 		badCards.setLength(0);
 		try
 		{
