@@ -58,11 +58,11 @@
 	                   		Отчет 16ВН</msh:link>
 	                   </li>
 	                   <li>
-	                   		<msh:link action="pres_journal.do" roles="/Policy/Mis/Journal/LabSurvey/OneDepartment">
-	                   		Отчет по направлениям на лаб. исследования</msh:link>
+	                   		<msh:link action="pres_journal.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment">
+	                   		Журнал забора крови</msh:link>
 	                   </li>
 	                   <li>
-	                   		<msh:link action="pres_journal_by_department.do" roles="/Policy/Mis/Journal/LabSurvey">
+	                   		<msh:link action="pres_journal_by_department.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DirectFromDepartment">
 	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
 	                   </li>
 					</ul>
