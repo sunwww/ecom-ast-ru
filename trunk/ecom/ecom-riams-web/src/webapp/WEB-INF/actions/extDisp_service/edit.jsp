@@ -15,7 +15,7 @@
 	
  max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,case when veds.isVisit='1' then 'ExtDispExam' else 'ExtDispVisit' end as edsdtype
+,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
 , to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
 , case when count(case when eds.card_id=edc.id and eds.isPathology='1' then '1' else null end)>0 then 'checked' else null end
 as servcheck
@@ -35,34 +35,34 @@ group by veds.id,veds.code,veds.name,veds.isVisit
 order by veds.id,veds.name"/>
 	<ecom:webQuery name="getServiceVisit" nativeSql="
 	select 
- max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
+ max(eds.id) as serviceid
 , veds.id as vedsid,'<b>'||veds.code||'</b>' as vedscode,veds.name as vedsname 
-,case when veds.isVisit='1' then 'ExtDispExam' else 'ExtDispVisit' end as edsdtype
-, to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
-,list(case when eds.card_id=edc.id then eds.recommendation else null end) as edsRecommendation
-, case when count(case when eds.card_id=edc.id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
+,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
+, to_char(max( eds.serviceDate ),'dd.mm.yyyy') as servicedate
+,list(eds.recommendation) as edsRecommendation
+, case when count(case when eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
 ,veds.workfunctioncode 
-,max(case when (eds.card_id=edc.id and eds.workfunction_id is not null) then cast(eds.workfunction_id as varchar) else '' end) as edsWF
-,max(case when (eds.card_id=edc.id and eds.workfunction_id is not null) then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename else ' ' end) as wfname
-,max(case when (eds.card_id=edc.id and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
-,max(case when (eds.card_id=edc.id and eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name
+,max(case when (eds.workfunction_id is not null) then cast(eds.workfunction_id as varchar) else '' end) as edsWF
+,max(case when (eds.workfunction_id is not null) then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename else '' end) wfname
+,max(case when (and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
+,max(case when (and eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name
 from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
-left join extdispservice eds on eds.dtype='ExtDispVisit' or eds.card_id=edc.id
+left join extdispservice eds on eds.dtype='ExtDispVisit' and eds.card_id=edc.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
-left join VocWorkFunction vwf on vwf.code= veds.workfunctioncode
-left join WorkFunction wf on wf.workFunction_id=vwf.id
+left join WorkFunction wf on wf.id=eds.workfunction_id
+left join VocWorkFunction vwf on vwf.id= wf.workfunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join Vocidc10 mkb on mkb.id=eds.idc10_id
 where edc.id='${param.id}' 
+and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
 and veds.id is not null
-and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
 
 group by veds.id,veds.code,veds.name
 ,veds.isVisit,veds.workfunctioncode
@@ -107,15 +107,20 @@ select case when 0=1 then '1' else null end
 ,veds.code as vedscode
 ,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
-,cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1)),veds.workfunctioncode as vedsworkfunction,cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1))
+,cast('' as varchar(1))
+,cast('' as varchar(1))
+,cast('' as varchar(1))
+,veds.workfunctioncode as vedsworkfunction
+,cast('' as varchar(1))
+,cast('' as varchar(1))
+,cast('' as varchar(1))
+,cast('' as varchar(1))
 
  from ExtDispCard edc
  left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
-
-left join VocWorkFunction vwf on vwf.code=veds.workFunctionCode
 where edc.id='${param.id}' and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and veds.isVisit='1'
 and edc.ageGroup_id=edps.ageGroup_id
