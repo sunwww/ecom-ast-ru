@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,6 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@Comment("Справочник услуг дополнительной диспансеризации")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "WorkFunctionCode" }) })
 public class VocExtDispService extends VocBaseEntity{
 		/** Визит */
 		@Comment("Визит")
