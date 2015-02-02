@@ -68,9 +68,13 @@ function createExtDispVisitService(aCtx,aParams){
 		sql=sql+"serviceDate="+serviceDate+",isEtdccSuspicion='"+isEtdccSuspicion+"',recommendation='"+recommendation+"' ";
 		if (workFunction!=null && workFunction!="" && workFunction!="null") {
 			sql=sql+", workfunction_id='"+workFunction+"'";
+		} else {
+			sql=sql+", workfunction_id=null";
 		}
 		if (Idc10!=null && Idc10!="" && Idc10!="null") {
 			sql+=", idc10_id='"+Idc10+"' ";
+		} else {
+			sql+=", idc10_id=null ";
 		}
 				sql+="where id="+id ;
 		//throw sql ;
