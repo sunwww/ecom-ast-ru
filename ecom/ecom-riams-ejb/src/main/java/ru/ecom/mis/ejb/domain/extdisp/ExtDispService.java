@@ -23,6 +23,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 	@AIndexes({
 		@AIndex(properties="card")
+		,@AIndex(properties="workFunction")
+		,@AIndex(properties="serviceType")
+		,@AIndex(properties="idc10")
 	    }) 
 public class ExtDispService extends BaseEntity{
 	/**
