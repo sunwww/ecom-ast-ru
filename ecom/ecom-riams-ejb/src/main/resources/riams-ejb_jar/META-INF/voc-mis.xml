@@ -4,7 +4,7 @@
 		from="workFunction as wf"
 		parent="vwf.code = :parent"
 		nameId='wf.id'
-		queryAppend="wf.dtype = 'PersonalWorkFunction' " 
+		queryAppend="wf.dtype = 'PersonalWorkFunction' and (archival is null or archival='0')" 
 		join="left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id
 		left join Worker as w on w.id=wf.worker_id
 		left join Patient as p on p.id=w.person_id" 
