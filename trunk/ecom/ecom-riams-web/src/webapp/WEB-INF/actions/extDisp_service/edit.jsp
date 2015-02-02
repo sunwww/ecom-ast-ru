@@ -23,9 +23,10 @@ as servcheck
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
-left join extdispservice eds on eds.serviceType_id=edps.serviceType_id and eds.dtype='ExtDispExam'
+left join extdispservice eds on eds.dtype='ExtDispExam' and eds.card_id=edc.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' 
+and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and veds.id is not null
@@ -49,7 +50,7 @@ from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
 left join ExtDispPlanService edps on edps.plan_id=edp.id
-left join extdispservice eds on eds.serviceType_id=edps.serviceType_id and eds.dtype='ExtDispVisit'
+left join extdispservice eds on eds.dtype='ExtDispVisit' or eds.card_id=edc.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 left join VocWorkFunction vwf on vwf.code= veds.workfunctioncode
 left join WorkFunction wf on wf.workFunction_id=vwf.id
@@ -61,6 +62,8 @@ and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
 and veds.id is not null
+and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
+
 group by veds.id,veds.code,veds.name
 ,veds.isVisit,veds.workfunctioncode
 order by veds.id,veds.name
@@ -104,7 +107,7 @@ select case when 0=1 then '1' else null end
 ,veds.code as vedscode
 ,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
-,'','','',veds.workfunctioncode as vedsworkfunction,'','','',''
+,cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1)),veds.workfunctioncode as vedsworkfunction,cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1)),cast('' as varchar(1))
 
  from ExtDispCard edc
  left join Patient pat on pat.id=edc.patient_id
