@@ -2,14 +2,17 @@
 <voc id="workFunctionByCode" type="NativeVocService">
 	<NativeVocService
 		from="workFunction as wf"
-		parent="vwf.code = :parent"
+		parent="vedsf.name = :parent"
 		nameId='wf.id'
 		queryAppend="wf.dtype = 'PersonalWorkFunction' and (archival is null or archival='0')" 
 		join="left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id
 		left join Worker as w on w.id=wf.worker_id
-		left join Patient as p on p.id=w.person_id" 
+		left join Patient as p on p.id=w.person_id
+		left join VocExtDispServiceFunction vedsf on vedsf.code=vwf.code
+		left join MisLpu ml on ml.id=w.lpu_id
+		" 
 		order=""
-		names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename"
+		names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename||' ('||ml.name||')' "
     	queried="upper(p.lastname) like upper(:query)"
 	/>
 </voc>
@@ -21,6 +24,17 @@
 		join="" order=""
 		names="vpt.code||' '|| vpt.name"
 		queried=" upper(vpt.name) like upper(:query) or upper(vpt.code) like upper(:query) "
+	/>
+</voc>
+<voc id="vocMkbAdc" type="NativeVocService">
+	<NativeVocService
+		from="VocMkbAdc vma"
+		nameId="vma.code"
+		queryAppend="" 
+		parent=" mkb.id=:parent "
+		join="left join VocIdc10 mkb on mkb.code=vma.name" order=""
+		names="'('||vma.code||')'"
+		queried=" upper(vpt.code) like upper(:query) "
 	/>
 </voc>
 <voc id="funcMedService" type="NativeVocService">
