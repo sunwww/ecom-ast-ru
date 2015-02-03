@@ -229,9 +229,9 @@ order by veds.id,veds.name"
 		out.println(i+1) ;
 		out.print("</td>") ;
 		out.print("<td>") ;
-		out.println("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
-		out.println("<input type='hidden' name='visitServiceTypeName"+i+"' id='visitServiceTypeName"+i+"' value='");out.print(wqr.get3()) ;out.print("'/>") ;
-		out.println("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
+		out.print("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
+		out.print("<input type='hidden' name='visitServiceTypeName"+i+"' id='visitServiceTypeName"+i+"' value='");out.print(wqr.get3()) ;out.print("'/>") ;
+		out.print("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
