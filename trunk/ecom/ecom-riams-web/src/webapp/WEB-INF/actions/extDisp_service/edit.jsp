@@ -36,16 +36,19 @@ order by veds.id,veds.name"/>
 	<ecom:webQuery name="getServiceVisit" nativeSql="
 	select 
  max(eds.id) as serviceid
-, veds.id as vedsid,'<b>'||veds.code||'</b>' as vedscode,veds.name as vedsname 
+, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
 , to_char(max( eds.serviceDate ),'dd.mm.yyyy') as servicedate
 ,list(eds.recommendation) as edsRecommendation
 , case when count(case when eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
 ,veds.workfunctioncode 
-,max(case when (eds.workfunction_id is not null) then cast(eds.workfunction_id as varchar) else '' end) as edsWF
-,max(case when (eds.workfunction_id is not null) then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename else '' end) wfname
-,max(case when (and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
-,max(case when (and eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name
+,case when max(eds.workfunction_id) is not null then max(cast(eds.workfunction_id as varchar)) else 
+	case when (max(eds.id)is null and count(wf1.id)='1') then max(cast(wf1.id as varchar)) else '' end end as edsWF
+
+,case when max(eds.workfunction_id)is not null then max(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name) else 
+	case when (max(eds.id)is null and count(wf1.id)='1') then max(vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename || ' '||ml1.name) else '' end end as wfname
+,max(case when (eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
+,max(case when (eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name
 from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -55,8 +58,14 @@ left join VocExtDispService veds on veds.id=edps.servicetype_id
 left join WorkFunction wf on wf.id=eds.workfunction_id
 left join VocWorkFunction vwf on vwf.id= wf.workfunction_id
 left join Worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=w.lpu_id
 left join Patient wp on wp.id=w.person_id
 left join Vocidc10 mkb on mkb.id=eds.idc10_id
+left join VocWorkFunction vwf1 on vwf1.code = veds.workfunctioncode
+left join WorkFunction wf1 on wf1.workfunction_id=vwf1.id and (wf1.archival is null or wf1.archival='0')
+left join Worker w1 on w1.id=wf1.worker_id
+left join mislpu ml1 on ml1.id=w1.lpu_id
+left join Patient wp1 on wp1.id=w1.person_id
 where edc.id='${param.id}' 
 and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
@@ -69,8 +78,18 @@ group by veds.id,veds.code,veds.name
 order by veds.id,veds.name
 
 	"/>
+	<ecom:webQuery maxResult="1" name="getCardWorkfunction" nativeSql="select vwf.code, wf.id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name
+	from extdispcard edc
+	left join workfunction wf on wf.id=edc.workfunction_id 
+	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+	left join worker w on w.id=wf.worker_id
+	left join mislpu ml on ml.id=w.lpu_id
+	left join patient wp on wp.id=w.person_id
+	where edc.id='${param.id}'
+	" /> 
 	<%List listExam = (List)request.getAttribute("getServiceExam") ;
 	List listVisit = (List)request.getAttribute("getServiceVisit") ;
+	List cardWorkfunction = (List) request.getAttribute("getCardWorkfunction");
 	if (listExam!=null && !listExam.isEmpty()) {
 	} else {
 		%>
@@ -107,14 +126,14 @@ select case when 0=1 then '1' else null end
 ,veds.code as vedscode
 ,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as dtype
-,cast('' as varchar(1))
-,cast('' as varchar(1))
-,cast('' as varchar(1))
+,cast('' as varchar(1)) as servicedate
+,cast('' as varchar(1)) as recommend
+,cast('' as varchar(1)) as suspicion
 ,veds.workfunctioncode as vedsworkfunction
-,cast('' as varchar(1))
-,cast('' as varchar(1))
-,cast('' as varchar(1))
-,cast('' as varchar(1))
+,cast('' as varchar(1)) as wfID
+,cast('' as varchar(1)) as wfName
+,cast('' as varchar(1)) as Idc10Id
+,cast('' as varchar(1)) as Idc10Name
 
  from ExtDispCard edc
  left join Patient pat on pat.id=edc.patient_id
@@ -167,8 +186,8 @@ order by veds.id,veds.name"
 		out.println(i+1) ;
 		out.print("</td>") ;
 		out.print("<td>") ;
-		out.println("<input type='hidden' name='examServiceType"+i+"' id='examServiceType"+i+"' value='");out.println(wqr.get2()) ;out.print("'/>") ;
-		out.println(wqr.get3()) ;out.print("</td>") ;
+		out.println("<input type='hidden' name='examServiceType"+i+"' id='examServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
+		out.println("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='examServiceDate"+i+"' id='examServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
@@ -185,7 +204,8 @@ order by veds.id,veds.name"
 		
 		
 		
-		if (sizeVisit>0) {
+		if (sizeVisit>0) {			
+			WebQueryResult cardWQR = (WebQueryResult) cardWorkfunction.get(0);
 	%>
 		<tr><td><h2>Посещения</h2></td></tr>
 	<%
@@ -209,8 +229,9 @@ order by veds.id,veds.name"
 		out.println(i+1) ;
 		out.print("</td>") ;
 		out.print("<td>") ;
-		out.println("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.println(wqr.get2()) ;out.print("'/>") ;
-		out.println(wqr.get3()) ;out.print("</td>") ;
+		out.println("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
+		out.println("<input type='hidden' name='visitServiceTypeName"+i+"' id='visitServiceTypeName"+i+"' value='");out.print(wqr.get3()) ;out.print("'/>") ;
+		out.println("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
@@ -221,13 +242,23 @@ order by veds.id,veds.name"
 		out.print("<td>") ;out.println("<input type='checkbox' name='visitIsEtdccSuspicion"+i+"' id='visitIsEtdccSuspicion"+i+"' ");
 		out.print(wqr.get8()!=null?wqr.get8():"");out.print(">") ;out.print("</td>") ;
 		/* Добавляем рабочую функцию врача */
+		if (wqr.get9().equals(cardWQR.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
+			out.print("<td title='Врач' class='label' colspan='1' size='10'><label id='lpuLabel' for='workFunctionName'>Врач:</label></td>"+
+					"<td colspan='2' class='workFunction'><div><input size='1' name='workFunction"+i+"' value='"+(cardWQR.get2()!=null?cardWQR.get2():"")+"' "+
+			"id='workFunction"+i+"' type='hidden'><input autocomplete='off' title='workFunction' name='workFunction"+i+"Name' value='"+cardWQR.get3()+"' id='workFunction"+i+"Name'"+
+			" size='40' class='autocomplete horizontalFill' type='text'><input size='1' name='workFunctionCode"+i+"' value='"+wqr.get9()+"' "+
+			"id='workFunctionCode"+i+"' type='hidden'><div style='visibility: hidden; display: none;'"+
+			" id='workFunction"+i+"Div'></div></div></td>");
+		} else {
 		out.print("<td title='Врач' class='label' colspan='1' size='10'><label id='lpuLabel' for='workFunctionName'>Врач:</label></td>"+
 				"<td colspan='2' class='workFunction'><div><input size='1' name='workFunction"+i+"' value='"+(wqr.get10()!=null?wqr.get10():"")+"' "+
 		"id='workFunction"+i+"' type='hidden'><input autocomplete='off' title='workFunction' name='workFunction"+i+"Name' value='"+wqr.get11()+"' id='workFunction"+i+"Name'"+
 		" size='40' class='autocomplete horizontalFill' type='text'><input size='1' name='workFunctionCode"+i+"' value='"+wqr.get9()+"' "+
 		"id='workFunctionCode"+i+"' type='hidden'><div style='visibility: hidden; display: none;'"+
 		" id='workFunction"+i+"Div'></div></div></td>");
+		
 		/* ---Добавляем рабочую функцию врача */
+		}
 		/* Диагноз  */
 		out.print("<td title='Диагноз' class='label' colspan='1' size='10'><label id='IdcLabel' for='IdcName'>Диагноз:</label></td>"+
 				"<td colspan='1' class='Idc10'><div><input size='1' name='Idc10"+i+"' value='"+wqr.get12()+"' "+
@@ -283,7 +314,8 @@ order by veds.id,veds.name"
 			out.print(wf+".setNameFieldId('workFunction"+i+"Name') ;\n");
 			out.print(wf+".setDivId('workFunction"+i+"Div') ;\n");
 			out.print(wf+".build() ;\n");
-			out.print(wf+".setParentId($('workFunctionCode"+i+"').value); \n");
+//			out.print(wf+".setParentId($('workFunctionCode"+i+"').value); \n");
+			out.print(wf+".setParentId($('visitServiceTypeName"+i+"').value); \n");
 
 			//Diagnosis Autocomplete
 			String mkb="Idc10"+i+"Autocomplete";
