@@ -721,7 +721,6 @@
         </msh:row>
         </msh:panel>
         <%-- -------------------------Начало блока "Лекарственное обеспечение" --%>
-     <%--    <msh:ifInRole roles="/Policy/Mis/Prescription/Drugs"> --%>
          <div style="display: none">
           <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">  
         <msh:panel styleId="border">
@@ -760,7 +759,6 @@
 	    </msh:panel>
 	    </msh:ifFormTypeIsCreate>
 	    </div>
-	    <%-- </msh:ifInRole> --%>
         <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
         <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
        <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
