@@ -103,7 +103,14 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 									sb.append("orange:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
 								}
 							} else if (patientId!=null && patientId!=0){ //Не дефект
+								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik);
+								if (att!=null) {
+									att.setDefectText("");
+									att.setDefectPeriod("");
+									theManager.persist(att);
+								}
 								sb.append("green:"+i+":"+patientId+"::Прикрепление принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+								
 							} else {
 								sb.append("black:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
 							}
