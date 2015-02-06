@@ -117,7 +117,7 @@ if (request.getParameter("short")==null) {
 				sqlAdd.append(usernameSearch).append("='").append(idPar).append("'");
 			}
 			
-			sqlAdd.append(" and ").append(dateSearch).append(" between to_date('").append(beginDate).append("','mm.dd.yyyy') and to_date('").append(finishDate).append("','mm.dd.yyyy') ") ;
+			sqlAdd.append(" and ").append(dateSearch).append(" between to_date('").append(beginDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy') ") ;
 			sqlAdd.append(ActionUtil.setParameterFilterSql("dispType","edc.dispType_id", request)) ;
 			request.setAttribute("sqlAdd", sqlAdd.toString()) ;
 		%>
@@ -139,7 +139,7 @@ if (request.getParameter("short")==null) {
 			</msh:section>
 		<%} else {
 			StringBuilder sqlAdd = new StringBuilder() ;
-			sqlAdd.append(dateSearch).append(" between to_date('").append(beginDate).append("','mm.dd.yyyy') and to_date('").append(finishDate).append("','mm.dd.yyyy') ") ;
+			sqlAdd.append(dateSearch).append(" between to_date('").append(beginDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy') ") ;
 			request.setAttribute("sqlAdd", sqlAdd.toString()) ;
 		if (dispType==null || dispType.equals("")||dispType.equals("0")){ %>
 			<msh:section> 																		<!--Группировка по типам ДД  -->
