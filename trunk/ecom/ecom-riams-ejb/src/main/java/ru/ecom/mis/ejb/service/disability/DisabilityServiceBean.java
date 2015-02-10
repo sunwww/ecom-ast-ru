@@ -42,8 +42,10 @@ import ru.ecom.mis.ejb.domain.disability.DisabilityReport;
 import ru.ecom.mis.ejb.domain.disability.RegimeViolationRecord;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
@@ -64,20 +66,32 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
-    public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
-    	if (aDateFinish==null || aDateFinish.equals("")) {
-    		aDateFinish = aDateStart;
-    	}
-    	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
-    	return exportLN(sqlAdd, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aPacketNumber);
+    public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aLpu, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
+    	if (aLpu!=null&&!aLpu.equals("")) {
+    		MisLpu lpu = theManager.find(MisLpu.class, Long.valueOf(aLpu));
+    		if (aWorkFunction!=null&&!aWorkFunction.equals("")){
+    			PersonalWorkFunction wf = (PersonalWorkFunction) theManager.find(WorkFunction.class, Long.valueOf(aWorkFunction));
+    			Patient pat = wf.getWorker().getPerson();
+    			aWorkFunction = pat.getLastname()+" "+pat.getFirstname()+" "+pat.getMiddlename();
+    		} else {
+    			aWorkFunction="MedOS_Team";
+    			}
+    		if (aDateFinish==null || aDateFinish.equals("")) {
+        		aDateFinish = aDateStart;
+        	}
+    		
+        	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
+        	return exportLN(sqlAdd, aSocCode, lpu.getPhone(), lpu.getEmail(), lpu.getOgrn().toString(), aWorkFunction, aPacketNumber);
+    	} else return null;
+    	
     }
     
     public String exportLNByNumber (String aNumber) throws ParseException, NamingException {
     	String sqlAdd = "dd.number = '"+aNumber+"' ";
-    	return exportLN(sqlAdd,"","","","","1");
+    	return exportLN(sqlAdd,"","","","","","1");
     }
     
-    public String exportLN(String sqlAdd, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
+    public String exportLN(String sqlAdd, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
 	String SQLreq; 
 		
 	SQLreq ="select dd.id as DDID"+
@@ -161,13 +175,13 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			System.out.println("Поиск записей:");
 			System.out.println(SQLreq);
 			
-			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aPacketNumber);
+			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aWorkFunction, aPacketNumber);
 	}
     
     private DataSource findDataSource() throws NamingException {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
-    public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
+    public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
 		Statement statement = null;
 			
 			Element rootElement = new Element("LPU");
@@ -175,7 +189,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			Element rowSet = new Element("ROWSET");
 			rowSet.setAttribute("LPU_OGRN",aOgrnCode).setAttribute("email", aSocEmail)
 				.setAttribute("phone", aSocPhone).setAttribute("version_software","02.2015")
-				.setAttribute("author","MedOS_team").setAttribute("software","MedOS")
+				.setAttribute("author",aWorkFunction).setAttribute("software","MedOS")
 				.setAttribute("version","");
 			rootElement.addContent(rowOperation.addContent("SET"));
 			rootElement.addContent(rowSet);
@@ -992,4 +1006,5 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		return null;
 	}
 	@Resource SessionContext theContext ;
+
 }
