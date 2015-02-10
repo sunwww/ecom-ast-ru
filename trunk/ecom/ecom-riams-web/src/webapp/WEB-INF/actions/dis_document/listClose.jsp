@@ -277,8 +277,12 @@
     		alert ('Заполните дату начала!');
     		return;
     	}
-    	if ($('socCode').value=='' ) {
-    		alert ('Заполните рег. номер в ФСС!');
+    	if ($('lpu').value=='') {
+    		alert ('Выберите ЛПУ!');
+    		return;    		
+    	}
+    	if ($('workFunction').value=='') {
+    		alert ('Выберите исполнителя!');
     		return;
     	}
 		$('aView').innerHTML="Подождите..." ;
