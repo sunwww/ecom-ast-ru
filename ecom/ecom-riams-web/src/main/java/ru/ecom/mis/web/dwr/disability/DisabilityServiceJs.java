@@ -16,6 +16,18 @@ public class DisabilityServiceJs {
 		return service.closeDisabilityDocument(aDocId, aReasonId,aSeries,aNumber) ;
 	}
 	
+	public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber, HttpServletRequest aRequest) throws Exception {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
+		
+		return service.exportLNByDate(aDateStart, aDateFinish,  aSocCode,  aSocPhone,  aSocEmail,  aOgrnCode, aPacketNumber );
+	}
+	
+	public String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
+		
+		return service.exportLNByNumber(aNumber);
+	}
+	
 	public String getDataByClose(Long aDocId,HttpServletRequest aRequest) throws Exception {
 		System.out.println("doc="+aDocId) ;
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
