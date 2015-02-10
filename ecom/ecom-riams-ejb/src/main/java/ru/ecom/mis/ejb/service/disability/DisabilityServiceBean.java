@@ -812,7 +812,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	
     	if (doc.getNumber()!=null) ret.append(doc.getNumber()) ;
     	ret.append("#") ;
-    	if (doc.getCloseReason()!=null) {
+  		if (doc.getOtherCloseDate()!=null) {
+			ret.append(DateFormat.formatToDate(doc.getOtherCloseDate())) ;
+		}
+  		ret.append("#") ;
+  		if (doc.getCloseReason()!=null) {
     		ret.append(doc.getCloseReason().getId()).append("#").append(doc.getCloseReason().getName()) ;
     	} else {
     		ret.append(0).append("#Выберите причину закрытия") ;
@@ -821,7 +825,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	
     }
     
-    public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber) {
+    public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate) {
 		DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocumentId) ;
 		if (doc.getDateTo()==null) {
 			throw new IllegalStateException("Нельзя закрыть документ, так как есть не закрытое продление!") ;  
@@ -831,6 +835,25 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		doc.setSeries(aSeries) ;
 		doc.setNumber(aNumber) ;
 		doc.setIsClose(Boolean.TRUE) ;
+		if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+				||reason.getCodeF().equals("33")
+				||reason.getCodeF().equals("34")
+				||reason.getCodeF().equals("36")
+				)) {
+			if (aOtherCloseDate!=null && !aOtherCloseDate.equals("")) {
+				try {
+					Date d = DateFormat.parseSqlDate(aOtherCloseDate) ;
+					doc.setOtherCloseDate(d) ;
+				} catch(Exception e) {
+					e.printStackTrace() ;
+					throw new IllegalStateException("Нельзя закрыть документ, так как причине закрытия с кодом "+reason.getCodeF()+" должна быть указана корректная иная дата закрытия!") ;
+				}
+			} else {
+				throw new IllegalStateException("Нельзя закрыть документ, так как причине закрытия с кодом "+reason.getCodeF()+" должна быть указана иная дата закрытия!") ;
+			}
+		} else {
+			doc.setOtherCloseDate(null) ;
+		}
 		theManager.persist(doc) ;
 		return reason.getName() ;
 	}
