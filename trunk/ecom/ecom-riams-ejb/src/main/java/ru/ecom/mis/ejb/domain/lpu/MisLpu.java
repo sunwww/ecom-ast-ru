@@ -478,5 +478,12 @@ public class MisLpu extends BaseEntity {
 
 	/** Автогенерация расписания */
 	private Boolean theAutoGeneration;
+	
+	/** Номер в ФСС */
+	public String getSocCode() {return theSocCode;}
+	public void setSocCode(String aSocCode) {theSocCode = aSocCode;}
+
+	/** Номер в ФСС */
+	private String theSocCode;
 
 }
