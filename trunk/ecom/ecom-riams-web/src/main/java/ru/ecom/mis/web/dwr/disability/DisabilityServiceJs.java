@@ -16,10 +16,10 @@ public class DisabilityServiceJs {
 		return service.closeDisabilityDocument(aDocId, aReasonId,aSeries,aNumber) ;
 	}
 	
-	public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aLpu, String aWorkFunction, String aPacketNumber, HttpServletRequest aRequest) throws Exception {
+	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		
-		return service.exportLNByDate(aDateStart, aDateFinish,  aSocCode,  aLpu, aWorkFunction,  aPacketNumber );
+		return service.exportLNByDate(aDateStart, aDateFinish,  aLpu, aWorkFunction,  aPacketNumber );
 	}
 	
 	public String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
