@@ -283,7 +283,7 @@
     	}
 		$('aView').innerHTML="Подождите..." ;
 		$('aViewTD').style.display="block";
-    	DisabilityService.exportLNByDate($('beginDate').value, $('endDate').value, $('socCode').value, $('lpu').value, $('packetNumber').value, {
+    	DisabilityService.exportLNByDate($('beginDate').value, $('endDate').value, $('lpu').value, $('workFunction').value, $('packetNumber').value, {
     		callback: function (aResult) {
     			if (aResult!=null) {
     				var aData = aResult.split("@");
