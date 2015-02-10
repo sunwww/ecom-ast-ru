@@ -471,9 +471,17 @@ public class MisLpuForm extends IdNameEntityForm {
 	private Boolean theAutoGeneration;
     /** Код федеральный */
 	@Comment("Код федеральный")
+	@Persist
 	public String getCodef() {return theCodef;}
 	public void setCodef(String aCodef) {theCodef = aCodef;}
 
 	/** Код федеральный */
 	private String theCodef;
+	/** Номер в ФСС */
+	@Persist
+	public String getSocCode() {return theSocCode;}
+	public void setSocCode(String aSocCode) {theSocCode = aSocCode;}
+
+	/** Номер в ФСС */
+	private String theSocCode;
 }
