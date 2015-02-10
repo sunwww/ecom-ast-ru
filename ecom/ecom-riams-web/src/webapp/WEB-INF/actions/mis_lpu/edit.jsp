@@ -54,8 +54,10 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="registrationInterval" label="Интервал регистр." horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="codef" label='№реестра' horizontalFill="true" />
-            
+        	<msh:textField property="socCode" label="Код в ФСС"/>
         </msh:row>
         <msh:row guid="0985a3e5-06a4-4245-b652-03e5fc74acf6">
           <msh:textField property="inn" label="ИНН" guid="01e13e55-f966-4eb7-815b-bcaf82617a05" />
