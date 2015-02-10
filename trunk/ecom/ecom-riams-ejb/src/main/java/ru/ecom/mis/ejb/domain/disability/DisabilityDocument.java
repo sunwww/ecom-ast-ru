@@ -466,5 +466,13 @@ public class DisabilityDocument extends BaseEntity{
 		}
 		return  res.toString();
 	}
+	
+	/** Дата иное */
+	@Comment("Дата иное")
+	public Date getOtherCloseDate() {return theOtherCloseDate;}
+	public void setOtherCloseDate(Date aOtherCloseDate) {theOtherCloseDate = aOtherCloseDate;}
+
+	/** Дата иное */
+	private Date theOtherCloseDate;
 
 }
