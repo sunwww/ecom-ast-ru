@@ -80,15 +80,4 @@ public class DisabilitySearchForm extends BaseValidatorForm {
 
 	/** Исполнитель */
 	private Long theWorkFunction;
-	/** Номер в ФСС */
-	public String getSocCode() {
-		return theSocCode;
-	}
-
-	public void setSocCode(String aSocCode) {
-		theSocCode = aSocCode;
-	}
-
-	/** Номер в ФСС */
-	private String theSocCode;
 }
