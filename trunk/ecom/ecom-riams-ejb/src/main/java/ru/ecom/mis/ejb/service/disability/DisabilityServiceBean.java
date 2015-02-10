@@ -66,7 +66,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
-    public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aLpu, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
+    public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
     	if (aLpu!=null&&!aLpu.equals("")) {
     		MisLpu lpu = theManager.find(MisLpu.class, Long.valueOf(aLpu));
     		if (aWorkFunction!=null&&!aWorkFunction.equals("")){
@@ -81,7 +81,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
         	}
     		
         	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
-        	return exportLN(sqlAdd, aSocCode, lpu.getPhone(), lpu.getEmail(), lpu.getOgrn().toString(), aWorkFunction, aPacketNumber);
+        	return exportLN(sqlAdd, lpu.getSocCode(), lpu.getPhone(), lpu.getEmail(), lpu.getOgrn().toString(), aWorkFunction, aPacketNumber);
     	} else return null;
     	
     }

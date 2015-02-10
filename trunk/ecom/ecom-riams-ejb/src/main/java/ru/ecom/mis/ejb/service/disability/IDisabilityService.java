@@ -19,7 +19,7 @@ public interface IDisabilityService {
 	public String getDataByClose(Long aDocumentId) ;
 	public Long createDuplicateDocument(Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFuntion2,String aJob,Boolean aUpdateJob) ;
 	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber) ;
-	public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aLpu, String aWorkFunction, String aPacketNumber)  throws ParseException, NamingException ;
+	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber)  throws ParseException, NamingException ;
 	public String exportLNByNumber (String aNumber) throws ParseException, NamingException ;
 
 	
