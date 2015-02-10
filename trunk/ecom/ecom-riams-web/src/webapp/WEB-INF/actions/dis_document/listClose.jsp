@@ -111,10 +111,54 @@
            <td>
             <input type="submit" onclick="create16vn()" value="Сформировать 16-ВН" />
           </td>
-      </msh:row>
+           <td>
+            <input type="button" onclick="showForm()" value="Экспорт в ФСС" />
+          </td>
+           <td>
+            <input type="button" onclick="clickForm()" value="cl\ick" />
+          </td>
+          </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
     </msh:panel>
+    <div id="formExportDiv" style="display: none">
+	<msh:panel styleId="formExport">
+	<table>
+		<tr><td></td><td></td></tr>
+		<tr>
+			<msh:autoComplete vocName="mainLpu" property="lpu" label="ЛПУ" size="30" />
+		</tr>
+		<tr>
+			<msh:autoComplete vocName="workFunction" property="workFunction" label="Исполнитель" size="30" />
+		</tr>
+		<tr>
+			<msh:textField property="socCode" label="Номер в ФСС" />
+		</tr>
+		<tr>
+			<msh:textField property="packetNumber" label="Порядковый номер пакета" />
+		</tr>
+	</table>
+	<table>
+	  <tr>	
+        <td>
+            <input type="button" onclick="exportLNByDate()" value="Экспортировать" />
+          </td></tr><tr>
+          <td id='aViewTD' style="display: none">
+       		Файл <span id='aView'></span>
+       	</td></tr></table>
+      <table id="exportTable" border="1" style="padding: 15px; display: none">
+       <tr style="color: red">
+        	<td colspan="2">Внимание! Следующие записи не выгружены!</td>
+       </tr>
+       <tr>
+        	<td>Номер ЛН</td>
+        	<td>Ошибка</td>
+        </tr>
+         <tbody id="exportElements" >
+        </tbody>
+        </table>
+		</msh:panel>
+	</div>
     </msh:form>
     
     <%
@@ -170,6 +214,7 @@
     	<% }   %>
   </tiles:put>
   <tiles:put type="string" name="javascript">
+   	<script type="text/javascript" src="./dwr/interface/DisabilityService.js"></script>
     <script type='text/javascript'>
     var typeDocument = document.forms[0].typeDocument ;
     var typeDate = document.forms[0].typeDate ;
@@ -181,6 +226,18 @@
     checkFieldUpdate('orderBy','${orderBy}',1) ;
     checkFieldUpdate('typeLpu','${typeLpu}',1) ;
     
+   	function clickForm() {
+   		alert($('socCode').value);
+   	}
+    
+    function showForm() {
+    	
+    	if ($('formExportDiv').style.display=='none') {
+    		$('formExportDiv').style.display='block';
+    	} else {
+    		$('formExportDiv').style.display='none';
+    	}
+    }
     function checkFieldUpdate(aField,aValue,aDefault) {
     	eval('var chk =  document.forms[0].'+aField) ;
     	var aMax = chk.length ;
@@ -216,6 +273,79 @@
     	frm.target='_blank' ;
     	frm.m.value='printNoActuality' ;
     	frm.action='print-disabilityJournalByNo.do' ;
+    }
+    
+    function exportLNByDate() {
+    	if ($('beginDate').value=='' ) {
+    		alert ('Заполните дату начала!');
+    		return;
+    	}
+    	if ($('socCode').value=='' ) {
+    		alert ('Заполните рег. номер в ФСС!');
+    		return;
+    	}
+		$('aView').innerHTML="Подождите..." ;
+		$('aViewTD').style.display="block";
+    	DisabilityService.exportLNByDate($('beginDate').value, $('endDate').value, $('socCode').value, $('lpu').value, $('packetNumber').value, {
+    		callback: function (aResult) {
+    			if (aResult!=null) {
+    				var aData = aResult.split("@");
+    				$('aView').innerHTML="<a href='../rtf/"+aData[0]+"' target='_blank'>"+aData[0]+"</a>" ;
+    				if (aData[1].length>0){
+    					
+        				aData[1] = aData[1].substring(0,aData[1].length-1);
+    	    			var rows = aData[1].split("#");
+    	    			flushTable();
+    	    			for (var i=0;i<rows.length;i++) {
+    	    				addRow (rows[i]);
+    	    			}
+    	    			$('exportTable').style.display = 'block' ;
+    				}
+    			} else {
+    				alert ("Ошибка: "+aResult);
+    			}
+    			
+    		//	var res = aResult.split("@");
+    			
+    		//	alert (res[0]);
+    		}
+    	});	
+    }
+    function flushTable() {
+  	  var table = document.getElementById("exportElements");
+  	  var aRows = table.childNodes;
+  	  if (aRows.length>1) {
+  		  for (var i=0;i<aRows.length;i++) {
+  			  table.deleteRow(0);
+  		  }
+  	  }
+  	  
+    }
+    var firstRow=1;
+    function addRow (aRow) {
+  	  var aData = aRow.split(":"); // ID:fullname:Diagnosis:Comment 
+   	
+  	  var tbody = document.getElementById('exportElements');
+      var row = document.createElement("TR");
+  	//row.id = type+"Element"+num;
+      tbody.appendChild(row);
+      
+      // Создаем ячейки в вышесозданной строке 
+      // и добавляем тх 
+      var td1 = document.createElement("TD");
+      var td2 = document.createElement("TD");
+           ///td2.colSpan="2";
+      
+  	 row.appendChild(td1);
+  	 row.appendChild(td2);
+  	 
+     
+      // Наполняем ячейки  
+      td1.innerHTML = "<a href='/riams/entityParentView-dis_document.do?id="+aData[1]+"' target='_blank'><span>\t"+aData[0]+"</span></a>";
+      td2.innerHTML = "<span> "+aData[2]+"</span>";
+
+      
+     
     }
     </script>
   </tiles:put>
