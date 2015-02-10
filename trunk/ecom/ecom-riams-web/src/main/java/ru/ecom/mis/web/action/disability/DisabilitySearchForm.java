@@ -44,4 +44,51 @@ public class DisabilitySearchForm extends BaseValidatorForm {
 	private String theEndDate;
 	/** DateBegin */
 	private String theBeginDate;
+	
+	/** Номер пакета */
+	public String getPacketNumber() {
+		return thePacketNumber;
+	}
+
+	public void setPacketNumber(String aPacketNumber) {
+		thePacketNumber = aPacketNumber;
+	}
+
+	/** Номер пакета */
+	private String thePacketNumber;
+
+	/** Головное ЛПУ */
+	public Long getLpu() {
+		return theLpu;
+	}
+
+	public void setLpu(Long aLpu) {
+		theLpu = aLpu;
+	}
+
+	/** Головное ЛПУ */
+	private Long theLpu;
+	
+	/** Исполнитель */
+	public Long getWorkFunction() {
+		return theWorkFunction;
+	}
+
+	public void setWorkFunction(Long aWorkFunction) {
+		theWorkFunction = aWorkFunction;
+	}
+
+	/** Исполнитель */
+	private Long theWorkFunction;
+	/** Номер в ФСС */
+	public String getSocCode() {
+		return theSocCode;
+	}
+
+	public void setSocCode(String aSocCode) {
+		theSocCode = aSocCode;
+	}
+
+	/** Номер в ФСС */
+	private String theSocCode;
 }
