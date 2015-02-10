@@ -114,9 +114,6 @@
            <td>
             <input type="button" onclick="showForm()" value="Экспорт в ФСС" />
           </td>
-           <td>
-            <input type="button" onclick="clickForm()" value="click" />
-          </td>
           </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
