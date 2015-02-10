@@ -224,7 +224,7 @@
     checkFieldUpdate('typeLpu','${typeLpu}',1) ;
     
    	function clickForm() {
-   		alert($('socCode').value);
+   		alert($('lpuName').value);
    	}
     
     function showForm() {
