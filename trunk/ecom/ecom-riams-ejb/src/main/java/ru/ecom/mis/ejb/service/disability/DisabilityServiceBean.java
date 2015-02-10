@@ -1,7 +1,15 @@
 package ru.ecom.mis.ejb.service.disability;
 
+import java.io.FileWriter;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,16 +18,24 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.IllegalDataException;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.domain.disability.DisabilityRecord;
 import ru.ecom.mis.ejb.domain.disability.DisabilityReport;
@@ -48,6 +64,449 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
+    public String exportLNByDate(String aDateStart, String aDateFinish, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
+    	if (aDateFinish==null || aDateFinish.equals("")) {
+    		aDateFinish = aDateStart;
+    	}
+    	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
+    	return exportLN(sqlAdd, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aPacketNumber);
+    }
+    
+    public String exportLNByNumber (String aNumber) throws ParseException, NamingException {
+    	String sqlAdd = "dd.number = '"+aNumber+"' ";
+    	return exportLN(sqlAdd,"","","","","1");
+    }
+    
+    public String exportLN(String sqlAdd, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
+	String SQLreq; 
+		
+	SQLreq ="select dd.id as DDID"+
+	",dd.patient_id as DD_PAT"+
+	",dc.patient_id as DC_PAT"+
+	",p.lastname as lastname"+
+	",p.firstname as firstname"+
+	",p.middlename as middlename"+
+	",p.snils as snils"+
+	",sex.omccode as sex"+
+	",p.birthday as birthday"+
+	",dd.number as ln_number"+
+	",dd.issuedate as issuedate"+
+	",dd.isclose,dd.closereason_id"+
+	",dd.idc10_id as none_giagnosis"+
+	",case when (dc.earlypregnancyregistration is true or dc.earlypregnancyregistration ='1') then '1' else '' end as preg12week"+
+	",vdr.codef as REASON_1"+
+	",dd.disabilitycase_id as none_discase"+
+	",dd.documenttype_id as none_ln_type"+
+	",case when (dc.placementservice is true or dc.placementservice ='1') then '1' else '' end as placementservice"+
+	",dd.hospitalizedfrom as HOSPITAL_DT1"+
+	",dd.hospitalizedto as HOSPITAL_DT2"+
+	",dd.job as employer"+
+	",mkb.code as diagnosis"+
+	",dd.hospitalizednumber, dd.status_id"+
+	",dd.duplicate_id as f_duplicate"+
+	",vddp.code as f_primary"+
+	",p1.lastname||' '||p1.firstname||' '||p1.middlename as serv1_fio"+
+	",cast(to_char(dd.hospitalizedto,'yyyy')as int)-cast(to_char(p1.birthday,'yyyy')as int)+"+
+	"	case when ((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p1.birthday,'MM')as int)<0) or"+
+	"	((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p1.birthday,'MM')as int)=0 "+
+	"	and ((cast(to_char(dd.hospitalizedto,'dd')as int))-cast(to_char(p1.birthday,'dd')as int)<0)) then -1 else 0 end as serv1_age"+
+	",vkr1.code as serv1_relation"+
+	",p2.lastname||' '||p2.firstname||' '||p2.middlename as serv2_fio"+
+	",cast(to_char(dd.hospitalizedto,'yyyy')as int)-cast(to_char(p2.birthday,'yyyy')as int)+"+
+	"	case when ((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p2.birthday,'MM')as int)<0) or"+
+	"	((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p2.birthday,'MM')as int)=0 "+
+	"	and ((cast(to_char(dd.hospitalizedto,'dd')as int))-cast(to_char(p2.birthday,'dd')as int)<0)) then -1 else 0 end as serv2_age "+
+	",vkr2.code as serv2_relation "+
+	",case when ml2.id is not null then ml2.name else ml1.name end as lpu_name "+
+	",case when ml2.id is not null then ml2.printaddress else ml1.printaddress end as lpu_address "+
+	",case when ml2.id is not null then ml2.ogrn else ml1.ogrn end as lpu_ogrn "+
+	",vdr2.code as REASON2 "+
+	",vdr3.code as REASON3 "+
+	",dd.sanatoriumogrn as sanatoriumOgrn "+
+	",dd.sanatoriumticketnumber as ticketNumber "+
+	",dd.sanatoriumdatefrom as sanDateFrom "+
+	",dd.sanatoriumdateto as sanDateTo "+
+	",dd.mainworkdocumentnumber as osnWorkplaceNumber "+
+	",dd2.number as prevDocument "+
+	",dd3.number as nextDocument "+
+	",dd.workcombotype_id as workcombotypeid "+
+	",cast('' as varchar(1)) as serv1_mm "+ //заглушка
+	",cast('' as varchar(1)) as serv2_mm "+ //заглушка
+	",vddcr.codef as mseResult "+
+	"from disabilitydocument dd " +
+	"left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id "+
+	"left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id "+
+	"left join disabilitydocument dd2 on dd2.id=dd.prevdocument_id "+
+	"left join disabilitycase dc on dc.id=dd.disabilitycase_id "+
+	"left join patient p on p.id=dc.patient_id "+
+	"left join vocsex sex on sex.id=p.sex_id "+
+	"left join vocidc10 mkb on mkb.id=dd.idc10final_id "+
+	"left join vocdisabilityreason vdr on vdr.id=dd.disabilityreason_id "+
+	"left join vocdisabilityreason vdr3 on vdr3.id=dd.disabilityreasonchange_id "+
+	"left join kinsman k1 on k1.id=dc.nursingperson1_id "+
+	"left join vockinsmanrole vkr1 on vkr1.id=k1.kinsmanrole_id "+
+	"left join patient p1 on p1.id=k1.kinsman_id "+
+	"left join kinsman k2 on k2.id=dc.nursingperson2_id "+
+	"left join vockinsmanrole vkr2 on vkr2.id=k2.kinsmanrole_id "+
+	"left join patient p2 on p2.id=k2.kinsman_id "+
+	"left join statisticstub ss on ss.code=dd.hospitalizednumber and ss.year=cast(to_char(dd.hospitalizedfrom,'yyyy')as int) "+
+	"left join medcase mc on mc.id=ss.medcase_id "+
+	"left join mislpu ml1 on ml1.id=mc.lpu_id "+
+	"left join mislpu ml2 on ml2.id=ml1.parent_id "+
+	"left join vocdisabilityreason2 vdr2 on vdr2.id=dd.disabilityreason2_id "+
+	"left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
+	"where "+sqlAdd +
+	"order by dd.issuedate desc";
+		
+			System.out.println("Поиск записей:");
+			System.out.println(SQLreq);
+			
+			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aPacketNumber);
+	}
+    
+    private DataSource findDataSource() throws NamingException {
+		return ApplicationDataSourceHelper.getInstance().findDataSource();
+	}
+    public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aPacketNumber) throws ParseException, NamingException {
+		Statement statement = null;
+			
+			Element rootElement = new Element("LPU");
+			Element rowOperation = new Element("OPERATION");
+			Element rowSet = new Element("ROWSET");
+			rowSet.setAttribute("LPU_OGRN",aOgrnCode).setAttribute("email", aSocEmail)
+				.setAttribute("phone", aSocPhone).setAttribute("version_software","02.2015")
+				.setAttribute("author","MedOS_team").setAttribute("software","MedOS")
+				.setAttribute("version","");
+			rootElement.addContent(rowOperation.addContent("SET"));
+			rootElement.addContent(rowSet);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			
+			try
+			{
+				DataSource ds = findDataSource();
+				Connection dbh = ds.getConnection();
+				statement = dbh.createStatement();
+				ResultSet rs = statement.executeQuery(SQLReq);
+				int numAll = 0;
+				int rightNum=0;
+				
+				StringBuilder defect = new StringBuilder();	
+				StringBuilder breach = new StringBuilder();
+				breach.append("select rvr.datefrom as date, vrvt.codef as code from regimeviolationrecord rvr "+
+						"left join vocregimeviolationtype vrvt on vrvt.id = regimeviolationtype_id "+
+						"where rvr.disabilitydocument_id='");
+				StringBuilder record = new StringBuilder();
+				record.append("select wf.id as wfid, wfAdd.id as wfidAdd,dr.datefrom, dr.dateto, dr.regime_id "
+						+ ", pw.lastname ||' '||pw.firstname||' '||pw.middlename as name, vwf.name as wf "
+						+ ", pwAdd.lastname ||' '||pwAdd.firstname||' '||pwAdd.middlename as nameAdd, vwfAdd.name as wfAdd "
+						+ ",ml.printname as lpuName, ml.printAddress as lpuAddress, ml.ogrn "
+						+ "from disabilityrecord dr "
+						+ "left join workfunction wf on wf.id=dr.workfunction_id "
+						+ "left join vocworkfunction vwf on vwf.id=wf.workfunction_id "
+						+ "left join worker w on w.id=wf.worker_id "
+						+ "left join mislpu ml on ml.id=w.lpu_id "
+						+ "left join patient pw on pw.id=w.person_id "
+						+ "left join workfunction wfAdd on wfAdd.id=dr.workfunctionadd_id "
+						+ "left join vocworkfunction vwfAdd on vwfAdd.id=wfAdd.workfunction_id "
+						+ "left join worker wAdd on wAdd.id=wfAdd.worker_id "
+						+ "left join patient pwAdd on pwAdd.id=wAdd.person_id "
+						+ "where dr.disabilitydocument_id='");												
+			while (rs.next()) 
+				{
+				numAll++;
+				String ln = rs.getString("ln_number");
+				String ln_id=rs.getString("ddid");
+				String prevDocument= rs.getString("prevDocument");
+				String surname = rs.getString("lastname");
+				String name = rs.getString("firstname");
+				String patronimic = rs.getString("middlename");
+				String workcombotypeid = rs.getString("workcombotypeid");
+				String placementService = rs.getString("placementService");
+				String snils = rs.getString("snils");
+				if (snils!=null) {
+					snils=snils.replace("-", "");
+					snils=snils.replace(" ", "");
+				}
+				Element rowRow = new Element("ROW");
+				Element rowLpuLn = new Element("LpuLn");
+				
+			//	rowLpuLn.setAttribute("id", rs.getString("DDID"));
+			//	rowLpuLn.setAttribute("_DELETE_", "THIS COMMENT!!!!!!!!!!");
+				rowLpuLn.addContent(new Element("SNILS").addContent(snils));
+				rowLpuLn.addContent(new Element("SURNAME").addContent(rs.getString("lastname")));
+				rowLpuLn.addContent(new Element("NAME").addContent(rs.getString("firstname")));
+				rowLpuLn.addContent(new Element("PATRONIMIC").addContent(rs.getString("middlename")));
+				if (placementService!=null &&placementService.equals("1")) {
+					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("3"));
+				} else {
+				if (workcombotypeid!=null &&!workcombotypeid.equals("")) {
+					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
+					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("2"));
+				}else {
+					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
+					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("1"));
+				}					
+				} 
+				rowLpuLn.addContent(new Element("LN_CODE").addContent(ln));
+				if (prevDocument!=null &&!prevDocument.equals("")) {
+					rowLpuLn.addContent(new Element("PREV_LN_CODE").addContent(prevDocument));
+				}
+				String primaryFlag = rs.getString("f_primary");
+				if (primaryFlag.equals("1")) {
+					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("1"));
+				} else {
+					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("0"));
+				}
+				String duplicateFlag = rs.getString("f_duplicate");
+				if (duplicateFlag!=null&&!duplicateFlag.equals("")) {
+					rowLpuLn.addContent(new Element("DUPLICATE_FLAG").addContent("1"));
+				} else {
+					rowLpuLn.addContent(new Element("DUPLICATE_FLAG").addContent("0"));
+				}
+				Element lnDate = new Element("LN_DATE").addContent(rs.getString("issuedate"));
+				rowLpuLn.addContent(lnDate);
+				
+			//	rowLpuLn.addContent(new Element("LPU_NAME").addContent(rs.getString("lpu_Name")));
+			//	rowLpuLn.addContent(new Element("LPU_ADDRESS").addContent(rs.getString("lpu_Address")));
+			//	rowLpuLn.addContent(new Element("LPU_OGRN").addContent(rs.getString("lpu_OGRN")));
+				rowLpuLn.addContent(new Element("BIRTHDAY").addContent(rs.getString("birthday")));
+				rowLpuLn.addContent(new Element("GENDER").addContent(rs.getString("sex")!=null&&rs.getString("sex").equals("2")?"1":"0"));
+				String reason1=rs.getString("reason_1");
+				rowLpuLn.addContent(new Element("REASON1").addContent(reason1));
+				
+				String reason2 = rs.getString("reason2");
+				if (reason2!=null&&!reason2.equals("")) {
+					rowLpuLn.addContent(new Element("REASON2").addContent(reason2));
+				}
+				String reason3 = rs.getString("reason3");
+				if (reason3!=null&&!reason3.equals("")) {
+					rowLpuLn.addContent(new Element("REASON3").addContent(reason2));
+				}
+				String diagnosis = rs.getString("diagnosis");
+				if (diagnosis!=null&&!diagnosis.equals("")) {
+					rowLpuLn.addContent(new Element("DIAGNOS").addContent(diagnosis));
+				}
+				
+				String parentCode = rs.getString("osnWorkplaceNumber");
+				if (parentCode!=null&&!parentCode.equals("")){
+					rowLpuLn.addContent(new Element("PARENT_CODE").addContent(parentCode));
+				}
+				String date1 = rs.getString("sanDateFrom");
+				if (reason3!=null&&!reason3.equals("")) {
+					if (date1!=null&&!date1.equals("")) {
+						rowLpuLn.addContent(new Element("DATE1").addContent(parentCode));
+					} else {
+						defect.append(ln).append(":").append(ln_id).append(":Нет даты начала путевки, reason3=").append(reason3).append("#");
+						continue;
+					}
+				}
+				String date2=rs.getString("sanDateTo");
+				if (date1!=null&&!date1.equals("")) {
+					if (reason2!=null&& (reason2.equals("017")||reason2.equals("018")||reason2.equals("019"))) {
+						rowLpuLn.addContent(new Element("DATE2").addContent(date2));
+						rowLpuLn.addContent(new Element("VOUCHER_NO").addContent(rs.getString("ticketNumber")));
+						rowLpuLn.addContent(new Element("VOUCHER_OGRN").addContent(rs.getString("sanatoriumOgrn")));
+					}
+				}
+				//Родственник 1
+				String serv1_age = rs.getString("serv1_age");
+				String serv1_mm = rs.getString("serv1_mm");
+				
+				if (reason1!=null&& (reason1.equals("09")||reason1.equals("12")
+						||reason1.equals("13")||reason1.equals("14")||reason1.equals("15"))) {
+					if (serv1_age!=null&&!serv1_age.equals("")) {
+						rowLpuLn.addContent(new Element("SERV1_AGE").addContent(serv1_age));
+					} else {
+						rowLpuLn.addContent(new Element("SERV1_MM").addContent(serv1_mm));
+					}
+					String serv1_rel_code = rs.getString("serv1_relation");
+					if (serv1_rel_code!=null&&!serv1_rel_code.equals("")) {
+						rowLpuLn.addContent(new Element("SERV1_RELATION_CODE").addContent(serv1_rel_code));	
+					} else {
+						defect.append(ln).append(":").append(ln_id).append("Не указана родственная связь!, reason1=").append(reason1).append("#");
+						continue;
+					}
+					String serv1_fio = rs.getString("serv1_fio");
+					if (serv1_fio!=null&&!serv1_fio.equals("")) {
+						rowLpuLn.addContent(new Element("SERV1_FIO").addContent(serv1_fio));
+					} else {
+						defect.append(ln).append(":").append(ln_id).append(":Не указаны ФИО родственника №1!, reason1=").append(reason1).append("#");
+						continue;
+					}
+					//Родственник 2
+					String serv2_fio = rs.getString("serv2_fio");
+					if (serv2_fio!=null&&!serv2_fio.equals("")) {
+						String serv2_age = rs.getString("serv2_age");
+						String serv2_mm = rs.getString("serv2_mm");
+						if (serv2_age!=null&&!serv2_age.equals("0")) {
+							rowLpuLn.addContent(new Element("SERV2_AGE").addContent(serv2_age));
+						} else {
+							rowLpuLn.addContent(new Element("SERV2_MM").addContent(serv2_mm));
+						}
+						String serv2_rel_code = rs.getString("serv2_relation");
+						if (serv2_rel_code!=null&&!serv2_rel_code.equals("")) {
+							rowLpuLn.addContent(new Element("SERV2_RELATION_CODE").addContent(serv2_rel_code));	
+						} else {
+							defect.append(ln).append(":").append(ln_id).append(":Не указана родственная связь родственника №2!, reason1=").append(reason1).append("#");
+							continue;
+						}
+						rowLpuLn.addContent(new Element("SERV2_FIO").addContent(serv2_fio));
+					}
+					if (rs.getString("preg12week")!=null&&rs.getString("preg12week").equals("1")) {
+						rowLpuLn.addContent(new Element("PREGN12W_FLAG").addContent("1"));
+					}
+				}
+				String hospital_Dt1 = rs.getString("HOSPITAL_DT1");
+				String hospital_Dt2 = rs.getString("HOSPITAL_DT2");	
+				if ((hospital_Dt1!=null &&!hospital_Dt1.equals(""))&&
+						(reason1!=null && (reason1.equals("09") ||reason1.equals("12") ||reason1.equals("13") ||
+						reason1.equals("14") ||reason1.equals("15")))) {
+					rowLpuLn.addContent(new Element("HOSPITAL_DT1").addContent(rs.getString("hospital_Dt1")));
+					if (hospital_Dt2!=null&&!hospital_Dt2.equals("")) {
+						rowLpuLn.addContent(new Element("HOSPITAL_DT2").addContent(rs.getString("hospital_Dt2")));
+					} else {
+						defect.append(ln).append(":").append(ln_id).append(":Не указана дата выписки (HOSPITAL_DT2), reason1=").append(reason1).append("#");
+						continue;
+						
+					}
+				}
+				//Нарушение режима
+				statement = dbh.createStatement();
+				String SQLBreach = breach.toString()+ln_id+"' limit 1 ";
+				ResultSet rs_breach = statement.executeQuery(SQLBreach);
+				while (rs_breach.next()) {
+					rowLpuLn.addContent(new Element("HOSPITAL_BREACH_CODE").addContent(rs_breach.getString("code")));
+					rowLpuLn.addContent(new Element("HOSPITAL_BREACH_DT").addContent(rs_breach.getString("date")));
+					break;
+				}
+				
+				
+				//МСЭ
+				 
+				statement = dbh.createStatement();
+				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom limit 3");
+				 int i=0;
+				 String returnDate = null;
+				 String lpuName = null, lpuAddress=null, lpuOgrn=null;
+				while (rsRecord.next()) {
+					i++;
+					String doc = rsRecord.getString("name");
+					String docId = rsRecord.getString("wfid");
+					String dateFrom = rsRecord.getString("dateFrom");
+					String dateTo = rsRecord.getString("dateTo");
+					String docWorkfunction = rsRecord.getString("wf");
+					String doc2role = rsRecord.getString("wfAdd");
+					String chairman = rsRecord.getString("nameAdd");
+					String doc2id = rsRecord.getString("wfidAdd");
+					rowLpuLn.addContent(new Element("TREAT"+i+"_DT1").addContent(dateFrom));
+					rowLpuLn.addContent(new Element("TREAT"+i+"_DT2").addContent(dateTo));
+					rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR_ROLE").addContent(docWorkfunction));
+					rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR").addContent(doc));
+					rowLpuLn.addContent(new Element("TREAT"+i+"_DOC_ID").addContent(docId));
+					lpuName = rsRecord.getString("lpuName");
+					lpuAddress = rsRecord.getString("lpuAddress");
+					lpuOgrn = rsRecord.getString("ogrn");
+					if (doc2id!=null&&!doc2id.equals("")){
+						rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR2_ROLE").addContent(doc2role));
+						rowLpuLn.addContent(new Element("TREAT"+i+"_CHAIRMAN_VK").addContent(chairman));
+						rowLpuLn.addContent(new Element("TREAT"+i+"_DOC2_ID").addContent(doc2id));
+					}
+					returnDate = dateTo;
+					}
+				if (lpuName!=null) {
+					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_OGRN").addContent(lpuOgrn));
+					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_ADDRESS").addContent(lpuAddress));
+					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_NAME").addContent(lpuName));
+				} else {
+					defect.append(ln).append(":").append(ln_id).append(":Не заполнено поле название ЛПУ!!!#");
+					continue;
+				}
+				if (returnDate!=null) {
+					
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(format.parse(returnDate));
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+					returnDate = new java.sql.Date(cal.getTime().getTime()).toString();
+					rowLpuLn.addContent(new Element("RETURN_DATE_LPU").addContent(returnDate));
+				} else {
+					if (rs.getString("mseResult")!=null&&!rs.getString("mseResult").equals("")) {
+						rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(rs.getString("mseResult")));
+					} else {
+						defect.append(ln).append(":").append(ln_id).append(":Return date = null & mseResult=null!!!#");
+						continue;
+					}
+				}
+				
+				String nextDocument = rs.getString("nextDocument");
+				if (nextDocument!=null &&!nextDocument.equals("")) {
+					rowLpuLn.addContent(new Element("NEXT_LN_CODE").addContent(nextDocument));
+				}
+				
+			//	rowLpuLn.addContent(new Element("LPU_OGRN").addContent(rs.getString("lpu_OGRN")));
+				
+				rowLpuLn.addContent(new Element("LN_VERSION").addContent("1"));
+				rowRow.addContent(rowLpuLn);
+				rowSet.addContent(rowRow);
+				//rootElement.addContent(rowRow);
+			rightNum++;
+				}
+			dbh.close();
+			System.out.println("Всего записей = " + numAll);
+			System.out.println("Верных записей = " + rightNum);
+			if (defect.length()>0) {
+				System.out.println("Дефекты: "+defect.toString());
+			}
+			System.out.println();
+			
+		//	return rootElement;
+			if (rootElement.getChildren().isEmpty()) {
+				return "Записей не найдено";
+			} else {
+				return createNewFile(rootElement, aSocCode, aPacketNumber)+"@"+defect.toString();
+			}
+			
+			}
+			
+		catch (SQLException e)
+			{
+	        System.out.println(e.getMessage());
+	        e.printStackTrace();
+	    	return "Find_data: SQLException";
+			}	
+		
+		}
+    
+	public static String createNewFile(Element rootElement, String aSocCode, String aPacketNumber) {
+		try 
+		{
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+			System.out.println("CreateNewFile, hashcode="+rootElement.hashCode());
+			XMLOutputter outputter = new XMLOutputter();
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
+			format.format(new java.sql.Date(cal.getTime().getTime()));
+			
+			
+			String filename="L_"+aSocCode+"_"+format.format(new java.sql.Date(cal.getTime().getTime()))+"_"+aPacketNumber+".xml";
+			String outputFile=workDir+"/"+filename;
+			FileWriter fwrt = new FileWriter(outputFile);
+			Document pat = new Document(rootElement);
+			outputter.setFormat(Format.getPrettyFormat().setEncoding("UTF-8"));
+			outputter.output(pat, fwrt);
+			fwrt.close();
+			System.out.println("CreateNewFile, fileName="+filename);
+			return filename;
+		}
+	
+		 catch (Exception ex) 
+		{
+			 System.out.println("E_CreateNewfile: "+ex.getMessage());
+			 return "ERROR";
+	        }
+	}
+    		
     public void createF16vn(String aDateStart,String aDateEnd) {
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select ") ;
