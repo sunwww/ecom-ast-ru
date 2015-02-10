@@ -115,7 +115,7 @@
             <input type="button" onclick="showForm()" value="Экспорт в ФСС" />
           </td>
            <td>
-            <input type="button" onclick="clickForm()" value="cl\ick" />
+            <input type="button" onclick="clickForm()" value="click" />
           </td>
           </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
@@ -130,9 +130,6 @@
 		</tr>
 		<tr>
 			<msh:autoComplete vocName="workFunction" property="workFunction" label="Исполнитель" size="30" />
-		</tr>
-		<tr>
-			<msh:textField property="socCode" label="Номер в ФСС" />
 		</tr>
 		<tr>
 			<msh:textField property="packetNumber" label="Порядковый номер пакета" />
