@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.service.disability;
 
 import java.io.FileWriter;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.IllegalDataException;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -65,6 +67,79 @@ public class DisabilityServiceBean implements IDisabilityService  {
 
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    
+    //Не тестировано, не проверялось вообще!!!
+   /* public String analyseExportLN(String aFileName) throws NamingException {
+    	try{
+    	SAXBuilder saxBuilder = new SAXBuilder();
+		Document xdoc = saxBuilder.build(new StringReader(aFileName));
+		org.jdom.Element rootElement = xdoc.getRootElement();
+		Element rowSet =rootElement.getChild("ROWSET"); 
+		int i=0;
+		StringBuilder sb = new StringBuilder();
+		List<Element> rowSets = rowSet.getChildren();
+		for (org.jdom.Element el: rowSets) {
+			i++;
+			Element result = el.getChild("LN_RESULT").getChild("RESULT");
+			String ln_code = result.getChildText("LN_CODE");
+			if (result.getChildText("STATUS").equals("1")) { //Тоды ошибка
+				Element fault = result.getChild("FAULT");
+				sb.append(i).append(":ЛН № ").append(ln_code).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
+					.append(":").append(fault.getChildText("ERROR_MESSAGE"));
+				
+			} else if (result.getChildText("STATUS").equals("0")) {
+				sb.append(i).append(":ЛН №").append(ln_code).append(" принят без замечаний:#");
+			}
+		}
+		return sb.toString();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return "ERROR";
+    	}
+    }*/
+    //Протестировать, проверить
+    /*public String getInfoByNumber(String aNumber) throws NamingException {
+    	String sqlReq = "select p.snils as snils from disabilitydocument dd " +
+    			"left join patient p on p.id=dd.patient_id " +
+    			"where dd.number='"+aNumber+"'";
+    	
+    	
+		try {
+			DataSource ds = findDataSource();
+			Connection dbh = ds.getConnection();
+			Statement statement = dbh.createStatement();
+			ResultSet rs = statement.executeQuery(sqlReq);
+			
+			Element rootElement = new Element("LPU");
+			Element rowOperation = new Element("OPERATION");
+			Element rowSet = new Element("ROWSET");
+			rowSet.setAttribute("LPU_OGRN","aOgrnCode").setAttribute("email", "aSocEmail")
+				.setAttribute("phone", "aSocPhone").setAttribute("version_software","02.2015")
+				.setAttribute("author","aWorkFunction").setAttribute("software","MedOS")
+				.setAttribute("version","");
+			rootElement.addContent(rowOperation.addContent("GET"));
+			while (rs.next()) {
+				String snils = rs.getString("snils");
+				if (snils!=null) {
+					snils=snils.replace("-", "");
+					snils=snils.replace(" ", "");
+				}
+				Element row = new Element("ROW");
+				row.addContent(new Element("LnDataRequest")
+					.addContent(new Element("LN_CODE").addContent(aNumber))
+					.addContent(new Element("SNILS").addContent(snils))
+				);
+				rowSet.addContent(row);
+			}
+			return createNewFile(rootElement, "aSocCode", "1");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		
+    	return aNumber;
+    }*/
     
     public String checkIsNull(Object aField) {
     	if (aField==null) return "";
