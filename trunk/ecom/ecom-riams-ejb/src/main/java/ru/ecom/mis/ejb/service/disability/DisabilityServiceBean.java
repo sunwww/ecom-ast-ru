@@ -66,6 +66,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
+    public String checkIsNull(Object aField) {
+    	if (aField==null) return "";
+    	else return aField.toString();
+    }
     public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
     	if (aLpu!=null&&!aLpu.equals("")) {
     		MisLpu lpu = theManager.find(MisLpu.class, Long.valueOf(aLpu));
@@ -81,7 +85,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
         	}
     		
         	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
-        	return exportLN(sqlAdd, lpu.getSocCode(), lpu.getPhone(), lpu.getEmail(), lpu.getOgrn().toString(), aWorkFunction, aPacketNumber);
+        	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), checkIsNull(lpu.getOgrn().toString()), checkIsNull(aWorkFunction), checkIsNull(aPacketNumber));
     	} else return null;
     	
     }
@@ -120,16 +124,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd.duplicate_id as f_duplicate"+
 	",vddp.code as f_primary"+
 	",p1.lastname||' '||p1.firstname||' '||p1.middlename as serv1_fio"+
-	",cast(to_char(dd.hospitalizedto,'yyyy')as int)-cast(to_char(p1.birthday,'yyyy')as int)+"+
-	"	case when ((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p1.birthday,'MM')as int)<0) or"+
-	"	((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p1.birthday,'MM')as int)=0 "+
-	"	and ((cast(to_char(dd.hospitalizedto,'dd')as int))-cast(to_char(p1.birthday,'dd')as int)<0)) then -1 else 0 end as serv1_age"+
+	",p1.birthday as serv1_age "+
 	",vkr1.code as serv1_relation"+
 	",p2.lastname||' '||p2.firstname||' '||p2.middlename as serv2_fio"+
-	",cast(to_char(dd.hospitalizedto,'yyyy')as int)-cast(to_char(p2.birthday,'yyyy')as int)+"+
-	"	case when ((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p2.birthday,'MM')as int)<0) or"+
-	"	((cast(to_char(dd.hospitalizedto,'MM')as int))-cast(to_char(p2.birthday,'MM')as int)=0 "+
-	"	and ((cast(to_char(dd.hospitalizedto,'dd')as int))-cast(to_char(p2.birthday,'dd')as int)<0)) then -1 else 0 end as serv2_age "+
+	",p2.birthday as serv2_age "+
 	",vkr2.code as serv2_relation "+
 	",case when ml2.id is not null then ml2.name else ml1.name end as lpu_name "+
 	",case when ml2.id is not null then ml2.printaddress else ml1.printaddress end as lpu_address "+
@@ -144,10 +142,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd2.number as prevDocument "+
 	",dd3.number as nextDocument "+
 	",dd.workcombotype_id as workcombotypeid "+
-	",cast('' as varchar(1)) as serv1_mm "+ //заглушка
-	",cast('' as varchar(1)) as serv2_mm "+ //заглушка
-	",vddcr.codef as mseResult "+
+	",vddcr.codef as mseResult " +
+	",dd.otherclosedate as otherdate " +
+	",dr.datefrom as startDate "+
 	"from disabilitydocument dd " +
+	"left join (select min(datefrom) as datefrom,disabilitydocument_id from disabilityrecord  group by disabilitydocument_id) as dr on dr.disabilitydocument_id=dd.id " +
 	"left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id "+
 	"left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id "+
 	"left join disabilitydocument dd2 on dd2.id=dd.prevdocument_id "+
@@ -236,6 +235,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String patronimic = rs.getString("middlename");
 				String workcombotypeid = rs.getString("workcombotypeid");
 				String placementService = rs.getString("placementService");
+		//		String dateFrom = "";
+				String startDate = rs.getString("startDate");
 				String snils = rs.getString("snils");
 				if (snils!=null) {
 					snils=snils.replace("-", "");
@@ -323,15 +324,29 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					}
 				}
 				//Родственник 1
-				String serv1_age = rs.getString("serv1_age");
-				String serv1_mm = rs.getString("serv1_mm");
+				String serv1_birthday = rs.getString("serv1_age");
 				
 				if (reason1!=null&& (reason1.equals("09")||reason1.equals("12")
 						||reason1.equals("13")||reason1.equals("14")||reason1.equals("15"))) {
-					if (serv1_age!=null&&!serv1_age.equals("")) {
-						rowLpuLn.addContent(new Element("SERV1_AGE").addContent(serv1_age));
+					//Считаем возраст
+					Date bithday1 = new Date(format.parse(serv1_birthday).getTime());
+					Date dateFrom1 = new Date(format.parse(startDate).getTime());
+					String age1 = ru.nuzmsh.util.date.AgeUtil.calculateAge(bithday1,dateFrom1);
+					System.out.println("----------------------------------------------------");
+					System.out.println("birthday1="+bithday1+", dateFrom="+dateFrom1+", age1="+age1);
+					int age_ind1 = age1.indexOf(".") ;
+					int age_ind2 = age1.indexOf(".",age_ind1+1) ; 
+					String age1_ye=age1.substring(0,age_ind1) ;
+					String age1_mo=age1.substring(age_ind1+1,age_ind2) ;
+					
+					if (age1_ye!=null&&!age1_ye.equals("")&&!age1_ye.equals("0")) {
+						rowLpuLn.addContent(new Element("SERV1_AGE").addContent(age1_ye));
 					} else {
-						rowLpuLn.addContent(new Element("SERV1_MM").addContent(serv1_mm));
+						if (age1_mo!=null&&!age1_mo.equals("")&&!age1_mo.equals("0")&&!age1_mo.equals(" 0")) {
+							rowLpuLn.addContent(new Element("SERV1_MM").addContent(age1_mo));
+						} else {
+						rowLpuLn.addContent(new Element("SERV1_MM").addContent("1"));
+						}
 					}
 					String serv1_rel_code = rs.getString("serv1_relation");
 					if (serv1_rel_code!=null&&!serv1_rel_code.equals("")) {
@@ -350,12 +365,24 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					//Родственник 2
 					String serv2_fio = rs.getString("serv2_fio");
 					if (serv2_fio!=null&&!serv2_fio.equals("")) {
-						String serv2_age = rs.getString("serv2_age");
-						String serv2_mm = rs.getString("serv2_mm");
-						if (serv2_age!=null&&!serv2_age.equals("0")) {
-							rowLpuLn.addContent(new Element("SERV2_AGE").addContent(serv2_age));
+						String serv2_birthday = rs.getString("serv2_age");
+						Date bithday2 = new Date(format.parse(serv2_birthday).getTime());
+						String age2 = ru.nuzmsh.util.date.AgeUtil.calculateAge(bithday2,dateFrom1);
+						System.out.println("----------------------------------------------------");
+						System.out.println("birthday2="+bithday2+", dateFrom="+dateFrom1+", age2="+age2);
+						int age2_ind1 = age2.indexOf(".") ;
+						int age2_ind2 = age2.indexOf(".",age2_ind1+1) ; 
+						String age2_ye=age2.substring(0,age2_ind1) ;
+						String age2_mo=age2.substring(age2_ind1+1,age2_ind2) ;
+						
+						if (age2_ye!=null&&!age2_ye.equals("")&&!age2_ye.equals("0")) {
+							rowLpuLn.addContent(new Element("SERV2_AGE").addContent(age2_ye));
 						} else {
-							rowLpuLn.addContent(new Element("SERV2_MM").addContent(serv2_mm));
+							if (age2_mo!=null&&!age2_mo.equals("")&&!age2_mo.equals("0")&&!age2_mo.equals(" 0")) {
+								rowLpuLn.addContent(new Element("SERV2_MM").addContent(age2_mo));
+							} else {
+							rowLpuLn.addContent(new Element("SERV2_MM").addContent("1"));
+							}
 						}
 						String serv2_rel_code = rs.getString("serv2_relation");
 						if (serv2_rel_code!=null&&!serv2_rel_code.equals("")) {
@@ -435,6 +462,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					defect.append(ln).append(":").append(ln_id).append(":Не заполнено поле название ЛПУ!!!#");
 					continue;
 				}
+				String mseResult = rs.getString("mseResult");
 				if (returnDate!=null) {
 					
 					Calendar cal = Calendar.getInstance();
@@ -443,10 +471,20 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					returnDate = new java.sql.Date(cal.getTime().getTime()).toString();
 					rowLpuLn.addContent(new Element("RETURN_DATE_LPU").addContent(returnDate));
 				} else {
-					if (rs.getString("mseResult")!=null&&!rs.getString("mseResult").equals("")) {
-						rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(rs.getString("mseResult")));
+					if (mseResult!=null&&!mseResult.equals("")) {
+						rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(mseResult));
+						if (mseResult.equals("32")||mseResult.equals("33")||mseResult.equals("34")||mseResult.equals("36")) {
+							String otherDate = rs.getString("otherDate");
+							if (otherDate!=null&&!otherDate.equals("")) {
+								rowLpuLn.addContent(new Element("OTHER_STATE_DT").addContent(rs.getString("otherdate")));
+							} else {
+								defect.append(ln).append(":").append(ln_id).append(":Поле ИНОЕ=").append(mseResult).append(", Дата ИНОЕ не заполнено!#");
+								continue;
+							}
+							
+						}
 					} else {
-						defect.append(ln).append(":").append(ln_id).append(":Return date = null & mseResult=null!!!#");
+						defect.append(ln).append(":").append(ln_id).append(":Не указана ни дата выхода на работу, ни ИНОЕ!#");
 						continue;
 					}
 				}
@@ -461,7 +499,6 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				rowLpuLn.addContent(new Element("LN_VERSION").addContent("1"));
 				rowRow.addContent(rowLpuLn);
 				rowSet.addContent(rowRow);
-				//rootElement.addContent(rowRow);
 			rightNum++;
 				}
 			dbh.close();
