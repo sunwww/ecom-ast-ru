@@ -160,7 +160,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
         	}
     		
         	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
-        	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), checkIsNull(lpu.getOgrn().toString()), checkIsNull(aWorkFunction), checkIsNull(aPacketNumber));
+        	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), lpu.getOgrn()!=null?lpu.getOgrn().toString():"", checkIsNull(aWorkFunction), checkIsNull(aPacketNumber));
     	} else return null;
     	
     }
