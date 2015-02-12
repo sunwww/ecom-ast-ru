@@ -69,7 +69,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     //Не тестировано, не проверялось вообще!!!
-   /* public String analyseExportLN(String aFileName) throws NamingException {
+    public String analyseExportLN(String aFileName) throws NamingException {
     	try{
     	SAXBuilder saxBuilder = new SAXBuilder();
 		Document xdoc = saxBuilder.build(new StringReader(aFileName));
@@ -96,9 +96,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
     		e.printStackTrace();
     		return "ERROR";
     	}
-    }*/
+    }
     //Протестировать, проверить
-    /*public String getInfoByNumber(String aNumber) throws NamingException {
+    public String getInfoByNumber(String aNumber) throws NamingException {
     	String sqlReq = "select p.snils as snils from disabilitydocument dd " +
     			"left join patient p on p.id=dd.patient_id " +
     			"where dd.number='"+aNumber+"'";
@@ -139,7 +139,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		}
 		
     	return aNumber;
-    }*/
+    }
     
     public String checkIsNull(Object aField) {
     	if (aField==null) return "";
@@ -384,18 +384,19 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String date1 = rs.getString("sanDateFrom");
 				if (reason3!=null&&!reason3.equals("")) {
 					if (date1!=null&&!date1.equals("")) {
-						rowLpuLn.addContent(new Element("DATE1").addContent(parentCode));
+						rowLpuLn.addContent(new Element("DATE1").addContent(rs.getString("sandatefrom")));
 					} else {
 						defect.append(ln).append(":").append(ln_id).append(":Нет даты начала путевки, reason3=").append(reason3).append("#");
 						continue;
 					}
-				}
-				String date2=rs.getString("sanDateTo");
-				if (date1!=null&&!date1.equals("")) {
-					if (reason2!=null&& (reason2.equals("017")||reason2.equals("018")||reason2.equals("019"))) {
-						rowLpuLn.addContent(new Element("DATE2").addContent(date2));
-						rowLpuLn.addContent(new Element("VOUCHER_NO").addContent(rs.getString("ticketNumber")));
-						rowLpuLn.addContent(new Element("VOUCHER_OGRN").addContent(rs.getString("sanatoriumOgrn")));
+				
+					String date2=rs.getString("sanDateTo");
+					if (date1!=null&&!date1.equals("")) {
+						if (reason2!=null&& (reason2.equals("017")||reason2.equals("018")||reason2.equals("019"))) {
+							rowLpuLn.addContent(new Element("DATE2").addContent(date2));
+							rowLpuLn.addContent(new Element("VOUCHER_NO").addContent(rs.getString("ticketNumber")));
+							rowLpuLn.addContent(new Element("VOUCHER_OGRN").addContent(rs.getString("sanatoriumOgrn")));
+						}
 					}
 				}
 				//Родственник 1
@@ -468,9 +469,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 						}
 						rowLpuLn.addContent(new Element("SERV2_FIO").addContent(serv2_fio));
 					}
-					if (rs.getString("preg12week")!=null&&rs.getString("preg12week").equals("1")) {
-						rowLpuLn.addContent(new Element("PREGN12W_FLAG").addContent("1"));
-					}
+					
+				}
+				System.out.println(rs.getString("preg12week"));
+				if (rs.getString("preg12week")!=null&&rs.getString("preg12week").equals("1")) {
+					rowLpuLn.addContent(new Element("PREGN12W_FLAG").addContent("1"));
 				}
 				String hospital_Dt1 = rs.getString("HOSPITAL_DT1");
 				String hospital_Dt2 = rs.getString("HOSPITAL_DT2");	
