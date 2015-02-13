@@ -839,6 +839,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	newDoc.setDisabilityReason(aDocument.getDisabilityReason()) ;
     	newDoc.setDisabilityReason2(aDocument.getDisabilityReason2()) ;
     	newDoc.setDisabilityReasonChange(aDocument.getDisabilityReasonChange()) ;
+    	newDoc.setOtherCloseDate(aDocument.getOtherCloseDate()) ;
     	//TODO newDoc.setDisabilityRecords(doc.getDisabilityRecords()) ;
     	newDoc.setDisabilityRegime(aDocument.getDisabilityRegime()) ;
     	newDoc.setDocumentType(aDocument.getDocumentType()) ;
