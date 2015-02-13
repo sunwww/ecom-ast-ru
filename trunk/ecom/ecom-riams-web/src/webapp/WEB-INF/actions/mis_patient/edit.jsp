@@ -58,11 +58,11 @@ where po1.careCard_id=pcc.id)=po.startDate)
 ,(select list(distinct mkb.code) from Diagnosis d 
 left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
 left join vocidc10 mkb on mkb.id=d.idc10_id 
-where d.patient_id=pcc.patient_id and vpd.code='1' and d.medcase_id is null
+where d.patient_id=pcc.patient_id and d.medcase_id is null and vpd.code='1' 
 and 
 (
 select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
- where d1.patient_id=pcc.patient_id and vpd1.code='1' and d1.medcase_id is null
+ where d1.patient_id=pcc.patient_id and d1.medcase_id is null and vpd1.code='1' 
 )=d.establishDate ) 
 from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		         "
@@ -175,25 +175,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       		
       		
       	</msh:row>
-      	<%--
-      	<msh:row>
-      		
-      		<msh:autoComplete property="medcardLast" viewAction="entityView-poly_medcard.do" shortViewAction="entityShortView-poly_medcard.do"
-      			label="Медкарта" vocName="medcardLast" viewOnlyField="true"/>
-      		<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
-      		<msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
-	      		<msh:autoComplete property="careCard"  viewAction="entityView-psych_careCard.do" shortViewAction="entityShortView-psych_careCard.do"
-	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
-	      		/>
-      		</msh:ifInRole>
-      		<msh:ifNotInRole roles="/Policy/Mis/Psychiatry/CareCard/View">
-	      		<msh:autoComplete property="careCard"  
-	      			label="Медкарта (псих.помощью)" vocName="psychiatricCareCard" viewOnlyField="true" 
-	      		/>
-      		</msh:ifNotInRole>
-      		</msh:ifInRole>
-      	</msh:row>
-      	 --%>
+      	
       	</msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="a71e4812-8951-4dcc-918f-dc1a440cc9e2">
           <msh:row guid="70af394e-52bb-4df4-8ea8-065f194678cf">
@@ -712,8 +694,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
 					where sls.patient_id=${param.id} 
 						and sls.DTYPE='HospitalMedCase'  
-					and (sls.dateFinish is null 
-					or sls.dischargeTime is null)
+					and sls.dischargeTime is null
 					and (sls.dateStart=CURRENT_DATE
 					 or sls.deniedHospitalizating_id is null)
 					"  />
@@ -743,8 +724,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					left join MisLpu ml1 on ml1.id=slo.department_id
 					where sls.patient_id=${param.id} 
 						and sls.DTYPE='HospitalMedCase'  
-					and (sls.dateFinish is null 
-					or sls.dischargeTime is null)
+					and  sls.dischargeTime is null
 					and (sls.dateStart=CURRENT_DATE
 					 or sls.deniedHospitalizating_id is null and slo.transferDate is null)
 					 
@@ -833,11 +813,11 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         
         <msh:sideLink key="SHIFT+1" roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/stac_sslList" name="СЛС" title="Показать все случаи лечения в стационаре" guid="ca5196e9-9239-47e3-aec4-9a0336e47144" />
         <msh:sideLink params="id" action="/entityParentList-smo_spo" name="СПО" title="Показать все случаи поликлинического обслуживания" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
-        <msh:sideLink params="id" styleId="viewShort" action="/javascript:getDefinition('js-extDisp_card-listByPatient.do?id=${param.id}&short=Short')" name="Доп.дисп." title="Показать все случаи дополнительной диспансеризации" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/ExtDisp/Card/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-extDisp_card-listByPatient.do?id=${param.id}&short=Short')" name="Доп.дисп." title="Показать все случаи дополнительной диспансеризации" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/ExtDisp/Card/View" />
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_medPolicy" name="Полисы" title="Показать все полисы" roles="/Policy/Mis/MedPolicy/View"/>
 <%-- <msh:sideLink params="id" action="/js-dis_case-listByPatient" name="Нетрудоспособности" title="Показать все случаи нетрудоспособности" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/DisabilityCase/View" /> --%>        
-        <msh:sideLink params="id" action="/entityParentList-dis_case" name="Нетрудоспособности" 
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-dis_case.do?id=${param.id}&short=Short')" name="Нетрудоспособности" 
         title="Показать все случаи нетрудоспособности по пациенту" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/Case/View" />
         
         <msh:sideLink params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />

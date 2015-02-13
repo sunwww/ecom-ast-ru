@@ -144,6 +144,9 @@
         <msh:row guid="e46a3-e51c-46ef-9a21-6bvb60831">
     	      <msh:autoComplete vocName="vocDisabilityDocumentCloseReason" property="closeReason" label="Причина закрытия" guid="c425f-265a-40ab-9581-a8ff" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
+       <msh:row>
+        	<msh:textField property="otherCloseDate" label="Иная дата закрытия для причин 32, 33, 34, 36" labelColSpan="3"/>
+        </msh:row>
         <msh:row>
           <msh:checkBox hideLabel="false" property="noActuality" viewOnlyField="true" guid="6deca67a-3fcb-472f-aadd-3e6cf3139c83" horizontalFill="false" label="Испорчен" />
 
@@ -225,6 +228,7 @@
     <ecom:titleTrail mainMenu="Disability" beginForm="dis_documentForm" guid="116eb2b5-9e8e-45d6-91a4-328b6922bee6" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
   <msh:ifFormTypeIsView formName="dis_documentForm">
     <script type="text/javascript">
      if (+$('isClose').checked==true) {
@@ -238,6 +242,27 @@
      <msh:ifFormTypeIsNotView formName="dis_documentForm">
     <script type="text/javascript">
 		prevDocumentAutocomplete.setParentId($('disabilityCase').value) ;
+	    closeReasonAutocomplete.addOnChangeCallback(function() {
+	    	DisabilityService.getCodeByReasonClose($('closeReason').value,{
+	    		callback: function(aString) {
+	    			if (aString!=null&&aString!=""&&(aString=="32" || aString=="33"||aString=="34"||aString=="36")) {
+	    				DisabilityService.getMaxDateToByDisDocument($('id').value,{
+	    		    		callback: function(aString1) {
+	    		    			if (aString1!=null&&aString1!=""&&aString1!="null") {
+	    		   					$('otherCloseDate').value=aString1 ;
+	    		    			} else {
+	    		    				$('otherCloseDate').value=$('hospitalizedTo').value ;;
+	    		    			}
+	    		    		}
+	    		    	})
+	   					$('otherCloseDate').className="required";
+	    			} else {
+	    				$('otherCloseDate').className="";
+	    				$('otherCloseDate').value="";
+	    			}
+	    		}
+	    	})
+	    });
 	  	idc10Autocomplete.addOnChangeCallback(function() {
 	 	 	 if ($('idc10Final').value==""){
 	 	 		$('idc10Final').value = $('idc10').value ; 
@@ -308,6 +333,7 @@
 	  		}
 	  	}
 	  	setPeriod() ;
+	  	
 	 </script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>
@@ -318,7 +344,7 @@
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-dis_document" name="Удалить" roles="/Policy/Mis/Disability/Case/Document/Delete" guid="4565603e-337e-48eb-82eb-79bd40cd5108" />
         <tags:closeDisDocument reason="closeReason" 
 	        roles="/Policy/Mis/Disability/Case/Document/Edit" key="ALT+3" 
-	        name="doc" title="Закрыть" 
+	        name="doc" title="Закрыть" otherCloseDate="otherCloseDate"
 	        confirm="Вы действительно хотите закрыть текущий документ нетрудоспособности?" 
 	        seria='series' number='number' />
         <tags:dis_duplicateDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+4" 

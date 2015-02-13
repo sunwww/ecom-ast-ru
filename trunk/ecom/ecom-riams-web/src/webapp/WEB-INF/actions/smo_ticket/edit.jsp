@@ -100,6 +100,7 @@
         	<msh:checkBox fieldColSpan="2" property="isDirectHospital" label="Направлен на стационарное лечение" horizontalFill="true"/>
         </msh:row>
         <msh:row guid="7dfb3b2c-407d-48f1-9e70-76cb3328f5f5">
+        	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="concludingMkb" label="Доп.код"/>
         	<msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
         <msh:row>

@@ -17,8 +17,9 @@
   <tiles:put name="body" type="string">
   <%
   
-	String typeEmergency =ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
-	String typeDtype =ActionUtil.updateParameter("Expert_Ker","typeView","3", request) ;
+	String typeEmergency = ActionUtil.updateParameter("Expert_Ker","typeEmergency","4", request) ;
+	String typeView = ActionUtil.updateParameter("Expert_Ker","typeView","3", request) ;
+	String typeLpu = ActionUtil.updateParameter("Expert_Ker","typeLpu","3", request) ;
   %>
   
     <msh:form action="/expert_journal_ker.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -40,6 +41,18 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeEmergency" value="3">  все
+        </td>
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="1">  стационар
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="2" >  поликлиника
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="3">  все
         </td>
       </msh:row>
 
@@ -91,6 +104,7 @@
     
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeLpu','${typeLpu}',1) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -129,7 +143,7 @@
     	} else {
     		request.setAttribute("dateEnd", date1) ;
     	}
-    	String view = (String)request.getAttribute("typeView") ;
+    	//String typeView = (String)request.getAttribute("typeView") ;
 
     	if (typeEmergency!=null && typeEmergency.equals("1")) {
     		request.setAttribute("emergencySql", " and slo.emergency='1' ") ;
@@ -138,6 +152,16 @@
     		request.setAttribute("emergencySql", " and (slo.emergency is null or slo.emergency='0') ") ;
     		request.setAttribute("emergencyInfo", ", поступивших по плановым показаниям") ;
     	} 
+    	
+    	if (typeLpu!=null && typeLpu.equals("1")) {
+    		request.setAttribute("lpuSql", " and slo.dtype='DepartmentMedCase' ") ;
+    		request.setAttribute("lpuInfo", ", стационар") ;
+
+    	} else if (typeLpu!=null && typeLpu.equals("2")) {
+    		request.setAttribute("lpuSql", " and slo.dtype!='DepartmentMedCase' ") ;
+    		request.setAttribute("lpuInfo", ", поликлиника") ;
+    		
+    	}
     	ActionUtil.setParameterFilterSql("department","ml.id", request) ;
     	
     	ActionUtil.setParameterFilterSql("modeCase","cec.modeCase_id", request) ;
@@ -152,7 +176,7 @@
 
     	%>
  <%
-    if (view!=null && (view.equals("1"))) {%>
+    if (typeView!=null && (typeView.equals("1"))) {%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
@@ -206,6 +230,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
+${lpuSql}
     order by cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -248,7 +273,7 @@ ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDire
     </msh:section>
 
     <%} %>
-       	<%if (view!=null && (view.equals("2"))) {%>
+       	<%if (typeView!=null && (typeView.equals("2"))) {%>
     
     <msh:section>
     <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
@@ -276,12 +301,13 @@ left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
+${lpuSql}
 	group by ml.id,ml.name
     order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
     viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
-     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" idField="1" >
+     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
       <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />

@@ -305,6 +305,9 @@ ul.listTimes li.first {
     		<msh:autoComplete property="rayon" label="Район" fieldColSpan="3" horizontalFill="true" vocName="vocRayon"/>
     	</msh:row>
     	<msh:row>
+    		<msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream"/>
+    	</msh:row>
+    	<msh:row>
     		<td colspan="4" class="buttons" align="left">
 				<input type="button" title="Поиск пациента для создания направления" onclick="step1_2();this.value=&quot;Поиск пациента &quot;;this.form.submit(); return true ;" value="    Поиск пациента" class="default" id="submitStep1Go2Button" autocomplete="off">
 				<input type="button" title="Поиск направлений по пациенту" onclick="this.value=&quot;Поиск направлений &quot;;this.form.action='javascript:findDirectByPatient()'; this.form.submit(); return true ;" value="    Поиск направлений" class="default" id="submitDirectButton" autocomplete="off">
@@ -729,7 +732,7 @@ ul.listTimes li.first {
   			step6() ;
   			if ($('btnRecord')) $('btnRecord').onclick() ;
   		}
-  		function record(aPatInfo,aPat,aFunc,aSpec,aDay,aTime) {
+  		function record(aPatInfo,aPat,aFunc,aSpec,aDay,aTime,aServiceStream) {
   			var func = aFunc.split("#") ; 
   			var spec = aSpec.split('#') ;
   			var day = aDay.split('#') ;
@@ -740,9 +743,11 @@ ul.listTimes li.first {
   				var pat1 = aPat.split('#') ;
   				pat = pat1[0] ;
   			} 
+  			var servStream = $('serviceStream').value ;
+  			//alert(servStream) ;
   			WorkCalendarService.preRecordByPatient(
   					aPatInfo,aPat,func[0],spec[0],day[1],time[1],
-					
+					servStream,
 			     {
 						callback: function(aResult) {
 							//alert(aResult) ;

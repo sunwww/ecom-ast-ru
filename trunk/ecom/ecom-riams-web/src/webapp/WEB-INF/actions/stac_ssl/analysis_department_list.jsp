@@ -698,22 +698,22 @@ order by operdep.name, dischdep.name
     select
 dmc.department_id as depid,dep.name as depname
 ,count(distinct hmc.id) as cntDischarge
-,count(distinct case when adr.kladr like '30000001%' then hmc.id else null end) as cntAstrakhan
-,count(distinct case when adr.kladr like '30000002%' then hmc.id else null end) as cntZnamenkc
-,count(distinct case when adr.kladr like '30%' and adr.kladr not like '30000%' then hmc.id else null end) as cntRayon
-,count(distinct case when adr.kladr like '30002%' then hmc.id else null end) as cntAhtub
-,count(distinct case when adr.kladr like '30003%' then hmc.id else null end) as cntVolodar
-,count(distinct case when adr.kladr like '30004%' then hmc.id else null end) as cntEnotaev
-,count(distinct case when adr.kladr like '30005%' then hmc.id else null end) as cntIkrian
-,count(distinct case when adr.kladr like '30006%' then hmc.id else null end) as cntKamiz
-,count(distinct case when adr.kladr like '30007%' then hmc.id else null end) as cntKrasnoiar
-,count(distinct case when adr.kladr like '30008%' then hmc.id else null end) as cntLiman
-,count(distinct case when adr.kladr like '30009%' then hmc.id else null end) as cntNarim
-,count(distinct case when adr.kladr like '30010%' then hmc.id else null end) as cntPrivol
-,count(distinct case when adr.kladr like '30011%' then hmc.id else null end) as cntHarab
-,count(distinct case when adr.kladr like '30012%' then hmc.id else null end) as cntChernoiar
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30000001%' then hmc.id else null end) as cntAstrakhan
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30000002%' then hmc.id else null end) as cntZnamenkc
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30%' and adr.kladr not like '30000%' then hmc.id else null end) as cntRayon
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30002%' then hmc.id else null end) as cntAhtub
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30003%' then hmc.id else null end) as cntVolodar
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30004%' then hmc.id else null end) as cntEnotaev
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30005%' then hmc.id else null end) as cntIkrian
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30006%' then hmc.id else null end) as cntKamiz
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30007%' then hmc.id else null end) as cntKrasnoiar
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30008%' then hmc.id else null end) as cntLiman
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30009%' then hmc.id else null end) as cntNarim
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30010%' then hmc.id else null end) as cntPrivol
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30011%' then hmc.id else null end) as cntHarab
+,count(distinct case when ok.voc_code='643' and adr.kladr like '30012%' then hmc.id else null end) as cntChernoiar
 ,count(distinct case when adr.kladr not like '30%' and ok.voc_code='643' then hmc.id else null end) as cntInog
-,count(distinct case when ok.voc_code!='643' then hmc.id else null end) as cntInost
+,count(distinct case when ok.voc_code is not null and ok.voc_code!='643' then hmc.id else null end) as cntInost
 ,(select count(*) from MedCase hmc1 
     left join patient pat1 on pat1.id=hmc1.patient_id
      left join Omc_Oksm ok1 on pat1.nationality_id=ok1.id
@@ -724,6 +724,12 @@ dmc.department_id as depid,dep.name as depname
     	and hmc1.department_id=dmc.department_id
     	and hmc1.deniedHospitalizating_id is null
     	) as cntAdmisPat
+,count(distinct case 
+when (ok.voc_code is null and adr.addressid is null) then hmc.id 
+when (ok.voc_code='643' and adr.addressid is null) then hmc.id
+when (ok.voc_code is null and adr.addressid is not null) then hmc.id
+
+else null end) as cntnoadr
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -791,6 +797,7 @@ order by dep.name
             <msh:tableColumn columnName="Черно- ярский" isCalcAmount="true" property="17"/>
             <msh:tableColumn columnName="Ино- город- ние" isCalcAmount="true" property="18"/>
             <msh:tableColumn columnName="Иност- ранцы" isCalcAmount="true" property="19"/>
+            <msh:tableColumn columnName="Без адр. или гражд." isCalcAmount="true" property="21"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>

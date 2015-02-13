@@ -84,7 +84,16 @@
           <msh:autoComplete showId="false" vocName="vocDeathReason" hideLabel="false" property="deathReason" viewOnlyField="false" label="Смерть произошла от:" guid="9eb66c69-6860-4464-b671-48494ec2dc85" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
-        	<msh:textArea property="commentReason" label="Причина смерти" fieldColSpan="3" horizontalFill="true" rows="2"/>
+        	<msh:textArea property="commentReason" label="Причина смерти (ПС)" fieldColSpan="3" horizontalFill="true" rows="2"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осн. ПС" property="reasonMainMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осл. ПС" property="reasonComplicationMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 соп. ПС" property="reasonConcomitantMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
           <td colspan="1" title="Адрес (deathPlaceAddressField)" class="label">

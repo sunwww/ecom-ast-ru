@@ -22,13 +22,13 @@
   <%
   	String typeAge =ActionUtil.updateParameter("Form039Action","typeAge","2", request) ;
   	String typeReestr =ActionUtil.updateParameter("Form039Action","typeReestr","2", request) ;
-  	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
+  	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","2", request) ;
 	String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
 	String typeAgeWork =ActionUtil.updateParameter("Form039Action","typeAgeWork","2", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
-	String typeDiag =ActionUtil.updateParameter("Form039Action","typeDiag","3", request) ;
+	String typeDiag =ActionUtil.updateParameter("Form039Action","typeDiag","2", request) ;
 
   %>
     <msh:form action="/visit_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">

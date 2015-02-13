@@ -1,5 +1,5 @@
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -209,6 +209,7 @@ then -1 else 0 end)
     ,vdcC.name||' '||coalesce(dcvpd.name,'нет данных') as categoryDifference
     ,vdcL.name as latrogeny
     ,dc.commentCategory as dccommentCategory 
+    
     from deathcase dc 
     left join medcase m on m.id=dc.medcase_id
     left join medcase dmc on dmc.parent_id=m.id and dmc.dtype='DepartmentMedCase'
