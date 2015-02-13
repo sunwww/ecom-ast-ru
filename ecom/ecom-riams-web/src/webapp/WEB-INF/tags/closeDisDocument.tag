@@ -9,6 +9,7 @@
 <%@ attribute name="key" required="true" description="Горячие клавиши" %>
 <%@ attribute name="confirm" required="false" description="Сообщение" %>
 <%@ attribute name="reason" required="true" description="Закрытие" %>
+<%@ attribute name="otherCloseDate" required="true" description="Иная дата закрытия" %>
 <%@ attribute name="seria" required="true" description="Серия" %>
 <%@ attribute name="number" required="true" description="Номер" %>
 
@@ -32,9 +33,13 @@
     	<msh:row>
     		<msh:textField property="${name}Seria" label="Серия"/>
     		<msh:textField property="${name}Number" label="Номер"/>
+    		
     	</msh:row>
         <msh:row>
         	<msh:autoComplete label="Причина закрытия" property="${name}Reason" vocName="vocDisabilityDocumentCloseReason"    horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+    		<msh:textField labelColSpan="3" property="${name}OtherCloseDate" label="Иная дата закрытия для причин 32, 33, 34, 36"/>
         </msh:row>
     </msh:panel>
         <msh:row>
@@ -48,11 +53,11 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}CloseDisDocumentDialogInitialized = false ;
      var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
      // Показать
+     
      function show${name}CloseDocument() {
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}CloseDisDocumentDialogInitialized) {
@@ -87,7 +92,7 @@
      	} else {
 	     	DisabilityService.closeDisabilityDocument(
 	     		'${param.id}',$('${name}Reason').value, $('${name}Seria').value,$('${name}Number').value
-	     		 ,{
+	     		 ,$('${name}OtherCloseDate').value, {
 	                   callback: function(aString) {
 	                       $('${reason}').value=$('${name}Reason').value ;
 	                       $('${reason}ReadOnly').value=aString ;
@@ -95,6 +100,7 @@
 	                       $('${seria}ReadOnly').value=$('${name}Seria').value ;
 	                       $('${number}').value=$('${name}Number').value ;
 	                       $('${number}ReadOnly').value=$('${name}Number').value ;
+	                       $('${otherCloseDate}ReadOnly').value=$('${name}OtherCloseDate').value ;
 	                       $('isClose').checked=true ;
 	                       
 	                       cancel${name}CloseDocument() ;
@@ -123,15 +129,42 @@
 					//number
 					var cnt_n = aString.indexOf("#",cnt_s+1) ;
      				$('${name}Number').value =  aString.substring(cnt_s+1,cnt_n)  ;
+     				//otherdate
+     				var cnt_o = aString.indexOf("#",cnt_n+1) ;
+     				$('${name}OtherCloseDate').value = aString.substring(cnt_n+1,cnt_o) ;
      				//reason
-					var cnt_r = aString.indexOf("#",cnt_n+1) ;
-					$('${name}Reason').value = aString.substring(cnt_n+1,cnt_r) ;
+					var cnt_r = aString.indexOf("#",cnt_o+1) ;
+					$('${name}Reason').value = aString.substring(cnt_o+1,cnt_r) ;
      				//reason info
 					var cnt_ri = aString.indexOf("#",cnt_r+1) ;
 					$('${name}ReasonName').value = aString.substring(cnt_r+1) ;
+					$('${name}Number').className="required";
+					$('${name}ReasonName').className="autocomplete horizontalFill required";
+					${name}ReasonAutocomplete.addOnChangeCallback(function() {
+				    	DisabilityService.getCodeByReasonClose($('${name}Reason').value,{
+				    		callback: function(aString) {
+				    			if (aString!=null&&aString!=""&&(aString=="32" || aString=="33"||aString=="34"||aString=="36")) {
+				    				DisabilityService.getMaxDateToByDisDocument('${param.id}',{
+				    		    		callback: function(aString1) {
+				    		    			if (aString1!=null&&aString1!=""&&aString1!="null") {
+				    		   					$('${name}OtherCloseDate').value=aString1 ;
+				    		    			} else {
+				    		    				$('${name}OtherCloseDate').value=$('hospitalizedTo').value ;;
+				    		    			}
+				    		    		}
+				    		    	}) ;
+				   					$('${name}OtherCloseDate').className="required";
+				    			} else {
+				    				$('${name}OtherCloseDate').className="";
+				    				$('${name}OtherCloseDate').value="";
+				    			}
+				    		}
+				    	})
+				    });
      			}
      		}
      	);
+     	
      	theIs${name}CloseDisDocumentDialogInitialized = true ;
      }
 </script>
