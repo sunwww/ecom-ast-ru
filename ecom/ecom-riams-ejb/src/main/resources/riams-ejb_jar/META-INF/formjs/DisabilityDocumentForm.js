@@ -17,7 +17,7 @@ function onPreCreate(aForm, aCtx) {
 		Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentPrimarity
 		,aForm.primarity) ;
     list = aCtx.manager.createQuery("from DisabilityDocument where series = :series"
-       	+" and number = :number and documentType_id <> :doctype"
+       	+" and number = :number and documentType_id = :doctype"
        	)
        	.setParameter("series",series)
        	.setParameter("number",number)
@@ -41,7 +41,21 @@ function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
 	
+	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+			||reason.getCodeF().equals("33")
+			||reason.getCodeF().equals("34")
+			||reason.getCodeF().equals("36")
+			)) {
+		if (aForm.otherCloseDate!=null && !aForm.otherCloseDate.equals("")) {
+			
+		} else {
+			throw "Нельзя закрыть документ, так как причина закрытия "+reason.getCodeF()+" "+reason.getName()+" должна быть указана иная дата закрытия!" ;
+		}
+	} else {
+		aForm.setOtherCloseDate("") ;
+	}
 }
 function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setPatient(aEntity.disabilityCase.patient) ;
@@ -110,7 +124,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 		(aForm.mainWorkDocumentNumber.equals("")  ) )
 			throw "При совмещении необходимо указывать номер документа по основному месту работы" ;
     list = aCtx.manager.createQuery("from DisabilityDocument where "
-       	+" (series = :series and number = :number and documentType_id <> :doctype)"
+       	+" (series = :series and number = :number and documentType_id = :doctype)"
        	+" and id != '"+thisid+"'"
        	)
        	.setParameter("series",series)
@@ -121,13 +135,28 @@ function onPreSave(aForm,aEntity , aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
+	//throw ""+aForm.getDisabilityReason() ;
+	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+			||reason.getCodeF().equals("33")
+			||reason.getCodeF().equals("34")
+			||reason.getCodeF().equals("36")
+			)) {
+		if (aForm.otherCloseDate!=null && !aForm.otherCloseDate.equals("")) {
+			
+		} else {
+			throw "Нельзя закрыть документ, так как причина закрытия "+reason.getCodeF()+" "+reason.getName()+" должна быть указана иная дата закрытия!" ;
+		}
+	} else {
+		aForm.setOtherCloseDate("") ;
+	}
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {
 		var error ="";
 		for(var i=0; i<aList.size(); i++) {
 			var doc = aList.get(i) ;
-			error = error+" ИД = "+doc.id+" ДОКУМЕНТ: "+doc.documentTypeInfo+" "+ doc.series + " " +doc.number + "<br/>" ;
+			error = error+" <a href='entityView-dis_document.do?id="+doc.id+"'>"+(doc.documentType!=null?doc.documentType.name:"-")+" "+ doc.series + " " +doc.number + "</a><br/>" ;
 		}
 		throw aError + error ;
 	}
