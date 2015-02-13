@@ -375,7 +375,7 @@
 	    </form>     </msh:sectionTitle>
 	<msh:sectionContent>
 			<msh:table name="diag_list" idField="1" 
-			action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&illnesPrimary=${param.illnesPrimary}&spec=${param.spec}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+			action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&illnesPrimary=${param.illnesPrimary}&spec=${param.spec}&workFunction=${param.workFunction}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
@@ -473,7 +473,7 @@
 		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id
 		"/>
-		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&illnesPrimary=${param.illnesPrimary}&workFunction=${param.workFunction}&lpu=${param.lpu}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&illnesPrimary=${param.illnesPrimary}&workFunction=${param.workFunction}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />

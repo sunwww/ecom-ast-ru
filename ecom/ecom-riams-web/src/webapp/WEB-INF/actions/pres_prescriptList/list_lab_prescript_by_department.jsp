@@ -1,3 +1,4 @@
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="java.util.Date"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
@@ -117,10 +118,12 @@
     </script>
     <%
     request.setAttribute("j", "<input type=\"button\" value=\"Прием осуществлен\" onclick=\""
-    +"checkTransferService(\\\''||list(''||p.id)||'\\\')\"/>") ;
-    
-    request.setAttribute("r", "<input type=\"button\" value=\"Очистить данные о приеме\" onclick=\""
-    +"removeTransferService(\\\''||list(''||p.id)||'\\\')\"/>") ;
+    +"checkService(\\\''||list(''||p.id)||'\\\')\"/>") ;
+    boolean isRemove=RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/IsRemoveIntake", request) ;
+    if (isRemove) {
+	    request.setAttribute("r", "<input type=\"button\" value=\"Очистить данные о приеме\" onclick=\""
+	    +"removeService(\\\''||list(''||p.id)||'\\\')\"/>") ;
+    } 
     StringBuilder sqlAdd = new StringBuilder() ;
     if (typeIntake!=null && typeIntake.equals("1")) {
 		sqlAdd.append(" and p.intakeDate is not null ") ;
@@ -145,7 +148,7 @@
     ,coalesce(vsst.name,'---') as vsstname
     ,pat.lastname,pat.firstname,pat.middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
-   ,list(ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name) as medServicies
+   ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as medServicies
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -184,7 +187,7 @@
     ,coalesce(vsst.name,'---') as vsstname
     ,pat.lastname,pat.firstname,pat.middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
-    ,list(ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name) as medServicies
+    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as medServicies
    from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -207,7 +210,7 @@
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday
-    order by pat.lastname,pat.firstname,pat.middlename"> 
+    order by vsst.name,pat.lastname,pat.firstname,pat.middlename"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
@@ -225,7 +228,8 @@
 	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
 	      <msh:tableColumn columnName="Имя" property="7" />
 	      <msh:tableColumn columnName="Отчетство" property="8"/>
-	      <msh:tableColumn columnName="Список услуг" property="9"/>
+	      <msh:tableColumn columnName="Дата рождения" property="9"/>
+	      <msh:tableColumn columnName="Список услуг" property="10"/>
 
 	    </msh:table>
 	    <script type="text/javascript">
@@ -260,8 +264,8 @@
   		function checkService(aListPrescript, aMaterialId) {
   			var mat = getCheckedRadio(document.forms['mainForm'],"typeMaterial") ;
   			if (mat && mat==2) aMaterialId = getMaterialId() ;
-  			if (aMaterialId!=null) {
-  				PrescriptionService.intakeService(aListPrescript, aMaterialId, { 
+  			if (!mat||mat!=2 ||mat && mat==2&&aMaterialId!=null) {
+  				PrescriptionService.intakeService(aListPrescript, { 
 		            callback: function(aResult) {
 		            	window.document.location.reload();
 		            }
@@ -274,7 +278,6 @@
 		            	window.document.location.reload();
 		            }
 				}); 
-  			
   		}
   	</script>
   </tiles:put>

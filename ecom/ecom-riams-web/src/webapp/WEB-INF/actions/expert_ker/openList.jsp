@@ -18,7 +18,9 @@
     <tiles:put name='body' type='string'>
     <%
 	String typeJournal =ActionUtil.updateParameter("Expert_Ker_Open","typeJournal","2", request) ;
-    %>
+	String typeView = ActionUtil.updateParameter("Expert_Ker","typeView","3", request) ;
+	String typeLpu = ActionUtil.updateParameter("Expert_Ker","typeLpu","3", request) ;
+   %>
     <msh:form action="expert_kersopen.do" defaultField="1" >
     <msh:panel>
           <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
@@ -39,11 +41,24 @@
         	<input type="radio" name="typeJournal" value="4">  по специалистам
         </td>
       </msh:row>
+      <msh:row>
+        <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="1">  стационар
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="2" >  поликлиника
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeLpu" value="3">  все
+        </td>
+      </msh:row>
       </msh:panel>
       </msh:form>
           <script type='text/javascript'>
     
     checkFieldUpdate('typeJournal','${typeJournal}',1) ;
+    checkFieldUpdate('typeLpu','${typeLpu}',3) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -57,6 +72,15 @@
    }
       </script>
     	<%
+    	if (typeLpu!=null && typeLpu.equals("1")) {
+    		request.setAttribute("lpuSql", " and slo.dtype='DepartmentMedCase' ") ;
+    		request.setAttribute("lpuInfo", ", стационар") ;
+
+    	} else if (typeLpu!=null && typeLpu.equals("2")) {
+    		request.setAttribute("lpuSql", " and slo.dtype!='DepartmentMedCase' ") ;
+    		request.setAttribute("lpuInfo", ", поликлиника") ;
+    		
+    	}
     	String groupId = request.getParameter("groupId") ;
     	//String groupId = request.getParameter("groupId") ;
     	if (groupId==null && typeJournal!=null && 
@@ -91,8 +115,8 @@
 	    	left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 	    	left join Worker ow on ow.id=owf.worker_id
 	    	left join Patient owp on owp.id=ow.person_id
-			where cec.expertdate is null
-			group by ${queryGroup}
+			where cec.expertdate is null ${lpuSql}
+			group by ${queryGroup} 
 			order by ${queryOrder}"
     	/>
         <msh:table name="list" viewUrl="expert_kersopen.do?typeJournal=${typeJournal}&short=Short" action="expert_kersopen.do?typeJournal=${typeJournal}" idField="1" noDataMessage="Не найдено">
@@ -133,7 +157,7 @@ left join Patient p on p.id=cec.patient_id
 			    	left join medcase slo on slo.id=cec.medcase_id
 			    	left join mislpu ml on ml.id=slo.department_id
 left join medcase sls on sls.id=slo.parent_id
-where cec.expertDate is null ${queryWhere} 
+where cec.expertDate is null ${queryWhere} ${lpuSql}
 order by ${queryOrder}
 "
 		    	/>

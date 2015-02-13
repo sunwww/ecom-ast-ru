@@ -52,6 +52,9 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="3">
         	<input type="radio" name="typeDate1" value="3">  когда произошло событие
         </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+        	<input type="radio" name="typeDate1" value="4">  выписки
+        </td>
         </msh:row>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -186,6 +189,9 @@
     	if (typeDate1!=null && typeDate1.equals("1")) {
     		request.setAttribute("paramDate","m.dateStart") ;
     		request.setAttribute("paramDateInfo","Дата поступления") ;
+    	} else if (typeDate1!=null && typeDate1.equals("4")) {
+    		request.setAttribute("paramDate","m.dateFinish") ;
+    		request.setAttribute("paramDateInfo","Дата выписки") ;
     	} else if (typeDate1!=null && typeDate1.equals("3")) {
     		request.setAttribute("paramDate", "pm.whenDateEventOccurred") ;
     		request.setAttribute("paramDateInfo", "Дата, когда произошло событие") ;
@@ -283,6 +289,19 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     ,case when m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is null then 'Стационар'
           when m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is not null then 'Помощь в приемном отделении'
      else m.dtype end as typeHelp
+     , case when m.emergency='1' then 'ДА' else 'НЕТ' end as emergency
+     ,vss.name as vssname
+     ,pol.commonNumber as commonNumber
+     ,case when m.dateFinish is not null then (select list(distinct mkb.code) from Diagnosis diag
+		left join VocIdc10 mkb on mkb.id=diag.idc10_id
+		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as mkbAfter
+     ,case when m.dateFinish is not null then (select list(distinct mkb.name) from Diagnosis diag
+		left join VocIdc10 mkb on mkb.id=diag.idc10_id
+		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as mkbAftername
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -304,7 +323,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
     left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id
     left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
-    
+    left join VocServiceStream vss on vss.id=m.serviceStream_id
     left join MisLpu as ml on ml.id=m.department_id 
     left join SecUser su on su.login=m.username
     left join WorkFunction wf1 on wf1.secUser_id=su.id
@@ -327,6 +346,13 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
+    </form><form action="print-stac_criminalMessage_pr42_1.do" method="post" target="_blank">
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="${param.dateBegin} - ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать доп. реестра"> 
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>

@@ -160,7 +160,9 @@
         <msh:row guid="e46a3-e51c-46ef-9a21-6bvb60831">
           <msh:autoComplete vocName="vocDisabilityDocumentCloseReason" property="closeReason" label="Причина закрытия" guid="c425f-265a-40ab-9581-a8ff" horizontalFill="true" size="40" />
         </msh:row> 
-        
+        <msh:row>
+        	<msh:textField property="otherCloseDate" label="Иная дата закрытия для причин 32, 33, 34, 36" labelColSpan="3"/>
+        </msh:row>
         <msh:row guid="685ad8f8-f93c-4bd6-98b5-a1618944cb07">
           <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
         </msh:row>
@@ -171,8 +173,23 @@
     <ecom:titleTrail mainMenu="Disability" beginForm="dis_documentByPatientForm" guid="116eb2b5-9e8e-45d6-91a4-328b6922bee6" />
   </tiles:put>
   <tiles:put name="javascript" type="string" >
+	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
     <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
+    
     <script type="text/javascript">
+    closeReasonAutocomplete.addOnChangeCallback(function() {
+    	DisabilityService.getCodeByReasonClose($('closeReason').value,{
+    		callback: function(aString) {
+    			if (aString!=null&&aString!=""&&(aString=="32" || aString=="33"||aString=="34"||aString=="36")) {
+    				$('otherCloseDate').value=$('dateTo').value ;
+    		    	$('otherCloseDate').className="required";
+    			} else {
+    				$('otherCloseDate').className="";
+    				$('otherCloseDate').value="" ;
+    			}
+    		}
+    	})
+    });
   	idc10Autocomplete.addOnChangeCallback(function() {
  	 	 if ($('idc10Final').value==""){
  	 		$('idc10Final').value = $('idc10').value ; 

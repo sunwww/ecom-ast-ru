@@ -131,7 +131,7 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="standart" fieldColSpan="4"
-        	label="Стандарт" horizontalFill="true" vocName="omcStandart"/>
+        	label="ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
         </msh:row>
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -203,7 +203,7 @@
     	}
     	String standart = (String)request.getParameter("standart") ;
     	if (standart!=null && !standart.equals("") && !standart.equals("0")) {
-    		request.setAttribute("standartSqlId", "'&standarte="+standart+"'");
+    		request.setAttribute("standartSqlId", "'&standart="+standart+"'");
     		request.setAttribute("standartSql", " and os.id="+standart);
     	} else {
     		request.setAttribute("standartSqlId", "'&standart='||os.id");
@@ -218,9 +218,9 @@
     	}
     	
     	if (typeStandart!=null && typeStandart.equals("1")) {
-    		request.setAttribute("fldStandart", "omcStandart_id") ;
+    		request.setAttribute("fldStandart", "kindHighCare_id") ;
     	} else {
-    		request.setAttribute("fldStandart", "omcStandartExpert_id") ;
+    		request.setAttribute("fldStandart", "kindHighCare_id") ;
     	}
     	if (typeDate!=null && typeDate.equals("1")) {
     		request.setAttribute("dateSql","dateStart") ;
@@ -262,7 +262,7 @@
     	,ss.code as sscode
     	,d.name
     	,list(distinct case when  (vdrt.code='3' or vdrt.code='4') and vpd.code='1' then mkb.code when mkb.id is null then 'не указан' else null end) 
-    	,os.model ||' '||os.name as osname
+    	,os.code ||' '||os.name as osname
     	,to_char(hmc.dateStart,'dd.mm.yyyy') as hmcDateStart
     	,to_char(m.dateStart,'dd.mm.yyyy') as mdateStart
     	,to_char(hmc.dateFinish,'dd.mm.yyyy') as hmcdateFinish
@@ -288,7 +288,7 @@
     	
     	,case when vhr.code='11' then 'Да' else null end as deathCase
     from MedCase as m 
-    left join Omc_standart os on os.id=m.${fldStandart}
+    left join vocKindHighCare os on os.id=m.${fldStandart}
     left join Diagnosis diag on diag.medcase_id=m.id
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -310,8 +310,8 @@
     ${departmentSql} ${serviceStreamSql} ${bedSubTypeSql} ${bedTypeSql} ${standartSql}  
     and os.id is not null  ${emergencySql} ${patientSql} 
     group by  m.id,hmc.id,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,d.name, vbst.id,vbst.name,
-    vss.id,vss.name,os.id,os.model,os.name,vhr.code,hmc.dateStart,hmc.dateFinish,m.dateStart,m.dateFinish,m.transferDate,bf.addCaseDuration
-    order by  vss.name,vbst.name,os.model
+    vss.id,vss.name,os.id,os.code,os.name,vhr.code,hmc.dateStart,hmc.dateFinish,m.dateStart,m.dateFinish,m.transferDate,bf.addCaseDuration
+    order by  vss.name,vbst.name,os.code
     	"/>
     	    <form action="print-stac_report_standart_reestr.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -330,7 +330,7 @@
     		<msh:tableColumn property="4" columnName="№Ист.бол."/>
     		<msh:tableColumn property="5" columnName="Отделение"/>
     		<msh:tableColumn property="6" columnName="Диагноз"/>
-    		<msh:tableColumn property="7" columnName="Стандарт"/>
+    		<msh:tableColumn property="7" columnName="ВМП"/>
     		<msh:tableColumn property="8" columnName="Дата госпит."/>
     		<msh:tableColumn property="9" columnName="Дата пост. в отделение"/>
     		<msh:tableColumn property="10" columnName="Дата выписки"/>
@@ -352,7 +352,7 @@
     	 ,${viewDepartmentSql}, ${viewBedSql}
     	,vbst.name as vbstname
     	,vss.name as vssname
-    	,os.model as osmodel
+    	,os.code as osmodel
     	,os.name as osname
     	,count(distinct m.id) as cnt
     	,sum(
@@ -386,7 +386,7 @@
     	and (vdrt.code='3' or vdrt.code='4') and vpd.code='1'
     	),'не указан')) as diag  
     from MedCase as m 
-    left join Omc_standart os on os.id=m.${fldStandart}
+    left join vocKindHighCare os on os.id=m.${fldStandart}
     left join MedCase as hmc on hmc.id=m.parent_id 
     left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
@@ -404,8 +404,8 @@
     ${bedTypeSql} ${standartSql} ${emergencySql}
     and os.id is not null ${patientSql}
     group by  ${viewDepartmentGroup} ${viewBedGroup} vbst.id,vbst.name,
-    vss.id,vss.name,os.id,os.model,os.name
-    order by  ${viewDepartmentOrder} ${viewBedOrder} vss.name,vbst.name,os.model
+    vss.id,vss.name,os.id,os.code,os.name
+    order by  ${viewDepartmentOrder} ${viewBedOrder} vss.name,vbst.name,os.code
     	"/>
     	<msh:table name="swod_by_standart" 
     	action="stac_report_standartOmc.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1">
@@ -414,7 +414,7 @@
     		<msh:tableColumn property="4" columnName="Тип коек"/>
     		<msh:tableColumn property="5" columnName="Поток"/>
     		<msh:tableColumn property="6" columnName="Код"/>
-    		<msh:tableColumn property="7" columnName="Наименование стандарта"/>
+    		<msh:tableColumn property="7" columnName="Наименование ВМП"/>
     		<msh:tableColumn property="8" isCalcAmount="true" columnName="Кол-во СЛО"/>
     		<msh:tableColumn property="9" isCalcAmount="true" columnName="Кол-во к.дней по СЛО"/>
     		<msh:tableColumn property="10" isCalcAmount="true" columnName="Кол-во к.дней по СЛС"/>

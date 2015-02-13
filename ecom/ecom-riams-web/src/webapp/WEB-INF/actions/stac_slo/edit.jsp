@@ -190,12 +190,19 @@
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
           <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcStandart">
+        
         <msh:row>
         	<msh:autoComplete property="omcStandart" fieldColSpan="6" label="ОМС стандарт (врач)" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="omcStandartExpert" fieldColSpan="6" label="ОМС стандарт (эксперт)" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcStandart">
+        <msh:hidden property="omcStandart"/>
+        <msh:hidden property="omcStandartExpert"/>
+        </msh:ifNotInRole>
         <msh:row>
         	<msh:autoComplete property="kindHighCare" fieldColSpan="6" label="Вид ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
         </msh:row>
