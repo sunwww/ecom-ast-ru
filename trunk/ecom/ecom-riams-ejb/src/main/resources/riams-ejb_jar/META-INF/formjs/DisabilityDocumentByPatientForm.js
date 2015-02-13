@@ -16,16 +16,32 @@ function onPreCreate(aForm, aCtx) {
 		throw "Предыдущий документ не должен совпадать с текущим." ;
 	}
     list = aCtx.manager.createQuery("from DisabilityDocument where series = :series"
-       	+" and number = :number and documentType_id <> :doctype"
+       	+" and number = :number and documentType_id = :doctype"
        	)
        	.setParameter("series",series)
        	.setParameter("number",number)
        	.setParameter("doctype",doctype)
        	.getResultList() ;
-	errorThrow(list) ;
+	errorThrow(list,"В базе уже существует документ с такими номером и серией") ;
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	
+	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
+	
+	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+			||reason.getCodeF().equals("33")
+			||reason.getCodeF().equals("34")
+			||reason.getCodeF().equals("36")
+			)) {
+		if (aForm.otherCloseDate!=null && !aForm.otherCloseDate.equals("")) {
+			
+		} else {
+			throw "Нельзя закрыть документ, так как причина закрытия "+reason.getCodeF()+" "+reason.getName()+" должна быть указана иная дата закрытия!" ;
+		}
+	} else {
+		aForm.setOtherCloseDate("") ;
+	}
 }
 
 function onCreate(aForm, aEntity, aCtx) {
@@ -87,7 +103,7 @@ function errorThrow(aList, aError) {
 		var error ="";
 		for(var i=0; i<aList.size(); i++) {
 			var doc = aList.get(i) ;
-			error = error+" ИД = "+doc.id+" ДОКУМЕНТ: "+doc.documentTypeInfo+" "+ doc.series + " " +doc.number + "<br/>" ;
+			error = error+" <a href='entityView-dis_document.do?id="+doc.id+"'>"+(doc.documentType!=null?doc.documentType.name:"-")+" "+ doc.series + " " +doc.number + "</a><br/>" ;
 		}
 		throw aError + error ;
 	}
