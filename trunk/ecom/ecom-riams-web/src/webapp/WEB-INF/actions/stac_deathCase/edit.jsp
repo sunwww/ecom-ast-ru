@@ -73,7 +73,7 @@
           <msh:textField property="postmortemBureauDate" label="Дата ПАБ" />
         </msh:row>
         <msh:row>
-          <msh:textField property="dateForensic" label="Дата МСЭ" />
+          <msh:textField property="dateForensic" label="Дата СМЭ" />
           <msh:checkBox property="isAutopsy" label="Вскрытие" />
         </msh:row>
         
