@@ -75,8 +75,10 @@
 		request.setAttribute("dFrom",dFrom) ;
 		if (typePayment!=null && typePayment.equals("1")) {
 			request.setAttribute("paymentSql", " and (ca.isPaymentTerminal is null or ca.isPaymentTerminal='0')") ;
+			request.setAttribute("paymentInfo", " Оплата наличными.") ;
 		} else if (typePayment!=null && typePayment.equals("2")) {
 			request.setAttribute("paymentSql", " and ca.isPaymentTerminal='1'") ;
+			request.setAttribute("paymentInfo", " Безналичный расчет.") ;
 		}
 		String dateTo = request.getParameter("dateTo") ;
 		String dTo = "" ;
@@ -238,7 +240,7 @@ order by ${groupOrder}
     <input type='hidden' name="sqlCount" id="sqlCount" value="3">
     <input type='hidden' name="totalCount" id="totalCount" value="1">
     <input type='hidden' name="totalList1" id="totalList1" value="1,2">
-    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
+    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}. ${paymentInfo}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
@@ -373,7 +375,7 @@ order by cao.operationDate,cao.operationTime
     <input type='hidden' name="sqlCount" id="sqlCount" value="3">
     <input type='hidden' name="totalCount" id="totalCount" value="1">
     <input type='hidden' name="totalList1" id="totalList1" value="1,2">
-    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}.">
+    <input type='hidden' name="sqlInfo1" id="sqlInfo1" value="${param.dateFrom}-${param.dateTo}. ${paymentInfo}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo2" value="${groupName}">
     <input type='hidden' name="sqlInfo2" id="sqlInfo3" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService">
