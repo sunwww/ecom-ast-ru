@@ -41,6 +41,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		writeOff.setAccount(aEntity.account) ;
 		writeOff.setCost(aEntity.cost);
 		writeOff.setDiscount(aEntity.discount) ;
+		writeOff.setIsPaymentTerminal(aEntity.isPaymentTerminal) ;
 		writeOff.setOperationDate(new java.sql.Date(date.getTime())) ;
 		writeOff.setOperationTime(new java.sql.Time (date.getTime())) ;
 		writeOff.setCreateDate(new java.sql.Date(date.getTime())) ;
