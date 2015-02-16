@@ -354,6 +354,7 @@ function printDocument(aCtx, aParams) {
 	recordChar(doc.mainWorkDocumentNumber,12,"doc.maindoc.number") ;
 	var closeReason = doc.closeReason ;
 	var closeReasonCode = closeReason!=null? closeReason.code:"0" ;
+	var closeReasonCodeF = +(closeReason!=null? closeReason.codeF:"0") ;
 	var dateClose =null;
 	
 	if (lastDate!=null) {
@@ -369,9 +370,9 @@ function printDocument(aCtx, aParams) {
 	} else {
 		closeReasonCode = +closeReasonCode ;
 		if (closeReasonCode>1) {
-			if (closeReasonCode>=3 && (closeReasonCode<=5 || closeReasonCode==7)) {
+			if (closeReasonCodeF==32 || closeReasonCodeF==33 || closeReasonCodeF==34 || closeReasonCodeF==36) {
 				recordDate(null,"doc.endDate") ;
-				recordDate(dateClose,"doc.otherEnd.date") ;
+				recordDate(doc.otherCloseDate,"doc.otherEnd.date") ;
 				recordChar(closeReason!=null?closeReason.codeF:"",2,"doc.otherEnd.code") ;
 			} else {
 				recordDate(null,"doc.endDate") ;
