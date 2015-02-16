@@ -43,7 +43,7 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
 	
-	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+	if (reason!=null && reason.getCodeF()!=null && (reason.getCodeF().equals("32")
 			||reason.getCodeF().equals("33")
 			||reason.getCodeF().equals("34")
 			||reason.getCodeF().equals("36")
@@ -137,7 +137,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
 	//throw ""+aForm.getDisabilityReason() ;
-	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+	if (reason!=null && reason.getCodeF()!=null && (reason.getCodeF().equals("32")
 			||reason.getCodeF().equals("33")
 			||reason.getCodeF().equals("34")
 			||reason.getCodeF().equals("36")
