@@ -1063,6 +1063,23 @@ public class HospitalMedCaseServiceJs {
     	return res.toString() ;
     	
     }
+    public String getTextDiaryByMedCase(Long aMedCase,HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	StringBuilder sql = new StringBuilder() ;
+    	StringBuilder res = new StringBuilder() ;
+    	sql = new StringBuilder() ;
+    	sql.append("select d.id,d.record from Diary d ") ;
+    	sql.append(" where d.medCase_id='").append(aMedCase).append("'") ;
+    	
+    	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),2) ;
+    	for(WebQueryResult wqr:list) {
+    		//WebQueryResult wqr = list.iterator().next() ;
+    		res.append(wqr.get2());
+    		
+    	} 
+    	
+    	return res.toString() ;
+    }
     public String getDefaultBedTypeByDepartment(Long aDepartment, Long aServiceStream, String aDateFrom,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sql = new StringBuilder() ;
@@ -1084,6 +1101,32 @@ public class HospitalMedCaseServiceJs {
     		
     	} else {
     		res.append("####");
+    	}
+    	
+    	return res.toString() ;
+    }
+    public String getDefaultBedSubTypeByDepartment(Long aDepartment, Long aServiceStream,Long aBedType, String aDateFrom,HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	StringBuilder sql = new StringBuilder() ;
+    	StringBuilder res = new StringBuilder() ;
+    	sql = new StringBuilder() ;
+    	sql.append("select vbt.id as vbtid, vbt.name as vbtname,vbst.id as vbstid,vbst.name as vbstname from BedFund bf ") ;
+    	sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
+    	sql.append(" where bf.lpu_id='").append(aDepartment) ;
+    	if (aServiceStream!=null && aServiceStream.intValue()>0) sql.append("' and bf.bedType_id='").append(aBedType) ;
+    	sql.append("' and bf.serviceStream_id='").append(aServiceStream) ;
+    	sql.append("' and bf.dateFinish is null") ;
+    	
+    	
+    	
+    	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),2) ;
+    	if (list.size()>0) {
+    		WebQueryResult wqr = list.iterator().next() ;
+    		//res.append(wqr.get1()).append("#").append(wqr.get2()).append("#") ;
+    		res.append(wqr.get3()).append("#").append(wqr.get4()).append("#") ;
+    		
+    	} else {
+    		res.append("##");
     	}
     	
     	return res.toString() ;

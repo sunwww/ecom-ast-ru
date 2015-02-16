@@ -817,7 +817,11 @@ public class WorkCalendarServiceJs {
 		sql.append(" select  wcd.id as wcdid, to_char(wcd.calendardate,'dd.mm.yyyy') as wcdcalendardate");
 		sql.append(" ,to_char(wcd.calendardate,'dd') as CDday");
 		sql.append(" ,count(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 1 else null end) as cntFree");
-		sql.append(" ,count(case when wct.medCase_id is not null or wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 1 else null end) as cntBasy");
+		if (!isRemoteUser) {
+			sql.append(" ,count(case when wct.medCase_id is not null or wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 1 else null end) as cntBasy");
+		} else {
+			sql.append(" ,count(case when (vsrt.id is not null and (vsrt.isViewRemoteUser='0' or vsrt.isViewRemoteUser is null)) or (vsrt.id is null and wct.medCase_id is not null or wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) then 1 else null end) as cntBusy");
+		}
 		sql.append(" ,count(wct.id) as cntAll");
 		sql.append(" from workCalendar wc"); 
 		sql.append(" left join workcalendarday wcd on wcd.workcalendar_id=wc.id");
@@ -1012,15 +1016,21 @@ public class WorkCalendarServiceJs {
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
 			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; 
 		if (isRemoteUser) {
-			sql.append(", case when vsrt.isRemoteRayon='1' then 'ЗАНЯТО' when vsrt.isViewOnlyMineDoctor='1' then 'ЗАНЯТО'  when vsrt.isViewOnlyDoctor='1' then 'ЗАНЯТО' else null end as reserve") ;
+			sql.append(", case when vsrt.id is not null and (vsrt.isViewRemoteUser='0' or vsrt.isViewRemoteUser is null) then 'ЗАНЯТО' when vsrt.isRemoteRayon='1' then 'ЗАНЯТО' when vsrt.isViewOnlyMineDoctor='1' then 'ЗАНЯТО'  when vsrt.isViewOnlyDoctor='1' then 'ЗАНЯТО' else null end as reserve") ;
 		} else {
-			sql.append(", case when wcd.calendarDate!=current_date then case when vsrt.isRemoteRayon='1' then 'РЕЗЕРВ УДАЛ.РАЙОН' when vsrt.isViewOnlyMineDoctor='1' then 'РЕЗЕРВ ВРАЧА'  when vsrt.isViewOnlyDoctor='1' then 'РЕЗЕРВ ВРАЧАМ' else null end else null end as reserve") ;
+			sql.append(",  vsrt.name  as reserve") ;
 		}
+		sql.append(",vss.name as v13ssname ") ;
+		sql.append(",vsrt.name as v14srtname ") ;
+		sql.append(",vsrt.colortext as v15srtcolor ") ;
+		sql.append(",vsrt.background as v16srtbackground ") ;
+		
 		if (isRemoteUser) {
 			sql.append(", case when sw.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
 			sql.append(", case when w.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
 		}
 		sql.append(" from WorkCalendarTime wct") ;
+		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
@@ -1062,17 +1072,19 @@ public class WorkCalendarServiceJs {
 			boolean reserve = false ;
 			int pre = Integer.valueOf(""+wqr.get3());
 			if (pre==1) {
-				if (isRemoteUser && wqr.get14()!=null && !(""+wqr.get14()).equals("")) info=false ;
+				if (isRemoteUser && wqr.get18()!=null && !(""+wqr.get18()).equals("")) info=false ;
 			} else {
-				if (isRemoteUser && wqr.get13()!=null && !(""+wqr.get13()).equals("")) info=false ;
+				if (isRemoteUser && wqr.get17()!=null && !(""+wqr.get17()).equals("")) info=false ;
 			}
+			
 			if (wqr.get12()!=null && !(""+wqr.get12()).equals("")) reserve = true ;
+			if (isRemoteUser&& info&&reserve) info=false ;
 			if (pre==1) {
 				
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()) .append(" ") ;
-					res.append("ЗАНЯТО").append("") ;
+					res.append("-ЗАНЯТО").append("") ;
 				} else {
 					if (wqr.get7()!=null) {
 						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>") 
@@ -1093,6 +1105,7 @@ public class WorkCalendarServiceJs {
 					if (wqr.get4()!=null) {
 						String prelastname = ""+wqr.get8() ;
 						String lastname = ""+wqr.get9() ;
+						//if (wqr.get13()!=null) lastname=lastname+" ("+wqr.get13()+")" ;
 						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
 						String add = "" ;
 						if (prelastname!=null && lastname!=null) {
@@ -1100,6 +1113,7 @@ public class WorkCalendarServiceJs {
 								add = " <i> вместо "+prelastname+"</i> " ;
 							}
 						}
+						if (wqr.get13()!=null) add = add+" ("+wqr.get13()+")" ;
 						if (wqr.get7()!=null) {
 							res.append(" <strike><u>")
 							.append(wqr.get2()).append("")
@@ -1119,7 +1133,7 @@ public class WorkCalendarServiceJs {
 						.append("','").append(wqr.get6()).append("')\">")
 						.append(wqr.get2()).append("</a>")
 						.append(" ") ;
-						res.append(wqr.get5()).append(" <a href=\"javascript:deleteTime('").append(wqr.get1()).append("')\">У</a>")  ;
+						res.append(wqr.get5()).append(" ").append(wqr.get13()!=null?"("+wqr.get13()+"":"").append(" <a href=\"javascript:deleteTime('").append(wqr.get1()).append("')\">У</a>")  ;
 						
 					}
 				}
@@ -1130,8 +1144,17 @@ public class WorkCalendarServiceJs {
 					res.append("ЗАНЯТО").append("") ;
 				} else {
 					if (reserve) {
-						res.append("<li id='liReserve'>") ;
-						res.append(wqr.get2()).append(" ") ;
+						res.append("<li id='liTime' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
+
+						//res.append("<li id='liReserve' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("'>") ;
+						//res.append(wqr.get2()).append(" ") ;
+						res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
+						if (first) res.append(" checked='true'");
+						res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
+						if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
+							res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
+						}
+						res.append(" ").append(wqr.get2()).append(" ") ;
 						res.append(wqr.get12()) ;
 					} else {
 						
@@ -1169,12 +1192,12 @@ public class WorkCalendarServiceJs {
 	}
 	public String preRecordByPatient(String aPatInfo,Long aPatientId
 			,Long aFunction,Long aSpec,Long aDay,Long aTime
-			,HttpServletRequest aRequest
+			,Long aServiceStream,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		//System.out.println("patid="+aPatientId) ;
+		System.out.println("serve="+aServiceStream) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId) ;
+		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream) ;
 		return "Сохранено" ;
 	}
 	public String preRecordByTimeAndPatient(String aPatInfo,Long aPatientId
