@@ -37,7 +37,6 @@
 	<form-bean name="dis_caseForm" type="ru.ecom.mis.ejb.form.disability.DisabilityCaseForm" />
 	<form-bean name="dis_documentForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm" />
 	<form-bean name="dis_documentByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
-	<form-bean name="dis_caseShortByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
 	<form-bean name="dis_caseOtherByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
 	<form-bean name="dis_recordForm" type="ru.ecom.mis.ejb.form.disability.DisabilityRecordForm" />
     <form-bean name="dis_medSocCommissionForm" type="ru.ecom.mis.ejb.form.disability.MedSocCommissionForm" />
