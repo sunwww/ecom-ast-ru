@@ -29,7 +29,7 @@ function onPreCreate(aForm, aCtx) {
 	
 	var reason = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason, aForm.getCloseReason()) ;
 	
-	if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
+	if (reason!=null && reason.getCodeF()!=null && (reason.getCodeF().equals("32")
 			||reason.getCodeF().equals("33")
 			||reason.getCodeF().equals("34")
 			||reason.getCodeF().equals("36")
