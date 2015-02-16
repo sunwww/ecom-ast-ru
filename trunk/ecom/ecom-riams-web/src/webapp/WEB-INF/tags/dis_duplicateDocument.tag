@@ -60,7 +60,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}DuplicateDisDocumentDialogInitialized = false ;
      var the${name}DuplicateDisDocumentDialog = new msh.widget.Dialog($('${name}DuplicateDisDocumentDialog')) ;

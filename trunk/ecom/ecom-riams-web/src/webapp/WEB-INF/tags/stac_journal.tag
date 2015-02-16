@@ -121,7 +121,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	/>
 	    	<msh:sideLink styleId="stac_journalByStandart"
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/StandartOmc" 
-	    		action="/stac_report_standartOmc" name="По стандартам"
+	    		action="/stac_report_standartOmc" name="По ВМП"
 	    	/>
 	    	<msh:sideLink styleId="stac_journalByBedFund"
 	    		roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund" 

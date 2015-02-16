@@ -54,7 +54,6 @@
 </div>
 </div>
 
-<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 <script type="text/javascript"><!--
      var theIs${name}WorkComboDisDocumentDialogInitialized = false ;
      var the${name}WorkComboDisDocumentDialog = new msh.widget.Dialog($('${name}WorkComboDisDocumentDialog')) ;
