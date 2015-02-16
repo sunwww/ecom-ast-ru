@@ -10,6 +10,7 @@ function issueRefund(aCtx, aId) {
 	var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
 	operReturn.setAccount(operationAccrual.account) ;
 	operReturn.setCost(operationAccrual.cost);
+	operReturn.setIsPaymentTerminal(operationAccrual.isPaymentTerminal);
 	operReturn.setDiscount(operationAccrual.discount) ;
 	operReturn.setOperationDate(dateS) ;
 	operReturn.setOperationTime(timeS) ;
