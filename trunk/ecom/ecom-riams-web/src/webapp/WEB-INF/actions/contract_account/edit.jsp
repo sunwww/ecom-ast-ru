@@ -49,7 +49,7 @@
 							<ecom:webQuery name="operationsAccrual" maxResult="10" nativeSql="
 select cao.id
 , to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
-, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
+, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2)||case when cao.isPaymentTerminal='1' then ' терминалом' else ' наличными' end  as oplate
 ,vwf.name||' '||wp.lastname,case when cao.repealOperation_id is not null then 'Был осуществлен возврат' else '' end
 from ContractAccountOperation cao
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -77,7 +77,7 @@ order by cao.operationDate desc,cao.operationTime desc
 						<msh:section title="Возвраты. Последние 10" >
 							<ecom:webQuery name="operationsReturn" maxResult="10" nativeSql="select cao.id
 								, to_char(cao.operationDate,'dd.mm.yyyy')||' '||cast(cao.operationTime as varchar(5))  as operationDate
-								, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2) as oplate
+								, cao.cost, cao.discount,round(cao.cost*(100-cao.discount)/100,2)||case when cao.isPaymentTerminal='1' then ' терминалом' else ' наличными' end as oplate
 								,vwf.name||' '||wp.lastname
 								from ContractAccountOperation cao
 								left join WorkFunction wf on wf.id=cao.workFunction_id

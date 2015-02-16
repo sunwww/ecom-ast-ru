@@ -49,10 +49,10 @@
         	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="bedType" label="Профиль коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedType"/>
+        	<msh:autoComplete parentAutocomplete="department" property="bedType" label="Профиль коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedTypeByDep"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="bedSubType" label="Тип коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedSubType"/>
+        	<msh:autoComplete property="bedSubType" label="Тип коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedSubTypeByDep"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="hospitalRoom" parentAutocomplete="department" label="Забронировано место в палате:" vocName="hospitalRoomByLpu" fieldColSpan="2" labelColSpan="2" horizontalFill="true"/>
@@ -71,6 +71,13 @@
         <msh:row>
         	<msh:textField horizontalFill="true" property="diagnosis" fieldColSpan="3" label="Диагноз"/>
         </msh:row>
+        <msh:ifFormTypeIsCreate formName="smo_planHospitalByVisitForm">
+        <msh:row>
+        	<td colspan="3" align="center">
+        	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/>
+        	</td>
+        </msh:row>
+        </msh:ifFormTypeIsCreate>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
@@ -148,7 +155,17 @@
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	
   	<script type="text/javascript">
-  		initPersonPatientDialog();
+  		//initPersonPatientDialog();
+  		function getTextDiaryByMedCase(aElement) {
+  			HospitalMedCaseService.getTextDiaryByMedCase(
+					 $('visit').value,{
+    			callback: function(aResult) {
+    				$('comment').value=$('comment').value+"\n"+aResult ;
+    				
+    			}
+    		}) ;
+  			aElement.style.display="none" ;
+  		} 
   		departmentAutocomplete.addOnChangeCallback(function() {
 			HospitalMedCaseService.getDefaultBedTypeByDepartment(
 					 $('department').value, $('serviceStream').value
@@ -167,9 +184,32 @@
       		      	 	$('bedSubType').value='0';
       		      	 	$('bedSubTypeName').value='';
       				}
+      				bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
+      				
       			}
       		}) ;  
   		});
+  		bedTypeAutocomplete.addOnChangeCallback(function() {
+  			HospitalMedCaseService.getDefaultBedSubTypeByDepartment(
+					 $('department').value, $('serviceStream').value
+					 ,$('bedType').value
+     				, $('dateFrom').value,{
+     			callback: function(aResult) {
+     				var res = aResult.split('#') ;
+
+     				if (+res[0]!=0) {
+     					$('bedSubType').value = res[0] ; 
+     					$('bedSubTypeName').value = res[1] ; 
+     				} else {
+     		      	 	$('bedSubType').value='0';
+     		      	 	$('bedSubTypeName').value='';
+     				}
+     				bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
+     				
+     			}
+     		}) ;
+      	 });
+
       		</script>  
   </msh:ifFormTypeIsNotView>
   </tiles:put>

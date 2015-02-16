@@ -817,7 +817,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_medPolicy" name="Полисы" title="Показать все полисы" roles="/Policy/Mis/MedPolicy/View"/>
 <%-- <msh:sideLink params="id" action="/js-dis_case-listByPatient" name="Нетрудоспособности" title="Показать все случаи нетрудоспособности" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/DisabilityCase/View" /> --%>        
-        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-dis_case.do?id=${param.id}&short=Short')" name="Нетрудоспособности" 
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-dis_case.do?id=${param.id}&short=Short')" name="Нетрудосп." 
         title="Показать все случаи нетрудоспособности по пациенту" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/Case/View" />
         
         <msh:sideLink params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />

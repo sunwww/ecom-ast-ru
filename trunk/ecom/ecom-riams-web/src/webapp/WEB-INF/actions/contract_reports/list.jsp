@@ -17,6 +17,7 @@
 	<tiles:put name='body' type='string' >
   <%
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
+  	String typePayment =ActionUtil.updateParameter("Form039Action","typePayment","1", request) ;
 %>
 		<msh:form action="/contract_reports_finance.do" defaultField="dateFrom">
 			<msh:panel>
@@ -30,6 +31,18 @@
 				<msh:row>
 					<msh:autoComplete property="operator" fieldColSpan="4" label="Оператор" vocName="workFunction" horizontalFill="true"/>
 				</msh:row>
+        <msh:row>
+	        <td class="label" title="Оплата (typePayment)" colspan="1"><label for="typePaymentName" id="typePaymentLabel">Оплата:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeTerminal" value="1">  наличными
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeTerminal" value="2"> терминалом
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeTerminal" value="2"> наличные и терминалом 
+	        </td>
+	    </msh:row>
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -60,7 +73,11 @@
 			dFrom = ">=to_date('"+dateFrom+"', 'dd.mm.yyyy')" ;
 		}
 		request.setAttribute("dFrom",dFrom) ;
-		
+		if (typePayment!=null && typePayment.equals("1")) {
+			request.setAttribute("paymentSql", " and (ca.isPaymentTerminal is null or ca.isPaymentTerminal='0')") ;
+		} else if (typePayment!=null && typePayment.equals("2")) {
+			request.setAttribute("paymentSql", " and ca.isPaymentTerminal='1'") ;
+		}
 		String dateTo = request.getParameter("dateTo") ;
 		String dTo = "" ;
 		if (dateTo==null ||dateTo.equals("") ) {
@@ -143,7 +160,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
-${nationalitySql}
+${nationalitySql} ${paymentSql}
 group by wp.lastname,wp.firstname,wp.middlename
 order by wp.lastname
 			"/>
@@ -173,7 +190,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
-${nationalitySql}
+${nationalitySql} ${paymentSql}
 and (pp.isVat='0' or pp.isVat is null)
 group by ${groupGroup}
 order by ${groupOrder}
@@ -206,7 +223,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
-${nationalitySql}
+${nationalitySql} ${paymentSql}
 and pp.isVat='1'
 group by ${groupGroup}
 order by ${groupOrder}
@@ -281,7 +298,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
-${nationalitySql}
+${nationalitySql} ${paymentSql}
 group by wp.lastname,wp.firstname,wp.middlename
 order by wp.lastname
 			"/>
@@ -311,8 +328,8 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql}
-and (pp.isVat='0' or pp.isVat is null)
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql} ${paymentSql}
+and (pp.isVat='0' or pp.isVat is null) 
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
 order by cao.operationDate,cao.operationTime
@@ -342,7 +359,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${operatorSql} ${nationalitySql} ${paymentSql}
 and (pp.isVat='1')
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
@@ -405,6 +422,7 @@ order by cao.operationDate,cao.operationTime
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
+    checkFieldUpdate('typePayment','${typePayment}',2) ;
     
     
     function checkFieldUpdate(aField,aValue,aDefault) {
