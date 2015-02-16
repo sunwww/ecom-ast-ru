@@ -361,6 +361,33 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
+   <voc id='vocBedTypeByDep' type='NativeVocService'>
+		<NativeVocService
+		    	from=" VocBedType vbt "
+		    	parent="bf.lpu_id=:parent"
+		    	nameId="vbt.id"
+		    	join=" left join bedfund bf on bf.bedtype_id=vbt.id  "
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (cast(vbt.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
+		    	names = "vbt.name"
+		    	groupBy="vbt.id,vbt.name"
+		    />
+	</voc>
+   <voc id='vocBedSubTypeByDep' type='NativeVocService'>
+		<NativeVocService
+		    	from=" VocBedSubType vbst "
+		    	parent="bf.lpu_id=:par1 and bf.bedType_id=:par2"
+		    	nameId="vbst.id"
+		    	join=" left join bedfund bf on bf.bedsubtype_id=vbst.id "
+		    	queryAppend=""
+		    	order=""
+		    	queried=" (cast(vbst.id as varchar(10)) like :querId or vbst.name like UPPER(:query)) "
+		    	names = "vbst.name"
+		    	parentSplitCount="2"
+		    	groupBy="vbst.id,vbst.name"
+		    />
+	</voc>
     <!-- Справочник типов коек -->
     <voc id='vocRoomType' type='EntityVocService'>
         <EntityVocService
