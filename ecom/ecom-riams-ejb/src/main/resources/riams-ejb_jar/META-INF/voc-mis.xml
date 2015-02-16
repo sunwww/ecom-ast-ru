@@ -4,16 +4,17 @@
 		from="workFunction as wf"
 		parent="vedsf.name = :parent"
 		nameId='wf.id'
-		queryAppend="wf.dtype = 'PersonalWorkFunction' and (archival is null or archival='0')" 
+		queryAppend="wf.dtype = 'PersonalWorkFunction' and (archival is null or archival='0') and vlf.code in ('2','4','5')" 
 		join="left join VocWorkFunction as vwf on vwf.id=wf.workFunction_id
 		left join Worker as w on w.id=wf.worker_id
 		left join Patient as p on p.id=w.person_id
 		left join VocExtDispServiceFunction vedsf on vedsf.code=vwf.code
 		left join MisLpu ml on ml.id=w.lpu_id
+		left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 		" 
 		order=""
 		names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename||' ('||ml.name||')' "
-    	queried="upper(p.lastname) like upper(:query)"
+    	queried="upper(p.lastname) like upper(:query)" 
 	/>
 </voc>
 <voc id="prescriptTypeNotEmergency" type="NativeVocService">
@@ -1168,12 +1169,12 @@
     	<NativeVocService
     			from = 'WorkFunction as wf '
     			parent = ''
-    			names  = "vwf.name||' '||case when w.person_id is null then wf.groupName else p.lastname||' '||p.firstname||' '||p.middlename end "
+    			names  = "vwf.name||' '||case when w.person_id is null then wf.groupName||' ('||mlGr.name||')' else p.lastname||' '||p.firstname||' '||p.middlename||' ('||mlW.name||')' end "
     			queried =" (cast(wf.id as varchar(20)) = :querInd or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) or wf.groupName like UPPER(:query) )"
-    			queryAppend = 'wc.id is not null and wf.group_id is null'
+    			queryAppend = "wc.id is not null and wf.group_id is null and (wf.archival is null or wf.archival='0')"
     			order =''
     			nameId='wf.id'
-    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join WorkCalendar wc on wc.workFunction_id=wf.id'
+    			join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join WorkCalendar wc on wc.workFunction_id=wf.id left join mislpu mlGr on mlGr.id=wf.lpu_id left join mislpu mlW on mlW.id=w.lpu_id '
     	/>
     </voc>
    <voc id='role' type='EntityVocService'>
