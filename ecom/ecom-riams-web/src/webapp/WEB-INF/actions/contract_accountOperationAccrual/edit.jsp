@@ -31,6 +31,9 @@
 					</td>
 					
 				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isPaymentTerminal" labelColSpan="2" label="Оплата терминалом"/>
+				</msh:row>
 				<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
 				<msh:row>
 					<td align="left" colspan="5">К оплате: <span id='costInfo'></<span></td>

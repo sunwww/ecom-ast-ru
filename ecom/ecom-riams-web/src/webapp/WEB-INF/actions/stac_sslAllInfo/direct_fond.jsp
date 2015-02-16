@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал для отправки данных в фонд"/>
+    <msh:title mainMenu="Journals" title="Журнал для отправки данных в фонд"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   </tiles:put>
@@ -17,13 +17,14 @@
   
 	String typeView=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", request) ;
 	String typeDate=ActionUtil.updateParameter("HospitalDirectDataInFond","typeDate","1", request) ;
+	String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", request) ;
   %>
   
     <msh:form action="/stac_direct_in_fond.do" defaultField="lpu" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:panel>
    
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
       	<msh:textField property="lpu"/>
@@ -36,9 +37,22 @@
         <msh:textField  property="period" label="Период с" />
          <msh:textField  property="periodTo" label="по" /> 
       </msh:row>
-
       <msh:row>
-        <td class="label" title="Список  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Список:</label></td>
+      	<td class="label" title="Режим  (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Режим:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';checkMode()">
+        	<input type="radio" name="typeMode" value="1"> Формирования Xml
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
+	        	<input type="radio" name="typeMode" value="2"> Импорт результата
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
+	        	<input type="radio" name="typeMode" value="3"> Работа с данными
+	        </td>
+      </msh:row>
+      </msh:panel>
+      <msh:panel styleId="exportXml">
+      <msh:row>
+        <td class="label" title="Тип xml  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Тип xml:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1"> (N1) направления на госп.
         </td>
@@ -75,6 +89,19 @@
         </td>
        </msh:row>
        <msh:row>
+       	<msh:hidden property="filename"/>
+       	<td colspan="4">
+       		Файл <span id='aView'></span>
+       	</td>
+       </msh:row>
+      <msh:row>
+           <td colspan="11">
+            <input type="submit" value="Сформировать файлы" />
+          </td>
+      </msh:row>
+          </msh:panel>
+          <msh:panel styleId="workData">
+           <msh:row>
                <td class="label" title="Список  (typeDate)" colspan="1"><label for="typeDateName" 
                id="typeDateLabel">Список:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -87,24 +114,16 @@
 	        	<input type="radio" name="typeDate" value="3">  отобразить не вошедших в импортированную базу
 	        </td>
        </msh:row>
-
-       
-       <msh:row>
-       	<msh:hidden property="filename"/>
-       	<td colspan="4">
-       		Файл <span id='aView'></span>
-       	</td>
-       </msh:row>
-      <msh:row>
+             <msh:row styleId="exportXml4">
            <td colspan="11">
-            <input type="submit" value="Найти" />
+            <input type="submit" value="Отобразить данные" />
           </td>
       </msh:row>
           </msh:panel>
     </msh:form>
        <msh:form action="stac_direct_in_fond_import.do"  defaultField="isClear" fileTransferSupports="true">
 			            <msh:hidden property="saveType"/>
-			 			<msh:panel>
+			 			<msh:panel styleId="importXml">
 			                <msh:row>
 			                    <td>Файл *.xml</td>
 			                    <td colspan="1">
@@ -123,6 +142,7 @@
       <script type="text/javascript">
       checkFieldUpdate('typeView','${typeView}',1) ;
       checkFieldUpdate('typeDate','${typeDate}',1) ;
+      checkFieldUpdate('typeMode','${typeMode}',1) ;
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
     	   	var aMax=chk.length ;
@@ -133,24 +153,42 @@
     	   		chk[+aValue-1].checked='checked' ;
     	   	}
     	   }
-      </script>
-
-    <script type='text/javascript'>
-    
-    //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-    //checkFieldUpdate('typeView','${typeView}',1) ;
+     
   $('aView').innerHTML=$('filename').value ;
-   function checkFieldUpdate(aField,aValue,aDefaultValue) {
-   	eval('var chk =  document.forms[0].'+aField) ;
-   	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
-   		chk[+aDefaultValue-1].checked='checked' ;
-   	} else {
-   		chk[+aValue-1].checked='checked' ;
-   	}
+  
+   function checkMode() {
+	   var chk =  document.forms[0].typeMode ;
+	   if (chk[0].checked) {
+		   //alert("exportXml") ;
+		   showTable("exportXml", true ) ; 
+		   showTable("importXml", false ) ; 
+		   showTable("workData", false ) ; 
+	   } else if (chk[1].checked) {
+		   //alert("importXml") ;
+		   showTable("exportXml", false ) ; 
+		   showTable("importXml", true ) ; 
+		   showTable("workData", false ) ; 
+	   } else {
+		   //alert("workData") ;
+		   showTable("exportXml", false ) ; 
+		   showTable("importXml", false ) ; 
+		   showTable("workData", true ) ; 
+	   }
    }
-	
+   function showTable(aTableId, aCanShow ) {
+		//alert(aTableId) ;
+		try {
+			//alert( aCanShow ? 'table' : 'none') ;
+			$(aTableId).style.display = aCanShow ? 'table' : 'none' ;
+		} catch (e) {
+			// for IE
+			//alert(aCanShow ? 'block' : 'none') ;
+			try{
+			$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
+			}catch(e) {}
+		}	
+	}
+	checkMode() ;
     </script>
 
   </tiles:put>

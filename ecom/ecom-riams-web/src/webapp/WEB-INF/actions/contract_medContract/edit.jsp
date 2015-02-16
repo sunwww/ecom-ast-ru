@@ -66,7 +66,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Счета оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
+			<msh:section title="Счета на оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo
