@@ -300,6 +300,20 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript_by_department.jsp" />
         </action>
+        <action path='/pres_journal_intake' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript_intake.jsp" />
+        </action>
+        <action path='/pres_journal_intake_transfer' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript_intake_transfer.jsp" />
+        </action>
         <action path='/mis_attachment' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
                 name='mis_attachmentForm'
                 validate='false'
