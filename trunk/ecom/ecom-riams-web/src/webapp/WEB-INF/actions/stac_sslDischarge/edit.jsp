@@ -119,6 +119,9 @@
               	</msh:ifNotInRole>
               </msh:ifFormTypeIsView>
       <msh:panel colsWidth="5%,10%,5%,80%">
+            	<msh:row>
+      		<td colspan="4"><div id='errorInformation' style="display: none;" class="errorMessage"/></td>
+      	</msh:row>
         <msh:separator label="Приемное отделение" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
         <msh:row guid="25f2a536-4fb6-4413-89db-a478145e097e">
           <msh:textField property="statCardNumber" label="Номер стат.карты" guid="e5f3d524-cca8-4a5a-a408-196ab6b79627" horizontalFill="true" viewOnlyField="true" />
@@ -311,6 +314,18 @@
         	</script>
         </msh:ifInRole>
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+     	<script type="text/javascript">
+     	HospitalMedCaseService.isCanDischarge('${param.id}', {
+            callback: function(aResult) {
+                if (aResult!=null) {
+                	$('errorInformation').innerHTML=aResult + " <u>Выписка создаваться не будет!!!</u>";
+        			$('errorInformation').style.display = 'block' ;
+                } else {
+                	$('errorInformation').style.display = 'none' ;
+                }
+            }
+			})
+     	</script>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
         	<script type="text/javascript">
         		$('dischargeEpicrisis').select() ;
