@@ -4,15 +4,15 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	var dateTo = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aDate1);
 	var dateFrom = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aDate2);
-	var dif = dateTo.compareTo(dateFrom) ;
-	throw "разница+dif" ; 
+	var dif = dateFrom.compareTo(dateTo) ;
+	//throw "разница"+dif ; 
 	var calFrom = java.util.Calendar.getInstance() ;
 	var calTo = java.util.Calendar.getInstance() ;
 	calFrom.setTime(dateTo) ;
 	calTo.setTime(dateFrom) ;
 	
-	for (var i=0;i<dif;i++) {
-		var date = FORMAT_2.format(calFrom);
+	while (calFrom.compareTo(calTo)) {
+		var date = FORMAT_2.format(calFrom.getTime());
 		
 		for (var i=0;i<8;i++) {
 			var sql=" update ContractAccountOperationByService caos222";

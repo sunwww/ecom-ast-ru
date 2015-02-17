@@ -256,5 +256,13 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** МКБ */
 	private String theMkb;
+	
+	/** Доп.код мкб */
+	@Comment("Доп.код мкб")
+	public String getMkbAdc() {return theMkbAdc;}
+	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
+
+	/** Доп.код мкб */
+	private String theMkbAdc;
 }
 

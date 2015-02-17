@@ -253,5 +253,13 @@ public class DiagnosisForm extends ru.ecom.mis.ejb.form.medcase.hospital.Diagnos
 	private String theName;
 	/** Информация по специалисту */
 	private String theWorkerInfo;
+	
+	/** Доп.код мкб */
+	@Comment("Доп.код мкб")
+	@Persist
+	public String getMkbAdc() {return theMkbAdc;}
+	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
 
+	/** Доп.код мкб */
+	private String theMkbAdc;
 }

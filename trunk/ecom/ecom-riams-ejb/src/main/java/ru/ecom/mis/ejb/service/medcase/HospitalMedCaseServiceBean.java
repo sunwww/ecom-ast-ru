@@ -110,13 +110,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    			List<HospitalDataFond> lf = theManager.createQuery("from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
 	    			HospitalDataFond hdf ;
 	    			if (lf.isEmpty()) {
+	    				lf=null ;
+	    				
 	    				hdf = new HospitalDataFond() ;
 	    				hdf.setNumberFond(ConvertSql.parseString(wqr.get1())) ;
 			    	} else {
 	    				hdf = lf.get(0) ;
-	    				System.out.println("_napr___"+wqr.get1());
+	    				//System.out.println("_napr___"+wqr.get1());
 	    			}
-		    		
 		    		if (wqr.get2()!=null) hdf.setDirectDate(ConvertSql.parseDate(wqr.get2())) ;
 		    		if (wqr.get3()!=null) hdf.setFormHelp(ConvertSql.parseString(wqr.get3())) ;
 		    		if (wqr.get4()!=null) hdf.setOrderLpuCode(ConvertSql.parseString(wqr.get4())) ;
@@ -141,10 +142,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		    		if (wqr.get18()!=null) hdf.setPhone(ConvertSql.parseString(wqr.get18())) ;
 		    		if (wqr.get19()!=null) hdf.setDiagnosis(ConvertSql.parseString(wqr.get19())) ;
 		    		if (wqr.get20()!=null) hdf.setProfile(ConvertSql.parseString(wqr.get20())) ;
-		    		
 		    		if (wqr.get21()!=null) hdf.setSnils(ConvertSql.parseString(wqr.get21())) ;
-		    		
-		    		
 		    		if (wqr.get22()!=null) hdf.setPreHospDate(ConvertSql.parseDate(wqr.get22())) ;
 		    		if (wqr.get23()!=null) hdf.setHospDate(ConvertSql.parseDate(wqr.get23())) ;
 		    		if (wqr.get24()!=null) hdf.setStatCard(ConvertSql.parseString(wqr.get24())) ;
@@ -163,11 +161,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		    		} else if (aFileType.equals("N5")) {
 		    			hdf.setIsTable5(Boolean.TRUE) ;
 		    		}
-		    		List<Object> list = theManager.createQuery("select mc.id from medcase mc left join statisticstub ss on ss.id=mc.statisticstub_id left join patient pat on pat.id=mc.patient_id where mc.dtype='HospitalMedCase' and (mc.datestart=hdf.hospdate or mc.datestart between hdf.prehospdate-7 and hdf.prehospdate+7 )and upper(hdf.lastname)=pat.lastname and upper(hdf.firstname)=pat.firstname and upper(hdf.middlename)=pat.middlename and hdf.birthday=pat.birthday").getResultList() ;
 		    		theManager.persist(hdf);
+		    		if (hdf.getIsTable4()==null || hdf.getIsTable4() &&  hdf.getIsTable5()==null ) {
+		    			List<Object> list = theManager.createNativeQuery("select mc.id from HospitalDataFond hdf left join medcase mc on mc.dtype='HospitalMedCase' left join statisticstub ss on ss.id=mc.statisticstub_id left join patient pat on pat.id=mc.patient_id where hdf.id='"+hdf.getId()+"' and (mc.datestart=hdf.hospdate or mc.datestart between hdf.prehospdate-7 and hdf.prehospdate+7 )and upper(hdf.lastname)=pat.lastname and upper(hdf.firstname)=pat.firstname and upper(hdf.middlename)=pat.middlename and hdf.birthday=pat.birthday and mc.id is not null").getResultList() ;
+		    		}
 	    		}
 	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
-	    		if(i%size==0) monitor.advice(1);
+	    		if(size>0&&i%size==0) monitor.advice(1);
 
 	            if (i % 300 == 0) {
 	              monitor.setText("Импортировано " + i);
@@ -342,7 +342,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     
     private String getTitleFile(String aReestr,String aLpu, String aPeriodByReestr,String aNPackage) {
     	aLpu="300001";
-    	String filename = "N"+aReestr+"M"+aLpu+"T30"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    	String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
     public String[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
@@ -352,23 +352,23 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	String[] fileExpList = {exportN1(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			
+    			,""
     	};
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	fileExpList[6]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
+    	fileExpList[2]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
     	
     	StringBuilder sb=new StringBuilder();
     	sb.append("zip -r -9 ") ;
-    	for (int i=6;i>-1;i--){
+    	for (int i=2;i>-1;i--){
     		sb.append(fileExpList[i]).append(" ");
     	}
-    	System.out.println(sb) ;
+    	//System.out.println(sb) ;
     	try {
-    		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
-    		Runtime.getRuntime().exec(arraCmd);
+    		//String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
+    		Runtime.getRuntime().exec(sb.toString());
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
@@ -381,23 +381,23 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			
+    			,""
     	};
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	fileExpList[6]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
+    	fileExpList[2]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
     	
     	StringBuilder sb=new StringBuilder();
-    	sb.append("zip -r -9 ") ;
-    	for (int i=6;i>-1;i--){
-    		sb.append(fileExpList[i]).append(" ");
+    	sb.append("zip -r -j -9 ") ;
+    	for (int i=2;i>-1;i--){
+    		sb.append(workDir).append("/").append(fileExpList[i]).append(" ");
     	}
-    	System.out.println(sb) ;
+    	//System.out.println(sb) ;
     	try {
-    		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
-			Runtime.getRuntime().exec(arraCmd);
+    		//String[] arraCmd = {sb.toString()} ;
+			Runtime.getRuntime().exec(sb.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -406,7 +406,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    	
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	
@@ -419,8 +422,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	StringBuilder sql = new StringBuilder() ;
     	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as wchbcreatedate");
     	sql.append(" ,cast('1' as varchar(1)) as forPom");
-    	sql.append(" ,cast('300001' as varchar(6)) as lpuSent");
-    	sql.append(" ,cast('300001' as varchar(6)) as lpuDirect");
+    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpuSent");
+    	sql.append(" ,coalesce(olpu.codef,oplpu.codef) as lpuDirect");
     	sql.append(" ,vmc.code as medpolicytype");
     	sql.append(" ,mp.series as mpseries");
     	sql.append(" , mp.polnumber as polnumber");
@@ -437,6 +440,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtcodef");
     	sql.append(" ,wp.snils as wpsnils");
     	sql.append(" ,wchb.dateFrom as wchbdatefrom");
+    	sql.append(", wchb.visit_id as visit");
     	sql.append(" from WorkCalendarHospitalBed wchb");
     	sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
     	sql.append(" left join Patient p on p.id=wchb.patient_id");
@@ -453,23 +457,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
     	sql.append(" left join Worker w on w.id=wf.worker_id");
     	sql.append(" left join Patient wp on wp.id=w.person_id");
+    	sql.append(" left join mislpu lpu on lpu.id=w.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	sql.append(" left join mislpu olpu on olpu.id=wchb.orderLpu_id");
+    	sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
     	sql.append(" where wchb.visit_id is not null");
-    	sql.append(" and wchb.createDate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateFrom).append("','yyyy-MM-dd')");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')");
-    	/*
-    	group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
-    	,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone,wchb.department_id,wchb.serviceStream_id
-    	,oss.smocode,vbt.codeF,vmc.code,mp.series,mp.polnumber,ri.smocode,ri.ogrn,mp.dtype,okt.okato
-    	,vs.omcCode*/
+    	sql.append(" and wchb.createDate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')");
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and wchb.visit_id is not null");
     	sql.append(" order by p.lastname,p.firstname,p.middlename");
-    	/*
-    	 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
-		,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone,wchb.department_id,wchb.serviceStream_id
-		,oss.smocode,vbt.codeF,vmc.code,mp.series,mp.polnumber,ri.smocode,ri.ogrn,mp.dtype,okt.okato
-		,vs.omcCode,wp.snils
-
-    	 */
-    	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
@@ -479,42 +474,82 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	int i=0 ;
     	for (Object[] obj:list) {
     		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1","",false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[3],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[4],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[5],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[6],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[7],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[8],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[9],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[10],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[11],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[12],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[13],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[14],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"CT",obj[15],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[16],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[17],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IDDOKT",obj[18],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[19],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    		if (!checkHospitalDataFond(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17],obj[20])) {
+    		//if (true) {
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1","",false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[3],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[4],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[5],false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[6],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[7],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[8],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[9],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[10],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[11],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[12],false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[13],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[14],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"CT",obj[15],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[16],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[17],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IDDOKT",obj[18],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[19],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+	    	}
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	//saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
+    private boolean checkHospitalDataFond(Object aLastname, Object aFirstname,Object aMiddlename
+    		, Object aBirthday, Object aPreDate, Object aProfile, Object aDirectMedCase) {
+    	StringBuilder fld = new StringBuilder() ;
+    	fld.append("select case when hdf.istable1='1' then '1' else null end as hdfistable1,hdf.istable2,hdf.istable3,hdf.istable4,hdf.istable5 from HospitalDataFond hdf where");
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append(fld) ;
+    	sql.append(" hdf.directMedCase_id='").append(aDirectMedCase).append("'") ;
+    	List<Object[]> l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+    	if (l.isEmpty()) {
+    		return false ;
+    	} else {
+    	}
+    	sql = new StringBuilder() ;
+    	sql.append(fld);
+    	sql.append(" hdf.lastname='").append(aLastname).append("'") ;
+    	sql.append(" and hdf.firstname='").append(aFirstname).append("'") ;
+    	sql.append(" and hdf.middlename='").append(aMiddlename).append("'") ;
+    	sql.append(" and hdf.birthday=to_date('").append(aBirthday).append("','dd.mm.yyyy')") ;
+    	sql.append(" and hdf.profile='").append(aProfile).append("'") ;
+    	sql.append(" and coalesce(hdf.prehospdate,hdf.hospdate)=to_date('").append(aPreDate)
+    		.append("','dd.mm.yyyy')") ;
+    	List<Object[]> l1 = theManager.createNativeQuery(sql.toString()).getResultList() ;
+    	if (l1.isEmpty()) {
+    		return false ;
+    	} else {
+    		if (l1.size()>1) {
+    			
+    		} else {
+    			Object[] o=l1.get(0) ;
+    			if (o[1]==null) return false ;
+    		}
+    		return true ;
+    	}
+    	
+    }
     public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    	
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 
@@ -525,25 +560,27 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as datestart");
-    	sql.append(" ,cast(sls.entranceTime as varchar(5)) as entrancetime");
-    	sql.append(" ,vmc.code as medpolicytype");
-    	sql.append(" ,mp.series as mpseries");
-    	sql.append(" , mp.polnumber as polnumber");
-    	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as oossmocode");
-    	sql.append(" , ri.ogrn as ogrnSmo");
-    	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as okatoSmo");
-    	sql.append(" ,p.lastname as lastname");
-    	sql.append(" ,p.firstname as firstname");
-    	sql.append(" ,p.middlename as middlename");
-    	sql.append(" ,vs.omcCode as vsomccode");
-    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
-    	sql.append(" ,vbt.codeF as vbtomccode");
-    	sql.append(" ,ss.code as sscode");
-    	sql.append(" ,mkb.code as mkbcode");
-    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
-    	sql.append(" ,coalesce(olpu.codef,oplpu.codef) as olpucodef") ;
+    	sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as f0datestart");
+    	sql.append(" ,cast(sls.entranceTime as varchar(5)) as f1entrancetime");
+    	sql.append(" ,vmc.code as f2medpolicytype");
+    	sql.append(" ,mp.series as f3mpseries");
+    	sql.append(" , mp.polnumber as f4polnumber");
+    	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as f5oossmocode");
+    	sql.append(" , ri.ogrn as f6ogrnSmo");
+    	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as f7okatoSmo");
+    	sql.append(" ,p.lastname as f8lastname");
+    	sql.append(" ,p.firstname as f9firstname");
+    	sql.append(" ,p.middlename as f10middlename");
+    	sql.append(" ,vs.omcCode as f11vsomccode");
+    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
+    	sql.append(" ,vbt.codeF as f13vbtomccode");
+    	sql.append(" ,ss.code as f14sscode");
+    	sql.append(" ,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4')  as f15mkbcode");
+    	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
+    	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
+    	sql.append(" ,hdf.numberfond as f18numberfond") ;
     	sql.append("  from medcase sls");
+    	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
     	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
@@ -559,15 +596,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join Patient p on p.id=sls.patient_id");
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
     	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
-    	sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
-    	sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
     	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
-    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
-    	sql.append(" and mkb.code is not null") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
+    	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -576,36 +611,43 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	xmlDoc.newElement(title, "VERSION", "1.0");
     	xmlDoc.newElement(title, "DATA", aDateFrom);
     	xmlDoc.newElement(title, "FILENAME", filename);
-    	int i=0 ;
+    	//int i=0 ;
     	for (Object[] obj:list) {
-    		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",null,true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[17],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],true,"") ;
-    		/*xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue(obj[5])) ;
-    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue(obj[6])) ;
-    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue(obj[7])) ;
-    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;*/
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    		String mkb =obj[15]!=null?""+obj[15]:null ;
+    		if (mkb!=null &&!mkb.equals("")) {
+	    		Element zap = xmlDoc.newElement(root, "NPR", null);
+	    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[18],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[17],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],true,"") ;
+	    		/*xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue(obj[5])) ;
+	    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue(obj[6])) ;
+	    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue(obj[7])) ;
+	    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;*/
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
+	    		if (mkb.contains(",")) {
+	    			String[] mkbs = mkb.split(",") ;
+	    			mkb=mkbs[0] ;
+	    		}
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
+	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+	    		}
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
@@ -616,7 +658,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
     	String filename = getTitleFile("3",aLpu,aPeriodByReestr,aNPackage) ; ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
@@ -641,6 +686,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,mkb.code as mkbcode");
     	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
     	sql.append("  from medcase sls");
+    	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
     	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
@@ -659,10 +705,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
-    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
-    	sql.append(" and mkb.code is not null") ;
+    	sql.append(" and mkb.code is not null and hdf.id is not null and hdf.numberfond is not null") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -699,7 +745,55 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
+    
     public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    		throws ParserConfigurationException, TransformerException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
+    	String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ; ;
+    	
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select hdf.numberFond as orderNumber");
+    	sql.append(" ,to_char(hdf.directdate,'yyyy-mm-dd') ");
+    	sql.append(" ,hdf.directLpuCode as vsomccode");
+    	sql.append("  from HospitalDataFond hdf");
+    	sql.append(" where hdf.directDate between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
+    	sql.append(" and hdf.hospitalMedCase_id is null ");
+    	sql.append(" and hdf.DeniedHospital is not null") ;
+    	sql.append(" order by hdf.numberFond") ;
+    	
+    	List<Object[]> list = theManager.createNativeQuery(sql.toString())
+    			.setMaxResults(70000).getResultList() ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	int i=0 ;
+    	for (Object[] obj:list) {
+    		Element zap = xmlDoc.newElement(root, "NPR", null);
+    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[0],true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[1],true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"ISTNPR","2",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMOLPU",obj[2],true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU_1",null,false,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PRNPR","5",true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    	}
+    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
+    	return filename+".xml";
+    }
+    public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
@@ -753,7 +847,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
-    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is not null ");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
     	sql.append(" and mkb.code is not null") ;
@@ -786,14 +880,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-   	
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
     	String filename = getTitleFile("5",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select sls.orderNumber as orderNumber");
+    	sql.append("select hdf.numberfond as orderNumber");
     	sql.append(" ,case when sls.emergency='1' then to_char(sls.dateFinish,'yyyy-mm-dd') else to_char(sls.orderDate,'yyyy-mm-dd') end as orderDate");
     	sql.append(" ,case when sls.emergency='1' then cast('3' as varchar(1)) else cast('1' as varchar(1)) end as pokaz");
     	sql.append(" ,coalesce(lpu.codef,plpu.codef)  as lpuSent");
@@ -816,6 +913,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,mkb.code as mkbcode");
     	sql.append(" ") ;
     	sql.append("  from medcase sls");
+    	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
     	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
     	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
@@ -834,10 +932,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
-    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('").append(aDateFrom).append("','yyyy-mm-dd')");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
     	sql.append(" and mkb.code is not null") ;
+    	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -885,7 +984,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-		
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
     	String filename = getTitleFile("6",aLpu,aPeriodByReestr,aNPackage) ;
     	
     	File outFile = new File(workDir+"/"+filename+".xml") ;

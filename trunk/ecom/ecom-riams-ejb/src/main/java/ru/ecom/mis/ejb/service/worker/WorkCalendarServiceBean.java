@@ -253,7 +253,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		
 	}
 	public void preRecordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime
-			,String aPatientInfo,Long aPatientId) {
+			,String aPatientInfo,Long aPatientId, Long aServiceStream) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select wct.id,wc.id from workcalendartime wct")
 			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
@@ -265,15 +265,17 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			.append("' and wf.workFunction_id='").append(aFunction)
 			.append("' and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='') ") ;
 		System.out.println("sql="+sql) ;
+		StringBuilder serviceStream = new StringBuilder() ;
+		if (aServiceStream!=null&&!aServiceStream.equals(Long.valueOf(0))) serviceStream.append(" serviceStream_id='").append(aServiceStream).append("' ,");
 		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (l.size()>0) {
 			//System.out.println("patid="+aPatientId) ;
 			sql = new StringBuilder() ;
 			if (aPatientId!=null && aPatientId>Long.valueOf(0)) {
-				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+				sql.append("update WorkCalendarTime set ").append(serviceStream).append("createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
 			} else {
 				String info = aPatientInfo.replace("#", " ").toUpperCase() ;
-				sql.append("update WorkCalendarTime set createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+				sql.append("update WorkCalendarTime set ").append(serviceStream).append(" createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
 			}
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 			
@@ -499,7 +501,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	 // Создать новые времена по специалисту за определенное число
 	 public void getCreateNewTimesBySpecAndDate(String aDate
 			 , Long aSpecialist, String aTimes, Long aReserveType) throws ParseException {
-		 
+		 VocServiceReserveType vsrt = (aReserveType!=null && !aReserveType.equals(Long.valueOf(0)))?
+				 theManager.find(VocServiceReserveType.class, aReserveType):null ;
 		 if (aTimes!=null) {
 			 aTimes=aTimes.replace(" ", "") ;
 			 if (!aTimes.equals("")) {
@@ -513,7 +516,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					 WorkCalendarDay day = createCalendarDay(wc,date) ;
 					 for (String time:times) {
 						 java.sql.Time t = DateFormat.parseSqlTime(time) ;
-						 createCalendarTime(t,aReserveType, day) ;
+						 createCalendarTime(t,vsrt, day) ;
 					 }
 				 }
 			 }

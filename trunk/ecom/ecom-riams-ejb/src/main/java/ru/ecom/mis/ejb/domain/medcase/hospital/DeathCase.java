@@ -16,6 +16,7 @@ import ru.ecom.document.ejb.domain.certificate.DeathCertificate;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory;
@@ -340,4 +341,39 @@ public class DeathCase extends BaseEntity {
 	private Boolean theIsAutopsy;
 	/** Дата СМЭ */
 	private Date theDateForensic;
+	
+	/** Код мкб */
+	@Comment("Код мкб")
+	@OneToOne
+	public VocIdc10 getReasonMainMkb() {return theReasonMainMkb;}
+	public void setReasonMainMkb(VocIdc10 aReasonMainMkb) {theReasonMainMkb = aReasonMainMkb;}
+
+	/** Код мкб */
+	private VocIdc10 theReasonMainMkb;
+	
+	/** Код мкб осложнения */
+	@Comment("Код мкб осложнения")
+	@OneToOne
+	public VocIdc10 getReasonComplicationMkb() {return theReasonComplicationMkb;}
+	public void setReasonComplicationMkb(VocIdc10 aReasonComplicationMkb) {theReasonComplicationMkb = aReasonComplicationMkb;}
+
+	/** Код мкб осложнения */
+	private VocIdc10 theReasonComplicationMkb;
+	
+	/** Код мкб сопутсвующий */
+	@Comment("Код мкб сопутсвующий")
+	@OneToOne
+	public VocIdc10 getReasonConcomitantMkb() {return theReasonConcomitantMkb;}
+	public void setReasonConcomitantMkb(VocIdc10 aReasonConcomitantMkb) {theReasonConcomitantMkb = aReasonConcomitantMkb;}
+
+	/** Код мкб сопутсвующий */
+	private VocIdc10 theReasonConcomitantMkb;
+	
+	/** Присутствие врача на вскрытие */
+	@Comment("Присутствие врача на вскрытие")
+	public Boolean getIsPresenceDoctorAutopsy() {return theIsPresenceDoctorAutopsy;}	
+	public void setIsPresenceDoctorAutopsy(Boolean aIsPresenceDoctorAutopsy) {theIsPresenceDoctorAutopsy = aIsPresenceDoctorAutopsy;}
+
+	/** Присутствие врача на вскрытие */
+	private Boolean theIsPresenceDoctorAutopsy;
 }
