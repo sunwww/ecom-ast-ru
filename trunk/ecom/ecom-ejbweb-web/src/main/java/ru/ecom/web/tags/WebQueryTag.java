@@ -34,8 +34,10 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
         		&& RolesHelper.checkRoles("/Policy/Config/IsReportBase", ctx)) {
         	isReportBase = Injection.getWebName(request, null) ;
         	isReportBase = isReportBase.substring(0,1)+"rep"+isReportBase.substring(1) ;
+        	//System.out.println(isReportBase+"==--- запроса: \n hql: "+theHql+", native: \n"+theNativeSql) ;
         }
         try {
+        	
 			IWebQueryService service = Injection.find(request,isReportBase).getService(IWebQueryService.class) ;
 			Integer maxResult = null;
 			if (theMaxResult!=null && !theMaxResult.equals("")) {

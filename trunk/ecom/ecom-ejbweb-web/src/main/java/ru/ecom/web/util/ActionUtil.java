@@ -69,7 +69,7 @@ public class ActionUtil {
 					c3.set(Calendar.HOUR_OF_DAY, 0) ;
 					c3.set(Calendar.MINUTE, 0) ;
 					c3.set(Calendar.MILLISECOND, 0) ;
-					c1.add(Calendar.DAY_OF_MONTH, 7) ;
+					c1.add(Calendar.DAY_OF_MONTH, 1) ;
 					if (c2.getTime().getTime() == c3.getTime().getTime() && c1.after(c3)) {
 						isRepBase = "false";
 					}

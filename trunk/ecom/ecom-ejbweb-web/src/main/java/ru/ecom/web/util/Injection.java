@@ -32,7 +32,7 @@ public class Injection {
     private static String KEY;
 
     private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) throws NamingException {
-        System.out.println("new Injection("+aWebName+"," + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
+        //System.out.println("new Injection("+aWebName+"," + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
         theAppName = aAppName;
         theWebName = aWebName;
         KEY = Injection.class.getName()+aWebName ;
@@ -116,8 +116,8 @@ public class Injection {
 	
 	            try {
 	
-	            	System.out.println("------webName="+aWebName) ;
-	                System.out.println("---appName="+prop.getProperty("ejb-app-name")) ;
+	            	//System.out.println("------webName="+aWebName) ;
+	                //System.out.println("---appName="+prop.getProperty("ejb-app-name")) ;
 	
 	                injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
 	                        , prop.getProperty("java.naming.provider.url")
@@ -157,21 +157,22 @@ public class Injection {
     public Object getService(String aServiceName) throws NamingException {
     	Object service ;
     	HashMap<String,Object> services = THREAD_SERVICES.get();
+    	//System.out.println(" ----get service="+theWebName+" --- ");
     	if(CAN_TRACE) LOG.trace(aServiceName+" , services  "+services) ;
     	if(services==null) {
     		services = new HashMap<String, Object>() ;
     		THREAD_SERVICES.set(services);
     		service = null ;
     	} else {
-    		service = services.get(aServiceName);
+    		service = services.get(aServiceName+theWebName);
     	}
     	if(service==null) {
         	InitialContext initialContext = new InitialContext(theEnv);
         	try {
-        		System.out.println("theAppName="+theAppName+"---"+aServiceName) ;
+        		//System.out.println("theAppName="+theAppName+"---"+aServiceName) ;
                 String serviceUrl = new StringBuilder().append(theAppName).append("/").append(aServiceName).append("Bean/remote").toString();
                 service = initialContext.lookup(serviceUrl);
-                services.put(aServiceName, service);
+                services.put(aServiceName+theWebName, service);
         	} finally {
         		initialContext.close() ;
         	}
