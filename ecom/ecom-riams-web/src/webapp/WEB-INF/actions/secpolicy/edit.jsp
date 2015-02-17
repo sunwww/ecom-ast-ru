@@ -35,6 +35,15 @@
 	                <msh:row>
 		                <ecom:oneToManyOneAutocomplete label="Роли" property="roleList" vocName="role" colSpan="4"/>
 	                </msh:row>
+	                <msh:row>
+	                	<msh:checkBox property="isCreateRole"  fieldColSpan="2" label="Создать новую роль (по умолчанию данные берутся из политики)"/>
+	                </msh:row>
+	                <msh:row styleId="roleRow1">
+	                    <msh:textField property="roleForm.key" label="Ключ" fieldColSpan="4" horizontalFill="true"/>
+	                </msh:row>
+                    <msh:row styleId="roleRow2">
+                        <msh:textField property="roleForm.name" label="Название" fieldColSpan="4" horizontalFill="true"/>
+                    </msh:row>
                 </msh:ifFormTypeIsNotView>
 
                 <msh:submitCancelButtonsRow colSpan="4" />
@@ -99,6 +108,36 @@
 
     <tiles:put name="javascript" type="string">
 	    <script type="text/javascript" src="./dwr/interface/RolePoliciesService.js" ></script>
+	    <msh:ifFormTypeIsNotView formName="secpolicyForm">
+	    
+	    <script type="text/javascript">
+	    eventutil.addEventListener($('isCreateRole'), 'click', onCreateRole) ;
+	    
+	    function onCreateRole() {
+	    	if ($('isCreateRole').checked) {
+	    		showRow("roleRow1",true) ;
+	    		showRow("roleRow2",true) ;
+	    	} else {
+	    		showRow("roleRow1",false) ;
+	    		showRow("roleRow2",false) ;
+	    	}
+	    }
+	    onCreateRole() ;
+	    function showRow(aRowId, aCanShow ) {
+    		//alert(aRowId) ;
+			try {
+				//alert( aCanShow ? 'table-row' : 'none') ;
+				$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
+			} catch (e) {
+				// for IE
+				//alert(aCanShow ? 'block' : 'none') ;
+				try{
+				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
+				}catch(e) {}
+			}	
+		}
+	    </script>
+	    </msh:ifFormTypeIsNotView>
         <script type="text/javascript">
             Element.addClassName($('mainMenuPolicies'), "selected") ;
             
