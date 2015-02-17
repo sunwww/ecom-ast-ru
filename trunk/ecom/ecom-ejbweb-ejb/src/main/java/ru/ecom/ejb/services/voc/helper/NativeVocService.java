@@ -69,25 +69,41 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     private final String[] theNames ;
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-    	 
+    	if(StringUtil.isNullOrEmpty(aId)) return "" ;  
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select ").append(theNameId).append(", ").append(theSelect).append(" from ").append(theFrom)
 		.append(" ").append(theJoin).append(" where ")
 		
-		.append(theNameId).append("=").append(aId) ;
-        if(StringUtil.isNullOrEmpty(aId)) return "" ; //throw new VocServiceException("Нет идентификатора ");
+		.append(theNameId).append("='").append(aId).append("'") ;
+        //throw new VocServiceException("Нет идентификатора ");
         
         LOG.info("id="+aId) ;
     	LOG.info(sql) ;
         //Object obj = aContext.getEntityManager().find(theEntityClass, theEntityHelper.convertId(theEntityClass, aId)) ;
         try {
         	List<Object[]> obj =aContext.getEntityManager().createNativeQuery(sql.toString()).getResultList() ;
-        	if (obj.size()>0) {
+        	if (!obj.isEmpty()) {
+        		
+        		if (obj.size()>1 && theParentField!=null && aAdditional!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+        			sql = new StringBuilder() ;
+        	    	sql.append("select ").append(theNameId).append(", ").append(theSelect).append(" from ").append(theFrom)
+        			.append(" ").append(theJoin).append(" where ")
+        			
+        			.append(theNameId).append("='").append(aId).append("'") ;
+        	    	sql.append(" and ");
+        	    	sql.append(getParent(theParentField,aAdditional.getParentId(),theSplitParentCount)) ;
+        	    	LOG.info("===parent=="+sql) ;
+        	    	List<Object[]> obj1 =aContext.getEntityManager().createNativeQuery(sql.toString()).getResultList() ;
+                	if (!obj1.isEmpty()) {
+                		return getNameFromEntity(obj1.get(0)) ;
+                	}
+        		}
         		return getNameFromEntity(obj.get(0)) ;
         	} else {
         		
         	}
         } catch (Exception e) {
+        	e.printStackTrace() ;
             //throw new VocServiceException("Ошибка при получении наименования у объекта "+theEntityClass+" "+aId);
         }
         return "" ;
@@ -196,15 +212,15 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	//LOG.info("-------sql2"+sql);
     	if (!StringUtil.isNullOrEmpty(aId)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
-    		sql.append(theNameId).append("<=:id ");
+    		sql.append(theNameId).append("<='").append(aId).append("' ");
     		appendIs=true ;
     	}
     	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
     	sql.append(" order by ").append(theNameId) .append(" desc");
     	Query query = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
-    	if (!StringUtil.isNullOrEmpty(aId)){
-    		query.setParameter("id", Long.valueOf(aId)) ;
-    	}
+    	//if (!StringUtil.isNullOrEmpty(aId)){
+    	//	query.setParameter("id", Long.valueOf(aId)) ;
+    	//}
     	List<Object[]> list = query.setMaxResults(aCount).getResultList() ;
     	return createValues(list,1) ;
         
@@ -234,7 +250,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	//todo else
     	if (!StringUtil.isNullOrEmpty(aId)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
-    		sql.append(theNameId).append(">=:id ");
+    		sql.append(theNameId).append(">='").append(aId).append("' ");
     		appendIs = true ;
     	}
     	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
@@ -242,9 +258,9 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	LOG.info(sql) ;
     	LOG.info("id="+aId) ;
     	Query query = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
-    	if (!StringUtil.isNullOrEmpty(aId)){
+    	/*if (!StringUtil.isNullOrEmpty(aId)){
     		query.setParameter("id", Long.valueOf(aId)) ;
-    	}
+    	}*/
     	/*
     	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
     		query.setParameter("parent",aAdditional.getParentId()) ;
