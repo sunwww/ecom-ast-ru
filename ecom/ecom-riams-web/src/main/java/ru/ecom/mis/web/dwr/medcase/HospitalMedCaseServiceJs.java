@@ -26,6 +26,35 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public String isCanDischarge(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		StringBuilder sql = new StringBuilder() ; 
+		sql.append("select slo.id as sloid,ml.name||' '||to_char(slo.dateStart,'dd.mm.yyyy')||coalesce('-'||to_char(slo.transferDate,'dd.mm.yyyy'),'') as info from medcase sls ")
+			.append(" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'")
+			.append(" left join mislpu ml on ml.id=slo.department_id")
+			.append(" left join diagnosis d on slo.id = d.medcase_id")
+			.append(" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id")
+			.append(" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id")
+			.append(" where sls.id='"+aMedCaseId+"' and (ml.isnoomc is null or ml.isnoomc='0') ")
+			.append(" group by sls.id,slo.id,ml.name,slo.dateStart,slo.transferDate	")
+			.append(" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  ") ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (list.size()>0) {
+			StringBuilder ret = new StringBuilder() ;
+			ret.append("Не полностью заполнены данные по диагнозам в отделениях!!! ") ;
+			for (WebQueryResult wqr:list) {
+				ret.append(" <a href='entitySubclassView-mis_medCase.do?id=")
+					.append(wqr.get1())
+					.append("' onclick='return  msh.util.FormData.getInstance().isChangedForLink() ;'>" )
+					.append(wqr.get2())
+					.append("</a>") ;
+			}
+			return ret.toString() ;
+		}
+		return null ;
+	}
+	
 	public String getYesNo(Long aYesNoId, HttpServletRequest aRequest) throws NamingException {
 		if (aYesNoId != null && !aYesNoId.equals(Long.valueOf(0))) {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
