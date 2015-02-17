@@ -54,6 +54,7 @@ public class TicketMedCaseSaveInterceptor implements IFormInterceptor {
 		diag.setIdc10(mkb) ;
 		diag.setName(form.getConcludingDiagnos()) ;
 		diag.setEstablishDate(smc.getDateStart()) ;
+		diag.setMkbAdc(form.getMkbAdc());
 		aManager.persist(diag) ;
 		
     }

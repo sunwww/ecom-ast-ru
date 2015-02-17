@@ -37,6 +37,7 @@ import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeReportGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispRisk;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
+import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispServiceFunction;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.report.util.XmlDocument;
@@ -104,10 +105,34 @@ public class VocabularyServiceBean {
     			if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
     			monitor.advice(1) ;
     			monitor.setText("Импортируется  услуга: "+wqr.get1());
-    			List<VocExtDispService> list = theManager.createQuery("from VocExtDispService where code='"+wqr.get1()+"'").getResultList() ;
+    			String code = wqr.get1()!=null?""+wqr.get1():"" ;
+    			List<VocExtDispService> list = theManager.createQuery("from VocExtDispService where code='"+code+"'").getResultList() ;
     			if (list.size()>0) {
     				VocExtDispService service = list.get(0);
+    				
+    				if (wqr.get1()!=null) service.setCode(""+wqr.get1()) ;
+    				if (wqr.get2()!=null) service.setName(""+wqr.get2()) ;
+    				service.setIsVisit(wqr.get3()!=null&&(""+wqr.get3()).equals("1")?true:false) ;
     				service.setWorkFunctionCode(""+wqr.get4());
+    				String wfCode = wqr.get4()!=null?""+wqr.get4():null ;
+    				wfCode=wfCode.trim() ;
+    				if (wfCode!=null &&wfCode.equals("")) wfCode=null ;
+    				if (wfCode==null) {
+    					theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='"+code.trim()+"'").executeUpdate() ;
+    					
+    				} else {
+    					theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='"+code+"' and code not in ('"+wfCode.replaceAll(",","','")+"')").executeUpdate() ;
+    					String[] wf = wfCode.split(",") ;
+    					for (String w:wf) {
+    						List<Object> l=theManager.createNativeQuery("select code from VocExtDispServiceFunction where name='"+code+"' and code='"+w+"'").setMaxResults(1).getResultList();
+								if (l.isEmpty()) {
+									VocExtDispServiceFunction vedsf = new VocExtDispServiceFunction() ;
+									vedsf.setCode(w) ;
+									vedsf.setName(code) ;
+									theManager.persist(vedsf) ;
+								}
+    					}
+    				}
     				service.setOrphCode(""+wqr.get5());
     				theManager.persist(service) ;
     				theHashService.put(""+wqr.get1(), service) ;
@@ -258,7 +283,13 @@ public class VocabularyServiceBean {
     		xmlDoc.newAttribute(el, "code", serv.getCode());
     		xmlDoc.newAttribute(el, "isVisit", serv.getIsVisit()!=null && serv.getIsVisit()?"1":"0");
     		xmlDoc.newAttribute(el, "name", serv.getName());
-    		xmlDoc.newAttribute(el, "workFunctionCode", serv.getWorkFunctionCode());
+    		List<Object> wf = theManager.createNativeQuery("select list(code) from VocExtDispServiceFunction where name='"+serv.getCode()+"' and code is not null and code!=''").getResultList() ;
+    		if (wf.isEmpty()) {
+    			String wfc = (""+wf.get(0)).replaceAll(" ", "") ;
+    			xmlDoc.newAttribute(el, "workFunctionCode", wfc);
+    		} else {
+    			xmlDoc.newAttribute(el, "workFunctionCode", "");
+    		}
     		xmlDoc.newAttribute(el, "orphCode", serv.getOrphCode());
     		
     	}

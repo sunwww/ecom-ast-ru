@@ -356,6 +356,23 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Пользователь, принявший биоматериал")
 	public String getTransferUsername() {return theTransferUsername;}
 	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
+	
+	/** Раб. функция, принявшего биоматериал */
+	@Comment("Раб. функция, принявшего биоматериал")
+	@OneToOne
+	public WorkFunction getTransferSpecial() {return theTransferSpecial;}
+	public void setTransferSpecial(WorkFunction aTransferSpecial) {theTransferSpecial = aTransferSpecial;}
+
+	/** Раб. функция, осущ. забор */
+	@Comment("Раб. функция, осущ. забор")
+	@OneToOne
+	public WorkFunction getIntakeSpecial() {return theIntakeSpecial;}
+	public void setIntakeSpecial(WorkFunction aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
+
+	/** Раб. функция, осущ. забор */
+	private WorkFunction theIntakeSpecial;
+	/** Раб. функция, принявшего биоматериал */
+	private WorkFunction theTransferSpecial;
 
 	/** Пользователь, принявший биоматериал */
 	private String theTransferUsername;

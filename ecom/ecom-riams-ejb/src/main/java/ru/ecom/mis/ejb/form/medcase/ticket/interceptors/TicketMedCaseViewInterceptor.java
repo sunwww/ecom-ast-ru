@@ -37,6 +37,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 			if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
 			if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
 			if (frm.getTraumaType()!=null) form.setConcludingTrauma(frm.getTraumaType()) ;
+			if (frm.getMkbAdc()!=null) form.setMkbAdc(frm.getMkbAdc()) ;
 		}
 		//TODO
 		//form.getConcomitantDiseases()

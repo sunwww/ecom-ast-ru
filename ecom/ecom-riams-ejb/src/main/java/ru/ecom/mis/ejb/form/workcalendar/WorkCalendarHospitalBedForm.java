@@ -1,14 +1,8 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
-import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -220,14 +214,14 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	
 	/** Профиль коек */
 	@Comment("Профиль коек")
-	@Persist
+	@Persist @Required
 	public Long getBedType() {return theBedType;}
 	public void setBedType(Long aBedType) {theBedType = aBedType;}
 
 	
 	/** Тип коек */
 	@Comment("Тип коек")
-	@Persist
+	@Persist @Required
 	public Long getBedSubType() {return theBedSubType;}
 	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
 

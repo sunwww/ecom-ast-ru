@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.disability;
 
+import java.sql.Date;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -519,4 +521,13 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** Статус информация */
 	private String theStatusInfo;
+	
+	/** Дата иное */
+	@Comment("Дата иное")
+	@Persist @DateString @DoDateString
+	public String getOtherCloseDate() {return theOtherCloseDate;}
+	public void setOtherCloseDate(String aOtherCloseDate) {theOtherCloseDate = aOtherCloseDate;}
+
+	/** Дата иное */
+	private String theOtherCloseDate;
 }

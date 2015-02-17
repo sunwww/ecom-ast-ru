@@ -43,5 +43,26 @@ public class VocServiceReserveType extends VocBaseEntity{
 	private Boolean theIsViewOnlyMineDoctor;
 	/** Отображать только врачам */
 	private Boolean theIsViewOnlyDoctor;
+	
+	/** Цвет в предварительной записи */
+	@Comment("Цвет в предварительной записи")
+	public String getBackground() {
+		return theBackground;
+	}
+
+	public void setBackground(String aBackground) {
+		theBackground = aBackground;
+	}
+
+	/** Цвет в предварительной записи */
+	private String theBackground;
+	
+	/** Цвет текста */
+	@Comment("Цвет текста")
+	public String getColorText() {return theColorText;}
+	public void setColorText(String aColorText) {theColorText = aColorText;}
+
+	/** Цвет текста */
+	private String theColorText;
 
 }

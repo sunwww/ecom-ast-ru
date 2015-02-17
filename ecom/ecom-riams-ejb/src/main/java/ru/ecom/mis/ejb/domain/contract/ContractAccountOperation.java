@@ -144,6 +144,7 @@ public class ContractAccountOperation extends BaseEntity{
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	
 	/** Пользователь, последний изменивший запись */
 	private String theEditUsername;
 	/** Время, последнего изменения */
@@ -156,5 +157,12 @@ public class ContractAccountOperation extends BaseEntity{
 	private Time theCreateTime;
 	/** Дата создания */
 	private Date theCreateDate;
+	/** Оплата терминалом */
 	
+	@Comment("Оплата терминалом")
+	public Boolean getIsPaymentTerminal() {return theIsPaymentTerminal;}
+	public void setIsPaymentTerminal(Boolean aIsPaymentTerminal) {theIsPaymentTerminal = aIsPaymentTerminal;}
+
+	/** Оплата терминалом */
+	private Boolean theIsPaymentTerminal;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.death;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -9,6 +11,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -397,4 +400,40 @@ public class DeathCaseForm extends IdEntityForm{
 	private Boolean theIsAutopsy;
 	/** Дата СМЭ */
 	private String theDateForensic;
+	
+	/** Код мкб */
+	@Comment("Код мкб")
+	@Persist @Required
+	public Long getReasonMainMkb() {return theReasonMainMkb;}
+	public void setReasonMainMkb(Long aReasonMainMkb) {theReasonMainMkb = aReasonMainMkb;}
+
+	/** Код мкб */
+	private Long theReasonMainMkb;
+	
+	/** Код мкб осложнения */
+	@Comment("Код мкб осложнения")
+	@Persist 
+	public Long getReasonComplicationMkb() {return theReasonComplicationMkb;}
+	public void setReasonComplicationMkb(Long aReasonComplicationMkb) {theReasonComplicationMkb = aReasonComplicationMkb;}
+
+	/** Код мкб осложнения */
+	private Long theReasonComplicationMkb;
+	
+	/** Код мкб сопутсвующий */
+	@Comment("Код мкб сопутсвующий")
+	@Persist 
+	public Long getReasonConcomitantMkb() {return theReasonConcomitantMkb;}
+	public void setReasonConcomitantMkb(Long aReasonConcomitantMkb) {theReasonConcomitantMkb = aReasonConcomitantMkb;}
+
+	/** Код мкб сопутсвующий */
+	private Long theReasonConcomitantMkb;
+	/** Присутствие врача на вскрытие */
+	@Comment("Присутствие врача на вскрытие")
+	@Persist
+	public Boolean getIsPresenceDoctorAutopsy() {return theIsPresenceDoctorAutopsy;}	
+	public void setIsPresenceDoctorAutopsy(Boolean aIsPresenceDoctorAutopsy) {theIsPresenceDoctorAutopsy = aIsPresenceDoctorAutopsy;}
+
+	/** Присутствие врача на вскрытие */
+	private Boolean theIsPresenceDoctorAutopsy;
+
 }

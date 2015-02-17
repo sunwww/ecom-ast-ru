@@ -486,5 +486,13 @@ public class Diagnosis extends BaseEntity {
 	private String theCreateUsername;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Дополнительный код */
+	@Comment("Дополнительный код")
+	public String getMkbAdc() {return theMkbAdc;}
+	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
+
+	/** Дополнительный код */
+	private String theMkbAdc;
 
 }

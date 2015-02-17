@@ -453,4 +453,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Проводилась анестезия */
 	private Long theIsAnesthesia;
+	
+	/** Анестезия вида */
+	@Comment("Анестезия вида")
+	public Long getAnesthesiaType() {return theAnesthesiaType;}
+	public void setAnesthesiaType(Long aAnesthesiaType) {theAnesthesiaType = aAnesthesiaType;}
+
+	/** Анестезия вида */
+	private Long theAnesthesiaType;
 }

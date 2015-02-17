@@ -28,7 +28,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Jaas/SecPolicy")
 @WebTrail(comment="", nameProperties="name", view="entityParentView-secpolicy.do")
 @ASaveInterceptors(
-        @AEntityFormInterceptor(SecPolicySaveInterceptor.class)
+       @AEntityFormInterceptor(SecPolicySaveInterceptor.class)
 )
 @AViewInterceptors(
         @AEntityFormInterceptor(SecPolicyViewInterceptor.class)
@@ -78,5 +78,21 @@ public class SecPolicyForm  extends IdEntityForm    {
     private String theName ;
     /** Ключ */
     private String theKey ;
+    
+    /** Создание роли */
+	@Comment("Создание роли")
+	public Boolean getIsCreateRole() {return theIsCreateRole;}
+	public void setIsCreateRole(Boolean aIsCreateRole) {theIsCreateRole = aIsCreateRole;}
+
+	/** Создание роли */
+	private Boolean theIsCreateRole;
+	
+	/** Роль */
+	@Comment("Роль")
+	public SecRoleForm getRoleForm() {return theRoleForm;}
+	public void setRoleForm(SecRoleForm aRoleForm) {theRoleForm = aRoleForm;}
+
+	/** Роль */
+	private SecRoleForm theRoleForm = new SecRoleForm() ;
 
 }

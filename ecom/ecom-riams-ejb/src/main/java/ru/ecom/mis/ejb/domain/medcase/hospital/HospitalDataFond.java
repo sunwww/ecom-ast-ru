@@ -8,6 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizatingFond;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
@@ -16,6 +18,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Госпитализации данные фонда")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "hospitalMedCase" }) })
 public class HospitalDataFond extends BaseEntity {
 
 	/** Направление */
@@ -280,4 +283,12 @@ public class HospitalDataFond extends BaseEntity {
 	private Date theHospDischargeDate;
 	/** Время госпитализации */
 	private Time theHospTime;
+	
+	/** Отказ от госпитализации */
+	@Comment("Отказ от госпитализации")
+	public Long getDeniedHospital() {return theDeniedHospital;}
+	public void setDeniedHospital(Long aDeniedHospital) {theDeniedHospital = aDeniedHospital;}
+
+	/** Отказ от госпитализации */
+	private Long theDeniedHospital;
 }

@@ -962,10 +962,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					doc.setOtherCloseDate(d) ;
 				} catch(Exception e) {
 					e.printStackTrace() ;
-					throw new IllegalStateException("Нельзя закрыть документ, так как причине закрытия с кодом "+reason.getCodeF()+" должна быть указана корректная иная дата закрытия!") ;
+					throw new IllegalStateException("Нельзя закрыть документ, так как причина закрытия "+reason.getCodeF()+" "+reason.getName()+" должна быть указана корректная иная дата закрытия!") ;
 				}
 			} else {
-				throw new IllegalStateException("Нельзя закрыть документ, так как причине закрытия с кодом "+reason.getCodeF()+" должна быть указана иная дата закрытия!") ;
+				throw new IllegalStateException("Нельзя закрыть документ, так как причина закрытия "+reason.getCodeF()+" "+reason.getName()+" должна быть указана иная дата закрытия!") ;
 			}
 		} else {
 			doc.setOtherCloseDate(null) ;

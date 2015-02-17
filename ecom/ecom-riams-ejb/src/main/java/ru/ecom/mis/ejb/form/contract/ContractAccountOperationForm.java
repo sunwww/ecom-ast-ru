@@ -25,114 +25,56 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({OperationAccrualForm.class,OperationReservationForm.class
 	,OperationReturnForm.class,OperationWriteOffForm.class})
 public class ContractAccountOperationForm extends IdEntityForm{
-	/**
-	 * Договорной счет
-	 */
+	/** Договорной счет */
 	@Comment("Договорной счет")
 	@Persist
-	public Long getAccount() {
-		return theAccount;
-	}
-	public void setAccount(Long aAccount) {
-		theAccount = aAccount;
-	}
-	/**
-	 * Договорной счет
-	 */
+	public Long getAccount() {return theAccount;}
+	public void setAccount(Long aAccount) {theAccount = aAccount;}
+	/** Договорной счет */
 	private Long theAccount;
-	/**
-	 * Дата
-	 */
+	/** Дата */
 	@Comment("Дата")
-	@Persist
-	@DateString @DoDateString
-	public String getOperationDate() {
-		return theOperationDate;
-	}
-	public void setOperationDate(String aOperationDate) {
-		theOperationDate = aOperationDate;
-	}
-	/**
-	 * Дата
-	 */
+	@Persist @DateString @DoDateString
+	public String getOperationDate() {return theOperationDate;}
+	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;}
+	/** Дата */
 	private String theOperationDate;
-	/**
-	 * Время операции
-	 */
+	/** Время операции */
 	@Comment("Время операции")
-	@Persist
-	@TimeString @DoTimeString
-	public String getOperationTime() {
-		return theOperationTime;
-	}
-	public void setOperationTime(String aOperationTime) {
-		theOperationTime = aOperationTime;
-	}
-	/**
-	 * Время операции
-	 */
+	@Persist @TimeString @DoTimeString
+	public String getOperationTime() {return theOperationTime;}
+	public void setOperationTime(String aOperationTime) {theOperationTime = aOperationTime;}
+	/** Время операции */
 	private String theOperationTime;
-	/**
-	 * Стоимость
-	 */
+	/** Стоимость */
 	@Comment("Стоимость")
-	@Required
-	@Persist
-	public String getCost() {
-		return theCost;
-	}
-	public void setCost(String aCost) {
-		theCost = aCost;
-	}
-	/**
-	 * Стоимость
-	 */
+	@Required @Persist
+	public String getCost() {return theCost;}
+	public void setCost(String aCost) {theCost = aCost;}
+	
+	/** Стоимость */
 	private String theCost;
 
-	/**
-	 * Отменившая операция
-	 */
+	/** Отменившая операция	 */
 	@Comment("Отменившая операция")
 	@Persist
-	public Long getRepealOperation() {
-		return theRepealOperation;
-	}
-	public void setRepealOperation(Long aRepealOperation) {
-		theRepealOperation = aRepealOperation;
-	}
-	/**
-	 * Отменившая операция
-	 */
+	public Long getRepealOperation() {return theRepealOperation;}
+	public void setRepealOperation(Long aRepealOperation) {theRepealOperation = aRepealOperation;}
+	/** Отменившая операция */
 	private Long theRepealOperation;
-	/**
-	 * Оператор
-	 */
+	/** Оператор */
 	@Comment("Оператор")
 	@Persist
-	public Long getWorkFunction() {
-		return theWorkFunction;
-	}
-	public void setWorkFunction(Long aWorkFunction) {
-		theWorkFunction = aWorkFunction;
-	}
-	/**
-	 * Оператор
-	 */
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Оператор */
 	private Long theWorkFunction;
-	/**
-	 * Скидка
-	 */
+	/** Скидка */
 	@Comment("Скидка")
 	@Persist
-	public String getDiscount() {
-		return theDiscount;
-	}
-	public void setDiscount(String aDiscount) {
-		theDiscount = aDiscount;
-	}
-	/**
-	 * Скидка
-	 */
+	public String getDiscount() {return theDiscount;}
+	public void setDiscount(String aDiscount) {theDiscount = aDiscount;}
+	/** Скидка */
 	private String theDiscount;
 	
 	/** Дата создания */
@@ -186,14 +128,18 @@ public class ContractAccountOperationForm extends IdEntityForm{
 	
 	/** Услуги */
 	@Comment("Услуги")
-	public String getMedServicies() {
-		return theMedServicies;
-	}
-
-	public void setMedServicies(String aMedServicies) {
-		theMedServicies = aMedServicies;
-	}
+	public String getMedServicies() {return theMedServicies;}
+	public void setMedServicies(String aMedServicies) {theMedServicies = aMedServicies;}
 
 	/** Услуги */
 	private String theMedServicies;
+	
+	@Comment("Оплата терминалом")
+	@Persist
+	public Boolean getIsPaymentTerminal() {return theIsPaymentTerminal;}
+	public void setIsPaymentTerminal(Boolean aIsPaymentTerminal) {theIsPaymentTerminal = aIsPaymentTerminal;}
+
+	/** Оплата терминалом */
+	private Boolean theIsPaymentTerminal;
+
 }
