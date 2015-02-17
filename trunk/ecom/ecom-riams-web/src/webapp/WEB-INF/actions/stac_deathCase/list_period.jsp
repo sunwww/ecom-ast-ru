@@ -95,6 +95,9 @@
         	label="Категория" horizontalFill="true" vocName="vocDeathCategory"/>
         </msh:row>
         <msh:row>
+        	<msh:textField property="deathReason" label="Причина вскрытия" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
     	    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
            <td>
@@ -160,7 +163,10 @@
 			request.setAttribute("differenceInfo", "не было расхождений по диагнозу ") ;
 			request.setAttribute("differenceSql", " and dc.categoryDifference_id is null ") ;
 		}
-    	
+		String deathReson=request.getParameter("deathReason") ;
+    	if (deathReson!=null&&!deathReson.equals("")) {
+    		request.setAttribute("deathReasonSql", " and upper(dc.commentReason) like '%"+deathReson.toUpperCase()+"%'") ;
+    	}
 		if (typeOperation!=null && typeOperation.equals("1")) {
 			request.setAttribute("operationSql", " and (so1.id is not null or so2.id is not null) ") ;
 			request.setAttribute("operationInfo", " были произведены хирургические вмешательства ") ;
@@ -209,7 +215,9 @@ then -1 else 0 end)
     ,vdcC.name||' '||coalesce(dcvpd.name,'нет данных') as categoryDifference
     ,vdcL.name as latrogeny
     ,dc.commentCategory as dccommentCategory 
-    
+    ,to_char(dc.dateForensic,'dd.mm.yyyy') as dateForensic
+    ,rmkb.code as rmkbcode
+    ,case when dc.isAutopsy='1' then 'производилось' ||case when dc.isPresenceDoctorAutopsy='1' then ', врач присутствовал при вскрытие' else '' end  else '' end as isAutopsy
     from deathcase dc 
     left join medcase m on m.id=dc.medcase_id
     left join medcase dmc on dmc.parent_id=m.id and dmc.dtype='DepartmentMedCase'
@@ -223,6 +231,7 @@ then -1 else 0 end)
     left join Diagnosis d on d.medCase_id=m.id
     left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
     left join VocIdc10 mkb on mkb.id=d.idc10_id
+    left join VocIdc10 rmkb on rmkb.id=dc.reasonMainMkb_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id
     left join VocPriorityDiagnosis dcvpd on dcvpd.id=dc.diagnosisDifference_id
     left join VocDeathCategory vdcC on vdcC.id=dc.categoryDifference_id
@@ -233,12 +242,12 @@ then -1 else 0 end)
     and to_date('${dateEnd}','dd.mm.yyyy')
     and dmc.transferDate is null
     ${emerSql} ${autopsySql} ${differenceSql} ${operationSql}
-    ${sexSql} ${departmentSql} ${categoryDifferenceSql}
+    ${sexSql} ${departmentSql} ${categoryDifferenceSql} ${deathReasonSql}
     group by dc.id,m.id,p.lastname,p.firstname,p.middlename,p.birthday
     ,m.emergency,dc.deathDate,dc.deathTime,dc.commentReason
     ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
     ,m.dateStart,m.entranceTime,pml.name,dml.name,dml.isNoOmc,bf.addCaseDuration
-    ,dc.commentCategory
+    ,dc.commentCategory,rmkb.code,dc.isAutopsy,dc.isPresenceDoctorAutopsy,dc.dateForensic
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <script type="text/javascript">
     function print() {
@@ -271,9 +280,12 @@ then -1 else 0 end)
             <msh:tableColumn property="10" columnName="МКБ клин. диагноза"/>
             <msh:tableColumn property="11" columnName="МКБ пат. анат. диагноза"/>
             <msh:tableColumn property="12" columnName="Причина смерти"/>
+            <msh:tableColumn property="17" columnName="МКБ"/>
+            <msh:tableColumn property="18" columnName="Вкрытие"/>
             <msh:tableColumn property="13" columnName="Категория расхождения"/>
             <msh:tableColumn property="14" columnName="Ятрогения"/>
             <msh:tableColumn property="15" columnName="Комментарий"/>
+            <msh:tableColumn property="16" columnName="Дата СМЭ"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>

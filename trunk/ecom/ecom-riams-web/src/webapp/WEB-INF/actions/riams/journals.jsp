@@ -64,11 +64,19 @@
 	                   		Отчет 16ВН</msh:link>
 	                   </li>
 	                   <li>
-	                   		<msh:link action="pres_journal.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment">
-	                   		Журнал забора крови</msh:link>
+	                   		<msh:link action="pres_journal_intake.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment">
+	                   		Журнал забора биоматериала для лаборатории </msh:link>
+	                   </li>
+	                   <li>
+	                   		<msh:link action="pres_journal_intake_transfer.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory">
+	                   		Журнал прием биоматериала в лаборатории</msh:link>
 	                   </li>
 	                   <li>
 	                   		<msh:link action="pres_journal_by_department.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DirectFromDepartment">
+	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
+	                   </li>
+	                   <li>
+	                   		<msh:link action="pres_journal.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/Control">
 	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
 	                   </li>
 					</ul>

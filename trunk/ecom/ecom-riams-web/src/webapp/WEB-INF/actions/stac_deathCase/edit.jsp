@@ -76,6 +76,9 @@
           <msh:textField property="dateForensic" label="Дата СМЭ" />
           <msh:checkBox property="isAutopsy" label="Вскрытие" />
         </msh:row>
+        <msh:row>
+          <msh:checkBox property="isPresenceDoctorAutopsy" labelColSpan="3" label="Присутствовал леч.врач на вскрытие"/>
+        </msh:row>
         
         <msh:row>
           <msh:autoComplete vocName="vocDeathPlace" property="deathPlace" label="Место смерти" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b216c" />

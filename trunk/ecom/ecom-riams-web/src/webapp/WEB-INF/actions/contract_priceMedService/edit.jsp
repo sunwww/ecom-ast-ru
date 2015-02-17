@@ -20,34 +20,34 @@
 					/>
 				</msh:row>
 				<msh:ifFormTypeIsNotView formName="contract_priceMedServiceForm">
-					<msh:row styleId="styleCategId">
+					<msh:row>
 						<msh:checkBox property="medServiceIsCreate" label="Добавить мед.услугу" fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row styleId="styleCateg">
+					<msh:row styleId="styleCateg1">
 						<msh:autoComplete label="Категория" property="medServiceForm.parent" vocName="medService" 
 							fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row styleId="styleCateg">
+					<msh:row styleId="styleCateg2">
 						<msh:autoComplete label="Услуга по спр. МЗ" property="medServiceForm.vocMedService" vocName="vocMedService" 
 							fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row styleId="styleCateg">
+					<msh:row styleId="styleCateg3">
 						<msh:autoComplete label="Тип услуги" property="medServiceForm.serviceType" vocName="vocServiceType" 
 							fieldColSpan="3" horizontalFill="true"/>
 					</msh:row>
-					<msh:row styleId="styleCateg">
+					<msh:row styleId="styleCateg4">
 						<msh:textField property="medServiceForm.code"/>
 						<msh:textField property="medServiceForm.complexity"/>
 					</msh:row>
-					<msh:row styleId="styleCateg">
+					<msh:row styleId="styleCateg5">
 						<msh:textField property="medServiceForm.name" fieldColSpan="3" 
 							horizontalFill="true"/>
 					</msh:row>
-			        <msh:row styleId="styleCateg">
+			        <msh:row styleId="styleCateg6">
 			        	<msh:checkBox property="medServiceForm.isHospital" label="В стационаре"/>
 			        	<msh:checkBox property="medServiceForm.isDayHospital" label="В дн.стационаре"/>
 			        </msh:row>
-			        <msh:row styleId="styleCateg">
+			        <msh:row styleId="styleCateg7">
 			        	<msh:checkBox property="medServiceForm.isPoliclinic" label="В поликлинике"/>
 			        	<msh:checkBox property="medServiceForm.vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
 			        </msh:row>
@@ -71,5 +71,37 @@
 			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_priceMedService" name="Удалить" title="Удалить" roles=""/>
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="price"/>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+	<msh:ifFormTypeIsNotView formName="contract_priceMedServiceForm">
+	    
+	    <script type="text/javascript">
+	    eventutil.addEventListener($('medServiceIsCreate'), 'click', onCreateService) ;
+	    
+	    function onCreateService() {
+	    	var val =false;
+	    	if ($('medServiceIsCreate').checked) {
+	    		val=true ;
+	    	}
+	    	for (var i=1;i<=7;i++) {
+    			showRow("styleCateg"+i,val) ;
+    		}
+	    }
+	    onCreateService() ;
+	    function showRow(aRowId, aCanShow ) {
+    		//alert(aRowId) ;
+			try {
+				//alert( aCanShow ? 'table-row' : 'none') ;
+				$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
+			} catch (e) {
+				// for IE
+				//alert(aCanShow ? 'block' : 'none') ;
+				try{
+				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
+				}catch(e) {}
+			}	
+		}
+	    </script>
+	    </msh:ifFormTypeIsNotView>
 	</tiles:put>
 </tiles:insert>

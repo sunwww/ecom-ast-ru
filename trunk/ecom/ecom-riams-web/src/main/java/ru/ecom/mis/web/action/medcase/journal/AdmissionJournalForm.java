@@ -357,4 +357,12 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Строка отчета */
 	private Long theReportStr;
+	
+	/** Причина смерти */
+	@Comment("Причина смерти")
+	public String getDeathReason() {return theDeathReason;}
+	public void setDeathReason(String aDeathReason) {theDeathReason = aDeathReason;}
+
+	/** Причина смерти */
+	private String theDeathReason;
 }
