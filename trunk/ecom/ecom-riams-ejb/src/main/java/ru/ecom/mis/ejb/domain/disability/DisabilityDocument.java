@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.validator.Length;
+
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -474,5 +476,20 @@ public class DisabilityDocument extends BaseEntity{
 
 	/** Дата иное */
 	private Date theOtherCloseDate;
+	
+	/** Дата экспорта */
+	@Comment("Дата экспорта")
+	public Date getExportDate() {return theExportDate;}
+	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
+	/** Дата экспорта */
+	private Date theExportDate;
+	
+	/** Дефект экспорта */
+	@Comment("Дефект экспорта")
+	public String getExportDefect() {return theExportDefect;}
+	public void setExportDefect(String aExportDefect) {theExportDefect = aExportDefect;}
+	/** Дефект экспорта */
+	private String theExportDefect;
+	
 
 }
