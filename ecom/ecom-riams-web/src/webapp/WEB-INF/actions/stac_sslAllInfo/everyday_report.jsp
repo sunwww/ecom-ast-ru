@@ -52,7 +52,7 @@
 	dep[23][0]="230";dep[23][1] = "ОАР №2 РЕАНИМАЦИЯ" ;dep[23][2] = "2" ;
 	dep[24][0]="192";dep[24][1] = "ОРИТ №1" ;dep[24][2] = "2" ;
 	dep[25][0]="183";dep[25][1] = "ГЕМАТОЛОГИЯ" ;dep[25][2] = "1" ;
-	dep[26][0]="194";dep[26][1] = "ПУЛЬМАТОЛОГИЯ" ;dep[26][2] = "1" ;
+	dep[26][0]="194";dep[26][1] = "ПУЛЬМОНОЛОГИЯ" ;dep[26][2] = "1" ;
 	dep[27][0]="222";dep[27][1] = "КАРДИОЛОГИЯ" ;dep[27][2] = "1" ;
 	dep[28][0]="262";dep[28][1] = "НЕОТЛОЖНАЯ КАРДИОЛОГИЯ" ;dep[28][2] = "1" ;
 	dep[29][0]="187";dep[29][1] = "ГАСТРОЭНТЕРОЛОГИЯ" ;dep[29][2] = "1" ;
@@ -646,8 +646,8 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	      <msh:tableColumn isCalcAmount="true" columnName="всего" addParam="&denied=0&emergency=0" property="17" />
     	      <msh:tableColumn isCalcAmount="true" columnName="всего" addParam="&denied=all" property="18" />
     	      <msh:tableColumn isCalcAmount="true" columnName="направ. в др. ЛПУ" addParam="&denied=4" property="19" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="отказ больного" addParam="&denied=8" property="20" />
-    	      <msh:tableColumn isCalcAmount="true" columnName="самовольно покинул отделение" addParam="&denied=5" property="21" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="самовольно покинул отделение" addParam="&denied=8" property="20" />
+    	      <msh:tableColumn isCalcAmount="true" columnName="отказ больного" addParam="&denied=5" property="21" />
     	      <msh:tableColumn isCalcAmount="true" columnName="отсутствие показаний" addParam="&denied=2" property="22" />
     	    </msh:table>
     	    </msh:sectionContent>
