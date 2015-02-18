@@ -90,6 +90,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpen.jsp" />
         </action>
+        <action path='/dis_documentExport' type='ru.ecom.mis.web.action.disability.DocumentExportAction'
+                name='dis_searchForm'
+                validate='true'
+                scope="request"
+                input='/WEB-INF/actions/dis_document/listExport.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listExport.jsp" />
+        </action>
         <action path='/dis_documentClose' type='ru.ecom.mis.web.action.disability.DocumentCloseAction'
                 name='dis_searchForm'
                 validate='true'
