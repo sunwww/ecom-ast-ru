@@ -18,6 +18,10 @@ import ru.ecom.web.util.Injection;
  */
 public class DisabilityServiceJs {
 	
+	public String analyseExportLN(String aFileName, HttpServletRequest aRequest) throws NamingException {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
+		return service.analyseExportLN(aFileName);
+	}
 	public String getCodeByReasonClose(Long aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select id,coalesce(codef,'') from VocDisabilityDocumentCloseReason where id='"+aReason+"'",1) ;
