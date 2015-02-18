@@ -21,6 +21,8 @@ public interface IDisabilityService {
 	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber) ;
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber)  throws ParseException, NamingException ;
 	public String exportLNByNumber (String aNumber) throws ParseException, NamingException ;
+	public String analyseExportLN(String aFileName) throws NamingException ;
+    	
 
 	
 }
