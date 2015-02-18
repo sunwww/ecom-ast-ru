@@ -37,6 +37,23 @@ import ru.nuzmsh.forms.validator.validators.Required;
 )
 public class DisabilityDocumentForm extends IdEntityForm{
 	
+
+	/** Дата экспорта */
+	@Comment("Дата экспорта")
+	@DateString @DoDateString @Persist
+	public String getExportDate() {return theExportDate;}
+	public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
+	/** Дата экспорта */
+	private String theExportDate;
+	
+	/** Дефект экспорта */
+	@Comment("Дефект экспорта")
+	@Persist
+	public String getExportDefect() {return theExportDefect;}
+	public void setExportDefect(String aExportDefect) {theExportDefect = aExportDefect;	}
+	/** Дефект экспорта */
+	private String theExportDefect;
+	
 	/** Медико-социальная экспертная комиссия */
 	@Comment("Медико-социальная экспертная комиссия")
 	@Persist
