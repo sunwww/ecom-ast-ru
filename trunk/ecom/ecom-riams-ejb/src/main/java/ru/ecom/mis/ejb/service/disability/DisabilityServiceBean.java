@@ -46,7 +46,6 @@ import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
@@ -69,6 +68,19 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     //Не тестировано, не проверялось вообще!!!
+    public DisabilityDocument getDocument (String aNumber) {
+		try {
+			System.out.println("---------------STRING aNumber="+aNumber);
+			DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
+			System.out.println(list);
+		return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+			
+		}
+		
+	}
     public String analyseExportLN(String aFileName) throws NamingException {
     	try{
     	SAXBuilder saxBuilder = new SAXBuilder();
@@ -80,15 +92,26 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		List<Element> rowSets = rowSet.getChildren();
 		for (org.jdom.Element el: rowSets) {
 			i++;
-			Element result = el.getChild("LN_RESULT").getChild("RESULT");
-			String ln_code = result.getChildText("LN_CODE");
+			Element result = el.getChild("LnResult").getChild("RESULT");
+			String ln_code = el.getChild("LnResult").getChildText("LN_CODE");
+			DisabilityDocument doc = getDocument(ln_code);
 			if (result.getChildText("STATUS").equals("1")) { //Тоды ошибка
 				Element fault = result.getChild("FAULT");
-				sb.append(i).append(":ЛН № ").append(ln_code).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
-					.append(":").append(fault.getChildText("ERROR_MESSAGE"));
+				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(ln_code).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
+					.append(":").append(fault.getChildText("ERROR_MESSAGE").replace(":", " "));
+				if (doc!=null) {
+					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
+					doc.setExportDefect(fault.getChildText("ERROR_CODE")+"|"+fault.getChildText("ERROR_MESSAGE").replace(":", " "));
+					theManager.persist(doc);
+				}
 				
 			} else if (result.getChildText("STATUS").equals("0")) {
-				sb.append(i).append(":ЛН №").append(ln_code).append(" принят без замечаний:#");
+				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(ln_code).append(":Принят без замечаний:#");
+				if (doc!=null) {
+					doc.setExportDefect("");
+					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
+					theManager.persist(doc);
+				}
 			}
 		}
 		return sb.toString();
@@ -243,7 +266,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	"left join mislpu ml2 on ml2.id=ml1.parent_id "+
 	"left join vocdisabilityreason2 vdr2 on vdr2.id=dd.disabilityreason2_id "+
 	"left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
-	"where "+sqlAdd +
+	"where dd.exportdate is null and "+sqlAdd +
+	" and dd.anotherlpu_id is null "+
 	"order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
