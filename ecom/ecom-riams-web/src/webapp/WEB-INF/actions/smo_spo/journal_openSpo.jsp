@@ -14,6 +14,7 @@
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Poly">Журнал по пациентам, у которых есть открытые СПО</msh:title>
   </tiles:put>
+  <input type="button" onclick="print()" value="Печать!">
   <tiles:put name="side" type="string">
   	<tags:visit_finds currentAction="smo_journal_openSpo"/>
   </tiles:put>
@@ -31,6 +32,7 @@
         where su.login='${login}'
         "
         />
+        
         <%
         	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll",request) ;
         	List list= (List)request.getAttribute("infoByLogin");
@@ -67,9 +69,7 @@
         	
     <%if (type==1) { %>
     <msh:section>
-    <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+        <ecom:webQuery name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.id) 
 	from MedCase spo 
 	left join WorkFunction wf on wf.id=spo.ownerFunction_id
@@ -77,8 +77,18 @@
 	left join MisLpu ml on w.lpu_id=ml.id 
 	where spo.dtype='PolyclinicMedCase' and spo.dateFinish is null  
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="dateListSQL"/>
+    <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
+    <form action="print-openSPO1.do" method="post" target="_blank">
+    <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр открытых СПО. Свод по отделениям.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="Отделение">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+      <input type="submit" value="Печать"> 
+    </form>
+    <msh:sectionContent>
+  <msh:table name="datelist" 
     viewUrl="smo_journal_openSpo.do?short=Short"
     action="smo_journal_openSpo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -90,8 +100,6 @@
     <% } %>
     <%   if (type==2 )  {	%>
     <msh:section>
-    <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
-    <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&curator='||owf.id as id
@@ -111,7 +119,18 @@ and spo.dateFinish is null and ow.lpu_id='${department}'
 and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
 group by owf.id,owp.lastname,owp.middlename,owp.firstname,ovwf.name 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="dateListSQL"/>
+    <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
+    <form action="print-openSPO2.do" method="post" target="_blank">
+    <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр открытых СПО. Реестр по лечащим врачам.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="Лечащий врач">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+      <input type="submit" value="Печать"> 
+      </form>
+    <msh:sectionContent>
+    
     <msh:table name="datelist" 
     viewUrl="smo_journal_openSpo.do?short=Short"
     action="smo_journal_openSpo.do" idField="1">
@@ -126,9 +145,7 @@ order by owp.lastname,owp.middlename,owp.firstname
          <%}%>
          <%if (type==3 )  {	%>
     <msh:section>
-    <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+     <ecom:webQuery name="datelist" nameFldSql="dateListSQL" nativeSql="
 select spo.id,spo.dateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
     ,pat.birthday  
@@ -152,6 +169,17 @@ select spo.id,spo.dateStart
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
+    <form action="print-openSPO3.do" method="post" target="_blank">
+    <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр открытых СПО. Реестр пациентов.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="Фамилия, имя, отчество пациента">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+    <input type='hidden' name="m" id="m" value="printNativeQuery${printPrefix}">
+      <input type="submit" value="Печать"> 
+      </form>
+    <msh:sectionContent>
+   
     <msh:table name="datelist" 
     viewUrl="entityParentView-smo_spo.do?short=Short"
     action="entityParentView-smo_spo.do" idField="1" selection="multiply" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
