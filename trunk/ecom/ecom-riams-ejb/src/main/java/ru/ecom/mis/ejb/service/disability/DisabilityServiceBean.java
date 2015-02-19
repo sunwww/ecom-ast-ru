@@ -267,7 +267,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	"left join vocdisabilityreason2 vdr2 on vdr2.id=dd.disabilityreason2_id "+
 	"left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
 	"where dd.exportdate is null and "+sqlAdd +
-	" and dd.anotherlpu_id is null "+
+	" and dd.anotherlpu_id is null " +
+	"and (dd.isclose is true or dd.isclose='1') "+
 	"order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
