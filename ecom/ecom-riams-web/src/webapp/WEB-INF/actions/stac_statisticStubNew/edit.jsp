@@ -36,9 +36,19 @@
           <msh:autoComplete vocName="lpu" property="lpu" label="Лечебное учреждение" fieldColSpan="6" 
           	horizontalFill="true" guid="968469ce-dd95-40f4-ef6cd3e4f" size="30" />
         </msh:row>
+        
+        <msh:row >
+          <msh:autoComplete vocName="vocPigeonHole" property="pigeonHole" label="Приемник" fieldColSpan="6" 
+          	horizontalFill="true" guid="968469ce-dd95-40f4-ef6cd3e4f" size="30" />
+        </msh:row>
+        
         <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
           <msh:textField property="year" label="Год" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
           <msh:textField property="code" label="Номер" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isPlan"/>
+        	<msh:checkBox property="isEmergency"/>
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>

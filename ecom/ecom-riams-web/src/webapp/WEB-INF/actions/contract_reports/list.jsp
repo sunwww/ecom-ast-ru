@@ -34,13 +34,13 @@
         <msh:row>
 	        <td class="label" title="Оплата (typePayment)" colspan="1"><label for="typePaymentName" id="typePaymentLabel">Оплата:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeTerminal" value="1">  наличными
+	        	<input type="radio" name="typePayment" value="1">  наличными
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeTerminal" value="2"> терминалом
+	        	<input type="radio" name="typePayment" value="2"> терминалом
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeTerminal" value="2"> наличные и терминалом 
+	        	<input type="radio" name="typePayment" value="3"> наличные и терминалом 
 	        </td>
 	    </msh:row>
         <msh:row>
@@ -74,10 +74,10 @@
 		}
 		request.setAttribute("dFrom",dFrom) ;
 		if (typePayment!=null && typePayment.equals("1")) {
-			request.setAttribute("paymentSql", " and (ca.isPaymentTerminal is null or ca.isPaymentTerminal='0')") ;
+			request.setAttribute("paymentSql", " and (cao.isPaymentTerminal is null or cao.isPaymentTerminal='0')") ;
 			request.setAttribute("paymentInfo", " Оплата наличными.") ;
 		} else if (typePayment!=null && typePayment.equals("2")) {
-			request.setAttribute("paymentSql", " and ca.isPaymentTerminal='1'") ;
+			request.setAttribute("paymentSql", " and cao.isPaymentTerminal='1'") ;
 			request.setAttribute("paymentInfo", " Безналичный расчет.") ;
 		}
 		String dateTo = request.getParameter("dateTo") ;
@@ -233,7 +233,7 @@ order by ${groupOrder}
 
 			<msh:sectionTitle> 
     <form action="print-contract_finance_group_operator.do" method="post" target="_blank">
-    Финасовый отчет за период ${FromTo}
+    Финасовый отчет за период ${paymentInfo} ${FromTo}
     <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
@@ -251,8 +251,8 @@ order by ${groupOrder}
 			<msh:sectionTitle>Услуги без НДС</msh:sectionTitle>
 
 				<msh:table name="finansReport_without_vat" 
-				action="contract_reports_finance.do?typeGroup=${groupGroupNext}"
-				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_finance.do?typeGroup=${groupGroupNext}&typePayment=${param.typePayment}"
+				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&typePayment=${param.typePayment}&short=Short" 
 				idField="1">
 					<msh:tableColumn columnName="${groupName}" property="2" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />
@@ -263,8 +263,8 @@ order by ${groupOrder}
 <msh:section title="Услуги с НДС">
 
 				<msh:table name="finansReport_with_vat" 
-				action="contract_reports_finance.do?typeGroup=${groupGroupNext}"
-				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&short=Short" 
+				action="contract_reports_finance.do?typeGroup=${groupGroupNext}&typePayment=${param.typePayment}"
+				viewUrl="contract_reports_finance.do?typeGroup=${groupGroupNext}&typePayment=${param.typePayment}&short=Short" 
 				idField="1">
 					<msh:tableColumn columnName="${groupName}" property="2" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />
@@ -368,7 +368,7 @@ group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO
 order by cao.operationDate,cao.operationTime
 			"/>
     <form action="print-contract_finance_reestr_operator.do" method="post" target="_blank">
-    Финасовый отчет за период ${FromTo}
+    Финасовый отчет за период ${paymentInfo}. ${FromTo}
     <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
@@ -421,9 +421,9 @@ order by cao.operationDate,cao.operationTime
   	<script type="text/javascript">
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-    checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeDtype','${typeDtype}',3) ;
-    checkFieldUpdate('typeDate','${typeDate}',2) ;
+    //checkFieldUpdate('typeView','${typeView}',1) ;
+    //checkFieldUpdate('typeDtype','${typeDtype}',3) ;
+    //checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typePayment','${typePayment}',2) ;
     
     

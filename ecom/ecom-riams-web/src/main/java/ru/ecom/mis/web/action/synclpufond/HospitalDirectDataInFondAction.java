@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
@@ -49,14 +50,22 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	    	//SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
 	    	String filename =null;
 	        if (typeView!=null && typeView.equals("1")) {
-	        	filename=service.exportN1(format_n.format(cal.getTime()), 
-	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+        		if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+        		form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("2")) {
 	        	filename=service.exportN2(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
 	        } else if (typeView!=null && typeView.equals("3")) {
-	        	filename=service.exportN3(format_n.format(cal.getTime()), 
+	        	WebQueryResult wqr = service.exportN3(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	filename=""+wqr.get1() ;
 	        } else if (typeView!=null && typeView.equals("4")) {
 	        	filename=service.exportN4(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
@@ -67,11 +76,15 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	filename=service.exportN6(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
 	        } else if (typeView!=null && typeView.equals("8")) {
-	        	String[] filenameList=service.exportFondZip13(format_n.format(cal.getTime()), 
+	        	WebQueryResult[] filenameList=service.exportFondZip13(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr()) ;
 	        	StringBuilder sb = new StringBuilder() ;
-	        	for (String fn:filenameList) {
-	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
+	        	for (WebQueryResult wqr:filenameList) {
+	        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        		if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+		        	//aRequest.setAttribute("listExist", fn.get4()) ;
+		        	//aRequest.setAttribute("listError", fn.get5()) ;
 	        	}
 	        	form.setFilename(sb.toString()) ;
 	        } else if (typeView!=null && typeView.equals("9")) {
