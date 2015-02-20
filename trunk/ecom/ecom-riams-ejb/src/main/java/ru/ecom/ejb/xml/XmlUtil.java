@@ -19,7 +19,7 @@ public class XmlUtil {
 	public static String namePackage(String aPackage) {
 		if (aPackage==null||aPackage.equals("")) return "01" ;
 		if (aPackage.length()==1) return "0"+aPackage ;
-		return aPackage.substring(0,2);
+		return aPackage.substring(aPackage.length()-2,aPackage.length());
 	}
 
 	public static void recordElementInDocumentXml(XmlDocument aXmlDocument, Element aMainNode, String aNameElement,Object aValue, boolean aIsRequired,String aValueDefault){

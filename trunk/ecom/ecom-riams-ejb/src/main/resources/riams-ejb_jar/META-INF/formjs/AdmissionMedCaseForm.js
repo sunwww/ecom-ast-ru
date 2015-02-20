@@ -45,7 +45,8 @@ function onCreate(aForm, aEntity, aCtx) {
 		aCtx.manager.persist(mp1) ;
 		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
 		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
-	}	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
+	}	
+	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
 		var medPolicyDmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
 		var mp2 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp2.setPolicies(medPolicyDmc) ;
@@ -214,44 +215,6 @@ function onPreSave(aForm,aEntity, aCtx) {
     		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
     	}
     }
-    // Обработка стат. карты
-    /*
-    var stub = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac(aEntity,aCtx.getSessionContext(),aCtx.getManager());
-	
-	var statCardNumber = aForm.getStatCardNumber() ;
-	if (statCardNumber!=null && statCardNumber!="" && (+aForm.getId()>0)) {
-		var year = aForm.getDateStart().substring(6) ;
-		//throw ""+year ;
-		var list = aCtx.getManager()
-				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
-			.setParameter("number", statCardNumber)
-			.setParameter("year",java.lang.Long.valueOf(year))
-			.getResultList() ;
-		
-		if (list.size()==0) {
-			var alwaysCreate = aCtx.getSessionContext()
-				.isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.AlwaysStatCardNumber) ;
-			if (!alwaysCreate) {
-    			if (+aForm.getDeniedHospitalizating()>0) {
-    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
-    				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.removeStatCardNumber(aCtx.getManager(), aCtx.getSessionContext(),aEntity);
-    			} else {
-    				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.getId(), statCardNumber, aCtx.getManager(), aCtx.getSessionContext());
-    			}
-    		} else {
-    			Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.changeStatCardNumber(aForm.getId(), statCardNumber, aCtx.getManager(), aCtx.getSessionContext());    			
-    		}
-			
-		} else {
-			if (+aForm.getDeniedHospitalizating()==0) {
-				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.createStacCardNumber(aForm.getId(),  aCtx.getManager(), aCtx.getSessionContext());
-			} else {
-				
-				Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.removeStatCardNumber(aCtx.getManager(), aCtx.getSessionContext(),aEntity);
-				//throw "remove" ;
-			}
-		}
-		
-	} */
+    
        
 }

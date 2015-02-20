@@ -103,7 +103,7 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 		if (list.size()>0) {
 			var slo ="" ;
 			for (var i=0; i<list.size(); i++) {
-				slo = slo+" <a href='entitySubclassView-mis_medCase.do?id="+list.get(0)[0]+"'>" +list.get(0)[1]+"</a>" ;
+				slo = slo+" <a href='entitySubclassView-mis_medCase.do?id="+list.get(0)[0]+"' onclick='return  msh.util.FormData.getInstance().isChangedForLink() ;'>" +list.get(0)[1]+"</a>" ;
 			}
 			throw "Не полностью заполнены данные по диагнозам в отделениях!!! "+ slo ;
 		}	
