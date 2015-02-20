@@ -365,4 +365,12 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Причина смерти */
 	private String theDeathReason;
+	
+	/** Порядковый номер */
+	@Comment("Порядковый номер")
+	public Long getNumberInJournal() {return theNumberInJournal;}
+	public void setNumberInJournal(Long aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
+
+	/** Порядковый номер */
+	private Long theNumberInJournal;
 }

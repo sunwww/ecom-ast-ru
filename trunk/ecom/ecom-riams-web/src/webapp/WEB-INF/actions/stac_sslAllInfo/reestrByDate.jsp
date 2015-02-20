@@ -26,6 +26,8 @@
 	String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", request) ;
 	String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","4", request) ;
 	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", request) ;
+	String typeFormat =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeFormat","2", request) ;
+	String typeNumber =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeNumber","3", request) ;
   	%>
     <msh:form action="/stac_reestrByHospital.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
@@ -137,21 +139,50 @@
             	<input type="submit" onclick="print('stac_reestrForDay')" value="Печать" />
             </msh:ifNotInRole>
             
-            <input type="submit" onclick="printJournal()" value="Печать журнала госпитализаций и отказов от госпитализаций" />
-<%--            <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
-             --%>
+            <input type="button" onclick="viewJournal()" value="Отобразить печать журнала госп. и отказов" />
+            </td>
+      </msh:row>
+      <msh:row styleId="journal1">
+      	<msh:textField property="numberInJournal" label="Начать с поряд. номера"/>
+      </msh:row>
+      <msh:row styleId="journal2">
+        <td class="label" title="Кол-во страниц в ширину (typeFormat)" colspan="1"><label for="typeFormatName" id="typeFormatLabel">Кол-во стр. в ширину:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeFormat" value="1">  одна страница
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeFormat" value="2" >  две страницы
+        </td>
+      </msh:row>
+      <msh:row styleId="journal3">
+        <td class="label" title="Печатать пункты (typeNumber)" colspan="1"><label for="typeNumberName" id="typeNumberLabel">Пункты в журнале:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeNumber" value="1">  четные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeNumber" value="2" >  нечетные
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeNumber" value="3" >  по порядку
+        </td>
+      </msh:row>
+      <msh:row styleId="journal4">
+	      <td colspan="11">
+    	  	<input type="submit" onclick="printJournal()" value="Печать журнала госпитализаций и отказов от госпитализаций" />
           </td>
       </msh:row>
     </msh:panel>
     </msh:form>
        <script type='text/javascript'>
-    
+    var viewPrintJournal=false ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     checkFieldUpdate('typePatient','${typePatient}',4) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeHour','${typeHour}',3) ;
     checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
+    checkFieldUpdate('typeFormat','${typeFormat}',1) ;
+    checkFieldUpdate('typeNumber','${typeNumber}',1) ;
     
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -165,21 +196,7 @@
    	}
    }
 			 
-/*
-    function printNew1() {
-    	print() ;
-    	var frm = document.forms[0] ;
-    	frm.m.value="printCoveringLetterByDay" ;
-    	frm.target='_blank' ;
-    	frm.action='print-stac_coveringLetterByDay1.do' ;
-    }
-    function printNew2() {
-    	print() ;
-    	var frm = document.forms[0] ;
-    	frm.m.value="printCoveringLetterByDay" ;
-    	frm.target='_blank' ;
-    	frm.action='print-stac_coveringLetterByDay2.do' ;
-    }*/
+
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
     }
@@ -422,18 +439,50 @@
 	    		+$('serviceStream').value;
 	    	
 	    }
+	    
+	    function viewJournal() {
+	    	var val =false;
+	    	if (viewPrintJournal) {
+	    		val=true ;
+	    	}
+	    	for (var i=1;i<=4;i++) {
+    			showRow("journal"+i,val) ;
+    		}
+	    	viewPrintJournal=!viewPrintJournal ;
+	    }
+	    viewJournal() ;
+	    function showRow(aRowId, aCanShow ) {
+    		//alert(aRowId) ;
+			try {
+				//alert( aCanShow ? 'table-row' : 'none') ;
+				$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
+			} catch (e) {
+				// for IE
+				//alert(aCanShow ? 'block' : 'none') ;
+				try{
+				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
+				}catch(e) {}
+			}	
+		}
 	    function printJournal() {
 	    	var frm = document.forms[0] ;
 	    	frm.m.value="printJournalByDay" ;
 	    	frm.s.value="HospitalPrintReport" ;
 	    	frm.target='_blank' ;
-	    	frm.action='print-stac_report001.do' ;
+	    	var format ="_A4" ;
+	    	var fC = getCheckedRadio(frm,"typeFormat") ;
+	    	if (+fC>1) {
+	    		format="" ;
+	    	}
+	    	frm.action='print-stac_report001'+format+'.do' ;
 	    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
 	    		+getCheckedRadio(frm,"typeHour")+":"
 	    		+getCheckedRadio(frm,"typeDate")+":"
 	    		+$('dateBegin').value+":"
 	    		+$('pigeonHole').value+":"
-	    		+$('department').value;
+	    		+$('department').value+":"
+	    		+$('numberInJournal').value
+	    		+":"+getCheckedRadio(frm,"typeNumber");
 	    }
 	    function printNew() {
 	    	//print() ;
