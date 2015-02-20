@@ -23,13 +23,13 @@ import ru.ecom.poly.ejb.services.GroupByDate;
 public interface IHospitalMedCaseService {
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
-	public String[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+	public WebQueryResult[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
 			throws ParserConfigurationException, TransformerException;
 	public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException;
-	public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException ;
+	public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException ;
 	public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
-	public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
+	public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)  throws ParserConfigurationException, TransformerException;
 	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)  throws ParserConfigurationException, TransformerException;

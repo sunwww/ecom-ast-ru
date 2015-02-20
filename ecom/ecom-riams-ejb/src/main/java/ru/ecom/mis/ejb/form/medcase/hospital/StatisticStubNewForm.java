@@ -1,8 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubNew;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -50,14 +53,6 @@ public class StatisticStubNewForm extends IdEntityForm{
 	public Long getLpu() {return theLpu;}
 	public void setLpu(Long aLpu) {theLpu = aLpu;}
 
-	/** Лечебное учреждение (инфо) */
-	@Comment("Лечебное учреждение (инфо)")
-	@Persist
-	public String getLpuInfo() {return theLpuInfo;}
-	public void setLpuInfo(String aLpuInfo) {theLpuInfo = aLpuInfo;}
-
-	/** Лечебное учреждение (инфо) */
-	private String theLpuInfo;
 	/** Лечебное учреждение */
 	private Long theLpu;
 	/** Информация */
@@ -66,5 +61,31 @@ public class StatisticStubNewForm extends IdEntityForm{
 	private String theCode;
 	/** Год */
 	private Long theYear;
+	
+	
+	/** Приемник */
+	@Comment("Приемник")
+	@Persist
+	public Long getPigeonHole() {return thePigeonHole;}
+	public void setPigeonHole(Long aPigeonHole) {thePigeonHole = aPigeonHole;}
+
+	/** Экстренно */
+	@Comment("Экстренно")
+	@Persist
+	public Boolean getIsEmergency() {return theIsEmergency;}
+	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+
+	/** Планово */
+	@Comment("Планово")
+	@Persist
+	public Boolean getIsPlan() {return theIsPlan;}
+	public void setIsPlan(Boolean aIsPlan) {theIsPlan = aIsPlan;}
+
+	/** Планово */
+	private Boolean theIsPlan;
+	/** Экстренно */
+	private Boolean theIsEmergency;
+	/** Приемник */
+	private Long thePigeonHole;
 
 }

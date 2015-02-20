@@ -9,6 +9,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -51,9 +52,33 @@ public abstract class StatisticStub extends BaseEntity {
 	@Transient
 	@Comment("Лечебное учреждение инфо")
 	public String getLpuInfo() {
-		return theLpu!=null ? theLpu.getFullname() : "" ;
+		//return theLpu!=null ? theLpu.getFullname() : "" ;
+		return "";
 	}
 	
+	
+	/** Приемник */
+	@Comment("Приемник")
+	@OneToOne
+	public VocPigeonHole getPigeonHole() {return thePigeonHole;}
+	public void setPigeonHole(VocPigeonHole aPigeonHole) {thePigeonHole = aPigeonHole;}
+
+	/** Экстренно */
+	@Comment("Экстренно")
+	public Boolean getIsEmergency() {return theIsEmergency;}
+	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+
+	/** Планово */
+	@Comment("Планово")
+	public Boolean getIsPlan() {return theIsPlan;}
+	public void setIsPlan(Boolean aIsPlan) {theIsPlan = aIsPlan;}
+
+	/** Планово */
+	private Boolean theIsPlan;
+	/** Экстренно */
+	private Boolean theIsEmergency;
+	/** Приемник */
+	private VocPigeonHole thePigeonHole;
 	/** Лечебное учреждение */
 	private MisLpu theLpu;
 	/** СМО */

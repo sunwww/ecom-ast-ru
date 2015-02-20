@@ -341,29 +341,31 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     }
     
     private String getTitleFile(String aReestr,String aLpu, String aPeriodByReestr,String aNPackage) {
-    	aLpu="300001";
+    	//aLpu="300001";
     	String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
-    public String[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public WebQueryResult[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	String[] fileExpList = {exportN1(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	WebQueryResult[] fileExpList = {exportN1(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			,""
+    			,new WebQueryResult()
     	};
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	fileExpList[2]=fileExpList[0].substring(2).replaceAll("\\.xml", "")+".263" ;
+    	fileExpList[2].set1((""+fileExpList[0].get1()).substring(2).replaceAll("\\.xml", "")+".263") ;
     	
     	StringBuilder sb=new StringBuilder();
     	sb.append("zip -r -9 ") ;
     	for (int i=2;i>-1;i--){
-    		sb.append(fileExpList[i]).append(" ");
+    		sb.append(fileExpList[i].get1()).append(" ");
+    		if (fileExpList[i].get2()!=null) sb.append(fileExpList[i].get2()).append(" ");
+    		if (fileExpList[i].get3()!=null) sb.append(fileExpList[i].get3()).append(" ");
     	}
     	//System.out.println(sb) ;
     	try {
@@ -403,7 +405,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		}
     	return fileExpList ;
     }
-    public String exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -413,12 +415,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	
-    	
     	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
-    	
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	WebQueryResult res = new WebQueryResult() ;
+
     	XmlDocument xmlDoc = new XmlDocument() ;
+    	XmlDocument xmlDocError = new XmlDocument() ;
+    	XmlDocument xmlDocExist = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+    	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as wchbcreatedate");
     	sql.append(" ,cast('1' as varchar(1)) as forPom");
@@ -468,45 +473,89 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	Element title_error = xmlDocError.newElement(root_error, "ZGLV", null);
+    	Element title_exist = xmlDocExist.newElement(root_exist, "ZGLV", null);
     	xmlDoc.newElement(title, "VERSION", "1.0");
-    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
     	xmlDoc.newElement(title, "FILENAME", filename);
-    	int i=0 ;
+    	int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
     	for (Object[] obj:list) {
-    		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		if (!checkHospitalDataFond(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17],obj[20])) {
-    		//if (true) {
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1","",false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[3],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[4],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[5],false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[6],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[7],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[8],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[9],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[10],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[11],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[12],false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[13],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[14],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"CT",obj[15],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[16],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[17],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IDDOKT",obj[18],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[19],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    		if (checkDirect(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17]
+    				, obj[4], obj[6],obj[18],obj[16])) {
+	    		if (!checkHospitalDataFond(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17],obj[20])) {
+	    			Element zap = xmlDoc.newElement(root, "NPR", null);
+	    			recordN1(xmlDoc, zap, obj, false) ;
+		    	} else {
+		    		Element zapExist = xmlDocExist.newElement(root_exist, "NPR", null);
+		    		i_exist.add(recordN1(xmlDocExist, zapExist, obj,true)) ;
+		    	} 
+	    	} else {
+	    		Element zapError = xmlDocError.newElement(root_error, "NPR", null);
+	    		i_error.add(recordN1(xmlDocError, zapError, obj,true)) ;
+	    		
 	    	}
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
-    	//saveXmlDocument(xmlDoc,outFile) ;
-    	return filename+".xml";
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	if (!i_exist.isEmpty()) {
+    		res.set2(filename+"_exist.xml") ;
+    		res.set4(i_exist) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(workDir+"/"+filename+"_exist.xml")) ;
+    	}
+    	if (!i_error.isEmpty()) {
+    		res.set3(filename+"_error.xml") ;
+    		res.set5(i_error) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(workDir+"/"+filename+"_error.xml")) ;
+    	}
+    	res.set1(filename+".xml") ;
+    	return res;
+    }
+    private WebQueryResult recordN1(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
+    	
+    	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1","",false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[3],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[4],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[5],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[6],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[7],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[8],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[9],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[10],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[11],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[12],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[13],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[14],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"CT",obj[15],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[16],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[17],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IDDOKT",obj[18],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[19],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+		WebQueryResult res = null ;
+		if (aIsCreateWQR) {
+			res= new WebQueryResult() ;
+			res.set1(obj[0]) ;res.set2(obj[1]) ;res.set3(obj[2]) ;res.set4(obj[3]) ;res.set5(obj[4]) ;
+			res.set6(obj[5]) ;res.set7(obj[6]) ;res.set8(obj[7]) ;res.set9(obj[8]) ;res.set10(obj[9]) ;
+			res.set11(obj[10]) ;res.set12(obj[11]) ;res.set13(obj[12]) ;res.set14(obj[13]) ;res.set15(obj[14]) ;
+			res.set16(obj[15]) ;res.set17(obj[16]) ;res.set18(obj[17]) ;res.set19(obj[18]) ;res.set20(obj[19]) ;
+		}
+		return res ;
+		
+    }
+    private boolean checkDirect(Object aLastname, Object aFirstname,Object aMiddlename
+    		, Object aBirthday, Object aPreDate, Object aProfile, Object aTypePolicy
+    		, Object aNumberPolicy,Object aSnilsDoctor,Object aDiagnosis) {
+    	if (aProfile==null) return false ;
+    	if (aPreDate==null) return false ;
+    	if (aSnilsDoctor==null) return false ;
+    	if (aTypePolicy==null) return false ;
+    	return true ;
     }
     private boolean checkHospitalDataFond(Object aLastname, Object aFirstname,Object aMiddlename
     		, Object aBirthday, Object aPreDate, Object aProfile, Object aDirectMedCase) {
@@ -575,7 +624,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
     	sql.append(" ,vbt.codeF as f13vbtomccode");
     	sql.append(" ,ss.code as f14sscode");
-    	sql.append(" ,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4')  as f15mkbcode");
+    	sql.append(" ,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
     	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
     	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
     	sql.append(" ,hdf.numberfond as f18numberfond") ;
@@ -652,9 +701,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
-    public String exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	WebQueryResult res = new WebQueryResult() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
@@ -708,7 +758,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
-    	sql.append(" and mkb.code is not null and hdf.id is not null and hdf.numberfond is not null") ;
+    	sql.append(" and mkb.code is not null and (hdf.id is not null and (hdf.numberfond is null or hdf.numberfond='') or hdf.id is null)") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -743,7 +793,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
-    	return filename+".xml";
+    	res.set1(filename+".xml") ;
+    	return res;
     }
     
     public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
@@ -956,18 +1007,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU_1",null,false,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[4],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_2",obj[5],true,"") ;
-    		/*
-    		xmlDoc.newElement(zap, "VPOLIS", AddressPointServiceBean.getStringValue(obj[2])) ;
-    		xmlDoc.newElement(zap, "SPOLIS", AddressPointServiceBean.getStringValue(obj[3])) ;
-    		xmlDoc.newElement(zap, "NPOLIS", AddressPointServiceBean.getStringValue(obj[4])) ;
-    		xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue(obj[5])) ;
-    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue(obj[6])) ;
-    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue(obj[7])) ;
-    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;
-    		xmlDoc.newElement(zap, "FAM", AddressPointServiceBean.getStringValue(obj[8])) ;
-    		xmlDoc.newElement(zap, "IM", AddressPointServiceBean.getStringValue(obj[9])) ;
-    		xmlDoc.newElement(zap, "OT", AddressPointServiceBean.getStringValue(obj[10])) ;
-    		 */
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[16],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[17],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[18],true,"") ;
@@ -1005,10 +1044,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join medcase sloL on sloL.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloL.dateFinish is not null ") ;
     	sql.append(" left join BedFund bf on bf.id=sloF.bedFund_id") ;
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id") ;
+    	sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart>=to_date('").append(aDateFrom).append("','yyyy-mm-dd')") ;
     	sql.append(" and sls.dateFinish>=coalesce(to_date('").append(aDateFrom).append("','yyyy-mm-dd'),current_date)") ;
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and vbst.code='1'") ;
     	sql.append(" group by vbt.codef,vbt.name,bf.bedsubtype_id") ;
     	sql.append(" order by vbt.name");
     	
@@ -1034,13 +1074,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEM",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEW",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREED",0,true,"") ;
-    		String[] smoCodes = {"30002","30004"} ;
+    		/*String[] smoCodes = {"30002","30004"} ;
     		for (String smoCode:smoCodes) {
         		Element obsmo = xmlDoc.newElement(zap, "OBSMO", null) ;
         		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMO",smoCode,true,"") ;
         		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOSL",0,true,"") ;
         		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOKD",0,true,"") ;
-    		}
+    		}*/
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";

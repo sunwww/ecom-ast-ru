@@ -343,6 +343,18 @@ function printJournalByDay(aCtx,aParams) {
 	var typeDate = +id[2] ;
 	var typeHour = id[1] ;
 	var typeEmergency = id[0] ;
+	var typeNumber=+id[7] ;
+	var numberInJournal =+id[6];
+	var step = 1 ;
+	if (numberInJournal<1) numberInJournal=1 ;
+	if (typeNumber==1||typeNumber==2) {
+		step=2 ;
+		if (typeNumber==1) {
+			if (numberInJournal%2!=0) numberInJournal=numberInJournal+1 ;
+		} else {
+			if (numberInJournal%2==0) numberInJournal=numberInJournal+1 ;
+		}
+	}
 	var emer = "" ;
 	var emerInfo = "все" ;
 	if (+typeEmergency==1) {
@@ -463,7 +475,7 @@ function printJournalByDay(aCtx,aParams) {
 			+" ,coalesce(oml.name,of1.name,'') as omlname"
 			+" ,case when m.deniedHospitalizating_id is null then ml.name else '' end as mlname"
 		    +" ,sc.code as sccode"
-		    +" , list(case when vdrt.code='1' then diag.name else '' end) as diag"
+		    +" , list(case when (vdrt.code='1' or vdrt.code='2') then coalesce(mkb.code||' '||diag.name,diag.name) else '' end) as diag"
 			+" ,coalesce(to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5))"
 			+" ||' '||coalesce(vho.name,'')||' '||coalesce(tml.name,''),'')  as finishresult"
 		    +", case when m.relativeMessage='1' then 'Да' else '' end as relativemessage"
@@ -474,6 +486,7 @@ function printJournalByDay(aCtx,aParams) {
 		    +" left outer join Patient pat on m.patient_id = pat.id" 
 		    +" left join MisLpu as ml on ml.id=m.department_id "
 		    +" left join diagnosis diag on diag.medcase_id=m.id"
+		    +" left join vocidc10 mkb on diag.idc10_id=mkb.id"
 		    +" left join VocDiagnosisRegistrationType vdrt on diag.registrationType_id=vdrt.id"
 		    +" left join MisLpu as oml on oml.id=m.orderLpu_id "
 		    +" left join MisLpu as tml on tml.id=m.moveToAnotherLpu_id "
@@ -506,7 +519,8 @@ function printJournalByDay(aCtx,aParams) {
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		par.set1(""+(i+1)) ;
+		par.set1(""+(numberInJournal)) ;
+		numberInJournal=numberInJournal+step ;
 		for (var j=2;j<=obj.length;j++) {
 			eval("par.set"+(j)+"(obj[j-1]);") ;
 		}
