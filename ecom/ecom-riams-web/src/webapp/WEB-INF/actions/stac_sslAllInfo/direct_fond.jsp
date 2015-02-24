@@ -48,8 +48,18 @@
 	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
 	        	<input type="radio" name="typeMode" value="3"> Работа с данными
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
+	        	<input type="radio" name="typeMode" value="4"> Обновить соответствия по направлениям
+	        </td>
       </msh:row>
       </msh:panel>
+      <msh:panel styleId="updateData">
+             <msh:row>
+           <td colspan="11">
+            <input type="submit" value="Обновить соответствия по направлениям" />
+          </td>
+      </msh:row>
+            </msh:panel>
       <msh:panel styleId="exportXml">
       <msh:row>
         <td class="label" title="Тип xml  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Тип xml:</label></td>
@@ -139,18 +149,19 @@
            <msh:row>
             <td class="label" title="Список  (typeView1)" colspan="1"><label for="typeView1Name" 
                id="typeView1Label">Список:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView1" value="1"> СЛС, по которым не сформировано направление
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+	        	<input type="radio" name="typeView1" value="1"> СЛС, по которым не сформировано направление и  направления, по которым не определены госпитализации 
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView1" value="2">  направления, по которым не определены госпитализации 
+	   </msh:row>
+	   <msh:row>
+	        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+	        	<input type="radio" name="typeView1" value="2">  отделения, по которым не проставлен диагноз 
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView1" value="3">  отделения, по которым не проставлен диагноз 
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView1" value="4">  ошибочные направления (изменен поток или тип стационара) 
-	        </td>
+	        <!-- 
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+	        	<input type="radio" name="typeView1" value="3">  ошибочные направления (изменен поток или тип стационара) 
+	        </td> -->
        	</msh:row>
              <msh:row>
            <td colspan="11">
@@ -204,16 +215,26 @@
 		   showTable("exportXml", true ) ; 
 		   showTable("importXml", false ) ; 
 		   showTable("workData", false ) ; 
+		   showTable("updateData", false ) ; 
+		   
 	   } else if (chk[1].checked) {
 		   //alert("importXml") ;
 		   showTable("exportXml", false ) ; 
 		   showTable("importXml", true ) ; 
 		   showTable("workData", false ) ; 
-	   } else {
+		   showTable("updateData", false ) ; 
+	   } else if (chk[2].checked){
 		   //alert("workData") ;
 		   showTable("exportXml", false ) ; 
 		   showTable("importXml", false ) ; 
 		   showTable("workData", true ) ; 
+		   showTable("updateData", false ) ; 
+	   } else {
+		   //alert("workData") ;
+		   showTable("exportXml", false ) ; 
+		   showTable("importXml", false ) ; 
+		   showTable("workData", false ) ; 
+		   showTable("updateData", false ) ; 
 	   }
    }
    function showTable(aTableId, aCanShow ) {
@@ -234,10 +255,17 @@
 	<% 
 	String period = request.getParameter("period") ;
 	String periodTo = request.getParameter("periodTo") ;
+	String numberReestr = request.getParameter("numberReestr") ;
 	if (periodTo==null ||periodTo.equals("")) periodTo=period ;
+	request.setAttribute("periodTo", periodTo) ;
 	boolean isCkeck = true ;
 	if (period==null ||period.equals("")) isCkeck=false ;
-	
+	if (typeLpu!=null && typeLpu.equals("1")) {
+		request.setAttribute("lpuSql", " and hdf.directlpucode='"+numberReestr+"'");
+	} else if (typeLpu!=null && typeLpu.equals("2")) {
+		request.setAttribute("lpuSql", " and hdf.directlpucode!='"+numberReestr+"'");
+	}
+		
 	if (typeMode!=null && typeMode.equals("1")) {if (isCkeck && request.getAttribute("listError")!=null){%>
 	<msh:table name="listError" action="javascript:void(0)" idField="1">
 			<msh:tableColumn property="sn" columnName="#"/>
@@ -300,6 +328,21 @@ and vss.code in ('OBLIGATORYINSURANCE','OTHER')
 
 and (case when  hdf.isTable3 ='1' then '1' when hdf.IsTable1='1' then '1' else null end) is null
 		"/>
+		<ecom:webQuery name="table2" nativeSql="
+	select hdf.numberfond,hdf.lastname,hdf.firstname,hdf.middlename,hdf.birthday,hdf.emergency
+,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils,hdf.diagnosis
+,hdf.phone,hdf.statcard,hdf.seriespolicy,hdf.numberpolicy,hdf.formhelp,hdf.orderlpucode
+,hdf.directlpucode
+from HospitalDataFond hdf
+where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' when hdf.IsTable4='1' then '1' else null end) is null
+${lpuSql}
+	"/>
+	<table>
+	<tr>
+	<th>БЕЗ НАПРАВЛЕНИЙ</th><th>НАПРАВЛЕНИЯ БЕЗ ГОСПИТАЛИЗАЦИЙ</th>
+	</tr> 
+	<tr>
+		<td valign="top">
 		<msh:table name="table1" action="javascript:void" idField="1">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="2" columnName="№ИБ"/>
@@ -314,16 +357,10 @@ and (case when  hdf.isTable3 ='1' then '1' when hdf.IsTable1='1' then '1' else n
 			<msh:tableColumn property="11" columnName="Поток обслуживания"/>
 			<msh:tableColumn property="12" columnName="Диагноз"/>
 		</msh:table>
-	<%       } else  if (typeView1!=null && typeView1.equals("2")) {%>
-	<ecom:webQuery name="table2" nativeSql="
-	select hdf.numberfond,hdf.lastname,hdf.firstname,hdf.middlename,hdf.birthday,hdf.emergency
-,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils,hdf.diagnosis
-,hdf.phone,hdf.statcard,hdf.seriespolicy,hdf.numberpolicy,hdf.formhelp,hdf.orderlpucode
-,hdf.directlpucode
-from HospitalDataFond hdf
-where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' when hdf.IsTable4='1' then '1' else null end) is null
-	"/>
-		<msh:table name="table1" action="javascript:void" idField="1">
+	</td>
+	<td valign="top">
+	
+		<msh:table name="table2" action="javascript:void" idField="1">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="2" columnName="№напр. фонда"/>
 			<msh:tableColumn property="3" columnName="Фамилия"/>
@@ -340,7 +377,10 @@ where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' 
 			<msh:tableColumn property="14" columnName="Напр.ЛПУ"/>
 			<msh:tableColumn property="15" columnName="КУда напр.ЛПУ"/>
 		</msh:table>	
-		<%       }  else  if (typeView1!=null && typeView1.equals("3")) {%>
+		</td>
+		</tr>
+		</table>
+		<%       }  else  if (typeView1!=null && typeView1.equals("2")) {%>
 		<ecom:webQuery name="table1" nativeSql="select sls.id as slsid
 ,oml.name as omlname		
 ,ss.code as sscode,pat.lastname as patlastname,pat.firstname as patfirstname
@@ -378,8 +418,8 @@ and vss.code in ('OBLIGATORYINSURANCE','OTHER')
 
 and (case when  hdf.isTable3 ='1' then '1' when hdf.IsTable1='1' then '1' else null end) is not null
 and (case when  hdf.isTable2 ='1' then '1' else null end) is null
-
-group by sls.id,oml.name ,ss.code ,pat.lastname ,pat.firstname 
+${lpuSql}
+group by sls.id,slo.id,oml.name ,ss.code ,pat.lastname ,pat.firstname 
 ,pat.middlename , sls.emergency,sls.dateStart ,sls.dateFinish
 ,ml.name ,vbt.name ,vss.name ,vbst.name
 having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0
