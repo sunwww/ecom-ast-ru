@@ -2,6 +2,7 @@ package ru.ecom.mis.web.action.synclpufond;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
@@ -102,7 +104,72 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     		
     	} else if (typeMode!=null && typeMode.equals("3")) {
     		
+    	} else if (typeMode!=null && typeMode.equals("4")) {
+    		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    		StringBuilder sql = new StringBuilder() ;
+    		String[] dates = {"=to_date(':dat','dd.mm.yyyy')"
+    				," between to_date(':dat','dd.mm.yyyy')-7 and to_date(':dat','dd.mm.yyyy')-1"
+    				," between to_date(':dat','dd.mm.yyyy')+1 and to_date(':dat','dd.mm.yyyy')+7"} ;
+    		
+    		sql.append("select ") ;
+    		sql.append(" hdf.id as hdfid,(select list(''||pat.id) from patient pat");
+    		sql.append(" where pat.lastname=upper(hdf.lastname) and pat.firstname=upper(hdf.firstname) and pat.middlename = upper(hdf.middlename) ") ;
+    		sql.append(" and pat.birthday=hdf.birthday  ) as pat") ;
+    		sql.append(" ,hdf.statcard as statcard, to_char(coalesce(hdf.hospdate,hdf.prehospdate),'dd.mm.yyyy')") ;
+    		sql.append(" from hospitaldatafond hdf ") ;
+    		sql.append(" where ") ;
+    		sql.append(" hdf.hospitalmedcase_id is null ") ;
+    		sql.append(" and (case when hdf.istable4='1' then '1' else null end  is null) ") ;
+    		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+    		for (WebQueryResult wqr:list) {
+    			Object hdfId=wqr.get1() ;
+    			boolean next = true ;
+    			if (wqr.get4()!=null && wqr.get2()!=null &&!(""+wqr.get2()).trim().equals("")) {
+	        		for (String dat:dates) {
+	        			if (next) { 
+	        			sql = new StringBuilder() ;
+	        			sql.append(" select list(''||sls.id) from medcase sls ") ;
+	            		sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
+	            		sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
+	            		sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
+	            		sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
+	            		sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
+	            		sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
+	            		sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
+	            		sql.append(" and pat.id in (").append(wqr.get2()).append(")");
+	            		sql.append(" and sls.datestart").append(dat.replace(":dat", ""+wqr.get4()));
+	            		if (wqr.get3()!=null) sql.append(" and ss.code=hdf.statcard ") ;
+	            		Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
+	            		if (!l1.isEmpty()) {
+	            			String medcase ;
+	            			Object slss = l1.iterator().next().get1() ;
+	            			if (slss!=null) {
+	            				medcase = freeMedCase(hdfId,slss, service) ;
+	            				if (medcase!=null) {
+	            					next = false ;
+	            				}
+	            			}
+	            		}
+	        			}
+	        		}
+        		}
+    		}
     	}
         return aMapping.findForward("success") ;
+    }
+    
+    private String freeMedCase(Object aHDF,Object aSLSs, IWebQueryService aService) {
+    	if (aSLSs== null ||(""+aSLSs).trim().equals("")) return null ;
+    	String [] s = (""+aSLSs).split(",") ;
+    	for (String m:s) {
+    		m=m.trim() ;
+    		
+    		Collection<WebQueryResult> l = aService.executeNativeSql("select id from hospitaldatafond where hospitalmedcase_id='"+m+"'") ;
+    		if (l.isEmpty()) {
+    	    	aService.executeUpdateNativeSql("update HospitalMedCase set hospitalMedCase_id='"+m+"' where id='"+aHDF+"'");
+    	    	return m ;
+    		}
+    	}
+    	return null ;
     }
 }
