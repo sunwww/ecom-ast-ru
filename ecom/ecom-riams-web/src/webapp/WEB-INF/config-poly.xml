@@ -325,6 +325,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality.jsp"/>
         </action>
+        <action path='/journal_nationality_ukraine' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_nationality_ukr.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality_ukr.jsp"/>
+        </action>
         <action path='/journal_visit_diagnosis' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='stac_admissionJournalForm'
                 validate='true'
