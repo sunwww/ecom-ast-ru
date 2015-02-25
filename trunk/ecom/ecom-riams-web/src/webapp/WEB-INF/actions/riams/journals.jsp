@@ -48,6 +48,9 @@
 						<li><msh:link action="journal_nationality_smo.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
 	                            Журнал обращений с группировкой по гражданству (475-Пр)
 	                        </msh:link></li>
+						<li><msh:link action="journal_nationality_ukraine.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
+	                            Журнал обращений с группировкой по гражданству (только украинцы)
+	                        </msh:link></li>
 	                   <li><msh:link action="stac_journalRepeatCaseByHospital_list" roles="/Policy/Mis/Journal/RepeatCase">
 	                   		Повторные случаи мед. обслуживания
 	                   		</msh:link></li>
