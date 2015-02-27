@@ -147,7 +147,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+",pwr.middlename as vrach_m "
 				+",edc.isServiceIndication as cntIsServiceIndication " 
 				+",case when ml2.id is not null then ml2.name else ml.name end as lpuName " 
-				+",case when ml2.id is not null then ml2.printAddress else ml2.printAddress end as lpuAddress "
+				+",case when ml2.id is not null then ml2.printAddress else ml.printAddress end as lpuAddress "
 				+"from ExtDispCard edc " 
 				+"left join mislpu ml on ml.id=edc.lpu_id "
 				+"left join mislpu ml2 on ml2.id=ml.parent_id "
