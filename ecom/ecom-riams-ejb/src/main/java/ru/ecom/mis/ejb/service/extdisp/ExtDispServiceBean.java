@@ -549,7 +549,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					if (divideNumber!=0 && numRight%divideNumber==0){ 
 						//System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
 						createFile(rootElement);
-						rootElement = new Element("chlidren");
+						rootElement = new Element("children");
 					}
 				}
 			dbh.close();
