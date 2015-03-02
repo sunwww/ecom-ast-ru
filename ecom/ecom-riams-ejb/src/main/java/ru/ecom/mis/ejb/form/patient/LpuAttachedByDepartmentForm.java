@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -210,4 +213,22 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	private String theDefectText;
 	/** Период дефекта */
 	private String theDefectPeriod;
+	
+	/** Страховая компания */
+	@Comment("Страховая компания")
+	@Persist
+	public Long getCompany() {return theCompany;}
+	public void setCompany(Long aCompany) {theCompany = aCompany;}
+
+	/** Страховая компания */
+	private Long theCompany;
+	
+	/** Подача производилась по неактуальному полису */
+	@Comment("Подача производилась по неактуальному полису")
+	@Persist
+	public Boolean getNoActualPolicy() {return theNoActualPolicy;}
+	public void setNoActualPolicy(Boolean aNoActualPolicy) {theNoActualPolicy = aNoActualPolicy;}
+
+	/** Подача производилась по неактуальному полису */
+	private Boolean theNoActualPolicy;
 }
