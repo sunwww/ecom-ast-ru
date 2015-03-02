@@ -52,6 +52,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
+    	StringBuilder filenames = new StringBuilder() ;
     	if (aAge!=null) {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
@@ -59,10 +60,34 @@ public class AddressPointServiceBean implements IAddressPointService {
     	//Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename = "P"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage)+".xml" ;
+    	
+    	StringBuilder sqlGroup = new StringBuilder() ;
+    	sqlGroup.append("select lp.company_id,vri.smocode") ;
+    	sqlGroup.append(" from Patient p") ;
+    	sqlGroup.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
+    	sqlGroup.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+    	sqlGroup.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
+    	sqlGroup.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
+    	sqlGroup.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+    	sqlGroup.append(" left join REG_IC vri on vri.id=lp.company_id") ;
+    	sqlGroup.append(" where ") ;
+    	if (aLpuCheck) sqlGroup.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
+    	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sqlGroup.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+    	sqlGroup.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+    	sqlGroup.append(" ").append(addSql) ;
+    	sqlGroup.append(" group by lp.company_id,vri.smocode") ;
+    	sqlGroup.append(" order by lp.company_id,vri.smocode") ;
+    	List<Object[]> listComp = theManager.createNativeQuery(sqlGroup.toString())
+    			.setMaxResults(90000).getResultList() ;
+    	
+    	for (Object[] comp:listComp) {
+    	String filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp[1]==null?"-":comp[1])
+    		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage)+".xml" ;
+    	filenames.append("#").append(filename) ;
     	File outFile = new File(workDir+"/"+filename) ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
     	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
@@ -77,6 +102,9 @@ public class AddressPointServiceBean implements IAddressPointService {
         sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
     	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
     	sql.append(" where ") ;
+    	sql.append(" lp.company_id") ;
+    	if (comp[0]!=null) {sql.append("=").append(comp[0]) ;} else {sql.append(" is null ") ;}
+    	sql.append(" and ");
     	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
     	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
     	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
@@ -112,7 +140,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     	//xmlDoc.saveDocument(outFile) ;
-    	return filename;
+    	}
+    	return filenames.length()>0?filenames.substring(1):"";
     }
     public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge,"","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
