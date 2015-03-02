@@ -154,8 +154,8 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	/** Дата создания */
 	private Date theCreateDate;
 	
-	/** Период дефекта */
-	@Comment("Период дефекта")
+	/** Дата импорта ( стар. Период дефекта ) */
+	@Comment("Дата импорта")
 	public String getDefectPeriod() {return theDefectPeriod;}
 	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
 
@@ -166,7 +166,7 @@ public class LpuAttachedByDepartment extends BaseEntity {
 
 	/** Текст дефекта */
 	private String theDefectText;
-	/** Период дефекта */
+	/** Дата импорта ( стар. Период дефекта ) */
 	private String theDefectPeriod;
 	
 	/** ЛПУ открепления */
