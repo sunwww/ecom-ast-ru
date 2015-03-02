@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
@@ -179,5 +180,21 @@ public class LpuAttachedByDepartment extends BaseEntity {
 
 	/** ЛПУ открепления */
 	private String theLpuTo;
+	
+	/** Страховая компания */
+	@Comment("Страховая компания")
+	@OneToOne
+	public RegInsuranceCompany getCompany() {return theCompany;}
+	public void setCompany(RegInsuranceCompany aCompany) {theCompany = aCompany;}
 
+	/** Страховая компания */
+	private RegInsuranceCompany theCompany;
+	
+	/** Подача производилась по неактуальному полису */
+	@Comment("Подача производилась по неактуальному полису")
+	public Boolean getNoActualPolicy() {return theNoActualPolicy;}
+	public void setNoActualPolicy(Boolean aNoActualPolicy) {theNoActualPolicy = aNoActualPolicy;}
+
+	/** Подача производилась по неактуальному полису */
+	private Boolean theNoActualPolicy;
 }
