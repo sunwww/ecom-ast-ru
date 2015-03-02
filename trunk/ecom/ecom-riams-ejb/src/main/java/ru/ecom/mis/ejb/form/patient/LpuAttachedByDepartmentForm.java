@@ -216,7 +216,7 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	
 	/** Страховая компания */
 	@Comment("Страховая компания")
-	@Persist
+	@Persist @Required
 	public Long getCompany() {return theCompany;}
 	public void setCompany(Long aCompany) {theCompany = aCompany;}
 
