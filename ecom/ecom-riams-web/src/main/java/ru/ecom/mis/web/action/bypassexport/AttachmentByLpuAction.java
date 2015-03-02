@@ -87,11 +87,16 @@ public class AttachmentByLpuAction extends BaseAction {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
     		if (typeRead!=null&&typeRead.equals("1")) {
-		    	filename = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+		    	String fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage());
-		        if (filename!=null) {
-		        form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
+		        if (fs!=null) {
+		        	String[] files = fs.split("#") ;
+		        	StringBuilder sb = new StringBuilder() ;
+		        	for (String file:files) {
+		        		sb.append("<a href='../rtf/"+file+"'>"+file+"</a> ") ;
+		        	}
+		        	form.setFilename(sb.toString()) ;
 		        } else {
 		        	form.setFilename("---") ;
 		        }
