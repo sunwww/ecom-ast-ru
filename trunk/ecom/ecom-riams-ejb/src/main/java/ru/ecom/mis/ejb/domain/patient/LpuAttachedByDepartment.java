@@ -26,6 +26,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties={"patient"})
 	,@AIndex(properties={"lpu"})
+	,@AIndex(properties={"company"})
 	,@AIndex(properties={"area"})
 })
 public class LpuAttachedByDepartment extends BaseEntity {
