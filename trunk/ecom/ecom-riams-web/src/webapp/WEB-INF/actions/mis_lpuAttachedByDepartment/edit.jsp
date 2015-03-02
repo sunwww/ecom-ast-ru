@@ -13,21 +13,28 @@
 
             <msh:panel>
             	<msh:row>
-            		<msh:autoComplete property="attachedType" label="Тип прикрепления" fieldColSpan="3" horizontalFill="true" vocName="vocAttachedType"/>
+            		<msh:autoComplete property="attachedType" label="Тип прикрепления" fieldColSpan="5" horizontalFill="true" vocName="vocAttachedType"/>
             	</msh:row>
 				<msh:row styleId='rowLpu'>
-		            <msh:autoComplete fieldColSpan="3" property="lpu" label="ЛПУ" horizontalFill="true"
+		            <msh:autoComplete fieldColSpan="5" property="lpu" label="ЛПУ" horizontalFill="true"
 		                              vocName="lpu" size="50"/>
 		        </msh:row>
 		        <msh:row styleId='rowLpuArea'>
-		            <msh:autoComplete fieldColSpan="3" property="area" label="Участок" horizontalFill="true"
+		            <msh:autoComplete fieldColSpan="5" property="area" label="Участок" horizontalFill="true"
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
-		        </msh:row>		
+		        </msh:row>	
+		                        <msh:row>
+                    <msh:autoComplete vocName="vocInsuranceCompany" property="company" label="Страховая&nbsp;компания" horizontalFill="true" fieldColSpan="5"/>
+                </msh:row>	
 		        <msh:row>
 		        	<msh:textField property="dateFrom" label="Дата прикрепления"/>
 		        	<msh:textField property="dateTo" label="Дата открепления"/>
 		        	<msh:textField property="lpuTo" label="ЛПУ открепления"/>
 		        </msh:row>
+		        <msh:row>
+		        	<msh:checkBox property="noActualPolicy" fieldColSpan="5" label="Подача производилась по неактуальному полису"/>
+		        </msh:row>
+		        
 			</msh:panel>
 			<msh:panel>
 		 <msh:row>
