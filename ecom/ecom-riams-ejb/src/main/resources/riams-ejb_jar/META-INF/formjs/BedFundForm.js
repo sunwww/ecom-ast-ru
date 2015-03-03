@@ -12,9 +12,13 @@ function onPreCreate(aForm, aCtx) {
     var dateStartD = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dateStart);
 	var dateFinish = aForm.getDateFinish();
 	var list ;
-	var noFood = "cast(noFood as integer)='1'"
+	var noFood = "noFood='1'" ;
+	var rehab = "isRehab='1'" ;
 	if (aForm.getNoFood()==null || aForm.getNoFood()==false) {
-		noFood = "(noFood is null or cast(noFood as integer)='0')"
+		noFood = "(noFood is null or noFood='0')"
+	}
+	if (aForm.getIsRehab()==null || aForm.getIsRehab()==false) {
+		rehab = "(isRehab is null or isRehab='0')"
 	}
 	if (dateFinish!=null && !dateFinish.equals("")) {		
 	    var dateFinishD = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dateFinish);
@@ -25,6 +29,7 @@ function onPreCreate(aForm, aCtx) {
         	+" and bedSubType_id = :bedSubType"
         	+" and reductionType.code = '1'"
         	+" and "+noFood
+        	+" and "+rehab
         	+" and ((:dateStart between dateStart and coalesce(dateFinish,:dateStart)) or (:dateFinish between dateStart and coalesce(dateFinish,:dateFinish)) or (dateStart between :dateStart and :dateFinish))"
         	)
         	.setParameter("lpu",lpu_id)
@@ -40,6 +45,7 @@ function onPreCreate(aForm, aCtx) {
         	+" and bedType_id = :bedType"
         	+" and bedSubType_id = :bedSubType "
         	+" and "+noFood
+        	+" and "+rehab
         	+" and reductionType.code = '1'"
         	+" and :dateStart <=  coalesce(dateFinish,CURRENT_DATE)"
         	)
@@ -75,9 +81,12 @@ function onPreSave(aForm,aEntity , aCtx) {
 	var dateFinish = aForm.getDateFinish();
 	var thisid = aForm.getId() ;
 	var list ;
-	var noFood = "cast(noFood as integer)='1'"
+	var noFood = "noFood='1'" ; var rehab = "isRehab='1'" ;
 	if (aForm.getNoFood()==null || aForm.getNoFood()==false) {
-		noFood = "(noFood is null or cast(noFood as integer)='0')"
+		noFood = "(noFood is null or noFood='0')"
+	}
+	if (aForm.getIsRehab()==null || aForm.getIsRehab()==false) {
+		rehab = "(isRehab is null or isRehab='0')"
 	}
 	if (dateFinish!=null && !dateFinish.equals("")) {		
 	    var dateFinishD = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(dateFinish);
@@ -87,6 +96,7 @@ function onPreSave(aForm,aEntity , aCtx) {
         	+" and bedSubType_id = :bedSubType"
         	+" and reductionType.code = '1'"
         	+" and "+noFood
+        	+" and "+rehab
         	+" and ("
         	+"(:dateStart between dateStart and coalesce(dateFinish,:dateStart))"
         	+" or "
@@ -109,6 +119,7 @@ function onPreSave(aForm,aEntity , aCtx) {
         	+" and bedType_id = :bedType"
         	+" and bedSubType_id = :bedSubType"
         	+" and "+noFood
+        	+" and "+rehab
         	+" and reductionType.code = '1'"
         	+" and :dateStart <=  coalesce(dateFinish,:dateStart)"
         	+" and id != '"+thisid+"'"
