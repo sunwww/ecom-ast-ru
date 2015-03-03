@@ -310,4 +310,14 @@ public class BedFundForm extends IdEntityForm {
 	public void setAddCaseDuration(Boolean aAddCaseDuration) {theAddCaseDuration = aAddCaseDuration;}
 
 	/** День выписки и день поступления считать разными днями */
-	private Boolean theAddCaseDuration;}
+	private Boolean theAddCaseDuration;
+	
+	/** Реабилитационные */
+	@Comment("Реабилитационные")
+	@Persist
+	public Boolean getIsRehab() {return theIsRehab;}
+	public void setIsRehab(Boolean aIsRehab) {theIsRehab = aIsRehab;}
+
+	/** Реабилитационные */
+	private Boolean theIsRehab;
+}
