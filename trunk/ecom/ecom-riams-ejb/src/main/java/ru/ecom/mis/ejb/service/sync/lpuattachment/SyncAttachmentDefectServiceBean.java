@@ -66,7 +66,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 				System.out.println("in ImportDefect, start. hashcode="+aFileName.hashCode());
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
-				SimpleDateFormat format2 = new SimpleDateFormat("MM-yyyy");
+			//	SimpleDateFormat format2 = new SimpleDateFormat("MM-yyyy");
 				SAXBuilder saxBuilder = new SAXBuilder();
 				Document xdoc = saxBuilder.build(new StringReader(aFileName));
 				org.jdom.Element rootElement = xdoc.getRootElement();
@@ -91,9 +91,9 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 				    				LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik);
 				    				if (att!=null) {
 				    					att.setDefectText(refreason);
-				    					att.setDefectPeriod(format2.format(new Date(new java.util.Date().getTime())));  
+				    					att.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime())));  
 										att.setEditUsername("fond_base");
-										att.setEditDate(new Date(new java.util.Date().getTime()));
+									//	att.setEditDate(new Date(new java.util.Date().getTime()));
 										theManager.persist(att);
 										sb.append("red:"+i+":"+patientId+":"+att.getId()+":Прикрепление пациента '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'обновлено. Дефект='"+refreason+"'#");
 				    				} else {
@@ -106,7 +106,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik);
 								if (att!=null) {
 									att.setDefectText("");
-									att.setDefectPeriod("");
+									att.setDefectPeriod(formatOutput.format(new java.util.Date().getTime()));
 									theManager.persist(att);
 								}
 								sb.append("green:"+i+":"+patientId+"::Прикрепление принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
