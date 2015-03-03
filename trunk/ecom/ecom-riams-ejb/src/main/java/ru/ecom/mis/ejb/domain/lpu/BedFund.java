@@ -290,4 +290,12 @@ public class BedFund extends BaseEntity{
 
 	/** День выписки и день поступления считать разными днями */
 	private Boolean theAddCaseDuration;
+	
+	/** Реабилитационные */
+	@Comment("Реабилитационные")
+	public Boolean getIsRehab() {return theIsRehab;}
+	public void setIsRehab(Boolean aIsRehab) {theIsRehab = aIsRehab;}
+
+	/** Реабилитационные */
+	private Boolean theIsRehab;
 }
