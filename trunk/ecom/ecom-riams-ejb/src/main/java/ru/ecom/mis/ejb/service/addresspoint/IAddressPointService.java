@@ -9,7 +9,8 @@ import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
  *
  */
 public interface IAddressPointService {
-
+	String createAttachmentFromPatient(String needUpdateIns);
+	String setInsuranceCompany(String needUpdateAll) ;
     void onUpdate(LpuAreaAddressText aText) ;
     void onRemove(LpuAreaAddressText aText) ;
     void onPersist(LpuAreaAddressText aText) ;

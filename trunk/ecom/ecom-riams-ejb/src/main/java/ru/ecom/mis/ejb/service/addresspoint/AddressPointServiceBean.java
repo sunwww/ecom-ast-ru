@@ -47,6 +47,44 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
+    //Создаем lpuAttachedByDepartment у пациентов, у которых нет спец. прикреплений
+    //Передаем YES - еще и обновляем поле "Страх. компания"
+    public String createAttachmentFromPatient(String needUpdateIns) {
+    	try{
+    	StringBuilder sql = new StringBuilder();
+    	sql.append("insert into lpuattachedbydepartment  (lpu_id, area_id, patient_id, datefrom, attachedtype_id,  createusername) "+
+    	"select p.lpu_id, p.lpuarea_id, p.id, to_date('01.01.2013', 'dd.MM.yyyy'),'1','_system' from patient p "+
+    	"where p.lpu_id is not null and not exists (select att.id from lpuattachedbydepartment att where att.patient_id=p.id) ");
+    	if (needUpdateIns!=null && needUpdateIns.equals("YES")) {
+    		setInsuranceCompany("");
+    	}
+    	int i = theManager.createNativeQuery(sql.toString()).executeUpdate();
+    	return "Прикрепления успешно созданы, изменено "+i+" записей";
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return "Какая-то ошибка";
+    	}
+    	
+    }
+    
+    public String setInsuranceCompany(String needUpdateAll) {
+    	try{
+    		StringBuilder sql = new StringBuilder();
+    		sql.append("update lpuattachedbydepartment att set company_id=(select smo.id from medpolicy mp left join reg_ic smo on smo.id=mp.company_id "+ 
+    				"where mp.patient_id=att.patient_id and mp.actualdatefrom is not null "+
+    				"and smo.omccode !=''order by actualdatefrom desc limit 1) ");
+    		if (needUpdateAll!=null && needUpdateAll.equals("YES")) {
+    			
+    		} else {
+    			 sql.append(" where company_id is null");
+    		}
+        	int i = theManager.createNativeQuery(sql.toString()).executeUpdate();
+        	return "Успешно обновлено "+i+ " записей";
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		return "Какая-то ошибка";
+        	}
+    }
     public String exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
@@ -117,7 +155,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
-    	xmlDoc.newElement(title, "FILENAME", "P"+aNReestr+"_"+aPeriodByReestr+aNPackage);
+    	xmlDoc.newElement(title, "FILENAME", "P"+aNReestr+"S"+(comp[1]==null?"-":comp[1])+"_"+aPeriodByReestr+aNPackage);
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "ZAP", null);
