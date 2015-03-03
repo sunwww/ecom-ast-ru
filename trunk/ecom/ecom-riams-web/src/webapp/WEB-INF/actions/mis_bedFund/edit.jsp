@@ -25,6 +25,10 @@
           <msh:checkBox property="noFood" label="Без питания" guid="1b-8802-467d-b205-70" />
         </msh:row>
         <msh:row>
+          <msh:checkBox property="isRehab" label="Реабилитационные койки" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
+        
         	<msh:checkBox property="addCaseDuration" fieldColSpan="3" label="День выписки и день поступления считать разными днями"/>
         </msh:row>
         <msh:row guid="b6eb-b971-44-9a90-5107">
