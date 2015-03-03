@@ -1123,6 +1123,20 @@
     			join=''
     	/>
     </voc>
+     <voc id='workCalendarTimeByDate' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'WorkCalendarTime as wct '
+    			parent = " wc.workFunction_id = :par1 and wcd.calendarDate = to_date(:par2,'dd.mm.yyyy')"
+    			names  = " to_char(wcd.calendarDate,'dd.mm.yyyy')||' '||cast(wct.timeFrom as varchar(5)) "
+    			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
+    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+    			order =''
+    			nameId='wct.id'
+    			join=' left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id'
+    			parentSplitCount="2"
+    			
+    	/>
+    </voc>
     <!-- Открытые СПО у пациента -->
     <voc id='vocOpenedSpoByPatient' type='NativeVocService'>
     	<NativeVocService
@@ -1334,6 +1348,18 @@ left join patient wp on wp.id=w.person_id "
     		queried=" upper(dep.name) like upper(:query) "
     		queryAppend=""
     		join= "left join medcase smoD on smoD.department_id =dep.id and smoD.DTYPE='DepartmentMedCase' "
+    		order=""
+    	/>
+    </voc>
+     <voc id='departmentIntake' type='NativeVocService'>
+    	<NativeVocService 
+    		from = ' MisLpu dep '
+    		parent=' '
+    		names=" dep.name " 
+    		nameId=" dep.id "
+    		queried=" upper(dep.name) like upper(:query) "
+    		queryAppend="dep.isIntakeBioMaterial='1'"
+    		join= ""
     		order=""
     	/>
     </voc>
