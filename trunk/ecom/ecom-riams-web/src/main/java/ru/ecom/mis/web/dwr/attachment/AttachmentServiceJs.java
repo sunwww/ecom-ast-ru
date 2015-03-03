@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jdom.JDOMException;
 
+import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.sync.lpuattachment.ISyncAttachmentDefectService;
 import ru.ecom.web.util.Injection;
@@ -30,4 +31,21 @@ public class AttachmentServiceJs {
 		return null;
 		
 	}
+	public String createAttachmentFromPatient (String needUpdateIns, HttpServletRequest aRequest)throws NamingException {
+		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class) ;
+		try {
+			return service.createAttachmentFromPatient(needUpdateIns);
+		} catch (Exception e) {
+			return "Some error happend";
+		}
+	}
+	
+	public String setInsuranceCompany (String needUpdateAll, HttpServletRequest aRequest)throws NamingException {
+		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class) ;
+		try {
+			return service.setInsuranceCompany(needUpdateAll);
+		} catch (Exception e) {
+			return "Some error happend";
+		}
+	}	
 }
