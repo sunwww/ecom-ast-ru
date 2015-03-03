@@ -34,6 +34,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
     		String typeDefect = ActionUtil.updateParameter("PatientAttachment","typeDefect","3", aRequest) ; 
     		String typeChange = ActionUtil.updateParameter("PatientAttachment","typeChange","1", aRequest) ; 
+    		String typeCompany = ActionUtil.updateParameter("PatientAttachment","typeCompany","3", aRequest) ; 
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -85,6 +86,11 @@ public class AttachmentByLpuAction extends BaseAction {
     			sqlAdd.append(" and lp.defectText!='' and lp.defectText is not null") ;
     		} else if (typeDefect!=null&&typeDefect.equals("2")) {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
+    		}
+    		if (typeCompany!=null &&typeCompany.equals("1")){
+    			sqlAdd.append(" and lp.company_id is not null ");
+    		} else if (typeCompany!=null &&typeCompany.equals("2")){
+    			sqlAdd.append(" and lp.company_id is null ");
     		}
     		if (typeRead!=null&&typeRead.equals("1")) {
 		    	String fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
