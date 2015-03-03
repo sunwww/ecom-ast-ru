@@ -19,6 +19,7 @@
 	String typeAttachment=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
 	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
 	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
+	String typeCompany=ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -105,6 +106,18 @@
 	        	<input type="radio" name="typeView" value="2">  пациентов без адресов
 	        </td>
        </msh:row>
+      <msh:row>
+        <td class="label" title="Страх. компания  (typeCompany)" colspan="1"><label for="typeCompanyName" id="typeCompanyLabel">Страховая компания:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeCompany" value="1">  указана
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeCompany" value="2">  не указана
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeCompany" value="3">  все
+        </td>
+       </msh:row>
        <msh:row>
         <msh:textField  property="changedDateFrom" label="Измененные с" />
       </msh:row>
@@ -118,7 +131,10 @@
 	    </td>
        </msh:row>
        <msh:row>
-      	 <td colspan="1">      	
+       
+	   </msh:row>
+       <msh:row>
+      	 <td colspan="1">  <label>Импорт дефектов: </label>    	
             <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
            <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
        	 </td>
@@ -134,6 +150,19 @@
            <td colspan="11">
             <input type="submit" value="Найти" />
           </td>
+      </msh:row>
+      <msh:row>
+           <td colspan="11" align="right">
+            <input type="button" onclick="document.getElementById('attachmentDiv').style='display: block'"  value="X" />
+          </td>
+          </msh:row><msh:row>
+          <td align="left">
+       <div id="attachmentDiv" style="display: none">
+       <p style="color: red">Внимание! Не стоит нажимать эти кнопки без необходимости</p>
+	     <input type="button" name="create_att" value="Создать прикрепления"  onclick="createAttachments()" /> 
+	     <input type="button" name="update_IC" value="Обновить страх. компании"  onclick="updateInsCompany()" /> 
+	    </div>
+	    </td>
       </msh:row>
       <table id="defectTable" border="1" style="padding: 15px; display: none">
        <tr style="color: black">
@@ -156,10 +185,32 @@
       checkFieldUpdate('typeAge','${typeAge}',3) ;
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
+      checkFieldUpdate('typeCompany','${typeCompany}',3) ;
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
-      var importDefects = function(event) {
+      function createAttachments() {
+    	  if (confirm("Процедуру необходимо проделывать ТОЛЬКО ОДИН РАЗ, вы уверены?")){
+    		  AttachmentService.createAttachmentFromPatient('NO', {
+        		  callback: function (aResult) {
+        			  alert(""+aResult);
+        		  }
+        	  });  
+    	  }
+    	  
+    	  
+      }
+      
+      function updateInsCompany () {
+    	  if (confirm("Будут обновлены данные страх. компаний в прикреплениях, вы уверены?")){
+    	  AttachmentService.setInsuranceCompany('NO', {
+    		  callback: function (aResult) {
+    			  alert(""+aResult);
+    		  }
+    	  });
+      }
+      }
+    	var importDefects = function(event) {
     	  var input = event.target;
     	  var reader = new FileReader();
     	  reader.onload = function() {
@@ -268,14 +319,16 @@
          , case when lp.dateTo is null then 'Прикреплен' else 'Откреплен' end as otkorprik
          , lp.defectperiod
          , lp.defecttext
+         ,smo.name
     	 from LpuAttachedByDepartment lp
     	 left join Patient p on lp.patient_id=p.id
     	 left join MisLpu ml1 on ml1.id=p.lpu_id
     	 left join MisLpu ml2 on ml2.id=lp.lpu_id
          left join VocAttachedType vat on lp.attachedType_id=vat.id
+         left join reg_ic smo on smo.id=lp.company_id
 
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ${sqlAdd} group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code, lp.defectperiod
-         , lp.defecttext
+         , lp.defecttext, smo.name
     	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     
         <msh:table viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
@@ -288,9 +341,10 @@
 			<msh:tableColumn columnName="Способ прикрепления" property="7"/>
 			<msh:tableColumn columnName="Дата прикрепления" property="8"/>
 			<msh:tableColumn columnName="Дата открепления" property="9"/>
-			<msh:tableColumn columnName="Прикреплен\откреплен" property="10"/>
-			<msh:tableColumn columnName="Период дефекта" property="11"/>
-			<msh:tableColumn columnName="Код дефекта" property="12"/>
+			<msh:tableColumn columnName="Статус" property="10"/>
+			<msh:tableColumn columnName="Дата импорта" property="11"/>
+			<msh:tableColumn columnName="Дефект" property="12"/>
+			<msh:tableColumn columnName="Страх. компания" property="13"/>
         </msh:table>
     <% 
     }} else {%>
