@@ -87,11 +87,15 @@ public class AttachmentByLpuAction extends BaseAction {
     		} else if (typeDefect!=null&&typeDefect.equals("2")) {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
+    		if (form.getCompany()!=null&& form.getCompany()!=0) {
+    			sqlAdd.append(" and lp.company_id='"+form.getCompany()+"' ");
+    		}
     		if (typeCompany!=null &&typeCompany.equals("1")){
     			sqlAdd.append(" and lp.company_id is not null ");
     		} else if (typeCompany!=null &&typeCompany.equals("2")){
     			sqlAdd.append(" and lp.company_id is null ");
     		}
+    		
     		if (typeRead!=null&&typeRead.equals("1")) {
 		    	String fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
