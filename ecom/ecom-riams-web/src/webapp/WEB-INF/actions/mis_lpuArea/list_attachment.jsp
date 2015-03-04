@@ -31,6 +31,10 @@
        <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
         <msh:autoComplete property="lpu" vocName="lpu" label="ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="7" guid="67d2a4af-71bc-4a19-8844-4a59b97fabda" horizontalFill="true" />
       </msh:row>
+		        <msh:row styleId='rowCompany'>
+		            <msh:autoComplete fieldColSpan="3" property="company" label="Страховая&nbsp;компания" horizontalFill="true"
+		                              vocName="vocInsuranceCompany"/>
+                    </msh:row>		
 		        <msh:row styleId='rowLpuArea'>
 		            <msh:autoComplete fieldColSpan="3" property="area" label="Участок" horizontalFill="true"
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
@@ -153,7 +157,7 @@
       </msh:row>
       <msh:row>
            <td colspan="11" align="right">
-            <input type="button" onclick="document.getElementById('attachmentDiv').style='display: block'"  value="X" />
+            <input type="button" onclick="document.getElementById('attachmentDiv').style.display='block'"  value="X" />
           </td>
           </msh:row><msh:row>
           <td align="left">
