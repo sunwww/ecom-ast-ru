@@ -89,6 +89,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
+    			, aNReestr, aNPackage,null);
+    }
+    public String exportAll(String aAge, String aFilenameAddSuffix
+    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+    		, String aDateFrom, String aDateTo, String aPeriodByReestr
+    		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	if (aAge!=null) {
@@ -109,6 +116,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	sqlGroup.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
     	sqlGroup.append(" left join REG_IC vri on vri.id=lp.company_id") ;
     	sqlGroup.append(" where ") ;
+    	if (aCompany!=null&&aCompany!=0) sqlGroup.append("lp.company_id='").append(aCompany).append("' and ");
     	if (aLpuCheck) sqlGroup.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
     	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sqlGroup.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
     	sqlGroup.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
