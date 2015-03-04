@@ -74,4 +74,11 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** Участок */
 	private Long theArea;
+	
+	/** Страховая компания */
+	@Comment("Страховая компания")
+	public Long getCompany() {return theCompany;}
+	public void setCompany(Long aCompany) {theCompany = aCompany;}
+	/** Страховая компания */
+	private Long theCompany;
 }
