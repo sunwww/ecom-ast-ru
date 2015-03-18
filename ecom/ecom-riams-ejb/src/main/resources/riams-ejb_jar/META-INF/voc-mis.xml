@@ -1,4 +1,28 @@
 <vocconfig>
+
+<voc id="actualPriceList" type="NativeVocService">
+	<NativeVocService
+		from="pricelist as pl"
+		nameId='pl.id'
+		queryAppend="current_date >= pl.datefrom and (pl.dateto is null or pl.dateto >= current_date)" 
+		order=""
+		names= "pl.name "
+    	queried="upper(pl.name) like upper(:query)" 
+	/>
+</voc>
+
+<voc id="extDispCom" type="NativeVocService">
+	<NativeVocService
+		from="vocExtDisp as ved"
+		nameId='ved.id'
+		queryAppend="(ved.isComission is true or ved.isComission='1')" 
+		order=""
+		names= "ved.name "
+    	queried="upper(ved.name) like upper(:query)" 
+	/>
+</voc>
+
+
 <voc id="workFunctionByCode" type="NativeVocService">
 	<NativeVocService
 		from="workFunction as wf"
