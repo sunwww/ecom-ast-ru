@@ -36,4 +36,11 @@ public class VocExtDispAgeGroup extends VocBaseEntity{
 	private VocExtDispAgeReportGroup theReportGroup;
 	/** Вид диспансеризации */
 	private VocExtDisp theDispType;
+	
+	/** Архивная */
+	@Comment("Архивная")
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** Архивная */
+	private Boolean theIsArchival;
 }
