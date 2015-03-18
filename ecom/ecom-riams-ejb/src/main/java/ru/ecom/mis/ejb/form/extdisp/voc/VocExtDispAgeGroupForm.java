@@ -53,4 +53,12 @@ public class VocExtDispAgeGroupForm extends IdEntityForm {
 	private String theName;
 	/** Вид доп. диспансеризации */
 	private Long theDispType;
+	
+	/** Архивная */
+	@Comment("Архивная")
+	@Persist
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** Архивная */
+	private Boolean theIsArchival;
 }
