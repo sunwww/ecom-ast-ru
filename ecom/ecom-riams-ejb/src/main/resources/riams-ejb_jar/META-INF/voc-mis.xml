@@ -159,7 +159,7 @@
 		from="VocExtDispAgeGroup vedhg"
 		parent="vedhg.dispType_id = :parent"
 		nameId="vedhg.id"
-		queryAppend="" join="" order=""
+		queryAppend="vedhg.isArchival is null or vedhg.isArchival='0' " join="" order=""
 		names="vedhg.name"
 		queried="upper(vedhg.name) like upper(:query)"
 	/>
