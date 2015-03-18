@@ -20,6 +20,9 @@
 							horizontalFill="true" fieldColSpan="3" label="Период для отчета"/>
 					</msh:row>
 				</msh:row>
+				<msh:row>
+				<msh:checkBox property="isArchival" label="В архиве" />
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
