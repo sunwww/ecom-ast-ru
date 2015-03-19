@@ -209,7 +209,7 @@
 				</msh:row>
 				<msh:row>
 					<msh:textField property="discountDefault" label="Скидка"/>
-					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="1"  vocName="priceList" horizontalFill="true" />
+					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="1"  vocName="actualPriceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
