@@ -165,8 +165,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id "
 				+"left join VocIdc10 mkb on mkb.id=edc.idcMain_id "
 				+"left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null "
-				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') " 
-				+"and to_date('"+aFinishDate+"','dd.mm.yyyy') "
+				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy') " 
+				+"and ved.code='CHILD_PROF_1' "  
 	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
 //				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
 //				+"and (p.commonnumber is not null and p.commonnumber!='') " 
