@@ -28,7 +28,7 @@ public class VInputFIOByMaskOmcValidator implements IValidator {
 	            }
 	            if (cnt == len)  throw new ValidateException("Можно ставить любую одну букву, кроме пробела или символа \"-\". <u>Например:</u> \"Х\"");
 	            if ((len>1) && str.charAt(0)=='-') throw new ValidateException("Строку необходимо начинать с любой символа, кроме символа \"-\"") ; 
-	            if (cnt>2)  throw new ValidateException("Разрешен ввод максимум 2х пробелов или символов \"-\". <u>Например:</u> \"САН-МАРК\", \"САН МАРК\"");
+	            if (cnt>4)  throw new ValidateException("Разрешен ввод максимум 4х пробелов или символов \"-\". <u>Например:</u> \"САН-МАРК\", \"САН МАРК\"");
 	            if (str.endsWith("-") ||str.endsWith(" ") ) throw new ValidateException("Строку можно заканчивать любым символом, кроме пробела или символа \"-\"");
 	            if (str.indexOf(".")!=-1) throw new ValidateException("Запрещен ввод знаков препинания, кроме \"-\" и пробела. <u>Например:</u> \"САН-МАРК\", \"САН МАРК\"");
 	            if (str.indexOf("@")!=-1) throw new ValidateException("Запрещен ввод знаков препинания, кроме \"-\" и пробела. <u>Например:</u> \"САН-МАРК\", \"САН МАРК\"");
