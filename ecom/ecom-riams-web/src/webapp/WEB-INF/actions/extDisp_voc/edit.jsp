@@ -15,6 +15,9 @@
 				<msh:row>
 					<msh:textField property="name" label="Наименование" fieldColSpan="3" size="100" horizontalFill="true"/>
 				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isComission" label="Медосмотр"/>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
@@ -31,10 +34,11 @@
 			</msh:section>
 			<msh:section title="Возрастные группы" createRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocAgeGroup.do?id=${param.id}"
 			shortList="entityParentList-extDisp_vocAgeGroup.do?id=${param.id}&short=Short" viewRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/View">
-			<ecom:webQuery name="vocExtDispAgeGroup" nativeSql="select vedag.id,vedag.code,vedag.name from VocExtDispAgeGroup vedag where vedag.dispType_id=${param.id}"/>
+			<ecom:webQuery name="vocExtDispAgeGroup" nativeSql="select vedag.id,vedag.code,vedag.name, case when (vedag.isArchival is null or vedag.isArchival='0') then 'Нет' else 'Да' end from VocExtDispAgeGroup vedag where vedag.dispType_id=${param.id}"/>
 				<msh:table name="vocExtDispAgeGroup" action="entityParentView-extDisp_vocAgeGroup.do" idField="1">
 					<msh:tableColumn columnName="Код" property="2"/>
 					<msh:tableColumn columnName="Наименование" property="3"/>
+					<msh:tableColumn columnName="В архиве" property="4"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Возрастные периоды для отчета" createRoles="/Policy/Mis/ExtDisp/Card/Voc/AgeGroup/Create" createUrl="entityParentPrepareCreate-extDisp_vocAgeReportGroup.do?id=${param.id}"
