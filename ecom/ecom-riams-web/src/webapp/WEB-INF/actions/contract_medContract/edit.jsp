@@ -31,7 +31,7 @@
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3"  vocName="priceList" horizontalFill="true" />
+					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3"  vocName="actualPriceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
