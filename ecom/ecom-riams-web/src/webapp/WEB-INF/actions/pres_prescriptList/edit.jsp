@@ -9,16 +9,36 @@
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
+        <script type="text/javascript">
+        
+        eventutil.addEventListener($('isDiet'), 'click', function () {showTable('tblDiet','isDiet');}) ;
+        eventutil.addEventListener($('isDrug'), 'click', function () {showTable('tblDrug','isDrug');}) ;
+        eventutil.addEventListener($('isMode'), 'click', function () {showTable('tblMode','isMode');}) ;
+        eventutil.addEventListener($('isFuncDiag'), 'click', function () {showTable('tblFuncDiag','isFuncDiag');}) ;
+        eventutil.addEventListener($('isLabSurvey'), 'click', function () {showTable('tblLabSurvey','isLabSurvey');}) ;
+        showTable('tblDrug','isDrug'); showTable('tblMode','isMode') ;showTable('tblDiet','isDiet') ;
+        showTable('tblFuncDiag','isFuncDiag'); showTable('tblLabSurvey','isLabSurvey') ;
+	    function showTable(aTableId, aCheckFld ) {
+    		//alert(aTableId+"--"+aCheckFld) ;
+	    	var aCanShow = $(aCheckFld).checked ;
+			try {
+				//alert( aCanShow ? 'table-row' : 'none') ;
+				$(aTableId).style.display = aCanShow ? 'table' : 'none' ;
+			} catch (e) {
+				// for IE
+				//alert(aCanShow ? 'block' : 'none') ;
+				try{
+				$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
+				}catch(e) {}
+			}	
+		}
+        </script>
+
 		<script type="text/javascript">
 		var oldaction = document.forms['pres_prescriptListForm'].action ;
 		document.forms['pres_prescriptListForm'].action="javascript:checkDoubles()";
-		var num=0;
-		var labNum=0;
-		var funcNum=0;
-		var drugNum=0;
-		var labList="";
-		var drugList="";
-		var allDrugList="";
+		var num=0; var labNum=0; var funcNum=0; var drugNum=0;
+		var labList=""; var drugList=""; var allDrugList="";
 		var currentDate = new Date;
 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 		var textMonth = currentDate.getMonth()+1;
@@ -50,32 +70,25 @@
 		}
  		
  			function startLoad() {
- 			if ($('prescriptType').value=="" || $('prescriptType').value==null){
+ 			if ($('prescriptType').value==null || $('prescriptType').value=="") {
  				showcheckPrescTypes(); 				
  			}
  			$('prescriptTypeName').disabled='true';
- 			if ($('labList').value.length>0)
-           		{
+ 			if ($('labList').value.length>0) {
  			//	alert ("labList.value= "+$('labList').value);
            		PrescriptionService.getPresLabTypes($('labList').value, 0,{
            			callback: function(aResult2) {
            			//	alert ("aResult is : " +aResult2);
-           				if (aResult2) {
+           				if (aResult2!=null && aResult2!="") {
            					var resultList = aResult2.split('#');
-           					if (resultList.length>0) {
-           						for (var i=0; i<resultList.length;i++) {
-           							var resultRow = resultList[i].split(':');
-           							if (resultRow[0]!="" && resultRow[0]!=null)
-           								{
-           								addRow(resultList[i]);
-           								}
-           						}
-           					}
+      						for (var i=0; i<resultList.length;i++) {
+      							var resultRow = resultList[i].split(':');
+      							if (resultRow[0]!=null&&resultRow[0]!="") addRow(resultList[i]);
+      						}
            				}
            			}
-           		}
-           				);
-           		} 
+           		});
+           	} 
  			if ($('allDrugList').value.length>0) {
  				var aDrugArr = $('allDrugList').value.split('#');
  				for (var i=0;i<aDrugArr.length;i++) {
@@ -88,7 +101,7 @@
  			
  
 
-}  
+		}  
 		
 		  function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
 		     	if (confirm(aTitleConfirm)) {
@@ -109,15 +122,13 @@
 					 removeRows('lab');
 					PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
 						callback: function(aResult) {
-							if (aResult) {
+							labList = "" ;
+							if (aResult!=null && aResult!="") {
 		       					var resultList = aResult.split('#');
 		       					if (resultList.length>0) {
 		       						for (var i=0; i<resultList.length;i++) {
 		       							var resultRow = resultList[i].split(':');
-		       							if (resultRow[0]!="" && resultRow[0]!=null)
-		       								{
-		       								addRow(resultList[i]);
-		       								}
+		       							if (resultRow[0]!="" && resultRow[0]!=null)	addRow(resultList[i]);
 		       						}
 		       					}
 		       				}
@@ -129,44 +140,58 @@
 		
  		function writeServicesToList(type) {
 			var typeNum = 0;
-		if (type=='lab') {
-			typeNum = labNum;
-		} else if (type=='func') {
-			typeNum = funcNum;
-		}
-		var isDoubble=0;
-		while (typeNum>0) {
-			if (document.getElementById(type+"Element"+typeNum)) {
-				var curService = document.getElementById(type+'Service'+typeNum);
-				var curDate = document.getElementById(type+'Date'+typeNum);
-				var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
-				if (curService.value != "" & curDate.value != "") {			            
-		            labList+=curService.value;
-		            labList+=":";
-		            labList+=curDate.value;
-		            labList+=":";
-		            labList+=curCabinet.value;
-		            labList+="#";
-		            // Проверка на дубли 
-		            if ($(type+'Servicies').value==curService.value) {
-		            	isDoubble=1;	
-		            }
-				}
-					
+			var fld ; reqFld = [0,1] ;
+			if (type=='lab') {
+				typeNum = labNum;
+				fld = [['Service',1],['Date',1],['Cabinet',1],['Department',1],['',1]] ;
+				 reqFld = [0,1,2,3] ;
+			} else if (type=='func') {
+				typeNum = funcNum;
+				reqFld = [0,1,2,4] ;
+				fld = [['Service',1],['Date',1],['Cabinet',1],['',1],['CalTime',1]] ;
 			}
-       		typeNum-=1;
-	 	}
-		if (isDoubble==0) {
-			if ($(type+'Servicies').value != "" & $(type+'Date').value != "") {
-			   	labList+=$(type+'Servicies').value;
-	            labList+=":";
-	            labList+=$(type+'Date').value;
-	            labList+=":";
-	            labList+=$(type+'Cabinet').value;
-	            labList+="#";
-	         }
-	     }
+			var isDoubble=0;
+			while (typeNum>0) {
+				if (document.getElementById(type+"Element"+typeNum)) {
+					if (document.getElementById(type+"Element"+typeNum)) {
+						var ar = getArrayByFld(type, typeNum, fld, reqFld, type+'Servicies', 0) ;
+						labList += ar [0] ; isDoubble=ar[2] ; 
+					}
+				}
+	       		typeNum-=1;
+		 	}
+			if (isDoubble==0) {
+				fld[0] = ['Servicies',1] ;
+				//var fld = [['Servicies',1],['Date',1],['Cabinet',1]] ;
+				var ar = getArrayByFld(type, "", fld, reqFld, type+'Servicies', -1) ;
+				labList += ar [0] ;  
+	     	}
 		}
+ 		function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
+ 			var next = true ;
+ 			var l="",lAll="",isDoubble=0 ;
+			for (var i=0;i<aReqFldId.length;i++) {
+				if ($(aType+aFldList[aReqFldId[i]][0]+aTypeNum).value=="") {next=false ; break;}  
+			}
+			if (next) {
+				//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
+				for (var i=0;i<aFldList.length;i++) {
+					var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
+					if (i!=0) {
+						l += ":" ;lAll+=":";
+					} 
+					if (aCheckId==i) {
+						if ($(aCheckFld).value==val) {
+			            	isDoubble=1;	
+			            }						
+					}
+					if (aFldList[i][1]==1) { l += val ; }
+					lAll+=val ;
+					if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
+				}
+			}
+			return [l,lAll,isDoubble] ;
+ 		}
 		// Добавление всех лекарственных назначений в список 
 		function writeDrugsToList() {
 			drugList="";
@@ -176,132 +201,31 @@
 			if (type=="drug") {
 			typeNum = drugNum;
 			}
-		var isDoubble=0;
-		while (typeNum>0) {
-			if (document.getElementById(type+"Element"+typeNum)) {
-				var curDrug = $(type+'Drug'+typeNum).value;
-				var curDrugName = $(type+'DrugName'+typeNum).value;
-				var curDate = document.getElementById(type+'Date'+typeNum);
-				var curMethod = document.getElementById(type+'Method'+typeNum);
-				var curMethodName = document.getElementById(type+'MethodName'+typeNum);
-				var curAmount = document.getElementById(type+'Amount'+typeNum);
-				var curDuration = document.getElementById(type+'Duration'+typeNum);
-				var curFrequency = document.getElementById(type+'Frequency'+typeNum);
-				var curAmountUnit = document.getElementById(type+'AmountUnit'+typeNum);
-				var curAmountUnitName = document.getElementById(type+'AmountUnitName'+typeNum);
-				var curDurationUnit = document.getElementById(type+'DurationUnit'+typeNum);
-				var curDurationUnitName = document.getElementById(type+'DurationUnitName'+typeNum);
-				var curFrequencyUnit = document.getElementById(type+'FrequencyUnit'+typeNum);
-				var curFrequencyUnitName = document.getElementById(type+'FrequencyUnitName'+typeNum);
-				if (curDrug != "" & curDate.value!= "") {	
-					//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
-		            drugList+=curDrug;
-		            drugList+=":";
-		            drugList+=curDate.value;
-		            drugList+=":";
-		            drugList+=curMethod.value;
-		            drugList+=":";
-		            drugList+=curFrequency.value;
-		            drugList+=":";
-		            drugList+=curFrequencyUnit.value;
-		            drugList+=":";
-		            drugList+=curAmount.value;
-		            drugList+=":";
-		            drugList+=curAmountUnit.value;
-		            drugList+=":";
-		            drugList+=curDuration.value;
-		            drugList+=":";
-		            drugList+=curDurationUnit.value;
-		            drugList+="#";
-		            // Add into allDrugList 
-		            allDrugList+=curDrug;
-		            allDrugList+=":";
-		            allDrugList+=curDrugName;
-		            allDrugList+=":";
-		            allDrugList+=curDate.value;
-		            allDrugList+=":";
-		            allDrugList+=curMethod.value;
-		            allDrugList+=":";
-		            allDrugList+=curMethodName.value;
-		            allDrugList+=":";
-		            allDrugList+=curFrequency.value;
-		            allDrugList+=":";
-		            allDrugList+=curFrequencyUnit.value;
-		            allDrugList+=":";
-		            allDrugList+=curFrequencyUnitName.value;
-		            allDrugList+=":";
-		            allDrugList+=curAmount.value;
-		            allDrugList+=":";
-		            allDrugList+=curAmountUnit.value;
-		            allDrugList+=":";
-		            allDrugList+=curAmountUnitName.value;
-		            allDrugList+=":";
-		            allDrugList+=curDuration.value;
-		            allDrugList+=":";
-		            allDrugList+=curDurationUnit.value;
-		            allDrugList+=":";
-		            allDrugList+=curDurationUnitName.value;
-		            allDrugList+="#";
-		            // Проверка на дубли 
-		            if ($('drugForm1.drug').value==curDrug) {
-		            	isDoubble=1;	
-		            }
-				}
+			var isDoubble=0;
+			while (typeNum>0) {
+				if (document.getElementById(type+"Element"+typeNum)) {
 					
-			}
-       		typeNum-=1;
-	 	}
-		if (isDoubble==0) {
-			if ($('drugForm1.drug').value != "" & $('drugForm1.planStartDate').value != "") {
-				drugList+=$('drugForm1.drug').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.planStartDate').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.method').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.frequency').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.frequencyUnit').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.amount').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.amountUnit').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.duration').value;
-	            drugList+=":";
-	            drugList+=$('drugForm1.durationUnit').value;
-	            drugList+="#";
-	            // allDrugList 
-	            allDrugList+=$('drugForm1.drug').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.drugName').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.planStartDate').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.method').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.methodName').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.frequency').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.frequencyUnit').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.frequencyUnitName').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.amount').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.amountUnit').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.amountUnitName').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.duration').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.durationUnit').value;
-	            allDrugList+=":";
-	            allDrugList+=$('drugForm1.durationUnitName').value;
-	            allDrugList+="#";
-	         }
-	     }
+					var fld = [['Drug',1],['DrugName',0],['Date',1],['Method',1],['MedthodName',0]
+						,['Frequency',1],['FrequencyUnit',1],['FrequencyUnitName',0]
+					    ,['Amount',1],['AmountUnit',1],['AmountUnitName',0],['Duration',1]
+					    ,['DurationUnit',1],['DurationUnitName',0]] ;
+					var reqFld = [0,2] ;
+					
+				}
+				var ar = getArrayByFld(type, typeNum, fld, reqFld, 'drugForm1.drug', 1) ;
+				drugList += ar [0] ; allDrugList += ar[1]; isDoubble=ar[2] ; 
+	       		typeNum-=1;
+		 	}
+			if (isDoubble==0) {
+				var fld = [['drugForm1.drug',1],['drugForm1.drugName',0],['drugForm1.planStartDate',1]
+				,['drugForm1.method',1],['drugForm1.methodName',0],['drugForm1.frequency',1]
+				,['drugForm1.frequencyUnit',1],['drugForm1.frequencyUnitName',0]
+				,['drugForm1.amount',1],['drugForm1.amountUnit',1],['drugForm1.amountUnitName',0]
+				,['drugForm1.duration',1],['drugForm1.durationUnit',1],['drugForm1.durationUnitName',0]] ;
+				var reqFld = [0,2] ;
+				var ar = getArrayByFld("", "", fld, reqFld, '', -1) ;
+				drugList += ar [0] ; allDrugList += ar[1];
+		    }
 	//	alert("DrugList = "+drugList); 
 		}
 		
@@ -353,14 +277,28 @@
 		
 
 		}
-		
+		function checkError(aErrorList) {
+			for (var i=0;i<aErrorList.length;i++) {
+				if (aErrorList[i][3]=="isEmptyUnit") {
+					if ($(aErrorList[i][0]).value==""){
+						alert("Обязательное поле: "+aErrorList[i][2]) ;
+						alert(aErrorList[i][0]+aErrorList[i][1]);
+						$(aErrorList[i][0]+aErrorList[i][1]).focus() ;
+						return true;
+					}
+				}
+			}
+			return false ;
+		}
 		function checkLabs() {
-
-			if (isEmptyUnit('drugForm1.frequency', 'Частота')) return;
-			if (isEmptyUnit('drugForm1.amount', 'Дозировка')) return;
-			if (isEmptyUnit('drugForm1.duration', 'Продолжительность')) return;
-			
-			
+			/*var error = [['drugForm1.frequency','', 'Частота','isEmptyUnit']
+				,['drugForm1.amount','', 'Дозировка','isEmptyUnit']
+				,['drugForm1.duration','', 'Продолжительность','isEmptyUnit']];
+			if (checkError(error)) {
+				document.getElementById('submitButton').disabled=false;
+				document.getElementById('submitButton').value='Создать';
+				return ;
+			}*/
 			if ($('funcServicies')) {
 				writeServicesToList('func');
 			}
@@ -368,119 +306,136 @@
 			writeDrugsToList();
 			$('drugList').value = drugList;
 			$('allDrugList').value = allDrugList;
-	//		alert("labList = "+$('labList').value); 
-	//		alert("drugList = "+$('drugList').value); 
+			//alert("labList = "+$('labList').value); 
+			//alert("funcList = "+$('funcList').value); 
+			//alert("drugList = "+$('drugList').value); 
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
-		
+		function checkIsNull(aFldName,aMessageError) {
+			if ($(aFldName).value==""){
+				alert(aMessageError);
+				$(aFldName).focus() ;
+				return true;
+			}
+			return false ;
+		}
 		function prepareLabRow(type) {
+			var fldList,reqList =[];
 			if (type=='lab') {
+				var error = [
+			      [type+'Date','', 'Укажите дату исследования!','isEmptyUnit']
+				  , [type+'Servicies','Name', 'Выбирите исследование!','isEmptyUnit']
+				  , [type+'Department','Name', 'Выбирите место (отделение), где будет производиться забор биоматерила!','isEmptyUnit']
+				  , [type+'Cabinet','Name', 'Выбирите кабинет лаборатории!','isEmptyUnit']
+				];
 				num = labNum;
-			} else if (type=='func') {
+				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['Cabinet',1]
+					,['CabinetName',1],['Department',1],['DepartmentName',1],['',1],['',1]
+				] ;
+				
+			} 
+			else if (type=='func') {
+				var error = [
+				   [type+'Date','', 'Укажите дату исследования!','isEmptyUnit']
+				  , [type+'Servicies','Name', 'Выбирите исследование!','isEmptyUnit']
+				  , [type+'Cabinet','Name', 'Выбирите кабинет!','isEmptyUnit']
+				  , [type+'CalTime','Name', 'Выбирите время направления на диагностику','isEmptyUnit']
+				] ;
 				num = funcNum;
+				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['Cabinet',1]
+				,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1]
+			] ;
 			}
-			if (document.getElementById(type+'Servicies').value==""){
-				alert("Выбирите услугу!");
-				return;
-			}
+			if (checkError(error)) return ;
 			// Проверим на дубли 
 			var checkNum = 1;
-			if (num>0){
-				while (checkNum<=num) {
-					if (document.getElementById(type+'Service'+checkNum)) {
-						if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
-						//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) {
-								if (confirm("В этом листе назначений уже назначено это исследование, ВЫ УВЕРЕНЫ, что хотите назначить его еще раз?")) {
-									break; 
-								}else {
-									return;
-								}
-								
-						//	}
+			while (checkNum<=num) {
+				if (document.getElementById(type+'Service'+checkNum)) {
+					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+						if (confirm("В этом листе назначений уже назначено это исследование, ВЫ УВЕРЕНЫ, что хотите назначить его еще раз?")) {
+							break; 
+						} else {
+							return;
 						}
 					}
-					checkNum+=1;
+				}
+				checkNum+=1;
 			}
-			}
-
-			var aLabID = document.getElementById(type+'Servicies').value;
-			var aLabName =document.getElementById(type+'ServiciesName').value;
-			var aLabDate = $(type+'Date').value;
-			var aLabCabinet = $(type+'Cabinet').value;
-			var aLabCabinetName = $(type+'CabinetName').value;
-			
-			var aData = type+":"+aLabID+":"+aLabName+":"+aLabDate+":"+aLabCabinet+":"+aLabCabinetName; 
-			addRow(aData);
+			var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
+			addRow(type+":"+ar[0],1);
 		}
 
 		
 		//AddRow для лабораторных и функциональных исследований 
-		function addRow(result) {
-			var resultRow = result.split(":");
+		function addRow(aResult,aFocus) {
+			var resultRow = aResult.split(":");
 			/*
 			0 - ms.type
-			1 - ms.ID
-			2 - ms. code+name
+			1 - ms.ID 2 - ms. code+name
 			3 - date
-			4 - cabinetcode
-			5 - cabinetname
+			4 - cabinetcode           5 - cabinetname
+			6 - departmentintakecode  7 - departmentintakename (for lab)
+			8 - timecode              9 - timename (for func)
 			*/
-			var aLabType = resultRow[0];
-			var aLabID = resultRow[1]; 
-			var aLabName = resultRow[2];
-			var aLabDate = resultRow[3]!=""?resultRow[3]:textDate;
-			var aLabCabinet = resultRow[4]?resultRow[4]:"";
-			var aLabCabinetName = resultRow[5]?resultRow[5]:"";
-			var type="";
+			var type = resultRow[0];
+			var id = resultRow[1]; 
+			var name = resultRow[2];
+			var date = resultRow[3]!=""?resultRow[3]:textDate;
+			var cabinet = resultRow[4]?resultRow[4]:"";
+			var cabinetName = resultRow[5]?resultRow[5]:"";
 			
-		if (aLabType=='LABSURVEY' || aLabType=='lab') {
-			type='lab';
-			num = labNum;
-		} else if (aLabType=='DIAGNOSTIC' || aLabType=='func') {
-			num = funcNum;
-			type='func';
-		}
-			
-		num+=1;
-	    
- 		var tbody = document.getElementById('add'+type+'Elements');
-	    var row = document.createElement("TR");
-		row.id = type+"Element"+num;
-	    tbody.appendChild(row);
-	
-	    // Создаем ячейки в вышесозданной строке 
-	    // и добавляем тх 
-	    var td1 = document.createElement("TD");
-	   	td1.colSpan="2";
-	   	td1.align="right";
-	    var td2 = document.createElement("TD");
-	    td2.colSpan="2";
-	    var td3 = document.createElement("TD");
-	    
-		 row.appendChild(td1);
-		 row.appendChild(td2);
-		 row.appendChild(td3);
-	   
-	    // Наполняем ячейки 
-	    var dt="<input id='"+type+"Service"+num+"' value='"+aLabID+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
-	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+aLabCabinet+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
-	    
-	    td2.innerHTML = dt+"<span>Исследование: <b>"+aLabName+"</b></span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+aLabDate+"' size = '10' />";
-	   	td2.innerHTML += dt2+"<span>. Кабинет: "+aLabCabinetName+"</span>" ;
-	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
-	   	new dateutil.DateField($(type+'Date'+num));
-					   
-		if (type=='lab') {
-			labNum = num;
-		} else if (type=='func'){
-			funcNum = num;
-		}
-		$(type+'Servicies').value='';
-		$(type+'ServiciesName').value='';
-	}
+			if (type=='LABSURVEY' || type=='lab') {
+				type='lab'; num = labNum;
+			} else if (type=='DIAGNOSTIC' || type=='func') {
+				type='func'; num = funcNum; 
+			}	
+			num+=1;
+		    
+	 		var tbody = document.getElementById('add'+type+'Elements');
+		    var row = document.createElement("TR");
+			row.id = type+"Element"+num;
+		    tbody.appendChild(row);
 		
+		    // Создаем ячейки в вышесозданной строке и добавляем тх 
+		    var td1 = document.createElement("TD"); td1.colSpan="2"; td1.align="right";
+		    var td2 = document.createElement("TD"); td2.colSpan="2";
+		    var td3 = document.createElement("TD");
+		    row.appendChild(td1); row.appendChild(td2); row.appendChild(td3);
+		   
+		    // Наполняем ячейки 
+		    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
+		    
+		  	td1.innerHTML = textInput("Дата",type,"Date",num,resultRow[3],textDate,10) ;
+		    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
+		   	if (type=="lab") {
+		   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
+		   		labNum = num;
+		   	} else if (type=="func"){
+		   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
+		   		funcNum = num;
+		   	}
+		   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+		   	new dateutil.DateField($(type+'Date'+num));
+			$(type+'Cabinet').value='';
+			$(type+'CabinetName').value='';
+			$(type+'Servicies').value='';
+			$(type+'ServiciesName').value='';
+			if (aFocus) $(type+'ServiciesName').focus() ;
+	}
+		function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
+			return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
+		}
+		function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
+			return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
+		}
+		function spanTag(aText,aValue,aDefaultValue) {
+			return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
+		}
+		function autocomplete(aLabel,aValue,aParentId,aVocName) {
+			
+		}
 		function prepareDrugRow(){
 			if ($('drugForm1.drug').value=='' ||$('drugForm1.method').value=='' ) {
 				alert ('Введите название лекарства и способ введения!');
@@ -540,10 +495,7 @@
 	    // Создаем ячейки в вышесозданной строке 
 	    // и добавляем тх 
 	    var td1 = document.createElement("TD");
-	  // 	td1.colSpan="2";
-	  // 	td1.align="right";
 	    var td2 = document.createElement("TD");
-	  //  td2.colSpan="2";
 	    var td3 = document.createElement("TD");
 	    var td4 = document.createElement("TD");
 	    var td5 = document.createElement("TD");
@@ -703,7 +655,23 @@
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
-        </msh:row><td></td>
+        </msh:row>
+        </msh:panel>
+         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
+           
+          <msh:panel styleId="border">
+        <msh:row>
+        	<msh:separator label="Добавить в лист назначений" colSpan="10"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isDrug" label="лек. средства"/>
+        	<msh:checkBox property="isDiet" label="диету"/>
+        	<msh:checkBox property="isMode" label="режим"/>
+	       <msh:checkBox property="isFuncDiag" label="функц.диагн. (консультации)"/>
+        	<msh:checkBox property="isLabSurvey" label="лаб. исследования"/>
+        </msh:row>
+        </msh:panel>
+        <msh:panel styleId="tblMode">
         <msh:row>
         	<msh:separator label="Режим" colSpan="10"/>
         </msh:row>
@@ -711,19 +679,21 @@
         	<msh:textField property="modeForm.planStartDate" label="Дата начала" size="10"/>
           <msh:autoComplete vocName="vocModePrescription" property="modeForm.modePrescription" label="Режим" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
+        </msh:panel>
+        <msh:panel styleId="tblDiet">
         <msh:row>
         	<msh:separator label="Диета" colSpan="10"/>
         </msh:row>
-        <msh:row guid="b556ehb-b971-441e-9a90-53217">
+        <msh:row>
         	<msh:textField property="dietForm.planStartDate" label="Дата начала" size="10"/>
           <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
           property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         </msh:panel>
         <%-- -------------------------Начало блока "Лекарственное обеспечение" --%>
-         <div style="display: none">
-          <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">  
-        <msh:panel styleId="border">
+         
+         
+        <msh:panel styleId="tblDrug">
         <msh:row>
         	<msh:separator label="Лекарственные назначения" colSpan="20"/>
         </msh:row>
@@ -757,12 +727,13 @@
         </tbody>
         </table>
 	    </msh:panel>
-	    </msh:ifFormTypeIsCreate>
-	    </div>
+	   
+	    
+	     
         <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
         <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
-       <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
-        <msh:panel styleId="border">
+       
+        <msh:panel styleId="tblLabSurvey">
         <msh:row>
         	<msh:separator label="Лабораторные исследования" colSpan="10"/>
         </msh:row>
@@ -771,18 +742,19 @@
         <table id="labTable">
         <tbody id="addlabElements">
     		
-			<tr>
+			<msh:row>
 			<msh:textField property="labDate" label="Дата " size="10"/>
 			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
-			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
             </td>
-            </msh:ifFormTypeIsNotView>
-            </tr>
-            <tr>
-				<msh:autoComplete property="labCabinet" label="Место забора" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
-			</tr>
+            </msh:row>
+            <msh:row>
+            	<msh:autoComplete property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
+            </msh:row>
+            <msh:row>
+				<msh:autoComplete property="labCabinet" label="Кабинет лаборатории" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+			</msh:row>
            </tbody>
     		</table>
     		</td></tr>
@@ -792,7 +764,7 @@
          <%-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ --%>
         <%-- --------------------------------------------------Начало блока "Функциональная диагностика" ------ --%>
          <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
-        <msh:panel styleId="border">
+        <msh:panel styleId="tblFuncDiag">
        	 <msh:row>
         	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
@@ -809,6 +781,7 @@
 			 </tr>
 			 <tr>
 			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			<msh:autoComplete property="funcCalTime" label="Время" vocName="workCalendarTimeByDate"/>
 			</tr>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			</msh:ifFormTypeIsNotView>
@@ -836,7 +809,6 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
-    <tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
     
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:ifInRole roles="/Policy/Mis/Prescription/DrugPrescription/View" guid="bf331972-44d3-4b35-9f3e-627a9be109e8">
