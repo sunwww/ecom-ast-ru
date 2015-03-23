@@ -65,9 +65,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	title='Регистрация инфекционных заболеваний'
     	styleId="stac_infectiousMessage"
     	/> 
-	<msh:sideLink roles="" name="Листы назначений" params="id" 
+	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" 
 		action='/entityParentList-pres_prescriptList' title='Показать листы назначений'
 		styleId="pres_prescriptList"
+		
 		/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
     	params="id"  action='/entityParentList-stac_surOperation'  key='Alt+7' title='Операции'
@@ -77,14 +78,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	params="id"  action='/entityParentList-smo_medService'  key='Alt+7' title='Мед.услуги'
     	styleId="smo_medService" 
     	/>
-   <!--  <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"     
-    	params="id"  action='/entityParentList-trans_transfusion'  key='Alt+8' 
-    	title='Переливание трансфузионных сред'/>  -->
+
     <msh:sideLink roles="/Policy/Mis/Inspection/View" name="Осмотры"     
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
 
-	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View"  name="Дневник специалиста"   
+	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View"  name="Дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ"   
 		params="id"  action='/entityParentList-smo_visitProtocol' title='Список дневников специалистов'
 		styleId="smo_visitProtocol"
 		/>
@@ -139,6 +138,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать справки" 
     	action='.javascript:printReference(".do")' title='Печать справки'
+    	/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" 
+    	name="Данные url справки" 
+    	action='.javascript:printReferenceUrl(".do")' title='Данные для справки'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
     	name="Печать экс. карты" params="id"  
@@ -240,6 +243,26 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   
 <script type="text/javascript">
 
+function printReferenceUrl() {
+	HospitalMedCaseService.getDataByReferenceUrl(
+		'${param.id}','HOSP',{
+			callback: function(aResult) {
+				if (aResult!=null) {
+					alert(aResult);
+					
+				}
+			}, errorHandler: function(aMessage) {
+				if (aMessage!=null) {
+					alert(aMessage);
+				} else{
+			    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
+				}
+			}
+		
+		}
+	);
+	//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+}
 function printReference() {
 	HospitalMedCaseService.getDataByReference(
 		'${param.id}','HOSP',{

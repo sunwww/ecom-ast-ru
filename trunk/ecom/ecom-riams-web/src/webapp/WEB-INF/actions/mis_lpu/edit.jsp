@@ -54,6 +54,7 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="registrationInterval" label="Интервал регистр." horizontalFill="true"/>
+        	<msh:checkBox property="isIntakeBioMaterial" label="В отд. осущ. забор биомат."/>
         </msh:row>
         <msh:row>
         	<msh:textField property="codef" label='№реестра' horizontalFill="true" />
@@ -143,6 +144,8 @@
 			          <msh:tableColumn columnName="Тип " property="bedSubTypeName" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="Поток обсл. " property="serviceStreamName" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="Для детей" property="forChild" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
+			          <msh:tableColumn columnName="Реабил." property="isRehab" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
+			          <msh:tableColumn columnName="Питание не вкл." property="noFood" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName=" " property="reductionTypeName" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="Дата нач." property="dateStart" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
 			          <msh:tableColumn columnName="Дата окон." property="dateFinish" guid="6c739d0e-36d8-4c34-b42e-11fa745cd2b7" />
@@ -176,7 +179,7 @@
 		      	left join VocWorkBusy vwb on vwb.id=wcdp.workBusy_id 
 		      	where wcdp.lpu_id=${param.id}" 
 		      	name="calendarDayPattern" />
-		      	<msh:table viewUrl="entityShortView-cal_dayPattern.do" deleteUrl="entityParentDeleteGoParentView-dayPattern.do" editUrl="entityParentEdit-cal_dayPattern.do" name="calendarDayPattern" action="entityParentView-cal_dayPattern.do" idField="1">
+		      	<msh:table viewUrl="entityShortView-cal_dayPattern.do" deleteUrl="entityParentDeleteGoParentView-cal_dayPattern.do" editUrl="entityParentEdit-cal_dayPattern.do" name="calendarDayPattern" action="entityParentView-cal_dayPattern.do" idField="1">
 		      		<msh:tableColumn property="sn" columnName="#"/>
 		      		<msh:tableColumn property="2" columnName="Название"/>
 		      		<msh:tableColumn property="3" columnName="Тип занятости"/>

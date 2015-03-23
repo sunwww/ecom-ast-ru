@@ -29,7 +29,7 @@
 					</msh:row>
 				</msh:ifFormTypeIsCreate>
 				<msh:row>
-					<msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3"/>
+					<msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3" size="100"/>
 				</msh:row>
 				<msh:row>
 					<msh:textArea property="timeIntervalForm.listTimes" fieldColSpan="4" hideLabel="true"
@@ -55,18 +55,36 @@
 					<msh:tableColumn columnName="Кол-во визитов" property="6"/>
 				</msh:table>
 			</msh:section>
-			<msh:section title="Шаблоны сгенерированные времена">
+			<msh:section title="Шаблоны сгенерированных времен">
 			<ecom:webQuery name="timePatterns" nativeSql="
-			select wctp.id,vwb.name as vwbname, wctp.calendarTime
+			select wctp.id,vwb.name as vwbname, wctp.calendarTime,vsrt.name as vsrtname
 			from WorkCalendarTimePattern wctp
 			left join VocWorkBusy vwb on vwb.id=wctp.workBusy_id
+			left join VocServiceReserveType vsrt on vsrt.id=wctp.reserveType_id
 			where wctp.dayPattern_id = ${param.id} and wctp.dtype='WorkCalendarTimeExample'
+			order by wctp.calendarTime
 			" />
-				<msh:table deleteUrl="entityParentDeleteGoParentView-cal_timeExample.do" editUrl="entityParentEdit-cal_timeExample.do" name="timePatterns" action="entitySubclassView-cal_timePattern.do" idField="1">
+				<msh:table deleteUrl="entityParentDeleteGoSubclassView-cal_timeExample.do" editUrl="entityParentEdit-cal_timeExample.do" name="timePatterns" action="entitySubclassEdit-cal_timePattern.do" idField="1">
 					<msh:tableColumn columnName="##" property="sn"/>
 					<msh:tableColumn columnName="Время приема" property="3"/>
+					<msh:tableColumn columnName="Резерв" property="4"/>
 				</msh:table>
 			</msh:section>
+			<msh:section title="В каких шаблонах используется">
+            <ecom:webQuery name="patterns" nativeSql="
+            select wcp.id,wcp.name
+from workcalendarpattern wcp
+left join WorkCalendarAlgorithm wca on wca.pattern_id=wcp.id
+
+where wca.monday_id=${param.id} or wca.tuesday_id=${param.id} or wca.wednesday_id=${param.id} or wca.thursday_id=${param.id} or wca.friday_id=${param.id}
+ or wca.saturday_id=${param.id} or wca.sunday_id=${param.id} or wca.dayPattern_id=${param.id}            " />
+                <msh:table deleteUrl="entityParentDeleteGoSubclassView-cal_pattern.do" editUrl="entitySubclassEdit-cal_pattern.do" name="patterns"
+action="entitySubclassView-cal_pattern.do" idField="1">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="Наименование шаблона" property="2"/>
+                </msh:table>
+            </msh:section>
+			
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
@@ -92,6 +110,17 @@
 			eventutil.addEventListener($('timeIntervalForm.timeTo'),'blur',function(){updateName();});
 			</script>
 		</msh:ifFormTypeIsCreate>
+		<script type="text/javascript">
+		function goNewDay() {
+			window.location.href = "entityParentPrepareCreate-cal_dayPattern.do?id="+$('lpu').value  ;
+		}
+		function goNewPattern() {
+			window.location.href = "entityParentPrepareCreate-cal_patternBySpec.do?id="+$('lpu').value  ;
+		}
+		function goViewFunctions() {
+			window.location.href = "js-mis_worker-pattern.do?id="+$('lpu').value  ;
+		}
+		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="cal_dayPatternForm" />
@@ -104,9 +133,17 @@
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_timeInterval" name="Интервал времен" title="Добавить шаблон интервалов времен" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create"/>
-<%--				<msh:sideLink key="ALT+4" params="id" action="/entityParentPrepareCreate-cal_timeExample" name="Шаблоны времен" title="Добавить шаблон времени" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create"/> --%>
+				<msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Create" 
+    	name="Шаблон дня по ЛПУ" 
+    	action='.javascript:goNewDay(".do")' title='Добавить шаблон дня'
+    	/>
+				<msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Specialist/Create" 
+    	name="Шаблон календаря по ЛПУ" 
+    	action='.javascript:goNewPattern(".do")' title='Добавить шаблон календаря по ЛПУ'
+    	/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Показать">
+       <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/javascript:goViewFunctions('.do')" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />				
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>

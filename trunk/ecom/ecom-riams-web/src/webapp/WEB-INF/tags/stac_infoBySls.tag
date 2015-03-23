@@ -210,13 +210,13 @@
           </msh:table>
         </msh:section>
       </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="141a017a-569a-4fa2-9a0e-3788f69da">
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View">
         <msh:section>
         <msh:sectionTitle>
-        	Дневник специалиста. 
+        	Дневник специалиста<span style="color: purple;"> ПРИЕМНОГО ОТДЕЛЕНИЯ</span>. 
         		<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
         			<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/Create">
-		        		<a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'> Добавить новый дневник специалиста</a>
+		        		<a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}'> Добавить новый дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ</a>
         			</msh:ifInRole>
         		</msh:ifNotInRole>
         </msh:sectionTitle>

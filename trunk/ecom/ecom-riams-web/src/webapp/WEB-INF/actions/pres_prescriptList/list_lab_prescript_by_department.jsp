@@ -16,11 +16,7 @@
    
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Показать" guid="a47dfc0b-97d1-4cb5-b904-4ff717e612a7" />
-    <msh:sideMenu title="Добавить" guid="60616958-11ef-48b0-bec7-f6b1d0b8463f">
-      <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_prescriptList" name="Сводный  лист назначений" guid="1faa5477-419b-4f77-8379-232e33a61922" params="id" />
-      <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+4" action=".javascript:shownewTemplatePrescription(1,&quot;.do&quot;)" name="ЛН из шаблона" guid="2a2c0ab6-4a46-41f7-8221-264de893815c" title="Добавить лист назначений из шаблона" />
-    </msh:sideMenu>
+
   </tiles:put>
   <tiles:put name="body" type="string">
   	<%
@@ -140,7 +136,8 @@
     <msh:section>
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
     select pat.id
-    ,case when p.intakeDate is null then '${j}' else '${r}' end as js
+    ,case when p.intakeDate is null then list(''||p.id) else null end as js1
+    ,case when p.intakeDate is null then null else list(''||p.id) end as js2
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     
@@ -166,7 +163,7 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and w.lpu_id='${lpu_id}' 
+    and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
@@ -205,7 +202,7 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and w.lpu_id='${lpu_id}' 
+    and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
@@ -221,15 +218,16 @@
     </msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1">
-	      <msh:tableColumn columnName="Управление" property="2"  />
-	      <msh:tableColumn columnName="Стат.карта" property="3"  />
-	      <msh:tableColumn columnName="Код биоматериала" property="4"/>
-	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
-	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
-	      <msh:tableColumn columnName="Имя" property="7" />
-	      <msh:tableColumn columnName="Отчетство" property="8"/>
-	      <msh:tableColumn columnName="Дата рождения" property="9"/>
-	      <msh:tableColumn columnName="Список услуг" property="10"/>
+	      <msh:tableButton property="2" buttonFunction="" buttonName="Прием биоматериала осуществлен" buttonShortName="Прием" hideIfEmpty="true"/>
+	      <msh:tableButton property="3" buttonFunction="" buttonName="Очистить данные о приеме биоматериала" buttonShortName="Очистить данные о приеме" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsRemoveIntake"/>
+	      <msh:tableColumn columnName="Стат.карта" property="4"  />
+	      <msh:tableColumn columnName="Код биоматериала" property="5"/>
+	      <msh:tableColumn columnName="Метка биоматериала" property="6"/>
+	      <msh:tableColumn columnName="Фамилия пациента" property="7"  />
+	      <msh:tableColumn columnName="Имя" property="8" />
+	      <msh:tableColumn columnName="Отчетство" property="9"/>
+	      <msh:tableColumn columnName="Дата рождения" property="10"/>
+	      <msh:tableColumn columnName="Список услуг" property="11"/>
 
 	    </msh:table>
 	    <script type="text/javascript">

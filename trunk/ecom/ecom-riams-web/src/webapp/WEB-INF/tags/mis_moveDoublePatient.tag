@@ -56,6 +56,7 @@
      // Отмена
      function cancel${name}DoublePatient() {
          the${name}DoublePatientDialog.hide() ;
+         msh.effect.FadeEffect.pushFadeAll();
      }
 
      // Сохранение данных
