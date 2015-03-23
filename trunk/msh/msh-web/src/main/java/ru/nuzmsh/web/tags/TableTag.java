@@ -1,24 +1,17 @@
 package ru.nuzmsh.web.tags;
 
-import java.awt.font.NumericShaper;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -195,14 +188,36 @@ public class TableTag extends AbstractGuidSupportTag {
     private String theAction;
 
     @SuppressWarnings("unchecked")
-	public void add(TableColumnTag aTag) {
-        theColumns.add(
-                new Column(aTag.getProperty(), aTag.getColumnName()
-                        , aTag.isIdentificator(), aTag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                        , aTag.getGuid(),aTag.getIsCalcAmount(),aTag.getAddParam())
-                
-        );
+    public void add(Object aTag,String aRole) {
+    	boolean isView =true ;
+		try {
+			if (aRole!=null &&!aRole.equals("")) isView = RolesHelper.checkRoles(aRole, (HttpServletRequest)pageContext.getRequest()) ;
+		}catch (Exception e) {
+			isView=false ;
+		}
+		if (isView) {
+			if (aTag instanceof TableColumnTag) {
+				TableColumnTag tag = (TableColumnTag) aTag ;
+				theCells.add(
+    			
+					new Column(tag.getProperty(), tag.getColumnName()
+    					, tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
+    					, tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam())
+    			
+    			);
+	    	} else if (aTag instanceof TableButtonTag) {
+	    		TableButtonTag tag = (TableButtonTag) aTag ;
+	    		theCells.add(
+	                    new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
+	                    		, tag.getButtonFunction()
+	                    		, tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest()
+	                            )
+	                    
+	            );
+	    	}
+		}
     }
+    
 
     /**
      * Сообщение об отсутствии данных
@@ -262,28 +277,13 @@ public class TableTag extends AbstractGuidSupportTag {
             }
         }
 
-        theColumns.clear();
+        theCells.clear();
+        
         if (!isEmpty) {
             try {
                 JspWriter out = pageContext.getOut();
-                /*
-                if (!theAction.startsWith("javascript")) {
-                    out.println(
-                            "<script type='text/javascript' xml:space='preserve'>\n" +
-                                    "              function " + getGoFunctionName() + "(aId) {\n" +
-                                    "				   var delim = '"+theAction+"'.indexOf('?')==-1 ? '?' : '&' ;\n"+
-                                    "                  var url = '" + theAction + "'+delim+'id='+aId+'&tmp=" + Math.random() + "' ;\n" +
-//                                    "alert(url) ; \n" +
-                                    "                  window.location = url ; \n" +
-                                    "              }\n" +
-                                    "</script>"
-                    );
-                }*/
-
-
                 out.println("<form>") ;
                 out.println("<table border='1' class='tabview sel tableArrow'>");
-//            out.println("<thead>") ;
             } catch (Exception e) {
                 new JspException(e);
             }
@@ -362,6 +362,12 @@ public class TableTag extends AbstractGuidSupportTag {
     	} else {
     		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
     	}
+    }
+    private static String getGoFunctionName(String theFunctionGoName, Object aParam,String aAddParam) {
+    	return new StringBuilder().append(theFunctionGoName)
+    			.append("('").append(aParam).append("'")
+    			.append(aAddParam!=null&&!aAddParam.equals("")?","+aAddParam:"")
+    			.append(")").toString() ;
     }
     
     private String getDeleteFunctionName(String aId) {
@@ -449,9 +455,15 @@ public class TableTag extends AbstractGuidSupportTag {
                         	out.println("&nbsp;") ;
                         	out.println("</th>") ;
                         }
-                        for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
-                            Column column = (Column) iterator.next();
-                            column.printHeader(out);
+                        for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
+                        	Object obj = iterator.next();
+                        	if (obj instanceof Button) {
+								Button button = (Button) obj;
+	                        	button.printHeader(out);
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+	                            column.printHeader(out);
+							}
                         }
                         out.println("</tr>");
                     }
@@ -521,22 +533,29 @@ public class TableTag extends AbstractGuidSupportTag {
                         
                         String goFunctionMainName = getGoFunctionName(currentId) ;
                         
-                        
-                        for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
-                            Column column = (Column) iterator.next();
-                            Object valueC ;
-                            if (theCellFunction) {
-                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
-                            } else {
-                            	valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
-                            }
-                        	if (!isFirstRow) {
-                        		if (valueC!=null) {
-                        			rowSum = column.amountCell(out, rowSum, valueC) ;
-                        			isSumColumn = true ;
-                        		}
-                        	}
+                        for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
+                        	Object obj = iterator.next();
+                        	if (obj instanceof Button) {
+								Button button = (Button) obj;
+								button.printFunction(out, row);
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+								Object valueC ;
+	                            if (theCellFunction) {
+	                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
+	                            } else {
+	                            	valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
+	                            }
+	                        	if (!isFirstRow) {
+	                        		if (valueC!=null) {
+	                        			rowSum = column.amountCell(out, rowSum, valueC) ;
+	                        			isSumColumn = true ;
+	                        		}
+	                        	}
+							}
                         }
+
+                        
                         //System.out.println("--->");
                         out.println("</tr>");
                     	if (isFirstRow) {
@@ -561,17 +580,20 @@ public class TableTag extends AbstractGuidSupportTag {
                         if (theDeleteUrl!=null) {
                             out.println("<td>&nbsp;</td>") ;
                         }
-
-	                    for (Iterator iterator = theColumns.iterator(); iterator.hasNext();) {
-	                        Column column = (Column) iterator.next();
-	                        column.printSumCell(out, rowSum, "", "");
-	
-	                    }
+                        for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
+                            Object obj = iterator.next();
+	                    	if (obj instanceof Button) {
+	                    		out.println("<td>&nbsp;</td>") ;
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+								column.printSumCell(out, rowSum, "", "");
+							}
+                        }
 	                    out.println("</tr>");
                     }
 
                     if (theNavigationAction != null) {
-                        out.println("<tr><td colspan='" + theColumns.size()
+                        out.println("<tr><td colspan='" + (theCells.size())
                                 + "' class='navigationBottom'>");
                         printNavigation(out, firstId, lastId);
                         out.println("</td></tr>");
@@ -592,7 +614,7 @@ public class TableTag extends AbstractGuidSupportTag {
             catch (Exception e) {
                 showException(e);
             } finally {
-                theColumns.clear();
+            	theCells.clear();
             }
         }
         printIdeEnd();
@@ -686,6 +708,106 @@ public class TableTag extends AbstractGuidSupportTag {
         }
     }
 
+    static final class Button {
+    	public Button(String aProperty,String aButtonShortName, String aButtonName
+    			, String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
+    		theProperty = aProperty;
+    		theButtonName = aButtonName;
+    		theCssClass = aCssClass;
+    		theServleRequest = aRequest ;
+    		if (aAddParam==null) aAddParam="" ;
+    		theAddParam =aAddParam ; 
+    		theButtonFunction = aButtonFunction ;
+    		theButtonShortName = aButtonShortName ;
+    		theHideIfEmpty = aHideIfEmpty ;
+    	}
+    	
+    	
+    	private void printHeader(JspWriter aOut) throws IOException {
+    		if (theCssClass != null) {
+    			aOut.print("<th");
+    			aOut.print(" class='");
+    			aOut.print(theCssClass);
+    			aOut.print("'>");
+    		} else {
+    			aOut.print("<th>");
+    		}
+    		//IdeTagHelper.getInstance().printMarker(, aJspContext)
+    		//aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
+    		//aOut.print(theButtonName);
+    		aOut.println("</th>");
+    	}
+    	
+
+    	private Object printFunction(JspWriter aOut, Object aObject) throws IOException {
+    		String styleClass = "";
+    		
+    		Object value;
+    		//Object valueSum = null ;
+    		try {
+    			// value = PropertyUtils.getProperty(aObject, theProperty);
+    			value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+//                System.out.println("value.getClass() = " + value.getClass());
+    			if (value instanceof Time) {
+    				value = DateFormat.formatToTime((Time) value);
+    				
+    			} else  if (value instanceof Date) {
+    				value = DateFormat.formatToDate((Date) value);
+    				
+    			} else if (value instanceof Boolean) {
+    				Boolean booleanValue = (Boolean) value ;
+    				if(booleanValue!=null && booleanValue) {
+    					value = "1" ;
+    				} else {
+    					value = "0" ;
+    				}
+    			}
+    			
+    		} catch (Exception e) {
+    			value = e + "";
+    		}
+    		if (theCssClass != null) {
+    			styleClass += " " + theCssClass;
+    		}
+    		aOut.print("<td ");
+    		
+    		if (theButtonName!=null) {
+    			aOut.print("title=\"");
+    			aOut.print(theButtonName) ;
+    			aOut.print("\" ");
+    		}
+    		aOut.print(" class='") ;
+    		aOut.print(styleClass);
+    		aOut.print(' ');
+    		aOut.print(theProperty);
+    		aOut.print("'>");
+    		if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
+	    		aOut.print("<input type='button' onclick=\"");
+	    		aOut.print(getGoFunctionName(theButtonFunction,value != null ? value : "",theAddParam)) ;
+	    		aOut.print("\" value=\""+theButtonShortName+"\"") ;
+	    		if (theButtonName!=null) {
+	    			aOut.print(" title=\"");
+	    			aOut.print(theButtonName) ;
+	    			aOut.print("\" ");
+	    		}
+	    		aOut.println(">"); 
+	    	}
+    		aOut.print("</td>");
+    		
+    		return "" ;
+    	}
+    	
+    	
+    	private final String theProperty;
+    	private final String theButtonShortName;
+    	private final String theButtonName;
+    	private final String theButtonFunction;
+    	private final boolean theHideIfEmpty;
+
+    	private final String theCssClass;
+    	private final HttpServletRequest theServleRequest ;
+    	private final String theAddParam ;
+   }
     static final class Column {
         public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
             theProperty = aProperty;
@@ -697,6 +819,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theIsCalcAmount = aIsCalcAmount ;
             if (aAddParam==null) aAddParam="" ;
             theAddParam =aAddParam ; 
+            
         }
 
         @SuppressWarnings("unused")
@@ -893,7 +1016,9 @@ public class TableTag extends AbstractGuidSupportTag {
      * Название атррибута в request или в session
      */
     private String theName;
-    private final ArrayList theColumns = new ArrayList();
+    //private final ArrayList theColumns = new ArrayList();
+    //private final ArrayList theButtons = new ArrayList();
+    private final ArrayList theCells = new ArrayList();
     private boolean theIsEmpty = false;
     /** Сообщение об отсутствии данных */
     private String theNoDataMessage = null;

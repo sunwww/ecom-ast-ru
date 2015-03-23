@@ -57,7 +57,7 @@ public class TableColumnTag extends AbstractGuidSupportTag {
     	Tag parent = getParent() ;
     	if(parent instanceof TableTag) {
             TableTag tableTag = (TableTag) parent ;
-            tableTag.add(this);
+            tableTag.add(this,getRole());
     	} else {
     		IdeTagHelper.getInstance().showException(this, new Exception("TableColumn должен быть внутри тэга Table"), pageContext);
     	}
@@ -99,4 +99,14 @@ public class TableColumnTag extends AbstractGuidSupportTag {
     private String theProperty ;
     /** CSS Класс */
     private String theCssClass = null ;
+	/** Роль *
+     * @jsp.attribute   description="Роль"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     */
+ 	public String getRole() {return theRole;}
+ 	public void setRole(String aRole) {theRole = aRole;}
+
+ 	/** Роль */
+ 	private String theRole;
 }
