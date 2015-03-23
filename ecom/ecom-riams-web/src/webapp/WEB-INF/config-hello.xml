@@ -22,6 +22,7 @@
     <form-bean name="work_groupWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.GroupWorkFunctionForm" />
     <form-bean name="work_workFunctionByWorkerForm" type="$$map$$work_workFunctionByWorkerForm" />
     <form-bean name="work_journalPatternCalendarForm" type="ru.ecom.mis.ejb.form.worker.JournalPatternCalendarForm" />
+    <form-bean name="cal_journalPatternCalendarForm" type="ru.ecom.mis.ejb.form.worker.JournalPatternCalendarByPatternForm" />
     
     <form-bean name="work_timeBySpecialistForm" type="ru.ecom.mis.web.action.worker.TimeBySpecialistForm" />
 

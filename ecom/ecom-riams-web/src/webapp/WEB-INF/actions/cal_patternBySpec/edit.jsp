@@ -348,9 +348,40 @@
 			</td>
 			</tr>
 			</table>
+			
+			<msh:section title="Рабочие календари"><msh:sectionContent>
+                    <ecom:webQuery name="altes" nativeSql="
+                     select jpc.id,jpc.workCalendar_id,vwf.name,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as fio
+                     from JournalPatternCalendar jpc
+                    left join WorkCalendar wc on jpc.workCalendar_id=wc.id
+                    left join WorkFunction wf on wf.id=wc.workFunction_id
+                    left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+                    left join Worker w on w.id=wf.worker_id
+                    left join Patient wp on wp.id=w.person_id
+                     where jpc.pattern_id='${param.id}'
+                    "/>
+                    <msh:table
+                        editUrl="entityParentEdit-work_journalPatternCalendar.do"
+                        viewUrl="entityShortView-work_journalPatternCalendar.do"
+                        deleteUrl="entityParentDeleteGoParentView-work_journalPatternCalendar.do"
+                        name="altes" action="entityView-work_journalPatternCalendar.do" idField="1">
+                        <msh:tableColumn property="sn" columnName="#"/>
+                        <msh:tableColumn property="2" columnName="Календарь"/>
+                        <msh:tableColumn property="3" columnName="Раб.функция"/>
+                        <msh:tableColumn property="4" columnName="ФИО спец. или наимен. группы"/>
+                     </msh:table>
+                </msh:sectionContent>
+</msh:section>
+			
 		</msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  		<script type="text/javascript">
+		
+		function goViewFunctions() {
+			window.location.href = "js-mis_worker-pattern.do?id="+$('lpu').value  ;
+		}
+		</script>
   <msh:ifFormTypeIsCreate formName="cal_patternBySpecForm">
   	<script type="text/javascript">
   	checkFieldUpdate('typeProfAlgorithm','${param.typeProfAlgorithm}',1) ;
@@ -518,6 +549,9 @@
 				<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_datesAlgorithm" name="алгоритм по датам" title="Добавить алгоритм шаблона рабочего календаря по датам" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm"/>
 				<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-cal_weekAlgorithm" name="алгоритм по неделям" title="Добавить алгоритм шаблона рабочего календаря по неделям" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm"/>
 				<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-cal_weekDaysAlgorithm" name="алгоритм по дням недели" title="Добавить алгоритм шаблона рабочего календаря по дням недели" roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm"/>
+			</msh:sideMenu>
+						<msh:sideMenu title="Показать">
+       <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/javascript:goViewFunctions('.do')" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />				
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
     </msh:ifFormTypeIsView>

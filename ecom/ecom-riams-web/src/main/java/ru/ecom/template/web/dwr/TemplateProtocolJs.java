@@ -29,6 +29,16 @@ import javax.naming.NamingException;
  * To change this template use File | Settings | File Templates.
  */
 public class TemplateProtocolJs {
+	public String getDtypeMedCase(Long aIdMedCase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select dtype from MedCase where id="+aIdMedCase) ;
+		if (list.isEmpty()) {
+			return null ;
+		} else {
+			return new StringBuilder().append(list.iterator().next().get1()).toString() ;
+		}
+		
+	}
 	/** Получить список параметров с номерами полей по шаблону */
 	public String getParameterByTemplate(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

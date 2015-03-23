@@ -5,18 +5,19 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг прейскуранта"/>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Переводы по отделения"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	
-    	<tags:contractMenu currentAction="price"/>
+  	 <tags:stac_journal currentAction="transfer"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
     String typeView =ActionUtil.updateParameter("Stac_journal_transfer","typeView","1", request) ;
+    String typeReport =ActionUtil.updateParameter("Stac_journal_transfer","typeReport","1", request) ;
+    if (request.getParameter("short")==null) {
   %>
   
     <msh:form action="/stac_journal_transfer_department.do" defaultField="departmentName" disableFormDataConfirm="true" method="GET">
@@ -28,10 +29,19 @@
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView" value="1">  реестр переводов
+	        	<input type="radio" name="typeView" value="1">  начиная с любого отделения с госпитализации 
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView" value="2">  реестр поступивших в отделение 1
+	        	<input type="radio" name="typeView" value="2">  1 отделение при госпитализации
+	        </td>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Вид отчета (typeReport)" colspan="1"><label for="typeReportName" id="typeReportLabel">Вид отчета:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+	        	<input type="radio" name="typeReport" value="1">  реестр
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeReport" value="2">  свод по длительности 1 отделения
 	        </td>
         </msh:row>
         <msh:row>
@@ -58,6 +68,7 @@
     <script type='text/javascript'>
     
     checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeReport','${typeReport}',1) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -69,57 +80,48 @@
    		chk[+aValue-1].checked='checked' ;
    	}
    }
-			 
+	function getPatientByCntDays() {
+		var dateBegin='${param.dateBegin}' ; var dateEnd='${param.dateEnd}';
+		var typeView = '1' ; var typeReport = '${typeReport}' ;
+	}
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
     	frm.action='stac_journal_transfer_department.do' ;
     }
     function print() {
-
     	
     }
     </script>
 
     
     <%
+    }
     String department = (String)request.getParameter("department") ;
     String date = (String)request.getParameter("dateBegin") ;
     String date1 = (String)request.getParameter("dateEnd") ;
     
     if (department!=null && !department.equals("") && !department.equals("0") 
     		&& date!=null && !date.equals("") )  {
-    	/*
-    	if (typeFindMed!=null && typeFindMed.equals("1")) {
-    		request.setAttribute("findMedSql", " pp.code=ms.code") ;
-    		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("2")) {
-    		request.setAttribute("findMedSql", " trim(upper(ms.name))=trim(upper(pp.name))") ;
-    		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("3")) {
-    		request.setAttribute("findMedSql", " pp.code=ms.code and trim(upper(ms.name))=trim(upper(pp.name))") ;
-    		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("4")) {
-    		request.setAttribute("findMedSql", " (pp.code=ms.code or trim(upper(ms.name))=trim(upper(pp.name)))") ;
-    		request.setAttribute("findMedAddSql", " and ms.id is null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("5")) {
-    		request.setAttribute("findMedSql", "") ;
-    	} 
-    	if (typeView!=null && typeView.equals("1")) {
-    		request.setAttribute("viewSql", " and pms.id is not null and ms1.id is not null") ;
-    	} else if (typeView!=null && typeView.equals("2")) {
-    		request.setAttribute("viewSql", " and ms1.id is null") ;
-    	} else if (typeView!=null && typeView.equals("3")) {
-    		request.setAttribute("viewSql", "") ;
-    	} 
-    	*/
+    	
     	ActionUtil.setParameterFilterSql("department","slo.department_id", request) ;
     	ActionUtil.setParameterFilterSql("department1","slo1.department_id", request) ;
     	ActionUtil.setParameterFilterSql("department2","slo2.department_id", request) ;
+    	
     	if (typeView!=null && typeView.equals("1")) {
+    		String days = request.getParameter("cntDays") ;
+    		String sloPrev = request.getParameter("sloFirst") ;
+    		if (days!=null &&!days.equals("")) request.setAttribute("daysSql", " and case when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1 when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1) else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart) end="+days);
+    		if (sloPrev!=null &&sloPrev.equals("Перевод")) {
+    			request.setAttribute("sloPrevSql", " and slo.prevMedCase_id is not null") ;
+    		} else if (sloPrev!=null) {
+    			request.setAttribute("sloPrevSql", " and slo.prevMedCase_id is null") ;
+    		}
+    		if (typeReport!=null && typeReport.equals("1")) {
+    			
     	%>
     
-    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo} ${param.sloFirst}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.code,mlSls.name as mlSls
 ,to_char(sls.dateStart,'dd.mm.yyyy')||' '||cast(sls.entranceTime as varchar(5)) as dateStartSls
@@ -128,6 +130,7 @@ select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.co
 ,ml1.name as mlSlo1,to_char(slo1.dateStart,'dd.mm.yyyy')||' '||cast(slo1.entranceTime as varchar(5)) as dateStartSlo1
 ,ml2.name as mlSlo2,to_char(slo2.dateStart,'dd.mm.yyyy')||' '||cast(slo2.entranceTime as varchar(5)) as dateStartSlo2
 from medcase slo
+left join BedFund bf on bf.id=slo.bedFund_id
 left join MedCase sls on sls.id=slo.parent_id
 left join Patient pat on pat.id=sls.patient_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -144,7 +147,7 @@ ${departmentSql} ${department1Sql} ${department2Sql}
 and slo.dtype='DepartmentMedCase' and slo1.dtype='DepartmentMedCase'
 and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  ${viewSql} 
-${filterByCodeSql} ${filterByNameSql}
+${filterByCodeSql} ${filterByNameSql} ${sloPrevSql} ${daysSql}
 order by pat.lastname
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -189,7 +192,89 @@ order by pat.lastname
       </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%} else { %>
+    <%
+    		} else if (typeReport!=null &&typeReport.equals("2")) {
+    			%>
+    		    
+    		    <msh:section title="Свод за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}  ${param.sloFirst}">
+    		    <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+    		select '&sloFirst='||case when slo.prevMedcase_id is null then '' else 'Перевод' end||'&department='||ml.id||'&department1='||coalesce(ml1.id,-1)||'&department2='||coalesce(ml2.id,-1)||'&cntDays='||case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end,case when slo.prevMedcase_id is null then '' else 'Перевод' end as mlSls
+    		,ml.name as mlname
+    		,ml1.name as mlSlo1
+    		,ml2.name as mlSlo2
+    		,case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end as beds
+    		,count(slo.id) as slocnt
+    		from medcase slo
+    		left join BedFund bf on bf.id=slo.bedfund_id
+    		left join MedCase sls on sls.id=slo.parent_id
+    		left join Patient pat on pat.id=sls.patient_id
+    		left join StatisticStub ss on ss.id=sls.statisticStub_id
+    		left join medcase slo1 on slo1.prevMedCase_id=slo.id
+    		left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+    		left join mislpu mlSls on mlSls.id=sls.department_id
+    		left join mislpu ml on ml.id=slo.department_id
+    		left join mislpu ml1 on ml1.id=slo1.department_id
+    		left join mislpu ml2 on ml2.id=slo2.department_id
+
+    		where 
+    		slo.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')
+    		${departmentSql} ${department1Sql} ${department2Sql}
+    		and slo.dtype='DepartmentMedCase' and slo1.dtype='DepartmentMedCase'
+    		and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+    		 ${viewSql} 
+    		${filterByCodeSql} ${filterByNameSql}
+    		 ${sloPrevSql} ${daysSql}
+    		group by ml.id,ml1.id,ml2.id
+    		,ml.name, ml1.name, ml2.name ,case when slo.prevMedcase_id is null then '' else 'Перевод' end
+    		,case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end
+    		order by ml.name
+    		    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    		    <msh:sectionTitle>
+    		    
+    		    <form action="print-stac_journal_transfer_department.do" method="post" target="_blank">
+    		    Реестр услуг.
+    		    <input type='hidden' name="sqlText" id="sqlText" value="${journal_expert_sql}"> 
+    		    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    		    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    		    <input type='hidden' name="s" id="s" value="PrintService">
+    		    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    		    <input type="submit" value="Печать"> 
+    		    </form>
+    		    </msh:sectionTitle>
+    		    <msh:sectionContent>
+    		    <msh:table name="journal_expert" action=" javascript:void(0)"
+    		    viewUrl="stac_journal_transfer_department.do?typeReport=1&typeView=${param.typeView}&short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+    		     idField="1" >
+    		      <msh:tableColumn columnName="#" property="sn" />
+    		      <msh:tableColumn columnName="Тип пост." property="2" />
+    		      <msh:tableColumn columnName="Отделение 1" property="3" />
+   		          <msh:tableColumn columnName="Кол-во случаев" property="7" />
+      		      
+    		      <msh:tableColumn columnName="Отделение 2" property="4" />
+    		      <msh:tableColumn columnName="Отделение 3" property="5" />
+    		      <msh:tableColumn columnName="Койко-дней" property="6" />
+    		      </msh:table>
+    		    </msh:sectionContent>
+    		    </msh:section>
+    		    <%    			
+    		}
+    		
+    		} else { 
+    			if (typeReport!=null && typeReport.equals("1")) {
+    		
+    		%>
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.code,mlSls.name as mlSls
@@ -199,6 +284,7 @@ select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.co
 ,ml1.name as mlSlo1,to_char(slo1.dateStart,'dd.mm.yyyy')||' '||cast(slo1.entranceTime as varchar(5)) as dateStartSlo1
 ,ml2.name as mlSlo2,to_char(slo2.dateStart,'dd.mm.yyyy')||' '||cast(slo2.entranceTime as varchar(5)) as dateStartSlo2
 from medcase slo
+left join BedFund bf on bf.id=slo.bedFund_id
 left join MedCase sls on sls.id=slo.parent_id
 left join Patient pat on pat.id=sls.patient_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -216,6 +302,7 @@ and slo.dtype='DepartmentMedCase' and slo1.dtype='DepartmentMedCase'
 and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  ${viewSql} 
 ${filterByCodeSql} ${filterByNameSql}
+ ${sloPrevSql} ${daysSql}
 and slo.prevMedCase_id is null
 order by pat.lastname
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -262,7 +349,90 @@ order by pat.lastname
     </msh:sectionContent>
     </msh:section>
     <% 
+    } else if (typeReport!=null && typeReport.equals("2")) {
+    	
+		%>
+<msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+<ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+select '&sloFirst='||case when slo.prevMedcase_id is null then '' else 'Перевод' end||'&department='||ml.id||'&department1='||coalesce(ml1.id,-2)||'&department2='||coalesce(ml2.id,-1)||'&cntDays='||case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end as id,case when slo.prevMedcase_id is null then '' else 'Перевод' end as mlSls
+,ml.name as mlname
+,ml1.name as mlSlo1
+,ml2.name as mlSlo2
+,case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end as days
+,count(slo.id) as cntSlo
+from medcase slo
+left join bedfund bf on slo.bedFund_id=bf.id
+left join MedCase sls on sls.id=slo.parent_id
+left join Patient pat on pat.id=sls.patient_id
+left join StatisticStub ss on ss.id=sls.statisticStub_id
+left join medcase slo1 on slo1.prevMedCase_id=slo.id
+left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join mislpu mlSls on mlSls.id=sls.department_id
+left join mislpu ml on ml.id=slo.department_id
+left join mislpu ml1 on ml1.id=slo1.department_id
+left join mislpu ml2 on ml2.id=slo2.department_id
+
+where 
+slo.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')
+${departmentSql} ${department1Sql} ${department2Sql}
+and slo.dtype='DepartmentMedCase' and slo1.dtype='DepartmentMedCase'
+and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+${viewSql} 
+${filterByCodeSql} ${filterByNameSql}
+and slo.prevMedCase_id is null
+group by ml.id,ml1.id,ml2.id
+,ml.name ,ml1.name ,ml2.name ,case when slo.prevMedcase_id is null then '' else 'Перевод' end
+,case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end
+order by ml.name
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+<msh:sectionTitle>
+
+<form action="print-.do" method="post" target="_blank">
+Свод.
+<input type='hidden' name="sqlText" id="sqlText" value="${journal_expert_sql}"> 
+<input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+<input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+<input type='hidden' name="s" id="s" value="PrintService">
+<input type='hidden' name="m" id="m" value="printNativeQuery">
+<input type="submit" value="Печать"> 
+</form>
+</msh:sectionTitle>
+<msh:sectionContent>
+<msh:table name="journal_expert"
+action=" javascript:void(0)" 
+viewUrl="stac_journal_transfer_department.do?typeReport=1&typeView=${param.typeView}&short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+    		    
+idField="1" >
+      	
+  <msh:tableColumn columnName="#" property="sn" />
+  <msh:tableColumn columnName="Тип пост." property="2" />
+  <msh:tableColumn columnName="Отделение 1" property="3" />
+  <msh:tableColumn columnName="Кол-во случаев" property="7" />
+  
+  <msh:tableColumn columnName="Отделение 2" property="4" />
+  <msh:tableColumn columnName="Отделение 3" property="5" />
+  <msh:tableColumn columnName="Койко-дней" property="6" />
+</msh:table>
+</msh:sectionContent>
+</msh:section>
+<%     
+    
+    
     }
+    			
+    		}
     } else {%>
     	<i>Нет данных </i>
     	<% 

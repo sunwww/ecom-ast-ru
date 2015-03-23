@@ -62,6 +62,7 @@
                                       size="100" rows="25" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
                     
                 </msh:row>
+
                 <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
                 <msh:row>
                     <td colspan="3" align="right">
@@ -71,6 +72,9 @@
                     <tags:keyWord name="record" service="KeyWordService" methodService="getDecryption"/>
                 </msh:row>
                 </msh:ifFormTypeIsNotView>
+                <msh:row>
+                	<msh:textArea property="journalText" fieldColSpan="8" rows="2" size="100" label="Принятые меры (для журнала)"/>
+                </msh:row>
                 <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
                 
                 <msh:row>
@@ -157,7 +161,7 @@
     	</msh:ifFormTypeIsNotView>
     	<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
     		<script type="text/javascript">
-    			if (confirm("Вы хотите создать дневник на основе шаблона?")) {
+    			if ($('record').value=="" && confirm("Вы хотите создать дневник на основе шаблона?")) {
     				showtmpTemplateProtocol() ;
     			} else {
     				if ($('dateRegistration').value!="") setFocusOnField('record') ;
@@ -165,7 +169,7 @@
     			}
     		</script>
     	</msh:ifFormTypeIsCreate>
-
+    	
     	<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm"><msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     		<script type="text/javascript">
 
@@ -183,6 +187,22 @@
     	</msh:ifFormTypeIsNotView>
     	
     	</msh:ifFormTypeAreViewOrEdit>
-    
+    	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    		<script type="text/javascript">
+    		TemplateProtocolService.getDtypeMedCase($('medCase').value,{
+    			callback: function(aDtype) {
+                	//alert(aString) ;
+                    if (aDtype!=null && aDtype=="HospitalMedCase") {
+                    	$('stateName').className="autocomplete horizontalFill required";
+                    	$('typeName').className="autocomplete horizontalFill required";
+                        $('journalText').className="required maxHorizontalSize";
+                    } else if (aDtype!=null && aDtype=="DepartmentMedCase") {
+                    	$('typeName').className="autocomplete horizontalFill required";
+                    	$('stateName').className="autocomplete horizontalFill required";
+                    }
+                 }
+    		})
+    		</script>
+    	</msh:ifFormTypeIsNotView>
     </tiles:put>
 </tiles:insert>

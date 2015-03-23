@@ -374,24 +374,31 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), coalesce(") ;
 		sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')')") ;
 		sql.append(",wct.prepatientInfo)") ;
-		sql.append(" as fio from WorkCalendarTime wct ")
+		sql.append(" as fio, vsrt.background,vsrt.colorText,vss.id,vss.name from WorkCalendarTime wct ")
 			.append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
+			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
+			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
 		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!=''))") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
-		res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th></tr><tr><td><ul>") ;
+		res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th><th>Резервы</th></tr><tr><td><ul>") ;
 		for (WebQueryResult wqr:list) {
 			
-			res.append("<li onclick=\"this.childNodes[1].checked='checked';checkRecord('")
+			res.append("<li ");
+			if (wqr.get4()!=null) {
+				res.append("style='color:").append(wqr.get5()).append("; background:").append(wqr.get4()).append("'") ;
+			}
+			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
 				.append(wqr.get1()).append("','")
-				.append(wqr.get2()).append("')\">") ;
+				.append(wqr.get2()).append("','").append(wqr.get6()).append("')\">") ;
 			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
 
 			res.append(" value='")
 			.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
+			.append("#").append(wqr.get6()).append("#").append(wqr.get7())
 			.append("'>") ;
-			res.append(wqr.get3()).append(" (").append(wqr.get2()).append(")") ;
+			res.append(wqr.get3()).append(" (").append(wqr.get2()).append(")").append("#").append(wqr.get7()) ;
 			res.append("</li>") ;
 		}
 		res.append("</ul></td><td><ul>") ;
@@ -406,17 +413,34 @@ public class WorkCalendarServiceJs {
 		.append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))") ;
 		
 		list = service.executeNativeSql(sql.toString(),50);
-
+		
 		for (WebQueryResult wqr:list) {
 			
 			res.append("<li style='padding-left:10px;list-style: none'><i>") ;
 			//res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
-
+			
 			//res.append(" value='")
 			//.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
 			//.append("'>") ;
 			res.append(wqr.get4()).append(" вместо ").append(wqr.get3()).append("") ;
 			res.append("</i></li>") ;
+		}
+		res.append("</ul></td><td><ul>") ;
+		list.clear() ;
+		sql = new StringBuilder() ;
+		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), vsrt.background,vsrt.colorText from WorkCalendarTime wct ")
+			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
+			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
+			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!=''))") ;
+
+		list = service.executeNativeSql(sql.toString(),50);
+
+		for (WebQueryResult wqr:list) {
+			
+			res.append("<li style='padding-left:10px;list-style: none'>") ;
+			res.append(wqr.get4()).append("") ;
+			res.append("</li>") ;
 		}
 		res.append("</ul></td></tr></table>") ;
 		return res.toString() ;

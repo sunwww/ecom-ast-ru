@@ -94,8 +94,19 @@
           <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent"  label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="username" viewOnlyField="true" label="Пользователь"/>
-        	<msh:textField property="createDate" viewOnlyField="true" label="Дата создания"/>
+        	<msh:separator label="Дополнительно" colSpan="4"/>
+        </msh:row>
+        </msh:panel>
+        <msh:panel>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+            <msh:label property="username" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редак."/>
+        	<msh:label property="editTime" label="время"/>
+          	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
@@ -182,7 +193,7 @@
     			
     			}
     		);
-    		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
+    		
     	}
       	function goNewDirection() {
       		window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&orderLpu="+$('orderLpu').value+"&tmp="+Math.random() ;

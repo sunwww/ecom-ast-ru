@@ -236,6 +236,7 @@
      // Отмена
      function cancel${name}FindPatientByFond() {
         the${name}FindPatientByFond.hide() ;
+        msh.effect.FadeEffect.pushFadeAll();
      }
      function checkedAll${name}FindPatientByFond(aValue) {
     	 var frm = document.forms['frmFond'] ;

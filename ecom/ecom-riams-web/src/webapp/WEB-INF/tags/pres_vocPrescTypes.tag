@@ -76,7 +76,7 @@
 								var param = presTypes[i].split(":");
 								var tID = param[0];
 								var tName = param[1];
-								var radio = "<td id='tdPresType"+i+"'>";
+								var radio = "<td id='tdPresType"+i+"'  onclick='this.childNodes[0].checked=\"checked\";this.childNodes[0].onclick();'>";
 								radio +="<input type='radio' id = 'presType"+i+"' name='presType' value='"+tID+"' onclick='setType("+tID+",\""+tName+"\")'>"+tName+"</td>";
 								tbody.appendChild(row);
 								row.innerHTML=radio;

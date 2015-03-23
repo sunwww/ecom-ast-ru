@@ -65,8 +65,9 @@
                  alt='На главное меню' title='Переход на главное меню'/>
         </a>
         <ul id='user'>
-
+        	<msh:ifInRole roles="/Policy/Mis/CustomMessage/PhoneAmokb">
             <li><a href='js-riams-phone.do' target='_blank'>Телефоны АМОКБ</a></li>
+            </msh:ifInRole>
             <li class="separator">|</li>
             <li><a href='ecom_releases.do'>Новости</a></li>
             <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">

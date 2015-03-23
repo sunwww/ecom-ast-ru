@@ -245,13 +245,17 @@
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
+        </msh:panel>
+        <msh:panel>
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
-            <msh:label property="username" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        	<msh:label property="createTime" label="время"/>
+            <msh:label property="username" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
-          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        	<msh:label property="editTime" label="время"/>
+          	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>

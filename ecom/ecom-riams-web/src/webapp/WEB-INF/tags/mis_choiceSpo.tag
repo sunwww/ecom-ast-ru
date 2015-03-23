@@ -74,6 +74,7 @@
      // Отмена
      function cancel${name}ChoiceSpo() {
     	 the${name}ChoiceSpoDialog.hide() ;
+    	 msh.effect.FadeEffect.pushFadeAll();
      }
 
      // Сохранение данных

@@ -123,6 +123,31 @@
           </msh:table>
         </msh:section>
     </msh:ifInRole>
+    
+    		<msh:ifInRole roles="/Policy/Mis/Contract/PriceList/PricePosition/PriceMedService/View">
+			<msh:section title="Соответствия с прейскурантом">
+			<ecom:webQuery name="pricePosition" 
+			nativeSql="select pms.id as pmsid,pl.name as plname,pg.name as pgname,pp.code as ppcode
+			,pp.name as ppname,pp.cost from PriceMedService pms
+			left join PricePosition pp on pp.id=pms.pricePosition_id
+			left join priceposition pg on pg.id=pp.parent_id
+			left join pricelist pl on pl.id=pp.priceList_id
+			where pms.medService_id=${param.id}
+			"
+			/>
+				<msh:table name="pricePosition" 
+				viewUrl="entityParentView-contract_priceMedService.do?short=Short"
+				action="entityParentView-contract_priceMedService.do" idField="1">
+					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Прейскурант" property="2"/>
+					<msh:tableColumn columnName="Группа" property="3"/>
+					<msh:tableColumn columnName="Код по прейскуранту" property="4"/>
+					<msh:tableColumn columnName="Наименование" property="5"/>
+					<msh:tableColumn columnName="Цена" property="6"/>
+				</msh:table>
+			</msh:section>
+		</msh:ifInRole>
+		
       </msh:ifFormTypeIsView>
     
   </tiles:put>

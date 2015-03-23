@@ -20,7 +20,7 @@
 </style>
  
  <msh:sideLink name="${title}" action=" javascript:show${name}WorkCalendar('.do') " />
- 
+ <form action="javascript:void(0)" >
  <div id='${name}WorkCalendar' class='dialog'>
     <h2>Выбор даты</h2>
     <div class='rootPane'>
@@ -28,20 +28,22 @@
     <input type="hidden" id="${name}WorkCalendar" name="${name}WorkCalendar"/>
     <input type="hidden" id="${name}WorkCalendarDay" name="${name}WorkCalendarDay"/>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/ViewAll">
+<msh:panel>
     	<msh:autoComplete size="120" property="${name}WorkFunction" label="Рабочая функция" vocName="workFunctionByDirect" horizontalFill="true"/>
-    </msh:ifInRole>
+ </msh:panel>    </msh:ifInRole>
     <div id="idManyCalendar"></div>
     
         <div style="float: left; margin-left: 1em; margin-bottom: 1em;" id="workCalendarMain${name}"></div>
         <div id="workCalendarComment${name}" style="margin-right: 1em; margin-bottom: 1em;"></div>
 		<div  style="float: right;">
-            <input type="button" value='OK' id='${name}ButtonOk' name='${name}ButtonOk' onclick='save${name}WorkCalendar()'/>
+            <input type="button" onclick="javascript:save${name}WorkCalendar()" value='OK' id='${name}ButtonOk' name='${name}ButtonOk'/>
             <input type="button" value='Отменить' id='${name}ButtonCancel' name='${name}ButtonCancel' onclick='cancel${name}WorkCalendar()'/>
         </div>
       
  </div>
  </div>
-    
+
+    </form>
 <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
 
 <script type="text/javascript">
@@ -52,7 +54,46 @@
      var the${name}Calendar;
      var zam = 0 ;
      
-     
+     function getWorkCalendar() {
+    		$('workCalendarMain${name}').innerHTML="" ;
+    		$('workCalendarComment${name}').innerHTML="" ;
+    		$('${name}ButtonOk').disabled=true ;
+    			WorkCalendarService.getWorkCalendar(
+    			          the${name}WorkFunction.value, 
+    				    	   	{
+    						 callback: function(aString1) {
+    						                	     $('${name}WorkCalendar').value=aString1 ;
+    						                	     var currentDay = 0 ;
+    						                	     if (currentDay==0) {
+    							                          var date=new Date();
+    		  									          var y = date.getFullYear();
+    												      var m = date.getMonth()+1;     // integer, 0..11
+    												      var d = date.getDate();      // integer, 1..31
+    													  the${name}Calendar = Calendar.setup(
+    													    {
+    													      flat         : "workCalendarMain${name}", // ID of the parent element
+    													      flatCallback : ${name}DateChanged ,          // our callback function
+    													      
+    													    }
+    													  );
+    	  						                	      getInfoByDay(d,m,y) ;
+    	  						                	       the${name}WorkCalendarDialog.hide() ;
+    	  						                	       the${name}WorkCalendarDialog.show() ;
+    						                	      }
+    					       						} ,
+    						errorHandler: function(aMessage) {
+    								var ind = aMessage.indexOf(":") ;
+    								aMessage = aMessage.substring(ind+1) ;
+    											    $('workCalendarMain${name}').innerHTML = "<p class='error'>"+aMessage +"</p>";
+    											    
+    	 				                	       the${name}WorkCalendarDialog.hide() ;
+    	 				                	       the${name}WorkCalendarDialog.show() ;
+    											    
+    										}
+    						            }
+    					         ) ;
+    					         
+    	}
   function ${name}DateChanged(calendar) {
   
 
@@ -122,21 +163,27 @@
 
      // Показать
      function show${name}WorkCalendar() {
-
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}Initialized) {
          	init${name}WorkCalendar() ;
           }
          the${name}WorkCalendarDialog.show() ;
+         try {
+        	 $('${name}WorkFunctionName').focus() ;
+        	 
+         } catch(e) {
+        	 
+         }
 
      }
      
      // Сохранение данных
      function save${name}WorkCalendar() {
         var saveIs = 1, error="";
-        window.location = "${action}?id="+$('${name}WorkCalendarDay').value
-        	+"&tmp="+Math.random();
-     	the${name}WorkCalendarDialog.hide() ;
+            window.location = "${action}?id="+$('${name}WorkCalendarDay').value
+	        	+"&tmp="+Math.random();
+	     	the${name}WorkCalendarDialog.hide() ;
+        
      }
      
      // инициализация диалогового окна
@@ -181,46 +228,7 @@
      
      }
      
-function getWorkCalendar() {
-	$('workCalendarMain${name}').innerHTML="" ;
-	$('workCalendarComment${name}').innerHTML="" ;
-	$('${name}ButtonOk').disabled=true ;
-		WorkCalendarService.getWorkCalendar(
-		          the${name}WorkFunction.value, 
-			    	   	{
-					 callback: function(aString1) {
-					                	     $('${name}WorkCalendar').value=aString1 ;
-					                	     var currentDay = 0 ;
-					                	     if (currentDay==0) {
-						                          var date=new Date();
-	  									          var y = date.getFullYear();
-											      var m = date.getMonth()+1;     // integer, 0..11
-											      var d = date.getDate();      // integer, 1..31
-												  the${name}Calendar = Calendar.setup(
-												    {
-												      flat         : "workCalendarMain${name}", // ID of the parent element
-												      flatCallback : ${name}DateChanged ,          // our callback function
-												      
-												    }
-												  );
-  						                	      getInfoByDay(d,m,y) ;
-  						                	       the${name}WorkCalendarDialog.hide() ;
-  						                	       the${name}WorkCalendarDialog.show() ;
-					                	      }
-				       						} ,
-					errorHandler: function(aMessage) {
-							var ind = aMessage.indexOf(":") ;
-							aMessage = aMessage.substring(ind+1) ;
-										    $('workCalendarMain${name}').innerHTML = "<p class='error'>"+aMessage +"</p>";
-										    
- 				                	       the${name}WorkCalendarDialog.hide() ;
- 				                	       the${name}WorkCalendarDialog.show() ;
-										    
-									}
-					            }
-				         ) ;
-				         
-}
+
 </script>
 
 <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/ViewAll">

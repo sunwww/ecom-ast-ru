@@ -5,13 +5,16 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-cal_timeExample.do" defaultField="calendarTime">
+		<msh:form action="/entityParentSaveGoParentView-cal_timeExample.do" defaultField="calendarTime">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="dayPattern" />
 			<msh:panel>
 				<msh:row>
 					<msh:textField property="calendarTime" label="Время"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="reserveType" vocName="vocServiceReserveType" size="50" label="Резерв"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>

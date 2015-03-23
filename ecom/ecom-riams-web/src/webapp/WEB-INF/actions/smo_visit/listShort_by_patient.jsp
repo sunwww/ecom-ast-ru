@@ -35,7 +35,7 @@ left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
-where mc.patient_id='${param.id}' and mc.DTYPE='Visit' and mc.dateStart is not null and (mc.noActuality is null or cast(mc.noActuality as integer)=0)
+where mc.patient_id='${param.id}' and (mc.DTYPE='Visit' or mc.DTYPE='ShortMedCase') and mc.dateStart is not null and (mc.noActuality is null or cast(mc.noActuality as integer)=0)
 order by mc.dateStart desc, mc.timeExecute desc
 "/>
     <msh:table viewUrl="entityShortView-smo_visit.do" name="listByPatient" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">

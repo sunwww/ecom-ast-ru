@@ -58,6 +58,7 @@
      // Отмена
      function cancel${name}ChangeServiceStream() {
          the${name}ChangeServiceStreamDialog.hide() ;
+         msh.effect.FadeEffect.pushFadeAll();
      }
 
      // Сохранение данных

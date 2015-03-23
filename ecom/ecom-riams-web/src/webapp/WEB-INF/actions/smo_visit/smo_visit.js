@@ -49,6 +49,7 @@ function addDisabilityByRedirectFromVisit(aForm, aCtx) {
 function getCalDayId(aCtx) {
 	var calendarDayId = aCtx.request.getParameter("id") ;
 	//throw "3"+calendarDayId ;
+	if (calendarDayId==null||calendarDayId=="null") calendarDayId=null ;
 	if(calendarDayId==null) {
 		calendarDayId = aCtx.session.getAttribute("smo_visit.currentCalendarDay") ;
 		//throw "2"+calendarDayId ;

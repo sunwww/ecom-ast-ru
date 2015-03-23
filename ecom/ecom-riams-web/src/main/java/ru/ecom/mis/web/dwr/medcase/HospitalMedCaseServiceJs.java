@@ -1,18 +1,16 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
-import com.sun.org.apache.bcel.internal.generic.CPInstruction;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.jaas.ejb.domain.SoftConfig;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
@@ -26,7 +24,153 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
-	
+	public String viewTable263sls(Long aHDFid,String aPreHospDate,String aLastname,String aFirstname, String aMiddlename, String aBirthday, String aMode, String aDenied, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
+		StringBuilder sql = new StringBuilder() ; 
+		sql.append(" select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename") ; 
+		sql.append(" 	||' '||to_char(pat.birthday,'dd.mm.yyyy') as fio") ;
+		sql.append(" ,case when sls.emergency='1' then 'экстр' else 'план' end as e3mer") ;
+		sql.append(" ,vbt.codeF||' '||vbt.name as f4") ;
+		sql.append(" ,to_char(sls.dateStart,'dd.mm.yyyy') as f5") ;
+		sql.append(" ,to_char(sls.orderdate,'dd.mm.yyyy') as o6rderdate, olpu.codef||' '||olpu.name as o7lpuname") ;
+		sql.append(" ,pat.phone as p8,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4') as f9") ;
+		sql.append(" ,ss.code as f11") ;
+		sql.append(" ,vdh.name as f12") ;
+		sql.append(" from medcase sls ") ;
+		sql.append(" left join MisLpu lpu on lpu.id=sls.lpu_id") ;
+		sql.append(" left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'") ;
+		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id") ;
+		sql.append(" left join MisLpu olpu on olpu.id=sls.orderlpu_id") ;
+		sql.append(" left join MisLpu ml on ml.id=slo.department_id") ;
+		sql.append(" left join VocBedType vbt on vbt.id = bf.bedType_id") ;
+		sql.append(" left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id") ;
+		sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
+		sql.append(" left join HospitalDataFond hdf on hdf.hospitalMEdCase_id=sls.id") ;
+		sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id") ;
+		sql.append(" left join Patient pat on pat.id=sls.patient_id") ;
+		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
+		sql.append(" left join MisLpu oml on oml.id=sls.orderLpu_id") ;
+		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(f.format(ConvertSql.parseDate(aPreHospDate, -7))).append("','dd.mm.yyyy') and to_date('").append(f.format(ConvertSql.parseDate(aPreHospDate, 28))).append("','dd.mm.yyyy') and hdf.id is null") ;
+		sql.append(" and (slo.id is null or slo.prevMedCase_id is null) and (vbst.id is null or vbst.code='1')") ;
+		sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+		sql.append(" and hdf.hospitalmedcase_id is null") ;
+
+		if (aDenied==null||aDenied.equals("1")) {
+			sql.append(" and sls.deniedHospitalizating_id is null") ;
+		} else if (aDenied.equals("2")) {
+			sql.append(" and sls.deniedHospitalizating_id is not null") ;
+		}
+		if (aMode==null||aMode.equals("1")) {
+			sql.append(" and pat.lastname='").append(aLastname).append("'") ;
+			sql.append(" and pat.firstname='").append(aFirstname).append("'") ;
+			sql.append(" and pat.middlename='").append(aMiddlename).append("'") ;
+			sql.append(" and pat.birthday=to_date('").append(aBirthday).append("','dd.mm.yyyy')") ;
+		} else if (aMode.equals("2")) {
+			sql.append(" and pat.lastname='").append(aLastname).append("'") ;
+		} else if (aMode.equals("3")) {
+			sql.append(" and pat.firstname='").append(aFirstname).append("'") ;
+		} else if (aMode.equals("4")) {
+			sql.append(" and coalesce(sls.datestart)=to_date('").append(aPreHospDate).append("','dd.mm.yyyy')") ;
+		}
+		sql.append(" order by pat.lastname,pat.firstname,pat.middlename,sls.dateStart") ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
+		StringBuilder ret = new StringBuilder() ;
+		ret.append("<table border='1'><tr>") ;
+		ret.append("<th></th>") ;
+		ret.append("<th>ФИО</th>") ;
+		ret.append("<th>Показания</th>") ;
+		ret.append("<th>Профиль</th>") ;
+		ret.append("<th>Дата госп.</th>") ;
+		ret.append("<th>Дата напр.</th>") ;
+		ret.append("<th>Телефон</th>") ;
+		ret.append("<th>Диагноз</th>") ;
+		ret.append("<th>Стат.карта</th>") ;
+		ret.append("<th>Причина отказа от госп.</th>") ;
+		ret.append("</tr>") ;
+		for (WebQueryResult wqr : l) {
+			ret.append("<tr>") ;
+			if (wqr.get12()==null) {
+				ret.append("<td><input type='button' value='Выбор' title='Установить соответствие с этой госпитализаций' onclick=\"setHospByHDF('").append(aHDFid).append("','").append(wqr.get1()).append("')\"></td>") ;
+			} else {
+				ret.append("<td><input type='button' value='Отказ' title='Установить отказ от госпитализации' onclick=\"showDiag263denied(").append(aHDFid).append(")\"></td>") ;
+			}ret.append("<td>").append(wqr.get2()).append("</td>") ;
+			ret.append("<td>").append(wqr.get3()).append("</td>") ;
+			ret.append("<td>").append(wqr.get4()).append("</td>") ;
+			ret.append("<td>").append(wqr.get5()).append("</td>") ;
+			ret.append("<td>").append(wqr.get6()).append("</td>") ;
+			ret.append("<td>").append(wqr.get7()).append("</td>") ;
+			ret.append("<td>").append(wqr.get8()).append("</td>") ;
+			ret.append("<td>").append(wqr.get9()).append("</td>") ;
+			ret.append("<td>").append(wqr.get10()).append("</td>") ;
+			ret.append("<td>").append(wqr.get11()).append("</td>") ;
+			ret.append("<td>").append(wqr.get12()).append("</td>") ;
+			ret.append("</tr>") ;
+		}
+		ret.append("</table>") ;
+		return ret.toString() ;
+	}
+	public String viewTable263narp(Long aSLSid,String aPreHospDate,String aLastname,String aFirstname, String aMiddlename, String aBirthday, String aMode, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ; 
+		sql.append(" select hdf.id,hdf.numberfond,hdf.lastname||' '||hdf.firstname||' '||hdf.middlename") ; 
+		sql.append(" 	||' '||to_char(hdf.birthday,'dd.mm.yyyy') as fio") ;
+		sql.append(" ,hdf.formHelp") ;
+		sql.append(" ,hdf.profile as f5") ;
+		sql.append(" ,coalesce(hdf.prehospdate,hdf.hospdate)") ;
+		sql.append(" ,hdf.directdate,hdf.snils as f8snils") ;
+		sql.append(" ,hdf.phone,hdf.diagnosis") ;
+		sql.append(" ,hdf.orderlpucode") ;
+		sql.append(" ,hdf.directlpucode") ;
+		sql.append(" ,hdf.statcard as f13") ;
+		sql.append(" ,hdf.deniedHospital") ;
+		sql.append(" ,''''||hdf.id||''','''||coalesce(''||hdf.deniedHospital,'')||'''' as idden") ;
+		sql.append(" from HospitalDataFond hdf") ;
+		sql.append(" where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' when hdf.IsTable4='1' then '1' else null end) is null") ;
+		sql.append(" and hdf.deniedHospital is null") ;
+		if (aMode==null||aMode.equals("1")) {
+			sql.append(" and hdf.lastname='").append(aLastname).append("'") ;
+			sql.append(" and hdf.firstname='").append(aFirstname).append("'") ;
+			sql.append(" and hdf.middlename='").append(aMiddlename).append("'") ;
+			sql.append(" and hdf.birthday=to_date('").append(aBirthday).append("','dd.mm.yyyy')") ;
+		} else if (aMode.equals("2")) {
+			sql.append(" and hdf.lastname='").append(aLastname).append("'") ;
+		} else if (aMode.equals("3")) {
+			sql.append(" and hdf.firstname='").append(aFirstname).append("'") ;
+		} else if (aMode.equals("4")) {
+			sql.append(" and coalesce(hdf.prehospdate,hdf.hospdate)=to_date('").append(aPreHospDate).append("','dd.mm.yyyy')") ;
+		}
+		sql.append(" order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id") ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
+		StringBuilder ret = new StringBuilder() ;
+		ret.append("<table border='1'><tr>") ;
+		ret.append("<th></th>") ;
+		ret.append("<th></th>") ;
+		ret.append("<th>№ по фонду</th>") ;
+		ret.append("<th>ФИО</th>") ;
+		ret.append("<th>Форма помощи</th>") ;
+		ret.append("<th>Профиль</th>") ;
+		ret.append("<th>Пред. дата госп.</th>") ;
+		ret.append("</tr>") ;
+		for (WebQueryResult wqr : l) {
+			ret.append("<tr>") ;
+			ret.append("<td><input type='button' value='Выбор' title='Установить соответствие с этим направлением' onclick=\"setHospByHDF('").append(wqr.get1()).append("','").append(aSLSid).append("')\"></td>") ;
+			ret.append("<td><input type='button' value='Отказ' title='Установить отказ от госпитализации' onclick=\"showDiag263denied(").append(wqr.get15()).append(")\"></td>") ;
+			ret.append("<td>").append(wqr.get2()).append("</td>") ;
+			ret.append("<td>").append(wqr.get3()).append("</td>") ;
+			ret.append("<td>").append(wqr.get4()).append("</td>") ;
+			ret.append("<td>").append(wqr.get5()).append("</td>") ;
+			ret.append("<td>").append(wqr.get6()).append("</td>") ;
+			ret.append("</tr>") ;
+		}
+		ret.append("</table>") ;
+		return ret.toString() ;
+	}
+	public String updateTable(String aTable, String aFldId, String aValId, String aFldSet, String aValSet, String aWhereAdd, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"='"+aValSet+"' where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+		return "" ;
+	}
 	public String isCanDischarge(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
@@ -76,7 +220,14 @@ public class HospitalMedCaseServiceJs {
 		}
 		
 	}
+	
 	public static String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
+		return getDataByReferencePrint( aMedCase, aType, false, aRequest) ;
+	}
+	public static String getDataByReferenceUrl(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
+		return getDataByReferencePrint( aMedCase, aType, true, aRequest) ;
+	}
+	public static String getDataByReferencePrint(Long aMedCase,String aType, boolean aIsUrl, HttpServletRequest aRequest) throws Exception {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		ISoftConfigService sservice = Injection.find(aRequest).getService(ISoftConfigService.class) ;
@@ -277,20 +428,27 @@ public class HospitalMedCaseServiceJs {
 				url_csp.append("http://").append(cspurl)
 					.append("/getmedcasecost.csp?CacheUserName=_system&tmp=").append(Math.random()).append("&CachePassword=sys&")
 					.append(href_slo) ;
-				System.out.println(url_csp) ;
-				String cost = ActionUtil.getContentOfHTTPPage(url_csp.toString().replaceAll(" ", ""),code_page);
-				//String cost = "11#2222" ;
-				System.out.println("----cost--->"+cost) ;
-				if (isf) {
-					res.append("&render=") ;
-					isf=false;
-				} else {
-					res.append("%23%23") ;
-				}
-				StringBuilder c = getRender(cost,new StringBuilder().append(wqr_slo.get17()).append(". КОЙКИ "),new StringBuilder().append(" С ").append(wqr_slo.get15()).append(" ПО ").append(wqr_slo.get16())) ;
+				//System.out.println(url_csp) ;
 				
-				res.append(c.toString().replaceAll("#", "%23").replaceAll(" ", "%20")) ;
-				System.out.println(res.toString()) ;
+				StringBuilder c ;
+				if (aIsUrl) {
+					res.append(" ").append(wqr_slo.get17()).append(" С ").append(wqr_slo.get15()).append(" ПО ").append(wqr_slo.get16()).append(" url=").append(url_csp) ;
+				} else {
+					String cost = ActionUtil.getContentOfHTTPPage(url_csp.toString().replaceAll(" ", ""),code_page);
+					//String cost = "11#2222" ;
+					//System.out.println("----cost--->"+cost) ;
+					if (isf) {
+						res.append("&render=") ;
+						isf=false;
+					} else {
+						res.append("%23%23") ;
+					}
+					c = getRender(cost,new StringBuilder().append(wqr_slo.get17()).append(". КОЙКИ "),new StringBuilder().append(" С ").append(wqr_slo.get15()).append(" ПО ").append(wqr_slo.get16())) ;
+					res.append(c.toString().replaceAll("#", "%23").replaceAll(" ", "%20")) ;
+				}
+				
+				
+				//System.out.println(res.toString()) ;
 				}
 			
 			}

@@ -39,6 +39,13 @@ public class PrescriptionForm extends BaseValidatorForm {
 	public Long getService() {return theService;}
 	public void setService(Long aService) {theService = aService;}
 
+	/** Подтип услуги */
+	@Comment("Подтип услуги")
+	public Long getServiceSubType() {return theServiceSubType;}
+	public void setServiceSubType(Long aServiceSubType) {theServiceSubType = aServiceSubType;}
+
+	/** Подтип услуги */
+	private Long theServiceSubType;
 	/** Услуга */
 	private Long theService;
 	/** Тип назначения */

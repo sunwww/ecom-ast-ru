@@ -26,6 +26,9 @@
 	        	<msh:autoComplete property="secUser" label="Пользователю" fieldColSpan="3" vocName="secUser" horizontalFill="true"/>
 	        </msh:row>
 	        <msh:row>
+	        	<msh:autoComplete property="secRole" label="Пол-лям, у которых есть роль" fieldColSpan="3" vocName="role" horizontalFill="true"/>
+	        </msh:row>
+	        <msh:row>
 	        	<msh:checkBox property="isAllUsers" label="Отправить всем пользователям" fieldColSpan="3" horizontalFill="true"/>
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
