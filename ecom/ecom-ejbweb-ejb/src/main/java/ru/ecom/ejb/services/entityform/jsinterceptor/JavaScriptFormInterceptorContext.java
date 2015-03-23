@@ -12,6 +12,7 @@ public class JavaScriptFormInterceptorContext {
 		theManager = aManager ;
 		theSessionContext = aContext ;
 		theInjection = aInjection ;
+		theUsername = theSessionContext.getCallerPrincipal().getName() ;
 	}
 	
 	public EntityManager getManager() {
@@ -21,6 +22,12 @@ public class JavaScriptFormInterceptorContext {
 	public SessionContext getSessionContext() {
 		return theSessionContext ;
 	}
+	/** Пользователь */
+	public String getUsername() {return theUsername;}
+	public void setUsername(String aUsername) {theUsername = aUsername;}
+
+	/** Пользователь */
+	private String theUsername;
 	
 //	public Object serviceInvoke(String aServiceName, String aMethodName, Object[] args) {
 //		return theInjection.invoke(aServiceName, aMethodName, args) ;

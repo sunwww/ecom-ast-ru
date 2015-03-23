@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import ru.nuzmsh.util.format.DateFormat;
+
 public class ConvertSql {
 	public static Long parseLong(Object aValue) {
 		Long ret =null;
@@ -52,9 +54,13 @@ public class ConvertSql {
 		if (aValue==null) return null ;
 		if (aValue instanceof java.sql.Date) {
 			return (java.sql.Date)aValue ;
-		}
-		if (aValue instanceof java.util.Date) {
+		} else if (aValue instanceof java.util.Date) {
 			return new java.sql.Date(((java.util.Date)aValue).getTime()) ;
+		} else if (aValue instanceof java.lang.String) {
+			try {
+				return DateFormat.parseSqlDate((String)aValue) ;
+			} catch (Exception e) {
+			}
 		}
 		return null ;
 	}
