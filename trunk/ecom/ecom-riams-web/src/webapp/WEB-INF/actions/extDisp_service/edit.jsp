@@ -26,7 +26,7 @@ left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join extdispservice eds on eds.dtype='ExtDispExam' and eds.card_id=edc.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' 
-and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
+and case when eds.serviceType_id=edps.serviceType_id then '1' when eds.id is null then '1' else '0' end = '1'
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and veds.id is not null
@@ -67,7 +67,7 @@ left join Worker w1 on w1.id=wf1.worker_id
 left join mislpu ml1 on ml1.id=w1.lpu_id
 left join Patient wp1 on wp1.id=w1.person_id
 where edc.id='${param.id}' 
-and (eds.serviceType_id=edps.serviceType_id or eds.id is null)
+and case when eds.serviceType_id=edps.serviceType_id then '1' when eds.id is null then '1' else '0' end = '1'
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
