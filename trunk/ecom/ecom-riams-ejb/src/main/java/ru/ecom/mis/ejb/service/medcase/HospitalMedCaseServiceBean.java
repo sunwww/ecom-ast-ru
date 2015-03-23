@@ -112,7 +112,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    			//HospitalDataFond hdf ;
 	    			Object id = null ;
 	    			if (!lf.isEmpty()) {
-	    				id=wqr.get1() ;
+	    				id=lf.get(0) ;
 			    	}
 	    			StringBuilder sql1 = new StringBuilder() ;
 	    			StringBuilder sql2 = new StringBuilder() ;
