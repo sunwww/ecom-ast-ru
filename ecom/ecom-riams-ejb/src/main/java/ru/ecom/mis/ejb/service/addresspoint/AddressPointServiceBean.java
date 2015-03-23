@@ -128,9 +128,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     	
     	for (Object[] comp:listComp) {
     	String filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp[1]==null?"-":comp[1])
-    		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage)+".xml" ;
-    	filenames.append("#").append(filename) ;
-    	File outFile = new File(workDir+"/"+filename) ;
+    		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    	filenames.append("#").append(filename+".xml") ;
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	
@@ -163,7 +163,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
-    	xmlDoc.newElement(title, "FILENAME", "P"+aNReestr+"S"+(comp[1]==null?"-":comp[1])+"_"+aPeriodByReestr+aNPackage);
+    	xmlDoc.newElement(title, "FILENAME", filename);
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "ZAP", null);

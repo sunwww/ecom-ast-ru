@@ -103,6 +103,8 @@ function onCreate(aForm, aEntity, aCtx) {
 				var par1 = java.lang.Long.valueOf(param[0]) ;
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
 				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
+				var par4 = (param[3])?java.lang.Long.valueOf(param[3]):null ;
+				//var par5 = (param[4])?java.lang.Long.valueOf(param[4]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
 				if (medService!=null) {
@@ -123,9 +125,32 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
+					var medServiceCabinet ;
 					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
-						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+						medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
+					}
+					//throw "отделение: "+par4+"";
+					if (par4!=null && !par4.equals(java.lang.Long(0))) {
+						var dep = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
+						adMedService.setDepartment(dep);
+					}
+					/*if (par5!=null && !par5.equals(java.lang.Long(0))) {
+						if (!isTemp&&pat!=null&&medService.serviceType!=null 
+								&& medService.serviceType.code.equals("DIAGNOSTIC")&&par2!=null) {
+							var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
+							var v = new Packages.ru.ecom.mis.ejb.domain.medcase.Visit() ;
+							v.serviceStream(hospStream) ;
+							v.setWorkFunctionPlan(medServiceCabinet) ;
+							v.setPatient() ;
+							v.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
+							v.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;							
+							if (wct.medCase==null) {
+								v.setTimePlan(wct) ;
+								v.setDatePlan(wct.workCalendarDay) ;
+							}
+							v.setOrderWorkFunction() ;
+						}*/
 					}
 					aCtx.manager.persist(adMedService) ;
 					matId=null ;
@@ -133,4 +158,3 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 		}
 	}
-}

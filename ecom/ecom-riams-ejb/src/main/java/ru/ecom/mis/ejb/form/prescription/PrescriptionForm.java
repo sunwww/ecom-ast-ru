@@ -8,8 +8,10 @@ import javax.persistence.OneToOne;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -458,6 +460,31 @@ public class PrescriptionForm extends IdEntityForm{
 	private String theTransferTime;
 	/** Дата передачи в лабораторию */
 	private String theTransferDate;
+	
+	/** Время из wct */
+	@Comment("Время из wct")
+	@Persist
+	public Long getCalendarTime() {return theCalendarTime;}
+	public void setCalendarTime(Long aCalendarTime) {theCalendarTime = aCalendarTime;}
 
+	/** Время из wct */
+	private Long theCalendarTime;
+
+	/** Отделение (забора) */
+	@Comment("Отделение (забора)")
+	@Persist
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+
+	/** Отделение (забора) */
+	private Long theDepartment;
+
+	/** Отделение для забора крови */
+	@Comment("Отделение для забора крови")
+	public Long getLabDepartment() {return theLabDepartment;}
+	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
+
+	/** Отделение для забора крови */
+	private Long theLabDepartment;
 }
 

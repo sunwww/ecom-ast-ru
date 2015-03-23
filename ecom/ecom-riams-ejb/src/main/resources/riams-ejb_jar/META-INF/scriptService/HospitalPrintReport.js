@@ -479,9 +479,11 @@ function printJournalByDay(aCtx,aParams) {
 			+" ,coalesce(to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5))"
 			+" ||' '||coalesce(vho.name,'')||' '||coalesce(tml.name,''),'')  as finishresult"
 		    +", case when m.relativeMessage='1' then 'Да' else '' end as relativemessage"
-			+" ,vdh.name as vdhname"
+			+" ,case when m.deniedHospitalizating_id is not null then vdh.name ||coalesce('. '||list(case when trim(prot.journalText)='-' then null else prot.journalText end),'') else '' end as vdhname"
 			+" ,case when m.deniedHospitalizating_id is not null then vh.name else '' end as vhname"
+			
 		    +" from MedCase as m  "
+		    +" left join Diary as prot on prot.medCase_id=m.id" 
 		    +" left join StatisticStub as sc on sc.medCase_id=m.id" 
 		    +" left outer join Patient pat on m.patient_id = pat.id" 
 		    +" left join MisLpu as ml on ml.id=m.department_id "

@@ -39,7 +39,7 @@ public class PrescriptListCreateInterceptor implements IFormInterceptor {
 		DietPrescriptionForm dietForm = form.getDietForm() ;
 		// Сохранение диеты
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Prescription/DietPrescription/Create")
-				&&dietForm!=null && dietForm.getDiet()!=null && !dietForm.equals(Long.valueOf(0))
+				&& dietForm!=null && dietForm.getDiet()!=null && !dietForm.getDiet().equals(Long.valueOf(0))
 				&& dietForm.getPlanStartDate()!=null 
 						&& !dietForm.getPlanStartDate().equals("")
 				) {

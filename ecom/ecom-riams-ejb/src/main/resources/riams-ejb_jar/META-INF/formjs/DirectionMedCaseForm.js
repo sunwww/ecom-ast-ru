@@ -72,13 +72,19 @@ function onCreate(aForm, aVisit, aCtx) {
 
 function onPreCreate(aForm, aCtx) {
 	checks(aCtx,aForm) ;
-	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
+	var date = new java.util.Date() ;
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 
 
 function onPreSave(aForm, aVisit, aCtx) {
     // освобождение предыдущего времени
+	var date = new java.util.Date() ;
+	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
+	aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 	
 	checks(aCtx,aForm) ;
 	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aForm.id))  ;

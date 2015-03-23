@@ -15,18 +15,39 @@ function onCreate(aForm, aEntity, aContext) {
 	if (+aForm.secUser) {
 		var user = aContext.manager.find(Packages.ru.ecom.jaas.ejb.domain.SecUser,aForm.secUser) ;
 		aEntity.setRecipient(user.login) ;
-	} else {
-		var listUser = aContext.manager.createQuery("from SecUser").getResultList() ;
+	} else if (+aForm.secRole) {
+		var listUser = aContext.manager.createNativeQuery("select su.id,su.login from SecUser su left join secuser_secrole susr on susr.secuser_id=su.id where susr.roles_id='"+aForm.secRole+"' and (su.disable='0' or su.disable is null) ").getResultList() ;
 		var validityDate = aEntity.validityDate ;
 		for (var i=0;i<listUser.size();i++) {
 			var user=listUser.get(i) ;
 			if (i==0) {
-				aEntity.setRecipient(user.login) ;
+				aEntity.setRecipient(""+user[1]) ;
+			} else {
+				var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
+				
+				mes.setMessageText(aForm.messageText) ;
+				mes.setMessageTitle(aForm.messageTitle) ;
+				mes.setRecipient(""+user[1]) ;
+				mes.setDispatchDate(dispatchDate) ;
+				mes.setDispatchTime(dispatchTime) ;
+				mes.setUsername(username) ;
+				mes.setValidityDate(validityDate) ;
+				aContext.manager.persist(mes) ;
+			}
+		}
+	} else {
+		
+		var listUser = aContext.manager.createNativeQuery("select su.id,su.login from SecUser su where su.disable='0' or su.disable is null ").getResultList() ;
+		var validityDate = aEntity.validityDate ;
+		for (var i=0;i<listUser.size();i++) {
+			var user=listUser.get(i) ;
+			if (i==0) {
+				aEntity.setRecipient(""+user[1]) ;
 			} else {
 				var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
 				mes.setMessageText(aForm.messageText) ;
 				mes.setMessageTitle(aForm.messageTitle) ;
-				mes.setRecipient(user.login) ;
+				mes.setRecipient(""+user[1]) ;
 				mes.setDispatchDate(dispatchDate) ;
 				mes.setDispatchTime(dispatchTime) ;
 				mes.setUsername(username) ;
@@ -42,8 +63,8 @@ function onCreate(aForm, aEntity, aContext) {
  * Перед созданием
  */
 function onPreCreate(aForm, aContext) {
-	if ((aForm.isAllUsers==null || aForm.isAllUsers==false) && (+aForm.secUser==0)) {
-		throw "Необходимо заполнить либо отправить сообщение всем пользователям, либо конкретного пользователя" ;
+	if ((aForm.isAllUsers==null || aForm.isAllUsers==false) &&(+aForm.secRole==0) && (+aForm.secUser==0)) {
+		throw "Необходимо заполнить либо отправить сообщение всем пользователям, либо конкретного пользователя, либо отметить пользователей с ролью" ;
 	}
 	
 }

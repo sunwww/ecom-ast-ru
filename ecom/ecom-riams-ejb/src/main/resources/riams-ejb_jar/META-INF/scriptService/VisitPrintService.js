@@ -184,6 +184,7 @@ function printPlanHospital(aCtx,aParams) {
 	map.put("doc.plandate",doc.dateFrom!=null?FORMAT_2.format(doc.dateFrom):"") ;
 	map.put("doc.mkbCode",doc.idc10!=null?doc.idc10.code:"") ;
 	map.put("department",doc.department!=null?doc.department.name:"") ;
+	map.put("document",doc) ;
 	return map ;
 }
 function parseInt(aNumeric) {

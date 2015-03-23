@@ -45,13 +45,8 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	/** Шаблон листа назначений */
 	@Comment("Шаблон листа назначений")
 	@Persist
-	public Long getTemplate() {
-		return theTemplate;
-	}
-
-	public void setTemplate(Long aTemplate) {
-		theTemplate = aTemplate;
-	}
+	public Long getTemplate() {return theTemplate;}
+	public void setTemplate(Long aTemplate) {theTemplate = aTemplate;}
 	/** Период актуальности */
 	@Comment("Период актуальности")
 	@Persist
@@ -66,29 +61,55 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	
 	/** Форма диеты */
 	@Comment("Форма диеты")
-	public DietPrescriptionForm getDietForm() {
-		return theDietForm;
-	}
-
-	public void setDietForm(DietPrescriptionForm aDietPrescriptionForm) {
-		theDietForm = aDietPrescriptionForm;
-	}
+	public DietPrescriptionForm getDietForm() {return theDietForm;}
+	public void setDietForm(DietPrescriptionForm aDietPrescriptionForm) {theDietForm = aDietPrescriptionForm;}
 
 	/** Режим */
 	@Comment("Режим")
-	public ModePrescriptionForm getModeForm() {
-		return theModeForm;
-	}
-
-	public void setModeForm(ModePrescriptionForm aModePrescriptionForm) {
-		theModeForm = aModePrescriptionForm;
-	}
+	public ModePrescriptionForm getModeForm() {return theModeForm;}
+	public void setModeForm(ModePrescriptionForm aModePrescriptionForm) {theModeForm = aModePrescriptionForm;}
 
 	/** Режим */
 	private ModePrescriptionForm theModeForm = new ModePrescriptionForm();
 	/** Форма диеты */
 	private DietPrescriptionForm theDietForm = new DietPrescriptionForm();
 	
+	
+	/** Диеты создавать */
+	@Comment("Диеты создавать")
+	public Boolean getIsDiet() {return theIsDiet;}
+	public void setIsDiet(Boolean aIsDiet) {theIsDiet = aIsDiet;}
+
+	/** Режим создавать */
+	@Comment("Режим создавать")
+	public Boolean getIsMode() {return theIsMode;}
+	public void setIsMode(Boolean aIsMode) {theIsMode = aIsMode;}
+
+	/** Добавить лекарственные назначения */
+	@Comment("Добавить лекарственные назначения")
+	public Boolean getIsDrug() {return theIsDrug;}
+	public void setIsDrug(Boolean aIsDrug) {theIsDrug = aIsDrug;}
+
+	/** Добавить информацию по функциональной диагностике */
+	@Comment("Добавить информацию по функциональной диагностике")
+	public Boolean getIsFuncDiag() {return theIsFuncDiag;}
+	public void setIsFuncDiag(Boolean aIsFuncDiag) {theIsFuncDiag = aIsFuncDiag;}
+
+	/** Добавить информацию по лаборатории */
+	@Comment("Добавить информацию по лаборатории")
+	public Boolean getIsLabSurvey() {return theIsLabSurvey;}
+	public void setIsLabSurvey(Boolean aIsLabSurvey) {theIsLabSurvey = aIsLabSurvey;}
+
+	/** Добавить информацию по лаборатории */
+	private Boolean theIsLabSurvey;
+	/** Добавить информацию по функциональной диагностике */
+	private Boolean theIsFuncDiag;
+	/** Добавить лекарственные назначения */
+	private Boolean theIsDrug;
+	/** Режим создавать */
+	private Boolean theIsMode;
+	/** Диеты создавать */
+	private Boolean theIsDiet;
 	/** Дата назначения */
 	@Comment("Дата назначения")
 	@DateString @DoDateString
@@ -276,4 +297,25 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
 	private Long theWorkFunction ;
+	
+	/** Отделение для забора крови */
+	@Comment("Отделение для забора крови")
+	public Long getLabDepartment() {return theLabDepartment;}
+	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
+
+	/** Отделение для забора крови */
+	private Long theLabDepartment;
+	
+	/** Время для направления на диагностику */
+	@Comment("Время для направления на диагностику")
+	public Long getFuncCalTime() {
+		return theFuncCalTime;
+	}
+
+	public void setFuncCalTime(Long aFuncCalTime) {
+		theFuncCalTime = aFuncCalTime;
+	}
+
+	/** Время для направления на диагностику */
+	private Long theFuncCalTime;
 }

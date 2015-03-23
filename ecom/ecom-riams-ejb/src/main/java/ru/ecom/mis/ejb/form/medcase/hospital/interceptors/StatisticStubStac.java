@@ -261,12 +261,12 @@ public class StatisticStubStac {
      * стат карты.
      */
     public static boolean isStacStardMustRemove(SessionContext aContext, HospitalMedCase aMedCase) {
-    	System.out.println((!aContext.isCallerInRole(AllowRestoredStatCard))) ;
+    	System.out.println((!aContext.isCallerInRole(AlwaysStatCardNumber))) ;
     	System.out.println(aMedCase.getStatisticStub()) ;
     	System.out.println(aMedCase.getDeniedHospitalizating()) ;
         return 
         		aMedCase.getStatisticStub() != null 
-        		&& (!aContext.isCallerInRole(AllowRestoredStatCard))
+        		&& (!aContext.isCallerInRole(AlwaysStatCardNumber))
         		&& (aMedCase.getDeniedHospitalizating() != null
                 || (aMedCase.getAmbulanceTreatment()!=null
                 && aMedCase.getAmbulanceTreatment().equals(Boolean.TRUE))

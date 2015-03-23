@@ -18,11 +18,13 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptFulfilState;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -380,5 +382,23 @@ public abstract class Prescription extends BaseEntity{
 	private Time theTransferTime;
 	/** Дата передачи в лабораторию */
 	private Date theTransferDate;
+	
+	/** Время из wct */
+	@Comment("Время из wct")
+	@OneToOne
+	public WorkCalendarTime getCalendarTime() {return theCalendarTime;}
+	public void setCalendarTime(WorkCalendarTime aCalendarTime) {theCalendarTime = aCalendarTime;}
+
+	/** Время из wct */
+	private WorkCalendarTime theCalendarTime;
+	
+	/** Отделение (забора) */
+	@Comment("Отделение (забора)")
+	@OneToOne
+	public MisLpu getDepartment() {return theDepartment;}
+	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+
+	/** Отделение (забора) */
+	private MisLpu theDepartment;
 
 }

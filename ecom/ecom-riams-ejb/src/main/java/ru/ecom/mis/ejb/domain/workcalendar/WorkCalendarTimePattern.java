@@ -65,13 +65,8 @@ public class WorkCalendarTimePattern extends BaseEntity{
 	/** Резерв времени */
 	@Comment("Резерв времени")
 	@OneToOne
-	public VocServiceReserveType getReserveType() {
-		return theReserveType;
-	}
-
-	public void setReserveType(VocServiceReserveType aReserveType) {
-		theReserveType = aReserveType;
-	}
+	public VocServiceReserveType getReserveType() {return theReserveType;}
+	public void setReserveType(VocServiceReserveType aReserveType) {theReserveType = aReserveType;}
 
 	/** Резерв времени */
 	private VocServiceReserveType theReserveType;

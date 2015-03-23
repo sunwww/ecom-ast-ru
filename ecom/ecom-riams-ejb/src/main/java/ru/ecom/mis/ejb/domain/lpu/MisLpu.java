@@ -486,4 +486,12 @@ public class MisLpu extends BaseEntity {
 	/** Номер в ФСС */
 	private String theSocCode;
 
+	/** Возможен забор крови */
+	@Comment("Возможен забор крови")
+	public Boolean getIsIntakeBioMaterial() {return theIsIntakeBioMaterial;}
+	public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {theIsIntakeBioMaterial = aIsIntakeBioMaterial;}
+
+	/** Возможен забор крови */
+	private Boolean theIsIntakeBioMaterial;
+	
 }

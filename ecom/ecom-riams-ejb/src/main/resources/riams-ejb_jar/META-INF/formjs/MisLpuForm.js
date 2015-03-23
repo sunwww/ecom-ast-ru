@@ -16,7 +16,9 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-
+	if (aForm.snilsDoctorDirect263!=null && !aForm.snilsDoctorDirect263.equals("")) {
+		theManager.createNativaQuery("update bedfund set snilsDoctorDirect263='"+aForm.getSnilsDoctorDirect263()+"' where lpu_id="+aForm.id).executeUpdate() ;
+	}
 }
 /**
  * Перед сохранением

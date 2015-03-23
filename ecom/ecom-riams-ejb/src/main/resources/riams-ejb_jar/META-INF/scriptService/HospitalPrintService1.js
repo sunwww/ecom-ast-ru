@@ -256,24 +256,11 @@ function printProtocols(aCtx, aParams) {
 		var protType=protocol.type ;
 		if (protType!=null) {
 			mapS.typeInfo=protType.name ;
-			//var protType = protType.isPrintAdministrator ;
 			mapS.setTicket(protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
 		}
 		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
-		/*var n = '\n'  ;
-		var items = protocol.record.split(n) ;
-		//mapS.setId(service.id) ;
-		//mapS.setDateExecute(""+service.dateExecute) ;
-		var rec = new java.lang.StringBuilder() ;
-		for (var j = 0; j < items.length; j++) {
-			rec.append(items[j]) ;
-			if (j < items.length-1) rec.append("<text:line-break/>") ;
-			//rec.append("                                                      ");
-		}
-		*/
 		mapS.setRecord(recordMultiValue(protocol.record));
-		
-		//mapS.typeInfo = protocol.medCase.info
+		mapS.setEditUsername(protocol.state!=null?protocol.state.name:null) ;
 		ret.add(mapS) ;
 		
 	}

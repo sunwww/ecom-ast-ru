@@ -41,9 +41,9 @@ public class Protocol extends Diary {
     public void setDateRegistration(Date aDateRegistration) { theDateRegistration = aDateRegistration ; }
 
     /** Талон */
-    @ManyToOne
-    public Ticket getTicket() { return theTicket ; }
-    public void setTicket(Ticket aTicket) { theTicket = aTicket ; }
+    //@ManyToOne
+    //public Ticket getTicket() { return theTicket ; }
+    //public void setTicket(Ticket aTicket) { theTicket = aTicket ; }
 
     /** Визит */
 	@Comment("Визит")
@@ -128,7 +128,15 @@ public class Protocol extends Diary {
 	/** Визит */
 	private MedCase theMedCase;
     /** Талон */
-    private Ticket theTicket ;
+    //private Ticket theTicket ;
     /** Дата регистрации талона */
     private Date theDateRegistration ;
+    
+    /** Информация для журнала */
+	@Comment("Информация для журнала")
+	public String getJournalText() {return theJournalText;}
+	public void setJournalText(String aJournalText) {theJournalText = aJournalText;}
+
+	/** Информация для журнала */
+	private String theJournalText;
 }

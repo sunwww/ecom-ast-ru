@@ -123,7 +123,7 @@ function onSave(aForm, aEntity, aContext) {
  * Перед сохранением
  */
 function onPreSave(aForm, aEntity, aContext) {
-	checkedInterval(aForm.timeFrom,aForm.timeTo,aForm.visitTime,aForm.countVisits) ;
+	//checkedInterval(aForm.timeFrom,aForm.timeTo,aForm.visitTime,aForm.countVisits) ;
 }
 
 /**

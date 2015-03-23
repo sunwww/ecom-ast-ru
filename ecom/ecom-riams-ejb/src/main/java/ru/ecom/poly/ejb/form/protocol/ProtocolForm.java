@@ -58,7 +58,7 @@ public class ProtocolForm extends IdEntityForm {
     public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
 
     /** Талон */
-    @Persist
+    //@Persist
     @Comment("Талон")
     public Long getTicket() {    return theTicket ;}
     public void setTicket(Long aTicket ) {  theTicket = aTicket ; }
@@ -139,4 +139,13 @@ public class ProtocolForm extends IdEntityForm {
     private String theDateRegistration ;
     /** Общая информация о протоколе */
     private String theInfo ;
+    /** Информация для журнала */
+    
+	@Comment("Информация для журнала")
+	@Persist
+	public String getJournalText() {return theJournalText;}
+	public void setJournalText(String aJournalText) {theJournalText = aJournalText;}
+
+	/** Информация для журнала */
+	private String theJournalText;
 }
