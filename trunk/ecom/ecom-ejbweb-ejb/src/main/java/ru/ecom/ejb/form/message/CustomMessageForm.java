@@ -129,4 +129,5 @@ public class CustomMessageForm extends IdEntityForm{
 	private String theDateReceipt;
 	/** Пользователь */
 	private String theUsername;
+	
 }
