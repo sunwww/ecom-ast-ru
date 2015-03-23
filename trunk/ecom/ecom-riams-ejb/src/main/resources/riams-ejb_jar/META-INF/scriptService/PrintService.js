@@ -68,7 +68,18 @@ function printNativeQuery_date(aCtx,aParams) {
 	map.put("sqlInfo",sqlInfo) ;
 	map.put("sqlColumn",sqlColumn) ;
 	map.put("listAll",retAll) ;
+	current_info(aCtx) ;
 	return map ;
+}
+function current_info(aCtx) {
+    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;	
+	var current = new java.util.Date() ;
+	var curDate = new java.sql.Date(current.getTime()) ;
+	var curTime = new java.sql.Time(current.getTime()) ;	
+	map.put("current_date",FORMAT_2.format(curDate)) ;
+	map.put("current_time",FORMAT_3.format(curTime)) ;
+	map.put("current_username",aCtx.sessionContext.callerPrincipal.name ) ;
 }
 function printGroupNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
@@ -135,6 +146,7 @@ function printGroupNativeQuery(aCtx,aParams) {
 	map.put("sqlInfo",sqlInfo) ;
 	map.put("sqlColumn",sqlColumn) ;
 	map.put("listAll",retAll) ;
+	current_info(aCtx) ;
 	return map ;
 }
 function printNativeQuery(aCtx,aParams) {
@@ -179,6 +191,7 @@ function printNativeQuery(aCtx,aParams) {
 	map.put("sqlInfo",sqlInfo) ;
 	map.put("sqlColumn",sqlColumn) ;
 	map.put("listAll",retAll) ;
+	current_info(aCtx) ;
 	return map ;
 }
 function printManyNativeQuery(aCtx,aParams) {
@@ -250,5 +263,6 @@ function printManyNativeQuery(aCtx,aParams) {
 		map.put("listTotal"+jj,parAll) ;
 	
 	}
+	current_info(aCtx) ;
 	return map ;
 }

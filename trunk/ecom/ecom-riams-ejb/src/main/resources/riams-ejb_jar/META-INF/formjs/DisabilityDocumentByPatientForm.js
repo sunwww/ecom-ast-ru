@@ -15,6 +15,7 @@ function onPreCreate(aForm, aCtx) {
 	if (aForm.prevDocument>0 && aForm.prevDocument == aForm.id) {
 		throw "Предыдущий документ не должен совпадать с текущим." ;
 	}
+	if (aForm.anotherLpu<1) {
     list = aCtx.manager.createQuery("from DisabilityDocument where series = :series"
        	+" and number = :number and documentType_id = :doctype"
        	)
@@ -22,7 +23,7 @@ function onPreCreate(aForm, aCtx) {
        	.setParameter("number",number)
        	.setParameter("doctype",doctype)
        	.getResultList() ;
-	errorThrow(list,"В базе уже существует документ с такими номером и серией") ;
+	errorThrow(list,"В базе уже существует документ с такими номером и серией") ;}
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;

@@ -320,4 +320,13 @@ public class BedFundForm extends IdEntityForm {
 
 	/** Реабилитационные */
 	private Boolean theIsRehab;
+	/** По умолчанию снилс врача генерации направлений для 263 приказа */
+	@Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
+	@Persist
+	public String getSnilsDoctorDirect263() {return theSnilsDoctorDirect263;}
+	public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {theSnilsDoctorDirect263 = aSnilsDoctorDirect263;}
+
+	/** По умолчанию снилс врача генерации направлений для 263 приказа */
+	private String theSnilsDoctorDirect263;
+
 }

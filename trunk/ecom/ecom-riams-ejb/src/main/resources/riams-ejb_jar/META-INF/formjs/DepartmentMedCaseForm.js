@@ -4,7 +4,7 @@
 function onPreCreate(aForm, aContext) {
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 	var listDep ;
 	if (aForm.prevMedCase >0) {
@@ -37,7 +37,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	if (aEntity!=null) {
 		var date = new java.util.Date() ;
 		aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-		//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+		aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 		aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 		
 	}
@@ -144,9 +144,13 @@ function onPreSave(aForm,aEntity, aContext) {
 
 //При сохранении
 function onCreate(aForm, aEntity, aContext) {
+	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	onSave(aForm, aEntity, aContext) ;
 }
 function onSave(aForm, aEntity, aContext) {
+	var dat =(new java.util.Date()).getTime() ;
+	//aEntity.setEditTime(new java.sql.Time (dat)) ;
+	
 	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
 		.setParameter("prev",aForm.id).getResultList() ;
 	/*if (listDep.size()>0) {

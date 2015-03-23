@@ -13,12 +13,15 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
+import sun.awt.windows.ThemeReader;
 
 
 /**
@@ -85,8 +88,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		Date date = new Date();
     		aForm.setDateStart(DateFormat.formatToDate(date));
             aForm.setEntranceTime(timeFormat.format(date));
-            //aForm.addDisabledField("dateStart");
-            //aForm.addDisabledField("entranceTime");
+            
     	} else {
     		try {
 	        	Calendar cal = Calendar.getInstance() ;
@@ -99,8 +101,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			} catch (ParseException e) {
 				e.printStackTrace();
 				throw new IllegalStateException("Неправильно заведена дата поступления в стационар");
-	    		// TODO Auto-generated catch block
-				
+	    		
 			}
     	}
         aForm.setPatient(aMedCase.getPatient().getId());
@@ -132,11 +133,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		.append(" group by ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id,ms2.id,ms.serviceStream_id")
     		.append(" having ms2.id is null ")
     		.append(" order by ms.transferDate desc,ms.transferTime desc");
-    	//sql.append("select max(ms.dateFinish),ms.id,ms.transferDate,ms.transferTime,ms.transferDepartment_id,ms.lpu_id")
-    	//		.append(" from MedCase as ms where ms.parent_id = :parentId and ms.DTYPE='DepartmentMedCase'") 
-    	//		.append(" and (select count(*) from MedCase as ms1 where ms1.prevMedCase_id=ms.id and DTYPE='DepartmentMedCase')=0")
-		//		.append(" order by ms.transferDate desc,ms.transferTime desc") ;
-    	//System.out.println(sql) ;
     	List<Object[]> list = aManager.createNativeQuery(sql.toString())
     			.setParameter("parentId", aMedCaseParent.getId()).setMaxResults(3).getResultList() ;
     	if (list.size()>0) {
@@ -150,72 +146,32 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             if (obj[4]!=null) aForm.setDepartment(ConvertSql.parseLong(obj[4]));
             aForm.setServiceStream(ConvertSql.parseLong(obj[6])) ;
             if ((obj[2]!=null)&&(obj[4]!=null)&&(obj[3]!=null)) aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCaseParent.getHospType())) ;
-    		//	throw new IllegalStateException("Нет лечения в отделении с переводом") ;
-    		//}
+            Long idPrev = ConvertSql.parseLong(obj[1]) ; 
+            DiagnosisForm diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "1", false) ; ;
+            if (diag!=null){
+            	aForm.setClinicalDiagnos(diag.getName());
+            	if (diag.getIdc10()!=null) aForm.setClinicalMkb(diag.getIdc10()) ;
+            	if (diag.getIllnesPrimary()!=null) aForm.setClinicalActuity(diag.getIllnesPrimary()) ;
+            } else {
+            	throw new IllegalStateException("Для ПЕРЕВОДА необходимо заполнить данные ДИАГНОЗА <a href='entityParentEdit-stac_slo.do?id="+idPrev+"'>в отделении</a>!!!") ;
+            }
+            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "3", "1", false) ; ;
+            if (diag!=null){
+            	aForm.setConcludingDiagnos(diag.getName());
+				if (diag.getIdc10()!=null) aForm.setConcludingMkb(diag.getIdc10()) ;;
+			}
+            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "3", false) ; ;
+            if (diag!=null){
+            	aForm.setConcomitantDiagnos(diag.getName());
+				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;;
+			}
+    		
     	} else {
     		throw new IllegalStateException("Нет случая лечения в отделении оформленного для перевода") ;
     	}
-    	/*
-		List<DepartmentMedCase> list = aManager.createQuery(
-                "from MedCase where transferDate parent_id = :parentId and DTYPE='DepartmentMedCase'"
-        ).setParameter("parentId",aMedCaseParent.getId()).setMaxResults(50).getResultList();
-		long maxTime =0;
-		Time maxHours=null ;
-		MisLpu maxDep = null ;
-		Long maxSlo = null ;
-    	for (DepartmentMedCase slo:list){
-    		if (slo.getDateFinish()!=null) throw new IllegalStateException("Уже есть лечение в отделении с выпиской.") ;
-    		Date date = slo.getTransferDate() ;
-            if (date==null ){
-            	throw new IllegalStateException("Нет лечения в отделении с переводом") ;
-            }            
-            if(date!=null && date.getTime()>maxTime) {
-                maxTime = date.getTime() ;
-                maxHours = slo.getTransferTime() ;
-                maxDep = slo.getTransferDepartment() ;
-                maxSlo = slo.getId() ;
-            } 
-
-    	}
-        if(maxTime!=0) {
-            aForm.setDateStart(DateFormat.formatToDate(new Date(maxTime)));
-            aForm.setEntranceTime(DateFormat.formatToTime(maxHours));
-            aForm.setPrevMedCase(maxSlo);
-            if(maxDep!=null) {
-                aForm.setDepartment(maxDep.getId());
-            }
-        } else {
-            throw new IllegalStateException("Нет лечения в отделении с переводом") ;
-        }
-        */
+    	
     }
-    /*
-    private void prepareForCreationNextSlo(SloEditForm aForm, Collection<StacSLO> aList) {
-        long maxTime = 0 ;
-        String maxHours = null ;
-        VocStacOTD maxDep = null ;
-
-        for (StacSLO slo : aList) {
-            if(slo.getDischargeDate()!=null) throw new IllegalStateException("Уже есть лечение в отделении с выпиской.") ;
-            Date date = slo.getTransferDate() ;
-            if(date!=null && date.getTime()>maxTime) {
-                maxTime = date.getTime() ;
-                maxHours = slo.getTransferTime() ;
-                maxDep = slo.getTransferDepartment() ;
-            }
-        }
-
-        if(maxTime!=0) {
-            aForm.setAdmissionDate(DateFormat.formatToDate(new Date(maxTime)));
-            aForm.setAdmissionTime(maxHours);
-            if(maxDep!=null) {
-                aForm.setAdmissionDepartmentPk(maxDep.getId());
-            }
-        } else {
-            throw new IllegalStateException("Нет лечения в отделении с переводом") ;
-        }
-    }
-     */
+    
     
     private Long getBedFund(EntityManager aManager, Long aDepartment, Long aServiceStream, String aDateFrom,VocHospType aHospType) {
     	String bedSubType = aHospType!=null?(aHospType.getCode().startsWith("DAY")?"2":"1"):"1" ;

@@ -28,7 +28,9 @@ public interface IHospitalMedCaseService {
 	public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException;
 	public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException ;
-	public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
+	public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    		throws ParserConfigurationException, TransformerException; 
+    public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)  throws ParserConfigurationException, TransformerException;

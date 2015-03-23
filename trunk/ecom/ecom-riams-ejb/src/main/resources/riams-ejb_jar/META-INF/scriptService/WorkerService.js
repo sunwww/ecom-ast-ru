@@ -1,7 +1,7 @@
 function replaceWorkFunction(aCtx,aParam) {
 	if (+aParam>0) {
 		
-		var username=aCtx.sessionContext.callerPrincipal.name ;
+		var username=aCtx.getUsername() ;
 		var sqluser = "select su.id as suid,w.person_id as pwid from secuser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where login='"+username+"'" ;
 		var listuser = aCtx.manager.createNativeQuery(sqluser).getResultList();
 		//throw username ;

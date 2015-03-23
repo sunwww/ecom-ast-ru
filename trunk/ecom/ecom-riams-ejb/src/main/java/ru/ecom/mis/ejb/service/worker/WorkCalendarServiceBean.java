@@ -344,15 +344,15 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			) throws ParseException {
 		 Date date = DateFormat.parseSqlDate(aDate) ;
 		 //int duration = aDuration.intValue() ;
-		 List<WorkCalendar> list = theManager
-					.createQuery("from WorkCalendar where workFunction_id=:wf")
+		 List<Object> list = theManager
+					.createNativeQuery("select id from WorkCalendar where workFunction_id=:wf")
 					.setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
 		 if (list.size()>0) {
-			WorkCalendar wc = list.get(0) ;
+			Object wc = list.get(0) ;
 			
-			List<WorkCalendarDay> listD = theManager
-					.createQuery("from WorkCalendarDay where workCalendar=:calen and calendarDate=:day")
-					.setParameter("calen", wc)
+			List<Object> listD = theManager
+					.createNativeQuery("select id from WorkCalendarDay where workCalendar_id=:calen and calendarDate=:day")
+					.setParameter("calen", ConvertSql.parseLong(wc))
 					.setParameter("day", date) 
 					.setMaxResults(1).getResultList() ;
 			java.sql.Time timeFrom = DateFormat.parseSqlTime(aBeginTime) ;
@@ -364,12 +364,12 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			int cnt = aCountVisits.intValue() ;
 			StringBuilder ret = new StringBuilder() ;
 			if (listD.size()>0) {
-				WorkCalendarDay day = listD.get(0) ;
+				Object day = listD.get(0) ;
 				StringBuilder sql1 = new StringBuilder() ;
 				sql1.append(" select count(*)");
 				sql1.append(" from WorkCalendarTime t ");
 				sql1.append(" where t.workCalendarDay_id = '")
-					.append(day.getId()).append("'");
+					.append(day).append("'");
 				sql1.append(" and t.timeFrom=:tim") ;
 				//List<Object[]> listT1 = theManager.createNativeQuery(sql1.toString()).setMaxResults(1).getResultList() ;
 				boolean isFirstExist = theManager.createNativeQuery(sql1.toString()).setParameter("tim", timeFrom).setMaxResults(1).getResultList().size()>0?true:false ;
@@ -399,7 +399,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					sql.append(" left join WorkCalendarTime t1 on t1.workCalendarDay_id=t.workCalendarDay_id"); 
 					sql.append(" left join WorkCalendarTime t2 on t2.workCalendarDay_id=t.workCalendarDay_id ");
 					sql.append(" where t.workCalendarDay_id = '")
-						.append(day.getId()).append("' and t.timeFrom between cast('")
+						.append(day).append("' and t.timeFrom between cast('")
 						.append(aBeginTime).append("' as time) and cast('")
 						.append(aEndTime).append("' as time) and t.timeFrom<t1.timeFrom ");
 					sql.append(" and t2.timeFrom between t.timeFrom and t1.timeFrom");

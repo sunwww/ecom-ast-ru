@@ -16,15 +16,17 @@ function onPreCreate(aForm, aCtx) {
 	var primary = aCtx.manager.find(
 		Packages.ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentPrimarity
 		,aForm.primarity) ;
-    list = aCtx.manager.createQuery("from DisabilityDocument where series = :series"
-       	+" and number = :number and documentType_id = :doctype"
-       	)
-       	.setParameter("series",series)
-       	.setParameter("number",number)
-       	.setParameter("doctype",doctype)
-       	.getResultList() ;
-		
-	errorThrow(list, "В базе уже существует документ с такими номером и серией") ;
+	if (aForm.anotherLpu<1) {
+	    list = aCtx.manager.createQuery("from DisabilityDocument where series = :series"
+	       	+" and number = :number and documentType_id = :doctype"
+	       	)
+	       	.setParameter("series",series)
+	       	.setParameter("number",number)
+	       	.setParameter("doctype",doctype)
+	       	.getResultList() ;
+			
+		errorThrow(list, "В базе уже существует документ с такими номером и серией") ;
+	}
     if (aForm.workComboType==0 && primary!=null && primary.code.equals("1")) {
 	    list = aCtx.manager.createNativeQuery("select count(*) from DisabilityDocument as dd"
 			+ " inner join VocDisabilityDocumentPrimarity as vddp on vddp.id=dd.primarity_id"
@@ -123,7 +125,9 @@ function onPreSave(aForm,aEntity , aCtx) {
 	if (aForm.workComboType!=0 && 
 		(aForm.mainWorkDocumentNumber.equals("")  ) )
 			throw "При совмещении необходимо указывать номер документа по основному месту работы" ;
-    list = aCtx.manager.createQuery("from DisabilityDocument where "
+	if (aForm.anotherLpu<1) {
+		list = aCtx.manager.createQuery("from DisabilityDocument where "
+	
        	+" (series = :series and number = :number and documentType_id = :doctype)"
        	+" and id != '"+thisid+"'"
        	)
@@ -131,7 +135,8 @@ function onPreSave(aForm,aEntity , aCtx) {
        	.setParameter("number",number)
        	.setParameter("doctype",doctype)
        	.getResultList() ;
-	errorThrow(list,"В базе уже существует документ с такими номером и серией") ;
+		errorThrow(list,"В базе уже существует документ с такими номером и серией") ;
+	}
 	var date = new java.util.Date() ;
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;

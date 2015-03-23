@@ -1,7 +1,8 @@
 function onPreCreate(aForm, aCtx) {
+	check(aForm,aCtx) ;
 	var date = new java.util.Date() ;
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	aForm.setUsername(aCtx.getUsername()) ;
 	aForm.setTime(new java.sql.Time (date.getTime())) ;
 	var wfe =aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
 		.setParameter("medCase", aForm.medCase).getResultList() ;
@@ -30,6 +31,7 @@ function onPreCreate(aForm, aCtx) {
 	
 }
 function onPreSave(aForm,aEntity, aCtx) {
+	check(aForm,aCtx) ;
 	var date = new java.util.Date();
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
@@ -52,6 +54,27 @@ function onSave(aForm, aEntity, aCtx) {
 		aCtx.manager.createNativeQuery("update Diary set dtype='Protocol' where id='"+aEntity.id+"'").executeUpdate() ;
 		
 	}
+}
+function check(aForm,aCtx) {
+	
+	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
+		
+		var t = aCtx.manager.createNativeQuery("select dtype,id from medcase where id="+aForm.medCase).getResultList() ;
+		
+		if (!t.isEmpty()) {
+			var dtype=""+t.get(0)[0] ;
+			//throw dtype ;
+			if (dtype=='HospitalMedCase'||dtype=='DepartmentMedCase') { 
+				if (aForm.type==null||(+aForm.type==0)) throw "Необходимо заполнить поле Тип протокола" ;
+				if (aForm.state==null||(+aForm.state==0)) throw "Необходимо заполнить поле Состояние больного" ;
+			}
+			if (dtype=='HospitalMedCase' &&(aForm.journalText==null||aForm.journalText.equals(""))) {
+				throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -" ;
+			}
+		}
+		
+	}
+	
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {

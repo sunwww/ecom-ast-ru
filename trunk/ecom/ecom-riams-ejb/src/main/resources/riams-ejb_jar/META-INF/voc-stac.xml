@@ -189,7 +189,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 		    	queryAppend=""
 		    	order=""
 		    	queried=" (cast(bf.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
-		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.noFood='1' then 'без питания' else 'с питанием' end ||')'"
+		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.isRehab='1' then 'реабилитационные ' else '' end || case when bf.noFood='1' then 'без питания' else 'с питанием' end  ||')'"
 		    	parentSplitCount="3"
 		    />
 

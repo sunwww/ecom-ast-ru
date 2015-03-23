@@ -15,7 +15,9 @@ function onView(aForm, aEntity, aContext) {
 
 
 function onPreCreate(aForm, aCtx) {
-	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date())) ;
+	var date = new java.util.Date() ;
+	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
 	        , aForm.getDateStart(), aForm.getEntranceTime());
@@ -37,6 +39,7 @@ function onPreCreate(aForm, aCtx) {
 	
 }
 function onCreate(aForm, aEntity, aCtx) {
+	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
 		var medPolicyOmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
 		var mp1 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
@@ -82,6 +85,8 @@ function onPreDelete(aMedCaseId, aContext) {
 }
 
 function onSave(aForm,aEntity,aCtx) {
+	//aEntity.setEditTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
+	
 	var sql = "update MedCase set dateStart=:dateStart,entranceTime=:entranceTime,department_id=:dep, lpu_id=:lpu where parent_id=:idSLS and DTYPE='DepartmentMedCase' and prevMedCase_id is null"
 	
 	aCtx.manager.createNativeQuery(sql)
@@ -144,7 +149,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 	if (aEntity!=null) {
 		var date = new java.util.Date() ;
 		aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-		//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+		aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 		aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	}
 	if (aForm.dateFinish!=null && aForm.dateFinish!=""
@@ -199,20 +204,22 @@ function onPreSave(aForm,aEntity, aCtx) {
     if (aEntity!=null && aEntity.getDeniedHospitalizating()!=null
     		&&+aForm.getDeniedHospitalizating()==0) {
     	var statCardNumber = aForm.statCardNumber ;
-    	if (statCardNumber==null || statCardNumber=="") {
-    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
-    		
-    		if (hand) throw "Не указан номер стат. карты" ;
-    	} else{
-    		var year = aForm.getDateStart().substring(6) ;
-    		//throw ""+year ;
-    		var list = aCtx.getManager()
-    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
-    			.setParameter("number", statCardNumber)
-    			.setParameter("year",java.lang.Long.valueOf(year))
-    			.getResultList() ;
-    		
-    		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
+    	if (aEntity.statisticStub!=null) {
+	    	if (statCardNumber==null || statCardNumber=="") {
+	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
+	    		
+	    		if (hand) throw "Не указан номер стат. карты" ;
+	    	} else{
+	    		var year = aForm.getDateStart().substring(6) ;
+	    		//throw ""+year ;
+	    		var list = aCtx.getManager()
+	    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
+	    			.setParameter("number", statCardNumber)
+	    			.setParameter("year",java.lang.Long.valueOf(year))
+	    			.getResultList() ;
+	    		
+	    		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
+	    	}
     	}
     }
     

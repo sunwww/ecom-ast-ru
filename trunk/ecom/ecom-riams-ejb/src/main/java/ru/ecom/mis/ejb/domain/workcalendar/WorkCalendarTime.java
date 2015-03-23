@@ -31,7 +31,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique = false, properties = {"medCase","workCalendarDay","timeFrom"}),
 	@AIndex(unique = false, properties = {"workCalendarDay"}),
-	@AIndex(unique = false, properties = {"timeFrom"})
+	//@AIndex(unique = false, properties = {"timeFrom"})
 	//,@AIndex(unique = false, properties = {"prePatient"})
 	//,@AIndex(unique = false, properties = {"prePatientInfo"})
 })

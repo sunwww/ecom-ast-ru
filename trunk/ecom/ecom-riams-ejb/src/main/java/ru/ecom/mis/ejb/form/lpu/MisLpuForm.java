@@ -484,4 +484,21 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Номер в ФСС */
 	private String theSocCode;
+	
+	/** Возможен забор крови */
+	@Persist
+	@Comment("Возможен забор крови")
+	public Boolean getIsIntakeBioMaterial() {return theIsIntakeBioMaterial;}
+	public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {theIsIntakeBioMaterial = aIsIntakeBioMaterial;}
+
+	/** Возможен забор крови */
+	private Boolean theIsIntakeBioMaterial;
+
+	/** По умолчанию снилс врача генерации направлений для 263 приказа */
+	@Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
+	public String getSnilsDoctorDirect263() {return theSnilsDoctorDirect263;}
+	public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {theSnilsDoctorDirect263 = aSnilsDoctorDirect263;}
+
+	/** По умолчанию снилс врача генерации направлений для 263 приказа */
+	private String theSnilsDoctorDirect263;
 }

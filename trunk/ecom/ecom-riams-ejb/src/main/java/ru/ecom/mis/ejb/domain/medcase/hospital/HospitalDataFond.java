@@ -18,7 +18,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Госпитализации данные фонда")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "hospitalMedCase" }) })
+@AIndexes(value = { @AIndex(properties = { "hospitalMedCase" }) 
+,@AIndex(properties = { "numberFond" })})
 public class HospitalDataFond extends BaseEntity {
 
 	/** Направление */
