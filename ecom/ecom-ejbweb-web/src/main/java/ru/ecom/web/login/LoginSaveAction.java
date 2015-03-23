@@ -214,9 +214,9 @@ public class LoginSaveAction extends LoginExitAction {
     			for (WebQueryResult wqr:list) {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
-    			System.out.println("get id message") ;
+    			//System.out.println("get id message") ;
     			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более 2х дней:", res1.toString(), aUsername) ;
-    			System.out.println("id="+id) ;
+    			//System.out.println("id="+id) ;
     			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
     		}
     	}
@@ -272,9 +272,9 @@ public class LoginSaveAction extends LoginExitAction {
     			for (WebQueryResult wqr:list) {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
-    			System.out.println("get id message") ;
+    			//System.out.println("get id message") ;
     			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более 2х дней:", res1.toString(), aUsername) ;
-    			System.out.println("id="+id) ;
+    			//System.out.println("id="+id) ;
     			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
     		}
     		
@@ -331,9 +331,9 @@ public class LoginSaveAction extends LoginExitAction {
 		    		res1.append("; необходимо сегодня делать направление: ").append(wqr.get3()).append(" ") ;
 		    		res1.append("; просрочены сроки подачи на ВК: ").append(wqr.get4()).append("<br>") ;
 		    	}
-		    	System.out.println("get id message") ;
+		    	//System.out.println("get id message") ;
 		    	Long id=serviceLogin.createSystemMessage("Длительность лечения пациентов более 13 дней (для безработных 28 дн):", res1.toString(), aUsername) ;
-		    	System.out.println("id="+id) ;
+		    	//System.out.println("id="+id) ;
 		    	UserMessage.addMessage(aRequest,id,"Направления на ВК:", res1.toString(),"stac_report_direct_medical_commission.do") ;
 	    	}
 	    	
@@ -456,11 +456,11 @@ public class LoginSaveAction extends LoginExitAction {
     }
 
 	private void logLoginUserInvironment(HttpServletRequest aRequest) {
-        LOG.info("Login user env : {") ;
+        //System.out.println("Login user env : {") ;
         for(Map.Entry entry : createUserEnvironmentInfo(aRequest).entrySet() ) {
-        	LOG.info("    "+entry.getKey()+" = "+entry.getValue()) ;
+        	System.out.println("    "+entry.getKey()+" = "+entry.getValue()) ;
         }
-        LOG.info("}") ;
+        //System.out.println("}") ;
 		
 	}
 

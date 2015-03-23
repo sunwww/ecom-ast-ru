@@ -146,7 +146,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		try {
 			if (aAttributeName==null) aAttributeName=aParameter ;
 			String param = (String)aRequest.getParameter(aParameter) ;
-			
+			System.out.println(aParameter+"param="+param) ;
 	    	if (param!=null && !param.equals("") && !param.equals("0")) {
 	    		service = Injection.find(aRequest).getService(IWebQueryService.class);
 	    		aSql = aSql.replaceAll(":id", param) ;
@@ -169,7 +169,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 	    	}
     	
 		} catch (NamingException e) {
-			
+			e.printStackTrace() ;
 		}
 		return sql ;
 			
@@ -184,15 +184,21 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		if (aAttributeName==null) aAttributeName=aParameter ;
 		String param = (String)aRequest.getParameter(aParameter) ;
 		String sql ="" ;
-    	if (param!=null && !param.equals("") && !param.equals("0")) {
+		if (param!=null && param.equals("-1")) {
     		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
-    		sql=" and "+aFldId+"='"+param+"'";
+    		sql=" and "+aFldId+" is null";
     		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
     		aRequest.setAttribute(aAttributeName,param) ;
-    	} else {
+    	} else if (param!=null && !param.equals("") && !param.equals("0")) {
+			aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
+			sql=" and "+aFldId+"='"+param+"'";
+			aRequest.setAttribute(aAttributeName+"Sql", sql) ;
+			aRequest.setAttribute(aAttributeName,param) ;
+		} else {
     		aRequest.setAttribute(aAttributeName,"0") ;
     		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
     	}
+    	
     	return sql ;
 	}
 	public static void setLikeSql(String aParameter,String aFldId,HttpServletRequest aRequest) {
