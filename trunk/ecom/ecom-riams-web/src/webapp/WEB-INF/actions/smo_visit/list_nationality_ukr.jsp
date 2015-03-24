@@ -252,6 +252,7 @@
 	    ,vwfe.name||' '||pe.lastname as pefio
 	    ,list(mkb.code) as mkbcode
 	    ,vss.name, res.name as resname
+	    ,case when vsst.omccode='66' then '+' else '-' end 
 from medcase m 
 left join vocvisitresult res on res.id=m.visitresult_id 
 left join patient p on p.id=m.patient_id
@@ -266,16 +267,18 @@ left join VocVisitResult vvr on vvr.id=m.visitResult_id
 left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Diagnosis d on d.medcase_id=m.id
 left join Vocidc10 mkb on mkb.id=d.idc10_id
+left join vocsocialstatus vsst on vsst.id=p.socialstatus_id 
 ${groupSqlAdd}
 where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
 and (m.noActuality is null or m.noActuality='0')
+and vss.code!='HOSPITAL' 
 ${emergencySql} ${departmentWFSql}
 ${serviceStreamSql}
  ${nationalitySql} ${regionSql} ${patientSql} ${ageSql}
 group by m.id,m.dateStart,m.timeExecute
 	    ,p.lastname,p.firstname,p.middlename,p.birthday
-	    ,vwfe.name,pe.lastname,vss.name,res.name 
+	    ,vwfe.name,pe.lastname,vss.name,res.name,vsst.omccode  
 order by p.lastname,p.firstname,p.middlename"/>
 
   	</msh:section>
@@ -283,22 +286,23 @@ order by p.lastname,p.firstname,p.middlename"/>
   	List listPol = (List)request.getAttribute("list_yes") ;
   	int sizePol = listPol.size();
   	if (sizePol>0) {
-  	out.println("<tr><td>") ;
+/*   	out.println("<tr><td>") ;
 	out.println("<table border=1>") ;
 	out.println("<tr>") ;
 	out.print("<th>№</th>") ;
 	out.print("<th>Пациент</th>") ;
 	out.print("<th>Дата рождения</th>") ;
+	out.print("<th>Беженец</th>") ;
 	out.print("<th>Дата обращения</th>") ;
 	out.print("<th>Диагноз</th>") ;
 	out.print("<th>Специалист</th>") ;
 	out.print("<th>Результат лечения</th>") ;
 	out.print("<th>Поток обслуживания</th>") ;
 	out.print("<th>Объем финансирования</th>") ;
-	out.println("</tr>") ;
+	out.println("</tr>") ; */
 	for (int i=0; i<sizePol; i++) {
 		WebQueryResult wqr = (WebQueryResult) listPol.get(i) ;
-		out.println("<tr>") ; 
+		/* out.println("<tr>") ; 
 		out.print("<td>") ;	//1
 		out.println(i+1) ;out.print("</td>") ;
 		out.print("<td>") ;	//2
@@ -306,13 +310,16 @@ order by p.lastname,p.firstname,p.middlename"/>
 		//out.println(wqr.get1()!=null?wqr.get1():"0") ; //IDMEDCASE
 		out.print("<td>") ;	//3
 		out.print(wqr.get4()) ;out.print("</td>") ;
+		out.print("<td>") ;	//Беженец
+		out.print(wqr.get9());
+		out.print("</td>") ;
 		out.print("<td>") ;	//4
 		out.println(wqr.get2()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get6()) ;out.print("</td>") ;	//5
 		out.print("<td>") ;out.println(wqr.get5()) ;out.print("</td>") ;	//6
 		out.print("<td>") ;out.print(wqr.get8()!=null?wqr.get8():"");out.print("</td>") ;	//7
 		out.print("<td>") ;out.print(wqr.get7()!=null?wqr.get7():"");out.print("</td>") ;
-		out.print("<td>") ;
+		out.print("<td>") ; */
 		try {
 			String[] arr =HospitalMedCaseServiceJs.getDataByReference(Long.valueOf(wqr.get1().toString()),"SPO", request).split("&");
 			for (int j=0;j<arr.length;j++)
@@ -320,22 +327,42 @@ order by p.lastname,p.firstname,p.middlename"/>
 				if (arr[j].startsWith("render")) {
 					String[] arrPrice =arr[j].split("%23"); 
 					String price = arrPrice[0].substring(7,arrPrice[0].length());
-					out.print(" ");out.print(price);out.print(" руб");
+					//wqr.set1(price);
+					wqr.set10(price+" руб.");
+					listPol.set(i,wqr);
+					/* out.print(" ");out.print(price);out.print(" руб"); */
 					break;
 				}
 			}
 		} catch (Exception e) {
-			out.print("---");	
+			/* out.print("---"); */
+			wqr.set10("---");
+			listPol.set(i,wqr);
+			
 		}
-		out.print("</td>") ;
-		out.println("</tr>") ;
+		/* out.print("</td>") ;
+		out.println("</tr>") ; */
 	}
-	out.println("</table>") ;
-	out.println("</td></tr>") ;
+	request.setAttribute("list_yes", listPol);
+/* 	out.println("</table>") ;
+	out.println("</td></tr>") ; */
   	} else {
-  		out.print("Нет данных");
+  		/* out.print("Нет данных"); */
   	}
   	%>
+   <msh:table name="list_yes" action="entitySubclassView-mis_medCase.do"
+    	viewUrl="entityView-mis_medCase.do?short=Short" idField="1">
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
+    	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+    	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+    	      <msh:tableColumn columnName="Беженец" property="9" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
+    	      <msh:tableColumn columnName="Дата обращения" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
+    	      <msh:tableColumn columnName="Диагноз" property="6" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
+    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Результат лечения" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Поток обслуживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Стоимость случая" identificator="false" property="10" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	     </msh:table>
   	<msh:section title="Стационар">
 
   	
@@ -347,7 +374,8 @@ order by p.lastname,p.firstname,p.middlename"/>
 	    ,ss.code as sscode 
 	    ,ml.name as mlname,vss.name as vssname, res.name as resname
 	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
-	    ,mkb.code || ' ' ||mkb.name as diagnosis 
+	    ,mkb.code || ' ' ||mkb.name as diagnosis
+	    ,case when vsst.omccode='66' then '+' else '-' end 
 	    
 from medcase m 
 left join medcase smo on smo.id=m.parent_id
@@ -361,6 +389,7 @@ left join mislpu ml on ml.id=m.department_id
 left join VocServiceStream vss on vss.id=smo.serviceStream_id
 left join diagnosis ds on ds.medcase_id=smo.id and ds.registrationtype_id='3' and ds.priority_id='1'
 left join vocidc10 mkb on mkb.id=ds.idc10_id
+left join vocsocialstatus vsst on vsst.id=p.socialstatus_id 
 where  
 m.DTYPE='DepartmentMedCase' and m.dateFinish between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 and (m.noActuality is null or m.noActuality='0')
@@ -374,59 +403,82 @@ order by p.lastname,p.firstname,p.middlename"/>
   	List listStac = (List)request.getAttribute("list_stac") ;
   	int sizeStac = listStac.size();
   	if (sizeStac>0) {
-  	out.println("<tr><td>") ;
+/*    	out.println("<tr><td>") ;
 	out.println("<table border=1>") ;
 	out.println("<tr>") ;
 	out.print("<th>№</th>") ;
 	out.print("<th>Пациент</th>") ;
 	out.print("<th>Дата рождения</th>") ;
+	out.print("<th>Беженец</th>") ;
 	out.print("<th>Диагноз</th>") ;
 	out.print("<th>Дата поступления</th>") ;
 	out.print("<th>Дата выписки</th>") ;
 	out.print("<th>Результат лечения</th>") ;
 	out.print("<th>Поток обслуживания</th>") ;
 	out.print("<th>Объем финансирования</th>") ;
-	out.println("</tr>") ;
+	out.println("</tr>") ; */ 
 	for (int i=0; i<sizeStac; i++) {
 		WebQueryResult wqr = (WebQueryResult) listStac.get(i) ;
-		out.println("<tr>") ; 
+/* 	 out.println("<tr>") ; 
 		out.print("<td>") ;	//1
 		out.println(i+1) ;out.print("</td>") ;
 		out.print("<td>") ;	//2
 		out.print("<b>"+wqr.get4()!=null?wqr.get4():"") ;out.print("</b></td>") ;		
 		//out.println(wqr.get1()!=null?wqr.get1():"0") ; //IDMEDCASE
+		out.print("<td>") ;	//Беженец
+		out.print(wqr.get11());
+		out.print("</td>") ;
 		out.print("<td>") ;	//3
 		out.print(wqr.get9()) ;out.print("</td>") ;
+		
 		out.print("<td>") ;	//4
 		out.print(wqr.get10()) ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get2()) ;out.print("</td>") ;	//5
 		out.print("<td>") ;out.println(wqr.get3()) ;out.print("</td>") ;	//6
 		out.print("<td>") ;out.print(wqr.get8()!=null?wqr.get8():"");out.print("</td>") ;	//7
 		out.print("<td>") ;out.print(wqr.get7()!=null?wqr.get7():"");out.print("</td>") ;	//8
-		out.print("<td>") ;	//4
-		try {
+		out.print("<td>") ;	//4 */
+	 	try {
 			String[] arr =HospitalMedCaseServiceJs.getDataByReference(Long.valueOf(wqr.get1().toString()),"HOSP", request).split("&");
 			for (int j=0;j<arr.length;j++)
 			{
 				if (arr[j].startsWith("render")) {
 					String[] arrPrice =arr[j].split("%23"); 
 					String price = arrPrice[0].substring(7,arrPrice[0].length());
-					out.print(" ");out.print(price);out.print(" руб");
+					wqr.set12(price+" руб.");
+					listStac.set(i,wqr);
+					 /* out.print(" ");out.print(price);out.print(" руб"); */ 
 				}
 			}
 		} catch (Exception e) {
-			out.print("---");	
+			wqr.set12("---");
+			listStac.set(i,wqr);	
 		}
-		out.print("</td>") ;	//4
-		out.println("</tr>") ;
+/* 		 out.print("</td>") ;	//4
+		out.println("</tr>") ; */ 
 	}
-	out.println("</table>") ;
-	out.println("</td></tr>") ;
+	request.setAttribute("list_stac", listStac);
+/*  	out.println("</table>") ;
+	out.println("</td></tr>") ;  */
   	} else {
-  		out.print("Нет данных");
+  		 /* out.print("Нет данных");  */
   	}
   	%>
-  	  	
+  	  <msh:table viewUrl="entityShortView-stac_ssl.do" 
+ name="list_stac"
+ action="entityView-stac_ssl.do" idField="1" >
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="4" />
+	      <msh:tableColumn property="9" columnName="Дата рождения"/>
+	      <msh:tableColumn property="11" columnName="Беженец"/>
+	      <msh:tableColumn columnName="Дата поступления" property="2" />
+	      <msh:tableColumn columnName="Дата выписки" identificator="false" property="3" />
+	      <msh:tableColumn property="6" columnName="Отделение"/>
+	      <msh:tableColumn property="7" columnName="Поток обслуживания"/>
+	      <msh:tableColumn property="8" columnName="Результат лечения"/>
+	      <msh:tableColumn property="10" columnName="Диагноз"/>
+	      <msh:tableColumn property="12" columnName="Объем финансирования"/>
+	    </msh:table>	
   	<msh:section title="Отказы от госпитализаций">
 
   	
