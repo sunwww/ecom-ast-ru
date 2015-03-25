@@ -34,4 +34,12 @@ public class VocExtDispForm extends IdEntityForm {
 	private String theCode;
 	/** Наименование */
 	private String theName;
+	
+	/** Флаг Медкомиссия */
+	@Comment("Флаг Медкомиссия")
+	@Persist
+	public Boolean getIsComission() {return theIsComission;}
+	public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;}
+	/** Флаг Медкомиссия */
+	private Boolean theIsComission;
 }
