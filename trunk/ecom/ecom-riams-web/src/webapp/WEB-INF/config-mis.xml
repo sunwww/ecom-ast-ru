@@ -5,6 +5,9 @@
 <struts-config>
 
 	<form-beans>
+		<!--  Медицинские осмотры -->
+		<form-bean name="extDispCom_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispComCardForm" />
+		
 		<!-- Доп.диспансеризация -->
 		<form-bean name="mis_attachmentForm" type="ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm" />
 		<form-bean name="extDisp_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispCardForm" />
