@@ -19,4 +19,15 @@ public class VocExtDisp extends VocBaseEntity{
 
 	/** Внутренний код */
 	private String theInternalCode;
+	
+/** Флаг медосмотра */
+@Comment("Флаг медосмотра")
+public Boolean getIsComission() {return theIsComission;}
+public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;}
+/** Флаг медосмотра */
+private Boolean theIsComission;
+	
+
+	/** Тип */
+	private String theType;
 }
