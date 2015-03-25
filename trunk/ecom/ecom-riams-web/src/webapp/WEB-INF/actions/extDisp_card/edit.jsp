@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 		<msh:form action="/entityParentSaveGoView-extDisp_card.do" defaultField="lpuName">
-			<msh:hidden property="id" />
+			<msh:hidden property="id" /> 
 			<msh:hidden property="saveType" />
 			<msh:hidden property="patient" />
 			<msh:panel colsWidth="1%,1%,1%,97%">
