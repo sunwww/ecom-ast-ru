@@ -401,7 +401,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	WebQueryResult[] fileExpList = {exportN1(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	WebQueryResult[] fileExpList = {exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
     			,new WebQueryResult()
     	};
@@ -560,6 +560,42 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	res.set1(filename+".xml") ;
     	return res;
     }
+    
+    private WebQueryResult recordN2(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
+    	
+    	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[18],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[17],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    	WebQueryResult res = null ;
+    	if (aIsCreateWQR) {
+    		res= new WebQueryResult() ;
+    		res.set1(obj[0]) ;res.set2(obj[1]) ;res.set3(obj[2]) ;res.set4(obj[3]) ;res.set5(obj[4]) ;
+    		res.set6(obj[5]) ;res.set7(obj[6]) ;res.set8(obj[7]) ;res.set9(obj[8]) ;res.set10(obj[9]) ;
+    		res.set11(obj[10]) ;res.set12(obj[11]) ;res.set13(obj[12]) ;res.set14(obj[13]) ;res.set15(obj[14]) ;
+    		res.set16(obj[15]) ;res.set17(obj[16]) ;res.set18(obj[17]) ;res.set19(obj[18]) ;
+    	}
+    	return res ;
+    	
+    }
     private WebQueryResult recordN1(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
     	
     	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
@@ -606,6 +642,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	if (aPreDate==null) return false ;
     	if (aSnilsDoctor==null) return false ;
     	if (aTypePolicy==null) return false ;
+    	/*try {
+    		java.util.Date preDate = new SimpleDateFormat("yyyy-DD-mm").parse(""+aPreDate) ;
+    		
+    	} catch(Exception e) {
+    		return false ;
+    	}*/
+    	return true ;
+    }
+    private boolean checkN2(Object[] aObj) {
+    	if (aObj[15]==null) return false ;
     	return true ;
     }
     private boolean checkHospitalDataFond(Object aLastname, Object aFirstname,Object aMiddlename
@@ -646,7 +692,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	
     }
-    public String exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -655,13 +701,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-
-    	
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
-    	
     	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	WebQueryResult res = new WebQueryResult() ;
+
     	XmlDocument xmlDoc = new XmlDocument() ;
+    	XmlDocument xmlDocError = new XmlDocument() ;
+    	XmlDocument xmlDocExist = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+    	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
+    	int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+    	
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as f0datestart");
     	sql.append(" ,cast(sls.entranceTime as varchar(5)) as f1entrancetime");
@@ -678,7 +729,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
     	sql.append(" ,vbt.codeF as f13vbtomccode");
     	sql.append(" ,ss.code as f14sscode");
-    	sql.append(" ,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
+    	sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
     	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
     	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
     	sql.append(" ,hdf.numberfond as f18numberfond") ;
@@ -703,57 +754,47 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
-    	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
+    	sql.append(" and sls.deniedHospitalizating_id is null and slo.prevMedCase_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
     	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
+    	sql.append(" and (hdf.istable3 is null or hdf.istable3='0')") ;
+    	sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
+    	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
+    	sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	Element title_error = xmlDocError.newElement(root_error, "ZGLV", null);
+    	Element title_exist = xmlDocExist.newElement(root_exist, "ZGLV", null);
     	xmlDoc.newElement(title, "VERSION", "1.0");
-    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
     	xmlDoc.newElement(title, "FILENAME", filename);
     	//int i=0 ;
     	for (Object[] obj:list) {
-    		String mkb =obj[15]!=null?""+obj[15]:null ;
-    		if (mkb!=null &&!mkb.equals("")) {
-	    		Element zap = xmlDoc.newElement(root, "NPR", null);
-	    		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[18],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[17],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],true,"") ;
-	    		/*xmlDoc.newElement(zap, "SMO", AddressPointServiceBean.getStringValue(obj[5])) ;
-	    		xmlDoc.newElement(zap, "SMO_OGRN", AddressPointServiceBean.getStringValue(obj[6])) ;
-	    		xmlDoc.newElement(zap, "SMO_OK", AddressPointServiceBean.getStringValue(obj[7])) ;
-	    		xmlDoc.newElement(zap, "SMO_NAM", AddressPointServiceBean.getStringValue("")) ;*/
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
-	    		if (mkb.contains(",")) {
-	    			String[] mkbs = mkb.split(",") ;
-	    			mkb=mkbs[0] ;
-	    		}
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
-	    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
-	    		}
+    		if (checkN2(obj)) {
+	    			Element zap = xmlDoc.newElement(root, "NPR", null);
+	    			recordN2(xmlDoc, zap, obj, false) ;
+	    	} else {
+	    		Element zapError = xmlDocError.newElement(root_error, "NPR", null);
+	    		i_error.add(recordN2(xmlDocError, zapError, obj,true)) ;
+	    		
+	    	}
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
-    	return filename+".xml";
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	if (!i_exist.isEmpty()) {
+    		res.set2(filename+"_exist.xml") ;
+    		res.set4(i_exist) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(workDir+"/"+filename+"_exist.xml")) ;
+    	}
+    	if (!i_error.isEmpty()) {
+    		res.set3(filename+"_error.xml") ;
+    		res.set5(i_error) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(workDir+"/"+filename+"_error.xml")) ;
+    	}
+    	res.set1(filename+".xml") ;
+    	return res;
     }
     public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
@@ -984,6 +1025,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" where hdf.directDate between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and hdf.hospitalMedCase_id is null ");
     	sql.append(" and hdf.DeniedHospital is not null") ;
+    	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
     	sql.append(" order by hdf.numberFond") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -1151,6 +1193,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
     	sql.append(" and mkb.code is not null") ;
     	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
+    	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
+    	sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -1371,6 +1415,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
@@ -1392,7 +1437,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
-	     	    	theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[1]+"') "
+	    	    	theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[1]+"') "
 	    	    			+" ,transferDate=(select transferDate from medcase where id='"+obj[1]+"')"
 	    	    			+" ,transferTime=(select transferTime from medcase where id='"+obj[1]+"')"
 	    	    			+" ,dischargeTime=(select dischargeTime from medcase where id='"+obj[1]+"')"
@@ -1491,10 +1537,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         //aAddress.setFullname(sb.toString()) ;
         
         //theManager.persist(aAddress) ;
-        Address a =theManager.find(Address.class, aAddressId) ;
-        a.setFullname(sb.toString()) ;
-        theManager.persist(a) ;
-    	//aManager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddressId).executeUpdate() ;
+        //Address a =theManager.find(Address.class, aAddressId) ;
+        //theManager.createNativeQuery("update set fullname='"+sb.toString()+"' ") 
+        //a.setFullname(sb.toString()) ;
+        //theManager.persist(a) ;
+    	aManager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddressId).executeUpdate() ;
         return sb.toString().trim() ;
     }
 
