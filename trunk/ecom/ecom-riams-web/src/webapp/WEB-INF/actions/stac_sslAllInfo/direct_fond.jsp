@@ -21,6 +21,7 @@
 	String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", request) ;
 	String typeEmergency=ActionUtil.updateParameter("HospitalDirectDataInFond","typeEmergency","3", request) ;
 	String typeLpu=ActionUtil.updateParameter("HospitalDirectDataInFond","typeLpu","3", request) ;
+	String typeImport=ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", request) ;
   %>
   
     <msh:form action="/stac_direct_in_fond.do" defaultField="lpu" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -51,9 +52,7 @@
 	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
 	        	<input type="radio" name="typeMode" value="3"> Работа с данными
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="8">
-	        	<input type="radio" name="typeMode" value="4"> Обновить соответствия по направлениям
-	        </td>
+
       </msh:row>
       </msh:panel>
       <msh:panel styleId="updateData">
@@ -103,6 +102,7 @@
        </msh:row>
        <msh:row>
        	<msh:hidden property="filename"/>
+       	<msh:hidden property="filenameError"/>
        	<td colspan="4">
        		Файл <span id='aView'></span>
        	</td>
@@ -192,32 +192,43 @@
        <msh:form action="stac_direct_in_fond_import.do"  defaultField="isClear" fileTransferSupports="true">
 			            <msh:hidden property="saveType"/>
 			 			<msh:panel styleId="importXml">
+			 			      <msh:row>
+        <td class="label" title="Обновить соответствия по направлениям и госпитализациям (typeImport)" colspan="2"><label for="typeImportName" id="typeImportLabel">Обновление соответствий по напр. и госп.:</label></td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeImport" value="1"> обновить  
+        </td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="3">
+        	<input type="radio" name="typeImport" value="2">  не обновлять
+        </td>
+      </msh:row>   
 			                <msh:row>
 			                    <td>Файл *.xml</td>
-			                    <td colspan="1">
+			                    <td colspan="15">
 			                        <input type="file" name="file" id="file" size="50" value="" onchange="">
 			                        <input type="button" name="run_import" value="Импорт"  onclick="this.form.submit()" />
 			                    </td>
 			                </msh:row>
-			                	<msh:row>
-			                	<td colspan="4" align="center">
-			                		
-			                	</td>
-			                	</msh:row>
+			                	       <msh:row>
+       	<td colspan="4">
+       		Файл <span id='aViewImportError'></span>
+       	</td>
+       </msh:row>
+
 			                	
 			            </msh:panel>
 			        </msh:form>
 	<tags:hosp_263 name="Diag"></tags:hosp_263>
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <script type="text/javascript">
-      checkFieldUpdate('typeLpu','${typeLpu}',1) ;
-      checkFieldUpdate('typeEmergency','${typeEmergency}',1) ;
-      checkFieldUpdate('typeView1','${typeView1}',1) ;
-      checkFieldUpdate('typeView','${typeView}',1) ;
-      checkFieldUpdate('typeDate','${typeDate}',1) ;
-      checkFieldUpdate('typeMode','${typeMode}',1) ;
-      function checkFieldUpdate(aField,aValue,aDefaultValue) {
-    	   	eval('var chk =  document.forms[0].'+aField) ;
+      checkFieldUpdate('typeLpu','${typeLpu}',1,0) ;
+      checkFieldUpdate('typeEmergency','${typeEmergency}',1,0) ;
+      checkFieldUpdate('typeView1','${typeView1}',1,0) ;
+      checkFieldUpdate('typeView','${typeView}',1,0) ;
+      checkFieldUpdate('typeDate','${typeDate}',1,0) ;
+      checkFieldUpdate('typeMode','${typeMode}',1,0) ;
+      checkFieldUpdate('typeImport','${typeImport}',1,1) ;
+      function checkFieldUpdate(aField,aValue,aDefaultValue,aFrm) {
+    	   	eval('var chk =  document.forms[aFrm].'+aField) ;
     	   	var aMax=chk.length ;
     	   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
     	   		chk[+aDefaultValue-1].checked='checked' ;
@@ -227,6 +238,7 @@
     	   }
      
   $('aView').innerHTML=$('filename').value ;
+  $('aViewImportError').innerHTML=$('filenameError').value ;
   
    function checkMode() {
 	   var chk =  document.forms[0].typeMode ;
@@ -535,7 +547,9 @@ having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d
 			<msh:tableColumn property="12" columnName="Диагноз"/>
 		</msh:table>	
 		<%       }  else  if (typeView1!=null && typeView1.equals("5")) {%>
-		<ecom:webQuery name="table1" nativeSql="select bf.id||''','''||coalesce(bf.snilsDoctorDirect263,'') as id,bf.snilsDoctorDirect263
+		<ecom:webQuery name="table1" nativeSql="
+select bf.id||''','''||coalesce(bf.snilsDoctorDirect263,'') as id
+,bf.snilsDoctorDirect263
 ,list(distinct oml.name) as omlname		
 ,ml.name as mlname
 ,vbt.name as vbtname,count(sls.id) 
