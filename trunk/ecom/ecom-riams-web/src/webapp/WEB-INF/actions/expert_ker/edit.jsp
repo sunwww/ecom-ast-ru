@@ -38,14 +38,11 @@
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:textField property="reasonAdd" fieldColSpan="3" label="Описание причины" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="mainDiagnosis" fieldColSpan="3" label="Код осн. диаг." horizontalFill="true" vocName="vocIdc10"/>
         </msh:row>
-        <msh:row>
-        	<msh:textField property="concomitantDiagnosis" label="Сопут. диагноз" horizontalFill="true" fieldColSpan="3"/>
-        </msh:row>
-        <msh:row>
-        	<msh:textField property="complicationDiagnosis" label="Осложнение" horizontalFill="true" fieldColSpan="3"/>
-        </msh:row>      
         <msh:row>
         	<msh:textField property="treatmentCurrent" label="Лечение на момент подачи" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>        
@@ -95,10 +92,12 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete parentAutocomplete="conclusion" property="conclusionSent" fieldColSpan="3" label="Заключение напр." horizontalFill="true" vocName="vocExpertConclusionSent"/> 
-        	
+        </msh:row>	
+        <msh:row>
+        	<msh:textField property="additionInfo" label="Заключение доп.инф." fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="additionInfo" label="Доп.инфор." fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textField property="notes" horizontalFill="true" label="Замечания" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="expComposition" fieldColSpan="3" label="Состав экспертов" horizontalFill="true" vocName="vocExpertComposition"/>
