@@ -24,4 +24,25 @@ public class VocExpertConclusionSent extends VocBaseEntity {
 
 	/** Обоснование  */
 	private VocExpertConclusion theConclusion;
+	
+	/** Неактуальный */
+	@Comment("Неактуальный")
+	public Boolean getNoActuality() {return theNoActuality;}
+	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+
+	/** Неактуальный */
+	private Boolean theNoActuality;
+	
+	/** Доп. данные */
+	@Comment("Доп. данные")
+	public String getAdditionData() {
+		return theAdditionData;
+	}
+
+	public void setAdditionData(String aAdditionData) {
+		theAdditionData = aAdditionData;
+	}
+
+	/** Доп. данные */
+	private String theAdditionData;
 }

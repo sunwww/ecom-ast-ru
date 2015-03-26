@@ -166,6 +166,20 @@ public class ClinicExpertCard extends BaseEntity {
 	public VocExpertConclusionSent getConclusionSent() {return theConclusionSent;}
 	public void setConclusionSent(VocExpertConclusionSent aConclusionSent) {theConclusionSent = aConclusionSent;}
 
+	/** Заключение дополнение */
+	@Comment("Заключение дополнение")
+	public String getConclusionSentAdd() {return theConclusionSentAdd;}
+	public void setConclusionSentAdd(String aConclusionSentAdd) {theConclusionSentAdd = aConclusionSentAdd;}
+
+	/** Причина дополнение */
+	@Comment("Причина дополнение")
+	public String getReasonAdd() {return theReasonAdd;}
+	public void setReasonAdd(String aReasonAdd) {theReasonAdd = aReasonAdd;}
+
+	/** Причина дополнение */
+	private String theReasonAdd;
+	/** Заключение дополнение */
+	private String theConclusionSentAdd;
 	/** Заключение. Направляется... */
 	private VocExpertConclusionSent theConclusionSent;
 	/** Срок предполагаемого лечения */
@@ -331,5 +345,13 @@ public class ClinicExpertCard extends BaseEntity {
 	/** Дата редактирования */
 	private Date theEditDate;
 	/** Дата создания */
-	private Date theCreateDate;	
+	private Date theCreateDate;
+	
+	/** Замечания */
+	@Comment("Замечания")
+	public String getNotes() {return theNotes;}
+	public void setNotes(String aNotes) {theNotes = aNotes;}
+
+	/** Замечания */
+	private String theNotes;
 }

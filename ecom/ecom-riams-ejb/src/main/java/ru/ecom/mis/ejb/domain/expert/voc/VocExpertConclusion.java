@@ -16,4 +16,11 @@ public class VocExpertConclusion extends VocBaseEntity{
 	public void setCodeAddtion(String aCodeAddtion) {theCodeAddtion = aCodeAddtion;}
 	/** Код основной */
 	private String theCodeAddtion;
+	/** Неактуальный */
+	@Comment("Неактуальный")
+	public Boolean getNoActuality() {return theNoActuality;}
+	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+
+	/** Неактуальный */
+	private Boolean theNoActuality;
 }
