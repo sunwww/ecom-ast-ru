@@ -214,4 +214,21 @@ public class DirectOfMedicalCommissionForm extends IdEntityForm {
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Заключение дополнение */
+	@Comment("Заключение дополнение")
+	@Persist
+	public String getConclusionSentAdd() {return theConclusionSentAdd;}
+	public void setConclusionSentAdd(String aConclusionSentAdd) {theConclusionSentAdd = aConclusionSentAdd;}
+
+	/** Причина дополнение */
+	@Comment("Причина дополнение")
+	@Persist
+	public String getReasonAdd() {return theReasonAdd;}
+	public void setReasonAdd(String aReasonAdd) {theReasonAdd = aReasonAdd;}
+
+	/** Причина дополнение */
+	private String theReasonAdd;
+	/** Заключение дополнение */
+	private String theConclusionSentAdd;
 }

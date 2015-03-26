@@ -205,4 +205,12 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 	/** Заключение. Направляется... */
 	private Long theConclusionSent;
 	
+	/** Замечания */
+	@Comment("Замечания")
+	@Persist
+	public String getNotes() {return theNotes;}
+	public void setNotes(String aNotes) {theNotes = aNotes;}
+
+	/** Замечания */
+	private String theNotes;
 }
