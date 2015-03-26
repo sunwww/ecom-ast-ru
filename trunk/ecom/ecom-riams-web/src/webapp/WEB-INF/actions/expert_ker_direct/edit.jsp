@@ -43,6 +43,9 @@
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:textField property="reasonAdd" fieldColSpan="3" label="Описание причины" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete property="disabilityDocument" fieldColSpan="5" label="Лист нетруд." parentId="expert_ker_directForm.patient"
         		vocName="disabilityDocumentByPatient" horizontalFill="true"/>
         </msh:row>
