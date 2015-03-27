@@ -162,6 +162,7 @@ public class FondWebService {
             sb.append("<th>").append("Дата смерти").append("</th>") ;
             sb.append("<th>").append("ЛПУ").append("</th>") ;
             sb.append("<th>").append("Тип прикрепления").append("</th>") ;
+            sb.append("<th>").append("Дата прикрепления").append("</th>") ;
             sb.append("</tr>") ;
             if (aPatFrm!=null&&aPatFrm.getSnils()==null) aPatFrm.setSnils("") ;
             boolean isStart = true ;
@@ -193,6 +194,7 @@ public class FondWebService {
             	sb.append("<td").append(">").append(dateDeath).append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("lpu")).append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("sp_prik")).append("</td>") ;
+            	sb.append("<td").append(">").append(upDate(e.getChildText("date_prik"))).append("</td>") ;
              	sb.append("</tr>") ;
             	if (isStart) {
             		isStart=false ;
@@ -394,7 +396,7 @@ public class FondWebService {
         		String hb = el.getChildText("section") ;
         		String fn = el.getChildText("apartment") ;
         		String kl = el.getChildText("street_gni") ;
-        		String r = el.getChildText("rayon") ;
+        		String r = el.getChildText("rayon") ; 
         		String sity = el.getChildText("sity") ;
         		String street = el.getChildText("street");
         		String streetT = el.getChildText("street_t");
