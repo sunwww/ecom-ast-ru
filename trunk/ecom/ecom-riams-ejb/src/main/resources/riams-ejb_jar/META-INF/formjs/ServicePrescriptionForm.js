@@ -19,7 +19,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
 	aEntity.setCreateUsername(username) ;
-	var wf =aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
 	aEntity.setPrescriptSpecial(wf) ;
 	var check1S = 0 ;
 	var pat = aEntity.prescriptionList.medCase.patient ;
