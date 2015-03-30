@@ -81,6 +81,103 @@ function current_info(aCtx) {
 	map.put("current_time",FORMAT_3.format(curTime)) ;
 	map.put("current_username",aCtx.sessionContext.callerPrincipal.name ) ;
 }
+function printGroupColumnNativeQuery(aCtx,aParams) {
+	var sqlText = aParams.get("sqlText");
+	var sqlInfo = aParams.get("sqlInfo");
+	var cntBegin = 1;
+	var sqlColumn = aParams.get("sqlColumn");
+	var groupField = aParams.get("groupField");
+	if (cntBegin<1) cntBegin=1 ;
+	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	var retAll = new java.util.ArrayList() ;
+	var groupList = new java.util.ArrayList() ;
+	var groupColList = new java.util.ArrayList() ;
+	//var group = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	
+	var cntColumn = +aParams.get("cntColumn");
+	if (cntColumn<1) cntColumn=1 ;
+	//throw ""+cntColumn ;
+	var iCol = 0 ;
+	var parCol = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	
+	var isColCreate = false ;
+	var idOld="" ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		eval("var idNew = ''+obj["+groupField+"] ;") ; 
+		if (idOld!=idNew) {
+			if (idOld!='') {
+				var r = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+				r.set1(idOld) ;
+				r.set2(groupList) ;
+				r.set3(groupColList) ;
+				ret.add(r) ;
+			}
+			cntBegin=1;
+			idOld = idNew ;
+			groupList = new java.util.ArrayList() ;
+			groupColList = new java.util.ArrayList() ;
+		}
+		
+		par.set1(""+cntBegin) ;
+		++cntBegin ;
+		for (var j=2;j<=obj.length;j++) {
+			var val = obj[j-1] ;
+			eval("par.set"+(j)+"(val==null?'':val);") ;
+			if (val==null) val=0 ;
+			
+			eval("var val1=parAll.get"+j+"()") ;
+			if (val1==null) val1=0 ;
+			var val11 = new java.math.BigDecimal(''+val1) ;
+			var val12=  new java.math.BigDecimal(''+0) ;
+			try {
+				val12 =  new java.math.BigDecimal(''+val) ;
+			} catch(e) {
+				
+			}
+			var val=val12.add(val11) ;
+			
+			eval("parAll.set"+(j)+"(val);") ;
+			
+		}
+		
+		
+		if (isColCreate && (iCol)%cntColumn==0) {
+			groupColList.add(parCol) ;
+			parCol = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			isColCreate = false;
+			iCol=0;
+			//throw "+++" ;
+		} else {
+			//throw "---" ;
+			
+			
+		}
+		iCol++ ;
+		isColCreate = true ;
+		eval("parCol.set"+iCol+"(par);") ;
+		groupList.add(par) ;
+		
+	}
+	if (idOld!='') {
+		var r = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		groupColList.add(parCol) ;
+		r.set1(idOld) ;
+		r.set2(groupList) ;
+		r.set3(groupColList) ;
+		ret.add(r) ;
+	}
+	retAll.add(parAll) ;
+	map.put("list",ret) ;
+	map.put("sqlInfo",sqlInfo) ;
+	map.put("sqlColumn",sqlColumn) ;
+	map.put("listAll",retAll) ;
+	current_info(aCtx) ;
+	return map ;
+}
 function printGroupNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");
@@ -263,6 +360,77 @@ function printManyNativeQuery(aCtx,aParams) {
 		map.put("listTotal"+jj,parAll) ;
 	
 	}
+	current_info(aCtx) ;
+	return map ;
+}
+function printColumn(aCtx,aParams) {
+	var sqlText = aParams.get("sqlText");
+	var sqlInfo = aParams.get("sqlInfo");
+	var cntBegin = +aParams.get("cntBegin");
+	
+	var sqlColumn = aParams.get("sqlColumn");
+	if (cntBegin<1) cntBegin=1 ;
+	
+	var cntColumn = +aParams.get("cntColumn");
+	if (cntColumn<1) cntColumn=1 ;
+	var retCol = new java.util.ArrayList() ;
+	var parCol = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	
+	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
+	var ret = new java.util.ArrayList() ;
+	var retAll = new java.util.ArrayList() ;
+	
+	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	
+	var iColumn = 1 ; var isColCreate = false ; 
+	for (var i=0; i < list.size(); i++) {
+		if (isColCreate && iColumn%cntColumn==0) {
+			retCol.add(parCol) ;
+			parCol = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			isColCreate = false;
+			iColumn++ ;
+		} else {
+			isColCreate = true ;
+			iColumn=1;
+		}
+		var obj = list.get(i) ;
+		
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		
+		par.set1(""+cntBegin) ;
+		++cntBegin ;
+		for (var j=2;j<=obj.length;j++) {
+			var val = obj[j-1] ;
+			eval("par.set"+(j)+"(val);") ;
+			if (val==null) val=0 ;
+			
+				eval("var val1=parAll.get"+j+"()") ;
+				if (val1==null) val1=0 ;
+				var val11 = new java.math.BigDecimal(''+val1) ;
+				var val12=  new java.math.BigDecimal(''+0) ;
+				try {
+				val12 =  new java.math.BigDecimal(''+val) ;
+				} catch(e) {
+					
+				}
+				var val=val12.add(val11) ;
+				
+				eval("parAll.set"+(j)+"(val);") ;
+			
+		}
+		ret.add(par) ;
+		eval("parCol.set"+iColumn+"(ret);") ;
+		
+	}
+	if (isColCreate) {
+		retCol.add(parCol) ;
+	}
+	retAll.add(parAll) ;
+	map.put("list",ret) ;
+	map.put("listCol",retCol) ;
+	map.put("sqlInfo",sqlInfo) ;
+	map.put("sqlColumn",sqlColumn) ;
+	map.put("listAll",retAll) ;
 	current_info(aCtx) ;
 	return map ;
 }
