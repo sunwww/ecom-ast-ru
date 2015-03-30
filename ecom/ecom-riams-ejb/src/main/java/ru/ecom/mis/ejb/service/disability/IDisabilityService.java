@@ -18,7 +18,7 @@ public interface IDisabilityService {
 	public List<GroupByDate> findCloseDocumentGroupByDate(String aDateFrom, String aDateTo) ;
 	public String getDataByClose(Long aDocumentId) ;
 	public Long createDuplicateDocument(Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFuntion2,String aJob,Boolean aUpdateJob) ;
-	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber) ;
+	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo) ;
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber)  throws ParseException, NamingException ;
 	public String exportLNByNumber (String aNumber) throws ParseException, NamingException ;
 	public String analyseExportLN(String aFileName) throws NamingException ;
