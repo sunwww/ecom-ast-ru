@@ -83,9 +83,13 @@
      	} else if ($('${name}Number').value=="") {
      		alert("Поле номер является обязательным") ;
      		$("${name}Number").focus() ;
-     	} else {
+     	} else if ($('${name}WorkComboType').value=="") {
+     		alert("Поле тип совмещения не заполнен") ;
+     		$("${name}WorkComboType").focus() ;
+     	} 
+     	else {
 	     	DisabilityService.createWorkComboDocument(
-	     		'${param.id}',$('${name}Job').value, $('${name}Seria').value,$('${name}Number').value
+	     		'${param.id}',$('${name}Job').value, $('${name}Seria').value,$('${name}Number').value, $('${name}WorkComboType').value
 	     		 ,{
 	                   callback: function(aString) {
 	        				alert('Создан бланк по совместительству!');
