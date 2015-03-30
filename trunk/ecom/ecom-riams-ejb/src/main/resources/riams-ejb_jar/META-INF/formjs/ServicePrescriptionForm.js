@@ -19,6 +19,8 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
 	aEntity.setCreateUsername(username) ;
+	var wf =aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	aEntity.setPrescriptSpecial(wf) ;
 	var check1S = 0 ;
 	var pat = aEntity.prescriptionList.medCase.patient ;
 //	throw ""+aForm.labList;	
@@ -47,24 +49,7 @@ function onCreate(aForm, aEntity, aCtx) {
 						var key =""+pat.id+"#"+par2;
 						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
 						labMap.put(key, matId);
-						/*matId = labMap.get(""+par2);
-						//throw ""+matId ; 
-						if (matId==null) {
-							var lPl =aCtx.manager.createNativeQuery("select p.materialId from prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join medcase mc on mc.id=pl.medCase_id where mc.patient_id='"+pat.id+"' and p.planStartDate=to_date('"+param[1]+"','dd.mm.yyyy') and p.materialId is not null and p.materialId!='' order by p.materialId desc ").getResultList();
-							if (lPl.size()>0) {
-								matId = lPl.get(0) ;
-							}
-							if (matId==null) {
-								var seqHelper = Packages.ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-								matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+par2, aCtx.manager);
-							}
-							if (matId!=null) {
-								
-								labMap.put(""+par2,matId) ;
-							} 
-							//	throw "matID"+matId;
-
-						}*/
+						
 					}
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ; // ?
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
