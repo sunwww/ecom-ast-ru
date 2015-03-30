@@ -48,6 +48,7 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.voc.VocCombo;
 import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.poly.ejb.services.GroupByDate;
@@ -269,6 +270,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	"where dd.exportdate is null and "+sqlAdd +
 	" and dd.anotherlpu_id is null " +
 	"and (dd.isclose is true or dd.isclose='1') "+
+	"and (dd.noactuality is null or dd.noactuality='0') "+
 	"order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
@@ -287,7 +289,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			Element rowOperation = new Element("OPERATION");
 			Element rowSet = new Element("ROWSET");
 			rowSet.setAttribute("LPU_OGRN",aOgrnCode).setAttribute("email", aSocEmail)
-				.setAttribute("phone", aSocPhone).setAttribute("version_software","02.2015")
+				.setAttribute("phone", aSocPhone).setAttribute("version_software","03.2015")
 				.setAttribute("author",aWorkFunction).setAttribute("software","MedOS")
 				.setAttribute("version","");
 			rootElement.addContent(rowOperation.addContent("SET"));
@@ -338,10 +340,20 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		//		String dateFrom = "";
 				String startDate = rs.getString("startDate");
 				String snils = rs.getString("snils");
-				if (snils!=null) {
+				String parentCode = rs.getString("osnWorkplaceNumber");
+				if (snils!=null &&!snils.equals("")) {
 					snils=snils.replace("-", "");
 					snils=snils.replace(" ", "");
+				} else {
+//Check ELN-101
+					defect.append(ln).append(":").append(ln_id).append(":ELN-101 Не заполнено поле СНИЛС").append("#");
+					continue;
 				}
+//Check ELN-029
+/*				if ((workcombotypeid==null ||workcombotypeid.equals("")) &&parentCode!=null&&!parentCode.equals("")) {
+					defect.append(ln).append(":").append(ln_id).append(":ELN-029 Номер ЛН, выданный по осн. месту работы не должен указываться при оформлении ЛН для осн. места работы").append("#");
+					continue;
+				}*/
 				Element rowRow = new Element("ROW");
 				Element rowLpuLn = new Element("LpuLn");
 				
@@ -354,10 +366,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				if (placementService!=null &&placementService.equals("1")) {
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("3"));
 				} else {
-				if (workcombotypeid!=null &&!workcombotypeid.equals("")) {
+				if ((workcombotypeid!=null &&!workcombotypeid.equals(""))||parentCode!=null&&!parentCode.equals("")) {
 					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("2"));
-				}else {
+				}  else {
 					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("1"));
 				}					
@@ -369,8 +381,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String primaryFlag = rs.getString("f_primary");
 				if (primaryFlag.equals("1")) {
 					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("1"));
-				} else {
+				} else if ((prevDocument!=null &&!prevDocument.equals(""))){
 					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("0"));
+				} else {
+//Check ELN-006
+					defect.append(ln).append(":").append(ln_id).append(":ELN-006 В продлении ЛН должен указываться номер основного ЛН").append("#");
+					continue;
 				}
 				String duplicateFlag = rs.getString("f_duplicate");
 				if (duplicateFlag!=null&&!duplicateFlag.equals("")) {
@@ -402,7 +418,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					rowLpuLn.addContent(new Element("DIAGNOS").addContent(diagnosis));
 				}
 				
-				String parentCode = rs.getString("osnWorkplaceNumber");
+			
 				if (parentCode!=null&&!parentCode.equals("")){
 					rowLpuLn.addContent(new Element("PARENT_CODE").addContent(parentCode));
 				}
@@ -502,9 +518,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				}
 				String hospital_Dt1 = rs.getString("HOSPITAL_DT1");
 				String hospital_Dt2 = rs.getString("HOSPITAL_DT2");	
-				if ((hospital_Dt1!=null &&!hospital_Dt1.equals(""))&&
-						(reason1!=null && (reason1.equals("09") ||reason1.equals("12") ||reason1.equals("13") ||
-						reason1.equals("14") ||reason1.equals("15")))) {
+				if ((hospital_Dt1!=null &&!hospital_Dt1.equals(""))) {
+//попробуем всегда заполнять поля "Дата начала" и "Дата окончания госпитализации"
+					/*&&(reason1!=null && (reason1.equals("09") ||reason1.equals("12") ||reason1.equals("13") ||
+						reason1.equals("14") ||reason1.equals("15")))) {*/
 					rowLpuLn.addContent(new Element("HOSPITAL_DT1").addContent(rs.getString("hospital_Dt1")));
 					if (hospital_Dt2!=null&&!hospital_Dt2.equals("")) {
 						rowLpuLn.addContent(new Element("HOSPITAL_DT2").addContent(rs.getString("hospital_Dt2")));
@@ -566,39 +583,41 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					continue;
 				}
 				String mseResult = rs.getString("mseResult");
-				if (returnDate!=null) {
-					
+				String nextDocument = rs.getString("nextDocument");
+				
+				//Если указан mseResult (codef), return_date=null
+				if (mseResult!=null&&!mseResult.equals("")) {
+					rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(mseResult));
+					if (mseResult.equals("32")||mseResult.equals("33")||mseResult.equals("34")||mseResult.equals("36")) {
+						String otherDate = rs.getString("otherDate");
+						if (otherDate!=null&&!otherDate.equals("")) {
+							rowLpuLn.addContent(new Element("OTHER_STATE_DT").addContent(rs.getString("otherdate")));
+						} else {
+							defect.append(ln).append(":").append(ln_id).append(":Поле ИНОЕ=").append(mseResult).append(", Дата ИНОЕ не заполнено!#");
+							continue;
+						}					
+					} else if (mseResult.equals("31")||mseResult.equals("37")) {
+						if (nextDocument!=null&&!nextDocument.equals("")) {
+						} else {
+	//Check ELN-089
+							defect.append(ln).append(":").append(ln_id).append(":ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
+							continue;			
+						}
+					}
+				}  else if (returnDate!=null) {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(format.parse(returnDate));
 					cal.add(Calendar.DAY_OF_MONTH, 1);
 					returnDate = new java.sql.Date(cal.getTime().getTime()).toString();
 					rowLpuLn.addContent(new Element("RETURN_DATE_LPU").addContent(returnDate));
 				} else {
-					if (mseResult!=null&&!mseResult.equals("")) {
-						rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(mseResult));
-						if (mseResult.equals("32")||mseResult.equals("33")||mseResult.equals("34")||mseResult.equals("36")) {
-							String otherDate = rs.getString("otherDate");
-							if (otherDate!=null&&!otherDate.equals("")) {
-								rowLpuLn.addContent(new Element("OTHER_STATE_DT").addContent(rs.getString("otherdate")));
-							} else {
-								defect.append(ln).append(":").append(ln_id).append(":Поле ИНОЕ=").append(mseResult).append(", Дата ИНОЕ не заполнено!#");
-								continue;
-							}
-							
-						}
-					} else {
-						defect.append(ln).append(":").append(ln_id).append(":Не указана ни дата выхода на работу, ни ИНОЕ!#");
-						continue;
-					}
+					defect.append(ln).append(":").append(ln_id).append(":Не указана ни дата выхода на работу, ни ИНОЕ!#");
+					continue;
+				}					
+				// if (mseResult.equals("31")||mseResult.equals("37")) 
+				if (nextDocument!=null&&!nextDocument.equals("")) {
+					rowLpuLn.addContent(new Element("NEXT_LN_CODE").addContent(nextDocument)); 
 				}
-				
-				String nextDocument = rs.getString("nextDocument");
-				if (nextDocument!=null &&!nextDocument.equals("")) {
-					rowLpuLn.addContent(new Element("NEXT_LN_CODE").addContent(nextDocument));
-				}
-				
-			//	rowLpuLn.addContent(new Element("LPU_OGRN").addContent(rs.getString("lpu_OGRN")));
-				
 				rowLpuLn.addContent(new Element("LN_VERSION").addContent("1"));
 				rowRow.addContent(rowLpuLn);
 				rowSet.addContent(rowRow);
@@ -828,9 +847,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	return newDoc.getId() ;
     	
     }
-    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber){
+    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-    			
+    	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;		
     	if (doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
     	}
@@ -846,6 +865,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	newDoc.setJob(aJob.trim().toUpperCase()) ;
     	newDoc.setMainWorkDocumentNumber(doc.getNumber()) ;
     	newDoc.setMainWorkDocumentSeries(doc.getSeries()) ;
+    	newDoc.setWorkComboType(newVocComb);
     	//newDoc.setNoActuality(doc.getNoActuality()) ;   	
     	theManager.persist(newDoc) ;
     	return newDoc.getId() ;
