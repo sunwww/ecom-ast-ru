@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -33,6 +34,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="medService", parentForm= MedServiceForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedService/VocWorkFunction")
 public class WorkFunctionServiceForm extends IdEntityForm {
+	
+	/** Специалист (группа) */
+	@Comment("Специалист (группа)")
+	@Persist
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Специалист (группа) */
+	private Long theWorkFunction;
+
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist
