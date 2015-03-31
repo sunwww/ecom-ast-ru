@@ -6,7 +6,7 @@
     			parent = ''
     			names  = "wf.dtype='GroupWorkFunction' then wf.groupname else vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end end"
     			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
-    			queryAppend = " (wf.dtype='PersonalWorkFunction' or wf.dtype='GroupWorkFunction') and (wf.archival is null or wf.archival='0')"
+    			queryAppend = " (wf.dtype='PersonalWorkFunction' and wg.group_id is null or wf.dtype='GroupWorkFunction') and (wf.archival is null or wf.archival='0')"
     			queriedSplitCount="3"
     			order =''
     			nameId='wf.id'
@@ -329,8 +329,47 @@
                 from  = 'VocExpertConclusionSent vecs'
                 parent='vec.id=:parent'
                 nameId="vecs.id"
-                queryAppend=""
-                join=" left join VocExpertConclusion vec on vec.id=vecs.conclusion_id "
+                queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
+                join=" left join VocExpertConclusion vec on vec.code=vecs.conclusionCode "
+                order=""
+                names   = "vecs.name "
+	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		
+			/>
+	</voc>
+	<voc id="vocExpertOrderConclusion" type="NativeVocService">
+		<NativeVocService
+                from  = 'VocExpertOrderConclusion vecs'
+                parent='vet.id=:parent'
+                nameId="vecs.id"
+                queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
+                join=" left join VocExpertType vet on vet.code=vesc.typeCode"
+                order=""
+                names   = "vecs.name "
+	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		
+			/>
+	</voc>
+	<voc id="vocExpertReason" type="NativeVocService">
+		<NativeVocService
+                from  = 'VocExpertReason vecs'
+                parent='vet.id=:parent'
+                nameId="vecs.id"
+                queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
+                join=" left join VocExpertType vet on vet.code=vesc.typeCode"
+                order=""
+                names   = "vecs.name "
+	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		
+			/>
+	</voc>
+	<voc id="vocExpertConclusion" type="NativeVocService">
+		<NativeVocService
+                from  = 'VocExpertConclusion vecs'
+                parent=''
+                nameId="vecs.id"
+                queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
+                join=""
                 order=""
                 names   = "vecs.name "
 	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
@@ -1160,10 +1199,10 @@
     			parent = " wct.workCalendarDay_id = :parent "
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null"
     			order =''
     			nameId='wct.id'
-    			join=''
+    			join=' left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id'
     	/>
     </voc>
      <voc id='workCalendarTimeByDate' type='NativeVocService'>
