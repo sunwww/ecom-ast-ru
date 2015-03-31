@@ -6,7 +6,7 @@
     			parent = ''
     			names  = "wf.dtype='GroupWorkFunction' then wf.groupname else vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end end"
     			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
-    			queryAppend = " (wf.dtype='PersonalWorkFunction' and wg.group_id is null or wf.dtype='GroupWorkFunction') and (wf.archival is null or wf.archival='0')"
+    			queryAppend = " (wf.dtype='PersonalWorkFunction' and wf.group_id is null or wf.dtype='GroupWorkFunction') and (wf.archival is null or wf.archival='0')"
     			queriedSplitCount="3"
     			order =''
     			nameId='wf.id'
