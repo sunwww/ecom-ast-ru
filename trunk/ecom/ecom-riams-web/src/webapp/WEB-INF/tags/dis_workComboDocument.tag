@@ -83,9 +83,9 @@
      	} else if ($('${name}Number').value=="") {
      		alert("Поле номер является обязательным") ;
      		$("${name}Number").focus() ;
-     	} else if ($('${name}WorkComboType').value=="") {
+     	} else if ($('${name}WorkComboType').value==""||(+$('${name}WorkComboType').value<1)) {
      		alert("Поле тип совмещения не заполнен") ;
-     		$("${name}WorkComboType").focus() ;
+     		$("${name}WorkComboTypeName").focus() ;
      	} 
      	else {
 	     	DisabilityService.createWorkComboDocument(
