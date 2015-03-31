@@ -19,6 +19,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import sun.awt.X11.PropMwmHints;
 
 /**
  * Услуги по рабочим функциям
@@ -38,6 +39,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class WorkFunctionService extends BaseEntity{
 	
+	/** Специалист (группа) */
+	@Comment("Специалист (группа)")
+	@OneToOne
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Специалист (группа) */
+	private WorkFunction theWorkFunction;
+
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@ManyToOne
