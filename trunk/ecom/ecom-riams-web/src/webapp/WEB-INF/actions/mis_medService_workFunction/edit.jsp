@@ -37,6 +37,9 @@
           <msh:autoComplete vocName="vocWorkFunction" property="vocWorkFunction" label="Раб. функция" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
+          <msh:autoComplete vocName="serviceWorkFunction" property="workFunction" label="Специалист (группа)" horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
           <msh:autoComplete vocName="lpu" property="lpu" label="ЛПУ" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
