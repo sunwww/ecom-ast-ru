@@ -175,8 +175,9 @@
     
     <msh:sectionTitle>
     
+    
     <form action="print-pres_lab_prescript_by_department.do" method="post" target="_blank">
-	    Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}
+	 Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}    
 	    <input type='hidden' name="sqlText" id="sqlText" value="select 
 	    pat.id as f1pat
     ,case when p.intakeDate is null then '' else '' end as f2js
@@ -222,64 +223,7 @@
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
-    ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id,ms.additionCode
-    ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    order by vsst.name,pat.lastname,pat.firstname,pat.middlename"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
-	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-	    <input type='hidden' name="s" id="s" value="PrintService">
-	    <input type='hidden' name="m" id="m" value="printGroupNativeQuery">
-	    <input type='hidden' name="groupField" id="groupField" value="4">
-	    <input type="submit" value="Печать"> 
-	    </form>    
-    <form action="print-pres_lab_prescript_by_department.do" method="post" target="_blank">
-	    
-	    <input type='hidden' name="sqlText" id="sqlText" value="select 
-	    pat.id as f1pat
-    ,case when p.intakeDate is null then '' else '' end as f2js
-    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
-    , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
-    ||'#'||pat.lastname else list(p.materialId) end) as f4material
-    ,coalesce(vsst.name,'---') as f5vsstname
-    ,pat.lastname as f6last,pat.firstname as f7first,pat.middlename as f8middlename 
-    ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
-    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
-    ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
-    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
-    ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
-    ,list(ms.additionCode || (select to_char(pmc.datestart,'dd.mm.yyyy') 
-    	from medcase mc 
-    	left join MedCase pmc on pmc.id=mc.parent_id and pmc.dtype='Visit'
-    	where mc.patient_id=slo.patient_id 
-    		and mc.medService_id=p.medService_id
-    		and pmc.datestart between current_date-1 and current_date-8
-    		
-    )) as mc
-   from prescription p
-    left join PrescriptionList pl on pl.id=p.prescriptionList_id
-    left join MedCase slo on slo.id=pl.medCase_id
-    left join MedCase sls on sls.id=slo.parent_id
-    left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id
-    left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id
-    left join Patient pat on pat.id=slo.patient_id
-    left join MedService ms on ms.id=p.medService_id
-    left join VocServiceType vst on vst.id=ms.serviceType_id
-    left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
-    left join WorkFunction wf on wf.id=p.prescriptSpecial_id
-    left join Worker w on w.id=wf.worker_id
-    left join Patient wp on wp.id=w.person_id
-    left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-    left join WorkFunction iwf on iwf.id=p.intakeSpecial_id
-    left join Worker iw on iw.id=iwf.worker_id
-    left join Patient iwp on iwp.id=iw.person_id
-    left join MisLpu ml on ml.id=w.lpu_id
-    where p.dtype='ServicePrescription'
-    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
-    and to_date('${endDate}','dd.mm.yyyy')
-    and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
-    and p.cancelDate is null ${sqlAdd}
-    group by pat.id,pat.lastname,pat.firstname,pat.middlename
-    ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id,ms.additionCode
+    ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
     order by vsst.name,pat.lastname,pat.firstname,pat.middlename"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
@@ -287,9 +231,9 @@
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
 	    <input type='hidden' name="groupField" id="groupField" value="4">
-	    <input type='hidden' name="cntColumn" id="cntColumn" value="2">
+	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
 	    <input type="submit" value="Печать" onclick="this.form.action='print-pres_lab_prescript_by_department.do'"> 
-	    <input type="submit" value="Печать" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do'"> 
+	    <input type="submit" value="Печать этикеток" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do'"> 
 	    </form>    
     </msh:sectionTitle>
     <msh:sectionContent>
