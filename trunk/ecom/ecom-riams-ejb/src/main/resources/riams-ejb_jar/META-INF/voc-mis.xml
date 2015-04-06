@@ -4,8 +4,8 @@
     	<NativeVocService
     			from = 'WorkFunction as wf '
     			parent = ''
-    			names  = "wf.dtype='GroupWorkFunction' then wf.groupname else vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end end"
-    			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+    			names  = "case when wf.dtype='GroupWorkFunction' then vwf.name||' '||wf.groupname else vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename end ||' ' || case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end"
+    			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or wf.groupname like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
     			queryAppend = " (wf.dtype='PersonalWorkFunction' and wf.group_id is null or wf.dtype='GroupWorkFunction') and (wf.archival is null or wf.archival='0')"
     			queriedSplitCount="3"
     			order =''
@@ -109,6 +109,16 @@
 		queryAppend="vst.code = 'LABSURVEY'" join=" left join VocServiceType vst on vst.id=ms.serviceType_id" order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+	/>
+</voc>
+<voc id="vocServiceSubTypeLab" type="NativeVocService">
+	<NativeVocService
+		from="VocServiceSubType vsst"
+		nameId="vsst.id"
+		queryAppend="vsst.code='LABSURVEY'" 
+		join="" order=""
+		names="vsst.name"
+		queried="upper(vsst.name) like upper(:query)"
 	/>
 </voc>
 <voc id="vocServiceSubType" type="NativeVocService">
@@ -343,7 +353,7 @@
                 parent='vet.id=:parent'
                 nameId="vecs.id"
                 queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
-                join=" left join VocExpertType vet on vet.code=vesc.typeCode"
+                join=" left join VocExpertType vet on vet.code=vecs.typeCode"
                 order=""
                 names   = "vecs.name "
 	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
@@ -356,7 +366,7 @@
                 parent='vet.id=:parent'
                 nameId="vecs.id"
                 queryAppend="(vecs.noActuality is null or vecs.noActuality='0')"
-                join=" left join VocExpertType vet on vet.code=vesc.typeCode"
+                join=" left join VocExpertType vet on vet.code=vecs.typeCode"
                 order=""
                 names   = "vecs.name "
 	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
