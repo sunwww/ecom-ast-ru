@@ -142,6 +142,7 @@ public class FondWebService {
 			;String aKladr;String aHouse; String aHouseBuilding; String aFlat;
         	*/
         	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
+        	String attachedDate = null; String attachedType = null; String attachedLpu = null;
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 			//String commonNumber;
         	InputStream in = new ByteArrayInputStream(result.getBytes());
@@ -175,6 +176,9 @@ public class FondWebService {
             	String dr = upDate(e.getChildText("dr")) ;
             	String dateDeath=upDate(e.getChildText("datadead")) ;
             	String ss =e.getChildText("ss") ;
+            	String attDate = upDate(e.getChildText("date_prik"));
+            	String attType = e.getChildText("sp_prik");
+            	String attLpu = e.getChildText("lpu");
             	sb.append("<td>").append("<input  onclick=\"patientcheck('patient')\" type='radio'")
             	.append(isStart?" checked='true'":"") 
             	.append(" name='fondFiodr' id='fondFiodr' value='")
@@ -192,13 +196,14 @@ public class FondWebService {
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(dateDeath).append("</td>") ;
-            	sb.append("<td").append(">").append(e.getChildText("lpu")).append("</td>") ;
-            	sb.append("<td").append(">").append(e.getChildText("sp_prik")).append("</td>") ;
-            	sb.append("<td").append(">").append(upDate(e.getChildText("date_prik"))).append("</td>") ;
+            	sb.append("<td").append(">").append(attLpu).append("</td>") ;
+            	sb.append("<td").append(">").append(attType).append("</td>") ;
+            	sb.append("<td").append(">").append(attDate).append("</td>") ;
              	sb.append("</tr>") ;
             	if (isStart) {
             		isStart=false ;
             		lastname = f ; firstname = i ; middlename = o; birthday = dr ;snils=ss;
+            		attachedLpu = attLpu; attachedDate = attDate; attachedType = attType;
             	}
             }
             sb.append("</table>") ;
@@ -435,7 +440,7 @@ public class FondWebService {
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
             		, companyCode, "", "", ""
             		, documentType, documentSeries, documentNumber
-            		, kladr, house, houseBuilding, flat);
+            		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType);
             return sb.toString() ;
         }
 		
