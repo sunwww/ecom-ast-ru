@@ -522,6 +522,7 @@ public class PatientServiceBean implements IPatientService {
 			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
 			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException {
 		PatientFond fond = new PatientFond() ;
 		fond.setLastname(aLastname) ;
@@ -549,7 +550,9 @@ public class PatientServiceBean implements IPatientService {
 		fond.setHouse(aHouse) ;
 		fond.setHouseBuilding(aHouseBuilding);
 		fond.setFlat(aFlat) ;
-		
+		fond.setAttachedType(aAttachedType);
+		fond.setAttachedDate(DateFormat.parseSqlDate(aAttachedDate));
+		fond.setLpuAttached(aLpuAttached);
 		theManager.persist(fond) ;
 		return ;
 	}
