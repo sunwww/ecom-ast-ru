@@ -43,6 +43,9 @@
         	<msh:checkBox property="isAdministrator" label="Начальник"/>
         	<msh:checkBox property="emergency" label="Экстр. пункт"/>
         </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isNoDirectSelf" label="Запрет на создание направление к самому себе" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
         <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
         	<msh:row>
         		<msh:checkBox property="isCalendarCreate" label="Создавать календарь"/>
