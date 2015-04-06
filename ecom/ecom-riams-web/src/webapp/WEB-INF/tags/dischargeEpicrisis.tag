@@ -72,6 +72,9 @@
 			        </msh:row>
 		        </msh:ifInRole>
 		        <msh:row>
+		            <msh:checkBox property="${name}DefaultInfo" label="Общие сведения о пациенте" fieldColSpan="2"/>
+		        </msh:row>
+		        <msh:row>
 		            <msh:checkBox property="${name}Operations" label="Операции" fieldColSpan="2"/>
 		        </msh:row>
 		    </msh:panel>
@@ -149,6 +152,8 @@
 			} ) ;
 		} else {
 			get${name}ExpMedserviceInfo() ;
+		} else {
+			get${name}DefaultInfo() ;
 		}
      }
 
@@ -163,6 +168,22 @@
  					callback: function(aString) {
  						$('${property}').value += "\n" ;
  						$('${property}').value += aString ;
+ 						get${name}DefaultInfo() ;
+ 						
+ 					}
+ 			} ) ;
+ 		} else {
+ 			get${name}DefaultInfo() ;
+ 		}
+      }
+     function get${name}DefaultInfo() {
+       	if ($('${name}DefaultInfo').checked) {
+      		var frm = document.forms["${name}EpicrisisParameterForm"]
+      		var reg = getCheckedRadio(frm,"${name}DefaultInfo") ;
+ 			HospitalMedCaseService.getPatientDefaultInfo($('${patient}').value,$('${dateStart}').value
+ 				,$('${dateFinish}').value, {
+ 					callback: function(aString) {
+ 						$('${property}').value = aString +"\n"+$('${property}').value;
  						the${name}EpicrisisDialog.hide() ;
  						$('${property}').focus() ;
  						
@@ -173,7 +194,6 @@
  			$('${property}').focus() ;
  		}
       }
-
      // инициализация диалогового окна выбора шаблона протокола
      function init${name}Epicrisis() {
              <%--

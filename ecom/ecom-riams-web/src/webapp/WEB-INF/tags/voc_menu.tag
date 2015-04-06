@@ -36,7 +36,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	<msh:sideLink styleId="drugClassif" action="/entityParentList-drug_classificator.do?id=0" name="Классификатор" roles="/Policy/Mis/Drug/Classificator/View" title="Перейти к классификатору лек.средств"/>
 	    	<msh:sideLink styleId="exp_voc_kind" action="/entityList-exp_vocKind.do" name="Виды экспертизы" roles="/Policy/Voc/VocQualityEstimationKind/View" title="Перейти к видам экспертизы"/>
 	    	<msh:sideLink styleId="post" action="/entityList-voc_post.do" name="Должности" roles="/Policy/Voc/VocPost/View" title="Перейти к должностям"/>
-	    	<msh:sideLink styleId="workFunction" action="/entityList-voc_workFunction.do" name="Рабочие функции" roles="/Policy/Voc/VocWorkFunction/View" title="Перейти к рабочим функциям"/>
+	    	<msh:sideLink styleId="mnWorkFunction" action="/entityList-voc_workFunction.do" name="Рабочие функции" roles="/Policy/Voc/VocWorkFunction/View" title="Перейти к рабочим функциям"/>
 	    	<msh:sideLink styleId="extDisp" action="/entityList-extDisp_voc.do" name="Виды доп. диспансеризации" roles="/Policy/Mis/ExtDisp/Card/Voc/View" title="Перейти к списку видов доп. диспансеризации"/>
 			<msh:sideLink styleId="analisisMedServices"
 				action="/contact_analisis_by_medServices.do" 
