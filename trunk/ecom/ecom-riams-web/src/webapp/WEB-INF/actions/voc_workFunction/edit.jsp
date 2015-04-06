@@ -68,7 +68,7 @@
       <msh:sideLink roles="/Policy/Voc/VocWorkFunction/Edit" key="ALT+2" params="id" action="/entityEdit-voc_workFunction" name="Изменить" title="Изменить данные по рабочей функции" guid="75bdfecf-3673-4e79-85d1-caa9ec490608" />
       <msh:sideLink roles="/Policy/Voc/VocWorkFunction/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityDelete-voc_workFunction" name="Удалить" title="Удалить данные рабочей функции" guid="90ae4764-8e8c-4c53-8648-2fffd15f4097" />
     </msh:sideMenu>
-        <tags:voc_menu currentAction="workFunction"/>
+        <tags:voc_menu currentAction="mnWorkFunction"/>
   </tiles:put>
 </tiles:insert>
 
