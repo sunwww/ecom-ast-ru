@@ -31,6 +31,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
 )
 public class DirectOfMedicalCommissionForm extends IdEntityForm {
+	
+	/** Тип ВК */
+	@Comment("Тип ВК")
+	@Persist @Required
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
+
+	/** Тип ВК */
+	private Long theType;
 	/** СМО */
 	@Comment("СМО")
 	@Persist

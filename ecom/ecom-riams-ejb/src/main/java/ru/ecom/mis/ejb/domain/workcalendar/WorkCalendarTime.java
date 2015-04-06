@@ -214,4 +214,26 @@ public class WorkCalendarTime extends BaseEntity{
 
 	/** Резерв времени */
 	private VocServiceReserveType theReserveType;
+	
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Время создания */
+	private Time theCreateTime;
+	/** Дата создания */
+	private Date theCreateDate;
 }

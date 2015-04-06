@@ -1,14 +1,7 @@
 package ru.ecom.mis.ejb.form.worker;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
-import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;

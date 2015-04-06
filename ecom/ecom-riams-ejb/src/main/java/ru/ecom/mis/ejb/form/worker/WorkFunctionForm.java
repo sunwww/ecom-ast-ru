@@ -225,5 +225,14 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** Импорт */
 	private Boolean theIsImport;
+	/** Запрет на направление к себе */
+	@Comment("Запрет на направление к себе")
+	@Persist
+	public Boolean getIsNoDirectSelf() { return theIsNoDirectSelf; }
+	public void setIsNoDirectSelf(Boolean aIsNoDirectSelf) { theIsNoDirectSelf = aIsNoDirectSelf; }
+
+	/** Запрет на направление к себе */
+	private Boolean theIsNoDirectSelf;
+
 }
 

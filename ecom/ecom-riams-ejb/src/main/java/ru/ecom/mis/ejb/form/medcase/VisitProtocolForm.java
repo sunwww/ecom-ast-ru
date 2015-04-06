@@ -9,6 +9,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState;
+import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
 import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
@@ -133,4 +134,13 @@ public class VisitProtocolForm extends ProtocolForm {
 
 	/** Тяжесть состояния */
 	private Long theState;
+	
+	/** Режим */
+	@Comment("Режим")
+	@Persist
+	public Long getMode() {return theMode;}
+	public void setMode(Long aMode) {theMode = aMode;}
+
+	/** Режим */
+	private Long theMode;
 }

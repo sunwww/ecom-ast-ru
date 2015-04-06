@@ -76,6 +76,14 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var wf = +aForm.workFunctionPlan ;
+	var wfc = aCtx.manager.createNativeQuery("select case when isNoDirectSelf='1' then isNoDirectSelf else null end from workfunction where id='"+wf+"'").getResultList() ;
+	if (wfc.size()>0 && wfc.get(0)!=null) {
+		wfc = aCtx.manager.createNativeQuery("select case when wf.id='"+wf+"' then wf.id  when wf.group_id='"+wf+"' then wf.id else null end from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='"+aForm.username+"'").getResultList() ;
+		if (wfc.size()>0 && wfc.get(0)!=null) {
+			throw "У Вас стоит ограничение на направление к самому себе!!!" ;
+		}
+	}
 }
 
 
