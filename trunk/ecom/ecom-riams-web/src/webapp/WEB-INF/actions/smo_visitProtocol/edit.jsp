@@ -54,6 +54,10 @@
                 		vocName="vocTypeProtocol"/>
 	                </msh:row>
                 	<msh:row>
+                		<msh:autoComplete property="mode" fieldColSpan="3" label="Режим" horizontalFill="true"
+                		vocName="vocProtocolMode"/>
+	                </msh:row>
+                	<msh:row>
                 		<msh:autoComplete property="state" fieldColSpan="3" label="Состояние больного" horizontalFill="true"
                 		vocName="vocPhoneMessageState"/>
 	                </msh:row>

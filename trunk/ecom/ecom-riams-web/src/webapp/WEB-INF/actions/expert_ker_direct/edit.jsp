@@ -16,6 +16,10 @@
       <msh:hidden guid="hiddenParent" property="patient" />
       <msh:panel colsWidth="1%,1%,1%,1%,96%">
         <msh:row>
+        	<msh:autoComplete vocName="vocExpertType" property="type" label="Тип ВК" 
+          	horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
           <msh:autoComplete vocName="vocExpertPatientStatus" property="patientStatus" label="Статус пациента" 
           	horizontalFill="true" fieldColSpan="5" />
         </msh:row>
@@ -39,7 +43,7 @@
         		vocName="workFunctionByLpu" parentAutocomplete="orderLpu" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        	<msh:autoComplete property="reasonDirect" parentAutocomplete="type" fieldColSpan="5" label="Причина подачи"
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
@@ -51,18 +55,12 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="mainDiagnosis" fieldColSpan="5" label="Код осн. диаг." horizontalFill="true" vocName="vocIdc10"/>
-        </msh:row>
-        <msh:row>
-        	<msh:textField property="concomitantDiagnosis" label="Сопут. диагноз" horizontalFill="true" fieldColSpan="5"/>
-        </msh:row>
-        <msh:row>
-        	<msh:textField property="complicationDiagnosis" label="Осложнение" horizontalFill="true" fieldColSpan="5"/>
-        </msh:row>        
+        </msh:row>      
         <msh:row>
         	<msh:textField property="treatmentCurrent" label="Лечение на момент подачи" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>                
         <msh:row>
-        	<msh:autoComplete property="orderConclusion" fieldColSpan="5" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
+        	<msh:autoComplete property="orderConclusion" parentAutocomplete="type" fieldColSpan="5" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="4" fieldColSpan="2"/>
@@ -135,6 +133,8 @@
     <msh:sideMenu title="Печать" >
         <msh:sideLink params="id" action="/print-directVK.do?s=HospitalPrintService&amp;m=printDirectVK"  
         	name="Направления" title="Печать направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
+        <msh:sideLink params="id" action="/print-directVKresult.do?s=HospitalPrintService&amp;m=printDirectVK"  
+        	name="Протокол" title="Печать протокола направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
     </msh:sideMenu>
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
       <msh:sideLink guid="7a5-4caf-4e14-aa70-287" action="/entityParentListRedirect-expert_ker_direct" name="К списку" params="id" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/View"/>
