@@ -288,4 +288,12 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Импорт */
 	private Boolean theIsImport;
+	
+	/** Запрет на направление к себе */
+	@Comment("Запрет на направление к себе")
+	public Boolean getIsNoDirectSelf() { return theIsNoDirectSelf; }
+	public void setIsNoDirectSelf(Boolean aIsNoDirectSelf) { theIsNoDirectSelf = aIsNoDirectSelf; }
+
+	/** Запрет на направление к себе */
+	private Boolean theIsNoDirectSelf;
 }

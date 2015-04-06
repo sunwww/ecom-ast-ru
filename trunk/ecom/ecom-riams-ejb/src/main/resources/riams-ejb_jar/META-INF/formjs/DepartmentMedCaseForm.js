@@ -45,7 +45,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
 	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
-	
+	var isNoPalat = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/NoRoomNumber") ;
 
 	if (prev!=null) {
 		var dateTransfer ;
@@ -114,7 +114,7 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 	}
 	*/
-	if (isDoc && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
+	if (isDoc && !isNoPalat && ((+aForm.roomNumber==0)||(+aForm.bedNumber==0))) {
 		throw "При госпитализации в отделение необходимо указывать палату и койку" ;
 	}
 	if (bedFund!=null && bedFund.bedSubType!=null) {

@@ -516,7 +516,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					 WorkCalendarDay day = createCalendarDay(wc,date) ;
 					 for (String time:times) {
 						 java.sql.Time t = DateFormat.parseSqlTime(time) ;
-						 createCalendarTime(t,vsrt, day) ;
+						 createCalendarTime(t,vsrt, day,true) ;
 					 }
 				 }
 			 }
@@ -919,7 +919,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					
 					//WorkCalendarTime time = new WorkCalendarTime() ;
 					WorkCalendarTimeExample ex = (WorkCalendarTimeExample) timePattern ;
-					createCalendarTime(ex.getCalendarTime(),ex.getReserveType(), day);
+					createCalendarTime(ex.getCalendarTime(),ex.getReserveType(), day,false);
 					//times.add(time) ;
 				}
 			}
@@ -997,11 +997,11 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		if (aReserveType!=null) theManager.find(VocServiceReserveType.class, aReserveType) ;
 		return createCalendarTime(aTime
 				, reserveType
-				, aWorkCalendarDay) ;
+				, aWorkCalendarDay, true) ;
 	}
 	private Long createCalendarTime(java.sql.Time aTime
 			, VocServiceReserveType aReserveType
-			, WorkCalendarDay aWorkCalendarDay) {
+			, WorkCalendarDay aWorkCalendarDay, boolean aAddData) {
 		LOG.info(new StringBuilder().append("----------++createCalendarTime").toString()) ;
 		// проверяем на занятость
 		if (aTime== null) return null ;
@@ -1020,6 +1020,10 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			t.setTimeFrom(aTime) ;
 			t.setAdditional(true) ;
 			t.setReserveType(aReserveType) ;
+			t.setAdditional(aAddData) ;
+			t.setCreateDate(new java.sql.Date(new java.util.Date().getTime())) ;
+			t.setCreateTime(new java.sql.Time(new java.util.Date().getTime())) ;
+			t.setCreateUsername(theContext.getCallerPrincipal().getName()) ;
 			theManager.persist(t) ;
 			return t.getId() ;
 		}	

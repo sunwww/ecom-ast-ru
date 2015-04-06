@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.Ticket;
+import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -139,4 +140,13 @@ public class Protocol extends Diary {
 
 	/** Информация для журнала */
 	private String theJournalText;
+	
+	/** Режим */
+	@Comment("Режим")
+	@OneToOne
+	public VocProtocolMode getMode() {return theMode;}
+	public void setMode(VocProtocolMode aMode) {theMode = aMode;}
+
+	/** Режим */
+	private VocProtocolMode theMode;
 }

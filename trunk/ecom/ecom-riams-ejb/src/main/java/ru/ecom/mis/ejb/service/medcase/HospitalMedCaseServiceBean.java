@@ -396,7 +396,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
-    public WebQueryResult[] exportFondZip13(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -478,8 +478,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	StringBuilder sql = new StringBuilder() ;
     	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as wchbcreatedate");
     	sql.append(" ,cast('1' as varchar(1)) as forPom");
-    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpuSent");
-    	sql.append(" ,coalesce(olpu.codef,oplpu.codef) as lpuDirect");
+    	sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as lpuSent");
+    	sql.append(" ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as lpuDirect");
     	sql.append(" ,vmc.code as medpolicytype");
     	sql.append(" ,mp.series as mpseries");
     	sql.append(" , mp.polnumber as polnumber");
@@ -937,7 +937,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vbt.codeF as vbtomccode");
     	sql.append(" ,ss.code as sscode");
     	sql.append(" ,mkb.code as mkbcode");
-    	sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
+    	sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as lpucodef") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");

@@ -14,13 +14,8 @@ public class VocExpertConclusionSent extends VocBaseEntity {
 	/** Обоснование  */
 	@Comment("Обоснование ")
 	@OneToOne
-	public VocExpertConclusion getConclusion() {
-		return theConclusion;
-	}
-
-	public void setConclusion(VocExpertConclusion aConclusion) {
-		theConclusion = aConclusion;
-	}
+	public VocExpertConclusion getConclusion() {return theConclusion;}
+	public void setConclusion(VocExpertConclusion aConclusion) {theConclusion = aConclusion;}
 
 	/** Обоснование  */
 	private VocExpertConclusion theConclusion;
@@ -45,4 +40,12 @@ public class VocExpertConclusionSent extends VocBaseEntity {
 
 	/** Доп. данные */
 	private String theAdditionData;
+	
+	/** Код обоснования */
+	@Comment("Код обоснования")
+	public String getConclusionCode() {return theConclusionCode;}
+	public void setConclusionCode(String aConclusionCode) {theConclusionCode = aConclusionCode;}
+
+	/** Код обоснования */
+	private String theConclusionCode;
 }

@@ -22,6 +22,7 @@ import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatientStatus;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertPatternCase;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertReason;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertSubject;
+import ru.ecom.mis.ejb.domain.expert.voc.VocExpertType;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
@@ -354,4 +355,13 @@ public class ClinicExpertCard extends BaseEntity {
 
 	/** Замечания */
 	private String theNotes;
+	
+	/** ТИп ВК */
+	@Comment("ТИп ВК")
+	@OneToOne
+	public VocExpertType getType() {return theType;}
+	public void setType(VocExpertType aType) {theType = aType;}
+
+	/** ТИп ВК */
+	private VocExpertType theType;
 }
