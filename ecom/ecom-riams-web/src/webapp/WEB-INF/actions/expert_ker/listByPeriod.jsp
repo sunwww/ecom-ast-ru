@@ -203,7 +203,7 @@ cec.id,to_char(expertDate,'dd.mm.yyyy')
 ,vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
-,vec.code||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||' '||coalesce(cec.additionInfo,'') as conclusion
+,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
 ,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
 ,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
 from ClinicExpertCard cec
@@ -223,6 +223,7 @@ left join VocExpertModeCase vemc on vemc.id=cec.modeCase_id
 left join VocExpertSubject ves on ves.id=cec.subjectCase_id
 left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 left join VocExpertConclusion vec on vec.id=cec.conclusion_id
+left join VocExpertConclusionSent vecs on vecs.id=cec.conclusionSent_id
 left join Address2 a on a.addressId=p.address_addressId
 left join Omc_KodTer okt on okt.id=p.territoryRegistrationNonresident_id
 left join Omc_Qnp oq on oq.id=p.TypeSettlementNonresident_id

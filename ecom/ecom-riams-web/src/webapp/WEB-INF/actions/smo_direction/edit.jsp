@@ -315,9 +315,14 @@
     	  getPreRecord() ;
     	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
   		}) ;
-    function checkRecord(aId,aValue) {
+    function checkRecord(aId,aValue,aIdService,aService) {
     	$('timePlan').value = aId; 
     	$('timePlanName').value = aValue ;
+    	if (+aIdService>0) {
+    		$('serviceStream').value=aIdService;
+    		$('serviceStreamName').value=aService;
+    		
+    	}
     }
     
     function getWorkFunctionByUsername() {

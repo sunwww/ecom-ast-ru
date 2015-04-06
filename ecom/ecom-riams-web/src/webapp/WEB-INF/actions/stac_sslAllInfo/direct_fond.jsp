@@ -94,7 +94,7 @@
         	<input type="radio" name="typeView" value="7">  список неопред. по N1
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="8">  N1 + N3 таблицы
+        	<input type="radio" name="typeView" value="8">  N2 + N3 таблицы
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="9">  N4 + N5 таблицы
@@ -298,6 +298,7 @@
 	function setDeniedByHDF(aHDFid,aFrm,aDenied) {
 		var frm=document.forms[aFrm] ;
 		var val = getCheckedRadio(frm,aDenied) ;
+		//alert(val) ;
 		HospitalMedCaseService.updateTable('HospitalDataFond','id',aHDFid,'deniedHospital',val,'',{
   			callback: function(aResult) {
   				window.location.reload() ;
@@ -306,6 +307,20 @@
 	}
 	function setHospByHDF(aHDFid,aSls) {
 		HospitalMedCaseService.updateTable('HospitalDataFond','id',aHDFid,'hospitalMedCase_id',aSls,'',{
+  			callback: function(aResult) {
+  				setDeniedByHDF(aHDFid,null) ;
+  			}
+  		}) ;
+	}
+	function deleteTableHDFEmpty(aMode) {
+		HospitalMedCaseService.deleteTableHDFEmpty(aMode,{
+  			callback: function(aResult) {
+  				window.location.reload() ;
+  			}
+  		}) ;
+	}
+	function deleteHDF(aNapr) {
+		HospitalMedCaseService.deleteHDF(aNapr,{
   			callback: function(aResult) {
   				window.location.reload() ;
   			}
@@ -413,7 +428,12 @@ ${lpuSlsSql} ${emergencySlsSql}
 			out.print("<th>НАПРАВЛЕНИЯ БЕЗ ГОСПИТАЛИЗАЦИЙ</th>") ;
 		%>
 		<ecom:webQuery name="table2" nativeSql="
-	select hdf.id,hdf.numberfond,hdf.lastname||' '||hdf.firstname||' '||hdf.middlename as f3io
+	select hdf.id
+	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
+	||hdf.numberfond||'<'||'/'||'span'||'>' as f2numberfond
+	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
+	||hdf.lastname||' '||hdf.firstname||' '||hdf.middlename||'<'||'/'||'span'||'>' as f3io
+	
 	,hdf.birthday,hdf.formHelp
 ,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils as f10snils
 ,hdf.phone,hdf.diagnosis
@@ -423,12 +443,12 @@ ${lpuSlsSql} ${emergencySlsSql}
 ,hdf.deniedHospital
 ,hdf.id||''','''||coalesce(''||hdf.deniedHospital,'') as idden
 ,hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||hdf.middlename
-	||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'',''1' as idforsls
+	||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'','''||coalesce(hdf.deniedHospital,0) as idforsls
 
 from HospitalDataFond hdf
 where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' when hdf.IsTable4='1' then '1' else null end) is null
 ${lpuSql} ${emergencySql}
-
+and coalesce(hdf.prehospdate,hdf.hospdate) between to_date('${param.period}','dd.mm.yyyy') and to_date('${periodTo}','dd.mm.yyyy')
 order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 	"/>
 	<%} %>
@@ -442,17 +462,17 @@ order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 		<msh:table name="table1" action=" javascript:void(0)" idField="1">
 			<msh:tableButton property="15" buttonFunction="showDiag263napr" buttonName="Установить соответствие с неопределенными направлениями" buttonShortName="Направление"/>
 			<msh:tableButton property="13" buttonFunction="setSnilsDoctor" buttonName="Установить СНИЛС врача" buttonShortName="Уст. СНИЛС"/>
-			<msh:tableColumn property="14" columnName="СНИЛС врача для генерации напр. для план. СЛС"/>
+			<msh:tableColumn property="14" columnName="<a href='javascript:alert(\"snils\")'>СНИЛС врача для генерации напр. для план. СЛС</a>"/>
 			<msh:tableColumn property="sn" columnName="#"/>
-			<msh:tableColumn property="2" columnName="Напр. ЛПУ"/>
+			<msh:tableColumn property="2" columnName="<a href='javascript:alert(\"lpu\")'>Напр. ЛПУ</a>"/>
 			<msh:tableColumn property="3" columnName="№ИБ"/>
-			<msh:tableColumn property="4" columnName="ФИО пациента"/>
+			<msh:tableColumn property="4" columnName="<a href='javascript:alert(\"pat\")'>ФИО пациента</a>"/>
 			<msh:tableColumn property="5" columnName="Дата рождения"/>
 			<msh:tableColumn property="6" columnName="Показания"/>
 			<msh:tableColumn property="7" columnName="Дата госп."/>
 			<msh:tableColumn property="8" columnName="Дата выписки"/>
 			<msh:tableColumn property="9" columnName="Отделение"/>
-			<msh:tableColumn property="10" columnName="Профиль коек"/>
+			<msh:tableColumn property="10" columnName="<a href='javascript:alert(\"prof\")'>Профиль коек</a>"/>
 			<msh:tableColumn property="11" columnName="Поток обслуживания"/>
 			<msh:tableColumn property="12" columnName="Диагноз"/>
 		</msh:table>
@@ -461,10 +481,16 @@ order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 		if (typeView1!=null && (typeView1.equals("2")||typeView1.equals("3"))) {
 		%>
 	<td valign="top">
-	
+	<msh:section>
+		<msh:sectionTitle>
+			<a href='javascript:void(0)' onclick="deleteTableHDFEmpty(1)">Удалить аннулированные направления</a>
+			<a href='javascript:void(0)' onclick="deleteTableHDFEmpty(2)">Удалить направленные (не госп. и не выписанные)</a>
+			<a href='javascript:void(0)' onclick="deleteTableHDFEmpty(3)">Удалить госпитализированных (еще не выписанным)</a>
+		</msh:sectionTitle>
 		<msh:table name="table2" action=" javascript:void(0)" idField="1">
 			<msh:tableButton property="18" buttonFunction="showDiag263sls" buttonName="Установить соответствие с неопределенной госпитализацией" buttonShortName="СЛС"/>
 			<msh:tableButton property="17" buttonFunction="showDiag263denied" buttonName="Установить отказ" buttonShortName="Отказ"/>
+			<msh:tableButton property="1" buttonFunction="deleteHDF" buttonName="Удалить направление" buttonShortName="Удалить"/>
 			<msh:tableColumn property="16" columnName="Код отказа"/>
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="2" columnName="№напр. фонда"/>
@@ -481,7 +507,8 @@ order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 			<msh:tableColumn property="13" columnName="Напр.ЛПУ"/>
 			<msh:tableColumn property="14" columnName="Куда напр.ЛПУ"/>
 			
-		</msh:table>	
+		</msh:table>
+		</msh:section>	
 		</td>
 		<%} %>
 		</tr>

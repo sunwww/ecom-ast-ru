@@ -19,6 +19,10 @@
       		<msh:separator colSpan="4" label="Направление на ВК"/>
       	</msh:row>
         <msh:row>
+          <msh:autoComplete vocName="vocExpertType" property="type" label="Тип ВК" 
+          	horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
+        <msh:row>
           <msh:autoComplete vocName="vocExpertPatientStatus" property="patientStatus" label="Статус пациента" 
           	horizontalFill="true" fieldColSpan="3" />
         </msh:row>
@@ -34,7 +38,7 @@
         		vocName="workFunction" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        	<msh:autoComplete property="reasonDirect" parentAutocomplete="type" fieldColSpan="5" label="Причина подачи"
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
@@ -47,7 +51,7 @@
         	<msh:textField property="treatmentCurrent" label="Лечение на момент подачи" horizontalFill="true" fieldColSpan="5"/>
         </msh:row>        
         <msh:row>
-        	<msh:autoComplete property="orderConclusion" fieldColSpan="3" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
+        	<msh:autoComplete property="orderConclusion" parentAutocomplete="type" fieldColSpan="3" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="2" fieldColSpan="2"/>
@@ -152,6 +156,8 @@
     <msh:sideMenu title="Печать" >
         <msh:sideLink params="id" action="/print-directVK.do?s=HospitalPrintService&amp;m=printDirectVK"  
         	name="Направления" title="Печать направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
+        <msh:sideLink params="id" action="/print-directVKresult.do?s=HospitalPrintService&amp;m=printDirectVK"  
+        	name="Протокола" title="Печать протокола направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
     </msh:sideMenu>    
 	<msh:sideMenu title="Журналы по КЭР">
 	      <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"

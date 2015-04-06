@@ -63,7 +63,6 @@
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
-      
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Voc" beginForm="mis_medService_workFunctionForm"/>
