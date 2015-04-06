@@ -374,7 +374,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), coalesce(") ;
 		sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')')") ;
 		sql.append(",wct.prepatientInfo)") ;
-		sql.append(" as fio, vsrt.background,vsrt.colorText,vss.id,vss.name from WorkCalendarTime wct ")
+		sql.append(" as fio, vsrt.background,vsrt.colorText,vss.id as vssid,vss.name as vssname from WorkCalendarTime wct ")
 			.append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
@@ -385,20 +385,24 @@ public class WorkCalendarServiceJs {
 		res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th><th>Резервы</th></tr><tr><td><ul>") ;
 		for (WebQueryResult wqr:list) {
 			
-			res.append("<li ");
+			res.append("<li style='padding-left:10px;list-style: none ");
 			if (wqr.get4()!=null) {
-				res.append("style='color:").append(wqr.get5()).append("; background:").append(wqr.get4()).append("'") ;
+				res.append(";background:").append(wqr.get4()) ;
 			}
+			if (wqr.get5()!=null) {
+				res.append("; color:").append(wqr.get5()).append("") ;
+			}
+			res.append("' ") ;
 			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
 				.append(wqr.get1()).append("','")
-				.append(wqr.get2()).append("','").append(wqr.get6()).append("')\">") ;
+				.append(wqr.get2()).append("','").append(wqr.get6()!=null?wqr.get6():"").append("','").append(wqr.get7()!=null?wqr.get7():"").append("')\">") ;
 			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
 
 			res.append(" value='")
 			.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
-			.append("#").append(wqr.get6()).append("#").append(wqr.get7())
+			.append("#").append(wqr.get6()!=null?wqr.get6():"").append("#").append(wqr.get7()!=null?wqr.get7():"").append("#").append(wqr.get8()!=null?wqr.get8():"")
 			.append("'>") ;
-			res.append(wqr.get3()).append(" (").append(wqr.get2()).append(")").append("#").append(wqr.get7()) ;
+			res.append(wqr.get2()).append(". ").append(wqr.get3()).append(" ").append(" ").append(wqr.get7()!=null?wqr.get7():"") ;
 			res.append("</li>") ;
 		}
 		res.append("</ul></td><td><ul>") ;
@@ -407,8 +411,8 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), coalesce(") ;
 		sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')'),wct.prepatientInfo) as prepat") ;
 		sql.append(",pc.lastname ||coalesce(' ('||pc.patientSync||')',' ('||pc.id||')') as camepat") ;
-		sql.append("") ;
-		sql.append(" from WorkCalendarTime wct left join MedCase m on m.id=wct.medCase_id left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
+		sql.append(",vsrt.background,vsrt.colorText") ;
+		sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
 		sql.append(" and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
 		.append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))") ;
 		
@@ -416,30 +420,50 @@ public class WorkCalendarServiceJs {
 		
 		for (WebQueryResult wqr:list) {
 			
-			res.append("<li style='padding-left:10px;list-style: none'><i>") ;
-			//res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
+			res.append("<li style='padding-left:10px;list-style: none ");
+			if (wqr.get5()!=null) {
+				res.append("; background:").append(wqr.get5()) ;
+			}
+			if (wqr.get6()!=null) {
+				res.append(";color:").append(wqr.get6()).append("") ;
+			}
+			res.append("'><i>") ;
+			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
 			
-			//res.append(" value='")
-			//.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
-			//.append("'>") ;
+			res.append(" value='")
+			.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
+			.append("'>") ;
 			res.append(wqr.get4()).append(" вместо ").append(wqr.get3()).append("") ;
 			res.append("</i></li>") ;
 		}
 		res.append("</ul></td><td><ul>") ;
 		list.clear() ;
 		sql = new StringBuilder() ;
-		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)), vsrt.background,vsrt.colorText from WorkCalendarTime wct ")
+		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
-			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!=''))") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 
 		for (WebQueryResult wqr:list) {
-			
-			res.append("<li style='padding-left:10px;list-style: none'>") ;
-			res.append(wqr.get4()).append("") ;
+			res.append("<li style='padding-left:10px;list-style: none ");
+			if (wqr.get3()!=null) {
+				res.append("; background:").append(wqr.get3()) ;
+			}
+			if (wqr.get4()!=null) {
+				res.append(";color:").append(wqr.get4()).append("") ;
+			}
+			res.append("' ") ;
+			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
+				.append(wqr.get1()).append("','")
+				.append(wqr.get2()).append("','").append(wqr.get6()).append("')\">") ;
+			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
+
+			res.append(" value='")
+			.append(wqr.get1()).append("#").append(wqr.get2())
+			.append("'>") ;
+			res.append(wqr.get2()).append(" ").append(wqr.get5()!=null?wqr.get5():"") ;
 			res.append("</li>") ;
 		}
 		res.append("</ul></td></tr></table>") ;

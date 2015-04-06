@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +29,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	AttachmentByLpuForm form =(AttachmentByLpuForm)aForm ;
     	String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", aRequest) ;
+    	String typeImport=ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", aRequest) ;
     	// Export xml
     	if (form!=null && typeMode!=null && typeMode.equals("1")) {
     		if (form!=null) {
@@ -63,8 +65,15 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	aRequest.setAttribute("listExist", wqr.get4()) ;
 	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("2")) {
-	        	filename=service.exportN2(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	WebQueryResult wqr = service.exportN2(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+        		if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+        		form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("3")) {
 	        	WebQueryResult wqr = service.exportN3(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
@@ -89,7 +98,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 		        	aRequest.setAttribute("listExist", wqr.get4()) ;
 		        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("8")) {
-	        	WebQueryResult[] filenameList=service.exportFondZip13(format_n.format(cal.getTime()), 
+	        	WebQueryResult[] filenameList=service.exportFondZip23(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr()) ;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	for (WebQueryResult wqr:filenameList) {
@@ -112,107 +121,113 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        if (filename!=null) form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
         }}
     	} else if (typeMode!=null && typeMode.equals("2")) {
-    		
+    		if (typeImport.equals("1")||typeImport.equals("3")) update(aRequest) ;
+    		String errorFile = aRequest.getParameter("errorFile") ;
+    		if (errorFile!=null && !errorFile.equals("") && !errorFile.equals("null")) {
+    			form.setFilenameError("<a href='../rtf/"+errorFile+"'>"+errorFile+"</a>") ;
+    		}
     	} else if (typeMode!=null && typeMode.equals("3")) {
     		
     	} else if (typeMode!=null && typeMode.equals("4")) {
-    		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
-    		StringBuilder sql = new StringBuilder() ;
-    		String[] dates = {"=to_date('datF','dd.mm.yyyy')"
-    				," between to_date('datS','dd.mm.yyyy') and to_date('datT','dd.mm.yyyy')"} ;
     		
-    		sql.append("select ") ;
-    		sql.append(" hdf.id as hdfid,(select list(''||pat.id) from patient pat");
-    		sql.append(" where pat.lastname=hdf.lastname and pat.firstname=hdf.firstname and pat.middlename = hdf.middlename ") ;
-    		sql.append(" and pat.birthday=hdf.birthday  ) as pat") ;
-    		sql.append(" ,hdf.statcard as statcard, to_char(coalesce(hdf.hospdate,hdf.prehospdate),'dd.mm.yyyy')") ;
-    		sql.append(" from hospitaldatafond hdf ") ;
-    		sql.append(" where ") ;
-    		sql.append(" hdf.hospitalmedcase_id is null ") ;
-    		sql.append(" and (case when hdf.istable4='1' then '1' else null end  is null) ") ;
-    		//System.out.println(sql) ;
-    		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
-    		//System.out.println("Проверка по госпитализациям"+list.size()) ;
-    		for (WebQueryResult wqr:list) {
-    			Object hdfId=wqr.get1() ;
-    			boolean next = true ;
-    			if (wqr.get4()!=null && wqr.get2()!=null &&!((""+wqr.get2()).equals(""))) {
-    				for (String dat:dates) {
-    					if (next) {
-    						String dat1 = dat.replaceAll("datF", ""+wqr.get4()) ;
-							dat1 = dat1.replaceAll("datS", f.format(ConvertSql.parseDate(""+wqr.get4(), -2))) ;
-							dat1 = dat1.replaceAll("datT", f.format(ConvertSql.parseDate(""+wqr.get4(), 7))) ;
-							//System.out.print(dat) ;
-							//System.out.print("--") ;
-							//System.out.println(dat1) ;
-    						sql = new StringBuilder() ;
-    						sql.append(" select list(''||sls.id) from medcase sls ") ;
-    						sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
-    						sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
-    						sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
-    						sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
-    						sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
-    						sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
-    						sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
-    						sql.append(" and pat.id in (").append(wqr.get2()).append(")");
-    						sql.append(" and sls.datestart").append(dat1);
-    						if (wqr.get3()!=null) sql.append(" and ss.code='"+wqr.get3()+"' ") ;
-    						Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
-    						if (!l1.isEmpty()) {
-    							String medcase ;
-    							Object slss = l1.iterator().next().get1() ;
-    							if (slss!=null) {
-    								medcase = freeMedCase(hdfId,slss, service) ;
-    								if (medcase!=null) {
-    									next = false ;
-    								}
-    							}
-    						}
-    					}
-    				}
-    				if (next && wqr.get3()!=null) {
-    					//System.out.println("no statcard") ;
-    					for (String dat:dates) {
-	        			if (next) {
-	        				String dat1 = dat.replaceAll("datF", ""+wqr.get4()) ;
-							dat1 = dat1.replaceAll("datS", f.format(ConvertSql.parseDate(""+wqr.get4(), -7))) ;
-							dat1 = dat1.replaceAll("datT", f.format(ConvertSql.parseDate(""+wqr.get4(), 7))) ;
-							
-	        				sql = new StringBuilder() ;
-	        				sql.append(" select list(''||sls.id) from medcase sls ") ;
-	        				sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
-	        				sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
-	        				sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
-	        				sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
-	        				sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
-	        				sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
-	        				sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
-	        				sql.append(" and pat.id in (").append(wqr.get2()).append(")");
-	        				sql.append(" and sls.datestart").append(dat1);
-	        				//if (wqr.get3()!=null) sql.append(" and ss.code=TRIM('"+wqr.get3()+"') ") ;
-	        				Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
-	        				if (!l1.isEmpty()) {
-	        					String medcase ;
-	        					Object slss = l1.iterator().next().get1() ;
-	        					if (slss!=null) {
-	        						medcase = freeMedCase(hdfId,slss, service) ;
-	        						if (medcase!=null) {
-	        							next = false ;
-	        						}
-	        					}
-	        				}
-	        			}}
-	        		}
-        		} else {
-        			//System.out.println("no="+wqr.get1());
-        		}
-    			
-    		}
     	}
         return aMapping.findForward("success") ;
     }
-    
+    private void update(HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
+		StringBuilder sql = new StringBuilder() ;
+		String[] dates = {"=to_date('datF','dd.mm.yyyy')"
+				," between to_date('datS','dd.mm.yyyy') and to_date('datT','dd.mm.yyyy')"} ;
+		
+		sql.append("select ") ;
+		sql.append(" hdf.id as hdfid,(select list(''||pat.id) from patient pat");
+		sql.append(" where pat.lastname=hdf.lastname and pat.firstname=hdf.firstname and pat.middlename = hdf.middlename ") ;
+		sql.append(" and pat.birthday=hdf.birthday  ) as pat") ;
+		sql.append(" ,hdf.statcard as statcard, to_char(coalesce(hdf.hospdate,hdf.prehospdate),'dd.mm.yyyy')") ;
+		sql.append(" from hospitaldatafond hdf ") ;
+		sql.append(" where ") ;
+		sql.append(" hdf.hospitalmedcase_id is null ") ;
+		sql.append(" and (case when hdf.istable4='1' then '1' else null end  is null) ") ;
+		//System.out.println(sql) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		//System.out.println("Проверка по госпитализациям"+list.size()) ;
+		for (WebQueryResult wqr:list) {
+			Object hdfId=wqr.get1() ;
+			boolean next = true ;
+			if (wqr.get4()!=null && wqr.get2()!=null &&!((""+wqr.get2()).equals(""))) {
+				for (String dat:dates) {
+					if (next) {
+						String dat1 = dat.replaceAll("datF", ""+wqr.get4()) ;
+						dat1 = dat1.replaceAll("datS", f.format(ConvertSql.parseDate(""+wqr.get4(), -2))) ;
+						dat1 = dat1.replaceAll("datT", f.format(ConvertSql.parseDate(""+wqr.get4(), 7))) ;
+						//System.out.print(dat) ;
+						//System.out.print("--") ;
+						//System.out.println(dat1) ;
+						sql = new StringBuilder() ;
+						sql.append(" select list(''||sls.id) from medcase sls ") ;
+						sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
+						sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
+						sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
+						sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
+						sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
+						sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
+						sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
+						sql.append(" and pat.id in (").append(wqr.get2()).append(")");
+						sql.append(" and sls.datestart").append(dat1);
+						if (wqr.get3()!=null) sql.append(" and ss.code='"+wqr.get3()+"' ") ;
+						Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
+						if (!l1.isEmpty()) {
+							String medcase ;
+							Object slss = l1.iterator().next().get1() ;
+							if (slss!=null) {
+								medcase = freeMedCase(hdfId,slss, service) ;
+								if (medcase!=null) {
+									next = false ;
+								}
+							}
+						}
+					}
+				}
+				if (next && wqr.get3()!=null) {
+					//System.out.println("no statcard") ;
+					for (String dat:dates) {
+        			if (next) {
+        				String dat1 = dat.replaceAll("datF", ""+wqr.get4()) ;
+						dat1 = dat1.replaceAll("datS", f.format(ConvertSql.parseDate(""+wqr.get4(), -7))) ;
+						dat1 = dat1.replaceAll("datT", f.format(ConvertSql.parseDate(""+wqr.get4(), 7))) ;
+						
+        				sql = new StringBuilder() ;
+        				sql.append(" select list(''||sls.id) from medcase sls ") ;
+        				sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
+        				sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
+        				sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
+        				sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
+        				sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
+        				sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
+        				sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
+        				sql.append(" and pat.id in (").append(wqr.get2()).append(")");
+        				sql.append(" and sls.datestart").append(dat1);
+        				//if (wqr.get3()!=null) sql.append(" and ss.code=TRIM('"+wqr.get3()+"') ") ;
+        				Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
+        				if (!l1.isEmpty()) {
+        					String medcase ;
+        					Object slss = l1.iterator().next().get1() ;
+        					if (slss!=null) {
+        						medcase = freeMedCase(hdfId,slss, service) ;
+        						if (medcase!=null) {
+        							next = false ;
+        						}
+        					}
+        				}
+        			}}
+        		}
+    		} else {
+    			//System.out.println("no="+wqr.get1());
+    		}
+			
+		}
+    }
     private String freeMedCase(Object aHDF,Object aSLSs, IWebQueryService aService) {
     	if (aSLSs== null ||(""+aSLSs).trim().equals("")) return null ;
     	String [] s = (""+aSLSs).split(",") ;
@@ -229,4 +244,6 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     	}
     	return null ;
     }
+    
+    
 }

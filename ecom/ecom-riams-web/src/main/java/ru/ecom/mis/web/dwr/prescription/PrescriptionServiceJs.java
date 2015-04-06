@@ -196,7 +196,28 @@ public class PrescriptionServiceJs {
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
 	}
-	public String intakeService(Long aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException {
+	public String checkTransferService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		//Long spec  = null ;
+		//Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
+		//if (!specL.isEmpty()) {
+		//	spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
+		//}
+		//if (spec==null) new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
+		sql.append("update Prescription set transferDate=to_date('").append(formatD.format(date))
+		.append("','dd.mm.yyyy'),transferTime=cast('").append(formatT.format(date)).append("' as time)")
+		.append(",transferUsername='").append(username).append("' ")
+		//.append(",intakeSpecial_id='").append(spec).append("' ")
+		.append(" where id in (").append(aListPrescript).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "1" ;
+	}
+	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		/*java.util.Date date = new java.util.Date() ;
