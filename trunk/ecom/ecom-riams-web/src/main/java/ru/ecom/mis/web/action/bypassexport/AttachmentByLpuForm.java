@@ -81,4 +81,17 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public void setCompany(Long aCompany) {theCompany = aCompany;}
 	/** Страховая компания */
 	private Long theCompany;
+	
+	/** FilenameError */
+	@Comment("FilenameError")
+	public String getFilenameError() {
+		return theFilenameError;
+	}
+
+	public void setFilenameError(String aFilenameError) {
+		theFilenameError = aFilenameError;
+	}
+
+	/** FilenameError */
+	private String theFilenameError;
 }

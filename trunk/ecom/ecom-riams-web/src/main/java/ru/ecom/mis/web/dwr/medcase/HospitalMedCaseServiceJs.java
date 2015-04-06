@@ -28,15 +28,16 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
 		StringBuilder sql = new StringBuilder() ; 
-		sql.append(" select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename") ; 
-		sql.append(" 	||' '||to_char(pat.birthday,'dd.mm.yyyy') as fio") ;
+		sql.append(" select sls.id as f1slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename") ; 
+		sql.append(" 	||' '||to_char(pat.birthday,'dd.mm.yyyy') as f2fio") ;
 		sql.append(" ,case when sls.emergency='1' then 'экстр' else 'план' end as e3mer") ;
 		sql.append(" ,vbt.codeF||' '||vbt.name as f4") ;
 		sql.append(" ,to_char(sls.dateStart,'dd.mm.yyyy') as f5") ;
 		sql.append(" ,to_char(sls.orderdate,'dd.mm.yyyy') as o6rderdate, olpu.codef||' '||olpu.name as o7lpuname") ;
 		sql.append(" ,pat.phone as p8,(select list(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4') as f9") ;
-		sql.append(" ,ss.code as f11") ;
-		sql.append(" ,vdh.name as f12") ;
+		sql.append(" ,ss.code as f10") ;
+		sql.append(" ,case when vdh.id is not null then vdh.name when hdf.id is not null then 'Исп. в др. напр.'") ;
+		sql.append(" when vss.code not in ('OBLIGATORYINSURANCE','OTHER') then vss.name else null end f11") ;
 		sql.append(" from medcase sls ") ;
 		sql.append(" left join MisLpu lpu on lpu.id=sls.lpu_id") ;
 		sql.append(" left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'") ;
@@ -53,8 +54,8 @@ public class HospitalMedCaseServiceJs {
 		sql.append(" left join MisLpu oml on oml.id=sls.orderLpu_id") ;
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(f.format(ConvertSql.parseDate(aPreHospDate, -7))).append("','dd.mm.yyyy') and to_date('").append(f.format(ConvertSql.parseDate(aPreHospDate, 28))).append("','dd.mm.yyyy') and hdf.id is null") ;
 		sql.append(" and (slo.id is null or slo.prevMedCase_id is null) and (vbst.id is null or vbst.code='1')") ;
-		sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
-		sql.append(" and hdf.hospitalmedcase_id is null") ;
+		sql.append(" ") ;
+		sql.append(" ") ;
 
 		if (aDenied==null||aDenied.equals("1")) {
 			sql.append(" and sls.deniedHospitalizating_id is null") ;
@@ -78,37 +79,55 @@ public class HospitalMedCaseServiceJs {
 		StringBuilder ret = new StringBuilder() ;
 		ret.append("<table border='1'><tr>") ;
 		ret.append("<th></th>") ;
+		ret.append("<th>Примечание</th>") ;
 		ret.append("<th>ФИО</th>") ;
 		ret.append("<th>Показания</th>") ;
 		ret.append("<th>Профиль</th>") ;
 		ret.append("<th>Дата госп.</th>") ;
 		ret.append("<th>Дата напр.</th>") ;
+		ret.append("<th>ЛПУ напр.</th>") ;
 		ret.append("<th>Телефон</th>") ;
 		ret.append("<th>Диагноз</th>") ;
 		ret.append("<th>Стат.карта</th>") ;
-		ret.append("<th>Причина отказа от госп.</th>") ;
 		ret.append("</tr>") ;
 		for (WebQueryResult wqr : l) {
 			ret.append("<tr>") ;
-			if (wqr.get12()==null) {
+			if (wqr.get11()==null) {
 				ret.append("<td><input type='button' value='Выбор' title='Установить соответствие с этой госпитализаций' onclick=\"setHospByHDF('").append(aHDFid).append("','").append(wqr.get1()).append("')\"></td>") ;
 			} else {
 				ret.append("<td><input type='button' value='Отказ' title='Установить отказ от госпитализации' onclick=\"showDiag263denied(").append(aHDFid).append(")\"></td>") ;
-			}ret.append("<td>").append(wqr.get2()).append("</td>") ;
-			ret.append("<td>").append(wqr.get3()).append("</td>") ;
-			ret.append("<td>").append(wqr.get4()).append("</td>") ;
-			ret.append("<td>").append(wqr.get5()).append("</td>") ;
-			ret.append("<td>").append(wqr.get6()).append("</td>") ;
-			ret.append("<td>").append(wqr.get7()).append("</td>") ;
-			ret.append("<td>").append(wqr.get8()).append("</td>") ;
-			ret.append("<td>").append(wqr.get9()).append("</td>") ;
-			ret.append("<td>").append(wqr.get10()).append("</td>") ;
-			ret.append("<td>").append(wqr.get11()).append("</td>") ;
-			ret.append("<td>").append(wqr.get12()).append("</td>") ;
+			}
+			ret.append("<td>").append(wqr.get11()!=null?wqr.get11():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get2()!=null?wqr.get2():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get3()!=null?wqr.get3():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get4()!=null?wqr.get4():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get5()!=null?wqr.get5():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get6()!=null?wqr.get6():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get7()!=null?wqr.get7():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get8()!=null?wqr.get8():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get9()!=null?wqr.get9():"").append("</td>") ;
+			ret.append("<td>").append(wqr.get10()!=null?wqr.get10():"").append("</td>") ;
+			
 			ret.append("</tr>") ;
 		}
 		ret.append("</table>") ;
 		return ret.toString() ;
+	}
+	public String deleteTableHDFEmpty(String aMode,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		if (aMode==null||aMode.equals("1")) {
+			service.executeUpdateNativeSql("delete from HospitalDataFond where isTable4='1'") ;
+		} else if (aMode==null||aMode.equals("2")) {
+			service.executeUpdateNativeSql("delete from HospitalDataFond where (isTable2 is null or isTable2='0') and (isTable3 is null or isTable3='0') and (isTable4 is null or isTable4='0') and (isTable5 is null or isTable5='0')") ;
+		} else if (aMode==null||aMode.equals("3")) {
+			service.executeUpdateNativeSql("delete from HospitalDataFond where (isTable2='1' or isTable3='1') and (isTable5 is null or isTable5='0')") ;
+		}
+		return null;
+	}
+	public String deleteHDF(String aNapr,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("delete from HospitalDataFond where id='"+aNapr+"'") ;
+		return null;
 	}
 	public String viewTable263narp(Long aSLSid,String aPreHospDate,String aLastname,String aFirstname, String aMiddlename, String aBirthday, String aMode, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -168,7 +187,12 @@ public class HospitalMedCaseServiceJs {
 	}
 	public String updateTable(String aTable, String aFldId, String aValId, String aFldSet, String aValSet, String aWhereAdd, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"='"+aValSet+"' where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+		if (aValSet==null || aValSet.equals("null")) {
+			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"=null where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+		} else {
+			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"='"+aValSet+"' where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+		}
+		
 		return "" ;
 	}
 	public String isCanDischarge(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
@@ -1034,6 +1058,9 @@ public class HospitalMedCaseServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.unionSloWithNextSlo(aSlo) ;
 		return "Объединены" ;
+	}
+	public String getPatientDefaultInfo(Long aPatient,String aDateFrom, String aDateTo, HttpServletRequest aRequest) throws NamingException {
+		return "" ;
 	}
 	public String deniedHospitalizatingSls(Long aMedCaseId,Long aDeniedHospitalizatingId,HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
