@@ -359,5 +359,26 @@ public class PatientFond extends BaseEntity{
 	 * Федеральный код страховой компании
 	 */
 	private String theCompabyCodeF;
+	
+	/** ЛПУ прикрепления */
+	@Comment("ЛПУ прикрепления")
+	public String getLpuAttached() {return theLpuAttached;}
+	public void setLpuAttached(String aLpuAttached) {theLpuAttached = aLpuAttached;}
+	/** ЛПУ прикрепления */
+	private String theLpuAttached;
+	
+	/** Тип прикрепления */
+	@Comment("Тип прикрепления")
+	public String getAttachedType() {return theAttachedType;}
+	public void setAttachedType(String aAttachedType) {theAttachedType = aAttachedType;}
+	/** Тип прикрепления */
+	private String theAttachedType;
+	
+	/** Дата прикрепления */
+	@Comment("Дата прикрепления")
+	public Date getAttachedDate() {return theAttachedDate;}
+	public void setAttachedDate(Date aAttachedDate) {theAttachedDate = aAttachedDate;}
+	/** Дата прикрепления */
+	private Date theAttachedDate;
 
 }
