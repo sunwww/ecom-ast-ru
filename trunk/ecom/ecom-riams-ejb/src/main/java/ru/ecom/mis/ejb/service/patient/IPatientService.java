@@ -25,6 +25,7 @@ public interface IPatientService {
 			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
 			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException ;
 	public String getCodeByMedPolicyOmc(Long aType) ;
 	public boolean isNaturalPerson(Long aPatient) ;
