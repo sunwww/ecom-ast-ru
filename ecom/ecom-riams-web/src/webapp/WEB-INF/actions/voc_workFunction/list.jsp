@@ -13,7 +13,7 @@
     <msh:sideMenu title="Добавить" guid="dcf2e072-d44e-47ca-ad16-db0ec61e35c8">
       <msh:sideLink key="ALT+N" roles="/Policy/Voc/VocWorkFunction/Create" action="/entityPrepareCreate-voc_workFunction" name="Рабочую функцию" guid="176203c0-0383-435c-8f78-263016d63671" />
     </msh:sideMenu>
-    <tags:voc_menu currentAction="workFunction" />
+    <tags:voc_menu currentAction="mnWorkFunction" />
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:section guid="23eab7e5-cd83-46cd-a3db-48aaa7cb0f93">
