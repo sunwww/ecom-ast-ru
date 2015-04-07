@@ -62,7 +62,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	return "Прикрепления успешно созданы, изменено "+i+" записей";
     	} catch (Exception e) {
     		e.printStackTrace();
-    		return "Какая-то ошибка";
+    		return "Ошибка:" +e.toString();
     	}
     	
     }
@@ -82,7 +82,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	return "Успешно обновлено "+i+ " записей";
         	} catch (Exception e) {
         		e.printStackTrace();
-        		return "Какая-то ошибка";
+        		return "Ошибка:" +e.toString();
         	}
     }
     public String exportAll(String aAge, String aFilenameAddSuffix
