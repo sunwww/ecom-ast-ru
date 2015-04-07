@@ -7,7 +7,7 @@
 
     <tiles:put name='body' type='string'>
         <msh:form action="entityParentSaveGoParentView-mis_lpuAttachedByDepartment.do" defaultField="attachedTypeName">
-            <msh:hidden property="id"/>
+        	<msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
             <msh:hidden property="patient"/>
 
@@ -80,14 +80,25 @@
 	            <hr/>
                 <msh:sideLink roles="/Policy/Mis/Patient/AttachedByDepartment/Delete" key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_lpuAttachedByDepartment" name="Удалить"
                               confirm="Удалить прикрепление?"/>
+                <msh:sideLink roles="/Policy/Mis/Patient/AttachedByDepartment/Edit" params="id" action="/javascript:cleanDefect();" name="Очистить дефект"/>
             </msh:ifFormTypeIsView>
-
+               
         </msh:sideMenu>
     </tiles:put>
 
     <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_lpuAttachedByDepartmentForm"/>
     </tiles:put>
-
-
+    <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
+  <script type="text/javascript">
+  function cleanDefect () {
+	  if (confirm("Очистить данные о дефекте?")){
+	  AttachmentService.cleanDefect($('id').value, {
+		  callback: function (aResult) {
+			  alert(""+aResult);
+		  }
+	  });
+  }
+  }
+  </script>
 </tiles:insert>
