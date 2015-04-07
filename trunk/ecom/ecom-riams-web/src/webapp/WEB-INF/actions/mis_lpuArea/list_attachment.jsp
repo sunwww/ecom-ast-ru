@@ -239,11 +239,13 @@
     	  
     	//  AttachmentService.importDefectsFromXML($'file').value;
       }
+
       function flushTable() {
     	  var table = document.getElementById("defectElements");
     	  var aRows = table.childNodes;
     	  if (aRows.length>1) {
-    		  for (var i=0;i<aRows.length;i++) {
+    		  var j=aRows.length;
+    		  for (var i=1;i<j;i++) {
     			  table.deleteRow(0);
     		  }
     	  }
