@@ -20,6 +20,8 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import bsh.StringUtil;
+
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
@@ -49,6 +51,21 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	private @EJB ISyncLpuFondService theSyncService ;
 	private @EJB ILocalMonitorService theMonitorService;
 	IMonitor monitor = null; 
+	public String cleanDefect(long aAttachmentId) {
+		try{
+			LpuAttachedByDepartment att = theManager.find(LpuAttachedByDepartment.class, aAttachmentId);
+			if (att!=null) {
+				att.setDefectText("");
+				return "Дефект очищен!";
+			} else {
+				return "Прикрепление не найдено";
+			}			 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Ошибка: "+e;
+		}
+		
+	}
 	public LpuAttachedByDepartment getAttachment (long aPatientId, Date aDate, String aMethodType) {
 		try{
 		LpuAttachedByDepartment list = (LpuAttachedByDepartment) theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateFrom =:dateFrom and attachedType_id=:aTypeId ")
@@ -70,13 +87,20 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 				SAXBuilder saxBuilder = new SAXBuilder();
 				Document xdoc = saxBuilder.build(new StringReader(aFileName));
 				org.jdom.Element rootElement = xdoc.getRootElement();
-				List<org.jdom.Element> elements =rootElement.getChildren(); 
+				List<org.jdom.Element> elements =rootElement.getChildren("ZAP"); 
 				int i=0;
 				StringBuilder sb = new StringBuilder();
 				for (org.jdom.Element el: elements) {
-					if (el.getName().equals("ZAP")) {
-							i++;
-							String refreason =el.getChildText("REFREASON"); 
+					i++;
+					StringBuilder refrSB = new StringBuilder();
+					List<org.jdom.Element> refresions =el.getChildren("REFREASON");	
+					for (org.jdom.Element r: refresions) {
+						if (r.getText().toLowerCase().equals("включен в регистр")){
+							refrSB.setLength(0); break;
+						}
+						refrSB.append(r.getText()).append(",");
+					}
+							String refreason =refrSB.length()>0?refrSB.substring(0,refrSB.length()-1).toString():""; 
 							String lastname = el.getChildText("FAM");
 							String firstname = el.getChildText("IM");
 							String middlename = el.getChildText("OT");
@@ -113,8 +137,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 								
 							} else {
 								sb.append("black:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
-							}
-						} 					
+							}				
 				}
 				
 				return sb.toString();
