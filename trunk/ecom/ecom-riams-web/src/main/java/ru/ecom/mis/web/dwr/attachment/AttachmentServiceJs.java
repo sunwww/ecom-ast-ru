@@ -20,6 +20,16 @@ import ru.ecom.web.util.Injection;
  *
  */
 public class AttachmentServiceJs {
+	public String cleanDefect(long aAttachmentId, HttpServletRequest aRequest) throws NamingException {
+		ISyncAttachmentDefectService service = Injection.find(aRequest).getService(ISyncAttachmentDefectService.class) ;
+		try {
+			return service.cleanDefect(aAttachmentId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Ошибка: "+e.toString();
+		}
+	}
 	public String importDefectsFromXML(String aFileName, HttpServletRequest aRequest) throws NamingException {
 		ISyncAttachmentDefectService service = Injection.find(aRequest).getService(ISyncAttachmentDefectService.class) ;
 		try {
