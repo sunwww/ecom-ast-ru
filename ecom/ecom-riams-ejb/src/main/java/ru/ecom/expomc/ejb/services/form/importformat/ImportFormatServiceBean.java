@@ -919,7 +919,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 Object data = null;
 
                 String id = keys.findId(row);
-                if (id != null) {
+                if (id != null && !id.equals("0")) {
                     data = theManager.find(entityClass, new Long(id));
                 }
 
@@ -947,7 +947,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                     //LOG.info(i+")\t"+key+": "+map.get(key).getClass().getCanonicalName()+" = "+map.get(key).toString());
                 }
 
-                if (id != null) {
+                if (id != null && !id.equals("0")) {
                     if (isModified) {
                         log("("+i+") Обновлено с ID:"+id);
                         importStatistics.incUpdEntity();
@@ -958,7 +958,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
 //                        if (i<=debugCount) LOG.info("REPLACE ID:"+id);
 
-                } else {
+                } else if (id!=null && id.equals("0")) {
+                	log("("+i+") Пропущено, несколько объектов имеют одинаковый ключ");
+                	importStatistics.incSyncEntity();
+                	isModified = false;
+                }else {
                     importStatistics.incAddEntity();
                     log("("+i+") Запись  добавлена");
                     isModified = true;
