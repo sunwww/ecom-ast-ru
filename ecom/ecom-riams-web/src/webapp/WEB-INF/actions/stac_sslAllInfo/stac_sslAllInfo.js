@@ -44,23 +44,16 @@ function listRecord(aCtx,aId) {
 	var pHole = +aId[1] ;
 	var emer = +aId[0] ;
 	if (emer==1) {
-		request.setAttribute("emergency"," and m.emergency='1'") ;
+		aCtx.request.setAttribute("emergency"," and m.emergency='1'") ;
 	} else if (emer==2) {
-		request.setAttribute("emergency"," and (m.emergency is null or m.emergency='0')") ;
+		aCtx.request.setAttribute("emergency"," and (m.emergency is null or m.emergency='0')") ;
 	}
 	if (dep>0) {
-		request.setAttribute("department", " and ml.id='"+dep+"'") ;
+		aCtx.request.setAttribute("department", " and ml.id='"+dep+"'") ;
 	}	
 	if (+pHole>0) {
-		request.setAttribute("pigeonHole"," and (m.department_id is not null and ml.pigeonHole_id='"+pHole+"' or m.department_id is null and ml1.pigeonHole_id='"+pHole+"')") ;
+		aCtx.request.setAttribute("pigeonHole"," and (m.department_id is not null and ml.pigeonHole_id='"+pHole+"' or m.department_id is null and ml1.pigeonHole_id='"+pHole+"')") ;
 	}
 	//request.setAttribute("dateI",) ;
 	return aCtx.createForward("/WEB-INF/actions/stac_sslAllInfo/listByDate.jsp") ;
 }
-/*
-function address(aForm, aCtx) {
-    var col = aCtx.invokeScript("HospitalPrintService", "addressUpdate"
-        	, "" ) ;
-	
-}
-*/
