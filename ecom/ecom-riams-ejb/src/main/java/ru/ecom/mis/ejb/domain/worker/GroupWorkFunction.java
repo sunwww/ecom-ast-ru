@@ -23,6 +23,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="groupName",table="WorkFunction")
 })
 public class GroupWorkFunction extends WorkFunction {
+	
+	/** Есть обслуживающий персонал */
+	@Comment("Есть обслуживающий персонал")
+	public Boolean getHasServiceStuff() {return theHasServiceStuff;}
+	public void setHasServiceStuff(Boolean aHasServiceStuff) {theHasServiceStuff = aHasServiceStuff;}
+	/** Есть обслуживающий персонал */
+	private Boolean theHasServiceStuff;
+	
 	@Transient @Comment("Информация")
 	public String getWorkFunctionInfo() {
 		return getName() + " " + theGroupName;
