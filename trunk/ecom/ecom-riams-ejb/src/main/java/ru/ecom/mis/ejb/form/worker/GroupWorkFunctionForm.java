@@ -19,6 +19,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
 public class GroupWorkFunctionForm extends WorkFunctionForm {
+	
+	/** Есть обслуживающий персонал */
+	@Comment("Есть обслуживающий персонал")
+	@Persist
+	public Boolean getHasServiceStuff() {return theHasServiceStuff;}
+	public void setHasServiceStuff(Boolean aHasServiceStuff) {theHasServiceStuff = aHasServiceStuff;}
+	/** Есть обслуживающий персонал */
+	private Boolean theHasServiceStuff;
+	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
