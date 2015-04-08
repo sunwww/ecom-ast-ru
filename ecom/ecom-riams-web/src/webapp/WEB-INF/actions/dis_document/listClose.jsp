@@ -111,9 +111,6 @@
            <td>
             <input type="submit" onclick="create16vn()" value="Сформировать 16-ВН" />
           </td>
-           <td>
-            <a href="/riams/dis_documentExport.do">Экспорт в ФСС </a>
-          </td>
           </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
