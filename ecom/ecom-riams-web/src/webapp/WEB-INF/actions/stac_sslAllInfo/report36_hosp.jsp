@@ -45,6 +45,12 @@
   	//request.setAttribute("diag_typeReg_cl", "4") ;
   	//request.setAttribute("diag_typeReg_pat", "5") ;
   	//request.setAttribute("diag_priority_m", "1") ;
+  	String orderDiag = "idcEntranceCode" ;
+  	if (typeDiagOrder!=null&&typeDiagOrder.equals("2")) {
+  		orderDiag= "idcDepartmentCode" ;
+  	} 
+  	request.setAttribute("orderDiag", orderDiag) ;
+  	
   	if (noViewForm!=null && noViewForm.equals("1")) {
   	} else {
   		
@@ -239,11 +245,11 @@ then ahr.sls else null end) as cntBeginPeriod15_17
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
-and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and  ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 then ahr.sls else null end) as cntEntranceAll
 ,count(case when 
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and  ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
 and
@@ -253,26 +259,26 @@ ahr.ageEntranceSls between 0 and 14 then ahr.sls else null end)  as cntEntrance0
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
 ${departmentSql}
-and  ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and  ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 
 and
 ahr.ageEntranceSls between 15 and 17 then ahr.sls else null end)  as cntEntrance15_17
 ,count(case when
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
-and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 and ahr.isFirstCurrentYear='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceAdmHosp
 ,count(case when
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
-and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 and ahr.isFirstLife='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceFirstLife
 ,count(case when
 ahr.entranceDate${timeAdd} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and ahr.transferDepartmentFrom is null
-and ahr.idcEntranceCode between rspt.codefrom and rspt.codeto 
+and ahr.${orderDiag} between rspt.codefrom and rspt.codeto 
 and ahr.isIncompetent='1' ${departmentSql}
 then ahr.sls else null end) as cntEntranceHospNeDobr
 
@@ -412,7 +418,7 @@ and (ahr.entranceDate${timeAdd} <= to_date('${dateEnd}','dd.mm.yyyy')
 
 and (ahr.idcDepartmentCode between rspt.codefrom and rspt.codeto 
 or ahr.idcDischarge between rspt.codefrom and rspt.codeto
-or ahr.idcEntranceCode between rspt.codefrom and rspt.codeto
+or ahr.${orderDiag} between rspt.codefrom and rspt.codeto
 
  )
 ${paramSql}
@@ -482,7 +488,7 @@ order by vrspt.strCode
 
         	    request.setAttribute("titleReestr","Список поступивших пациентов") ;
         		request.setAttribute("dateSql", sql) ;
-        		request.setAttribute("diagnosField","idcEntranceCode") ;
+        		request.setAttribute("diagnosField",orderDiag) ;
         	} else if (view.equals("5")) {
         		sql="ahr.dischargeDate"+timeAdd+" between to_date('"+date+"','dd.mm.yyyy') and to_date('"
             			+dateEnd+"','dd.mm.yyyy') and ahr.transferDepartmentIn is null" ;
@@ -599,7 +605,7 @@ where ${dateSql}   ${reportStrSql}
 ${paramSql}
 ${departmentSql}
 
-group by ahr.sls,ahr.dischargeDate${timeAdd},ahr.entranceDate${timeAdd},ahr.idcDepartmentCode,ahr.idcEntranceCode,ahr.idcDischarge
+group by ahr.sls,ahr.dischargeDate${timeAdd},ahr.entranceDate${timeAdd},ahr.idcDepartmentCode,ahr.${orderDiag},ahr.idcDischarge
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname,ahr.dischargeDate24,ahr.entranceDate24
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate${timeAdd},ahr.entranceHospDate24,ahr.addbeddays
 ,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency,ahr.isFirstCurrentYear,ahr.isFirstLife
