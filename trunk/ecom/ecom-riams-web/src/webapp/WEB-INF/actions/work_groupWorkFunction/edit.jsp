@@ -26,7 +26,7 @@
         <msh:row guid="7fe9abb8-b4e0-49ce-a31b-0d9c09b621da">
           <msh:checkBox property="hasServiceStuff" label="Имеет вспомогательный персонал" guid="8754e635-11ce-4c73-b398-4479988fd60d" />
         </msh:row>
-        <msh:row>
+        <msh:row> 
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row>
