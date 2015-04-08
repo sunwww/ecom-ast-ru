@@ -61,18 +61,25 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Импорт данных" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
-       <msh:row>
+             <msh:row>
           	 <td colspan="3"> 
           <label>Импорт файла с ФСС:</label>     	
             <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
           </td>
           </msh:row>
-     <%--  <msh:row>
-           <td>
-            <input type="button" onclick="showForm()" value="Экспорт в ФСС" />
+      <form action="/dis_documentExport.do" name="uploadForm" target="hiddenframe" enctype="multipart/form-data" method="post">
+  <%--      <msh:row>
+          	 <td colspan="3"> 
+          <label>Импорт файла с ФСС(IFRAME):</label>     	
+            <input type="file"  name="filenameImport" id="filenameImport" size="50" value="Импорт " onchange="document.uploadForm.submit()">
           </td>
-          </msh:row> --%>
-         
+          </msh:row>
+      <msh:row>
+           <td>
+            <input type="button" onclick="textAjax()" value="textAjax" />
+          </td>
+          </msh:row>  --%>
+        </form> 
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
        <table id="importTable" border="1" style="padding: 15px; display: none">
@@ -197,7 +204,35 @@
     checkFieldUpdate('typeDocument','${typeDocument}',3) ;
     checkFieldUpdate('orderBy','${orderBy}',1) ;
 
-
+	
+    function getXmlHttp() {
+    	var xmlHttp;
+    	try {
+    		xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+    	} catch (E) {
+    		try{
+    		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    		}catch (E) {
+        		xmlHttp = false;
+        	}
+    	}
+    	if (!xmlHttp && typeof XMLHttpRequest!='undefined') {
+    		xmlHttp = new XMLHttpRequest();
+    	}
+    	return xmlHttp;
+    }
+    function textAjax() {
+    	var xmlHttp = getXmlHttp();
+    	xmlHttp.open('GET', '/riams/mis_patients.do',true);
+    	xmlHttp.onreadystatechange=function () {
+    		if (xmlHttp.readyState==4) {
+    			if (xmlHttp.status==200) {
+    				alert (xmlHttp.responseText);
+    			}
+    		}
+    	};
+    	xmlHttp.send(null);
+    }
     function checkFieldUpdate(aField,aValue,aDefault) {
     	eval('var chk =  document.forms[0].'+aField) ;
     	var aMax = chk.length ;
