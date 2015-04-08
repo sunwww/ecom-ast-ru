@@ -152,8 +152,6 @@
 			} ) ;
 		} else {
 			get${name}ExpMedserviceInfo() ;
-		} else {
-			get${name}DefaultInfo() ;
 		}
      }
 
