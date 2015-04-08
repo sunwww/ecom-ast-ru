@@ -98,7 +98,12 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 						if (r.getText().toLowerCase().equals("включен в регистр")){
 							refrSB.setLength(0); break;
 						}
-						refrSB.append(r.getText()).append(",");
+						if (r.getText().equals("3")||r.getText().equals("4")||r.getText().equals("5")||r.getText().equals("6")) {
+							
+						} else {
+							refrSB.append(r.getText()).append(",");
+						}
+						
 					}
 							String refreason =refrSB.length()>0?refrSB.substring(0,refrSB.length()-1).toString():""; 
 							String lastname = el.getChildText("FAM");
