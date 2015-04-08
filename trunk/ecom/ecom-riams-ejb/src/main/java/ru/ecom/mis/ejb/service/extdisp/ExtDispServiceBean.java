@@ -148,7 +148,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+",edc.isServiceIndication as cntIsServiceIndication " 
 				+",case when ml2.id is not null then ml2.name else ml.name end as lpuName " 
 				+",case when ml2.id is not null then ml2.printAddress else ml.printAddress end as lpuAddress "
-				+",case when p.address_addressid is not null then adr.postindex||':'||adrPar.kladr ||':'||adr.kladr||':'||p.housenumber||':'||p.housebuilding||':'||p.flatnumber else '0' end as fullAddress "
+				+",case when p.address_addressid is not null then adr.postindex||' :'||adrPar.kladr ||' :'||adr.kladr||' :'||p.housenumber||' :'||p.housebuilding||' :'||p.flatnumber ||' ' else '0' end as fullAddress "
 				+"from ExtDispCard edc " 
 				+"left join mislpu ml on ml.id=edc.lpu_id "
 				+"left join mislpu ml2 on ml2.id=ml.parent_id "
@@ -390,14 +390,16 @@ public class ExtDispServiceBean implements IExtDispService {
 				.addContent(new Element("medSanAddress").addContent(rs.getString("lpuAddress")))
 				.addContent(new Element("address"));
 				String fullAddress = rs.getString("fullAddress");
-				if (fullAddress!=null&&!fullAddress.equals("0")) {
+				if (fullAddress!=null&&!fullAddress.equals("0")&&!fullAddress.equals("")) {
 					String[] arrAddress = fullAddress.split(":"); //postIndex:kladrNP:kladrStr:house:building:appartment
+					System.out.println("============PERSON="+rs.getString("lastname"));
+					System.out.println("============ARRAY="+arrAddress.length);
 					currPat.getChild("address").addContent(new Element("index").addContent(arrAddress[0]))
 						.addContent(new Element("kladrNP").addContent(arrAddress[1]!=null?arrAddress[1]:""))
-						.addContent(new Element("kladrStreet").addContent(arrAddress[2]!=null?arrAddress[2]:"")) //Код улицы по KLADR
-						.addContent(new Element("house").addContent(arrAddress[3]!=null?arrAddress[3]:"")) //номер дома
-						.addContent(new Element("building").addContent(arrAddress[4]!=null?arrAddress[4]:"")) //Корпус
-						.addContent(new Element("appartment").addContent(arrAddress[5]!=null?arrAddress[5]:"")); //Квартира
+						.addContent(new Element("kladrStreet").addContent(arrAddress.length>2?arrAddress[2].trim():"")) //Код улицы по KLADR
+						.addContent(new Element("house").addContent(arrAddress.length>3?arrAddress[3].trim():"")) //номер дома
+						.addContent(new Element("building").addContent(arrAddress.length>4?arrAddress[4].trim():"")) //Корпус
+						.addContent(new Element("appartment").addContent(arrAddress.length>5?arrAddress[5].trim():"")); //Квартира
 
 				} else {
 					currPat.getChild("address").addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
