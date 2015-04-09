@@ -45,6 +45,14 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+	<action path='/blood_report' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/blood_report.jsp" />
+        </action>
+        
 		<action path='/journal_militiaMessage'
 		    type='ru.ecom.mis.web.action.medcase.journal.AdmissionJournalSearchAction'
 		    name='stac_admissionJournalForm' validate='false' scope='request'
