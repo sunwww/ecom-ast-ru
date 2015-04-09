@@ -216,6 +216,9 @@
 						<li><msh:link action="stac_report_insCompany.do" roles="/Policy/Mis/MedCase/Stac/Journal/InsuranceCompany">
 	                            Журнал по страховым компаниям
 	                        </msh:link></li>
+	                        <li><msh:link action="blood_report.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
+	                            Госпитализации с болезнями системы кровообращения
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
