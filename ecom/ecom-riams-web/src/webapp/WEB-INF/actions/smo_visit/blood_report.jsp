@@ -131,11 +131,10 @@ and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateE
 and vdrt.code='3'
 and ${appendSQL}  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
-        <form action="print-f039_reestr.do" method="post" target="_blank">
+        <form action="print-blReport.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}. 
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${dateBegin} по ${dateEnd}.">
-    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
     <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type='hidden' name="date1" id="date1" value="${dateBegin}">
