@@ -304,7 +304,6 @@ public class PrescriptionForm extends IdEntityForm{
 	public void setFuncList(String aFuncList) {
 		theFuncList = aFuncList;
 	}
-
 	/** Список функциональных исследований */
 	private String theFuncList;
 	/** Пользователь, который последний редактировал запись */
