@@ -217,6 +217,10 @@ public class ImportSyncKey extends ImportKey {
             log("id:"+keyid);
             declev();
             return keyid;
+        } else if (keyList.size()>1) {
+        	log("найдено: "+keyList.size()+", пропускаем");
+        	declev();
+        	return "0";
         } else {
             log("найдено: "+keyList.size());
             declev();
