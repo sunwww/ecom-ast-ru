@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Patient" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -95,9 +95,11 @@
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="prescriptType" fieldColSpan="4" horizontalFill="true" label="Тип наначения" vocName="vocPrescriptType"/>
+        	<msh:autoComplete property="prescriptType" fieldColSpan="4" horizontalFill="true" label="Тип назначения" vocName="vocPrescriptType"/>
         </msh:row>
-        
+        <msh:row>
+        	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
+        </msh:row> 
       <msh:row>
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />

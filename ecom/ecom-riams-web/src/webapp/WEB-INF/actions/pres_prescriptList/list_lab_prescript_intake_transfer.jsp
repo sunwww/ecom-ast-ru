@@ -12,16 +12,18 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Journals" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
-
+        <msh:sideMenu>
+                <tags:laboratory_menu currentAction="pres_transfer"/>
+        </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
   	<%
   	
-  	//String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
+  	String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
   	String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
     
   	%>
@@ -32,14 +34,26 @@
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
+        <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();">
+        	<input type="radio" name="typeIntake" value="1"> был
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
+        	<input type="radio" name="typeIntake" value="2"> не был
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+        	<input type="radio" name="typeIntake" value="3"> отобразить все данные
+        </td>
+     </msh:row>
+      <msh:row>
         <td class="label" title="Передача в лабораторию (typeTransfer)"><label for="typeTransferName" id="typeTransferLabel">Передача в лабораторию:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
         	<input type="radio" name="typeTransfer" value="1"> осуществлена
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
         	<input type="radio" name="typeTransfer" value="2"> не была произведена
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
         	<input type="radio" name="typeTransfer" value="3"> все
         </td>
 
@@ -49,11 +63,11 @@
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="prescriptType" fieldColSpan="4" horizontalFill="true" label="Тип наначения" vocName="vocPrescriptType"/>
+        	<msh:autoComplete property="prescriptType" fieldColSpan="4" horizontalFill="true" label="Тип назначения" vocName="vocPrescriptType"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="serviceSubType" fieldColSpan="4" horizontalFill="true" label="Тип услуги" vocName="vocServiceSubTypeLab"/>
-        </msh:row>        
+        	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
+        </msh:row>
       <msh:row>
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
@@ -65,10 +79,12 @@
     </msh:form>
     
     <script type='text/javascript'>
-    //checkFieldUpdate('typeIntake','${typeIntake}',1) ;
+    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
-
+    function checkfrm() {
+    	document.forms[1].submit() ;
+    }
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[1].'+aField) ;
    	var aMax=chk.length ;
@@ -97,19 +113,36 @@
   		request.setAttribute("beginDate", beginDate) ;
   		request.setAttribute("endDate", endDate) ;
     StringBuilder sqlAdd = new StringBuilder() ;
-    
+    if (typeIntake!=null && typeIntake.equals("1")) {
+		sqlAdd.append(" and p.intakeDate is not null ") ;
+	} else if (typeIntake!=null && typeIntake.equals("2")) {
+		sqlAdd.append(" and p.intakeDate is null ") ;
+	}
     if (typeTransfer!=null && typeTransfer.equals("1")) {
 		sqlAdd.append(" and p.transferDate is not null ") ;
 	} else if (typeTransfer!=null && typeTransfer.equals("2")) {
 		sqlAdd.append(" and p.transferDate is null ") ;
 	}
+	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
+				, "отделение","deparment","ml.id", request)) ;
+		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
+				, "тип назначения","prescriptType","vpt.id", request)) ;
+		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
+				, "исследование","service","ms.id", request)) ;
+		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
+				, "биоматериал","serviceSubType","ms.serviceSubType_id", request)) ;
+		 StringBuilder title = new StringBuilder() ;
+		title.append(request.getAttribute("departmentInfo"))
+			.append(" ").append(request.getAttribute("serviceSubTypeInfo")) 
+			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
+			.append(" ").append(request.getAttribute("serviceInfo")) ;
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
     %>
     <msh:section>
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
     select 
-    case when p.intakeDate is not null then replace(list(''||p.id),' ','') else null end as js1
-    ,case when p.intakeDate is null then null else list(''||p.id) end as js2
+  replace(list(''||p.id),' ','') as f15pid
+  ,  case when p.intakeDate is null then replace(list(''||p.id),' ','') else null end as js1
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
     , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     
@@ -121,7 +154,7 @@
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
-   
+       ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -140,16 +173,18 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and coalesce(p.department_id,w.lpu_id)='${param.department}' 
     and p.cancelDate is null 
-    and p.intakeDate is not null
+    
     ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
+    ,p.transferDate,p.transferTime
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -160,21 +195,27 @@
 	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply">
 	     <msh:tableNotEmpty>
             <tr>
-              <th colspan="4">
+              <th colspan="13">
                 <msh:toolbar>
+
                   <a href="javascript:transferInLab()">Переданы в лабораторию</a>
                 </msh:toolbar>
               </th>
             </tr>
           </msh:tableNotEmpty>
-	      <msh:tableColumn columnName="Стат.карта" property="3"  />
-	      <msh:tableColumn columnName="Код биоматериала" property="4"/>
+          <msh:tableButton property="2" buttonFunction="remove" buttonName="Осуществлен брак" buttonShortName="Брак"/>
+	      <msh:tableColumn columnName="#" property="sn"  />
+	      <msh:tableColumn columnName="Код назн." property="4"/>
+	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
 	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
 	      <msh:tableColumn columnName="Имя" property="7" />
 	      <msh:tableColumn columnName="Отчетство" property="8"/>
 	      <msh:tableColumn columnName="Дата рождения" property="9"/>
+	      <msh:tableColumn columnName="Дата и время забора" property="13"/>
+	      <msh:tableColumn columnName="Дата и время приема в лабораторию" property="14"/>
 	      <msh:tableColumn columnName="Список услуг" property="10"/>
+	      
 
 	    </msh:table>
 	    <script type="text/javascript">
@@ -209,6 +250,7 @@
   		
   	    function transferInLab() {
   	    	var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
+  	    	//alert(ids) ;
   	        if (ids) {
   	        	PrescriptionService.checkTransferService( ids, { 
   		            callback: function(aResult) {
@@ -221,6 +263,34 @@
   	        
   				
   		}
+  		function getReason(aReason) {
+			aReason=prompt('Введите причину брака:', aReason) ;
+			if (aReason==null || aReason=="") {
+				if (confirm('Неопределена причина брака. Хотите ввести еще раз?')) {
+					return getReason(aReason) ;
+				}
+			} else {
+				return aReason ;
+			}
+			return null ;
+  		}
+  	    function cancelInLab(aId,aReason) {
+  	    	var reason = getReason(aReason) ;
+  	    	if (reason!=null) {
+  	        	PrescriptionService.cancelTransferService( id,aReason, { 
+  		            callback: function(aResult) {
+  		            	window.document.location.reload();
+  		            }
+  				});
+  	        } else {
+  	            alert("Нет выделенных пациентов");
+  	        }
+  	        
+  				
+  		}
+  	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
+  	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
+  	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	</script>
   </tiles:put>
 </tiles:insert>
