@@ -12,11 +12,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Journals" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
-   
+    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
   </tiles:put>
   <tiles:put name="side" type="string">
-
+ <msh:sideMenu>
+                <tags:laboratory_menu currentAction="pres_intake"/>
+        </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
   	<%
@@ -45,26 +46,26 @@
       </msh:row>
       <msh:row>
         <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
         	<input type="radio" name="typeIntake" value="1"> был
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" >
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;" >
         	<input type="radio" name="typeIntake" value="2"> не был
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
         	<input type="radio" name="typeIntake" value="3"> отобразить все данные
         </td>
      </msh:row>
       
       <msh:row>
         <td class="label" title="Передача в лабораторию (typeTransfer)"><label for="typeTransferName" id="typeTransferLabel">Передача в лабораторию:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
         	<input type="radio" name="typeTransfer" value="1"> осуществлена
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
         	<input type="radio" name="typeTransfer" value="2"> не была произведена
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
         	<input type="radio" name="typeTransfer" value="3"> все
         </td>
 
@@ -72,16 +73,18 @@
      <%--
       <msh:row>
         <td class="label" title="Наименование пробирки (typeMaterial)" colspan="2"><label for="typeMaterial" id="typeMaterialLabel">Пробирка:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();">
         	<input type="radio" name="typeMaterial" value="1"> №стат.карты, Фамилия пациента
         </td>
-        <td onclick="this.childNodes[1].checked='checked';" >
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
         	<input type="radio" name="typeMaterial" value="2"> штрих-код
         </td>
 
        </msh:row>
        --%>
-        
+        <msh:row>
+        	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
+        </msh:row>
       <msh:row>
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
@@ -96,7 +99,10 @@
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
-
+    function checkfrm() {
+    	document.forms[1].submit() ;
+    }
+    
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[1].'+aField) ;
    	var aMax=chk.length ;
@@ -115,6 +121,7 @@
     </script>
     <%
     StringBuilder sqlAdd = new StringBuilder() ;
+    StringBuilder title = new StringBuilder() ;
     if (typeIntake!=null && typeIntake.equals("1")) {
 		sqlAdd.append(" and p.intakeDate is not null ") ;
 	} else if (typeIntake!=null && typeIntake.equals("2")) {
@@ -125,6 +132,15 @@
 	} else if (typeTransfer!=null && typeTransfer.equals("2")) {
 		sqlAdd.append(" and p.transferDate is null ") ;
 	}
+		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
+  				, "тип назначения","prescriptType","vpt.id", request)) ;
+  		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
+  				, "исследование","service","ms.id", request)) ;
+  		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
+  				, "биоматериал","serviceSubType","ms.serviceSubType_id", request)) ;
+  		title.append(" ").append(request.getAttribute("serviceSubTypeInfo")) 
+  			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
+  			.append(" ").append(request.getAttribute("serviceInfo")) ;
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
     %>
     <msh:section>
@@ -143,6 +159,7 @@
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
+       ,to_char(p.planStartDate,'dd.mm.yyyy') as f14planStartDate
    
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -162,6 +179,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -169,7 +187,7 @@
     and p.cancelDate is null ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
+    ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -198,7 +216,9 @@
     		and mc.medService_id=p.medService_id
     		and pmc.datestart between current_date-1 and current_date-8
     		
-    )) as mc
+    )) as mf14c
+    ,to_char(p.planStartDate,'dd.mm.yyyy') as f15planStartDate
+    
    from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -225,6 +245,7 @@
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
+    ,p.planStartDate 
     order by vsst.name,pat.lastname,pat.firstname,pat.middlename"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
@@ -240,7 +261,10 @@
 	    <msh:table name="list" action="javascript:void(0)" idField="1">
 	      <msh:tableButton property="1" buttonFunction="showBiomatIntakeInfo" buttonName="Прием биоматериала осуществлен" buttonShortName="Прием" hideIfEmpty="true"/>
 	      <msh:tableButton property="2" buttonFunction="removeService" buttonName="Очистить данные о приеме биоматериала" buttonShortName="Очистить данные о приеме" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsRemoveIntake"/>
+	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Стат.карта" property="3"  />
+	      <msh:tableColumn columnName="Направ. на дату" property="14"/>
+	      <msh:tableColumn columnName="Дата и время забора" property="13"/>
 	      <msh:tableColumn columnName="Код биоматериала" property="4"/>
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
 	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
@@ -287,6 +311,7 @@
 		            }
 				}); 
   		}
+  		serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	</script>
   </tiles:put>
 </tiles:insert>

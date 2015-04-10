@@ -12,7 +12,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Patient" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -69,16 +69,9 @@
 
        </msh:row>
      
-      <msh:row>
-        <td class="label" title="Наименование пробирки (typeMaterial)" colspan="2"><label for="typeMaterial" id="typeMaterialLabel">Пробирка:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeMaterial" value="1"> №стат.карты, Фамилия пациента
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';" >
-        	<input type="radio" name="typeMaterial" value="2"> штрих-код
-        </td>
-
-       </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
+        </msh:row> 
       
         
       <msh:row>
@@ -93,7 +86,7 @@
     
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-    checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
+    //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
