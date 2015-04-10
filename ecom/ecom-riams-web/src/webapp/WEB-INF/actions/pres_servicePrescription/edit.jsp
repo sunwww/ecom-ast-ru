@@ -19,6 +19,12 @@
 	var labList="";
 	
 	onload =function () {
+		var date = new Date();
+		var month = date.getMonth()+1; if (month<10) {month="0"+month;}
+		var day = date.getDate(); if (day<10) {day="0"+day;}
+		var year = date.getFullYear();
+		$('labDate').value=day+"."+month+"."+year;
+		$('funcDate').value=day+"."+month+"."+year;
 			if ($('prescriptType').value=="" || $('prescriptType').value==null){
  				showcheckPrescTypes();
  			}	
@@ -136,7 +142,7 @@
 		}
 		
 		$('labList').value=labList ;
-
+	alert($('labList').value);
 		document.forms['pres_servicePrescriptionForm'].action=oldaction ;
 		document.forms['pres_servicePrescriptionForm'].submit();
 	}
@@ -154,12 +160,13 @@
 			var curService = document.getElementById(type+'Service'+typeNum);
 			var curDate = document.getElementById(type+'Date'+typeNum);
 			var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
+			var curDepartment = document.getElementById(type+'Department'+typeNum);
+			
 			if (curService.value != "" & curDate.value != "") {			            
-	            labList+=curService.value;
-	            labList+=":";
-	            labList+=curDate.value;
-	            labList+=":";
-	            labList+=curCabinet.value;
+	            labList+=curService.value+":";
+	            labList+=curDate.value+":";
+	            labList+=curCabinet.value+":";
+	            labList+=curDepartment.value;
 	            labList+="#";
 	            // Проверка на дубли 
 	            if ($(type+'Servicies').value==curService.value) {
@@ -178,6 +185,8 @@
 	            labList+=$(type+'Date').value;
 	            labList+=":";
 	            labList+=$(type+'Cabinet').value;
+	            labList+=":";
+	            labList+=$(type+'Department').value;
 	            labList+="#";
 	         }
 		 
@@ -239,26 +248,29 @@
 	    var td2 = document.createElement("TD");
 	    td2.colSpan="2";
 	    var td3 = document.createElement("TD");
+	    var td4 = document.createElement("TD");
 	    
 		 row.appendChild(td1);
 		 row.appendChild(td2);
 		 row.appendChild(td3);
-	    
+		 row.appendChild(td4);
 	    // Наполняем ячейки 
 	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
-	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
-	    
+	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='1' readonly='true' />";
+	    var dt4 = "<input id='"+type+"Department"+num+"' value='"+$(type+'Department').value+"' type='hidden' name='"+type+"Department"+num+"' horizontalFill='true' size='1' readonly='true' />";
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"   ' size = '10' />";
-	   	td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+	   	//td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
 	   	new dateutil.DateField($(type+'Date'+num));
+	   	td4.innerHTML=dt2+dt4;
 					   
 		if (type=='lab') {
 			labNum = num;
 		} else if (type=='func'){
 			funcNum = num;
 		}
+	
 	}
 			</script>
 			</msh:ifFormTypeIsNotView>
@@ -273,6 +285,8 @@
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <input type="hidden" id="funcDepartment" value="">
+      <input type="hidden" id="labCabinet" value="">
       <msh:panel guid="panel" colsWidth="3">
 
         
@@ -311,7 +325,7 @@
             </td>
 			</tr>
 			<tr>
-			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+			<msh:autoComplete property="labDepartment" label="Место забора" vocName="departmentIntake" size='20' fieldColSpan="3" horizontalFill="true" />
 			</tr>
            </tbody>
     		</table>
@@ -330,6 +344,7 @@
         </msh:row>
         <tbody id="addfuncElements">
     		<tr>
+    		
 			<msh:textField property="funcDate" label="Дата " size="10"/>
 			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
 			<td>        	
@@ -337,8 +352,7 @@
             </td>
 			</tr>
 			<tr>
-			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
-			 </tr>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" /></tr>
        		</tbody>
     		</table>
     		</td></tr></msh:row>
