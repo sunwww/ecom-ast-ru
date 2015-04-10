@@ -382,7 +382,8 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
+    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" 
+   nameFldSql="v1_report14swod" nativeSql="
 select 
 '&department='||sloa.department_id,ml.name as mlname
 ,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
@@ -879,12 +880,12 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:sectionTitle>
         ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nameFldSql="report14swod_sql" nativeSql="
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
-    ,count(sls.id) as cntDeath
+    ,count(distinct sls.id) as cntDeath
     ,count(distinct
 case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then sls.id else null end    ) as cntRash
     ,
-    count(case when dc.isAutopsy='1' then sls.id else null end) autopsy
-    , count(case when dc.id is null then sls.id else null end) noDeathof
+    count(distinct case when dc.isAutopsy='1' then sls.id else null end) autopsy
+    , count(distinct case when dc.id is null then sls.id else null end) noDeathof
      from medcase sls
     left join DeathCase dc on dc.medCase_id=sls.id
     left join MedCase sloa on sloa.parent_id=sls.id
@@ -935,7 +936,6 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-        
         <msh:table name="report14swod" 
         viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
          action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
