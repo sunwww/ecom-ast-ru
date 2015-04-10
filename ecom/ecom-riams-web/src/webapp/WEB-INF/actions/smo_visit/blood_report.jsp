@@ -117,7 +117,7 @@ select sls.id
 ,case when sls.datefinish is null then (select dep.name from medcase slo left join 
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
-,case when vhr.code='11' then sls.datefinish else null end as f11_isDead
+,case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end as f11_isDead
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
 left join diagnosis diag on diag.medcase_id=sls.id
@@ -129,7 +129,9 @@ left join vochospitalizationresult vhr on vhr.id=sls.result_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 and vdrt.code='3'
-and ${appendSQL}  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+and ${appendSQL}  
+order by p.lastname, p.firstname, p.middlename 
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
         <form action="print-blReport.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}. 
