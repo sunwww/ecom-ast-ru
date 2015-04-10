@@ -117,7 +117,7 @@ select sls.id
 ,case when sls.datefinish is null then (select dep.name from medcase slo left join 
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
-,case when vhr.code='11' then p.deathdate else null end as f11_isDead
+,case when vhr.code='11' then sls.datefinish else null end as f11_isDead
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
 left join diagnosis diag on diag.medcase_id=sls.id
