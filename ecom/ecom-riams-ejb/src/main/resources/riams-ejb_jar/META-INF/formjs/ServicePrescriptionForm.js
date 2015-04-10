@@ -35,7 +35,8 @@ function onCreate(aForm, aEntity, aCtx) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
-				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
+				var par3 = (+param[2]>0)?java.lang.Long.valueOf(param[2]):null ; //Кабинет исследования
+				var par4 = (+param[3]>0)?java.lang.Long.valueOf(param[3]):null ; //Место забора крови
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				if (medService!=null && par2!=null) {
 					var adMedService ;
@@ -60,9 +61,13 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateUsername(username) ;
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
-					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
+					if (par3!=null&&!par3.equals(java.lang.Long(0))) { 
 						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
+					}
+					if (par4!=null&&!par4.equals(java.lang.Long(0))) { //А стало так 
+						var department = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
+						adMedService.setDepartment(department);	
 					}
 					aCtx.manager.persist(adMedService) ;
 				}
