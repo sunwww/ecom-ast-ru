@@ -604,7 +604,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 						if (nextDocument!=null&&!nextDocument.equals("")) {
 						} else {
 	//Check ELN-089
-							nextDocument="000000000000";
+							nextDocument="000000000001";
 						//	defect.append(ln).append(":").append(ln_id).append(":TESTTESTTEST_ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
 							//continue;			
 						}
