@@ -16,5 +16,9 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-
+	var patient = aEntity.getPatient();
+	if (patient.getDeathDate()!= null) {
+	} else {
+		patient.setDeathDate(aEntity.getDeathDate());
+	}
 }
