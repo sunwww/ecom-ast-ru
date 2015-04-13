@@ -1,4 +1,19 @@
 /**
+ * Перед созданием
+ * 
+ */
+function onPreCreate(aForm, aCtx) {
+	var date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getFinishDate());
+	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
+	if (pat.getDeathDate()!=null) {
+		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
+		if (date.getTime() > deathDate.getTime()) {
+			throw "Невозможно создать карту диспансеризации с датой окончания позже даты смерти пациента: "
+				+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
+		} 
+}
+}
+/**
  * При создании
  */
 function onCreate(aForm, aEntity, aCtx) {
