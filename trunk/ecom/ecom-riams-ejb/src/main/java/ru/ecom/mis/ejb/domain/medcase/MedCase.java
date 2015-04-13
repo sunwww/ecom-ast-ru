@@ -20,10 +20,8 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.mis.ejb.domain.birth.Inspection;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocKindHighCare;
@@ -31,11 +29,9 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMethodHighCare;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.PrescriptionBlank;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -176,17 +172,17 @@ abstract public class MedCase extends BaseEntity {
 //	private VocHospType theTargetHospType;
 
 	//private StatisticStub theStatisticStub;
-	/**Вакцинации*/
+//	/**Вакцинации*/
 	/*@Comment("Вакцинации")
 	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
 	public List<Vaccination> getVaccinations() {return theVaccinations;}
 	public void setVaccinations(List<Vaccination> aNewProperty) {theVaccinations = aNewProperty;}
 	*/
-	/** Случай смерти */
-	@Comment("Случай смерти")
-	@OneToOne
-	public DeathCase getDeathCase() {return theDeathCase;}
-	public void setDeathCase(DeathCase aDeathCase) {theDeathCase = aDeathCase;	}
+//	/** Случай смерти */
+	//@Comment("Случай смерти")
+	//@OneToOne
+	//public DeathCase getDeathCase() {return theDeathCase;}
+	//public void setDeathCase(DeathCase aDeathCase) {theDeathCase = aDeathCase;	}
 	
 	/**Выписанные рецептурные бланки  */
     @OneToMany(mappedBy = "medCase", cascade = ALL)
@@ -330,8 +326,8 @@ abstract public class MedCase extends BaseEntity {
 	private VocIntoxication theIntoxication;
     /** Вакцинации*/
 	//private List<Vaccination> theVaccinations;	
-    /** Случай смерти */
-	private DeathCase theDeathCase;
+    ///** Случай смерти */
+	//private DeathCase theDeathCase;
     /**Выписанные рецептурные бланки */
     private List<PrescriptionBlank> thePrescriptionBlanks;
     
