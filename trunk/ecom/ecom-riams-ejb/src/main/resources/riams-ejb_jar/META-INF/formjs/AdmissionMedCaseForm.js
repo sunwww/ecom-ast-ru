@@ -36,6 +36,15 @@ function onPreCreate(aForm, aCtx) {
 	if (ret==true) {
 		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
 	}
+	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
+		if (pat.getDeathDate()!=null) {
+			
+			var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
+			if (date.getTime() > deathDate.getTime()) {
+			throw "Невозможно создать СЛС позже даты смерти пациента: "
+			+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
+			}
+	}
 	
 }
 function onCreate(aForm, aEntity, aCtx) {
