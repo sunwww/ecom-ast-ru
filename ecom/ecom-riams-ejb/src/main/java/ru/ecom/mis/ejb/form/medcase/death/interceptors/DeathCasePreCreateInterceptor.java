@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.medcase.death.interceptors;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
@@ -28,7 +29,10 @@ public class DeathCasePreCreateInterceptor  implements IParentFormInterceptor {
 		if (medCase.getResult()==null || !medCase.getResult().getCode().equals("11")) {
 			throw new IllegalArgumentException("Случай смерти создается только при результате госпитализации смерть, а не при "+medCase.getResult().getName()+"!!!") ;
 		}
-    	
+    	List<Object> l = aContext.getEntityManager().createNativeQuery("select id from DeathCase where medCase_id='"+medCase.getId()+"'").getResultList() ;
+    	if (!l.isEmpty()) {
+    		throw new IllegalArgumentException("В данном СЛС уже создан <a href=entityParentView-stac_deathCase.do?id="+l.get(0).toString()+">случай смерти!</a>") ;
+    	}
     	form.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString());
         Date date = new Date();
     	form.setCreateDate(DateFormat.formatToDate(date));
