@@ -22,6 +22,7 @@ public interface IDisabilityService {
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber)  throws ParseException, NamingException ;
 	public String exportLNByNumber (String aNumber) throws ParseException, NamingException ;
 	public String analyseExportLN(String aFileName) throws NamingException ;
+	public boolean isRightSnils (String aSNILS) throws ParseException, NamingException ;
     	
 
 	
