@@ -68,7 +68,35 @@ public class DisabilityServiceBean implements IDisabilityService  {
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
-    //Не тестировано, не проверялось вообще!!!
+    
+   public boolean isRightSnils (String aSNILS) {
+		String currentSnils = aSNILS.replace("-", "").replace(" ", "");
+		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
+		System.out.println(snilsCN);
+		if (currentSnils.length()!=11) {
+			System.out.println("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
+			return false;
+		} 
+		int sum = 0;
+		int controlNumber = 0;
+		for (int i=0;i<9;i++) {
+			sum+=Integer.valueOf(currentSnils.substring(i, i+1))*(9-i);
+		}
+		if (sum>101) {
+			sum=sum%101;			
+		}
+		if (sum<100) {
+			controlNumber=sum;
+		} 
+		if (snilsCN==controlNumber) {
+			System.out.println("==isRightSnils, СНИЛС верный! "+currentSnils);
+			return true;	
+		} else {
+			System.out.println("==isRightSnils, Неправильный СНИЛС!"+currentSnils);
+			return false;
+		}
+			
+   }
     public DisabilityDocument getDocument (String aNumber) {
 		try {
 			System.out.println("---------------STRING aNumber="+aNumber);
@@ -82,6 +110,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		}
 		
 	}
+
+    //Не тестировано, не проверялось вообще!!!
     public String analyseExportLN(String aFileName) throws NamingException {
     	try{
     	SAXBuilder saxBuilder = new SAXBuilder();
@@ -347,6 +377,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				} else {
 //Check ELN-101
 					defect.append(ln).append(":").append(ln_id).append(":ELN-101 Не заполнено поле СНИЛС").append("#");
+					continue;
+				}
+				if (!isRightSnils(snils)) {
+					defect.append(ln).append(":").append(ln_id).append(":ELN-102 СНИЛС застрахованного заполнен некорректно - ")
+						.append(rs.getString("snils")).append("#");
 					continue;
 				}
 //Check ELN-029
