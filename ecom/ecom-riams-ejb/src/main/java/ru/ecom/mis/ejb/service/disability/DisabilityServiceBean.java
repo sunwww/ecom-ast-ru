@@ -303,6 +303,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	" and dd.anotherlpu_id is null " +
 	"and (dd.isclose is true or dd.isclose='1') "+
 	"and (dd.noactuality is null or dd.noactuality='0') "+
+	"and ss.dtype='StatisticStubExist' "+
 	"order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
