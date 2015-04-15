@@ -238,8 +238,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 		}
 		
 		sql.append("SELECT '").append(aStartDate).append(":")
-		.append(aFinishDate).append(":'||coalesce(").append(id).append(",'0')||':")
-		.append(id1!=null?id1:id).append("'").append(getFilterId(aSpecialist, aWorkFunction, aLpu, aServiceStream, aWorkPlaceType,aOrderLpu,aOrderWF,aSocialStatus,aDefect)).append(" as id") ;
+		.append(aFinishDate).append(":'||coalesce(").append(id).append(",'0')||':'||")
+		.append(id1!=null?id1:id).append(getFilterId(aSpecialist, aWorkFunction, aLpu, aServiceStream, aWorkPlaceType,aOrderLpu,aOrderWF,aSocialStatus,aDefect)).append(" as id") ;
 		sql.append(",").append(name).append(" as tfield") ;
 		
 		return sql.toString() ;
