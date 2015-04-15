@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -314,7 +316,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	}
     public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
 		Statement statement = null;
-			
+			Pattern lnPattern = Pattern.compile("^[0-9]{12}$");
 			Element rootElement = new Element("LPU");
 			Element rowOperation = new Element("OPERATION");
 			Element rowSet = new Element("ROWSET");
@@ -371,6 +373,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String startDate = rs.getString("startDate");
 				String snils = rs.getString("snils");
 				String parentCode = rs.getString("osnWorkplaceNumber");
+				Matcher m = lnPattern.matcher(ln);
+				if (!m.matches()) {
+//Check ELN-004
+					defect.append(ln).append(":").append(ln_id).append(":ELN-004 Некорректный номер ЛН - ").append(ln).append("#");
+					continue;				
+				}
 				if (snils!=null &&!snils.equals("")) {
 					snils=snils.replace("-", "");
 					snils=snils.replace(" ", "");
@@ -389,6 +397,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					defect.append(ln).append(":").append(ln_id).append(":ELN-029 Номер ЛН, выданный по осн. месту работы не должен указываться при оформлении ЛН для осн. места работы").append("#");
 					continue;
 				}*/
+				if (workcombotypeid!=null&&!workcombotypeid.equals("") &&(parentCode==null||parentCode.equals(""))) {
+//Check ELN-030
+					defect.append(ln).append(":").append(ln_id).append(":ELN-030 В ЛН для работы по совместительству должен указываться номер ЛН, выписанного для основного места работы").append("#");
+					continue;
+				}
 				Element rowRow = new Element("ROW");
 				Element rowLpuLn = new Element("LpuLn");
 				
@@ -561,9 +574,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
 //попробуем всегда заполнять поля "Дата начала" и "Дата окончания госпитализации"
 					/*&&(reason1!=null && (reason1.equals("09") ||reason1.equals("12") ||reason1.equals("13") ||
 						reason1.equals("14") ||reason1.equals("15")))) {*/
-					rowLpuLn.addContent(new Element("HOSPITAL_DT1").addContent(rs.getString("hospital_Dt1")));
+					rowLpuLn.addContent(new Element("HOSPITAL_DT1").addContent(hospital_Dt1));
 					if (hospital_Dt2!=null&&!hospital_Dt2.equals("")) {
-						rowLpuLn.addContent(new Element("HOSPITAL_DT2").addContent(rs.getString("hospital_Dt2")));
+						rowLpuLn.addContent(new Element("HOSPITAL_DT2").addContent(hospital_Dt2));
 					} else {
 						defect.append(ln).append(":").append(ln_id).append(":Не указана дата выписки (HOSPITAL_DT2), reason1=").append(reason1).append("#");
 						continue;
@@ -626,7 +639,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				
 				//Если указан mseResult (codef), return_date=null
 				if (mseResult!=null&&!mseResult.equals("")) {
-					rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1"))-1, new Element("MSE_RESULT").addContent(mseResult));
+					rowLpuLn.addContent(rowLpuLn.indexOf(rowLpuLn.getChild("TREAT1_DT1")), new Element("MSE_RESULT").addContent(mseResult));
 					if (mseResult.equals("32")||mseResult.equals("33")||mseResult.equals("34")||mseResult.equals("36")) {
 						String otherDate = rs.getString("otherDate");
 						if (otherDate!=null&&!otherDate.equals("")) {
