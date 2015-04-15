@@ -23,7 +23,37 @@ public class SnilsStringValidator implements IValidator{
             		if (!m.find()) {
             			throw new ValidateException("Неправильно введен СНИЛС. Форма ввода СНИЛС: NNN-NNN-NNN NN. Например: 111-111-111 11");
             		}
+            		if (!isRigthSnils(str)) {
+            			throw new ValidateException("Неправильно введен СНИЛС. Не сходится контрольная сумма");
+            		}
+            		
                 }
             }
+	}
+	public boolean isRigthSnils (String aSnils) {
+				String currentSnils = aSnils.replace("-", "").replace(" ", "");
+				int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
+				System.out.println(snilsCN);
+				if (currentSnils.length()!=11) {
+					return false;
+				} 
+				int sum = 0;
+				int controlNumber = 0;
+				for (int i=0;i<9;i++) {
+					sum+=Integer.valueOf(currentSnils.substring(i, i+1))*(9-i);
+				}
+				if (sum>101) {
+					sum=sum%101;			
+				}
+				if (sum<100) {
+					controlNumber=sum;
+				} 
+				if (snilsCN==controlNumber) {
+					System.out.println("==isRightSnilsValidator, СНИЛС верный! "+currentSnils);
+					return true;	
+				} else {
+					System.out.println("==isRightSnilsValidator, Неправильный СНИЛС!"+currentSnils);
+					return false;
+				}
 	}
 }
