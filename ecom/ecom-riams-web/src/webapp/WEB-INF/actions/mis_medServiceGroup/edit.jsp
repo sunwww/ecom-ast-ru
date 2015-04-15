@@ -92,6 +92,44 @@
     	</msh:section>
     </msh:ifInRole>
      --%>
+     <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
+    	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
+    		createUrl="entityParentPrepareCreate-mis_medServiceGroup_workFunction.do?id=${param.id}"
+    		title="Прикрепление к рабочим функциям по отделениям" >
+    	<ecom:webQuery name="workFunc" nativeSql="
+    	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
+    	,vbt.name as vbtname,vbst.name as vbstname
+    	,vrt.name as vrtname
+    	,case when wf.dtype='GroupWorkFunction' then wf.groupname else vwfP.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename end as wfName
+    	
+    	from WorkFunctionService wfs
+    	
+    	left join MisLpu lpu on lpu.id=wfs.lpu_id 
+    	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
+     	 left join VocBedType vbt on vbt.id=wfs.bedType_id
+     	 left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
+     	 left join VocRoomType vrt on vrt.id=wfs.roomType_id
+     	 left join WorkFunction wf on wf.id=wfs.workfunction_id
+     	 left join vocworkfunction vwfP on vwfP.id=wf.workfunction_id
+		left join worker w on w.id=wf.worker_id
+		left join patient wp on wp.id=w.person_id 
+    	
+    	where wfs.medService_id='${param.id}'
+    	"/>
+  		<msh:table selection="true" name="workFunc" 
+  		action="entityParentView-mis_medServiceGroup_workFunction.do"
+  		editUrl="entityParentEdit-mis_medServiceGroup_workFunction.do" 
+  		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medServiceGroup_workFunction.do">
+            <msh:tableColumn property="2" columnName="Рабочая функция"  />
+            <msh:tableColumn property="7" columnName="Специалист (групповая функция)"  />
+            <msh:tableColumn property="3" columnName="ЛПУ" />
+            <msh:tableColumn property="4" columnName="Профиль коек" />
+            <msh:tableColumn property="5" columnName="Тип коек" />
+            <msh:tableColumn property="6" columnName="Уровень палат" />
+        </msh:table>
+    	
+    	</msh:section>
+    </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
         <msh:section title="Подкатегории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medServiceGroup.do?id=${param.id}">
           <ecom:webQuery  name="childMedService" nativeSql="
