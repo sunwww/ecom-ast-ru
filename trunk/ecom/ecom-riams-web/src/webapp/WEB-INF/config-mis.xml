@@ -252,7 +252,8 @@
         <!-- Медицинские услуги -->  		
         <form-bean name="mis_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceForm" />
         <form-bean name="mis_medServiceGroupForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceGroupForm" />
-        <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
+        <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceGroupForm" />
+        <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
         <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
         
