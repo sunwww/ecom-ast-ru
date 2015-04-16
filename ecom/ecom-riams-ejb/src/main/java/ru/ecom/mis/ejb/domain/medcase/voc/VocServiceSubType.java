@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
@@ -20,4 +21,12 @@ public class VocServiceSubType extends VocBaseEntity {
 
 	/** Код типа */
 	private String theServiceType;
+	
+	/** Тип биоматериала */
+	@Comment("Тип биоматериала")
+	public String getBiomaterial() {return theBiomaterial;}
+	public void setBiomaterial(String aBiomaterial) {theBiomaterial = aBiomaterial;}
+
+	/** Тип биоматериала */
+	private String theBiomaterial;
 }
