@@ -15,11 +15,9 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
+import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptFulfilState;
@@ -27,7 +25,6 @@ import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -400,5 +397,14 @@ public abstract class Prescription extends BaseEntity{
 
 	/** Отделение (забора) */
 	private MisLpu theDepartment;
+	
+	/** СМО */
+	@Comment("СМО")
+	@OneToOne
+	public MedCase getMedCase() {return theMedCase;}
+	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+
+	/** СМО */
+	private MedCase theMedCase;
 
 }
