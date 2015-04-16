@@ -297,7 +297,7 @@
       </msh:row>
  </msh:ifFormTypeIsNotView>
          <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true"  />
+          <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
         </msh:row>
      <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
      	<msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
