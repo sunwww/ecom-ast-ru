@@ -10,7 +10,13 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
-        
+        var currentDate = new Date;
+		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+		var textMonth = currentDate.getMonth()+1;
+		var textMonth = textMonth<10?'0'+textMonth:textMonth;
+		var textYear =currentDate.getFullYear();
+		var textDate = textDay+'.'+textMonth+'.'+textYear;
+		
         eventutil.addEventListener($('isDiet'), 'click', function () {showTable('tblDiet','isDiet');}) ;
         eventutil.addEventListener($('isDrug'), 'click', function () {showTable('tblDrug','isDrug');}) ;
         eventutil.addEventListener($('isMode'), 'click', function () {showTable('tblMode','isMode');}) ;
@@ -19,6 +25,14 @@
         showTable('tblDrug','isDrug'); showTable('tblMode','isMode') ;showTable('tblDiet','isDiet') ;
         showTable('tblFuncDiag','isFuncDiag'); showTable('tblLabSurvey','isLabSurvey') ;
 	    function showTable(aTableId, aCheckFld ) {
+	    	var aFld = '';
+	    	if (aTableId=='tblLabSurvey') {aFld='labDate';}
+	    	else if (aTableId=='tblFuncDiag') {aFld='funcDate';}
+	    	else if (aTableId=='tblDrug') {aFld='drugForm1.planStartDate';}
+	    	else if (aTableId=='tblDiet') {aFld='dietForm.planStartDate';}
+	    	else if (aTableId=='tblMode') {aFld='modeForm.planStartDate';}
+	    	
+	    	if (aFld!=''&&$(aFld).value==''){$(aFld).value=textDate;}
     		//alert(aTableId+"--"+aCheckFld) ;
 	    	var aCanShow = $(aCheckFld).checked ;
 			try {
@@ -39,12 +53,7 @@
 		document.forms['pres_prescriptListForm'].action="javascript:checkDoubles()";
 		var num=0; var labNum=0; var funcNum=0; var drugNum=0;
 		var labList=""; var drugList=""; var allDrugList="";
-		var currentDate = new Date;
-		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-		var textMonth = currentDate.getMonth()+1;
-		var textMonth = textMonth<10?'0'+textMonth:textMonth;
-		var textYear =currentDate.getFullYear();
-		var textDate = textDay+'.'+textMonth+'.'+textYear;
+		
 		
  		onload=checkPrescriptExists();
  		
@@ -640,6 +649,7 @@
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="allDrugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="labCabinet" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
@@ -752,9 +762,6 @@
             <msh:row>
             	<msh:autoComplete property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
             </msh:row>
-            <msh:row>
-				<msh:autoComplete property="labCabinet" label="Кабинет лаборатории" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
-			</msh:row>
            </tbody>
     		</table>
     		</td></tr>
