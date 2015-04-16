@@ -144,7 +144,7 @@
 			if (type=='lab') {
 				typeNum = labNum;
 				fld = [['Service',1],['Date',1],['Cabinet',1],['Department',1],['',1]] ;
-				 reqFld = [0,1,2,3] ;
+				 reqFld = [0,1] ;
 			} else if (type=='func') {
 				typeNum = funcNum;
 				reqFld = [0,1,2,4] ;
@@ -282,7 +282,7 @@
 				if (aErrorList[i][3]=="isEmptyUnit") {
 					if ($(aErrorList[i][0]).value==""){
 						alert("Обязательное поле: "+aErrorList[i][2]) ;
-						alert(aErrorList[i][0]+aErrorList[i][1]);
+						//alert(aErrorList[i][0]+aErrorList[i][1]);
 						$(aErrorList[i][0]+aErrorList[i][1]).focus() ;
 						return true;
 					}
