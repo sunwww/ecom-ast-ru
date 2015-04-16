@@ -326,8 +326,8 @@
 				var error = [
 			      [type+'Date','', 'Укажите дату исследования!','isEmptyUnit']
 				  , [type+'Servicies','Name', 'Выбирите исследование!','isEmptyUnit']
-				  , [type+'Department','Name', 'Выбирите место (отделение), где будет производиться забор биоматерила!','isEmptyUnit']
-				  , [type+'Cabinet','Name', 'Выбирите кабинет лаборатории!','isEmptyUnit']
+			//	  , [type+'Department','Name', 'Выбирите место (отделение), где будет производиться забор биоматерила!','isEmptyUnit']
+			//	  , [type+'Cabinet','Name', 'Выбирите кабинет лаборатории!','isEmptyUnit']
 				];
 				num = labNum;
 				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['Cabinet',1]
