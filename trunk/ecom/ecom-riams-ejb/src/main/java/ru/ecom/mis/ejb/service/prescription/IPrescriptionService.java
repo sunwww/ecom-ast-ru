@@ -14,6 +14,7 @@ public interface IPrescriptionService {
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
 	public boolean checkMedCaseEmergency(Long aId, String idType) ;
+	public boolean checkLabAnalyzed(Long aPrescriptId,String aUsername) ;
 	
 	/**
 	 *  Получение списка типов назначений
