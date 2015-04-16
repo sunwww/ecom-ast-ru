@@ -18,8 +18,12 @@ import javax.persistence.PersistenceContext;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.prescription.AbstractPrescriptionList;
 import ru.ecom.mis.ejb.domain.prescription.DietPrescription;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
@@ -38,6 +42,55 @@ import ru.nuzmsh.util.format.DateFormat;
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
 	
+	public boolean checkLabAnalyzed(Long aPrescriptId,String aUsername) {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
+		sql.append(" when slo.dtype='Visit' then sls.id else slo.id end as pmo") ;
+		sql.append(" ,p.prescriptSpecial_id as presspec") ;
+		sql.append(" ,p.prescriptCabinet_id as cabinet") ;
+		sql.append(" ,p.medService_id as service") ;
+		sql.append(" from prescription p ") ;
+		sql.append(" left join PrescriptionList pl on pl.id=p.prescriptionlist_id left join medcase slo on slo.id=pl.medcase_id left join medcase sls on sls.id=slo.parent_id left join patient pat on pat.id=slo.patient_id where p.id=").append(aPrescriptId) ;
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
+		if (list.isEmpty() || wf.isEmpty()) {
+			return false ;
+		} else {
+			Object[] objs = list.get(0) ;
+			//Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
+			Patient pat = theManager.find(Patient.class, ConvertSql.parseLong(objs[0])) ;
+			MedCase mc = theManager.find(MedCase.class,ConvertSql.parseLong(objs[1])) ;
+			WorkFunction ps = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[2])) ;
+			WorkFunction pc = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[3])) ;
+			WorkFunction wfCur = theManager.find(WorkFunction.class, ConvertSql.parseLong(wf.get(0))) ;
+			MedService ms = theManager.find(MedService.class, ConvertSql.parseLong(objs[3])) ;
+			long date = new java.util.Date().getTime() ;
+			Visit vis = new Visit() ;
+			vis.setParent(mc) ;
+			vis.setOrderWorkFunction(ps) ;
+			vis.setWorkFunctionPlan(pc) ;
+			vis.setPatient(pat) ;
+			vis.setCreateDate(new java.sql.Date(date)) ;
+			vis.setCreateTime(new java.sql.Time(date)) ;
+			vis.setUsername(aUsername) ;
+			ServiceMedCase smc = new ServiceMedCase() ;
+			
+			smc.setPatient(pat) ;
+			smc.setMedService(ms) ;
+			smc.setParent(vis) ;
+			smc.setOrderWorkFunction(ps) ;
+			smc.setWorkFunctionPlan(pc) ;
+			smc.setWorkFunctionExecute(wfCur) ;
+			smc.setCreateDate(new java.sql.Date(date)) ;
+			smc.setCreateTime(new java.sql.Time(date)) ;
+			smc.setUsername(aUsername) ;
+			theManager.persist(vis) ;
+			theManager.persist(smc) ;
+			theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
+		}
+		
+		return true ;
+	}
 	/**
 	 * 
 	 * @param aLabMap - карта (Ключ = ИД пациента+дата назначения)
