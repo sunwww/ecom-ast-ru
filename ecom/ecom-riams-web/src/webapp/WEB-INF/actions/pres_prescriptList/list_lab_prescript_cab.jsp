@@ -21,10 +21,12 @@
   <tiles:put name="body" type="string">
   	<%
   	
-  	String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
-  	String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
-  	String typeResult =ActionUtil.updateParameter("PrescriptJournal","typeResult","1", request) ;
-    
+  	String typeResult =ActionUtil.updateParameter("PrescriptJournalDoc","typeResult","1", request) ;
+  	String typeCabinet =ActionUtil.updateParameter("PrescriptJournalDoc","typeCabinet","1", request) ;
+  	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
+  	ActionUtil.getValueBySql("select gwf.id,gwf.groupname from workfunction gwf left join workfunction wf on wf.group_id=gwf.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "group_id","group_name",request) ;
+  	Object groupId = request.getAttribute("group_id") ;
+  	if (groupId!=null && !groupId.equals("")) {
   	%>
   	  <msh:form action="/pres_journal_prescript_cab_lab.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
@@ -32,29 +34,15 @@
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
-        <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
+        <td class="label" title="Кабинет (typeCabinet)" colspan="1"><label for="typeCabinetName" id="typeCabinetLabel">Кабинет:</label></td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();">
-        	<input type="radio" name="typeIntake" value="1"> был
+        	<input type="radio" name="typeCabinet" value="1"> свой кабинет
         </td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
-        	<input type="radio" name="typeIntake" value="2"> не был
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-        	<input type="radio" name="typeIntake" value="3"> отобразить все данные
+        	<input type="radio" name="typeCabinet" value="2"> отдел
         </td>
      </msh:row>
-      <msh:row>
-        <td class="label" title="Передача в лабораторию (typeTransfer)"><label for="typeTransferName" id="typeTransferLabel">Передача в лабораторию:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
-        	<input type="radio" name="typeTransfer" value="1"> осуществлена
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-        	<input type="radio" name="typeTransfer" value="2"> не была произведена
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-        	<input type="radio" name="typeTransfer" value="3"> все
-        </td>
-       </msh:row>
+     
       <msh:row>
         <td class="label" title="Этап исследования (typeResult)"><label for="typeResultName" id="typeResultLabel">Этап выполнения:</label></td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
@@ -97,11 +85,14 @@
       </msh:row>
     </msh:panel>
     </msh:form>
+      	<tags:pres_intake_biomaterial name="Bio" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
     
     <script type='text/javascript'>
-    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
+    //checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
-    checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
+    //checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
+    checkFieldUpdate('typeCabinet','${typeCabinet}',1) ;
+    checkFieldUpdate('typeResult','${typeResult}',1) ;
     function checkfrm() {
     	document.forms[0].submit() ;
     }
@@ -118,13 +109,41 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-
+    function getReason(aReason) {
+			if (+aReason>0) {
+			reason=prompt('Введите причину брака:', '') ;
+			if (reason==null) {
+				return null ;
+			} else if (reason.trim()=="") {
+				return getReason(aReason) ;
+			} else {
+				return reason ;
+			}
+			
+			} else {
+				return "" ;
+			}
+		}
+	    function cancelInLab(aId,aReasonId,aReason) {
+	    	var reason = getReason(aReason) ;
+	    	if (reason!=null) {
+	    		//alert(123) ;
+	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
+		            callback: function(aResult) {
+		            	window.document.location.reload();
+		            }
+				});
+	    	} else {
+	    		//alert(321) ;
+	    		cancelBioIntakeInfo();
+	    	}	
+		}
 			 
     </script>
     <%
-    String department = request.getParameter("department") ;
-  	if (department!=null && !department.equals("")) {
-  		String beginDate = request.getParameter("beginDate") ;
+    String beginDate = request.getParameter("beginDate") ;
+  	//if (department!=null && !department.equals("")) {
+  		
   		if (beginDate==null || beginDate.equals("")) {
   			beginDate=DateFormat.formatToDate(new Date()) ;
   		}
@@ -133,16 +152,23 @@
   		request.setAttribute("beginDate", beginDate) ;
   		request.setAttribute("endDate", endDate) ;
     StringBuilder sqlAdd = new StringBuilder() ;
-    if (typeIntake!=null && typeIntake.equals("1")) {
-		sqlAdd.append(" and p.intakeDate is not null ") ;
-	} else if (typeIntake!=null && typeIntake.equals("2")) {
-		sqlAdd.append(" and p.intakeDate is null ") ;
-	}
-    if (typeTransfer!=null && typeTransfer.equals("1")) {
-		sqlAdd.append(" and p.transferDate is not null ") ;
-	} else if (typeTransfer!=null && typeTransfer.equals("2")) {
-		sqlAdd.append(" and p.transferDate is null ") ;
-	}
+    
+    if (typeResult!=null && typeResult.equals("1")) {
+    	sqlAdd.append(" and p.medcase_id is null and p.cancelDate is null") ;
+    } else if (typeResult!=null && typeResult.equals("2")) {
+    	sqlAdd.append(" and mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is null") ;
+    } else if (typeResult!=null && typeResult.equals("3")) {
+    	sqlAdd.append(" and mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null") ;
+    } else if (typeResult!=null && typeResult.equals("4")) {
+    	sqlAdd.append("  and mc.dateStart is not null and p.cancelDate is null and mc.workFunctionExecute_id is not null") ;
+    } else if (typeResult!=null && typeResult.equals("5")) {
+    	sqlAdd.append("  and p.cancelDate is not null ") ;
+    }
+    if (typeCabinet!=null && typeCabinet.equals("1")) {
+    	sqlAdd.append(" and p.prescriptCabinet_id = '"+groupId+"'") ;
+    } else {
+    	sqlAdd.append(" and p.prescriptCabinet_id in (select g2wf.id from workfunction gwf left join workfunctionservice gwfs on gwfs.workfunction_id=gwf.id left join workfunctionservice g2wfs on g2wfs.medservice_id=gwfs.medservice_id left join workfunction g2wf on g2wf.id=g2wfs.workfunction_id where gwf.id='"+groupId+"') and (select count(*) from WorkFunctionService wfs left join MedService pms on pms.id=wfs.medservice_id where wfs.workfunction_id='"+groupId+"' and pms.id=ms.parent_id)>0") ;
+    }
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 			, "отделение","deparment","ml.id", request)) ;
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
@@ -158,6 +184,7 @@
 		.append(" ").append(request.getAttribute("serviceInfo")) ;
 	
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
+    
     %>
     <msh:section>
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
@@ -165,28 +192,30 @@
     p.id as pid,
     case 
     when p.cancelDate is not null then 'ОТМЕНЕНО' 
-    when p.intakeDate is null then 'Назначено'
-    when p.transferDate is null then 'Взят биоматериал в отделении'
-    when p.medcase_id is not null and mc.dateStart is null then 'Передан биоматериал в лабораторию'
-    when p.medcase_id is not null and mc.dateStart is null then 'В обработке'
-    when p.medcase_id is not null and mc.dateStart is null then 'Ожидается подтверждение врача КДЛ'
-    when p.medcase_id is not null and mc.dateStart is null then 'Выполнено'
+   
+    when p.medcase_id is null then 'Передан биоматериал в лабораторию'
+    when mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is null then 'В обработке'
+    when mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is not null then 'Ожидается подтверждение врача КДЛ'
+    when mc.dateStart is not null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is not null then 'Выполнено'
     else null
     end as comment
     
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
-    , p.materialId||' ('||vsst.code||')' as f4material
-    ,coalesce(vsst.name,'---') as f5vsstname
-    ,pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f6birthday
-   , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f7medServicies
-   ,wp.lastname||' '||wp.firstname||' '||wp.middlename as f8fioworker
-   ,iwp.lastname||' '||iwp.firstname||' '||iwp.middlename as f9intakefioworker
-       ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f10dtintake
-       ,to_char(p.planStartDate,'dd.mm.yyyy') as f11planStartDate
-   ,mc.id as f12mcid
-   ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
-   ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
-   ,ml.name as mlname
+    , p.materialId||' ('||coalesce(vsst.code,'---')||')' as f4material
+    ,pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f5birthday
+   , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f6medServicies
+   ,wp.lastname ||' ('||ml.name||')' as f7fioworker
+      ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5))||' '||iwp.lastname as f8dtintake
+       ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f9dtintake
+       ,to_char(p.planStartDate,'dd.mm.yyyy') as f10planStartDate
+   ,mc.id as f11mcid
+   ,'js-pres_prescriptList-pres_by_6_month_patient.do?id='||pat.id as f12patid
+   ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f13sls
+  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
+  ,  case when mc.dateStart is null and mc.workFunctionExecute_id is null and p.medcase_id is null and p.cancelDate is null and p.medcase_id is not null then p.id else null end as j15sanaliz
+  ,  case when mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is null then p.id else null end as j16enter
+  ,  case when mc.dateStart is not null and p.cancelDate is null and mc.workFunctionExecute_id is not null then p.id else null end as j16enter
+  
     from prescription p
     left join MedCase mc on mc.id=p.medcase_id
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -209,37 +238,40 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and coalesce(p.department_id,w.lpu_id)='${param.department}' 
-    and p.cancelDate is null 
+    and p.transferdate is not null 
     
     ${sqlAdd}
-    group by pat.id,pat.lastname,pat.firstname,pat.middlename
+    group by p.id,pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    ,p.transferDate,p.transferTime
+    ,p.transferDate,p.transferTime,ms.parent_id,ms.id,ms.code,ms.name,ms.additionCode
+    ,p.medCase_id,mc.workFunctionExecute_id,mc.dateStart,vsst.code
+    ,wp.lastname,wp.middlename,wp.firstname,vwf.name,mc.id,ml.name
+    ,p.canceldate,p.materialid,p.planstartdate
+    ,vsst.biomaterial
     order by pat.lastname,pat.firstname,pat.middlename
+    
     "/>
     
     <msh:sectionTitle>
 
     </msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply">
-	     <msh:tableButton property="2" buttonFunction="remove" buttonName="Брак" buttonShortName="Брак"/>
-	     <msh:tableButton property="2" buttonFunction="remove" buttonName="Выполнен анализ" buttonShortName="Анализ"/>
-	     <msh:tableButton property="2" buttonFunction="remove" buttonName="Заполнен резальтат" buttonShortName="Результат"/>
-	     <msh:tableButton property="2" buttonFunction="control" buttonName="Результат заведен правильно" buttonShortName="Подтверждение"/>
+	    <msh:table name="list" action="javascript:void(0)" idField="1" >
+	     <msh:tableButton property="14" hideIfEmpty="true" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
+	     <msh:tableButton property="14" hideIfEmpty="true" buttonFunction="checkLabAnalyzed" buttonName="Выполнен анализ" buttonShortName="Анализ"/>
+	     <msh:tableButton property="15" hideIfEmpty="true" buttonFunction="goService" buttonName="Заполнен резальтат" buttonShortName="Рез."/>
+	     <msh:tableButton property="16" hideIfEmpty="true" buttonFunction="checkControl" buttonName="Результат заведен правильно" buttonShortName="Подт."/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
+	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="ИБ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
+	      <msh:tableButton property="12" buttonFunction="getDefinition" buttonName="Просмотр данных о лабораторных назначениях" buttonShortName="ЛН" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
-	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
-	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
-	      <msh:tableColumn columnName="Имя" property="7" />
-	      <msh:tableColumn columnName="Отчетство" property="8"/>
-	      <msh:tableColumn columnName="Дата рождения" property="9"/>
-	      <msh:tableColumn columnName="Дата и время забора" property="13"/>
-	      <msh:tableColumn columnName="Дата и время приема в лабораторию" property="14"/>
-	      <msh:tableColumn columnName="Список услуг" property="10"/>
+	      <msh:tableColumn columnName="ФИО пациента" property="5"  />
+	      <msh:tableColumn columnName="Забор" property="8"/>
+	      <msh:tableColumn columnName="Прием в лабораторию" property="9"/>
+	      <msh:tableColumn columnName="Исследование" property="6"/>
+	      <msh:tableColumn columnName ="Назначил" property="7"/>
 	    </msh:table>
 	    <script type="text/javascript">
 	    
@@ -250,7 +282,7 @@
   	<%	
   	} else {
   	  	%>
-<H1>Выберите параметры!!!!</H1>  	  	
+<H1>НЕПРАВИЛЬНО НАСТРОЕН ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ!!! ОБРАТИТЕСЬ К АДМИНИСТРАТОРУ!!!!</H1>  	  	
   	  	<%	
   	}
   	
@@ -286,29 +318,40 @@
   				
   		}
   		function getReason(aReason) {
-			aReason=prompt('Введите причину брака:', aReason) ;
-			if (aReason==null || aReason=="") {
-				if (confirm('Неопределена причина брака. Хотите ввести еще раз?')) {
+  			if (+aReason>0) {
+				reason=prompt('Введите причину брака:', '') ;
+				if (reason==null) {
+					return null ;
+				} else if (reason.trim()=="") {
 					return getReason(aReason) ;
+				} else {
+					return reason ;
 				}
-			} else {
-				return aReason ;
-			}
-			return null ;
+				
+  			} else {
+  				return "" ;
+  			}
   		}
-  	    function cancelInLab(aId,aReason) {
+  		function checkLabAnalyzed(aId) {
+  			PrescriptionService.checkLabAnalyzed( aId, { 
+		            callback: function(aResult) {
+		            	window.document.location.reload();
+		            }
+				});
+  		}
+  	    function cancelInLab(aId,aReasonId,aReason) {
   	    	var reason = getReason(aReason) ;
   	    	if (reason!=null) {
-  	        	PrescriptionService.cancelTransferService( id,reason, { 
+  	    		//alert(123) ;
+  	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
   		            callback: function(aResult) {
   		            	window.document.location.reload();
   		            }
   				});
-  	        } else {
-  	            alert("Нет выделенных пациентов");
-  	        }
-  	        
-  				
+  	    	} else {
+  	    		//alert(321) ;
+  	    		cancelBioIntakeInfo();
+  	    	}	
   		}
     	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
       	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;

@@ -20,14 +20,14 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
-	public String cancelService(String aPrescript,String aReason,HttpServletRequest aRequest) throws NamingException {
+	public String cancelService(String aPrescript,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		sql.append("update Prescription set cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id='").append(aPrescript).append("'");
+		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
@@ -41,7 +41,6 @@ public class PrescriptionServiceJs {
 	public String isPrescriptListExists(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
-	//	System.out.println("---------------------in isPrescriptListExists, req="+req);
 		Collection <WebQueryResult> wrt = service.executeNativeSql(req, 1);
 		
 		if (wrt.size()>0) {
@@ -196,25 +195,89 @@ public class PrescriptionServiceJs {
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
 	}
+	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select id,name,case when additionData='1' then additionData else null end as addData from VocPrescriptCancelReason where serviceType='LABSURVEY' and biomaterial='"+aBiomaterialType+"'") ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
+		StringBuilder ret = new StringBuilder() ;
+		ret.append("<table>") ;
+		for (WebQueryResult wqr:l) {			
+			ret.append("<tr>") ;
+			ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()\" colspan=\"4\">");
+    		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\" onchange=\"cancelInLab('"+aPrescript+"','"+wqr.get1()+"','"+(wqr.get3()!=null?"1":"0")+"')\">  "+wqr.get2()); 
+    		ret.append("</td>") ;
+    		ret.append("</tr>") ;
+		}
+		ret.append("</table>") ;
+		return ret.toString() ;
+	}
+	public String getLabCabinetByPres(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select pms.id as p1msid,pms.code||' '||pms.name as p2msname,wf.id as w3fid,wf.groupname as w4fgroup,replace(list(''||ms.id),' ','') as m5slist") ;
+		sql.append(" from WorkFunction wf") ;
+		sql.append(" left join WorkFunctionService wfs on wfs.workfunction_id=wf.id") ;
+		sql.append(" left join MedService pms on pms.id=wfs.medservice_id") ;
+		sql.append(" left join MedService ms on ms.parent_id=pms.id") ;
+		sql.append(" left join Prescription p on ms.id=p.medService_id") ;
+		sql.append(" where p.id in (").append(aListPrescript).append(") ") ;
+		sql.append(" group by pms.id,pms.code,pms.name,wf.id,wf.groupname") ;
+		sql.append(" order by pms.name,wf.groupname");
+		StringBuilder ret = new StringBuilder() ;
+		Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
+		String oldi = "" ;
+		StringBuilder listCab = new StringBuilder() ;
+		ret.append("<form name='frmCabinet' id='frmCabinet'><table>") ;
+		for (WebQueryResult wqr:lwqr) {
+			String newi = String.valueOf(wqr.get1()) ;
+			if (!newi.equals(oldi)) {
+				oldi=newi ;
+				if (listCab.length()>0)listCab.append(",") ;
+				listCab.append(newi) ;
+				ret.append("<tr>") ;
+				ret.append("<th colspan='2'>").append(wqr.get2()).append("</th>") ;
+				ret.append("</tr>") ;
+			}
+			ret.append("<tr>") ;
+			ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';\" colspan=\"4\">");
+    		ret.append("	<input name=\"typeCabinet").append(wqr.get1()).append("\" id=\"typeCabinet").append(wqr.get1()).append("\" value=\"").append(wqr.get1()).append("#").append(wqr.get3()).append("#").append(aListPrescript).append("#").append(wqr.get5()).append("\" type=\"radio\" />  "+wqr.get4()); 
+    		ret.append("</td>") ;
+			ret.append("</tr>") ;
+
+		}
+		ret.append("<tr>") ;
+		ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';\" colspan=\"4\">");
+		ret.append("	<input name=\"btnOk\" value=\"Принять\" type=\"button\" onclick=\"transferInLabCheck('").append(listCab).append("')\"/>" ); 
+		ret.append("</td>") ;
+		ret.append("</tr>") ;
+		ret.append("</table></form>") ;
+		return ret.toString() ;
+	}
+	public String checkLabAnalyzed(Long aPrescript,HttpServletRequest aRequest) throws NamingException {
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		service.checkLabAnalyzed(aPrescript,username) ;
+		return "1" ;
+	}
 	public String checkTransferService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
-		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		//Long spec  = null ;
-		//Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
-		//if (!specL.isEmpty()) {
-		//	spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
-		//}
-		//if (spec==null) new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
-		sql.append("update Prescription set transferDate=to_date('").append(formatD.format(date))
-		.append("','dd.mm.yyyy'),transferTime=cast('").append(formatT.format(date)).append("' as time)")
-		.append(",transferUsername='").append(username).append("' ")
-		//.append(",intakeSpecial_id='").append(spec).append("' ")
-		.append(" where id in (").append(aListPrescript).append(")");
-		service.executeUpdateNativeSql(sql.toString()) ;
+		String[] l = aListPrescript.split(":") ;
+		for (String r:l) {
+			String[] cab = r.split("#") ;
+			sql = new StringBuilder() ;
+			sql.append("update Prescription set prescriptCabinet_id='"+cab[1]+"',transferDate=to_date('").append(formatD.format(date))
+			.append("','dd.mm.yyyy'),transferTime=cast('").append(formatT.format(date)).append("' as time)")
+			.append(",transferUsername='").append(username).append("' ")
+			//.append(",intakeSpecial_id='").append(spec).append("' ")
+			.append(" where id in (").append(cab[2]).append(") and medservice_id in (").append(cab[3]).append(")");
+			service.executeUpdateNativeSql(sql.toString()) ;
+		}
 		return "1" ;
 	}
 	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException {

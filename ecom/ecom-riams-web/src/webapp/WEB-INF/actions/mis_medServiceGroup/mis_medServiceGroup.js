@@ -22,3 +22,6 @@ function deleteMedService(aForm, aCtx) {
 	aCtx.invokeScript("VocService", "deleteByMedService", ids);
 	return aCtx.createForward("/entityParentView-mis_medServiceGroup.do?id="+id) ;
 }
+function viewTableAll(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/mis_medServiceGroup/listAllService.jsp") ;
+}

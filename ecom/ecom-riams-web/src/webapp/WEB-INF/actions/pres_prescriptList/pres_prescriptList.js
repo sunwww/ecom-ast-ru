@@ -10,3 +10,6 @@ function list_by_department(aForm, aCtx) {
 function journal_by_control(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/list_lab_prescript.jsp") ;
 }
+function pres_by_6_month_patient(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/list_lab_prescript_6_month_patient.jsp?short=Short&id="+aCtx.request.getParameter("id")) ;
+}

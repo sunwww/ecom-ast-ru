@@ -44,11 +44,10 @@
     when p.cancelDate is not null then 'ОТМЕНЕНО' 
     when p.intakeDate is null then 'Назначено'
     when p.transferDate is null then 'Взят биоматериал в отделении'
-    when p.medcase_id is not null and mc.dateStart is null then 'Передан биоматериал в лабораторию'
-    when p.medcase_id is not null and mc.dateStart is null then 'В обработке'
-    when p.medcase_id is not null and mc.dateStart is null then 'Ожидается подтверждение врача КДЛ'
-    when p.medcase_id is not null and mc.dateStart is null then 'Выполнено'
-    else null
+    when p.prescriptCabinet_id is null then 'Передан биоматериал в лабораторию'
+    when mc.workFunctionExecute_id is null then 'Передан в кабинет'
+    when mc.workFunctionExecute_id is not null and mc.dateStart is null  then 'Ожидается подтверждение врача КДЛ'
+    else 'Выполнено'
     end as comment
     
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
@@ -115,9 +114,14 @@
     	
     	$('number').focus() ;
     	$('number').select() ;
-
-  		
-  	
+    	if ($('dateFrom').value=="") {
+	    	var currentDate = new Date;
+			var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+			var textMonth = currentDate.getMonth()+1;
+			var textMonth = textMonth<10?'0'+textMonth:textMonth;
+			var textYear =currentDate.getFullYear();
+			$('dateFrom').value=textDay+'.'+textMonth+'.'+textYear;
+    	}
   	</script>
   
      </tiles:put>

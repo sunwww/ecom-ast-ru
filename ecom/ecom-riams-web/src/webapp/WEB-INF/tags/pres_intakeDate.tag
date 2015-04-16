@@ -76,7 +76,25 @@
 
          }
      }
-
+     
+     function save${name}IntakeCurrent(aListPrescript) {
+    	 $('${name}List').value=aListPrescript;
+    	 var currentDate = new Date;
+ 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+ 		var textMonth = currentDate.getMonth()+1;
+ 		var textMonth = textMonth<10?'0'+textMonth:textMonth;
+ 		var textYear =currentDate.getFullYear();
+ 		var textMinute = currentDate.getMinutes() ;
+ 		var textHour = currentDate.getHours() ;
+ 		PrescriptionService.intakeService($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
+      			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
+  				, { 
+	            callback: function(aResult) {
+	            	window.document.location.reload();
+	            }
+			});
+    	 
+     }
      // инициализация диалогового окна
      function init${name}IntakeInfoDialog() {
      	new dateutil.DateField($('${name}Date')) ;
