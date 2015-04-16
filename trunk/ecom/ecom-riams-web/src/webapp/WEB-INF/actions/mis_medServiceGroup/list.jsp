@@ -21,6 +21,10 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
       <msh:sideLink params="" action="/entityPrepareCreate-mis_medServiceGroup" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
+      
+    </msh:sideMenu>
+    <msh:sideMenu>
+    	<msh:sideLink name="Список дейс.услуг" action="/js-mis_medServiceGroup-viewTableAll.do" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="medService"/>
   </tiles:put>

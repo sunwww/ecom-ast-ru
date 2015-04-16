@@ -19,7 +19,7 @@
     <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceGroupForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
       <msh:sideMenu title="Добавить" guid="adding">
         <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create" />
-        <msh:sideLink action="/entityParentPrepareCreate-mis_medServiceGroup_workFunction" name="Прикрепление раб.функции" params="id" roles="/Policy/Mis/MedService/VocWorkFunction/Create" />
+        <msh:sideLink action="/entityParentPrepareCreate-mis_medService_workFunction" name="Прикрепление раб.функции" params="id" roles="/Policy/Mis/MedService/VocWorkFunction/Create" />
         <msh:sideLink action="/entityParentPrepareCreate-mis_medServiceGroup" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create"  />
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>

@@ -9,15 +9,13 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Журнал назначений" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Показать" guid="a47dfc0b-97d1-4cb5-b904-4ff717e612a7" />
-    <msh:sideMenu title="Добавить" guid="60616958-11ef-48b0-bec7-f6b1d0b8463f">
-      <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_prescriptList" name="Сводный  лист назначений" guid="1faa5477-419b-4f77-8379-232e33a61922" params="id" />
-      <msh:sideLink roles="/Policy/Mis/Prescription/Create" key="ALT+4" action=".javascript:shownewTemplatePrescription(1,&quot;.do&quot;)" name="ЛН из шаблона" guid="2a2c0ab6-4a46-41f7-8221-264de893815c" title="Добавить лист назначений из шаблона" />
-    </msh:sideMenu>
+     <msh:sideMenu>
+                <tags:laboratory_menu currentAction="pres_journal"/>
+        </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
@@ -26,6 +24,7 @@
   String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","3", request) ;
   String typeReestr =request.getParameter("typeReestr") ;
   String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
+  String typeService =ActionUtil.updateParameter("PrescriptJournal","typeService","2", request) ;
 
 	 %>
   <msh:form action="/pres_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -73,6 +72,16 @@
 
        </msh:row>
       <msh:row>
+        <td class="label" title="Группировать (typeService)"><label for="typeServiceName" id="typeServiceLabel">Группировать услуги:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeService" value="1"> без группировки
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+        	<input type="radio" name="typeService" value="2"> группировать
+        </td>
+
+       </msh:row>
+      <msh:row>
         <td class="label" title="Просмотр данных (typeGroup)"><label for="typeGroupName" id="typeGroupLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeGroup" value="1"> по отделениям и услугам
@@ -116,6 +125,7 @@
            checkFieldUpdate('typeGroup','${typeGroup}',1) ;
            checkFieldUpdate('typeCancel','${typeCancel}',1) ;
            checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
+           checkFieldUpdate('typeService','${typeService}',1) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -184,8 +194,13 @@
   				, "отделение","deparment","ml.id", request)) ;
   		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
   				, "тип назначения","prescriptType","vpt.id", request)) ;
-  		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
-  				, "исследование","service","ms.id", request)) ;
+  		if (typeService!=null &&typeService.equals("1")) {
+  	  		sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
+  	  				, "исследование","service","ms.id", request)) ;
+  		} else {
+  			sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
+  	  				, "категория исследований","service","pms.id", request)) ;
+  		}
   		title.append(request.getAttribute("departmentInfo"))
   			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
   			.append(" ").append(request.getAttribute("serviceInfo")) ;
@@ -200,21 +215,31 @@
 		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
 		request.setAttribute("href", href.toString()) ;
 		request.setAttribute("title", title.toString()) ;
+		String ms = "ms.id,ms.additionCode,ms.code,ms.name";
+		String ms_i = "ms.id";
+		String ms_o = "ms.code" ;
+		String ms_n = "ms.code||' ('||ms.additionCode||')'||ms.name" ;
+		if (typeService!=null&&typeService.equals("2")) {
+			ms = "pms.id,pms.additionCode,pms.code,pms.name";
+			ms_i = "pms.id";
+			ms_o = "pms.code" ;
+			ms_n = "pms.code||' ('||pms.additionCode||')'||pms.name" ;
+		}
 		if (typeGroup!=null && (typeReestr==null || typeReestr.equals("0"))) {
 			if (typeGroup.equals("1")) {
-				request.setAttribute("groupSql", "ml.name as mlname,ms.name as msname") ;
-       			request.setAttribute("groupSqlId", "'&department='||ml.id||'&service='||ms.id") ;
+				request.setAttribute("groupSql", "ml.name as mlname,"+ms_n+" as msname") ;
+       			request.setAttribute("groupSqlId", "'&department='||ml.id||'&service='||"+ms_i+"") ;
        			request.setAttribute("groupName1", "Отделение") ;
        			request.setAttribute("groupName2", "Услуга") ;
-       			request.setAttribute("groupGroup", "ml.id,ml.name,ms.id,ms.name") ;
-       			request.setAttribute("groupOrder", "ml.name,ms.name") ;
+       			request.setAttribute("groupGroup", "ml.id,ml.name,"+ms) ;
+       			request.setAttribute("groupOrder", "ml.name,"+ms_o) ;
 			} else if (typeGroup.equals("2")) {
-				request.setAttribute("groupSql", "ms.name as msname,ml.name as mlname") ;
-       			request.setAttribute("groupSqlId", "'&department='||ml.id||'&service='||ms.id") ;
+				request.setAttribute("groupSql", ""+ms_n+" as msname,ml.name as mlname") ;
+       			request.setAttribute("groupSqlId", "'&department='||ml.id||'&service='||"+ms_i+"") ;
        			request.setAttribute("groupName1", "Услуга") ;
        			request.setAttribute("groupName2", "Отделение") ;
-       			request.setAttribute("groupGroup", "ms.id,ms.name,ml.id,ml.name") ;
-       			request.setAttribute("groupOrder", "ms.name,ml.name") ;
+       			request.setAttribute("groupGroup", ""+ms+",ml.id,ml.name") ;
+       			request.setAttribute("groupOrder", ms_o+",ml.name") ;
 			} else if (typeGroup.equals("3")) {
 				request.setAttribute("groupSql", "vpt.name as vptname,ml.name as mlname") ;
        			request.setAttribute("groupSqlId", "'&department='||ml.id||'&prescriptType='||vpt.id") ;
@@ -223,12 +248,12 @@
        			request.setAttribute("groupGroup", "vpt.id,vpt.name,ml.id,ml.name") ;
        			request.setAttribute("groupOrder", "vpt.name,ml.name") ;
 			} else if (typeGroup.equals("4")) {
-				request.setAttribute("groupSql", "vpt.name as vptname,ms.name as msname") ;
-       			request.setAttribute("groupSqlId", "'&service='||ms.id||'&prescriptType='||vpt.id") ;
+				request.setAttribute("groupSql", "vpt.name as vptname,"+ms_n+" as msname") ;
+       			request.setAttribute("groupSqlId", "'&service='||"+ms_i+"||'&prescriptType='||vpt.id") ;
        			request.setAttribute("groupName1", "Тип назначения") ;
        			request.setAttribute("groupName2", "Услуга") ;
-       			request.setAttribute("groupGroup", "vpt.id,vpt.name,ms.id,ms.name") ;
-       			request.setAttribute("groupOrder", "vpt.name,ms.name") ;
+       			request.setAttribute("groupGroup", "vpt.id,vpt.name,"+ms+"") ;
+       			request.setAttribute("groupOrder", "vpt.name,"+ms_o+"") ;
 			}
 		
   		if (typeGroup!=null &&
@@ -250,6 +275,7 @@
     left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id
     left join Patient pat on pat.id=slo.patient_id
     left join MedService ms on ms.id=p.medService_id
+    left join MedService pms on pms.id=ms.parent_id
     left join VocServiceType vst on vst.id=ms.serviceType_id
     left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
     left join WorkFunction wf on wf.id=p.prescriptSpecial_id
@@ -288,6 +314,7 @@
     , p.materialId as material
     ,ms.code||' '||ms.name as medServicies
     ,case when p.canceldate is null then '${j}' else 'Услуга отменена' end as isCancel
+    ,pms.name as pmsname
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -296,6 +323,7 @@
     left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id
     left join Patient pat on pat.id=slo.patient_id
     left join MedService ms on ms.id=p.medService_id
+    left join MedService pms on pms.id=ms.parent_id
     left join VocServiceType vst on vst.id=ms.serviceType_id
     left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
     left join WorkFunction wf on wf.id=p.prescriptSpecial_id
@@ -309,7 +337,7 @@
      ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
-    ,p.id,ms.id,ms.name,ms.code,p.intakedate,p.materialId,isCancel
+    ,p.id,ms.id,ms.name,ms.code,p.intakedate,p.materialId,isCancel,pms.name
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
@@ -321,7 +349,8 @@
 	      <msh:tableColumn columnName="Отчетство" property="5"/>
 	      <msh:tableColumn columnName="Метка биоматериала" property="6"/>
 	      <msh:tableColumn columnName="Код биоматериала" property="7"/>
-	      <msh:tableColumn columnName="Список услуг" property="8"/>
+	      <msh:tableColumn columnName="Услуга" property="8"/>
+	      <msh:tableColumn columnName="Категория услуги" property="10"/>
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>

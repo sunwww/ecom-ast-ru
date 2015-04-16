@@ -115,6 +115,8 @@
 
             <msh:sideLink params=""  styleId="mainMenuStacJournal" action="/stac_findSlsByStatCard.do" name="Журнал обращений"
                           roles="/Policy/MainMenu/AdmissionJournal" title="Журнал обращений" />
+            <msh:sideLink params=""  styleId="mainMenuLaboratoryJournal" action="/pres_prescription_find.do" name="Лаборатория"
+                          roles="/Policy/MainMenu/LaboratoryJournal" title="Лаборатория" />
 
             <msh:sideLink params="" styleId="mainMenuJournals"
             			name="Отчеты" roles="/Policy/MainMenu/Journals" title="Отчеты" 
