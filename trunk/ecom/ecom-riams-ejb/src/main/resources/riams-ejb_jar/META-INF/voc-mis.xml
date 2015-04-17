@@ -111,11 +111,12 @@
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
 </voc>
-<voc id="vocServiceSubTypeLab" type="NativeVocService">
+<voc id="vocServiceSubTypeByCode" type="NativeVocService">
 	<NativeVocService
 		from="VocServiceSubType vsst"
 		nameId="vsst.id"
-		queryAppend="vsst.code='LABSURVEY'" 
+		queryAppend=""
+		parent="vsst.serviceType = :parent" 
 		join="" order=""
 		names="vsst.name"
 		queried="upper(vsst.name) like upper(:query)"
@@ -343,7 +344,7 @@
                 join=" left join VocExpertConclusion vec on vec.code=vecs.conclusionCode "
                 order=""
                 names   = "vecs.name "
-	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		queried="(cast(vecs.id as varchar(5)) like :querId or upper(vecs.name) like UPPER(:query))"
 	    		
 			/>
 	</voc>
@@ -356,7 +357,7 @@
                 join=" left join VocExpertType vet on vet.code=vecs.typeCode"
                 order=""
                 names   = "vecs.name "
-	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		queried="(cast(vecs.id as varchar(5)) like :querId or upper(vecs.name) like UPPER(:query))"
 	    		
 			/>
 	</voc>
@@ -369,7 +370,7 @@
                 join=" left join VocExpertType vet on vet.code=vecs.typeCode"
                 order=""
                 names   = "vecs.name "
-	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		queried="(cast(vecs.id as varchar(5)) like :querId or upper(vecs.name) like UPPER(:query))"
 	    		
 			/>
 	</voc>
@@ -382,7 +383,7 @@
                 join=""
                 order=""
                 names   = "vecs.name "
-	    		queried="(vecs.id like :query or upper(vecs.name) like UPPER(:query))"
+	    		queried="(cast(vecs.id as varchar(5)) like :querId or upper(vecs.name) like UPPER(:query))"
 	    		
 			/>
 	</voc>
