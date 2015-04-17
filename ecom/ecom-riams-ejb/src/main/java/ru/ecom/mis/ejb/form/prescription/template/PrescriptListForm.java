@@ -36,6 +36,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
     @AEntityFormInterceptor(PrescriptListCreateInterceptor.class)
 })
 public class PrescriptListForm extends AbstractPrescriptionListForm {
+	
+	/** Отделение (лаборатория) */
+	@Comment("Отделение (лаборатория)")
+	public Long getLabDepartment() {return theLabDepartment;}
+	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
+	/** Отделение (лаборатория) */
+	private Long theLabDepartment;
+	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist 
