@@ -22,7 +22,7 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
-    public String listProtocolsByUsername(String aSmoId,String aFunctionTemp, String aFunctionProt,String aVersion,HttpServletRequest aRequest) throws NamingException, JspException {
+    public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
