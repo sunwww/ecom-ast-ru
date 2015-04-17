@@ -57,7 +57,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return false ;
 		} else {
 			Object[] objs = list.get(0) ;
-			//Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
+			Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
 			Patient pat = theManager.find(Patient.class, ConvertSql.parseLong(objs[0])) ;
 			MedCase mc = theManager.find(MedCase.class,ConvertSql.parseLong(objs[1])) ;
 			WorkFunction ps = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[2])) ;
@@ -84,12 +84,21 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			smc.setCreateDate(new java.sql.Date(date)) ;
 			smc.setCreateTime(new java.sql.Time(date)) ;
 			smc.setUsername(aUsername) ;
+			pres.setMedCase(vis) ;
 			theManager.persist(vis) ;
 			theManager.persist(smc) ;
-			theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
+			theManager.persist(pres) ;
+			//theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
 		}
 		
 		return true ;
+	}
+	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) {
+		PrescriptListTemplate temp = new PrescriptListTemplate() ;
+		temp.setName(aName) ;
+		temp.setComments(aComment) ;
+		theManager.persist(temp) ;
+		return temp.getId() ;
 	}
 	/**
 	 * 
