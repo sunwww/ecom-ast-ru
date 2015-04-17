@@ -6,7 +6,7 @@ package ru.ecom.mis.ejb.service.prescription;
  * @author STkacheva
  */
 public interface IPrescriptionService {
-
+	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) ;
 	
 	/**
 	 * Проверка на возможность создавать направление с типом "экстренно".
