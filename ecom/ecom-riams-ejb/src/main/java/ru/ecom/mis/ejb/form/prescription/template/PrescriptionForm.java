@@ -30,6 +30,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({DrugPrescriptionForm.class, DietPrescriptionForm.class, ServicePrescriptionForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/Template")
 public class PrescriptionForm extends ru.ecom.mis.ejb.form.prescription.PrescriptionForm{
+	
+
 	/** Плановая дата начала */
 	@Comment("Плановая дата начала")
 	@Persist 
