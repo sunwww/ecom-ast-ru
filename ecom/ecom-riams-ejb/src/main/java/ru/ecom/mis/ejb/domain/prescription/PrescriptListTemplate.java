@@ -7,6 +7,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -27,4 +28,12 @@ public class PrescriptListTemplate extends AbstractPrescriptionList {
 
 	/** Категории классификатора */
 	private List<TemplateCategory> theCategories;
+	/** Группы пользователей */
+	@Comment("Группы пользователей")
+	@ManyToMany
+	public List<SecGroup> getSecGroups() {return theSecGroups;}
+	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+
+	/** Группы пользователей */
+	private List<SecGroup> theSecGroups;
 }
