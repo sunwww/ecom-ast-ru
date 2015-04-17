@@ -1063,7 +1063,7 @@ public class HospitalMedCaseServiceJs {
 	public String getPatientDefaultInfo(Long aPatient,String aDateFrom, String aDateTo, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder ret = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult>  col = service.executeNativeSql("select vi.name||' дата установления '||to_char(i.dateFrom,'dd.mm.yyyy') ||coalesce(' дата следующего пересмотра '||to_char(i.nextRevisionDate,'dd.mm.yyyy')) ||case when i.incapable='1' then ' недееспособный ' ||' '||coalesce(' дата суда '||to_char(i.lawCourtDate,'dd.mm.yyyy'))||coalesce(' суд '||vlc.name) else '' end  from invalidity i left join VocInvalidity vi on vi.id=i.group_id 	left join VocLawCourt vlc on vlc.id=i.lawCourt_id  where i.patient_id="+aPatient+"   order by i.dateFrom desc ") ;
+		Collection<WebQueryResult>  col = service.executeNativeSql("select vi.name||' дата установления '||to_char(i.dateFrom,'dd.mm.yyyy') || case when i.withoutexam='1' then ' без переосвидетельствования ' else coalesce(' дата следующего пересмотра '||to_char(i.nextRevisionDate,'dd.mm.yyyy'),'') end || case when i.incapable='1' then ' недееспособный ' ||' '||coalesce(' дата суда '||to_char(i.lawCourtDate,'dd.mm.yyyy'))||coalesce(' суд '||vlc.name) else '' end  from invalidity i left join VocInvalidity vi on vi.id=i.group_id        left join VocLawCourt vlc on vlc.id=i.lawCourt_id where i.patient_id="+aPatient+"   order by i.dateFrom desc ") ;
 		if (!col.isEmpty()) {
 			ret.append("\nИНВАЛИДНОСТЬ: ") ;
 			for (WebQueryResult wqr : col) {
@@ -1071,8 +1071,9 @@ public class HospitalMedCaseServiceJs {
 			}
 			
 		}
-		col = service.executeNativeSql("select ml.name||' С '||to_char(sls.dateStart,'dd.mm.yyyy')||' ПО '||to_char(sls.dateFinish,'dd.mm.yyyy') from medcase sls left join medcase slo on slo.parent_id=sls.id  left join mislpu ml on ml.id=slo.department_id where sls.patient_id="+aPatient+" and sls.dtype='HospitalMedCase' and sls.dateFinish <= to_date('"+aDateFrom+"','dd.mm.yyyy') and slo.datefinish is not null order by sls.datefinish desc ") ;
 		col.clear() ;
+		col = service.executeNativeSql("select ml.name||' С '||to_char(sls.dateStart,'dd.mm.yyyy')||' ПО '||to_char(sls.dateFinish,'dd.mm.yyyy') from medcase sls left join medcase slo on slo.parent_id=sls.id  left join mislpu ml on ml.id=slo.department_id where sls.patient_id="+aPatient+" and sls.dtype='HospitalMedCase' and sls.dateFinish <= to_date('"+aDateFrom+"','dd.mm.yyyy') and slo.datefinish is not null order by sls.datefinish desc ") ;
+		
 		if (!col.isEmpty()) {
 			ret.append("\nПРЕДЫДУЩИЕ ГОСПИТАЛИЗАЦИИ: ") ;
 			for (WebQueryResult wqr : col) {

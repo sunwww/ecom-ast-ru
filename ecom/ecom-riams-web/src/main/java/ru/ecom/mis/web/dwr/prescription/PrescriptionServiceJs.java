@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 
 import org.jdom.IllegalDataException;
 
@@ -14,12 +15,52 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 /**
  * Сервис назначений
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+    public String listProtocolsByUsername(String aSmoId,String aFunctionTemp, String aFunctionProt,String aVersion,HttpServletRequest aRequest) throws NamingException, JspException {
+		StringBuilder sql = new StringBuilder() ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
+		sql.append(" from PrescriptionList tp");
+		sql.append(" left join SecUser su on tp.username=su.login");
+		sql.append(" left join PrescriptionList_secgroup tg on tp.id=tg.templateprotocol_id");
+		sql.append(" left join SecGroup_secUser gu on gu.secgroup_id=tg.secgroups_id");
+		sql.append(" left join SecUser gsu on gsu.id=gu.secUsers_id");
+		sql.append(" where tp.dtype='PrescriptListTemplate' and su.login='").append(login).append("' or gsu.login='").append(login).append("'");
+		sql.append(" group by tp.id,tp.title,su.login");
+		sql.append(" order by tp.title") ;
+		//sql.append("select t.id as tid,t.title as ttile") ;
+		//sql.append(" from TemplateProtocol t") ;
+ 
+		//sql.append(" where t.username='").append(login).append("'") ;
+		//sql.append(" order by t.title") ;
+		
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder res = new StringBuilder() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		res.append("<table>");
+		res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
+		res.append("<tr><td colspan='2' valign='top'>") ;
+		res.append("<h2>Список своих шаблонов</h2>") ;
+		res.append("</td><td colspan='1' valign='top'><h2>Список протоколов по пациенту</h2></td></tr><tr><td valign='top'>") ;
+		res.append("<h2>шаблоны</h2>") ;
+		res.append("<ul>");
+		for (WebQueryResult wqr:list) {
+			res.append("<li class='liTemp' onclick=\"").append(aFunctionTemp).append("('")
+			.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionTemp).append("('")
+			.append(wqr.get1()).append("',1)\">") ;
+			res.append(wqr.get2()) ;
+			res.append("</li>") ;
+		}
+		res.append("</ul></td>") ;
+		res.append("</tr></table>") ;
+		return res.toString() ;
+	}
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
 		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;

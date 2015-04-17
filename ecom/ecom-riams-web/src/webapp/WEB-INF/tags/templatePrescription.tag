@@ -33,6 +33,12 @@
                 <input type="button" value='OK' onclick='save${name}TemplatePrescription()'/>
                 <input type="button" value='Отменить' onclick='cancel${name}TemplatePrescription()'/>
             </td>
+            
+        </msh:row>
+        <msh:row>
+        <td valign="top">
+			<div id="${name}divListPrescriptions"></div>
+		</td>
         </msh:row>
 </form>
 
@@ -111,6 +117,12 @@
                //  ${name}templatePrescriptionAutocomplete.setParentId($('${name}templateCategory').value) ;
                  ${name}templatePrescriptionAutocomplete.setVocId('');
              }) ;
+             PrescriptionService.listProtocolsByUsername( ${name}PrevProtocolAutocomplete.getParentId(), 'get${name}TextProtocolById','get${name}TextDiaryById','${version}',{
+                 callback: function(aString) {
+                     $('${name}divListPrescriptions').innerHTML = aString ;
+                     
+                  }
+              } ) ;
              theIs${name}TempPrescriptionDialogInitialized = true ;
      }
 </script>
