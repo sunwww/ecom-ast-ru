@@ -625,7 +625,9 @@
         <msh:row guid="b28cb409-df33-4406-bef7-9a79f93b49dd">
           <ecom:oneToManyOneAutocomplete label="Категории шаблона" property="categories" vocName="vocTemplateCategory" colSpan="4" />
         </msh:row>        
-
+        <msh:row guid="b9051979-4115-40c0-8d63-4fce097d9a72">
+          <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
+        </msh:row>
        <msh:ifFormTypeIsNotView formName="pres_templateForm">
        <msh:ifInRole roles="/Policy/Mis/Prescription/Template/ModePrescription/Create">
 	        <msh:row>
