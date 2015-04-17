@@ -20,7 +20,7 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
-	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) {
+	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
 		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;
 	}
