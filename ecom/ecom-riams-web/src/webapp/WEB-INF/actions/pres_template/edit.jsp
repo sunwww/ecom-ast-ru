@@ -18,14 +18,29 @@
 		var drugNum=0;
 		var labList="";
 		var drugList="";
-
+		
+		function addPrescription(aLabID, aLabDepartment, aLabCabinet) {
+			var aID = $('id').value;
+			PrescriptionService.addPrescriptionToList(aID, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",{
+				callback: function(aResult) {
+					alert(aResult);
+				}
+			});
+		}
+		function deletePrescription(aMedService) {
+			PrescriptionService.removePrescriptionFromList($('id').value,aMedService,{
+				callback: function(aResult) {
+					alert("Removed - "+aResult);
+				}
+			});
+		}
  		onload=function () {
            	if ($('labList').value.length>0)
           		{
            	//	alert ("labList= "+$('labList').value);
           		PrescriptionService.getPresLabTypes($('labList').value, 0,{
           			callback: function(aResult2) {
-          				alert ("aResult is : " +aResult2);
+          				//alert ("aResult is : " +aResult2);
           				if (aResult2) {	            					
           					var resultList = aResult2.split('#');
           					if (resultList.length>0) {
@@ -43,8 +58,51 @@
           		}
           				);
           		} 
+           	if ($('id').value!=null&&$('id').value>0) {
+           		PrescriptionService.getLabListFromTemplate($('id').value,{
+           			callback: function(aResult) {
+           				fillFormFromTemplate(aResult);
+           			}
+           		});
+           	}
 			
-		}  
+		}
+ 		function fillFormFromTemplate(aData) {
+			$('comments').value="";
+			//flushAllFields();
+			var aRow = aData.split("#");
+			if (aRow.length>0) {
+				for (var i=0;i<aRow.length;i++) {
+					var research = aRow[i].split("@");
+					if (research[0]!=null && research[0]!="" ){
+						var prescType = research[0];
+						if (prescType=="DRUG") {
+							addDrugRow(research[1]);
+						} 
+						else if (prescType=="SERVICE") {
+							addRow(research[1]);
+						}
+						else if (prescType=="DIET")	{
+							var dietData = research[1].split(":");
+							$('dietForm.diet').value=dietData[0];
+							$('dietForm.dietName').value=dietData[0]+" "+dietData[1];
+							
+						}
+						else if (prescType=="MODE")	{
+							var modeData = research[1].split(":");
+							$('modeForm.modePrescription').value=modeData[0];
+							$('modeForm.modePrescriptionName').value=modeData[0]+" "+modeData[1];
+							
+						}
+						else if (prescType=="COMMENT"){
+							$('comments').value=research[1];
+						} else {
+						 }
+					}
+				}
+			}
+			
+		}
 		function isEmptyUnit(aField,aFieldText) {
 			if ($(aField).value!="" && $(aField+'Unit').value=="") {
 			alert ('Заполните поле" '+aFieldText+'"');
@@ -65,18 +123,14 @@
 		var isDoubble=0;
 		while (typeNum>0) {
 			if (document.getElementById(type+"Element"+typeNum)) {
-				var curService = document.getElementById(type+'Service'+typeNum);
-				var curDate = document.getElementById(type+'Date'+typeNum);
-				var curCabinet = document.getElementById(type+'Cabinet'+typeNum);
-				if (curService.value != "") {			            
-		            labList+=curService.value;
-		            labList+=":";
-		            labList+=curDate.value;
-		            labList+=":";
-		            labList+=curCabinet.value;
-		            labList+="#";
+				var curService = $(type+'Service'+typeNum).value;
+				var curDate = $(type+'Date'+typeNum).value;
+				var curCabinet = $(type+'Cabinet'+typeNum)?$(type+'Cabinet'+typeNum).value:"";
+				var curDepartment = $(type+'Department'+typeNum)?$(type+'Department'+typeNum).value:"";
+				
+				if (curService.value != "") {	
 		            // Проверка на дубли 
-		            if ($(type+'Servicies').value==curService.value) {
+		            if ($(type+'Servicies').value==curService) {
 		            	isDoubble=1;	
 		            }
 				}
@@ -90,7 +144,9 @@
 	            labList+=":";
 	            labList+=$(type+'Date').value;
 	            labList+=":";
-	            labList+=$(type+'Cabinet').value;
+	            labList+=$(type+'Cabinet')?$(type+'Cabinet').value:"";
+	            labList+=":";
+	            labList+=$(type+'Department')?$(type+'Department').value:"";
 	            labList+="#";
 	         }
 	     }
@@ -271,27 +327,25 @@
 				while (checkNum<=num) {
 					if (document.getElementById(type+'Service'+checkNum)) {
 						if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
-						//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) { 
-								if (confirm("В этом листе назначений уже назначено такое исследование, все равно добавить?")) {
-									break; 
-								}else {
-									return;
-								}
-								
-						//	}
+							alert("В шаблоне уже назначено такое исследование!");
+							return;
 						}
 					}
 					checkNum+=1;
 			}
 			}
 
-			var aLabID = document.getElementById(type+'Servicies').value;
-			var aLabName =document.getElementById(type+'ServiciesName').value;
+			var aLabID = $(type+'Servicies').value;
+			var aLabName =$(type+'ServiciesName').value;
 			var aLabDate = $(type+'Date').value;
 			var aLabCabinet = $(type+'Cabinet').value;
-			var aLabCabinetName = $(type+'CabinetName').value;
+			var aLabCabinetName = $(type+'CabinetName')?$(type+'CabinetName').value:"";
+			var aLabDepartment = $(type+'Department').value;
+			var aLabDepartmentName = $(type+'DepartmentName')?$(type+'DepartmentName').value:"";
 			
-			var aData = type+":"+aLabID+":"+aLabName+":"+aLabDate+":"+aLabCabinet+":"+aLabCabinetName; 
+			var aData = type+":"+aLabID+":"+aLabName+":"+aLabDate+":"+aLabCabinet+":"+aLabCabinetName+":"+aLabDepartment+":"+aLabDepartmentName; 
+			alert ("prepare - "+aLabID+":"+aLabCabinet+":"+aLabDepartment);
+			addPrescription(aLabID, aLabDepartment, aLabCabinet);
 			addRow(aData);
 		}
 		
@@ -302,8 +356,10 @@
 			1 - ms.ID
 			2 - ms. code+name
 			3 - date
-			4 - cabinetcode
+			4 - cabinetID
 			5 - cabinetname
+			6 - departmentID
+			7 - departmentName
 			*/
 			var aLabType = resultRow[0];
 			var aLabID = resultRow[1]; 
@@ -311,6 +367,9 @@
 			var aLabDate = resultRow[3];
 			var aLabCabinet = resultRow[4]?resultRow[4]:"";
 			var aLabCabinetName = resultRow[5]?resultRow[5]:"";
+			var aLabDepartment = resultRow[6]?resultRow[6]:"";
+			var aLabDepartmentName = resultRow[7]?resultRow[7]:"";
+			
 			var type="";
 			
 		if (aLabType=='LABSURVEY' || aLabType=='lab') {
@@ -342,13 +401,16 @@
 		 row.appendChild(td3);
 	   
 	    // Наполняем ячейки 
-	    var dt="<input id='"+type+"Service"+num+"' value='"+aLabID+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
-	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+aLabCabinet+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='20' readonly='true' />";
-	    
-	    td2.innerHTML = dt+"<span>"+aLabName+"</span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+aLabDate+"' size = '10' />";
-	   	td2.innerHTML += dt2+"<span>. Кабинет: "+aLabCabinet+" "+aLabCabinetName+"</span>" ;
-	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+	  
+	    var dt=spanTag("",aLabName,"")+hiddenInput(type, "Service",num,aLabID,"");
+	    var dt1 = textInput("Дата",type,"Date",num,"","",10);
+	    var dt2=spanTag("Кабинет",aLabCabinetName,"")+hiddenInput(type, "Cabinet",num,aLabCabinet,"");
+	    var dt3 = spanTag("Отдел", aLabDepartmentName,"") + hiddenInput(type,"Department",num,aLabDepartment,"");
+	    td2.innerHTML = dt ;
+	  	td1.innerHTML =dt1;
+	   	td2.innerHTML += dt2;
+	   	td2.innerHTML += dt3;
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='javascript:deletePrescription("+aLabID+");var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 	   	new dateutil.DateField($(type+'Date'+num));
 					   
 		if (type=='lab') {
@@ -359,6 +421,17 @@
 		$(type+'Servicies').value='';
 		$(type+'ServiciesName').value='';
 	}
+		
+		function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
+			return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
+		}
+		function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
+			return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
+		}
+		function spanTag(aText,aValue,aDefaultValue) {
+			return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
+		}
+		
 		function isChecked(num) {
 			if (num==1) {
 				$('prescriptTypeLabel').style.display="none";
@@ -486,7 +559,7 @@
 	    $('drugForm1.durationUnit').value='';
 	    $('drugForm1.durationUnitName').value='';
 	}
-		
+
 		function fillFormFromTemplate(aData) {
 			$('comments').value="";
 			//flushAllFields(); 
@@ -537,6 +610,8 @@
       <msh:hidden property="saveType" guid="efb8a9d9-e3c6-4f03-87bc-f0cccb820e89" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="labCabinet" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <input type="hidden" id="funcDepartment" />
       <msh:panel>
      	<msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="1" size="30" viewOnlyField="true"/>
@@ -551,7 +626,7 @@
           <ecom:oneToManyOneAutocomplete label="Категории шаблона" property="categories" vocName="vocTemplateCategory" colSpan="4" />
         </msh:row>        
 
-       <msh:ifFormTypeIsCreate formName="pres_templateForm">
+       <msh:ifFormTypeIsNotView formName="pres_templateForm">
        <msh:ifInRole roles="/Policy/Mis/Prescription/Template/ModePrescription/Create">
 	        <msh:row>
 	        	<msh:separator label="Режим" colSpan="10"/>
@@ -572,7 +647,7 @@
         </msh:ifInRole>
         <msh:ifInRole roles="/Policy/Mis/Prescription/Template/DrugPrescription/Create">
   <!-- -------------------------Начало блока "ЛЕкарственное обеспечение" -->
-          <msh:ifFormTypeIsNotView formName="pres_templateForm">  
+          
         <msh:panel styleId="border">
         <msh:row>
         	<msh:separator label="Лекарственные назначения" colSpan="20"/>
@@ -608,13 +683,13 @@
         </tbody>
         </table>
 	    </msh:panel>
-	    </msh:ifFormTypeIsNotView>
+	    
         <!-- --------------------------------------------------Конец блока "Лекарственное обеспечение" -->
 
         </msh:ifInRole>
-        </msh:ifFormTypeIsCreate>
+        </msh:ifFormTypeIsNotView>
       <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
-       <msh:ifFormTypeIsCreate formName="pres_templateForm"> 
+       <msh:ifFormTypeIsNotView formName="pres_templateForm"> 
         <msh:panel>
         <msh:row>
         	<msh:separator label="Лабораторные исследования" colSpan="10"/>
@@ -626,7 +701,7 @@
     		
 			<tr>
 			<msh:textField property="labDate" label="Дата " size="10"/>
-			<msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
 			<msh:ifFormTypeIsNotView formName="pres_templateForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
@@ -634,18 +709,17 @@
             </msh:ifFormTypeIsNotView>
             </tr>
             <tr>
-    		
-			<msh:autoComplete property="labCabinet" label="Кабинет" parentAutocomplete="labServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" />
+    			<msh:autoComplete property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
 			</tr>
            </tbody>
     		</table>
     		</td></tr>
         </msh:row>
         </msh:panel>
-        </msh:ifFormTypeIsCreate>
+        </msh:ifFormTypeIsNotView>
          <%-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ --%>
         <%-- -- --------------------------------------------------Начало блока "Функциональная диагностика" ------ --%>
-         <msh:ifFormTypeIsCreate formName="pres_templateForm"> 
+         <msh:ifFormTypeIsNotView formName="pres_templateForm"> 
         <msh:panel>
        	 <msh:row>
         	<msh:separator label="Функциональные исследования" colSpan="10"/>
@@ -663,6 +737,7 @@
 			 </tr>
 			 <tr>
 			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			<%-- <msh:autoComplete property="funcCalTime" label="Время" vocName="workCalendarTimeByDate"/> --%>
 			</tr>
 			<msh:ifFormTypeIsNotView formName="pres_templateForm">
 			</msh:ifFormTypeIsNotView>
@@ -670,7 +745,8 @@
     		</table>
     		</td></tr></msh:row>
         </msh:panel>
-        </msh:ifFormTypeIsCreate>
+        
+        </msh:ifFormTypeIsNotView >
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
