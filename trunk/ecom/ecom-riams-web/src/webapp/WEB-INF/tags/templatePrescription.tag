@@ -92,17 +92,20 @@
          //window.document.location.reload()  ;
          //theTempProtDialog.hide() ;
      }
+     function get${name}PrescriptionById() {
+    	 PrescriptionService.getDescription($('${name}templatePrescription').value, {
+             callback: function(aString) {
+                 $('${name}decriptionTextPrescription').value = aString ;
+              }
+          } ) ;
+     }
 
      // инициализация диалогового окна
      function init${name}TemplatePrescription() {
              $('${name}decriptionTextPrescription').readOnly=true ;
              $('${name}decriptionTextPrescription').value = "" ;
              ${name}templatePrescriptionAutocomplete.addOnChangeCallback(function() {
-                 PrescriptionService.getDescription($('${name}templatePrescription').value, {
-                    callback: function(aString) {
-                        $('${name}decriptionTextPrescription').value = aString ;
-                     }
-                 } ) ;
+                 get${name}PrescriptionById()
              }) ;
              ${name}templateCategoryAutocomplete.addOnChangeCallback(function() {
                  ${name}templatePrescriptionAutocomplete.setVocId('');
@@ -117,7 +120,7 @@
                //  ${name}templatePrescriptionAutocomplete.setParentId($('${name}templateCategory').value) ;
                  ${name}templatePrescriptionAutocomplete.setVocId('');
              }) ;
-             PrescriptionService.listProtocolsByUsername( ${name}PrevProtocolAutocomplete.getParentId(), 'get${name}TextProtocolById','get${name}TextDiaryById','${version}',{
+             PrescriptionService.listProtocolsByUsername('get${name}PrescriptionById',{
                  callback: function(aString) {
                      $('${name}divListPrescriptions').innerHTML = aString ;
                      
