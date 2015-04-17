@@ -7,6 +7,7 @@ import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
@@ -76,6 +77,15 @@ public class PrescriptListForm extends AbstractPrescriptionListForm {
 	private String theName ;
 	/** Категории классификатора */
 	private String theCategories;
+	
+	/** Группы пользователей */
+	@Comment("Группы пользователей")
+	@Persist @PersistManyToManyOneProperty(collectionGenericType = SecGroup.class)
+	public String getSecGroups() {return theSecGroups;}
+	public void setSecGroups(String aSecGroups) {theSecGroups = aSecGroups;}
+
+	/** Группы пользователей */
+	private String theSecGroups;
 
 	/** Лек. ср-во 1 */
 	@Comment("Лек. ср-во 1")
