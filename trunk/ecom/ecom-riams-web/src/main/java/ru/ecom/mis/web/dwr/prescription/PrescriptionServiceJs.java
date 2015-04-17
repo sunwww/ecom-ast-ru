@@ -20,6 +20,28 @@ import ru.ecom.web.util.Injection;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+	
+	public String removePrescriptionFromList (String aPrescriptList, String aMedService,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder str = new StringBuilder();
+		str.append("delete from prescription where medservice_id='").append(aMedService).append("' and prescriptionlist_id='")
+			.append(aPrescriptList).append("'");
+		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
+	}
+	public String addPrescriptionToList (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder str = new StringBuilder();
+		StringBuilder values = new StringBuilder();
+		StringBuilder valuesData = new StringBuilder();
+		values.append("prescriptionlist_id");valuesData.append("'").append(aPrescriptList).append("'");
+		values.append(",dtype");valuesData.append(",'").append(dType).append("'");
+		values.append(",medservice_id");valuesData.append(",'").append(aMedService).append("'");
+		if (aDepartment!=null&&!aDepartment.equals("")) {values.append(",department_id");valuesData.append(",'").append(aDepartment).append("'");}
+		if (aCabinet!=null&&!aCabinet.equals("")) {values.append(",prescriptcabinet_id");valuesData.append(",'").append(aCabinet).append("'");}
+		str.append("insert into prescription (").append(values).append(") values (").append(valuesData).append(")");			
+		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
+	}
+	
 	public String cancelService(String aPrescript,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
