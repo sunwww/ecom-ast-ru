@@ -130,7 +130,6 @@ function onCreate(aForm, aEntity, aCtx) {
 						medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
-					//throw "отделение: "+par4+"";
 					if (par4!=null) {
 						var dep = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(dep);
