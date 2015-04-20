@@ -44,13 +44,13 @@ function onCreate(aForm, aEntity, aCtx) {
 				var param = addDrugs[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
-				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ; //method
+				var par3 = (+param[2]>0)?java.lang.Long.valueOf(param[2]):null ; //method
 				var par4 = (param[3])?java.lang.Integer.valueOf(param[3]):null ; //frequency
-				var par4u = (param[4])?java.lang.Long.valueOf(param[4]):null ; //frequencyUnit
+				var par4u = (+param[4]>0)?java.lang.Long.valueOf(param[4]):null ; //frequencyUnit
 				var par5 = (param[5])?java.math.BigDecimal.valueOf(param[5]):null ; //amount
-				var par5u = (param[6])?java.lang.Long.valueOf(param[6]):null ; //amountUnit
+				var par5u = (+param[6]>0)?java.lang.Long.valueOf(param[6]):null ; //amountUnit
 				var par6 = (param[7])?java.lang.Integer.valueOf(param[7]):null ; //duration
-				var par6u = (param[8])?java.lang.Long.valueOf(param[8]):null ; //durationUnit
+				var par6u = (+param[8]>0)?java.lang.Long.valueOf(param[8]):null ; //durationUnit
 				var drug = aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.VocDrugClassify,par1) ;
 						
 				if (drug!=null) {
@@ -102,8 +102,8 @@ function onCreate(aForm, aEntity, aCtx) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
-				var par3 = (param[2])?java.lang.Long.valueOf(param[2]):null ;
-				var par4 = (param[3])?java.lang.Long.valueOf(param[3]):null ;
+				var par3 = (param[2]&&(+param[2]>0))?java.lang.Long.valueOf(param[2]):null ;
+				var par4 = (param[3]&&(+param[3]>0))?java.lang.Long.valueOf(param[3]):null ;
 				//var par5 = (param[4])?java.lang.Long.valueOf(param[4]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
@@ -126,12 +126,12 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateTime(time) ;
 					adMedService.setCreateDate(date) ;
 					var medServiceCabinet ;
-					if (par3!=null&&!par3.equals(java.lang.Long(0))) {
+					if (par3!=null) {
 						medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
 					//throw "отделение: "+par4+"";
-					if (par4!=null && !par4.equals(java.lang.Long(0))) {
+					if (par4!=null) {
 						var dep = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(dep);
 					}
