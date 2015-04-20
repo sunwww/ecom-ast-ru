@@ -185,7 +185,7 @@
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and coalesce(p.department_id,w.lpu_id)='${param.department}' 
-    
+    and vst.code='LABSURVEY' 
     
     ${sqlAdd}
     group by pat.id,pat.lastname,pat.firstname,pat.middlename

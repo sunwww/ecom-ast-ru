@@ -285,6 +285,7 @@
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${endDate}','dd.mm.yyyy')
+    and vst.code='LABSURVEY' 
     ${sqlAdd}
     group by ${groupGroup}
     

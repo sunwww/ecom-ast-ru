@@ -238,6 +238,7 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
+    and vst.code='LABSURVEY' 
     and p.transferdate is not null 
     
     ${sqlAdd}

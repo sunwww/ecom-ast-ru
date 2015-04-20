@@ -89,15 +89,31 @@
      					);
      		
          }
-         //window.document.location.reload()  ;
-         //theTempProtDialog.hide() ;
      }
-     function get${name}PrescriptionById() {
-    	 PrescriptionService.getDescription($('${name}templatePrescription').value, {
+     function get${name}PrescriptionById(aId,aIsSave) {
+    	 var id=$('${name}templatePrescription').value ;
+    	 if (+aId>0) {
+    		 id=aId ;
+    	 }
+    	 if (+aIsSave>0) {
+    		 PrescriptionService.getLabListFromTemplate(
+  					id , {
+  						callback: function(aLabList) {
+  						the${name}TempPrescriptionDialog.hide() ;
+  						if (aLabList!="" && aLabList!=null){
+  							fillFormFromTemplate(aLabList);
+  						}
+  						}
+  					}
+  					); 
+    	 } else {
+    	 
+    	 PrescriptionService.getDescription(id, {
              callback: function(aString) {
                  $('${name}decriptionTextPrescription').value = aString ;
               }
           } ) ;
+    	 }
      }
 
      // инициализация диалогового окна

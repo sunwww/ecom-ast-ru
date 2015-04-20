@@ -8,7 +8,9 @@
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 
+<msh:ifFormTypeAreViewOrEdit formName="pres_templateForm">
 <msh:ifFormTypeIsNotView formName="pres_templateForm">
+
 		<script type="text/javascript">
 		var oldaction = document.forms['pres_templateForm'].action ;
 		document.forms['pres_templateForm'].action="javascript:checkLabs()";
@@ -23,14 +25,14 @@
 			var aID = $('id').value;
 			PrescriptionService.addPrescriptionToList(aID, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",{
 				callback: function(aResult) {
-					alert(aResult);
+					//alert(aResult);
 				}
 			});
 		}
 		function deletePrescription(aMedService) {
 			PrescriptionService.removePrescriptionFromList($('id').value,aMedService,{
 				callback: function(aResult) {
-					alert("Removed - "+aResult);
+					//alert("Removed - "+aResult);
 				}
 			});
 		}
@@ -344,7 +346,7 @@
 			var aLabDepartmentName = $(type+'DepartmentName')?$(type+'DepartmentName').value:"";
 			
 			var aData = type+":"+aLabID+":"+aLabName+":"+aLabDate+":"+aLabCabinet+":"+aLabCabinetName+":"+aLabDepartment+":"+aLabDepartmentName; 
-			alert ("prepare - "+aLabID+":"+aLabCabinet+":"+aLabDepartment);
+			//alert ("prepare - "+aLabID+":"+aLabCabinet+":"+aLabDepartment);
 			addPrescription(aLabID, aLabDepartment, aLabCabinet);
 			addRow(aData);
 		}
@@ -599,6 +601,7 @@
 	
 		</script>
 		</msh:ifFormTypeIsNotView>
+		</msh:ifFormTypeAreViewOrEdit>
 		</tiles:put>
 
   <tiles:put name="body" type="string">
@@ -628,6 +631,32 @@
         <msh:row guid="b9051979-4115-40c0-8d63-4fce097d9a72">
           <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
         </msh:row>
+         </msh:panel>
+         <msh:panel>
+           <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="10"/>
+        </msh:row>
+       
+       
+        
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        	<msh:label property="createUsername" label="пол-ль"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редакт."/>
+        	<msh:label property="editTime" label="время"/>
+        	<msh:label property="editUsername" label="пол-ль"/>
+        </msh:row>  
+        
+        <msh:row>
+        	<msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" labelSave="Сохранить данные заголовка"  />
+        </msh:row>              
+        
+      </msh:panel>
+        <msh:ifFormTypeAreViewOrEdit formName="pres_templateForm">
+         <msh:panel>
        <msh:ifFormTypeIsNotView formName="pres_templateForm">
        <msh:ifInRole roles="/Policy/Mis/Prescription/Template/ModePrescription/Create">
 	        <msh:row>
@@ -644,11 +673,11 @@
 	        <msh:row guid="b556ehb-b971-441e-9a90-53217">
 	        	
 	          <msh:autoComplete viewAction="entityView-diet_diet.do" vocName="Diet" 
-	          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="9" />
+	          property="dietForm.diet" label="Диета" horizontalFill="true" fieldColSpan="9" size="100"/>
 	        </msh:row>
         </msh:ifInRole>
         <msh:ifInRole roles="/Policy/Mis/Prescription/Template/DrugPrescription/Create">
-  <!-- -------------------------Начало блока "ЛЕкарственное обеспечение" -->
+
           
         <msh:panel styleId="border">
         <msh:row>
@@ -686,11 +715,9 @@
         </table>
 	    </msh:panel>
 	    
-        <!-- --------------------------------------------------Конец блока "Лекарственное обеспечение" -->
 
         </msh:ifInRole>
         </msh:ifFormTypeIsNotView>
-      <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
        <msh:ifFormTypeIsNotView formName="pres_templateForm"> 
         <msh:panel>
         <msh:row>
@@ -719,8 +746,6 @@
         </msh:row>
         </msh:panel>
         </msh:ifFormTypeIsNotView>
-         <%-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ --%>
-        <%-- -- --------------------------------------------------Начало блока "Функциональная диагностика" ------ --%>
          <msh:ifFormTypeIsNotView formName="pres_templateForm"> 
         <msh:panel>
        	 <msh:row>
@@ -749,27 +774,8 @@
         </msh:panel>
         
         </msh:ifFormTypeIsNotView >
-          <msh:row>
-        	<msh:separator label="Дополнительная информация" colSpan="10"/>
-        </msh:row>
         </msh:panel>
-        <msh:panel>
-        <msh:row>
-        	<msh:label property="createDate" label="Дата создания"/>
-        	<msh:label property="createTime" label="время"/>
-        	<msh:label property="createUsername" label="пол-ль"/>
-        </msh:row>
-        <msh:row>
-        	<msh:label property="editDate" label="Дата редакт."/>
-        	<msh:label property="editTime" label="время"/>
-        	<msh:label property="editUsername" label="пол-ль"/>
-        </msh:row>  
-          
-        <msh:row>
-        	<msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
-        </msh:row>              
-        
-      </msh:panel>
+      </msh:ifFormTypeAreViewOrEdit>
     </msh:form>
     <msh:ifFormTypeIsView formName="pres_templateForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
      
@@ -791,15 +797,8 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_templateForm" guid="d4c560e9-6ddb-4cf2-9375-4caf7f0d3fb8">
       <msh:sideMenu title="Шаблон" guid="2742309d-41bf-4fbe-9238-2f895b5f79a9">
-        <msh:sideLink key="ALT+1" params="id" action="/entityEdit-pres_template" name="Изменить" roles="/Policy/Mis/Prescription/Template/Edit" guid="0f0781cd-81dd-4da2-aba5-67eab700b161" />
+        <msh:sideLink key="ALT+1" params="id" action="/entityEdit-pres_template" name="Изменить назначения" roles="/Policy/Mis/Prescription/Template/Edit" guid="0f0781cd-81dd-4da2-aba5-67eab700b161" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-pres_template" name="Удалить" roles="/Policy/Mis/Prescription/Template/Delete" guid="99bf20e3-4292-4554-bd60-051aa4338ee1" />
-      </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="9825ef2b-1d4b-4070-b035-b6707a878e5c">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-pres_template_drugPrescription" name="Лекарственное средство" roles="/Policy/Mis/Prescription/Template/DrugPrescription/View" guid="f5549341-6246-4cc4-8369-6f7b04931f2a" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-pres_template_dietPrescription" name="Диету" guid="71dca8ec-ccdf-4f2a-88c7-750cbc00b045" roles="/Policy/Mis/Prescription/Template/DietPrescription/View" />
-        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ModePrescription/View" params="id" action="/entityParentPrepareCreate-pres_template_modePrescription" name="Режим" />
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_servicePrescription" name="Медицинскую услугу" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
-        <msh:sideLink action=" javascript:shownewTemplatePrescription(1,&quot;.&quot;)" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
       </msh:sideMenu>
       <tags:template_menu currentAction="prescriptions"/>
     </msh:ifFormTypeIsView>
