@@ -325,7 +325,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			list.append(presNew.getMedService().getCode()).append(" ");
 			list.append(presNew.getMedService().getName()).append("::"); //: aLabDate 
 			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getId():"").append(":");
-			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getName():"").append("#");
+			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getName():"").append(":");
+			list.append(presNew.getDepartment()!=null?presNew.getDepartment().getId():"").append(":");
+			list.append(presNew.getDepartment()!=null?presNew.getDepartment().getName():"").append("#");
 			return list.toString();
 			}
 			catch (Exception e) {
@@ -337,48 +339,72 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return "";
 	}
 	/**
+	 * Создаем шаблон листа назначений из существующего ЛН 
+	 */
+	public Long savePrescriptNew(Long aIdTemplateList, Long aIdParent) {
+		return savePrescriptNew(aIdTemplateList, aIdParent,null);
+	}
+	
+	/**
 	 * Добавить все назначения в новый лист
 	 * @param aIdTemplateList - ИД шаблона листа назначений
 	 * @param aIdParent - ИД СМО (если СМО не указан создается шаблон !!!)
 	 * @return true - при успешном сохранении, false - при ошибке при сохранении
 	 */
-	public boolean savePrescriptNew(Long aIdTemplateList, Long aIdParent) {
-		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
+	public Long savePrescriptNew(Long aIdTemplateList, Long aIdParent, String aName) {
+		AbstractPrescriptionList template = theManager.find(AbstractPrescriptionList.class, aIdTemplateList);
+	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
+	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		MedCase medCase = theManager.find(MedCase.class, aIdParent) ;
 		WorkFunction wf = WorkerServiceBean.getWorkFunction(theContext, theManager) ;
 //		System.out.println("template="+aIdTemplateList);
 //		System.out.println("medCase="+aIdParent) ;
+		AbstractPrescriptionList list  ;
 		if (medCase!=null) {
 //			System.out.println("MedCase существует ! Создается PrescriptList") ;
-			PrescriptList list = new PrescriptList() ;
+			 list = new PrescriptList() ;
 			
 			list.setMedCase(medCase) ;
 			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
 			list.setCreateUsername(theContext.getCallerPrincipal().toString());
-			list.setName(template.getName()) ;
+			if (aName!=null&&!aName.equals("")) {
+				list.setName(aName) ;
+			} else {
+				list.setName(template.getName()) ;
+			}
 			list.setComments(template.getComments());
 			list.setWorkFunction(wf) ;
 			theManager.persist(list) ;
 			addPrescription(template,list,wf) ;
 		} else  {
 //			System.out.println("MedCase не существует ! Создается PrescriptListTemplate") ;
-			PrescriptListTemplate list = new PrescriptListTemplate() ;
+			list =  new PrescriptListTemplate() ;
 			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
 			list.setCreateUsername(theContext.getCallerPrincipal().toString());
-			list.setName(template.getName()) ;
-			List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
-			for (TemplateCategory tempCateg:template.getCategories()) {
-				tempCategList.add(tempCateg) ;
+			if (aName!=null&&!aName.equals("")) {
+				list.setName(aName) ;
+			} else {
+				list.setName(template.getName()) ;
 			}
-			list.setCategories(tempCategList);
-			list.setComments(template.getComments());
-			list.setWorkFunction(wf);
-			theManager.persist(list) ;
-			theManager.flush() ;
-//			System.out.println(list.getId()) ;
-			addPrescription(template,list,null) ;
+			
+			System.out.println("================ CLASS PrescriptionList = "+template.getClass().toString());
+			if (template.getClass().toString().equals("PrescriptListTemplate")) {
+				 template = (PrescriptListTemplate) template;
+				System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
+				List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
+				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
+				for (TemplateCategory tempCateg:template2.getCategories()) {
+					tempCategList.add(tempCateg) ;
+				}
+				//list.setCategories(tempCategList);
+			}
+		list.setComments(template.getComments());
+		list.setWorkFunction(wf);
+		theManager.persist(list) ;
+		theManager.flush() ;
+		addPrescription(template,list,null) ;
 		}
-		return true ;
+		return list.getId() ;
 	}
 	
 	private void addPrescription(AbstractPrescriptionList aTemplate, AbstractPrescriptionList aList, WorkFunction aSpecialist) {		
@@ -386,7 +412,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			List<Prescription> listNew = aList.getPrescriptions() ;
 			if (listNew==null) listNew =new ArrayList<Prescription>() ;
 			for (Prescription presc:aTemplate.getPrescriptions()) {
-				System.out.println("Назначение: "+presc.getId());
+//				System.out.println("Назначение: "+presc.getId());
 				Prescription prescNew = newPrescriptionOnTemplate(presc, aSpecialist);
 //				System.out.println("создание копии назначения") ;
 				
@@ -445,6 +471,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			presNew.setMedService(presOld.getMedService());
 			presNew.setPrescriptCabinet(presOld.getPrescriptCabinet());
 			presNew.setPrescriptSpecial(presOld.getPrescriptSpecial());
+			presNew.setDepartment(presOld.getDepartment());
 			return presNew;
 		}
 		

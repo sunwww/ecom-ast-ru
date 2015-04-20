@@ -40,7 +40,8 @@ public interface IPrescriptionService {
 	 * @param aIdParent - ИД СМО (если СМО не указан создается шаблон !!!)
 	 * @return true - при успешном сохранении, false - при ошибке при сохранении
 	 */
-	public boolean savePrescriptNew(Long aIdTemplateList,Long aIdParent) ;
+	public Long savePrescriptNew(Long aIdTemplateList,Long aIdParent) ;
+	public Long savePrescriptNew(Long aIdTemplateList,Long aIdParent, String aName) ;
 	/**
 	 * Получить описание шаблона листа назначения
 	 * @param aIdTemplateList - ИД листа назначения
