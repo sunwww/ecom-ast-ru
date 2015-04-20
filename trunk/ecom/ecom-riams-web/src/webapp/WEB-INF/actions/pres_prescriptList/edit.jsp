@@ -10,6 +10,14 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
+        function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
+         	if (confirm(aTitleConfirm)) {
+    			window.location.href = aUrlCreate  ;
+    		} else {
+    			window.history.back();
+    		}
+     	}
+        
         var currentDate = new Date;
 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 		var textMonth = currentDate.getMonth()+1;
@@ -112,14 +120,7 @@
 
 		}  
 		
-		  function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
-		     	if (confirm(aTitleConfirm)) {
-					window.location.href = aUrlCreate  ;
-				} else {
-					window.history.back();
-				}
-				
-		  }
+		 
 		//При изменении типа ЛН, удаляем все лаб. исследования, прогоняем через PrescriptionService, 
 		//Заполняем только теми исследованиями, у которых соответствующий тип 
 
@@ -634,6 +635,25 @@
 	
 		</script>
 		</msh:ifFormTypeIsNotView>
+		<msh:ifFormTypeIsView formName="pres_prescriptListForm">
+			<script type="text/javascript">
+				function createTemplate() {
+			if (confirm("Создать шаблон на основе текущего листа назначений?")) {
+				var name = prompt("Введите имя шаблона");
+				PrescriptionService.createTemplateFromList($('id').value, name, {
+					callback: function(aResult) {
+						if (aResult!=null&&aResult!='') {
+							if (confirm("Шаблон успешно создан, хотите в него перейти?")) {
+				    			window.location.href = "entityParentView-pres_template.do?id="+aResult  ;
+				    		}
+						}
+					}
+				});
+			}
+			
+		}
+			</script>
+		</msh:ifFormTypeIsView>
 			</tiles:put>
 		
   <tiles:put name="title" type="string">
@@ -828,7 +848,6 @@
   <tiles:put name="side" type="string">
   	<msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
   		<msh:sideMenu title="Шаблоны">
-  			<%-- <msh:sideLink action=" javascript:shownewTemplatePrescription()" name="ЛН на основе шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f4e12" title="ЛН на основе шаблона" /> --%>
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
   		</msh:sideMenu>
   		<tags:templatePrescription record="2" parentId="${param.id}" name="add" />
@@ -836,6 +855,7 @@
   	</msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="d4c560e9-6ddb-4cf2-9375-4caf7f0d3fb8">
       <msh:sideMenu title="Лист назначений" guid="2742309d-41bf-4fbe-9238-2f895b5f79a9">
+      	<msh:sideLink action=" javascript:createTemplate()" name="Создать шаблона на основе текущего ЛН" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-pres_prescriptList" name="Удалить" roles="/Policy/Mis/Prescription/Prescript/Delete" guid="99bf20e3-4292-4554-bd60-051aa4338ee1" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="9825ef2b-1d4b-4070-b035-b6707a878e5c">
