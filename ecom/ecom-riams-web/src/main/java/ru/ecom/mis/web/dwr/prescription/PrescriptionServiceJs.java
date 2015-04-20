@@ -25,30 +25,26 @@ public class PrescriptionServiceJs {
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
-		sql.append(" from PrescriptionList tp");
-		sql.append(" left join SecUser su on tp.username=su.login");
-		sql.append(" left join PrescriptionList_secgroup tg on tp.id=tg.templateprotocol_id");
+		sql.append("select pl.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || pl.name as ttile") ; 
+		sql.append(" from PrescriptionList pl");
+		sql.append(" left join SecUser su on pl.createusername=su.login");
+		sql.append(" left join PrescriptionList_secgroup tg on pl.id=tg.prescriptionList_id");
 		sql.append(" left join SecGroup_secUser gu on gu.secgroup_id=tg.secgroups_id");
 		sql.append(" left join SecUser gsu on gsu.id=gu.secUsers_id");
-		sql.append(" where tp.dtype='PrescriptListTemplate' and su.login='").append(login).append("' or gsu.login='").append(login).append("'");
-		sql.append(" group by tp.id,tp.title,su.login");
-		sql.append(" order by tp.title") ;
-		//sql.append("select t.id as tid,t.title as ttile") ;
-		//sql.append(" from TemplateProtocol t") ;
- 
-		//sql.append(" where t.username='").append(login).append("'") ;
-		//sql.append(" order by t.title") ;
+		sql.append(" where pl.dtype='PrescriptListTemplate' and su.login='").append(login).append("' or gsu.login='").append(login).append("'");
+		sql.append(" group by pl.id,pl.name,su.login");
+		sql.append(" order by pl.name") ;
+		
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder() ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		res.append("<table>");
-		res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
-		res.append("<tr><td colspan='2' valign='top'>") ;
+		res.append("<tr><td colspan='1'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
+		res.append("<tr><td colspan='1' valign='top'>") ;
 		res.append("<h2>Список своих шаблонов</h2>") ;
-		res.append("</td><td colspan='1' valign='top'><h2>Список протоколов по пациенту</h2></td></tr><tr><td valign='top'>") ;
-		res.append("<h2>шаблоны</h2>") ;
+		res.append("</td></tr><tr><td valign='top'>") ;
+		
 		res.append("<ul>");
 		for (WebQueryResult wqr:list) {
 			res.append("<li class='liTemp' onclick=\"").append(aFunctionTemp).append("('")

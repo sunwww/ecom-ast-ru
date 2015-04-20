@@ -152,7 +152,7 @@
 			var fld ; reqFld = [0,1] ;
 			if (type=='lab') {
 				typeNum = labNum;
-				fld = [['Service',1],['Date',1],['Cabinet',1],['Department',1],['',1]] ;
+				fld = [['Service',1],['Date',1],['',1],['Department',1],['',1]] ;
 				 reqFld = [0,1] ;
 			} else if (type=='func') {
 				typeNum = funcNum;
@@ -339,8 +339,8 @@
 			//	  , [type+'Cabinet','Name', 'Выбирите кабинет лаборатории!','isEmptyUnit']
 				];
 				num = labNum;
-				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['Cabinet',1]
-					,['CabinetName',1],['Department',1],['DepartmentName',1],['',1],['',1]
+				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['',1]
+					,['',1],['Department',1],['DepartmentName',1],['',1],['',1]
 				] ;
 				
 			} 
@@ -417,18 +417,19 @@
 		    
 		  	td1.innerHTML = textInput("Дата",type,"Date",num,resultRow[3],textDate,10) ;
 		    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
-		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
 		   	if (type=="lab") {
 		   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
 		   		labNum = num;
 		   	} else if (type=="func"){
+			   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
 		   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
 		   		funcNum = num;
+		   		$(type+'Cabinet').value='';
+				$(type+'CabinetName').value='';
 		   	}
 		   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 		   	new dateutil.DateField($(type+'Date'+num));
-			$(type+'Cabinet').value='';
-			$(type+'CabinetName').value='';
+			
 			$(type+'Servicies').value='';
 			$(type+'ServiciesName').value='';
 			if (aFocus) $(type+'ServiciesName').focus() ;
