@@ -431,11 +431,17 @@ public class PrescriptionServiceJs {
 	private String savePrescriptNew(Long aTemplateList, Long aMedCase, IPrescriptionService service) {
 		String ret ="";
 		try {
-			if (service.savePrescriptNew(aTemplateList, aMedCase)) ret ="Сохранено в новый лист назначений" ;
+			if (service.savePrescriptNew(aTemplateList, aMedCase)>0) ret ="Сохранено в новый лист назначений" ;
 			else ret = "Ошибка при сохранении  в новый лист назначений" ;
 		} catch (Exception e) {
 			ret = "Ошибка при сохранении  в новый лист назначений:"+e.getMessage() ;
 		}
 		return ret;	}
+
+	public String createTemplateFromList(Long aPrescriptList, String aName, HttpServletRequest aRequest) throws NamingException {
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
+			
+		return ""+service.savePrescriptNew(aPrescriptList, Long.valueOf(0),aName).toString();	
+	}
 	
 }
