@@ -128,10 +128,12 @@
 			 writeServicesToList('lab');
 				$('labServicies').value="";
 				$('labServiciesName').value="";
+				labServiciesAutocomplete.setParentId($('prescriptType').value) ;
 				if (labList.length>0) {
 					 removeRows('lab');
 					PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
 						callback: function(aResult) {
+							
 							labList = "" ;
 							if (aResult!=null && aResult!="") {
 		       					var resultList = aResult.split('#');
@@ -775,7 +777,7 @@
     		
 			<msh:row>
 			<msh:textField property="labDate" label="Дата " size="10"/>
-			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
+			<msh:autoComplete parentId="pres_prescriptListForm.prescriptType" property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
             </td>
