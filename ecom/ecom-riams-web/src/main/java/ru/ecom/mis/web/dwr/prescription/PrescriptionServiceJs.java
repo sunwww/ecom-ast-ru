@@ -199,7 +199,6 @@ public class PrescriptionServiceJs {
 		StringBuilder res = new StringBuilder() ;
 		String[] labListArr = aPresIDs.split("#");
 		if (labListArr.length>0) {
-			
 			for (int i=0; i<labListArr.length;i++) {
 				String[] param = labListArr[i].split(":");
 			//	System.out.println("For="+i+" data ID= "+param[0]);
@@ -211,11 +210,18 @@ public class PrescriptionServiceJs {
 				if (msID!=null && msID!=""){
 					sqlMS.setLength(0);
 					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
-					.append("left join vocservicetype vst on vst.id = ms.servicetype_id ")
+					.append("left join vocservicetype vst on vst.id=ms.servicetype_id ")
 					.append("where ms.id='").append(msID).append("' ");
-					/*if (aPrescriptListType>0) {
-					sqlMS.append("and ms.servicesubtype_id='").append(aPrescriptListType).append("' ");
-					}*/
+					if (aPrescriptListType>0) {
+					sqlMS.append("and ms.id not in ");
+					sqlMS.append("(select mss.id from medservice mss");
+					sqlMS.append(" left join workfunctionservice wfss on wfss.medservice_id=mss.id");
+					sqlMS.append(" left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id");
+					sqlMS.append(" left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id='");
+					sqlMS.append(aPrescriptListType).append("' ");
+					sqlMS.append(" and mss.dtype='MedService' and vsts.code='LABSURVEY')");
+	
+					}
 					
 					Collection<WebQueryResult> listMS = service.executeNativeSql(sqlMS.toString()) ;
 					for (WebQueryResult wqr :listMS) {
@@ -244,7 +250,8 @@ public class PrescriptionServiceJs {
 						} else res.append("::");
 						res.append("::" );
 						res.append("#") ;
-					}					
+					}
+					System.out.println("Соответствуют анализы: "+ res.toString());
 					
 					
 				}
