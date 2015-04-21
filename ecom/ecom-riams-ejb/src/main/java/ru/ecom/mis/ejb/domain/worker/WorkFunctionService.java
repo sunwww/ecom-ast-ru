@@ -167,12 +167,12 @@ public class WorkFunctionService extends BaseEntity{
 	/** Список диагнозов */
 	private String theListIdc10;
 	
-	/** Тип назначений */
-	@Comment("Тип назначений")
+	/** Запрещенный тип назначений */
+	@Comment("Запрещенный тип назначений")
 	@OneToOne
 	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
 	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
 
-	/** Тип назначений */
+	/** Запрещенный тип назначений */
 	private VocPrescriptType thePrescriptType;
 }
