@@ -55,11 +55,15 @@
      }
      
 	function setType(typeID, typeName) {
-		$('prescriptType').value = typeID;
-		$('prescriptTypeName').value = typeName;
-		$('prescriptTypeName').disabled='true';
+		if ($('prescriptType').value==typeID) {
+			
+		} else {
+			$('prescriptType').value = typeID;
+			$('prescriptTypeName').value = typeName;
+			$('prescriptTypeName').disabled='true';
+			changePrescriptionType();
+		}
 		the${name}PrescTypesDialog.hide() ;
-		changePrescriptionType();
 	}
      // инициализация диалогового окна 
      function init${name}PrescTypesDialog() {
