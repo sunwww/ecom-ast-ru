@@ -140,7 +140,7 @@
 		       					if (resultList.length>0) {
 		       						for (var i=0; i<resultList.length;i++) {
 		       							var resultRow = resultList[i].split(':');
-		       							if (resultRow[0]!="" && resultRow[0]!=null)	addRow(resultList[i]);
+		       							if (resultRow[0]!="" && resultRow[0]!=null)	addRow(resultList[i],1);
 		       						}
 		       					}
 		       				}
