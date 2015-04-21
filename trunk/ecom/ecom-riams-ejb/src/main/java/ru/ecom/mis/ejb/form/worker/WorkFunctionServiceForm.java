@@ -154,13 +154,13 @@ public class WorkFunctionServiceForm extends IdEntityForm {
 	private String theListIdc10;
 	
 	
-	/** Тип назначений */
-	@Comment("Тип назначений")
+	/** Запрещенный тип назначений */
+	@Comment("Запрещенный тип назначений")
 	@Persist
 	public Long getPrescriptType() {return thePrescriptType;}
 	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
 
-	/** Тип назначений */
+	/** Запрещенный тип назначений */
 	private Long thePrescriptType;
 
 }
