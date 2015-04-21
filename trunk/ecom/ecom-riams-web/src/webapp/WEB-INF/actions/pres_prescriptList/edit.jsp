@@ -10,6 +10,7 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
+      
         function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
          	if (confirm(aTitleConfirm)) {
     			window.location.href = aUrlCreate  ;
@@ -24,7 +25,7 @@
 		var textMonth = textMonth<10?'0'+textMonth:textMonth;
 		var textYear =currentDate.getFullYear();
 		var textDate = textDay+'.'+textMonth+'.'+textYear;
-		
+		  
         eventutil.addEventListener($('isDiet'), 'click', function () {showTable('tblDiet','isDiet');}) ;
         eventutil.addEventListener($('isDrug'), 'click', function () {showTable('tblDrug','isDrug');}) ;
         eventutil.addEventListener($('isMode'), 'click', function () {showTable('tblMode','isMode');}) ;
@@ -32,6 +33,7 @@
         eventutil.addEventListener($('isLabSurvey'), 'click', function () {showTable('tblLabSurvey','isLabSurvey');}) ;
         showTable('tblDrug','isDrug'); showTable('tblMode','isMode') ;showTable('tblDiet','isDiet') ;
         showTable('tblFuncDiag','isFuncDiag'); showTable('tblLabSurvey','isLabSurvey') ;
+        $('isLabSurvey').click();
 	    function showTable(aTableId, aCheckFld ) {
 	    	var aFld = '';
 	    	if (aTableId=='tblLabSurvey') {aFld='labDate';}
