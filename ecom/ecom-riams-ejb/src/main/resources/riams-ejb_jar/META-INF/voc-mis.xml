@@ -105,8 +105,20 @@
 <voc id="labMedService" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
-		nameId="ms.id"
-		queryAppend="vst.code = 'LABSURVEY'" join=" left join VocServiceType vst on vst.id=ms.serviceType_id" order=""
+		parent="ms.id not in (select mss.id from medservice mss
+	left join workfunctionservice wfss on wfss.medservice_id=mss.id
+	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
+	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :parent 
+	and mss.dtype='MedService'
+	and vsts.code='LABSURVEY'
+	)"
+		nameId=" ms.id"
+		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService'" 
+		join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id 
+				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id 
+				left join vocservicetype vst on vst.id=ms.servicetype_id " 
+		groupBy="ms.id, ms.name, ms.code"
+		order="ms.name"
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
