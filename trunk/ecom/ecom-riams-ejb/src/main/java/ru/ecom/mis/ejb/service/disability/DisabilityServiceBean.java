@@ -72,7 +72,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
     
     
    public boolean isRightSnils (String aSNILS) {
-		String currentSnils = aSNILS.replace("-", "").replace(" ", "");
+	//   System.out.println("=======isRightSnils, snilsBefore="+aSNILS);
+		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");
+	//	 System.out.println("=======isRightSnils, snilsAFTER="+currentSnils);
 		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
 		System.out.println(snilsCN);
 		if (currentSnils.length()!=11) {
@@ -375,6 +377,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String snils = rs.getString("snils");
 				String parentCode = rs.getString("osnWorkplaceNumber");
 				Matcher m = lnPattern.matcher(ln);
+				System.out.println("======Текущий ЛН = "+ln);
 				if (!m.matches()) {
 //Check ELN-004
 					defect.append(ln).append(":").append(ln_id).append(":ELN-004 Некорректный номер ЛН - ").append(ln).append("#");
@@ -383,6 +386,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				if (snils!=null &&!snils.equals("")) {
 					snils=snils.replace("-", "");
 					snils=snils.replace(" ", "");
+					snils=snils.replace("\t", "");
 				} else {
 //Check ELN-101
 					defect.append(ln).append(":").append(ln_id).append(":ELN-101 Не заполнено поле СНИЛС").append("#");
@@ -653,7 +657,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 						if (nextDocument!=null&&!nextDocument.equals("")) {
 						} else {
 	//Check ELN-089
-							nextDocument="000000000001";
+							nextDocument="000000000002";
 						//	defect.append(ln).append(":").append(ln_id).append(":TESTTESTTEST_ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
 							//continue;			
 						}
@@ -698,8 +702,14 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			{
 	        System.out.println(e.getMessage());
 	        e.printStackTrace();
-	    	return "Find_data: SQLException";
+	    	return "Find_data: SQLException"+e;
 			}	
+			catch (Exception e)
+			{
+	        System.out.println(e.getMessage());
+	        e.printStackTrace();
+	    	return "Find_data: Exception"+e;
+			}
 		
 		}
     
