@@ -242,11 +242,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd.issuedate as issuedate"+
 	",dd.isclose,dd.closereason_id"+
 	",dd.idc10_id as none_giagnosis"+
-	",case when (dc.earlypregnancyregistration is true or dc.earlypregnancyregistration ='1') then '1' else '' end as preg12week"+
+	",case when (dc.earlypregnancyregistration is not null or dc.earlypregnancyregistration ='1') then '1' else '' end as preg12week"+
 	",vdr.codef as REASON_1"+
 	",dd.disabilitycase_id as none_discase"+
 	",dd.documenttype_id as none_ln_type"+
-	",case when (dc.placementservice is true or dc.placementservice ='1') then '1' else '' end as placementservice"+
+	",case when (dc.placementservice is not null or dc.placementservice ='1') then '1' else '' end as placementservice"+
 	",dd.hospitalizedfrom as HOSPITAL_DT1"+
 	",dd.hospitalizedto as HOSPITAL_DT2"+
 	",dd.job as employer"+
@@ -301,7 +301,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	"left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
 	"where dd.exportdate is null and "+sqlAdd +
 	" and dd.anotherlpu_id is null " +
-	"and (dd.isclose is true or dd.isclose='1') "+
+	"and (dd.isclose is not null or dd.isclose='1') "+
 	"and (dd.noactuality is null or dd.noactuality='0') "+
 	"and ss.dtype='StatisticStubExist' "+
 	"order by dd.issuedate desc";
