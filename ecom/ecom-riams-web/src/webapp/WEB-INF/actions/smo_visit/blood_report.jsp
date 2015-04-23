@@ -132,7 +132,7 @@ left join address2 adr on adr.addressid = p.address_addressid
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-and vdrt.code='4
+and vdrt.code='4'
 and vpd.code='1'
 and vbst.code='1'
 and ${appendSQL} 
