@@ -49,7 +49,15 @@ public class CategoryTreeServiceJs {
     				;fldParent="pp.parent_id";fldOrderBy="pp.code";
     				//whereAdd=" and pp.dateTo is null "+whereAdd;
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
-    	} else {
+    	} else if (aTable.toUpperCase().equals("MEDSERVICE")) {
+    		if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {aParent=4056L;} //Только лабораторные исследования!
+    		table="MedService ms" ;fldId="ms.id"; 
+			fldView="case when ms.dtype='MedServiceGroup' then '<b>'||ms.code||'</b> '||replace(ms.name,'\"','') else '<b>'||ms.code||'</b> '||' '||replace(ms.name,'\"','') end" 
+			;fldParent="parent_id";fldOrderBy="case when ms.dtype='MedServiceGroup' then 1 else 0 end,ms.code";
+			whereAdd="and (ms.dtype='MedServiceGroup' or ms.parent_id is not null) and ms.finishDate is null " ;
+			fldIsChild = "(select count(*) from "+table+"1 where ms1.parent_id=ms.id)";
+}
+    	else {
     		return "" ;
     	}
     	
@@ -67,6 +75,7 @@ public class CategoryTreeServiceJs {
     	}
     	sql.append(" ").append(whereAdd).append(" ") ;
     	sql.append(" order by ").append(fldOrderBy) ;
+    	System.out.println("======CategoryTreeService, sql= "+sql.toString());
     	Collection<WebQueryResult> list=service.executeNativeSql(sql.toString()) ;
     	StringBuilder rs = new StringBuilder() ;
     	for (WebQueryResult wqr : list) {
