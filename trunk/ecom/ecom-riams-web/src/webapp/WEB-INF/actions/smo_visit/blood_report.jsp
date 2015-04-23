@@ -88,11 +88,11 @@
     			request.setAttribute("dateSql","sls.dateFinish" ) ;
     		}
     		if (typeDiagnosis!=null && (typeDiagnosis.equals("1"))) {    			
-    			 sqlAdd.append(" (mkb.code between 'I60' and 'I64') ");
+    			 sqlAdd.append(" (mkb.code between 'I60' and 'I64.999') ");
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("2"))) {
     			sqlAdd.append(" mkb.code='I20.2' ");    			
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("3"))) {
-    			sqlAdd.append(" (mkb.code between 'I21' and 'I23') ");
+    			sqlAdd.append(" (mkb.code between 'I21' and 'I23.999') ");
     		}
     		
     		request.setAttribute ("appendSQL", sqlAdd.toString());
@@ -102,25 +102,29 @@
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select sls.id
 ,p.lastname||' '||p.firstname||' '||p.middlename as f1
-,coalesce(adr.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
+,max(coalesce(adr.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
 	||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end  	
-	||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as address
+	||case when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end) as address
 ,to_char(p.birthday,'dd.mm.yyyy') as f3
 ,cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) 
 	+(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) 
 	+(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) 
 	as f4_Age
-,case when ot.voc_code='К' then to_char(sls.datestart,'dd.mm.yyyy') else null end as f5_SMP
-,case when (ot.id isnull or ot.voc_code!='К') then to_char(sls.datestart,'dd.mm.yyyy') else null end as f6_notSMP
+,max(case when ot.voc_code='К' then to_char(sls.datestart,'dd.mm.yyyy') else null end) as f5_SMP
+,max(case when (ot.id isnull or ot.voc_code!='К') then to_char(sls.datestart,'dd.mm.yyyy') else null end ) as f6_notSMP
 ,to_char(sls.datefinish,'dd.mm.yyyy') as f7_dateFinish
 ,mkb.code as f8
 ,case when sls.datefinish is null then (select dep.name from medcase slo left join 
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
-,case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end as f11_isDead
+,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
-left join diagnosis diag on diag.medcase_id=sls.id
+left join medcase slo on slo.parent_id=sls.id
+left join bedfund bf on bf.id=slo.bedfund_id
+left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
+left join diagnosis diag on diag.medcase_id=slo.id
+left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id
 left join vocdiagnosisregistrationtype vdrt on vdrt.id=diag.registrationtype_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join patient p on p.id=sls.patient_id
@@ -128,8 +132,11 @@ left join address2 adr on adr.addressid = p.address_addressid
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-and vdrt.code='3'
-and ${appendSQL}  
+and vdrt.code='4
+and vpd.code='1'
+and vbst.code='1'
+and ${appendSQL} 
+group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish, mkb.code 
 order by p.lastname, p.firstname, p.middlename 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
