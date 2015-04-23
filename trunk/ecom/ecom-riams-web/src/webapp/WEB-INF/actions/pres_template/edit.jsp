@@ -350,7 +350,11 @@
 			addPrescription(aLabID, aLabDepartment, aLabCabinet);
 			addRow(aData);
 		}
-		
+		function prepare1Row(aID, aName) {
+			//Add Lab from ++ 
+			addPrescription(aID, "", "");
+			addRow("LABSURVEY:"+aID+":"+aName+":::::")
+		}
 		function addRow(result) {
 			var resultRow = result.split(":");
 			/*
@@ -734,6 +738,7 @@
 			<msh:ifFormTypeIsNotView formName="pres_templateForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
+	            <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
@@ -803,8 +808,10 @@
       <tags:template_menu currentAction="prescriptions"/>
     </msh:ifFormTypeIsView>
     <tags:templatePrescription record="2" name="add" />
+    <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id" />
     <msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения на основе существующего шаблона" title="Создать шаблон лист назначения на основе существующего шаблона" guid="c6e48b9d-d1cf-4731-af04-3f8fe356717e" />
   </tiles:put>
+  
   <tiles:put name="style" type="string">
   	<style type="text/css">
          #borderTable {
