@@ -590,7 +590,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				}
 				//Нарушение режима
 				statement = dbh.createStatement();
-				String SQLBreach = breach.toString()+ln_id+"' limit 1 ";
+				String SQLBreach = breach.toString()+ln_id+"'";
 				ResultSet rs_breach = statement.executeQuery(SQLBreach);
 				while (rs_breach.next()) {
 					rowLpuLn.addContent(new Element("HOSPITAL_BREACH_CODE").addContent(rs_breach.getString("code")));
@@ -602,12 +602,13 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				//МСЭ
 				 
 				statement = dbh.createStatement();
-				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom limit 3");
+				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom");
 				 int i=0;
 				 String returnDate = null;
 				 String lpuName = null, lpuAddress=null, lpuOgrn=null;
 				while (rsRecord.next()) {
 					i++;
+					if (i>3) break;
 					String doc = rsRecord.getString("name");
 					String docId = rsRecord.getString("wfid");
 					String dateFrom = rsRecord.getString("dateFrom");
@@ -656,8 +657,14 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					} else if (mseResult.equals("31")||mseResult.equals("37")) {
 						if (nextDocument!=null&&!nextDocument.equals("")) {
 						} else {
-	//Check ELN-089
-							nextDocument="000000000002";
+							if (prevDocument!=null&& prevDocument.equals("000000000000")) {
+								defect.append(ln).append(":").append(ln_id).append(":TEST_ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
+								continue;	
+							} else {
+								nextDocument="000000000000";
+							}
+	//Check ELN-089	
+							
 						//	defect.append(ln).append(":").append(ln_id).append(":TESTTESTTEST_ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
 							//continue;			
 						}
