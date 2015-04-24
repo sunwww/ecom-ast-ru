@@ -157,12 +157,13 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		
 		
 	}
+	//Работает неправильно, вместо синхронизации использовать импорт дефектов!
 	public void sync(long aMonitorId, long aTimeId) {
 		Patient patient;
 		Long patientId;
 		LpuAttachedByDepartment attachment;
 		LpuAttachmentFomcDefect defect;
-		
+		SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
 			Date current_date=new Date(new java.util.Date().getTime()) ;
 			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт дефектов прикрепленного населения", getCount(aTimeId));
 			try{
@@ -181,9 +182,8 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType());
 					if (attachment!=null) {
 						attachment.setDefectText(defect.getRefreason());
-						attachment.setDefectPeriod(""); // Изменить !!! 
+						attachment.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime()))); // Изменить !!! 
 						attachment.setEditUsername("fond_base");
-						attachment.setEditDate(current_date);
 						theManager.persist(attachment);
 						monitor.setText(i+" Запись обновлена, пациент= "+patient.getPatientInfo()+", код дефекта = "+attachment.getDefectText());
 					} else {
