@@ -618,6 +618,7 @@
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="labCabinet" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <input type="text" id="justforlab">
       <input type="hidden" id="funcDepartment" />
       <msh:panel>
      	<msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
@@ -731,10 +732,12 @@
         <tr><td>
         <table id="labTable">
         <tbody id="addlabElements">
-    		
 			<tr>
 			<msh:textField property="labDate" label="Дата " size="10"/>
-			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
+			
+			<msh:autoComplete property="labServicies" label="Исследование" vocName="labMedService" parentId="id" size="90"/> 
+			<!--Немного неправильно, но работает  -->
+			
 			<msh:ifFormTypeIsNotView formName="pres_templateForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
