@@ -50,4 +50,11 @@ public class VocExtDispService extends VocBaseEntity{
 
 		/** Специальность врача */
 		private String theWorkFunctionCode;
+		
+		/** Код главной услуги */
+		@Comment("Код главной услуги")
+		public String getMainCode() {return theMainCode;}
+		public void setMainCode(String aMainCode) {theMainCode = aMainCode;}
+		/** Код главной услуги */
+		private String theMainCode;
 }
