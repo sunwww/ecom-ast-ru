@@ -91,11 +91,11 @@
         	<msh:separator label="Больной по уходу" colSpan="4"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanBySMO" 
+        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis" 
         		property="nursingPerson1" label="Лицо по уходу 1" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanBySMO" 
+        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis" 
         		property="nursingPerson2" label="Лицо по уходу 2" fieldColSpan="3"/>
         </msh:row>        
         <msh:row guid="3972e779-80b6-45cb-8004-df6bcb22da38">
