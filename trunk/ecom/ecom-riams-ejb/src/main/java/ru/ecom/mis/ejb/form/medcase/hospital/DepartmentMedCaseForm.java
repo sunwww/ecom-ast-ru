@@ -85,20 +85,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	public Long getDepartment() {return theDepartment;	}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;	}
 
-	/** Дата перевода */
-	@Comment("Дата перевода")
-	@DateString @DoDateString
-	@Persist @MaxDateCurrent
-	public String getTransferDate() {return theTransferDate;	}
-	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
-
-	/** Время перевода */
-	@Comment("Время перевода")
-	@TimeString @DoTimeString
-	@Persist
-	public String getTransferTime() {return theTransferTime;	}
-	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
-	
 	/** Дата выписки */
 	@Comment("Дата выписки")
 	@DateString @DoDateString
@@ -268,10 +254,7 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	private String theDischargeTime;
 	/** Дата выписки */
 	private String theDateFinish;
-	/** Время перевода */
-	private String theTransferTime;
-	/** Дата перевода */
-	private String theTransferDate;
+
 	/** Отделение */
 	private Long theDepartment;
 	/** Отделение перевода */
