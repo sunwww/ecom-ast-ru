@@ -28,10 +28,10 @@
         	<msh:separator label="Сопровождающие лица" colSpan="4"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanBySMO" property="nursingPerson1" label="Лицо по уходу 1" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanByDis" property="nursingPerson1" label="Лицо по уходу 1" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanBySMO" property="nursingPerson2" label="Лицо по уходу 2" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:autoComplete parentId="dis_caseForm.patient" vocName="kinsmanByDis" property="nursingPerson2" label="Лицо по уходу 2" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
