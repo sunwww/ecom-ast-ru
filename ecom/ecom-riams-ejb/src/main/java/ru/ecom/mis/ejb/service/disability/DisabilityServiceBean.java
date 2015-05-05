@@ -256,9 +256,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd.hospitalizednumber, dd.status_id"+
 	",dd.duplicate_id as f_duplicate"+
 	",vddp.code as f_primary"+
-	",p1.lastname||' '||p1.firstname||' '||p1.middlename as serv1_fio"+
-	",p1.birthday as serv1_age "+
-	",vkr1.code as serv1_relation"+
+	",case when p1.id is not null and p1.id!=p.id then p1.lastname||' '||p1.firstname||' '||p1.middlename else p12.lastname||' '||p12.firstname||' '||p12.middlename end as serv1_fio"+
+	",case when p1.id is not null and p1.id!=p.id then p1.birthday else p12.birthday end as serv1_age "+
+	",case when p1.id is not null and p1.id!=p.id then vkr1.code else vkr1.oppositeRoleCode end as serv1_relation"+
+	",case when p2.id is not null and p2.id!=p.id then p2.lastname||' '||p2.firstname||' '||p2.middlename else p22.lastname||' '||p22.firstname||' '||p22.middlename end as serv2_fio"+
+	",case when p2.id is not null and p2.id!=p.id then p2.birthday else p22.birthday end as serv2_age "+
+	",case when p2.id is not null and p2.id!=p.id then vkr2.code else vkr2.oppositeRoleCode end as serv2_relation"+
 	",p2.lastname||' '||p2.firstname||' '||p2.middlename as serv2_fio"+
 	",p2.birthday as serv2_age "+
 	",vkr2.code as serv2_relation "+
@@ -278,35 +281,37 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",vddcr.codef as mseResult " +
 	",dd.otherclosedate as otherdate " +
 	",dr.datefrom as startDate "+
-	"from disabilitydocument dd " +
-	"left join (select min(datefrom) as datefrom,disabilitydocument_id from disabilityrecord  group by disabilitydocument_id) as dr on dr.disabilitydocument_id=dd.id " +
-	"left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id "+
-	"left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id "+
-	"left join disabilitydocument dd2 on dd2.id=dd.prevdocument_id "+
-	"left join disabilitycase dc on dc.id=dd.disabilitycase_id "+
-	"left join patient p on p.id=dc.patient_id "+
-	"left join vocsex sex on sex.id=p.sex_id "+
-	"left join vocidc10 mkb on mkb.id=dd.idc10final_id "+
-	"left join vocdisabilityreason vdr on vdr.id=dd.disabilityreason_id "+
-	"left join vocdisabilityreason vdr3 on vdr3.id=dd.disabilityreasonchange_id "+
-	"left join kinsman k1 on k1.id=dc.nursingperson1_id "+
-	"left join vockinsmanrole vkr1 on vkr1.id=k1.kinsmanrole_id "+
-	"left join patient p1 on p1.id=k1.kinsman_id "+
-	"left join kinsman k2 on k2.id=dc.nursingperson2_id "+
-	"left join vockinsmanrole vkr2 on vkr2.id=k2.kinsmanrole_id "+
-	"left join patient p2 on p2.id=k2.kinsman_id "+
-	"left join statisticstub ss on ss.code=dd.hospitalizednumber and ss.year=cast(to_char(dd.hospitalizedfrom,'yyyy')as int) "+
-	"left join medcase mc on mc.id=ss.medcase_id "+
-	"left join mislpu ml1 on ml1.id=mc.lpu_id "+
-	"left join mislpu ml2 on ml2.id=ml1.parent_id "+
-	"left join vocdisabilityreason2 vdr2 on vdr2.id=dd.disabilityreason2_id "+
-	"left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
-	"where dd.exportdate is null and "+sqlAdd +
+	" from disabilitydocument dd " +
+	" left join (select min(datefrom) as datefrom,disabilitydocument_id from disabilityrecord  group by disabilitydocument_id) as dr on dr.disabilitydocument_id=dd.id " +
+	" left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id "+
+	" left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id "+
+	" left join disabilitydocument dd2 on dd2.id=dd.prevdocument_id "+
+	" left join disabilitycase dc on dc.id=dd.disabilitycase_id "+
+	" left join patient p on p.id=dc.patient_id "+
+	" left join vocsex sex on sex.id=p.sex_id "+
+	" left join vocidc10 mkb on mkb.id=dd.idc10final_id "+
+	" left join vocdisabilityreason vdr on vdr.id=dd.disabilityreason_id "+
+	" left join vocdisabilityreason vdr3 on vdr3.id=dd.disabilityreasonchange_id "+
+	" left join kinsman k1 on k1.id=dc.nursingperson1_id "+
+	" left join vockinsmanrole vkr1 on vkr1.id=k1.kinsmanrole_id "+
+	" left join patient p1 on p1.id=k1.kinsman_id "+
+	" left join patient p12 on p1.id=k1.person_id "+
+	" left join kinsman k2 on k2.id=dc.nursingperson2_id "+
+	" left join vockinsmanrole vkr2 on vkr2.id=k2.kinsmanrole_id "+
+	" left join patient p2 on p2.id=k2.kinsman_id "+
+	" left join patient p22 on p2.id=k2.person_id "+
+	" left join statisticstub ss on ss.code=dd.hospitalizednumber and ss.year=cast(to_char(dd.hospitalizedfrom,'yyyy')as int) "+
+	" left join medcase mc on mc.id=ss.medcase_id "+
+	" left join mislpu ml1 on ml1.id=mc.lpu_id "+
+	" left join mislpu ml2 on ml2.id=ml1.parent_id "+
+	" left join vocdisabilityreason2 vdr2 on vdr2.id=dd.disabilityreason2_id "+
+	" left join vocdisabilitydocumentprimarity vddp on vddp.id=dd.primarity_id "+
+	" where dd.exportdate is null and "+sqlAdd +
 	" and dd.anotherlpu_id is null " +
-	"and (dd.isclose is not null or dd.isclose='1') "+
-	"and (dd.noactuality is null or dd.noactuality='0') "+
-	"and ss.dtype='StatisticStubExist' "+
-	"order by dd.issuedate desc";
+	" and dd.isclose='1' "+
+	" and (dd.noactuality is null or dd.noactuality='0') "+
+	" and ss.dtype='StatisticStubExist' "+
+	" order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
 			System.out.println(SQLreq);
