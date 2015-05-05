@@ -211,4 +211,13 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Подтип назначения */
 	private Long theServiceSubType;
+
+	/** Короткое наименование */
+	@Comment("Короткое наименование")
+	@Persist
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое наименование */
+	private String theShortName;
 }
