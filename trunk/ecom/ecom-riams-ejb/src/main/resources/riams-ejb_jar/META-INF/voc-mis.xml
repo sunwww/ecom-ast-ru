@@ -759,6 +759,22 @@
 		    />
 
     </voc>
+    <voc id='kinsmanByDis' type='NativeVocService'>
+		    <NativeVocService
+		    	from=" Kinsman as k "
+		    	parent='(k.person_id=:parent or  k.kinsman_id=:parent)'
+		    	nameId="k.id"
+		    	join="
+		    	 left join Patient as pk on pk.id=k.kinsman_id 
+		    	 left join Patient as pk1 on pk1.id=k.person_id 
+		    	"
+		    	queryAppend=""
+		    	order=""
+		    	queried=" pk.lastname like UPPER(:query) "
+		    	names = " pk.lastname||'('||pk1.lastname||')' ||' '|| pk.firstname ||' '|| pk.middlename ||' гр ' || to_char(pk.birthday,'DD.MM.YYYY')"
+		    />
+
+    </voc>
 
     <voc id='lpuAreaAddressText' type='EntityVocService'>
         <EntityVocService
