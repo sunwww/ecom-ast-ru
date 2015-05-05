@@ -22,6 +22,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Mkb;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
@@ -606,4 +607,22 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	/** Поступление в данный стационар */
 	private Long theAdmissionInHospital;
 
+	/** Дата перевода */
+	@Comment("Дата перевода")
+	@DateString @DoDateString
+	@Persist @MaxDateCurrent
+	public String getTransferDate() {return theTransferDate;	}
+	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
+
+	/** Время перевода */
+	@Comment("Время перевода")
+	@TimeString @DoTimeString
+	@Persist
+	public String getTransferTime() {return theTransferTime;	}
+	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+
+	/** Время перевода */
+	private String theTransferTime;
+	/** Дата перевода */
+	private String theTransferDate;
 }
