@@ -78,7 +78,7 @@ public class AgeUtil {
     		ageDays = cd.get(Calendar.DAY_OF_MONTH) - bd.get(Calendar.DAY_OF_MONTH) ; 
     	} 
     	System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days."); 
-    	return ageYears + ". " + ageMonths + "." + ageDays; 
+    	return ageYears + "." + ageMonths + "." + ageDays; 
     	
     }
     
