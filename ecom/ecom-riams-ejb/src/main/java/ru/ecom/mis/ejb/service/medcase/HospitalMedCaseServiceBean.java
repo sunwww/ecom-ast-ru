@@ -1985,7 +1985,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append(" ,vdh.id as f4vhdid,sls.username as f5slsusername,case when sls.emergency='1' then 'да' else null end as f6emergency") ;
 		query.append(" ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard");
 		query.append(" ,ml.name as f8entdep,mlLast.name as f9mlLastdep") ;
-		query.append(" ,case when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays") ;
+		query.append(" ,case when vdh.id is not null then null when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays") ;
 		query.append(" ,list(vpd.name||' '||mkb.code) as f11diagDisch") ;
 		query.append(" ,list(vpd1.name||' '||mkb1.code) as f12diagClinic") ;
 		query.append(" from MedCase sls");
@@ -2004,7 +2004,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append("	left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'");
 		query.append("	left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id");
 
-		query.append(" where (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and sls.patient_id=:patient and (sloLast.id is null or sloLast.transferDate is null) ");
+		query.append(" where sls.patient_id=:patient and (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and  (sloLast.id is null or sloLast.transferDate is null) ");
 		query.append(" group by sls.id,sls.dtype,sls.dateStart,sls.dateFinish,vdh.id ,sls.username ,sls.emergency, ss.code,vdh.id,vdh.name ,ml.name,mlLast.name,vht.code");
 		query.append(" order by sls.dateStart");
 		 //Query query2 = theManager.createQuery(query.toString()) ;
