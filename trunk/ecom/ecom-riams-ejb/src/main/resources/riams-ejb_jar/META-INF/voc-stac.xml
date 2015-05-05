@@ -55,9 +55,9 @@
 	<voc id="vocKindHighCare" type="NativeVocService">
 		<NativeVocService
 		    	from=" VocKindHighCare as vkhc "
-		    	parent=''
+		    	parent=" (vss.id=:parent or vkhc.serviceStreamCode is null or vkhc.serviceStreamCode='') "
 		    	nameId="vkhc.id"
-		    	join=""
+		    	join=" left join VocServiceStream vss on vss.code=vkhc.serviceStreamCode  "
 		    	queryAppend=""
 		    	order=""
 		    	queried=" (vkhc.name like upper(:query) or vkhc.code like upper(:querId) or replace(vkhc.code,'.','') like upper(:querId))"
@@ -67,13 +67,14 @@
 	<voc id="vocMethodHighCare" type="NativeVocService">
 		<NativeVocService
 		    	from=" VocMethodHighCare as vmhc "
-		    	parent='vkhc.id=:parent'
+		    	parent="vkhc.id=:parent"
 		    	nameId="vmhc.id"
-		    	join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare"
+		    	join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
 		    	queryAppend=""
 		    	order=""
 		    	queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
 		    	names = "vmhc.code||' '||vmhc.name"
+		    	
 		/>
 	</voc>
 	<voc id="hospitalRoomByLpu" type="NativeVocService">
