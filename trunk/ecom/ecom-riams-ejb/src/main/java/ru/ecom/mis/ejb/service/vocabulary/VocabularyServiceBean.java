@@ -100,7 +100,7 @@ public class VocabularyServiceBean {
     public void importVocExtDisp(long aMonitorId,boolean aClear, List<WebQueryResult> aService, List<WebQueryResult> aRisks, List<WebQueryResult> aExtDisps) {
     	IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	try {
-    		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aService.size()+aRisks.size()+aExtDisps.size()) ;
+    		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт типов диспансеризаций", aService.size()+aRisks.size()+aExtDisps.size()) ;
     		for(WebQueryResult wqr : aService) {
     			if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
     			monitor.advice(1) ;
@@ -164,7 +164,7 @@ public class VocabularyServiceBean {
         	for(WebQueryResult wqr : aExtDisps) {
         		if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
         		monitor.advice(1) ;
-        		monitor.setText("Импортируется  риск: "+wqr.get1());
+        		monitor.setText("Импортируется  диспансеризация: "+wqr.get1());
         		List<VocExtDisp> list = theManager.createQuery("from VocExtDisp where code='"+wqr.get1()+"'").getResultList() ;
         		VocExtDisp dispType = null;
         		ExtDispPlan plan = null;
@@ -173,6 +173,9 @@ public class VocabularyServiceBean {
         			List<ExtDispPlan> listPlan = theManager.createQuery("from ExtDispPlan where dispType_id='"+dispType.getId()+"'").getResultList() ;
         			if (listPlan.size()>0) {
         				plan = listPlan.get(0) ;
+        				if (aClear) {
+                		theManager.createNativeQuery("delete from ExtDispPlanService where plan_id='"+plan.getId()+"'").executeUpdate();	
+                		}
         			} 
         		} else {
         			dispType = new VocExtDisp() ;
@@ -185,6 +188,7 @@ public class VocabularyServiceBean {
         			plan.setDispType(dispType) ;
         			theManager.persist(plan) ;
         		}
+        		
         		List<WebQueryResult> listHealthGroup = (List<WebQueryResult>)wqr.get6() ;
         		for (WebQueryResult wqrHG:listHealthGroup) {
         			String code =  ""+wqrHG.get1() ;
@@ -215,6 +219,13 @@ public class VocabularyServiceBean {
         			}
         		}
         		List<WebQueryResult> listAgeGroup = (List<WebQueryResult>)wqr.get5() ;
+        		if (aClear) {
+        			List<VocExtDispAgeGroup> listPlans = theManager.createQuery("from VocExtDispAgeGroup where dispType_id='"+dispType.getId()+"'").getResultList() ;
+            		for (VocExtDispAgeGroup vedag:listPlans ) {
+            			vedag.setIsArchival(true);
+            		}
+        		}
+        		
         		for (WebQueryResult wqrHG:listAgeGroup) {
         			String code=""+wqrHG.get1() ;
         			List<VocExtDispAgeGroup> listPlan = theManager.createQuery("from VocExtDispAgeGroup where dispType_id='"+dispType.getId()+"' and code='"+code+"'").getResultList() ;
@@ -224,9 +235,13 @@ public class VocabularyServiceBean {
         				hg.setCode(code) ;
         				hg.setName(""+wqrHG.get2()) ;
         				hg.setReportGroup(hashAgeRepGroup.get(""+wqrHG.get3())) ;
+        				hg.setIsArchival(false);
         				theManager.persist(hg) ;
         				hashAgeGroup.put(code, hg) ;
         			} else {
+        				if (aClear) {
+        					listPlan.get(0).setIsArchival(false);
+        				}
         				hashAgeGroup.put(code, listPlan.get(0)) ;
         			}
         		}
@@ -284,7 +299,7 @@ public class VocabularyServiceBean {
     		xmlDoc.newAttribute(el, "isVisit", serv.getIsVisit()!=null && serv.getIsVisit()?"1":"0");
     		xmlDoc.newAttribute(el, "name", serv.getName());
     		List<Object> wf = theManager.createNativeQuery("select list(code) from VocExtDispServiceFunction where name='"+serv.getCode()+"' and code is not null and code!=''").getResultList() ;
-    		if (wf.isEmpty()) {
+    		if (!wf.isEmpty()) {
     			String wfc = (""+wf.get(0)).replaceAll(" ", "") ;
     			xmlDoc.newAttribute(el, "workFunctionCode", wfc);
     		} else {
@@ -304,7 +319,7 @@ public class VocabularyServiceBean {
     	for (Long vedId:aVocExpDisps) {
     		VocExtDisp ved = theManager.find(VocExtDisp.class, vedId) ;
     		List<VocExtDispAgeReportGroup> listAgeReportGroup = theManager.createQuery("from VocExtDispAgeReportGroup where dispType=:dispType").setParameter("dispType", ved).getResultList() ;
-    		List<VocExtDispAgeGroup> listAgeGroup = theManager.createQuery("from VocExtDispAgeGroup where dispType=:dispType").setParameter("dispType", ved).getResultList() ;
+    		List<VocExtDispAgeGroup> listAgeGroup = theManager.createQuery("from VocExtDispAgeGroup where dispType=:dispType and isArchival is null").setParameter("dispType", ved).getResultList() ;
     		List<VocExtDispHealthGroup> listHealthGroup = theManager.createQuery("from VocExtDispHealthGroup where dispType=:dispType").setParameter("dispType", ved).getResultList() ;
     		
     		Element vedEl = xmlDoc.newElement(vedMainEl, "vocExtDisp", null);
