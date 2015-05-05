@@ -44,5 +44,13 @@ public class VocKinsmanRole extends VocBaseEntity{
 
 	/** Код ОМС */
 	private String theOmcCode;
+	
+	/** Код прот. роли */
+	@Comment("Код прот. роли")
+	public String getOppositeRoleCode() {return theOppositeRoleCode;}
+	public void setOppositeRoleCode(String aOppositeRoleCode) {theOppositeRoleCode = aOppositeRoleCode;}
+
+	/** Код прот. роли */
+	private String theOppositeRoleCode;
 
 }
