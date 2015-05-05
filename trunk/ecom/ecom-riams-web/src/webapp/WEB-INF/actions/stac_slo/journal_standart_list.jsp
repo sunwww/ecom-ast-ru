@@ -130,7 +130,7 @@
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="standart" fieldColSpan="4"
+        	<msh:autoComplete parentAutocomplete="serviceStream" property="standart" fieldColSpan="4"
         	label="ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
         </msh:row>
         <msh:row>
@@ -439,7 +439,28 @@
     checkFieldUpdate('typeViewDepartment','${typeViewDepartment}',1) ;
     checkFieldUpdate('typeViewBed','${typeViewBed}',1) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
-    
+    /*
+    kindHighCareAutocomplete.addOnChangeCallback(function() {
+  		updateMethod() ;
+  	}) ;
+  	
+  	serviceStreamAutocomplete.addOnChangeCallback(function() {
+  	 	updateMethod() ;
+  	 });
+  	methodParam = "" ;
+  	updateMethod() ;
+  	function updateMethod() {
+  		methodParam1 = (+$('kindHighCare').value)+"#"+(+$('serviceStream').value)  ;
+      	if (methodParam1!=methodParam) {
+      		
+      		if (methodParam!="") {
+	      		$('methodHighCare').value="" ;
+	      		$('methodHighCareName').value="" ;
+      		}
+      		methodParam=methodParam1 ;
+      		methodHighCareAutocomplete.setParentId(methodParam1) ;
+      	}
+  	}*/
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;

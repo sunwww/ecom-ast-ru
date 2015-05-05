@@ -32,7 +32,7 @@
             <msh:sectionTitle>Протоколы по случаю медицинского обслуживания</msh:sectionTitle>
             <msh:sectionContent>
             	<ecom:webQuery name="protocols" nativeSql="
-            	select to_char(d.dateRegistration,'dd.mm.yyyy')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id
+            	select to_char(d.dateRegistration,'yyyymmdd')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id
             	, d.dateRegistration, d.timeRegistration, d.record, d.printDate 
             	, vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
             	from MedCase slo
