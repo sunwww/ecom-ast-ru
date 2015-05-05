@@ -207,7 +207,7 @@
         	<msh:autoComplete property="kindHighCare" fieldColSpan="6" label="Вид ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="methodHighCare" fieldColSpan="6" label="Метод ВМП" parentAutocomplete="kindHighCare" horizontalFill="true" vocName="vocMethodHighCare"/>
+        	<msh:autoComplete property="methodHighCare" parentAutocomplete="kindHighCare" fieldColSpan="6" label="Метод ВМП" horizontalFill="true" vocName="vocMethodHighCare"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
@@ -509,14 +509,20 @@
       	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.setParentId(lpuDate) ;
+      	kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
       	//bedFundAutocomplete.setVocId(theBedFund);
       	//alert(departmentAutocomplete) ;
       	//transferDepartmentAutocomplete.setParentId($('lpu').value) ;
       	
       	if (bedFundAutocomplete) bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.addOnChangeCallback(function() {
+      			$('kindHighCare').value = "" ;
+      	 		$('kindHighCareName').value = "" ;
+      	 		kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
+      	 	
       	 	updateLpuAndDate() ;
       	 	updateBedFund() ;
+      	 	
       	 });
       	updateLpuAndDate() ;
       	 function updateLpuAndDate() {
@@ -560,10 +566,17 @@
     	      			$('roomNumber').value='0' ;
     	      			$('roomNumberName').value='' ;
     	      		} catch(e) {}
-    	      		
+    	      		var oldid = $('serviceStream').value ;
     	      		updateLpuAndDate() ;
     	      	 	ownerFunctionAutocomplete.setParentId($('department').value) ;
     	      		updateBedFund() ;
+    	      		
+    	      	 	var newid = $('serviceStream').value ;
+    	      	 	if (oldid!=newid) {
+    	      	 		$('kindHighCare').value = "" ;
+    	      	 		$('kindHighCareName').value = "" ;
+    	      	 		kindHighCareAutocomplete.setParentId(+newid) ;
+    	      	 	}
     	      	 });
           	} catch (e) {
           	}
@@ -599,7 +612,7 @@
     	      		      	 	$('bedFundName').value='';
     	      				}
     	      			}
-    	      		})
+    	      		}) 
     	      	 });
           	} catch (e) {
           	}

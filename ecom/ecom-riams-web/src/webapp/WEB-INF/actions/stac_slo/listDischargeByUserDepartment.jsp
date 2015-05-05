@@ -1,3 +1,5 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -29,11 +31,17 @@
 		    </msh:form>
       </msh:ifInRole>
         <%
+        	java.util.Date date = new java.util.Date() ;
+        	Calendar cal = Calendar.getInstance() ;
+        	cal.setTime(date) ;
+        	cal.add(Calendar.DAY_OF_MONTH, -5) ;
+        	SimpleDateFormat format_1 = new SimpleDateFormat("dd.MM.yyyy") ;
+        	request.setAttribute("current_5", format_1.format(cal.getTime())) ;
 		    Long department = (Long)request.getAttribute("department") ;
 		    if (department!=null && department.intValue()>0 )  {
     	%>
     <msh:section>
-    <msh:sectionTitle>Журнал выписанных пациентов из отделения  ${departmentInfo} в течение 3х дней
+    <msh:sectionTitle>Журнал выписанных пациентов из отделения  ${departmentInfo} в течение 5х дней
      <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
     </msh:sectionTitle>
     <msh:sectionContent>
@@ -64,7 +72,7 @@
     left join Patient wp on wp.id=w.person_id
     left outer join Patient pat on m.patient_id = pat.id 
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}' 
-    and m.dateFinish between current_date-3 and current_date
+    and m.dateFinish between to_date('${current_5}','dd.mm.yyyy') and current_date
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart,sls.dateFinish
     ,bf.addCaseDuration
@@ -86,7 +94,7 @@
     <% } else {%>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <msh:section>
-    <msh:sectionTitle>Свод выписанных пациентов в отделение  ${departmentInfo} в течение 3х дней
+    <msh:sectionTitle>Свод выписанных пациентов в отделение  ${departmentInfo} в течение 5 дней
      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <a href='stac_journalDischargeByUserDepartment.do'>Выбрать другое отделение</a>
     </msh:ifInRole>
@@ -109,7 +117,7 @@
     left outer join Patient pat on m.patient_id = pat.id
     left join MisLpu ml on ml.id=m.department_id
     where m.DTYPE='DepartmentMedCase'
-    and m.dateFinish between current_date-3 and current_date
+    and m.dateFinish between to_date('${current_5}','dd.mm.yyyy') and current_date
     group by ml.id,ml.name
     order by ml.name
     "
