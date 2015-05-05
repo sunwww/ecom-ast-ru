@@ -55,6 +55,9 @@
           <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+          <msh:textField property="shortName" label="Короткое наим." horizontalFill="true" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="complexity" label="Уровень сложности"/>
         	<msh:checkBox property="isNoOmc" label="Не входит в ОМС"/>
         </msh:row>
