@@ -218,17 +218,17 @@ public class DisabilityServiceBean implements IDisabilityService  {
         	}
     		
         	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
-        	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), lpu.getOgrn()!=null?lpu.getOgrn().toString():"", checkIsNull(aWorkFunction), checkIsNull(aPacketNumber));
+        	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), lpu.getOgrn()!=null?lpu.getOgrn().toString():"", checkIsNull(aWorkFunction), checkIsNull(aPacketNumber),lpu);
     	} else return null;
     	
     }
     
     public String exportLNByNumber (String aNumber) throws ParseException, NamingException {
     	String sqlAdd = "dd.number = '"+aNumber+"' ";
-    	return exportLN(sqlAdd,"","","","","","1");
+    	return exportLN(sqlAdd,"","","","","","1",null);
     }
     
-    public String exportLN(String sqlAdd, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
+    public String exportLN(String sqlAdd, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber,MisLpu lpu) throws ParseException, NamingException {
 	String SQLreq; 
 		
 	SQLreq ="select dd.id as DDID"+
@@ -310,19 +310,19 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	" and dd.anotherlpu_id is null " +
 	" and dd.isclose='1' "+
 	" and (dd.noactuality is null or dd.noactuality='0') "+
-	" and ss.dtype='StatisticStubExist' "+
+	" and (ss.dtype='StatisticStubExist' or ss.id is null) "+
 	" order by dd.issuedate desc";
 		
 			System.out.println("Поиск записей:");
 			System.out.println(SQLreq);
 			
-			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aWorkFunction, aPacketNumber);
+			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aWorkFunction, aPacketNumber, lpu);
 	}
     
     private DataSource findDataSource() throws NamingException {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
-    public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
+    public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber, MisLpu lpu) throws ParseException, NamingException {
 		Statement statement = null;
 			Pattern lnPattern = Pattern.compile("^[0-9]{12}$");
 			Element rootElement = new Element("LPU");
@@ -336,6 +336,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			rootElement.addContent(rowSet);
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			
+			
 			try
 			{
 				DataSource ds = findDataSource();
@@ -344,6 +345,15 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				ResultSet rs = statement.executeQuery(SQLReq);
 				int numAll = 0;
 				int rightNum=0;
+				String lpuAddress=null; 
+				String lpuName=null;
+				String lpuOgrn=null;
+				
+				if (lpu!=null) {
+					lpuAddress = lpu.getPrintAddress();
+					lpuName = lpu.getName();
+					lpuOgrn = String.valueOf(lpu.getOgrn());
+				}
 				
 				StringBuilder defect = new StringBuilder();	
 				StringBuilder breach = new StringBuilder();
@@ -610,7 +620,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom");
 				 int i=0;
 				 String returnDate = null;
-				 String lpuName = null, lpuAddress=null, lpuOgrn=null;
+				// String lpuName = null, lpuAddress=null, lpuOgrn=null;
 				while (rsRecord.next()) {
 					i++;
 					if (i>3) break;
@@ -627,9 +637,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR_ROLE").addContent(docWorkfunction));
 					rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR").addContent(doc));
 					rowLpuLn.addContent(new Element("TREAT"+i+"_DOC_ID").addContent(docId));
-					lpuName = rsRecord.getString("lpuName");
-					lpuAddress = rsRecord.getString("lpuAddress");
-					lpuOgrn = rsRecord.getString("ogrn");
+					lpuName = (lpuName!=null)?lpuName:rsRecord.getString("lpuName");
+					lpuAddress = (lpuName!=null)?lpuAddress:rsRecord.getString("lpuAddress");
+					lpuOgrn = (lpuName!=null)?lpuOgrn:rsRecord.getString("ogrn");
 					if (doc2id!=null&&!doc2id.equals("")){
 						rowLpuLn.addContent(new Element("TREAT"+i+"_DOCTOR2_ROLE").addContent(doc2role));
 						rowLpuLn.addContent(new Element("TREAT"+i+"_CHAIRMAN_VK").addContent(chairman));
@@ -662,7 +672,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					} else if (mseResult.equals("31")||mseResult.equals("37")) {
 						if (nextDocument!=null&&!nextDocument.equals("")) {
 						} else {
-							if (prevDocument!=null&& prevDocument.equals("000000000000")) {
+							if (prevDocument!=null && prevDocument.equals("000000000000")) {
 								defect.append(ln).append(":").append(ln_id).append(":TEST_ELN-089 При указанном в поле ИНОЕ коде 31(продолжает болеть) или 37 (Долечивание) поле должен быть выдан ЛН (продолжение)#");
 								continue;	
 							} else {
