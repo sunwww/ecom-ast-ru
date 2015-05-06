@@ -319,7 +319,7 @@ public class VocabularyServiceBean {
     	for (Long vedId:aVocExpDisps) {
     		VocExtDisp ved = theManager.find(VocExtDisp.class, vedId) ;
     		List<VocExtDispAgeReportGroup> listAgeReportGroup = theManager.createQuery("from VocExtDispAgeReportGroup where dispType=:dispType").setParameter("dispType", ved).getResultList() ;
-    		List<VocExtDispAgeGroup> listAgeGroup = theManager.createQuery("from VocExtDispAgeGroup where dispType=:dispType and isArchival is null").setParameter("dispType", ved).getResultList() ;
+    		List<VocExtDispAgeGroup> listAgeGroup = theManager.createQuery("from VocExtDispAgeGroup where dispType=:dispType and (isArchival is null or isArchival='0')").setParameter("dispType", ved).getResultList() ;
     		List<VocExtDispHealthGroup> listHealthGroup = theManager.createQuery("from VocExtDispHealthGroup where dispType=:dispType").setParameter("dispType", ved).getResultList() ;
     		
     		Element vedEl = xmlDoc.newElement(vedMainEl, "vocExtDisp", null);
@@ -354,7 +354,7 @@ public class VocabularyServiceBean {
 				.append(" left join VocSex vs on vs.id=edps.sex_id")
 				.append(" left join VocExtDispService veds on veds.id=edps.serviceType_id")
 				.append(" left join VocExtDispAgeGroup vedag on vedag.id=edps.ageGroup_id")
-				.append(" where edp.dispType_id='").append(ved.getId()).append("'")
+				.append(" where edp.dispType_id='").append(ved.getId()).append("' and (isArchival is null or isArchival='0')")
 				.append(" group by veds.code,vs.omcCode,vedag.code")
 				.append(" order by veds.code") ;
     		List<Object[]> listPlan = theManager.createNativeQuery(sqlPlan.toString()).getResultList() ;
