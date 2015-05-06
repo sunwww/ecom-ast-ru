@@ -16,8 +16,8 @@
  max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
-, to_char(max(case when eds.card_id=edc.id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
-, case when count(case when eds.card_id=edc.id and eds.isPathology='1' then '1' else null end)>0 then 'checked' else null end
+, to_char(max(case when eds.card_id=edc.id and eds.serviceType_id=edps.serviceType_id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
+, case when count(case when eds.card_id=edc.id and eds.isPathology='1' and eds.serviceType_id=edps.serviceType_id then '1' else null end)>0 then 'checked' else null end
 as servcheck
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
@@ -26,7 +26,6 @@ left join ExtDispPlanService edps on edps.plan_id=edp.id
 left join extdispservice eds on eds.dtype='ExtDispExam' and eds.card_id=edc.id
 left join VocExtDispService veds on veds.id=edps.servicetype_id
 where edc.id='${param.id}' 
-and case when eds.serviceType_id=edps.serviceType_id then '1' when eds.id is null then '1' else '0' end = '1'
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and veds.id is not null
