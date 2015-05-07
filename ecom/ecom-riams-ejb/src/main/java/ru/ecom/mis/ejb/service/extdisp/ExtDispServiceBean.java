@@ -348,7 +348,10 @@ public class ExtDispServiceBean implements IExtDispService {
 					}
 				} //Заканчивается поиск услуг
 				
-				card_issled.addContent(card_basic);
+				if (!card_basic.getChildren().isEmpty()) {
+					card_issled.addContent(card_basic);
+				}
+				
 					
 				{  //Запускаем поиск осмотров специалистами
 					
