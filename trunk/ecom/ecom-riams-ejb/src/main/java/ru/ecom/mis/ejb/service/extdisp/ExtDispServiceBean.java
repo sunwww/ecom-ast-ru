@@ -95,7 +95,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			}
 		else {
 				return fileNames[0];
-		}} return "createArchive ERROR, aFileNames.length=0";
+		}} return "Нет данных";
 	}
 	public String exportOrph(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
