@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -16,6 +17,8 @@ import org.jdom.input.SAXBuilder;
 import org.tempuri.WS_MES_SERVER.wsdl.WSLocator;
 import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
@@ -126,6 +129,14 @@ public class FondWebService {
     }
 	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException, NamingException, ParseException {
 		if (!aRz.equals("")) {
+			
+			IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			String defaultLpu =null;
+			Collection<WebQueryResult> list = serviceWQS.executeNativeSql("select keyvalue from SoftConfig where key='DEFAULT_LPU_OMCCODE'") ;
+			if (!list.isEmpty()) {
+				defaultLpu = list.iterator().next().get1().toString();
+			}
+			
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
         	System.out.println(result);
@@ -196,7 +207,7 @@ public class FondWebService {
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getSnils().equals(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"")?"":" bgcolor='yellow'"):"").append(">").append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("</td>") ;
             	sb.append("<td").append(">").append(e.getChildText("_dead")).append("</td>") ;
             	sb.append("<td").append(">").append(dateDeath).append("</td>") ;
-            	sb.append("<td").append(">").append(attLpu).append("</td>") ;
+            	sb.append("<td").append(defaultLpu!=null&&(!defaultLpu.equals(attLpu))?" bgcolor='yellow'":"").append(">").append(attLpu).append("</td>") ;
             	sb.append("<td").append(">").append(attType).append("</td>") ;
             	sb.append("<td").append(">").append(attDate).append("</td>") ;
              	sb.append("</tr>") ;
