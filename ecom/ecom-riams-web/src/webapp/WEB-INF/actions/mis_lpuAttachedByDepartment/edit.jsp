@@ -52,6 +52,12 @@
         	<msh:separator label="Дополнительная информация" colSpan="6"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="noActuality" viewOnlyField="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="checkResult" viewOnlyField="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
         	<msh:label property="createTime" label="время"/>
         	<msh:label property="createUsername" label="пользователь"/>
@@ -95,7 +101,8 @@
 	  if (confirm("Очистить данные о дефекте?")){
 	  AttachmentService.cleanDefect($('id').value, {
 		  callback: function (aResult) {
-			  alert(""+aResult);
+			//  alert(""+aResult);
+			  window.document.location.reload();
 		  }
 	  });
   }
