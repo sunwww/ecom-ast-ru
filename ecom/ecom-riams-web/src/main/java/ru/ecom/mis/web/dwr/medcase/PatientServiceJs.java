@@ -179,11 +179,11 @@ public class PatientServiceJs {
 	public boolean updateDataByFond(Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress
 			, boolean aIsPatient, boolean aIsPolicy
-			, boolean aIsDocument, boolean aIsAddress,HttpServletRequest aRequest) throws Exception {
+			, boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment, HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		return service.updateDataByFond(username,aPatientId, aFiodr, aDocument, aPolicy, aAddress,aIsPatient,aIsPolicy
-				, aIsDocument, aIsAddress);
+				, aIsDocument, aIsAddress, aIsAttachment);
 		
 	}
 	public Object checkPatientByPolicy(Long aPatientId, String aSeries, String aNumber,HttpServletRequest aRequest) throws Exception {
