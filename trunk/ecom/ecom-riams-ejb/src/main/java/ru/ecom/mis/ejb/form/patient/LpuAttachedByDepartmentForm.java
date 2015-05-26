@@ -29,6 +29,22 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/AttachedByDepartment")
 public class LpuAttachedByDepartmentForm extends IdEntityForm {
 
+	/** Не актуально */
+	@Comment("Не актуально")
+	@Persist
+	public Boolean getNoActuality() {return theNoActuality;}
+	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+	/** Не актуально */
+	private Boolean theNoActuality;
+	
+	/** Результат последней проверки ФОМС */
+	@Comment("Результат последней проверки ФОМС")
+	@Persist
+	public String getCheckResult() {return theCheckResult;}
+	public void setCheckResult(String aCheckResult) {theCheckResult = aCheckResult;}
+	/** Результат последней проверки ФОМС */
+	private String theCheckResult;
+	
 	/** ЛПУ открепления */
 	@Comment("ЛПУ открепления")
 	@Persist
