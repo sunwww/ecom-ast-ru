@@ -33,6 +33,7 @@
     		<msh:checkBox property="is${name}Policy" label="Полис"/>
     		<msh:checkBox property="is${name}Document" label="Документы"/>
     		<msh:checkBox property="is${name}Address" label="Адрес"/>
+    		<msh:checkBox property="is${name}Attachment" label="Прикрепление"/>
     	</msh:row>
         <msh:row>
             <td colspan="8" align="center">
@@ -116,6 +117,7 @@
 		     		$('${patientField}').value,fondFiodr,fondDocument,fondPolicy,fondAdr
 		     		,$('is${name}Patient').checked,$('is${name}Policy').checked
 		     		,$('is${name}Document').checked,$('is${name}Address').checked
+		     		,$('is${name}Attachment').checked
 		     		 ,{
 		                   callback: function(aString) {
 		                      //alert("Данные обновлены") ;
