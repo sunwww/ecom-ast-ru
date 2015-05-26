@@ -197,6 +197,7 @@ public class FondWebService {
     			.append(o).append("#").append(dr).append("#")
     			.append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("#").append(aRz).append("#")
     			.append(dateDeath).append("#")
+    			.append(attLpu).append("#").append(attType).append("#").append(attDate).append("#")
     			.append("'/>").append("</td>") ;
            	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
