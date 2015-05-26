@@ -30,6 +30,8 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
+import ru.ecom.jaas.ejb.domain.SoftConfig;
 import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
 import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
@@ -38,8 +40,10 @@ import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
+import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
@@ -300,7 +304,7 @@ public class PatientServiceBean implements IPatientService {
 	public boolean updateDataByFond(String aUsername, Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress
 			,boolean aIsPatient, boolean aIsPolicy
-			, boolean aIsDocument, boolean aIsAddress) {
+			, boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment) {
 		String[] fiodr =null;
 		String curDate = DateFormat.formatToDate(new java.util.Date()) ;
 		
@@ -339,8 +343,85 @@ public class PatientServiceBean implements IPatientService {
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 						
 					}
-				}
+				}				
+				
 			}
+			if (aIsAttachment){
+				if (fiodr.length>7 && fiodr[7]!=null&&!fiodr[7].equals("")) { //Импорт данных прикрепления
+					SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig where key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
+					String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
+					RegInsuranceCompany insCompany =null; 
+					if (aPolicy!=null&&!aPolicy.equals("")) {
+						String[] policies = aPolicy.split("&");
+						for (String policy: policies) {
+							String[] policyInfo = policy.split("#");
+					//		System.out.println("-----------------------POLICY"+policy);
+							if (policyInfo[6].equals("1")) {
+					//			System.out.println("----------Найден актуальный полис: "+policy);
+								insCompany = (RegInsuranceCompany) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
+										.setParameter("code", policyInfo[0]).getResultList().get(0);
+								break;
+								
+							}
+						}
+					}
+			if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
+					
+					List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
+							.setParameter("pat", aPatientId).getResultList();
+					VocAttachedType attType = (VocAttachedType) theManager.createQuery("from VocAttachedType where code=:code")
+							.setParameter("code", attachedType).getResultList().get(0);
+					
+					if (attachments.isEmpty()) { // Создаем новое 
+				//		System.out.println("------ ATT NOT FOUND, Создаем новое!!!");
+						String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig where key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
+						MisLpu lpuAtt = null;
+						if (lpuId!=null&&lpuId.equals("")) {
+							MisLpu lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
+						}
+						
+						if (lpuAtt!=null) {
+				//			System.out.println("Найденное ЛПУ - "+lpuAtt.getFullname());
+							LpuAttachedByDepartment att = new LpuAttachedByDepartment();
+							att.setPatient(theManager.find(Patient.class, aPatientId));
+							att.setLpu(lpuAtt);
+							att.setAttachedType(attType);
+							try {
+								Date dat = DateFormat.parseSqlDate(attachedDate) ;
+								att.setDateFrom(dat);
+								att.setCompany(insCompany);
+								att.setCreateUsername("fond_check");
+								//Указать участок!!!
+								theManager.persist(att);
+								System.out.println("------- Прикрепление создано! Пациент = "+aPatientId);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								System.out.println("Дата не распознана "+attachedDate);
+								e.printStackTrace();
+							}
+						} else {
+							System.out.println("ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано");
+						}
+						
+					} else  { // Обновляем существующее 
+						for (LpuAttachedByDepartment a: attachments) {
+							if (a.getAttachedType().equals(attType)) {
+		//						System.out.println("------ ATT FOUND!!!, обновляем существующее, "+a.getId());
+								StringBuilder str = new StringBuilder();
+								str.append("update LpuAttachedByDepartment set dateFrom=to_date('").append(attachedDate)
+									.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"',editusername='fond_check' where id='").append(a.getId()).append("'");
+								theManager.createNativeQuery(str.toString()).executeUpdate();
+								System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
+								} else {
+									System.out.println("Найдено прикрепление с другим типом, прикрепление не создано");
+								}
+						}
+					}
+				}
+				
+			}
+		}
+			
 		}
 		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
 			String[] doc = aDocument.split("#") ;
