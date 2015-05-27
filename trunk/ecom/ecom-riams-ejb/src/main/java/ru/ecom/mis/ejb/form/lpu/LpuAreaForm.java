@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -67,4 +68,21 @@ public class LpuAreaForm extends IdNameCommentEntityForm {
     private String theNumber ;
     /** ЛПУ */
     private Long theLpu ;
+    /** Участковый */
+	@Comment("Участковый")
+	@Persist @Required
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+
+	/** Участковый */
+	private Long theWorkFunction;
+	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	@Persist @Required
+	public String getCodeDepartment() {return theCodeDepartment;}
+	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
+
+	/** Код подразделения */
+	private String theCodeDepartment;
 }
