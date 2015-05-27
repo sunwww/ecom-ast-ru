@@ -377,7 +377,7 @@ public class PatientServiceBean implements IPatientService {
 						String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig where key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
 						MisLpu lpuAtt = null;
 						if (lpuId!=null&&lpuId.equals("")) {
-							MisLpu lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
+							lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
 						}
 						
 						if (lpuAtt!=null) {

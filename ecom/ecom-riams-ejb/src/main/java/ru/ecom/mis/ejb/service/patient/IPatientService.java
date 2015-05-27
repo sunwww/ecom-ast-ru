@@ -34,7 +34,7 @@ public interface IPatientService {
 	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) ;
 	public boolean updateDataByFond(String aUsername,Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress,boolean aIsPatient, boolean aIsPolicy
-			, boolean aIsDocument, boolean aIsAddress) ;
+			, boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment) ;
 	public boolean updateOrCreatePolicyByFond(Long aPatientId, String aRz, String aLastname, String aFirstname
 			, String aMiddlename, String aBirthday, String aComp, String aSeries
 			, String aNumber, String aDateFrom, String aDateTo,String aCurrentDate) ;
