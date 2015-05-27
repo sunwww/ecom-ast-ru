@@ -90,7 +90,7 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 
 	/** Участок */
 	@Comment("Участок")
-	@Persist
+	@Persist @Required
 	public Long getArea() {
 		return theArea;
 	}
