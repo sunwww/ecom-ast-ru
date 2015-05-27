@@ -4,18 +4,40 @@ function printInfoPatientByMedcase(aCtx, aParams) {
 			, new java.lang.Long(aParams.get("id"))) ;
 	return printInfoByPatient(medCase,aCtx) ;
 }
+function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
+	l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
+	if (l.isEmpty()) {
+		return aValueDefault ;
+	} else {
+		return l.get(0)[1] ;
+	}
+}
 function printInfoByPatient(aPatient,aCtx) {
 	var map = new java.util.HashMap() ;
 	var polList = aPatient.medPolicies ;
 	var policy = null ;
-	//for(var i = 0; i<polList.size(); i++) {	
+	map.put("address_lpu",getDefaultParameterByConfig("address_lpu","___________________",aCtx)) ;
+	map.put("name_lpu",getDefaultParameterByConfig("name_lpu","___________________",aCtx)) ;
+	map.put("ogrn_lpu",getDefaultParameterByConfig("ogrn_lpu","___________________",aCtx)) ;
+	map.put("okud_lpu",getDefaultParameterByConfig("okud_lpu","_________",aCtx)) ;
+	map.put("okpo_lpu",getDefaultParameterByConfig("okpo_lpu","_________",aCtx)) ;
 	policy = polList.size()>0?polList.get(polList.size()-1):"" ;
-	//}	
 	map.put("pat", aPatient) ;
 	
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var psychDate = null ;
+	//if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
+		var psa=aCtx.manager.createNativeQuery("select pcc.id,to_char(pcc.firstPsychiatricVisitDate,'dd.mm.yyyy')"+
+				" from PsychiatricCareCard pcc where pcc.patient_id="+aPatient.id).getResultList() ;
+		if (psa.isEmpty()) {
+			map.put("currentDate",FORMAT_2.format(currentDate)) ;
+		} else {
+			psychDate = psa.get(0)[1] ;
+		}
+	//} 
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	map.put("psychDate",psychDate) ;
 	var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(currentDate) ;
 	cal.add(java.util.Calendar.DATE,14) ;
@@ -26,7 +48,7 @@ function printInfoByPatient(aPatient,aCtx) {
 		map.put("card.code",medcard.number) ;
 		map.put("card.cardIndex",medcard.cardIndex!=null?medcard.cardIndex.name:"") ;
 	} else {
-		map.put("card.code","") ;
+		map.put("card.code",aPatient.patientSync) ;
 		map.put("card.cardIndex","") ;
 	}
 	var listInv = aCtx.manager.createQuery("from Invalidity where patient_id=:pat and (nextRevisionDate>=CURRENT_DATE or withoutExam='1') order by dateFrom desc,revisionDate desc,lastRevisionDate desc")
@@ -62,60 +84,49 @@ function printInfoByPatient(aPatient,aCtx) {
 		areaText = area.getName() + ",  "+area.getComment()  ;
 	}
 	map.put("areaText", areaText) ;
-	var ddD = null;var ddMkb=null ;
+	var ddList = new java.util.ArrayList() ;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
-		var sqlD = "select to_char(case when (select max(po1.startDate) from psychiaticObservation po1"
-			+" 				 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" 				 where po.careCard_id=po1.careCard_id and vpac1.code!='Д') is null"
-			+" 				then"
-			+" 				(select min(po2.startDate) from psychiaticObservation po2 where" 
-			+" 				po.careCard_id=po2.careCard_id)"
-			+" 					else"
-			+" 					(select min(po2.startDate) from psychiaticObservation po2 where"
-			+" 					po.careCard_id=po2.careCard_id and po2.startDate>"
-			+" 					 (select max(po1.startDate) from psychiaticObservation po1"
-			+" 					 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" 					 where po.careCard_id=po1.careCard_id and vpac1.code!='Д')"
-			+" 					)"
-			+" 					end,'dd.mm.yyyy')"
-			+" 					as ddmin"
+		var sqlD = "select to_char(lpcc.startdate,'dd.mm.yyyy') as p1ocode";
+		 +"  , to_char(lpcc.finishdate,'dd.mm.yyyy')  as p2ocode";
+		 +" ,(select mkb.code||'#'||mkb.name from diagnosis d left";
+		 +" join vocidc10 mkb on mkb.id=d.idc10_id";
+		 +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id";
+		 +" where d.patient_id=pcc.patient_id and d.medcase_id is ";
+		 +" null and vpd.code='1'";
+		 +" and d.establishDate=(select max(d1.establishDate) from";
+		 +" diagnosis d1";
+		 +" left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id";
+		 +" where d1.patient_id=pcc.patient_id and d1.medcase_id";
+		 +"  is null and vpd1.code='1'";
+		 +"   and d1.establishDate<=coalesce(lpcc.finishdate,current_date))) as mkbcode";
 
-			+" 					,case when vpac.code='Д' then vpac.code else null end as pocode"
+		 +"   from psychiaticObservation po";
+		 +"  left join LpuAreaPsychCareCard lpcc on lpcc.id=po.lpuAreaPsychCareCard_id";
+		 +"   left join VocpsychambulatoryCare vpac on";
+		 +"  vpac.id=po.ambulatoryCare_id";
 
-			+" 					 ,(select mkb.code from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id "
-			+" 							 left join vocprioritydiagnosis vpd on vpd.id=d.priority_id "
-			+" 							 where d.patient_id='"+aPatient.id+"' and d.medcase_id is null and vpd.code='1'"
-			+" 					 and d.establishDate=(select max(d1.establishDate) from diagnosis d1 "
-			+" 							 left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id "
-			+" 							 where d1.patient_id='"+aPatient.id+"' and d1.medcase_id is null and vpd1.code='1'"
-			+" 					 and d1.establishDate<=current_date)) as mkbcode"
-
-			+" 					 from psychiaticObservation po"
-			+" 					 left join VocpsychambulatoryCare vpac on vpac.id=po.ambulatoryCare_id"
-			+" 					 left join PsychiatricCareCard pcc on pcc.id=po.careCard_id"
-			+" 					 where pcc.patient_id='"+aPatient.id+"'"
-				 
-			+" 					 having (select max(po1.startDate) from psychiaticObservation po1"
-			+" 					 left join VocpsychambulatoryCare vpac1 on vpac1.id=po1.ambulatoryCare_id"
-			+" 					 where po.careCard_id=po1.careCard_id"
-			+" 					 )=po.startdate";
-
+		 +" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id";
+		 +" where pcc.patient_id='"+aPatient+"' and vpac.code='Д'";
+         +" order by po.startdate" ;
 			
 			
 			
-		var listD = aCtx.manager.createNativeQuery(sqlD).setMaxResults(1).getResultList() ;
+		var listD = aCtx.manager.createNativeQuery(sqlD).getResultList() ;
+		var dd = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		if (listD.size()>0) {
 			var objD = listD.get(0) ;
 			if (objD[1]!=null ) {
-				ddD=objD[0] ;
-				ddMkb=objD[2] ;
+				dd.set1(objD[0]) ;
+				dd.set2(objD[1]) ;
+				dd.set3(objD[2]!=null?objD[2].split("#")[0]:null) ;
+				dd.set4(objD[2]!=null?objD[2].split("#")[1]:null) ;
 			}
-			
-		}
-				
+		}	
 	} 
-	map.put("ddiag",ddD) ;
-	map.put("ddates",ddMkb) ;
+	map.put("ddates",ddD) ;
+	map.put("ddiag",ddMkb) ;
+	map.put("ddiagn",ddMkbn) ;
+	map.put("ddlist",ddList) ;
 	return map ;
 }
 function printInfo(aCtx, aParams) {

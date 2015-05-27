@@ -2,6 +2,7 @@ function onPreCreate(aForm, aCtx) {
 	onPreSave(aForm,aCtx)
 }
 function onPreSave(aForm,aEntity, aCtx) {
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	checkAllDiagnosis (aCtx, aForm.id) ;
 	var date = new java.util.Date() ;
 	// Проверка введенных данных

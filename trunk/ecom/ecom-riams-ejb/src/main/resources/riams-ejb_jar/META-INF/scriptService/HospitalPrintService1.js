@@ -53,7 +53,7 @@ function printStatCards(aCtx, aParams) {
 		//wqr.set7(medCase.outcome) ;//"sls.outcome",
 		//wqr.set8(medCase.result) ;//"sls.result",
 		
-		//wqr.set9(medCase.daysCount) ;//"sls.daysCount", 
+		wqr.set9(medCase.daysCount) ;//"sls.daysCount", 
 		
 		//7. Доставлен по экстренным показания
 		wqr.set10(medCase.emergency!=null && medCase.emergency==true?"экстренные":"планово") ;
@@ -310,11 +310,12 @@ function printBillings(aCtx, aParams)
 		var retwq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		ret1.add(retwq) ;
 		if (medCase.result!=null&& (medCase.result.code=="11" || medCase.result.code=="15")) {
-			mapS.set8(ret1) ; //death
-			mapS.set9(ret2) ; //normal
-		} else {
 			mapS.set8(ret2) ;
 			mapS.set9(ret1) ;
+		} else {
+			mapS.set8(ret1) ; //death
+			mapS.set9(ret2) ; //normal
+			
 		}
 		ret.add(mapS) ;
 		

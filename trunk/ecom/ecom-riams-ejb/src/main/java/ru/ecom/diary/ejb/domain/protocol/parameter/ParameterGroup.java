@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -18,6 +20,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Группа параметров")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "parent" }) })
 public class ParameterGroup extends BaseEntity {
 	/** Наименование */
 	@Comment("Наименование")

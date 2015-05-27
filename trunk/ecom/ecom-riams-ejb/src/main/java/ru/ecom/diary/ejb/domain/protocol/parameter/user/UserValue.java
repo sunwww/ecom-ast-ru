@@ -1,10 +1,14 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter.user;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -14,6 +18,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "domain","name" }) })
 public class UserValue extends BaseEntity{
 	/** Значение */
 	@Comment("Значение")
@@ -30,5 +35,13 @@ public class UserValue extends BaseEntity{
 	private UserDomain theDomain;
 	/** Значение */
 	private String theName;
+	
+	/** Кол-во баллов */
+	@Comment("Кол-во баллов")
+	public BigDecimal getCntBall() {return theCntBall;}
+	public void setCntBall(BigDecimal aCntBall) {theCntBall = aCntBall;}
+
+	/** Кол-во баллов */
+	private BigDecimal theCntBall;
 
 }

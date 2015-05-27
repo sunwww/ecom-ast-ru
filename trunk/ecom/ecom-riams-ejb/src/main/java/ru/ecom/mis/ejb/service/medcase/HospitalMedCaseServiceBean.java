@@ -564,7 +564,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private WebQueryResult recordN2(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
     	
     	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[18],true,"") ;
-		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[19],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM","1",true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
@@ -733,6 +733,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
     	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
     	sql.append(" ,hdf.numberfond as f18numberfond") ;
+    	sql.append(" ,to_char(hdf.directDate,'yyyy-mm-dd') as f19directDate") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
     	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
@@ -755,7 +756,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and slo.prevMedCase_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
     	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
     	sql.append(" and (hdf.istable3 is null or hdf.istable3='0')") ;
     	sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
@@ -1018,11 +1019,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select hdf.numberFond as orderNumber");
-    	sql.append(" ,to_char(hdf.directdate,'yyyy-mm-dd') ");
+    	sql.append(" ,to_char(hdf.directDate,'yyyy-mm-dd') as direct");
     	sql.append(" ,hdf.directLpuCode as vsomccode");
     	sql.append(" ,hdf.DeniedHospital as DeniedHospital");
     	sql.append("  from HospitalDataFond hdf");
-    	sql.append(" where hdf.directDate between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
+    	sql.append(" where hdf.preHospDate between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and hdf.hospitalMedCase_id is null ");
     	sql.append(" and hdf.DeniedHospital is not null") ;
     	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
@@ -1147,26 +1148,26 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select hdf.numberfond as orderNumber");
-    	sql.append(" ,case when sls.emergency='1' then to_char(sls.dateFinish,'yyyy-mm-dd') else to_char(sls.orderDate,'yyyy-mm-dd') end as orderDate");
-    	sql.append(" ,case when sls.emergency='1' then cast('3' as varchar(1)) else cast('1' as varchar(1)) end as pokaz");
-    	sql.append(" ,coalesce(lpu.codef,plpu.codef)  as lpuSent");
-    	sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as datestart");
+    	sql.append(" ,to_char(hdf.directDate,'yyyy-mm-dd')  as orderDate");
+    	sql.append(" ,hdf.formHelp  as pokaz");
+    	sql.append(" ,hdf.DirectLpuCode  as lpuSent");
+    	sql.append(" ,to_char(coalesce(hdf.hospDate,sls.dateStart),'yyyy-mm-dd') as datestart");
     	sql.append(" ,to_char(sls.dateFinish,'yyyy-mm-dd') as dateFinish");
-    	sql.append(" ,cast(sls.entranceTime as varchar(5)) as entrancetime");
+    	sql.append(" ,cast(coalesce(hdf.hospTime,sls.entranceTime) as varchar(5)) as entrancetime");
     	sql.append(" ,vmc.code as medpolicytype");
     	sql.append(" ,mp.series as mpseries");
     	sql.append(" , mp.polnumber as polnumber");
     	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as oossmocode");
     	sql.append(" , ri.ogrn as ogrnSmo");
     	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as okatoSmo");
-    	sql.append(" ,p.lastname as lastname");
-    	sql.append(" ,p.firstname as firstname");
-    	sql.append(" ,p.middlename as middlename");
+    	sql.append(" ,hdf.lastname as lastname");
+    	sql.append(" ,hdf.firstname as firstname");
+    	sql.append(" ,hdf.middlename as middlename");
     	sql.append(" ,vs.omcCode as vsomccode");
-    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
-    	sql.append(" ,vbt.codeF as vbtomccode");
-    	sql.append(" ,ss.code as sscode");
-    	sql.append(" ,mkb.code as mkbcode");
+    	sql.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as birthday");
+    	sql.append(" ,hdf.profile as vbtomccode");
+    	sql.append(" ,hdf.statcard as sscode");
+    	//sql.append(" ,mkb.code as mkbcode");
     	sql.append(" ") ;
     	sql.append("  from medcase sls");
     	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
@@ -1182,17 +1183,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
-    	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
-    	sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
-    	sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
-    	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
-    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+    	//sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
+    	//sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
+    	//sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
+    	//sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
+    	//sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
-    	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
+    	sql.append(" and sls.deniedHospitalizating_id is null");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
-    	sql.append(" and mkb.code is not null") ;
+    	sql.append(" ") ;
     	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
+    	sql.append(" and (hdf.istable2='1' or hdf.istable3='1')") ;
     	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
     	sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
@@ -1466,7 +1468,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	StatisticStubStac.removeStatCardNumber(theManager, theContext,medCase);
     }
     public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
+    	
     	HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
+    	if (sls.getDateFinish()!=null) throw new IllegalArgumentException("На выписанных пациентов, предварительная выписка не оформляется!!!!");
     	sls.setDischargeEpicrisis(aDischargeEpicrisis) ;
     	theManager.persist(sls) ;
     }
@@ -1992,7 +1996,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append(" from MedCase sls");
 		query.append(" left join VocHospType vht on vht.id=sls.hospType_id");
 		query.append(" left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id");
-		query.append(" left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.dtype='DepartmentMedCase'");
+		query.append(" left join MedCase sloLast on sloLast.parent_id=sls.id and UPPER(sloLast.dtype)='DEPARTMENTMEDCASE'");
 		query.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
 		query.append(" left join MisLpu mlLast on mlLast.id=sloLast.department_id");
 		query.append(" left join MisLpu ml on ml.id=sls.department_id");
@@ -2005,7 +2009,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		query.append("	left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'");
 		query.append("	left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id");
 
-		query.append(" where sls.patient_id=:patient and (sls.DTYPE='HospitalMedCase' or sls.DTYPE='ExtHospitalMedCase') and  (sloLast.id is null or sloLast.transferDate is null) ");
+		query.append(" where sls.patient_id=:patient and UPPER(sls.DTYPE) IN ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') and  (sloLast.id is null or sloLast.transferDate is null) ");
 		query.append(" group by sls.id,sls.dtype,sls.dateStart,sls.dateFinish,vdh.id ,sls.username ,sls.emergency, ss.code,vdh.id,vdh.name ,ml.name,mlLast.name,vht.code");
 		query.append(" order by sls.dateStart");
 		 //Query query2 = theManager.createQuery(query.toString()) ;

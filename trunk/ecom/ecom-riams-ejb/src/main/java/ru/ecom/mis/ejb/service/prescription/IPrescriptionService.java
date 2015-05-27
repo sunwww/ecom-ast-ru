@@ -1,11 +1,14 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import org.json.JSONException;
+
 
 /**
  * Интерфейс сервиса для работы с назначениями
  * @author STkacheva
  */
 public interface IPrescriptionService {
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams,String aUsername) throws JSONException  ;
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) ;
 	
 	/**
@@ -14,7 +17,7 @@ public interface IPrescriptionService {
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
 	public boolean checkMedCaseEmergency(Long aId, String idType) ;
-	public boolean checkLabAnalyzed(Long aPrescriptId,String aUsername) ;
+	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) ;
 	
 	/**
 	 *  Получение списка типов назначений

@@ -201,4 +201,12 @@ public class MedService extends BaseEntity{
 
 	/** Подтип назначения */
 	private VocServiceSubType theServiceSubType;
+	
+	/** Короткое наименование */
+	@Comment("Короткое наименование")
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое наименование */
+	private String theShortName;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.form.protocol.parameter.user;
 
+import java.math.BigDecimal;
+
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -34,5 +36,14 @@ public class UserValueForm extends IdEntityForm {
 	private Long theDomain;
 	/** Значение */
 	private String theName;
+	
+	/** Кол-во баллов */
+	@Comment("Кол-во баллов")
+	@Persist
+	public String getCntBall() {return theCntBall;}
+	public void setCntBall(String aCntBall) {theCntBall = aCntBall;}
+
+	/** Кол-во баллов */
+	private String theCntBall;
 
 }

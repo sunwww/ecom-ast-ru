@@ -341,6 +341,19 @@ public class Invalidity extends BaseEntity{
 	/** Трудоспособен */
 	private Boolean theIsWorking;
 	
+	/** Есть другая инвалидность */
+	@Comment("Есть другая инвалидность")
+	public Boolean getIsOtherInvalidity() {
+		return theIsOtherInvalidity;
+	}
+
+	public void setIsOtherInvalidity(Boolean aIsOtherInvalidity) {
+		theIsOtherInvalidity = aIsOtherInvalidity;
+	}
+
+	/** Есть другая инвалидность */
+	private Boolean theIsOtherInvalidity;
+	
 	/** Первичность */
 	@Comment("Первичность")
 	public Boolean getInitial() {

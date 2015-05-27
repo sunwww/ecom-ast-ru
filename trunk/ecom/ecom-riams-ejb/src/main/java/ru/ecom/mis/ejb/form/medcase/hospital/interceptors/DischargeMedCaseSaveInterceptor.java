@@ -19,6 +19,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
+import sun.awt.windows.ThemeReader;
 
 public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
  
@@ -85,8 +86,8 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			/*List<VocPriorityDiagnosis> listpr = aManager.createQuery("from VocPriorityDiagnosis where code=1").getResultList() ;
 			if (listpr.size()>0) vocPriorType=listpr.get(0) ;*/
 			
-			List<Diagnosis> diagList = medCase.getDiagnosis() ;
-			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
+			List<Diagnosis> diagList = aManager.createQuery("from Diagnosis where medCase_id="+medCase.getId()).getResultList() ;
+			//if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 			for(Diagnosis diag:diagList){
 				if (!adding4) adding4=setDiagnosisByType(false,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, aManager,vocPriorType,form.getClinicalActuity()) ;
 				if (!adding5) adding5=setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
@@ -94,40 +95,40 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aManager,vocPriorType,null) ;
 				if (!adding6) adding6=setDiagnosisByType(false,diag, vocTypeConcluding, form.getConcomitantDiagnos(), form.getDateFinish(), form.getConcomitantMkb(), medCase, aManager,vocConcomType,null) ;
 				if (!adding7) adding7=setDiagnosisByType(false,diag, vocTypeConcluding, form.getComplicationDiagnos(), form.getDateFinish(), form.getComplicationMkb(), medCase, aManager,vocComplicationType,null) ;
-				if (adding4&&adding5&&adding3&&adding1&&adding7) break ;
+				if (adding4&&adding5&&adding3&&adding1&&adding7&&adding6) break ;
 			}
 			
 			if (!adding4) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, aManager,vocPriorType,form.getClinicalActuity()) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding5) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding3) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDateFinish(), form.getConcludingMkb(), medCase, aManager,vocPriorType,form.getConcludingActuity()) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding1) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aManager,vocPriorType,null) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding6) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcomitantDiagnos(), form.getDateFinish(), form.getConcomitantMkb(), medCase, aManager,vocConcomType,null) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding7) {
 				Diagnosis diag = new Diagnosis();
 				setDiagnosisByType(true,diag, vocTypeConcluding, form.getComplicationDiagnos(), form.getDateFinish(), form.getComplicationMkb(), medCase, aManager,vocComplicationType,null) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
-			medCase.setDiagnosis(diagList);
+			//medCase.setDiagnosis(diagList);
 			
 		}
 	}
@@ -141,8 +142,8 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 	public static boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
 		boolean result = false ;
 		if (!aNewIs) {
-			aNewIs = aDiag.getRegistrationType()!=null && aDiag.getRegistrationType().equals(aType) 
-				&& aDiag.getPriority()!=null && aDiag.getPriority().equals(aPriorityType)  
+			aNewIs = aDiag.getRegistrationType()!=null && aDiag.getRegistrationType().getCode().equals(aType.getCode()) 
+				&& aDiag.getPriority()!=null && aDiag.getPriority().getCode().equals(aPriorityType.getCode())  
 				//&& aDiag.getPriority()!=null && aDiag.getPrimary().equals(aPriorityType) 
 				; 
 		}
@@ -168,6 +169,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				aDiag.setPrimary(primary) ;
 				aDiag.setIllnesPrimary(illnes) ;
 			}
+			aManager.persist(aDiag) ;
 			result = true ;
 		}
 		

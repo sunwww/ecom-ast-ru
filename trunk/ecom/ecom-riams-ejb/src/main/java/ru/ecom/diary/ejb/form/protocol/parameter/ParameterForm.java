@@ -102,8 +102,8 @@ public class ParameterForm extends IdEntityForm{
 	/** Норма - минимальное значение */
 	@Comment("Норма - минимальное значение")
 	@Persist
-	public String getNormMininumBD() {return theNormMininumBD;}
-	public void setNormMininumBD(String aNormMininumBD) {theNormMininumBD = aNormMininumBD;}
+	public String getNormMinimumBD() {return theNormMinimumBD;}
+	public void setNormMinimumBD(String aNormMinimumBD) {theNormMinimumBD = aNormMinimumBD;}
 
 	/** Норма - максимальное значение */
 	@Comment("Норма - максимальное значение")
@@ -137,5 +137,14 @@ public class ParameterForm extends IdEntityForm{
 	/** Норма - максимальное значение */
 	private String theNormMaximumBD;
 	/** Норма - минимальное значение */
-	private String theNormMininumBD;
+	private String theNormMinimumBD;
+	
+	/** Значение по умолчанию для текстового поля */
+	@Comment("Значение по умолчанию для текстового поля")
+	@Persist
+	public String getValueTextDefault() {return theValueTextDefault;}
+	public void setValueTextDefault(String aValueTextDefault) {theValueTextDefault = aValueTextDefault;}
+ 
+	/** Значение по умолчанию для текстового поля */
+	private String theValueTextDefault;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +16,15 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
+import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
+import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
+import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -33,6 +42,9 @@ import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
+import ru.ecom.poly.ejb.domain.protocol.Protocol;
+import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 /**
  * Сервис для работы с назначениями
@@ -41,8 +53,93 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-	
-	public boolean checkLabAnalyzed(Long aPrescriptId,String aUsername) {
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams,String aUsername) throws JSONException {
+		Protocol d =null;
+		//if (aProtocolId!=null )) {
+		StringBuilder sql = new StringBuilder() ;
+		Visit m = theManager.find(Visit.class, aSmoId) ;
+		if (m!=null) {
+		List<Object> l = null;
+		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			sql = new StringBuilder() ;
+			sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId).append("") ;
+			l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			
+		}
+		if (l==null || l.isEmpty()) {
+			sql = new StringBuilder() ;
+			sql.append("select id from Diary where medCase_id=").append(aSmoId).append("") ;
+			l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+		}
+		if (!l.isEmpty()) {
+			Long idD = ConvertSql.parseLong(l.get(0)) ;
+			d = theManager.find(Protocol.class, idD) ;
+			theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
+		}
+		} else {
+			Long smo = checkLabAnalyzed(aPrescriptId,aUsername) ;
+			m = theManager.find(Visit.class, smo) ;
+		}
+		if (d == null) {
+			d = new RoughDraft() ;
+			d.setMedCase(m) ;
+			theManager.persist(d) ;
+		}
+		//}
+		JSONObject obj = new JSONObject(aParams) ;
+		JSONArray params = obj.getJSONArray("params");
+		StringBuilder sb = new StringBuilder() ;
+		for (int i = 0; i < params.length(); i++) {
+			boolean isSave = true ;
+			JSONObject param = (JSONObject) params.get(i);
+			FormInputProtocol fip = new FormInputProtocol() ;
+			fip.setDocProtocol(d) ;
+			Parameter p = theManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
+			fip.setParameter(p) ;
+			fip.setPosition(Long.valueOf(i+1)) ;
+			String type = String.valueOf(param.get("type"));
+			// 1-числовой
+			// 4-числовой с плав точкой
+			String value = String.valueOf(param.get("value"));
+			if (type.equals("1")||type.equals("4")) {
+				if (!StringUtil.isNullOrEmpty(value)) {
+					fip.setValueBD(new BigDecimal(value)) ;
+					if (sb.length()>0) sb.append("\n") ;
+					sb.append(param.get("name")).append(": ") ;
+					sb.append(value).append(" ") ;
+					sb.append(param.get("unitname")).append(" ") ;
+				}
+				//пользовательский справочник
+			} else if (type.equals("2")) {
+				Long id = ConvertSql.parseLong(value) ;
+				if (id!=null && !id.equals(Long.valueOf(0))) {
+					UserValue uv = theManager.find(UserValue.class, id) ;
+					fip.setValueVoc(uv) ;
+					if (sb.length()>0) sb.append("\n") ;
+					sb.append(param.get("name")).append(": ") ;
+					sb.append(param.get("valueVoc")).append(" ") ;
+					sb.append(param.get("unitname")).append(" ") ;
+				}
+				//3-текстовый
+				//5-текстовый с ограничением
+			} else if (type.equals("3")||type.equals("5")) {
+				if (!StringUtil.isNullOrEmpty(value)) {
+					fip.setValueText(String.valueOf(value)) ;
+					if (sb.length()>0) sb.append("\n") ;
+					sb.append(param.get("name")).append(": ") ;
+					sb.append(value).append(" ") ;
+					sb.append(param.get("unitname")).append(" ") ;
+				}
+			}
+			theManager.persist(fip) ;
+		}
+		d.setRecord(sb.toString()) ;
+		theManager.persist(d) ;
+		m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
+		theManager.persist(m) ;
+		return "" ;
+	}
+	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
 		sql.append(" when slo.dtype='Visit' then sls.id else slo.id end as pmo") ;
@@ -54,7 +151,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
 		if (list.isEmpty() || wf.isEmpty()) {
-			return false ;
+			return null ;
 		} else {
 			Object[] objs = list.get(0) ;
 			Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
@@ -63,7 +160,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			WorkFunction ps = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[2])) ;
 			WorkFunction pc = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[3])) ;
 			WorkFunction wfCur = theManager.find(WorkFunction.class, ConvertSql.parseLong(wf.get(0))) ;
-			MedService ms = theManager.find(MedService.class, ConvertSql.parseLong(objs[3])) ;
+			MedService ms = theManager.find(MedService.class, ConvertSql.parseLong(objs[4])) ;
 			long date = new java.util.Date().getTime() ;
 			Visit vis = new Visit() ;
 			vis.setParent(mc) ;
@@ -74,7 +171,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			vis.setCreateTime(new java.sql.Time(date)) ;
 			vis.setUsername(aUsername) ;
 			ServiceMedCase smc = new ServiceMedCase() ;
-			
 			smc.setPatient(pat) ;
 			smc.setMedService(ms) ;
 			smc.setParent(vis) ;
@@ -89,9 +185,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			theManager.persist(smc) ;
 			theManager.persist(pres) ;
 			//theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
+			return  vis.getId();
 		}
 		
-		return true ;
+		
 	}
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) {
 		PrescriptListTemplate temp = new PrescriptListTemplate() ;
