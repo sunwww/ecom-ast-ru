@@ -27,8 +27,8 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
 public class FondWebService {
-	private static String theAddress = "192.168.4.2" ;
-	//private static String theAddress = "vipnet" ;
+	//private static String theAddress = "192.168.4.2" ;
+	private static String theAddress = "vipnet" ;
 	//private static String theAddress = "192.168.10.179" ;
 	private static String theLpu = "1" ;
 	//private final static String theAddress = "srv-kir" ;
