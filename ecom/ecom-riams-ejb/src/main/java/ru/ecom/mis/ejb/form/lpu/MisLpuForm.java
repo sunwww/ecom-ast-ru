@@ -501,4 +501,13 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** По умолчанию снилс врача генерации направлений для 263 приказа */
 	private String theSnilsDoctorDirect263;
+	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	@Persist @Required
+	public String getCodeDepartment() {return theCodeDepartment;}
+	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
+
+	/** Код подразделения */
+	private String theCodeDepartment;
 }
