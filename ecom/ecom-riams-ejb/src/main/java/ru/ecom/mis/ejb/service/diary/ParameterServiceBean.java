@@ -23,6 +23,9 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
+import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
+import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
+import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
 import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
 import ru.ecom.diary.ejb.service.protocol.ParameterPage;
 import ru.ecom.diary.ejb.service.protocol.ParameterType;
@@ -35,7 +38,10 @@ import ru.ecom.diary.ejb.service.protocol.field.TextField;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
+import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.StringUtil;
 /**
  * Сервис для работы с параметрами
@@ -47,7 +53,24 @@ import ru.nuzmsh.util.StringUtil;
 @Remote(IParameterService.class)
 @SecurityDomain("other")
 public class ParameterServiceBean implements IParameterService{
-	
+	public Long createProtocolDrForCreateParam(Long aSmoId, Long aTemplate) {
+		MedCase smo = theManager.find(MedCase.class, aSmoId) ;
+		RoughDraft draft = new RoughDraft() ;
+		draft.setMedCase(smo) ;
+		theManager.persist(draft) ;
+		List<ParameterByForm> listParam = theManager.createNativeQuery("from ParameterByForm where template_id="+aTemplate).getResultList() ;
+		//TODO ошибка доделать
+		if (listParam.isEmpty()) {}
+		for (ParameterByForm pf:listParam) {
+			FormInputProtocol pfnew = new FormInputProtocol() ;
+			pfnew.setParameter(pf.getParameter()) ;
+			pfnew.setPosition(pf.getPosition()) ;
+			pfnew.setDocProtocol(draft) ;
+			theManager.persist(pfnew) ;
+		}
+		
+		return draft.getId() ;
+	}
 	public List<ParameterType> loadParameterType()  {
 		List<ParameterType> list = new LinkedList<ParameterType>()  ;
 		try {

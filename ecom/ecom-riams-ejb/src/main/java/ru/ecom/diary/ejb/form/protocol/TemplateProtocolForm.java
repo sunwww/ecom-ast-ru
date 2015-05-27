@@ -69,4 +69,13 @@ public class TemplateProtocolForm extends IdEntityForm{
 	private Long theMedService;
 	/** Заголовок */
 	private String theTitle;
+	
+	/** Тип шаблона */
+	@Comment("Тип шаблона")
+	@Persist
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
+
+	/** Тип шаблона */
+	private Long theType;
 }

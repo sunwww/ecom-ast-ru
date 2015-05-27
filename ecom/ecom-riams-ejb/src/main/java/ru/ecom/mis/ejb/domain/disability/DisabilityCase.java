@@ -69,7 +69,7 @@ public class DisabilityCase extends BaseEntity{
 	@Comment("Продолжительность")
 	@Transient
 	public String getDuration() {
-		return DurationUtil.getDuration(getDateFrom(), getDateTo());
+		return DurationUtil.getDurationMedCase(getDateFrom(), getDateTo(),1,1);
 	}
 	
 	/** Документы нетрудоспособности */

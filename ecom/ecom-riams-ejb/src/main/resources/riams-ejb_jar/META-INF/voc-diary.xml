@@ -84,7 +84,18 @@
                 queryConvertType = 'FIRST_UPPER'
                 />
     </voc>
-
+    <voc id="userValue" type="NativeVocService">
+    	<NativeVocService
+		    	from=" UserValue as ul "
+		    	parent='ul.domain_id=:parent '
+		    	nameId="ul.id"
+		    	join=" "
+		    	queryAppend=" "
+		    	order=""
+		    	queried=" upper(ul.name) like UPPER(:query) or cast(ul.id as varchar(10)) like (:query) "
+		    	names = " ul.name "
+    	/>
+    </voc>
     <voc id='TemplateProtocolNew' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol'

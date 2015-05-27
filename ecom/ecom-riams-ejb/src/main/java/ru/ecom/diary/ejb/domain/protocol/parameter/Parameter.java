@@ -98,8 +98,8 @@ public class Parameter extends BaseEntity{
 	
 	/** Норма - минимальное значение */
 	@Comment("Норма - минимальное значение")
-	public String getNormMininumBD() {return theNormMininumBD;}
-	public void setNormMininumBD(String aNormMininumBD) {theNormMininumBD = aNormMininumBD;}
+	public String getNormMinimumBD() {return theNormMinimumBD;}
+	public void setNormMinimumBD(String aNormMinimumBD) {theNormMinimumBD = aNormMinimumBD;}
 
 	/** Норма - максимальное значение */
 	@Comment("Норма - максимальное значение")
@@ -129,9 +129,17 @@ public class Parameter extends BaseEntity{
 	/** Норма - максимальное значение */
 	private String theNormMaximumBD;
 	/** Норма - минимальное значение */
-	private String theNormMininumBD;
+	private String theNormMinimumBD;
 	/** Единица измерения */
 	private VocMeasureUnit theMeasureUnit;
 	/** Наименование */
 	private String theName;
+	
+	/** Значение по умолчанию для текстового поля */
+	@Comment("Значение по умолчанию для текстового поля")
+	public String getValueTextDefault() {return theValueTextDefault;}
+	public void setValueTextDefault(String aValueTextDefault) {theValueTextDefault = aValueTextDefault;}
+
+	/** Значение по умолчанию для текстового поля */
+	private String theValueTextDefault;
 }

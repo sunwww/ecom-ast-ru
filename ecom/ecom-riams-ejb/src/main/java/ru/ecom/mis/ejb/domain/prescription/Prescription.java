@@ -17,6 +17,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason;
@@ -36,6 +38,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Назначение")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes(value = { @AIndex(properties = { "intakeDate" }) })
 public abstract class Prescription extends BaseEntity{
 
 	/** Лист назначений */

@@ -257,10 +257,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd.duplicate_id as f_duplicate"+
 	",vddp.code as f_primary"+
 	",case when p1.id is not null and p1.id!=p.id then p1.lastname||' '||p1.firstname||' '||p1.middlename else p12.lastname||' '||p12.firstname||' '||p12.middlename end as serv1_fio"+
-	",case when p1.id is not null and p1.id!=p.id then p1.birthday else p12.birthday end as serv1_age "+
+	",case when p1.id is not null and p1.id!=p.id then to_char(p1.birthday,'yyyy-MM-dd') else to_char(p12.birthday,'yyyy-MM-dd') end as serv1_age "+
 	",case when p1.id is not null and p1.id!=p.id then vkr1.code else vkr1.oppositeRoleCode end as serv1_relation"+
 	",case when p2.id is not null and p2.id!=p.id then p2.lastname||' '||p2.firstname||' '||p2.middlename else p22.lastname||' '||p22.firstname||' '||p22.middlename end as serv2_fio"+
-	",case when p2.id is not null and p2.id!=p.id then p2.birthday else p22.birthday end as serv2_age "+
+	",case when p2.id is not null and p2.id!=p.id then to_char(p2.birthday,'yyyy-MM-dd') else to_char(p22.birthday,'yyyy-MM-dd') end as serv2_age "+
 	",case when p2.id is not null and p2.id!=p.id then vkr2.code else vkr2.oppositeRoleCode end as serv2_relation"+
 	",p2.lastname||' '||p2.firstname||' '||p2.middlename as serv2_fio"+
 	",p2.birthday as serv2_age "+
@@ -295,11 +295,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	" left join kinsman k1 on k1.id=dc.nursingperson1_id "+
 	" left join vockinsmanrole vkr1 on vkr1.id=k1.kinsmanrole_id "+
 	" left join patient p1 on p1.id=k1.kinsman_id "+
-	" left join patient p12 on p1.id=k1.person_id "+
+	" left join patient p12 on p12.id=k1.person_id "+
 	" left join kinsman k2 on k2.id=dc.nursingperson2_id "+
 	" left join vockinsmanrole vkr2 on vkr2.id=k2.kinsmanrole_id "+
 	" left join patient p2 on p2.id=k2.kinsman_id "+
-	" left join patient p22 on p2.id=k2.person_id "+
+	" left join patient p22 on p22.id=k2.person_id "+
 	" left join statisticstub ss on ss.code=dd.hospitalizednumber and ss.year=cast(to_char(dd.hospitalizedfrom,'yyyy')as int) "+
 	" left join medcase mc on mc.id=ss.medcase_id "+
 	" left join mislpu ml1 on ml1.id=mc.lpu_id "+

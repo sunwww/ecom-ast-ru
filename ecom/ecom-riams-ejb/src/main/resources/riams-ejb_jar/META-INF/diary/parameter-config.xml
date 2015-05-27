@@ -3,6 +3,9 @@
     <parameter id='1' type='Integer' name='Числовой' >
     	<fields>
     		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр числовой' colSpan='4'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' fieldColSpan='3' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -31,6 +34,9 @@
     <parameter id='4' type='String' name='Числовой с плавающей точкой' >
     	<fields>
     		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр числовой с плавающей точкой' colSpan='4'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -41,8 +47,9 @@
     			vocName='vocMeasureUnit' horizontalFill='true'/>
     		<field type='row' open='0'/>		
     		<field type='row' open='1'/>
-    		<field property='cntDecimal' type='textField' label='Кол-во знаков полсе запятой' size='50' required='falser'/>
+    		<field property='cntDecimal' type='textField' label='Кол-во знаков после запятой' size='50' required='falser'/>
     		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
     		<field type='separator' label='Референтный интервал' colSpan='4'/>
     		<field type='row' open='0'/>    		
     		<field type='row' open='1'/>
@@ -61,6 +68,9 @@
 	<parameter id='2' type='VocUser' name='Пользовательский справочник' >
     	<fields>
     		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр пользовательский справочник' colSpan='4'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -72,17 +82,23 @@
     		<field type='row' open='0'/>		
     		<field type='row' open='1'/>
     		<field property='valueDomain' type='autoComplete' label='Справочник'
-    			vocName='valueDomain' horizontalFill='true'/>
+    			vocName='valueDomain' horizontalFill='true' viewUrl='entityView-diary_userDomain.do?short=Short'/>
     		<field type='row' open='0'/>
     	</fields>
 	</parameter>
     <parameter id='3' type='String' name='Текстовый' >
     	<fields>
     		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр текстовый' colSpan='4'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
     		<field property='name' type='textField' label='Полное название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='valueTextDefault' type='textField' label='Значение по умолчанию' size='50' />
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>    
     		<field property='measureUnit' type='autoComplete' label='Ед.измерения'
@@ -90,8 +106,11 @@
     		<field type='row' open='0'/>		
     	</fields>
 	</parameter>
-    <parameter id='4' type='String' name='Текстовое поле с ограничением' >
+    <parameter id='5' type='String' name='Текстовое поле с ограничением' >
     	<fields>
+    		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр текстовое поле с ограничением' colSpan='4'/>
+    		<field type='row' open='0'/>
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>

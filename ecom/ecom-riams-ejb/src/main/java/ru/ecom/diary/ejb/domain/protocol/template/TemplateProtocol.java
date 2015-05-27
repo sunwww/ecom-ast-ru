@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,7 +33,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-    @AIndex(properties="username")
+	@AIndex(properties="username")
+    ,@AIndex(properties="medService")
     }) 
 @EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
@@ -50,6 +52,7 @@ public class TemplateProtocol extends BaseEntity {
     public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
 
     /** Тип шаблона */
+    @OneToOne
     public TemplateProtocolType getType() { return theType ; }
     public void setType(TemplateProtocolType aType) { theType = aType ; }
 
@@ -80,12 +83,6 @@ public class TemplateProtocol extends BaseEntity {
 	@Transient
 	public String getInformation() {return "";}
 
-	/** Параметры протокола */
-	@Comment("Параметры протокола")
-	@ManyToMany
-	public List<Parameter> getParameters() {return theParameters;}
-	public void setParameters(List<Parameter> aParameters) {theParameters = aParameters;}
-	
 	
 	@Comment("Информация по категориям")
 	@Transient
@@ -109,8 +106,7 @@ public class TemplateProtocol extends BaseEntity {
 	/** Группы пользователей */
 	private List<SecGroup> theSecGroups;
 
-	/** Параметры протокола */
-	private List<Parameter> theParameters;
+	
 	/** Медицинская услуга */
 	private MedService theMedService;
 	/** Дата создания */

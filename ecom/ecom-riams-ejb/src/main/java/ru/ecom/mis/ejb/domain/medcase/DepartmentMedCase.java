@@ -32,15 +32,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 }) 
 public class DepartmentMedCase extends HospitalMedCase {
 	
-	/** Дата перевода */
-	@Comment("Дата перевода")
-	public Date getTransferDate() {return theTransferDate;	}
-	public void setTransferDate(Date aTransferDate) {theTransferDate = aTransferDate;}
 
-	/** Время перевода */
-	@Comment("Время перевода")
-	public Time getTransferTime() {return theTransferTime;	}
-	public void setTransferTime(Time aTransferTime) {theTransferTime = aTransferTime;}
 
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
@@ -122,10 +114,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	private MedCase thePrevMedCase;
 	/** Отделение перевода */
 	private MisLpu theTransferDepartment;
-	/** Время перевода */
-	private Time theTransferTime;
-	/** Дата перевода */
-	private Date theTransferDate;
+
 	
 	/** Палата матери */
 	@Comment("Палата матери")

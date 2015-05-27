@@ -432,13 +432,23 @@ function printDocument(aCtx, aParams) {
 			var kinship = care.kinsmanRole.code ;
 			var kinpat = care.kinsman ;
 			if (kinpat!=null) {
+				if ((+kinpat.id)==(+pat.id)) {
+					kinpat = care.person ;
+					kinship = care.kinsmanRole.oppositeRoleCode 
+				}
 				var age = Packages.ru.nuzmsh.util.date.AgeUtil.calculateAge(kinpat.birthday,firstDate) ;
+				//throw ""+age ;
 				var age_ind1 = age.indexOf(".") ;
 				var age_ind2 = age.indexOf(".",age_ind1+1) ; 
 				age_ye=age.substring(0,age_ind1) ;
+				if (+age_ye>0) {
+					age_mo="" ;
+				} else {
+					age_mo=age.substring(age_ind1+1,age_ind2) ;
+					if (+age_mo<10) age_mo="0"+(+age_mo) ;
+				}
 				if (+age_ye<10) age_ye="0"+age_ye ;
-				age_mo=age.substring(age_ind1+1,age_ind2) ;
-				if (+age_mo<10) age_mo="0"+age_mo ;
+				
 			}
 		}
 		recordChar(age_ye,2,"doc.care"+i+".age.year") ;

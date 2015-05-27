@@ -47,7 +47,7 @@ public class DiaryServiceBean implements IDiaryService {
         return ret ;
     }
 	 public List<Object[]> loadParameterTableByMedService(long aTemplateId) {
-		List<Object[]> list = theManager.createNativeQuery("select p.parameter_id,par.name from ParameterByForm p left join Parameter par on par.id=p.parameter_id where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
+		List<Object[]> list = theManager.createNativeQuery("select p.parameter_id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm p left join Parameter par on par.id=p.parameter_id left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
 		return list ;
 	 }
 
@@ -59,40 +59,45 @@ public class DiaryServiceBean implements IDiaryService {
 			if (param!=null) parametersSet.add(ConvertSql.parseLong(param)) ;
 		}
 		
-		List<ParameterGroup> rootGroups = findRootGroups() ;
+		List<Object[]> rootGroups = findRootGroups() ;
 		
 		CheckNodeByGroup rootNode = new CheckNodeByGroup("g"+0, "/",false);
-		System.out.println("-G-"+rootNode.getName()) ;
-		for (ParameterGroup group : rootGroups) {
-			System.out.println("-ROOT--"+group.getId()+"-"+group.getName()) ;
-			CheckNodeByGroup node = new CheckNodeByGroup("g"+group.getId(),group.getName(),false) ;
+		//System.out.println("-G-"+rootNode.getName()) ;
+		for (Object[] group : rootGroups) {
+			Long id =ConvertSql.parseLong(group[0]) ;
+			//System.out.println("-ROOT--"+id+"-"+group[1]) ;
+			CheckNodeByGroup node = new CheckNodeByGroup("g"+id,""+group[1],false) ;
 			rootNode.getChilds().add(node);
-			addGroups(group,node,parametersSet) ;
-			addParameters(group,node,parametersSet);
+			addGroups(id,node,parametersSet) ;
+			addParameters(id,node,parametersSet);
 		}
 		
 		return rootNode;
 	}
-	private List<ParameterGroup> findRootGroups() {
-		return theManager.createQuery("from ParameterGroup where parent is null") .setMaxResults(100).getResultList();
+	private List<Object[]> findRootGroups() {
+		return theManager.createNativeQuery("select id,name from ParameterGroup where parent_id is null order by name") .setMaxResults(100).getResultList();
 	}
-	private void addGroups (ParameterGroup aGroups, CheckNode aNode, TreeSet<Long> aParameters) {
-		for (ParameterGroup group: aGroups.getChildGroups()) {
+	private void addGroups (Long aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
+		List<Object[]> listChild = theManager.createNativeQuery("select id, name from ParameterGroup where parent_id = :parent order by name").setParameter("parent", aGroup).getResultList() ;
+		for (Object[] group: listChild) {
+			Long id = ConvertSql.parseLong(group[0]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup(
-					"g"+group.getId() , new StringBuilder().append(group.getName()).toString(),false
+					"g"+group[0] , new StringBuilder().append(group[1]).toString(),false
 					) ;
 			aNode.getChilds().add(node) ;
-			System.out.println("-GR-"+aNode.getId()+"-"+node.getName()) ;
-			addGroups(group,node ,aParameters) ;
-			addParameters(group,node,aParameters);
+			//System.out.println("-GR-"+aNode.getId()+"-"+node.getName()) ;
+			addGroups(id,node ,aParameters) ;
+			addParameters(id,node,aParameters);
 		}
 	}
-	private void addParameters(ParameterGroup aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
-		for (Parameter param: aGroup.getParameters()) {
-			CheckNodeByParameter node = new CheckNodeByParameter("p"+param.getId(),
-					new StringBuilder().append(param.getName()).toString()
-					,aParameters.contains(param.getId()),param.getType());
-			System.out.println("-PAR-"+aNode.getId()+"-"+node.getName()) ;
+	private void addParameters(Long aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
+		List<Object[]> listChild = theManager.createNativeQuery("select par.id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,''),par.type as partype from Parameter par left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where par.group_id = :parent order by par.name").setParameter("parent", aGroup).getResultList() ;
+		
+		for (Object[] param: listChild) {
+			CheckNodeByParameter node = new CheckNodeByParameter("p"+param[0],
+					new StringBuilder().append(param[1]).toString()
+					,aParameters.contains(ConvertSql.parseLong(param[0])),ConvertSql.parseLong(param[2]));
+			//System.out.println("-PAR-"+aNode.getId()+"-"+node.getName()) ;
 			aNode.getChilds().add(node) ;
 		}
 	}
@@ -100,9 +105,7 @@ public class DiaryServiceBean implements IDiaryService {
 	public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdded, long[] aRemoved) {
 		TemplateProtocol protocol = theManager.find(TemplateProtocol.class, aProtocolId) ;
 		//theManager.refresh(protocol) ;
-		List<Parameter> params = protocol.getParameters() ;
-		if (params==null) params = new LinkedList<Parameter>() ;
-		System.out.println("ADDING");
+		//System.out.println("ADDING");
 		int i=0;
 		for (long idParam:aAdded) {
 			i++ ;
@@ -131,19 +134,17 @@ public class DiaryServiceBean implements IDiaryService {
 				}
 				
 			}
-			System.out.println("OK");
+			//System.out.println("OK");
 		}
-		System.out.println("REMOVED");
+		//System.out.println("REMOVED");
 		for(long idParam:aRemoved) {
-			System.out.println("removed id "+idParam);
+			//System.out.println("removed id "+idParam);
 			theManager.createNativeQuery("delete from ParameterByForm where template_id='"+aProtocolId+"' and parameter_id='"+idParam+"'").executeUpdate() ;
-			System.out.println("OK");
+			//System.out.println("OK");
 		}
-		System.out.println("Size params="+params.size());
-		protocol.setParameters(params);
-		theManager.persist(protocol) ;
+		//System.out.println("Size params="+params.size());
 		//theManager.refresh(protocol) ;
-		System.out.println("Size params after saving="+protocol.getParameters().size());
+		//System.out.println("Size params after saving="+protocol.getParameters().size());
 		
 	}
 	@EJB ILocalEntityFormService theEntityFormService ;

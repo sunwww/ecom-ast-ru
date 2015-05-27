@@ -434,4 +434,14 @@ public class InvalidityForm extends IdEntityForm{
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Есть другая инвалидность */
+	@Comment("Есть другая инвалидность")
+	@Persist
+	public Boolean getIsOtherInvalidity() {return theIsOtherInvalidity;}
+	public void setIsOtherInvalidity(Boolean aIsOtherInvalidity) {theIsOtherInvalidity = aIsOtherInvalidity;}
+
+	/** Есть другая инвалидность */
+	private Boolean theIsOtherInvalidity;
+
 }

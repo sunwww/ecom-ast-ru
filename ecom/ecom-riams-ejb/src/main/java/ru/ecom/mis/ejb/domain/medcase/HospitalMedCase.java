@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -48,10 +49,21 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class HospitalMedCase extends LongMedCase {
 
+	/** Дата перевода */
+	@Comment("Дата перевода")
+	public Date getTransferDate() {return theTransferDate;	}
+	public void setTransferDate(Date aTransferDate) {theTransferDate = aTransferDate;}
+
+	/** Время перевода */
+	@Comment("Время перевода")
+	public Time getTransferTime() {return theTransferTime;	}
+	public void setTransferTime(Time aTransferTime) {theTransferTime = aTransferTime;}
 
 
-
-
+	/** Время перевода */
+	private Time theTransferTime;
+	/** Дата перевода */
+	private Date theTransferDate;
 	/** Диагнозы */
 	@Comment("Диагнозы")
 	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
