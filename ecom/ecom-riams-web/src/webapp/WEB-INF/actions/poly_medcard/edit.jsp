@@ -45,7 +45,7 @@
     	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
     	left join worker w on w.id=wf.worker_id
     	left join patient wp on wp.id=w.person_id
-    	where smc.dtype='ShortMedCase' and m.id=${param.id} and smc.dateStart is not null 
+    	where UPPER(smc.dtype)='SHORTMEDCASE' and m.id=${param.id} and smc.dateStart is not null 
     	and smc.medcard_id=m.id
     	order by smc.dateStart desc
     	" maxResult="1" />
@@ -74,7 +74,7 @@
 			    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 			    	left join worker w on w.id=wf.worker_id
 			    	left join patient wp on wp.id=w.person_id
-					where smc.dtype='ShortMedCase' and card.id='${param.id}'
+					where UPPER(smc.dtype)='SHORTMEDCASE' and card.id='${param.id}'
 					and smc.dateStart is null 
 					and smc.medCard_id='${param.id}'
 					"

@@ -17,7 +17,7 @@
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-      <tags:diary_additionMenu />
+            <tags:voc_menu currentAction="diary_param_list" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -61,6 +61,8 @@
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
+    
+    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="diary_parameterForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />

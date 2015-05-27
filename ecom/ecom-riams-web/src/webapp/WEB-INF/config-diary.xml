@@ -45,6 +45,14 @@
                 >
             <forward name="success" redirect="true" path="/WEB-INF/actions/stat_protocol/list.jsp" />
         </action>
+        <action path='/smo_diary_parameterEdit' type='ru.ecom.diary.web.action.protocol.smo.ProtocolEditAction'
+                name='diary_parameterForm'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/entityEdit-diary_parameter.do" />
+            <forward name="success_file" redirect="false" path="/WEB-INF/actions/diary_parameter/file.jsp" />
+        </action>
         <action path='/diary_parameterEdit' type='ru.ecom.diary.web.action.protocol.parameter.ParameterEditAction'
                 name='diary_parameterForm'
                 validate='false'

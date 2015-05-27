@@ -43,9 +43,24 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				name="Анализ услуг " roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"
 				title="Анализ услуг "
 				/>
-			<msh:sideLink styleId="repconfig"
+			<msh:sideLink styleId="diary_param_list"
 				action="/js-rep_parameter-report_list.do" 
 				name="Параметры отчетов" roles="/Policy/Voc/ReportConfig/View"
 				title="Параметры отчетов"
 				/>
+				
+				        <msh:sideLink 
+        	action="/entityList-diary_userDomain.do" 
+        	name="⇧Пользов. справочники" 
+        	title="Просмотр пользовательских справочников" 
+        	styleId="diary_user_voc"
+        	roles="/Policy/Diary/User/Domain/View"
+        	/>
+        <msh:sideLink 
+        	action="/entityParentList-diary_parameterGroup.do?id=-1" 
+        	name="⇧Группы параметров" 
+        	title="Просмотр групп доступных параметров" 
+        	styleId="diary_parameterGroup"
+        	roles="/Policy/Diary/ParameterGroup/View"
+        	/>
 	    </msh:sideMenu>

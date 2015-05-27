@@ -25,3 +25,6 @@ function deleteMedService(aForm, aCtx) {
 function viewTableAll(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/mis_medServiceGroup/listAllService.jsp") ;
 }
+function viewTemplate(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/mis_medServiceGroup/listTemplate.jsp") ;
+}

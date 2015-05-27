@@ -99,20 +99,20 @@
           
           
           from MedCase
-           left  join WorkFunction owf  on MedCase.ownerFunction_id       = owf.id &#xA;
+           left  join WorkFunction owf  on MedCase.ownerFunction_id       = owf.id 
            left join Worker ow on ow.id=owf.worker_id
            left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
-            left outer join Patient owp on ow.person_id           = owp.id&#xA; 
-             left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tranDep.id&#xA; 
-              left outer join MisLpu postDep on MedCase.department_id           = postDep.id&#xA;
+            left outer join Patient owp on ow.person_id           = owp.id 
+             left outer join MisLpu tranDep on MedCase.transferDepartment_id           = tranDep.id 
+              left outer join MisLpu postDep on MedCase.department_id           = postDep.id
                left join BedFund on BedFund.id=MedCase.bedFund_id 
           left join VocServiceStream on VocServiceStream.id=MedCase.serviceStream_id
           left join OMC_STANDART osd on MedCase.omcStandart_id=osd.id
           left join OMC_STANDART ose on MedCase.omcStandartExpert_id=ose.id
                left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
-               where MedCase.parent_id=${param.id} &#xA;   and MedCase.DTYPE='DepartmentMedCase'
+               where MedCase.parent_id=${param.id}   and upper(MedCase.DTYPE)='DEPARTMENTMEDCASE'
                order by MedCase.dateStart,MedCase.entranceTime
-               " guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
+               " />
           <msh:table name="allSLOs" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="a99e7bed-cb69-49df-bbe6-ac9718cd22e0">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>

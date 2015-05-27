@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
  
         <msh:sideLink 
-        	action="/entityParentList-mis_medService.do?id=-1" 
+        	action="/entityParentList-mis_medServiceGroup.do?id=-1" 
         	name="⇧Медицинские услуги" 
         	title="Перейти к списку основному списку медицинских услуг" 
         	styleId="mis_medService"

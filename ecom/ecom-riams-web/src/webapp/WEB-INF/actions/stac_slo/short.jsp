@@ -157,12 +157,15 @@
       select d.id as did, d.dateRegistration as ddateRegistration
       , d.timeRegistration as dtimeRegistration, d.record as drecord 
      , vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
-      from Diary as d
+      from MedCase slo
+      left join MedCase aslo on aslo.parent_id=slo.parent_id
+      left join Diary as d on aslo.id=d.medCase_id
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
       left join Patient pw on pw.id=w.person_id
+      
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-            	where d.DTYPE='Protocol' and d.medCase_id='${param.id}' 
+            	where slo.id='${param.id}' and d.DTYPE='Protocol'
             	order by  d.dateRegistration desc,  d.timeRegistration desc"/>
 
           <msh:table hideTitle="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">

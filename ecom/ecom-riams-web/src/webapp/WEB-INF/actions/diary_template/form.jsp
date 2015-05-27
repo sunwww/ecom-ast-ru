@@ -34,7 +34,8 @@
         <msh:sideLink key="ALT+5" params="id" action="/diary_templatePrint" name="Форма печати" roles="/Policy/Diary/Template/Edit" guid="05503c33-989d1be735e97e" />
     </msh:sideMenu>--%>
     <msh:sideMenu title="Дополнительно">
-      <tags:diary_additionMenu />
+                  <tags:voc_menu currentAction="mis_medService" />
+
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="title" type="string">

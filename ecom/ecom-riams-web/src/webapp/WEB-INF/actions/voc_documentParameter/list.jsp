@@ -107,7 +107,7 @@ order by vdpg.name,vdp.id"/>
     <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
       <msh:sideLink params="" action="/entityPrepareCreate-voc_documentParameter" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
     </msh:sideMenu>
-    <tags:voc_menu currentAction="medService"/>
+    <tags:voc_menu currentAction="diary_param_list"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>

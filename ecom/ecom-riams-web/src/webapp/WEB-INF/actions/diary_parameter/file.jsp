@@ -17,7 +17,8 @@
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-      <tags:diary_additionMenu />
+                  <tags:voc_menu currentAction="diary_param_list" />
+
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -34,6 +35,28 @@
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
+    <msh:ifFormTypeIsView formName="diary_parameterForm">
+    <msh:section title="Список шаблонов, где присутствует данный параметер">
+    <ecom:webQuery name="list_template"
+    nativeSql="
+    select p.template_id,tp.title as tptitle
+,ms.id as msid,pms.name as pmsname
+,ms.code||' ('||ms.additioncode||') '||ms.name||' ('||coalesce(ms.shortname,'НЕТ СОКРАЩЕННОГО НАИМЕНОВАНИЯ!!!!')||') ' as msname
+
+from ParameterByForm p 
+left join TemplateProtocol tp on tp.id=p.template_id
+left join MedService ms on ms.id=tp.medService_id
+left join MedService pms on pms.id=ms.parent_id
+where p.parameter_id=${param.id} order by p.position
+    "
+    />
+    <msh:table name="list_template" action="entityParentView-diary_template.do" idField="1">
+    	<msh:tableColumn property="2" columnName="Шаблон"/>
+    	<msh:tableColumn property="4" columnName="Категория"/>
+    	<msh:tableColumn property="5" columnName="Наименование услуги"/>
+    </msh:table>
+    </msh:section>
+    </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="diary_parameterForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />

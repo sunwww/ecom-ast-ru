@@ -24,7 +24,7 @@
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
-      <tags:diary_additionMenu />
+      <tags:voc_menu currentAction="medService" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="title" type="string">

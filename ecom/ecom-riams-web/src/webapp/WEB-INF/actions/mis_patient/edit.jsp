@@ -80,7 +80,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
     	from medCase m
     	left join Diagnosis d on d.medCase_id=m.id
     	left join VocIdc10 mkb on mkb.id=d.idc10_id
-    	where m.patient_id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
+    	where m.patient_id=${param.id} and UPPER(m.DTYPE) IN ('VISIT','SHORTMEDCASE')
     	and m.dateStart is not null
     	group by m.id,m.dateStart
     	order by m.dateStart desc
@@ -108,7 +108,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
     	left join patient wp on wp.id=w.person_id
     	left join worker w1 on w1.id=wf1.worker_id
     	left join patient wp1 on wp1.id=w1.person_id
-    	where m.patient_id=${param.id} and (m.DTYPE='Visit' or m.dtype='ShortMedCase')
+    	where m.patient_id=${param.id} and upper(m.DTYPE) in ('VISIT','SHORTMEDCASE')
     	and m.dateStart is not null
     	order by m.dateStart desc
     	" maxResult="1" />
@@ -608,7 +608,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       <ecom:webQuery name="extDocument" nativeSql="
       	select d.id,vedt.name as vedtname,to_char(d.createDate,'dd.mm.yyyy')||coalesce(' '||cast(d.createTime as varchar(5)),''),d.referenceTo from Document d
       	left join VocExternalDocumentType vedt on vedt.id=d.type_id
-      	where d.dtype='ExternalDocument' and d.patient_id='${param.id}'
+      	where d.patient_id='${param.id}' AND UPPER(d.dtype)='EXTERNALDOCUMENT'
       "/>
       	<msh:table name="extDocument"
       	viewUrl="entityParentView-doc_externalDocument.do?short=Short" 
@@ -635,7 +635,7 @@ left join WorkFunction owf on owf.id=spo.ownerFunction_id
 left join Worker ow  on ow.id = owf.worker_id    
 left join Patient owp on ow.person_id           = owp.id  
 where spo.patient_id='${param.id}'     
-and spo.DTYPE='PolyclinicMedCase'    and spo.dateFinish is null " />
+and UPPER(spo.DTYPE)='POLYCLINICMEDCASE'    and spo.dateFinish is null " />
           <msh:table idField="1" name="openedSpos" action="entityParentView-smo_spo.do" guid="2b5a4a9c-3bf0-4e1a-a1d0-2884bdb3e011" noDataMessage="Нет открытых СПО">
             <msh:tableColumn columnName="№" identificator="false" property="sn" guid="96a6e146-6273-4318-a397-f07c0af06825" />
             <msh:tableColumn columnName="Номер" property="1" guid="7d9ea677-7644-4167-af7e-320593fcb061" />
@@ -666,7 +666,7 @@ left join WorkFunction pwf on smo.workFunctionPlan_id = pwf.id
 left join Worker pw on pwf.worker_id = pw.id 
 left join Patient ppw on pw.person_id = ppw.id 
 left join VocWorkFunction pvwf on pwf.workFunction_id = pvwf.id 
-where smo.patient_id='${param.id}' and smo.DTYPE='Visit' and smo.dateStart is null 
+where smo.patient_id='${param.id}' and UPPER(smo.DTYPE)='VISIT' and smo.dateStart is null 
 and (smo.noActuality is null or smo.noActuality='0')
 order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03fb5" />
           <msh:table guid="tableChilds" name="directions" action="entityParentEdit-smo_visit.do" idField="1">
@@ -696,7 +696,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					left join StatisticStub ss on sls.statisticStub_id = ss.id 
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
 					where sls.patient_id=${param.id} 
-						and sls.DTYPE='HospitalMedCase'  
+						and UPPER(sls.DTYPE)='HOSPITALMEDCASE'  
 					and sls.dischargeTime is null
 					and (sls.dateStart=CURRENT_DATE
 					 or sls.deniedHospitalizating_id is null)
@@ -723,14 +723,14 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					left join MisLpu ml on ml.id=sls.department_id
 					left join StatisticStub ss on sls.statisticStub_id = ss.id 
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
-					left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
+					left join MedCase slo on slo.parent_id=sls.id 
 					left join MisLpu ml1 on ml1.id=slo.department_id
 					where sls.patient_id=${param.id} 
-						and sls.DTYPE='HospitalMedCase'  
+						and UPPER(sls.DTYPE)='HOSPITALMEDCASE'  
 					and  sls.dischargeTime is null
 					and (sls.dateStart=CURRENT_DATE
 					 or sls.deniedHospitalizating_id is null and slo.transferDate is null)
-					 
+					 AND (UPPER(slo.dtype)='DEPARTMENTMEDCASE')
 					"  />
 		          <msh:table idField="1" name="openedSLSs"
 		          viewUrl="entityShortView-stac_ssl.do"
@@ -1159,6 +1159,37 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
 		eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
 		eventutil.addEnterSupport('foreignRegistrationAddress', 'buttonShowrealAddressAddress') ;
+		
+		function checkPatientLpu() {
+            var addressId = $('address').value ;
+            var houseNumber = $('houseNumber').value ;
+            var houseBuilding = $('houseBuilding').value ;
+            var flatNumber = $('flatNumber').value ;
+            var birthDay = $('birthday').value ;
+
+            var p = $('patientLpuDiv') ;
+            p.style.color = "gray";
+            p.innerHTML = "Вычисление...";
+            setSubmitButtonDisabled(true) ;
+
+            AddressService.findPatientLpu(addressId, houseNumber, houseBuilding, birthDay, flatNumber, {
+                callback: function(aString) {
+                    p.innerHTML = "Прикрепленное ЛПУ: " + aString;
+                    p.style.color = "blue";
+                    setSubmitButtonDisabled(false) ;
+                },
+                errorHandler: function(aMessage) {
+                    var s = new String(aMessage) ;
+                    s = s.replace("java.lang.IllegalStateException", "");
+                    s = s.replace("java.lang.IllegalStateException", "");
+                    s = s.replace("java.lang.IllegalArgumentException", "");
+                    p.innerHTML = s;
+                    p.style.color = "red";
+                    setSubmitButtonDisabled(true) ;
+                }
+            });
+			
+        }
 /*
       	function checkAttached() {
 			checkAttachedByDepartment() ;
@@ -1194,36 +1225,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			if(!attachedByPolicy) checkPatientLpu() ;
 		}
 		
-        function checkPatientLpu() {
-            var addressId = $('address').value ;
-            var houseNumber = $('houseNumber').value ;
-            var houseBuilding = $('houseBuilding').value ;
-            var flatNumber = $('flatNumber').value ;
-            var birthDay = $('birthday').value ;
-
-            var p = $('patientLpuDiv') ;
-            p.style.color = "gray";
-            p.innerHTML = "Вычисление...";
-            setSubmitButtonDisabled(true) ;
-
-            AddressService.findPatientLpu(addressId, houseNumber, houseBuilding, birthDay, flatNumber, {
-                callback: function(aString) {
-                    p.innerHTML = "Прикрепленное ЛПУ: " + aString;
-                    p.style.color = "blue";
-                    setSubmitButtonDisabled(false) ;
-                },
-                errorHandler: function(aMessage) {
-                    var s = new String(aMessage) ;
-                    s = s.replace("java.lang.IllegalStateException", "");
-                    s = s.replace("java.lang.IllegalStateException", "");
-                    s = s.replace("java.lang.IllegalArgumentException", "");
-                    p.innerHTML = s;
-                    p.style.color = "red";
-                    setSubmitButtonDisabled(true) ;
-                }
-            });
-			
-        }
+        
 
         function onAddressSave() {
             checkPatientLpu();

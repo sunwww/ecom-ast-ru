@@ -23,9 +23,9 @@
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-        <tags:diary_additionMenu />
+        <tags:voc_menu currentAction="medService" />
       </msh:sideMenu>
-      <tags:voc_menu currentAction="medService"/>
+      
     </msh:ifFormTypeAreViewOrEdit>
     
   </tiles:put>
@@ -126,7 +126,7 @@
     	</msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
-        <msh:section title="Шаблоны заключений" guid="e681be03-d0185f156">
+        <msh:section title="Шаблоны заключений" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
           <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
             <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />

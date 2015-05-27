@@ -65,11 +65,12 @@ background: #eee;
     <div id="parameterCheckDiv">
    <br/>
    <br/>
-   <h2>Порядок сортировки выбранных элементов</h2>
+   <h2>Порядок сортировки выбранных элементов <a href='javascript:void(0)' onclick='save()'>Сохранить изменения</a> <a href='javascript:void(0)' onclick='save()'>Отменить</a> </h2>
     <table id="parameterCheckTable">
     	<thead>
     	<tr>
     		<td>Параметр</td>
+    		<td></td>
     	</tr>
     	</thead>
     	<tbody id="parameterCheckTbody">
@@ -83,7 +84,7 @@ background: #eee;
 </tiles:put>
 
 <tiles:put name='side' type='string'>
-	<tags:style_currentMenu currentAction="mis_medService" />
+	
 	<msh:sideMenu title="Параметры шаблона">
 		<msh:sideLink name="Сохранить" action=".javascript:save('.do')"/>
 		<msh:sideLink name="Не сохранять" action=".javascript:cancel('.do')"/>
@@ -91,7 +92,7 @@ background: #eee;
 		<msh:sideLink name="Свернуть" action=".javascript:tree.collapseAll('.do')"/>
 	</msh:sideMenu>
 	<msh:sideMenu title="Дополнительно">
-      <tags:diary_additionMenu />
+      <tags:voc_menu currentAction="medService" />
 	</msh:sideMenu>
 
 </tiles:put>
@@ -112,6 +113,7 @@ background: #eee;
 <msh:javascriptSrc src='./dwr/interface/TemplateProtocolService.js' />
 
     <script type="text/javascript">
+    var arrcheck = [];
     
     
     var dragTable = function(table, callbacks) {
@@ -260,7 +262,7 @@ background: #eee;
     //}
     
         //Element.addClassName($('mainMenuRoles'), "selected");
-    function updateRow(aId,aTitle,aCheckState) {
+    function updateRow(aId,aTitle,aCheckState,aTreeId,aIndex) {
     	var index="_tr"+aId ;
     	var tbody = document.getElementById('parameterCheckTbody');
     	if (aCheckState==2) {
@@ -275,12 +277,17 @@ background: #eee;
 			    // и добавляем тх 
 			   // var td1 = document.createElement("TD");
 			    var td2 = document.createElement("TD");
+			    var td3 = document.createElement("TD");
 			    //td1.align="right";
 			    
 			   	td2.innerHTML=aTitle ;
+			   	td3.innerHTML="<a href='javascript:void(0)' onclick=\"YAHOO.widget.TreeView.getNode('"+aTreeId
+			   			+"',"+aIndex+").checkClick()\"> Удалить из выбранных </a>" 
+			   	+" <a target='_blank' href='diary_parameterView.do?id="+aId+"'> Перейти к параметру </a>" ;
 			   	
 			     //row.appendChild(td1);
 				 row.appendChild(td2);
+				 row.appendChild(td3);
 			 
     		} else {
     			alert("Элемент уже существует))") ;
@@ -311,7 +318,7 @@ YAHOO.widget.CheckTaskNode = function(oData, oParent, expanded, checked, aId) {
         	} else {
         		this.uncheck();
         	}
-        	updateRow(this.theId.substring(1),this.label,this.checkState) ;
+        	updateRow(this.theId.substring(1),this.label,this.checkState,this.tree.id,this.index) ;
         };
         this.getNodeHtml = function() { 
         	var sb = new Array();
@@ -406,8 +413,7 @@ YAHOO.widget.CheckTaskNode.prototype.theId = -1 ;
 	    			
 	    		}
             }
-	    	//alert(added) ;
-		    TemplateProtocolService.saveParametersByMedService(${param.id}, added, removed, 
+	    	TemplateProtocolService.saveParametersByMedService(${param.id}, added, removed, 
 			    { 
 					callback: function() {
 					    var url = "diary_templateView.do?id=${param.id}" ;
@@ -445,6 +451,13 @@ YAHOO.widget.CheckTaskNode.prototype.theId = -1 ;
 
         function createNode(aParent, aName, aChecked, aVisible, aId) {
             var node = new YAHOO.widget.CheckTaskNode(aName, aParent, aVisible, aChecked, aId);
+            
+            if (aChecked) {
+            	arrcheck[arrcheck.length>0?arrcheck.length:0]=[node.theId.substring(1),node.tree.id,node.index] ;
+        		//alert(arrcheck[arrcheck.length-1][0]) ;
+            	//updateRow(node.theId.substring(1),node.label,'2',node.tree.id,node.index) ;
+        	}
+        	
             return node ;
         }
         
@@ -466,16 +479,27 @@ YAHOO.widget.CheckTaskNode.prototype.theId = -1 ;
         }
 
         var callback = null;
-        
         treeInit();
+        function findIndex(aId) {
+        	for (var i=0;i<arrcheck.length;i++) {
+        		
+        		if (+arrcheck[i][0]==(+aId)) return i ;
+        	}
+        	return null ;
+        }
+        var ia = null;
+        
         <%
         Collection l = (Collection)request.getAttribute("params_table") ;
         Iterator it = l.iterator();
+        
         for(int i=0;i<l.size();i++) {
         	WebQueryResult wqr = (WebQueryResult)it.next() ;
-        	out.println("updateRow('"+wqr.get1()+"','"+wqr.get2()+"','2'); ") ;
+        	out.println("ia = findIndex("+wqr.get1()+");");
+        	out.println("if (ia!=null) {updateRow('"+wqr.get1()+"','"+wqr.get2()+"','2',arrcheck[ia][1],arrcheck[ia][2]); }") ;
         }
         %>
+        
     </script>
 </tiles:put>
 

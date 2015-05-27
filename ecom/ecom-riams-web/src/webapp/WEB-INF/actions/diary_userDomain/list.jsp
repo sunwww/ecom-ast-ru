@@ -21,7 +21,8 @@
       <msh:sideLink action="/entityPrepareCreate-diary_userDomain" name="Пользовательский справочник" title="Добавить пользовательский справочник" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Diary/User/Domain/Create" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="a37ce27e-b89c-43f8-bbb6-ae417b49b711">
-      <tags:diary_additionMenu />
+                  <tags:voc_menu currentAction="diary_user_voc" />
+
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>
