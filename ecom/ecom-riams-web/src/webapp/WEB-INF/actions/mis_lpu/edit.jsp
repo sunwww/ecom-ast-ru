@@ -47,7 +47,9 @@
           <msh:autoComplete showId="false" vocName="vocPigeonHole" property="pigeonHole" label="Приемник" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:row guid="2398008e-85f4-4ed7-83f6-f2a186533ac5">
-          <msh:autoComplete showId="false" hideLabel="false" property="subordination" viewOnlyField="false" label="Подчиненность" guid="a3031936-9397-4ed5-92cd-1d208165aba2" fieldColSpan="3" horizontalFill="true" vocName="vocSubordination" />
+          <msh:textField property="codeDepartment"/>
+          <msh:autoComplete showId="false" hideLabel="false" property="subordination" viewOnlyField="false" label="Подчиненность" guid="a3031936-9397-4ed5-92cd-1d208165aba2" horizontalFill="true" vocName="vocSubordination" />
+          
         </msh:row>
         <msh:row>
           <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3" vocName="workFunctionByDirect" parentId="mis_lpuForm.id"/>
