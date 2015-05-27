@@ -494,4 +494,11 @@ public class MisLpu extends BaseEntity {
 	/** Возможен забор крови */
 	private Boolean theIsIntakeBioMaterial;
 	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	public String getCodeDepartment() {return theCodeDepartment;}
+	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
+
+	/** Код подразделения */
+	private String theCodeDepartment;
 }
