@@ -851,6 +851,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	    			if (aResult.substring(0,1)=='1') {
 	    				$('syncRow').style.backgroundColor="green";
 	    				$('syncRow').style.color="white";
+	    			} else {
+	    				$('syncRow').style.backgroundColor="yellow";
 	    			}
 	    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
 	    		}
