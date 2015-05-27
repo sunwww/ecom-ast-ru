@@ -23,19 +23,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties = { "commonNumber" })
 })
 public class PatientAttachedImport extends BaseEntity implements IImportData {
-	/*
-// поиск совпадений
-update PatientAttachedImport pai
-set patient_id=(select max(p.id) from Patient p where p.lastname=pai.lastname and pai.firstname=p.firstname and pai.middlename=p.middlename
-and p.birthday=to_date(pai.birthday,'dd.mm.yyyy')
-)
 
-
-update PatientAttachedImport pai
-set addressRegistration_addressid=(select min(a.addressid) from Address2 a where a.kladr like '30000001%' and UPPER(a.name)=upper(pai.street) group by upper(a.name) having count(*)=1)
-where city like '%АСТРАХАНЬ%'
-
-	 */
 	public final static String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
 	public final static String STATUS_CHECK_TYPE_PACKAGE="P" ;
 	public final static String STATUS_CHECK_TYPE_MANUAL="M" ;
