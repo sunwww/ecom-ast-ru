@@ -14,6 +14,8 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocAreaType;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Участок
@@ -84,6 +86,20 @@ public class LpuArea extends BaseEntity {
     private String theComment ;
     /** Номер участка */
     private String theNumber ;
+    
+    /** Участковый */
+	@Comment("Участковый")
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
 
+	/** Участковый */
+	private WorkFunction theWorkFunction;
+	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	public String getCodeDepartment() {return theCodeDepartment;}
+	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
 
+	/** Код подразделения */
+	private String theCodeDepartment;
 }
