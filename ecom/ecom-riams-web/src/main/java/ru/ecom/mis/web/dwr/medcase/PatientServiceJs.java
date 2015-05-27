@@ -20,6 +20,29 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy') from patient p " +
+				"left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
+				"and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and (pf.lpuattached is not null and pf.lpuattached!='') order by pf.checkdate desc", 1);
+		Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
+		if (defLpu.isEmpty()) {
+			return "0Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)";
+		}
+		String defaultLpu = defLpu.iterator().next().get1().toString(); 
+		String defaultLpuName = defLpu.iterator().next().get2().toString(); 
+		
+		if (!list.isEmpty()) {
+			String lastAttachment = list.iterator().next().get1().toString();
+			String checkDate = list.iterator().next().get2().toString();
+			if (lastAttachment.equals(defaultLpu)) {
+				return "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName;
+			} else {
+				return "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName;
+			}
+		}
+		return "0Необходимо выполнить проверку по базе ФОМС";
+	}
 	public String getSexByOmccode(String aOmccode,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocSex where omcCode='"+aOmccode+"'",1) ;
