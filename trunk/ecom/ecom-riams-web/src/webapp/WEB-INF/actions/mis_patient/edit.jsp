@@ -169,17 +169,20 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
       	<msh:row>
       		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"></div></td>
       	</msh:row>
-      	<msh:row >
+      	<msh:row>
+      		<td colspan="4" id="syncRow" >
+      		</td>
+      		</msh:row>
+      	<msh:row>
       		<msh:textField property="patientSync" label="Код синх." viewOnlyField="true"/>
       		<msh:textField property="editDate" label="Дата редакт." viewOnlyField="true"/>
-      		
       		
       	</msh:row>
       	
       	</msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="a71e4812-8951-4dcc-918f-dc1a440cc9e2">
-          <msh:row guid="70af394e-52bb-4df4-8ea8-065f194678cf">
-            <msh:textField guid="lastname123" property="lastname" label="Фамилия" size="30" fieldColSpan="3" />
+          <msh:row  guid="70af394e-52bb-4df4-8ea8-065f194678cf">
+            <msh:textField guid="lastname123" property="lastname" label="Фамилия" size="30" fieldColSpan="3"  />
           </msh:row>
           <msh:row guid="ccbe7fee-de86-4c80-9691-c83b60c44e5d">
             <msh:textField guid="firstname123" property="firstname" label="Имя" size="30" fieldColSpan="3" />
@@ -491,7 +494,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         left join MisLpu ml on ml.id=l.lpu_id
         left join VocAttachedType vat on vat.id=l.attachedType_id
         where l.patient_id=${param.id}"/>
-          <msh:section title="Специальное прикрепление" createUrl="entityParentPrepareCreate-mis_lpuAttachedByDepartment.do?id=${param.id}" createRoles="/Policy/Mis/Patient/AttachedByDepartment/Create">
+          <msh:section  title="Специальное прикрепление" createUrl="entityParentPrepareCreate-mis_lpuAttachedByDepartment.do?id=${param.id}" createRoles="/Policy/Mis/Patient/AttachedByDepartment/Create">
             <msh:table name="attbydep" action="entityParentView-mis_lpuAttachedByDepartment.do" idField="1">
               <msh:tableColumn property="2" columnName="Тип прикрепления"/>
               <msh:tableColumn property="3" columnName="ЛПУ"/>
@@ -778,6 +781,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     		 roles="/Policy/Mis/Patient/CheckByFond"/>
     		<msh:sideLink name="Добавить данные из базы фонда по RZ" action="/javascript:checkPatientByCommonNumber('.do')"
     		 roles="/Policy/Mis/Patient/CheckByFond"/>
+    		
     	</msh:sideMenu>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="82ccfbf3-9c28-4416-ba41-529f2cea7691">
@@ -839,6 +843,21 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
   </tiles:put>
   <tiles:put name="javascript" type="string">
       <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
+		<script type="text/javascript">
+		onload=function checkIsAttachment() {
+	    	PatientService.isPatientAttached($('id').value, {
+	    		callback: function (aResult) {
+	    			if (aResult.substring(0,1)=='1') {
+	    				$('syncRow').style.backgroundColor="green";
+	    				$('syncRow').style.color="white";
+	    			}
+	    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
+	    		}
+	    	});
+	    }
+		</script>
+      </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/Patient/EditColorType">
     <script type="text/javascript">
 	function updateColorPatient() {
@@ -855,7 +874,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
-    	function checkPatientByCommonNumber(a) {
+    	
+    function checkPatientByCommonNumber(a) {
     		showPatientFindPatientByFond("Подождите идет поиск...") ;
     		PatientButtonView(0) ;
     		PatientService.checkPatientByCommonNumber($('id').value,$('commonNumber').value, {
