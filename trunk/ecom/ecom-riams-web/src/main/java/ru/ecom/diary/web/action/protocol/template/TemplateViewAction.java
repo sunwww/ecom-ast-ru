@@ -1,5 +1,8 @@
 package ru.ecom.diary.web.action.protocol.template;
 
+import java.util.Collection;
+
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +13,8 @@ import org.apache.struts.action.ActionMapping;
 import ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm;
 import ru.ecom.diary.ejb.service.protocol.IDiaryService;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.actions.entity.EditAction;
 import ru.ecom.web.util.Injection;
 
@@ -20,11 +25,17 @@ public class TemplateViewAction extends EditAction {
 	    TemplateProtocolForm form = (TemplateProtocolForm) aForm ;
 	    form.setTypeViewOnly();
 	
-	    IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
+	    //IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
+	    //CheckNode root = service.loadParametersByMedService(getLongId(aRequest, "Идентификатор роли")) ;
+	    //CheckNodesUtil.removeUnchecked(root);
+	    //aRequest.setAttribute("params", root);
+	
+	    return aMapping.findForward("success") ;
+    }
+    public static void getParams(HttpServletRequest aRequest) throws NamingException {
+    	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
 	    CheckNode root = service.loadParametersByMedService(getLongId(aRequest, "Идентификатор роли")) ;
 	    CheckNodesUtil.removeUnchecked(root);
 	    aRequest.setAttribute("params", root);
-	
-	    return aMapping.findForward("success") ;
     }
 }

@@ -36,37 +36,54 @@
     </msh:form>
     <msh:ifFormTypeIsView formName="poly_medcardForm" guid="d23e5168-1840-4e42-b681-7d8b84945666">
     	<ecom:webQuery name="lastVisit" nativeSql="select 
-    	t.id,t.date,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
-    	from ticket t 
-    	left join medcard m on m.id=t.medcard_id
+    	smc.id,smc.dateStart,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+    	from medcard m 
     	left join patient p on p.id=m.person_id
-    	left join workfunction wf on wf.id=t.workFunction_id
+    	left join MedCase smc on p.id=smc.patient_id
+    	
+    	left join workfunction wf on wf.id=smc.workFunctionExecute_id
     	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
     	left join worker w on w.id=wf.worker_id
     	left join patient wp on wp.id=w.person_id
-    	where m.id=${param.id}
-    	order by t.date desc
+    	where UPPER(smc.dtype)='SHORTMEDCASE' and m.id=${param.id} and smc.dateStart is not null 
+    	and smc.medcard_id=m.id
+    	order by smc.dateStart desc
     	" maxResult="1" />
     <msh:tableNotEmpty name="lastVisit">
      <msh:section title="Последнее посещение">
-    	<msh:table name="lastVisit" action="entityParentView-poly_ticket.do" idField="1">
+    	<msh:table name="lastVisit" action="entityParentView-smo_ticket.do" idField="1">
 	    	<msh:tableColumn property="2" columnName="Дата"/>
     		<msh:tableColumn property="3" columnName="Специалист"/>
     	</msh:table>
      </msh:section>
     </msh:tableNotEmpty>
-    <msh:ifInRole roles="/Policy/Poly/Ticket/View">
+	  <msh:ifInRole roles="/Policy/Poly/Ticket/View">
 	      <msh:section title="Открытые талоны" createRoles="/Policy/Poly/Ticket/Create" viewRoles="/Policy/Poly/Ticket/View" 
-	      shortList="entityParentShortList-poly_ticket.do?id=${param.id}" 
-	      createUrl="entityParentPrepareCreate-poly_ticket.do?id=${param.id}" 
-	      listUrl="entityParentList-poly_ticket.do">
+	      shortList="js-smo_ticket-list.do?short=Short&id=${param.id}" 
+	      createUrl="entityParentPrepareCreate-smo_ticket.do?id=${param.id}" 
+	      listUrl="js-smo_ticket-list.do?id=${param.id}">
 	        <msh:sectionContent guid="6963aae2-0581-4f08-8844-279f55ea6b45">
-	        <poly:parentTicketListTag formName="poly_ticketForm" attribute="tickets"/>
-	          <msh:table name="tickets" action="entityParentEdit-poly_ticket.do" idField="id" guid="2efa0c8f-b1ce-4046-90bc-2726273449b4">
-	            <msh:tableColumn columnName="Дата выдачи" property="dateCreate" guid="2a999db1-fa0c-4e31-a4d2-3a143b2531bb" />
-	            <msh:tableColumn columnName="Дата приема" property="date" guid="2a999db0c-4e31-a4d2-3a143b2531bb" />
-	            <msh:tableColumn columnName="Номер" property="id" guid="2a9991-fa0c-4e31-a4d2-3a143b2531bb" />
-	            <msh:tableColumn columnName="Специалист" property="workFunctionInfo" guid="f25d6806-aba9-45c9-b5f8-c85f94a5062b" />
+	        <ecom:webQuery name="tickets"
+	        	nativeSql="select 
+					smc.id as smcid,smc.createDate as smccreateDate,smc.orderDate as smcorderDate
+					,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+					from MedCase smc
+					left join Patient pat on pat.id=smc.patient_id
+					left join Medcard card on card.person_id=pat.id 
+			    	left join workfunction wf on wf.id=smc.workFunctionExecute_id
+			    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+			    	left join worker w on w.id=wf.worker_id
+			    	left join patient wp on wp.id=w.person_id
+					where UPPER(smc.dtype)='SHORTMEDCASE' and card.id='${param.id}'
+					and smc.dateStart is null 
+					and smc.medCard_id='${param.id}'
+					"
+			/>
+	          <msh:table name="tickets" printUrl="print-ticketshort.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-poly_medcard.do__id=${param.id}&noView=1" action="entityParentEdit-smo_ticket.do" idField="1" guid="2efa0c8f-b1ce-4046-90bc-2726273449b4">
+	            <msh:tableColumn columnName="Номер" property="1" guid="2a9991-fa0c-4e31-a4d2-3a143b2531bb" />
+	            <msh:tableColumn columnName="Дата выдачи" property="2" guid="2a999db1-fa0c-4e31-a4d2-3a143b2531bb" />
+	            <msh:tableColumn columnName="Дата приема" property="3" guid="2a999db0c-4e31-a4d2-3a143b2531bb" />
+	            <msh:tableColumn columnName="Специалист" property="4" guid="f25d6806-aba9-45c9-b5f8-c85f94a5062b" />
 	          </msh:table>
 	        </msh:sectionContent>
 	      </msh:section>
@@ -88,6 +105,7 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Мед.карта">
       <msh:ifFormTypeIsView formName="poly_medcardForm" guid="67544104-2df3-4f80-a9a4-b119f24ce63c">
+		<msh:sideLink name="Просмотр инф. о заключениях по медкарте" action="/js-poly_protocol-infoByMedcard.do" params="id" roles="/Policy/Poly/Ticket/View"/>
       
         <msh:sideLink roles="/Policy/Poly/Medcard/Edit" key="ALT+2" params="id" action="/entityEdit-poly_medcard" name="Изменить" guid="6d095b79-2e4a-45a2-8811-96f9d293397b" />
       </msh:ifFormTypeIsView>
@@ -98,11 +116,16 @@
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
 	    <msh:sideMenu title="Добавить">
-	        <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-poly_ticket" name="Талон" title="Создать новый талон" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
+	        <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-smo_ticket" name="Талон" title="Создать новый талон" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
 	        <msh:sideLink roles="/Policy/Poly/ShortTicket/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-smo_short_ticket" name="Талон на прием" title="Создать талон на прием" guid="0b67da68-32d4-4ad5-8582-ba1faa76640c" />
 	    </msh:sideMenu>
     <msh:sideMenu title="Показать все">
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/entityParentList-poly_ticket" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/js-smo_ticket-list" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
+    </msh:sideMenu>
+    <msh:sideMenu title="Печать">
+    <msh:sideLink roles="/Policy/Mis/Patient/View"  key="CTRL+1"
+    	name="Амб. карта"   action="/javascript:goPrint('.do')"  
+    	 title='Амб.карты'  />
     </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
     <tags:ticket_finds currentAction="medcard"/>    
@@ -112,6 +135,14 @@
     <ecom:titleTrail mainMenu="Medcard" beginForm="poly_medcardForm" guid="8d54b767-f785-4513-8a11-3dd5d2112e48" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
+  <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+  	<script type="text/javascript">
+      	function goPrint() {
+      		window.location = 'print-ambcard.do?s=PatientPrintService&m=printInfo&id='+$('person').value+"&tmp="+Math.random() ;
+      	}
+      	</script>
+  </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
 </tiles:insert>
 

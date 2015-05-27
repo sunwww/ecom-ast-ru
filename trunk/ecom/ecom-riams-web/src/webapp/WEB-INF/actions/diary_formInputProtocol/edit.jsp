@@ -17,7 +17,7 @@
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-      <tags:diary_additionMenu />
+            <tags:voc_menu currentAction="mis_medService" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">

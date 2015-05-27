@@ -591,8 +591,11 @@ ahr.dischargeDate${timeAdd}-ahr.entranceHospDate${timeAdd}+cast(ahr.addbeddays a
 end as beddays
 ,case when ahr.isFirstCurrentYear='1' then 'Да' else null end as isFirstCurrentYear
 ,case when ahr.isFirstLife='1' then 'Да' else null end as isFirstLife
+,olpu.name as olpuname
+,pvr.name as vrname
  from AggregateHospitalReport ahr
  left join medcase sls on ahr.sls=sls.id
+ left join mislpu olpu on olpu.id=sls.orderlpu_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 left join MisLpu ml1 on ml1.id=ahr.department
@@ -600,6 +603,7 @@ left join MisLpu ml2 on ml2.id=ahr.TransferDepartmentFrom
 left join MisLpu ml3 on ml3.id=ahr.TransferDepartmentIn
 ${reportStrLeftJoin}
 left join Patient p on p.id=sls.patient_id
+left join VocRayon pvr on pvr.id=p.rayon_id
 where ${dateSql}   ${reportStrSql}
       ${paramSql} 
 ${paramSql}
@@ -609,7 +613,7 @@ group by ahr.sls,ahr.dischargeDate${timeAdd},ahr.entranceDate${timeAdd},ahr.idcD
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname,ahr.dischargeDate24,ahr.entranceDate24
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish,ahr.entranceHospDate${timeAdd},ahr.entranceHospDate24,ahr.addbeddays
 ,ahr.idcDischarge,ahr.isDeath,ahr.isEmergency,ahr.isFirstCurrentYear,ahr.isFirstLife
-,ml1.name ,ml2.name ,ml3.name
+,ml1.name ,ml2.name ,ml3.name,pvr.name
 order by p.lastname,p.firstname,p.middlename " />
     <msh:sectionTitle>
     <form action="print-stac_report36_3.do" method="post" target="_blank">
@@ -646,6 +650,8 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="К.дн" property="17"/>
       <msh:tableColumn columnName="Впервые в этом году" property="18"/>
       <msh:tableColumn columnName="Впервые в жизни" property="19"/>
+      <msh:tableColumn columnName="Кем направлен" property="20"/>
+      <msh:tableColumn columnName="Район" property="21"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		

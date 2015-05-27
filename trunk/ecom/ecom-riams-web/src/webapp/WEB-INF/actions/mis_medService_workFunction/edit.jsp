@@ -18,9 +18,9 @@
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="mis_medService_workFunctionForm" >
       <msh:sideMenu title="Дополнительно" >
-        <tags:diary_additionMenu />
+        <tags:voc_menu currentAction="medService" />
       </msh:sideMenu>
-      <tags:voc_menu currentAction="medService"/>
+      
     </msh:ifFormTypeAreViewOrEdit>
     
   </tiles:put>

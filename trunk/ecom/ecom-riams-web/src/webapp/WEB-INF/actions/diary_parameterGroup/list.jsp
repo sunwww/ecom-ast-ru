@@ -21,7 +21,8 @@
       <msh:sideLink action="/entityPrepareCreate-diary_parameterGroup" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
-<tags:diary_additionMenu />    
+            <tags:voc_menu currentAction="diary_param_list" />
+
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

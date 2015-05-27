@@ -22,7 +22,7 @@
         <tags:diary_parameterCreate vocName="parameterType" document="параметра" roles="/Policy/Diary/ParameterGroup/Parameter/Create" action="diary_parameterPrepareCreate.do?id=${param.id}" name="type" title="Параметр" />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-        <tags:diary_additionMenu />
+                    <tags:voc_menu currentAction="diary_param_list" />
       </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
@@ -45,21 +45,30 @@
     </msh:form>
     <msh:ifInRole roles="/Policy/Diary/ParameterGroup/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">
       <msh:ifFormTypeIsView formName="diary_parameterGroupForm" guid="9f1dd6a4-a7b7-43e7-b205-85730bba6968">
-        <msh:section title="Список категорий" guid="e681be03-dea7-4bce-96cf-aa600185f156">
-          <ecom:parentEntityListAll attribute="childGroups" formName="diary_parameterGroupForm" guid="children" />
-          <msh:table name="childGroups" action="entityParentView-diary_parameterGroup.do" idField="id" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
-            <msh:tableColumn property="name" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
-            <msh:tableColumn columnName="Параметры" identificator="false" property="parametersInfo" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
+        <msh:section title="Список категорий" createRoles="/Policy/Diary/ParameterGroup/Create" createUrl="entityParentPrepareCreate-diary_parameterGroup.do?id=${param.id}">
+        <ecom:webQuery name="childGroups" nativeSql="select id,name 
+        from parametergroup 
+        where parent_id=${param.id} order by name"/>
+          <msh:table name="childGroups" action="entityParentView-diary_parameterGroup.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+            <msh:tableColumn property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
           </msh:table>
         </msh:section>
       </msh:ifFormTypeIsView>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/ParameterGroup/Parameter/View" guid="5e3d7e52-5747-4b60-aab3-f17">
       <msh:ifFormTypeIsView formName="diary_parameterGroupForm" guid="9f1dd6a4-a7b7-43e7-b6968">
-        <msh:section title="Список параметров" guid="e681be03-dea7-4bce-56">
-          <ecom:parentEntityListAll attribute="parameters" formName="diary_parameterForm" guid="fjaskldfj-fadsf-fasd" />
-          <msh:table name="parameters" action="diary_parameterView.do" idField="id" guid="16cdff99-8997-eebc80ecc49c">
-            <msh:tableColumn property="name" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+        <msh:section title="Список параметров" guid="e681be03-dea7-4bce-56" createRoles="/Policy/Diary/ParameterGroup/Parameter/Create" createUrl="javascript:showtypeCreateType()"> 
+         <ecom:webQuery name="parameters" nativeSql="select p.id,p.name
+         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
+         ,vmu.name as vmuname
+          from parameter p 
+          left join userDomain vd on vd.id=p.valueDomain_id 
+          left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id
+          where p.group_id=${param.id} order by p.name"/>
+          <msh:table name="parameters" action="diary_parameterView.do" idField="1" guid="16cdff99-8997-eebc80ecc49c">
+            <msh:tableColumn property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+            <msh:tableColumn property="3" columnName="Тип" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+            <msh:tableColumn property="4" columnName="Ед.изм" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
           </msh:table>
         </msh:section>
       </msh:ifFormTypeIsView>

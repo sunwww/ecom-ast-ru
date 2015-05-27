@@ -16,7 +16,9 @@
    
   </tiles:put>
   <tiles:put name="side" type="string">
-
+ <msh:sideMenu>
+                <tags:laboratory_menu currentAction="pres_cabinet"/>
+        </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
   	<%
@@ -109,35 +111,8 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-    function getReason(aReason) {
-			if (+aReason>0) {
-			reason=prompt('Введите причину брака:', '') ;
-			if (reason==null) {
-				return null ;
-			} else if (reason.trim()=="") {
-				return getReason(aReason) ;
-			} else {
-				return reason ;
-			}
-			
-			} else {
-				return "" ;
-			}
-		}
-	    function cancelInLab(aId,aReasonId,aReason) {
-	    	var reason = getReason(aReason) ;
-	    	if (reason!=null) {
-	    		//alert(123) ;
-	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-		            callback: function(aResult) {
-		            	window.document.location.reload();
-		            }
-				});
-	    	} else {
-	    		//alert(321) ;
-	    		cancelBioIntakeInfo();
-	    	}	
-		}
+    
+	    
 			 
     </script>
     <%
@@ -206,18 +181,20 @@
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f6medServicies
    ,wp.lastname ||' ('||ml.name||')' as f7fioworker
       ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5))||' '||iwp.lastname as f8dtintake
-       ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f9dtintake
+       ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f9dtransferintake
        ,to_char(p.planStartDate,'dd.mm.yyyy') as f10planStartDate
    ,mc.id as f11mcid
    ,'js-pres_prescriptList-pres_by_6_month_patient.do?id='||pat.id as f12patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f13sls
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
-  ,  case when mc.dateStart is null and mc.workFunctionExecute_id is null and p.medcase_id is null and p.cancelDate is null and p.medcase_id is not null then p.id else null end as j15sanaliz
-  ,  case when mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is null then p.id else null end as j16enter
-  ,  case when mc.dateStart is not null and p.cancelDate is null and mc.workFunctionExecute_id is not null then p.id else null end as j16enter
-  
+  ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null and p.medcase_id is not null then mc.id||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j15sanaliz
+  ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id else null end as j16enter
+  ,d.record as d17record 
+  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
     from prescription p
+    left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     left join MedCase mc on mc.id=p.medcase_id
+    left join Diary d on d.medcase_id=mc.id
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
     left join MedCase sls on sls.id=slo.parent_id
@@ -236,7 +213,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     where p.dtype='ServicePrescription'
-    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and p.transferDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and vst.code='LABSURVEY' 
     and p.transferdate is not null 
@@ -249,7 +226,7 @@
     ,p.medCase_id,mc.workFunctionExecute_id,mc.dateStart,vsst.code
     ,wp.lastname,wp.middlename,wp.firstname,vwf.name,mc.id,ml.name
     ,p.canceldate,p.materialid,p.planstartdate
-    ,vsst.biomaterial
+    ,vsst.biomaterial,d.record,d.id
     order by pat.lastname,pat.firstname,pat.middlename
     
     "/>
@@ -259,16 +236,18 @@
     </msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" >
-	     <msh:tableButton property="14" hideIfEmpty="true" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
-	     <msh:tableButton property="14" hideIfEmpty="true" buttonFunction="checkLabAnalyzed" buttonName="Выполнен анализ" buttonShortName="Анализ"/>
-	     <msh:tableButton property="15" hideIfEmpty="true" buttonFunction="goService" buttonName="Заполнен резальтат" buttonShortName="Рез."/>
-	     <msh:tableButton property="16" hideIfEmpty="true" buttonFunction="checkControl" buttonName="Результат заведен правильно" buttonShortName="Подт."/>
+	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
+	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ"/>
+	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="ПОдтвердить выполнение результата и ввести резальтат" buttonShortName="Ан.+Рез."/>
+	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Ввести резальтат" buttonShortName="Рез."/>
+	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт."/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="ИБ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
-	      <msh:tableButton property="12" buttonFunction="getDefinition" buttonName="Просмотр данных о лабораторных назначениях" buttonShortName="ЛН" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
+	      <msh:tableButton property="12" buttonFunction="getDefinition" buttonName="Просмотр данных о лабораторных назначениях" buttonShortName="ЛН" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="ФИО пациента" property="5"  />
+	      <msh:tableColumn columnName ="Результат" property="17" cssClass="preCell"/>
 	      <msh:tableColumn columnName="Забор" property="8"/>
 	      <msh:tableColumn columnName="Прием в лабораторию" property="9"/>
 	      <msh:tableColumn columnName="Исследование" property="6"/>
@@ -292,47 +271,18 @@
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
-  		/*function getMaterialId(aMaterialId) {
-			aMaterialId=prompt('Введите наименование пробирки:', aMaterialId) ;
-			if (aMaterialId==null || aMaterialId=="") {
-				if (confirm('Неопределено наименование пробирки. Хотите ввести еще раз?')) {
-					return getMaterialId(aMaterialId) ;
-				}
-			} else {
-				return aMaterialId ;
-			}
-			return null ;
-  		}*/
+  	var fldJson = null ;
   		
-  	    function transferInLab() {
-  	    	var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
-  	        if (ids) {
-  	        	PrescriptionService.checkTransferService( ids, { 
-  		            callback: function(aResult) {
-  		            	window.document.location.reload();
-  		            }
-  				});
-  	        } else {
-  	            alert("Нет выделенных пациентов");
-  	        }
-  	        
-  				
+  		function checkLabControl(aSmoId,aProtocolId) {
+  			PrescriptionService.checkLabControl(aSmoId,aProtocolId, {
+  				callback: function (aResult) {
+  					window.document.location.reload();
+  				}
+  			}) ;
   		}
-  		function getReason(aReason) {
-  			if (+aReason>0) {
-				reason=prompt('Введите причину брака:', '') ;
-				if (reason==null) {
-					return null ;
-				} else if (reason.trim()=="") {
-					return getReason(aReason) ;
-				} else {
-					return reason ;
-				}
-				
-  			} else {
-  				return "" ;
-  			}
-  		}
+  		
+  		
+  		
   		function checkLabAnalyzed(aId) {
   			PrescriptionService.checkLabAnalyzed( aId, { 
 		            callback: function(aResult) {
@@ -340,20 +290,7 @@
 		            }
 				});
   		}
-  	    function cancelInLab(aId,aReasonId,aReason) {
-  	    	var reason = getReason(aReason) ;
-  	    	if (reason!=null) {
-  	    		//alert(123) ;
-  	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-  		            callback: function(aResult) {
-  		            	window.document.location.reload();
-  		            }
-  				});
-  	    	} else {
-  	    		//alert(321) ;
-  	    		cancelBioIntakeInfo();
-  	    	}	
-  		}
+  		
     	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
       	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
       	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;

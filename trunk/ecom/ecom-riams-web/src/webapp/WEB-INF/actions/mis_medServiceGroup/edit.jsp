@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
-    <tags:style_currentMenu currentAction="mis_medServiceGroup" />
+    <tags:style_currentMenu currentAction="mis_medService" />
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceGroupForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medServiceGroup" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
@@ -23,9 +23,7 @@
         <msh:sideLink action="/entityParentPrepareCreate-mis_medServiceGroup" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create"  />
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>
-      <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-        <tags:diary_additionMenu />
-      </msh:sideMenu>
+      
       <tags:voc_menu currentAction="medService"/>
     </msh:ifFormTypeAreViewOrEdit>
     
@@ -156,7 +154,7 @@
         </msh:section>
         
         
-        <msh:section title="Услуги категории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medService.do?id=${param.id}">
+        <msh:section title="Услуги категории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medService.do?id=${param.id}" shortList="js-mis_medServiceGroup-viewTemplate.do?id=${param.id}&short=Short">
           <ecom:webQuery  name="childMedService" nativeSql="
           	select ms.id,ms.name as msname,vms.name as vmsname, ms.startDate,ms.finishDate,
           	 (

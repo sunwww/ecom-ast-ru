@@ -170,10 +170,8 @@
   			request.setAttribute("department", " and slo.department_id='"+dep+"'") ;
   		}
   	}
-  	String lpuDirect = request.getParameter("lpuDirect") ; 
-  	if (lpuDirect!=null&&!lpuDirect.equals("")&&!lpuDirect.equals("0")) {
-		request.setAttribute("lpuDirectSql", " and sls.orderLpu_id='"+lpuDirect+"'") ;
-  	}
+  	
+	ActionUtil.setParameterFilterSql("lpuDirect","sls.orderLpu_id", request) ;
 	ActionUtil.setParameterFilterSql("lpuFunctionDirect","ml.lpuFunction_id", request) ;
 
   	if (typeGroup!=null && typeGroup.equals("1")) {
@@ -181,11 +179,11 @@
   		request.setAttribute("typeGroupName", "dep.name") ;
   		request.setAttribute("typeGroupColumn", "department") ;
   	} else if (typeGroup!=null && typeGroup.equals("3")) {
-  		request.setAttribute("typeGroupId", "ml.lpuFunction_id") ;
+  		request.setAttribute("typeGroupId", "coalesce(ml.lpuFunction_id,'-1')") ;
   		request.setAttribute("typeGroupName", "vlf.name") ;
   		request.setAttribute("typeGroupColumn", "lpuFunctionDirect") ;
   	} else {
-  		request.setAttribute("typeGroupId", "ml.id") ;
+  		request.setAttribute("typeGroupId", "coalesce(ml.id,'-1')") ;
   		request.setAttribute("typeGroupName", "ml.name") ;
   		request.setAttribute("typeGroupColumn", "lpuDirect") ;
   	}
@@ -299,11 +297,11 @@ order by ${typeGroupName}
 sls.id as slsid
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename
-,cast(to_char(sls.dateFinish,'yyyy') as int)
+,cast(to_char(${dateSql},'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
-+(case when (cast(to_char(sls.dateFinish, 'mm') as int)
++(case when (cast(to_char(${dateSql}, 'mm') as int)
 -cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(sls.dateFinish,'dd') as int) 
++(case when (cast(to_char(${dateSql},'dd') as int) 
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0)
 then -1 else 0 end)
@@ -312,6 +310,7 @@ then -1 else 0 end)
  ,of_.name as ofname, vss.name as vssname
  ,vht.name as vhtname,case when sls.emergency='1' then 'Экстр.' else 'План.' end as emerg
  , vlf.name as vlfname
+ ,vr.name as vrname
 from MedCase sls
 left join VocHospType vht on sls.sourceHospType_id=vht.id
 
@@ -323,6 +322,7 @@ left join misLpu dep on dep.id=sls.department_id
 left join omc_frm of_ on of_.id=sls.orderType_id
 left join vocServiceStream vss on vss.id=sls.serviceStream_id
 left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
+left join VocRayon vr on vr.id=p.rayon_id
 where slo.dtype='DepartmentMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
@@ -336,6 +336,7 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="№стат. карт" property="2" />
       <msh:tableColumn columnName="ФИО пациента" property="3" />
       <msh:tableColumn columnName="Возраст" property="4" />
+      <msh:tableColumn columnName="Район" property="14" />
       <msh:tableColumn columnName="Дата поступления" property="5"/>
       <msh:tableColumn columnName="Дата выписки" property="6"/>
       <msh:tableColumn columnName="Порядок пост." property="12"/>

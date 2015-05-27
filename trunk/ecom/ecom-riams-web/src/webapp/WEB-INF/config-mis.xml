@@ -386,6 +386,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_goingToSmo.jsp" />
         </action>
+        <action path='/smo_protocol_param' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_medService/protocol.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_medService/protocol.jsp" />
+        </action>
         <action path='/service_kdl' type='ru.ecom.mis.web.action.kdl.KdlAction'
                 
                 validate='true'

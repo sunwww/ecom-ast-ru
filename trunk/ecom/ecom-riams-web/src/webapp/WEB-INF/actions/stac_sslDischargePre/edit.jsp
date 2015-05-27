@@ -132,6 +132,10 @@
           <msh:textField property="dateStart" label="Дата поступления" guid="e3fd4642-a532-4510-a528-c6e766328d61" viewOnlyField="true" />
           <msh:textField property="entranceTime" label="время" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff" viewOnlyField="true" />
         </msh:row>
+        <msh:row guid="0e91a1ca-c366-435c-8f2c-274d23d87fd3">
+          <msh:textField property="transferDate" label="Выбыт. из приемника" guid="e3fd4642-a532-4510-a528-c6e766328d61"  viewOnlyField="true"/>
+          <msh:textField property="transferTime" label="время" fieldColSpan="3" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff"  viewOnlyField="true"/>
+        </msh:row>        
         <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
           <msh:checkBox property="relativeMessage" label="Сообщение родственникам" guid="21e6d68e-e0a2-4854-85e7-9344d25e3d46" viewOnlyField="true" />
           <msh:autoComplete property="department" label="Отделение" guid="bf59f5d5-2843-4abc-bf23-cbbbda89a67e" vocName="vocLpuOtd" horizontalFill="true" viewOnlyField="true" />

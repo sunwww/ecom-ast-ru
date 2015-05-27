@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="diary_userDomain" />
@@ -18,7 +18,8 @@
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="diary_userValueForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-        <tags:diary_additionMenu />
+                    <tags:voc_menu currentAction="diary_user_voc" />
+
       </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
@@ -26,13 +27,16 @@
     <!-- 
     	  - Медицинских услуг
     	  -->
-    <msh:form action="/entityParentSaveGoView-diary_userValue.do" defaultField="name" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form action="/entityParentSaveGoParentView-diary_userValue.do" defaultField="name" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
       <msh:hidden property="domain" guid="bd32944-4587-a963-a09db2b93caf" />
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
-        <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
-          <msh:textField property="name" label="Название" size="50" guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" />
+        <msh:row>
+          <msh:textField property="name" label="Название" size="150" />
+        </msh:row>
+        <msh:row>
+          <msh:textField property="cntBall" label="Кол-во баллов" size="50"  />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>

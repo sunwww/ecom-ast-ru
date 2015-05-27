@@ -38,7 +38,7 @@
         <msh:section>
             <msh:sectionTitle>Протоколы по случаю лечения в стационаре (и отделениях) </msh:sectionTitle>
             <msh:sectionContent>
-			<ecom:webQuery name="protocols"  nativeSql="select p.dateRegistration ||'!'||p.timeRegistration ||'!'||p.id, p.dateRegistration, p.timeRegistration, p.record, p.printDate 
+			<ecom:webQuery name="protocols"  nativeSql="select to_char(p.dateRegistration,'yyyymmdd') ||'!'||cast(p.timeRegistration as varchar(5)) ||'!'||p.id, p.dateRegistration, p.timeRegistration, p.record, p.printDate 
 				, case when m.DTYPE='HospitalMedCase' then 'Приемное отделение' when m.DTYPE='DepartmentMedCase' then d.name else '' end
 				from Diary p
 				left join MedCase m on m.id=p.medcase_id 

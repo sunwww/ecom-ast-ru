@@ -23,9 +23,10 @@
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
-        <tags:diary_additionMenu />
+                    <tags:voc_menu currentAction="diary_param_list" />
+
       </msh:sideMenu>
-      <tags:voc_menu currentAction="medService"/>
+      
     </msh:ifFormTypeAreViewOrEdit>
     
   </tiles:put>

@@ -418,7 +418,7 @@
       		left join PsychiatricCareCard cc on cc.patient_id=h.patient_id
       		left join mislpu lpu on lpu.id=h.lpu_id
       		left join VocMzDepType vmdt on vmdt.id=lpu.profile_id
-      		where cc.id=${param.id} and (h.dtype='HospitalMedCase' or h.dtype='ExtHospitalMedCase') and vmdt.code='К25'"/>
+      		where cc.id=${param.id} and upper(h.dtype) in ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') and vmdt.code='К25'"/>
       		<msh:table viewUrl="entitySubclassShortView-mis_medCase.do" name="hospitalMedCase" action="entitySubclassView-mis_medCase.do" idField="1">
       			<msh:tableColumn property="2" columnName="Дата поступления"/>
       			<msh:tableColumn property="3" columnName="Дата выписки"/>

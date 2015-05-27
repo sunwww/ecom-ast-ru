@@ -40,9 +40,10 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="greatePatrioticWarInvalid" label="Инвалид ВОВ"/>
+        	<msh:checkBox property="isOtherInvalidity" label="Другая инвалидность"/>
         </msh:row>
         <msh:row>
-        	<msh:checkBox property="isWorking" label="Трудоспособен"/>
+        	<msh:checkBox property="isWorking" label="Работает"/>
         	<msh:autoComplete property="group" label="Группа инвалидности" horizontalFill="true" vocName="vocInvalidity"/>
         </msh:row>
         <msh:row>

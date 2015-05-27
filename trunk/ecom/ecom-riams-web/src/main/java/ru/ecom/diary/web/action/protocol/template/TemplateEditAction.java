@@ -3,6 +3,7 @@ package ru.ecom.diary.web.action.protocol.template;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
@@ -23,24 +24,35 @@ import ru.nuzmsh.web.struts.BaseAction;
 
 public class TemplateEditAction extends BaseAction{
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-	    IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
+	    
+    	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
         IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
         Long temp = getLongId(aRequest, "Идентификатор мед.услуги") ;
-        Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id where pf.template_id='"+temp+"' order by pf.position") ;  
+        Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name||' ('||case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id left join userDomain vd on vd.id=p.valueDomain_id left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id where pf.template_id='"+temp+"' order by pf.position") ;  
         CheckNode root = service.loadParametersByMedService(temp) ;
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("params", root);
         aRequest.setAttribute("params_table", l) ;
-
         return aMapping.findForward("success") ;
+    }
+    public static void getParams(HttpServletRequest aRequest) throws NamingException {
+    	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
+        IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Long temp = getLongId(aRequest, "Идентификатор мед.услуги") ;
+        Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name||' ('||case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id left join userDomain vd on vd.id=p.valueDomain_id left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id where pf.template_id='"+temp+"' order by pf.position") ;  
+        CheckNode root = service.loadParametersByMedService(temp) ;
+//        CheckNodesUtil.removeUnchecked(root);
+        aRequest.setAttribute("params", root);
+        aRequest.setAttribute("params_table", l) ;
     }
 
 	
 	public static void printNode(JspWriter out, CheckNode aNode) throws IOException {
-        if(aNode==null) throw new IllegalArgumentException("aNode==null") ;
+        if(aNode!=null) {//throw new IllegalArgumentException("aNode==null") ;
         for (CheckNode node : aNode.getChilds()) {
             outNode(out, "root", node) ;
             printNodes(out, node);
+        }
         }
         
         

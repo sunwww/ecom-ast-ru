@@ -8,13 +8,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.jdom.IllegalDataException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONWriter;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 /**
@@ -87,7 +95,7 @@ public class PrescriptionServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
-		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
 		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
@@ -264,7 +272,7 @@ public class PrescriptionServiceJs {
 		System.out.println("Получить описание шаблона: "+aIdTemplateList);
 		return service.getDescription(aIdTemplateList) ;
 	}
-	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType,HttpServletRequest aRequest) throws NamingException {
+	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType, String aPrefixMethod,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select id,name,case when additionData='1' then additionData else null end as addData from VocPrescriptCancelReason where serviceType='LABSURVEY' and biomaterial='"+aBiomaterialType+"'") ;
@@ -274,7 +282,7 @@ public class PrescriptionServiceJs {
 		for (WebQueryResult wqr:l) {			
 			ret.append("<tr>") ;
 			ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()\" colspan=\"4\">");
-    		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\" onchange=\"cancelInLab('"+aPrescript+"','"+wqr.get1()+"','"+(wqr.get3()!=null?"1":"0")+"')\">  "+wqr.get2()); 
+    		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\" onchange=\"cancel"+aPrefixMethod+"InLab('"+aPrescript+"','"+wqr.get1()+"','"+(wqr.get3()!=null?"1":"0")+"')\">  "+wqr.get2()); 
     		ret.append("</td>") ;
     		ret.append("</tr>") ;
 		}
@@ -374,10 +382,10 @@ public class PrescriptionServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
-		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
 		Long spec  = null ;
-		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunciton wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
+		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
 		if (!specL.isEmpty()) {
 			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
 		}
@@ -433,6 +441,225 @@ public class PrescriptionServiceJs {
 		}
 		
 		return ret ;
+	}
+	public String getTemplateByService(Long aSmoId, Long aService, String aFunctionGo, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder ret = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		Long aProtocolId = null ;
+		Collection<WebQueryResult> list = null ;
+		if (aSmoId!=null) { 
+			list = service.executeNativeSql("select id from diary where medcase_id="+aSmoId) ;
+		}
+		if (list!=null && !list.isEmpty()) {
+			aProtocolId = ConvertSql.parseLong(list.iterator().next().get1()) ;
+		}
+		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			ret.append(2).append("#").append("").append(aProtocolId) ;
+		} else {
+			sql = new StringBuilder() ;
+			sql.append("select ms.id as msid,ms.name as msname,tp.id as tpid,tp.title as tptitle") ;
+			sql.append(" ,list(pg.name||': '||p.name)") ;
+			sql.append(" from templateprotocol tp") ;
+			sql.append(" left join parameterbyform pf on pf.template_id = tp.id") ;
+			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join parametergroup pg on pg.id=p.group_id") ;
+			sql.append(" left join medservice ms on ms.id=tp.medservice_id") ;
+			//sql.append(" left join medcase mc1 on mc1.medservice_id=ms.id") ;
+			//sql.append(" left join medcase mc2 on mc2.id=mc1.parent_id") ;
+			sql.append(" where tp.medservice_id='").append(aService).append("'") ;
+			sql.append(" group by tp.id,tp.title,ms.id,ms.name") ;
+			Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
+			
+			
+			String oldi = "" ;
+			StringBuilder listCab = new StringBuilder() ;
+			if (lwqr.isEmpty()) {
+				ret.append("0#") ;
+				ret.append("<form name='frmTemplate' id='frmTemplate'>") ;
+				ret.append("<a target='_blank' href='entityView-mis_medService.do?id=").append(aService).append("'>").append("НЕТ ШАБЛОНА НА УСЛУГУ</a>") ;
+				ret.append("</form>") ;
+			} else if (lwqr.size()==1) {
+				WebQueryResult wqr = lwqr.iterator().next() ;
+				ret.append("1#").append(wqr.get3()).append("##").append(wqr.get2()) ;
+			} else {
+				ret.append("0#") ;
+				ret.append("<form name='frmTemplate' id='frmTemplate'><table>") ;
+				for (WebQueryResult wqr:lwqr) {
+					String newi = String.valueOf(wqr.get1()) ;
+					if (!newi.equals(oldi)) {
+						oldi=newi ;
+						if (listCab.length()>0)listCab.append(",") ;
+						listCab.append(newi) ;
+						ret.append("<tr>") ;
+						ret.append("<th colspan='2'>").append(wqr.get2()).append("</th>") ;
+						ret.append("</tr>") ;
+					}
+					ret.append("<tr>") ;
+					ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';").append(aFunctionGo).append("('")
+					.append(aSmoId).append("','").append(aService)
+					.append("','").append(wqr.get2())
+					.append("','").append(aProtocolId!=null?aProtocolId:"")
+					.append("','").append(wqr.get3())
+					.append("')\" colspan=\"4\">");
+		    		ret.append("	<input name=\"typeTemplate\" id=\"typeTemplate\" value=\"").append(wqr.get1()).append("#").append(wqr.get3()).append("#").append(aSmoId).append("#").append(wqr.get5()).append("\" type=\"radio\" />  "+wqr.get4()); 
+		    		ret.append("</td>") ;
+					ret.append("</tr>") ;
+	
+				}
+				
+				ret.append("</table></form>") ;
+			}
+		}
+		
+		return ret.toString() ;
+	}
+	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException, JSONException {
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username) ;
+	}
+	public String checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		Long spec  = null ;
+		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
+		if (!specL.isEmpty()) {
+			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
+		}
+		if (spec==null) new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
+		
+		sql.append("update MedCase set workFunctionExecute_id='"+spec+"',dateStart=to_date('").append(formatD.format(date))
+		.append("','dd.mm.yyyy'),timeExecute=cast('").append(formatT.format(date)).append("' as time)")
+		.append(",editUsername='").append(username).append("' ,editdate=to_date('").append(formatD.format(date))
+		.append("','dd.mm.yyyy'),edittime=cast('").append(formatT.format(date)).append("' as time)")
+		.append(" where id in (").append(aSmoId).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		sql = new StringBuilder() ;
+		sql.append("update Diary set dtype='Protocol',specialist_id='"+spec+"',dateRegistration=to_date('").append(formatD.format(date))
+		.append("','dd.mm.yyyy'),timeRegistration=cast('").append(formatT.format(date)).append("' as time)")
+		.append(" where id in (").append(aProtocol).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "" ;
+	}
+	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		Collection<WebQueryResult> lwqr = null ;
+		
+		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
+			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
+			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
+			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
+			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
+			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
+			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
+			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
+			sql.append(" when p.type ='4' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990.'||repeat('0',cast(p.cntdecimal as int)))"); 
+			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
+			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
+			sql.append(" ,vv.name as d20val4v") ;
+			sql.append(" from FormInputProtocol pf") ;
+			sql.append(" left join Diary d on pf.docProtocol_id = d.id") ;
+			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
+			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
+			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+			sql.append(" where d.id='").append(aProtocolId).append("'") ;
+			sql.append(" order by pf.position") ;
+			lwqr = service.executeNativeSql(sql.toString()) ;
+		} 
+		if (lwqr==null || lwqr.isEmpty()) {
+			sql = new StringBuilder() ;
+			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
+			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
+			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
+			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
+			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
+			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
+			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
+			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
+			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
+			sql.append(" from parameterbyform pf") ;
+			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
+			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
+			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+			sql.append(" where tp.id='").append(aTemplateId).append("'") ;
+			sql.append(" order by pf.position") ;
+			lwqr = service.executeNativeSql(sql.toString()) ;
+		}
+			
+			
+		StringBuilder sb = new StringBuilder() ;
+		StringBuilder err = new StringBuilder() ;
+			sb.append("{");
+			//sb.append("\"paramCount\":\""+lwqr.size()+"\",") ;
+			sb.append("\"params\":[") ;
+			boolean firstPassed = false ;
+			boolean firstError = false ;
+			String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
+			,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
+			,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
+			,{"13","unitid"},{"14","unitname"}
+			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
+			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+			} ;
+			for(WebQueryResult wqr : lwqr) {
+				
+				StringBuilder par = new StringBuilder() ;
+				par.append("{") ;
+				boolean isFirtMethod = false ;
+				boolean isError = false ;
+				//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
+				if (String.valueOf(wqr.get4()).equals("2")) {
+					//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+					if (wqr.get15()==null) {
+						isError = true ;
+						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+					}
+				}
+				try {
+					
+					for(String[] prop : props) {
+						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+						String strValue = value!=null?value.toString():"";
+						
+						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
+						par.append("\"").append(prop[1]).append("\":\"").append(strValue).append("\"") ;
+						
+					}
+					
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+				par.append("}") ;
+				if (isError) {
+					if(firstError) err.append(", ") ;else firstError=true;
+					err.append(par) ;
+				}else{
+					if(firstPassed) sb.append(", ") ;else firstPassed=true;
+					sb.append(par) ;
+				}
+			}
+			sb.append("]") ;
+			sb.append(",\"errors\":[").append(err).append("]") ;
+			sb.append(",\"template\":\"").append(aTemplateId).append("\"") ;
+			sb.append(",\"protocol\":\"").append(aProtocolId).append("\"") ;
+			sb.append("}") ;
+			return sb.toString();
+		
 	}
 	
 	private String savePrescriptNew(Long aTemplateList, Long aMedCase, IPrescriptionService service) {
