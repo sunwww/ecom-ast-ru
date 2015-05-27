@@ -23,6 +23,10 @@
         
         <msh:row guid="numberRow123">
           <msh:textField property="number" label="Номер участка" guid="9f8be45a-773a-4ca4-a12c-8f50d63e3ffc" />
+          <msh:textField property="codeDepartment" label="Код подразделения"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="workFunction" label="Участковый" vocName="workFunction" horizontalFill="true" labelColSpan="3"/>
         </msh:row>
         <msh:row guid="c3c9de7b-88e7-42f5-a7e9-2e1a8d5651b8">
           <msh:autoComplete guid="type123" property="type" label="Тип участка" vocName="vocAreaType" size="20" />
