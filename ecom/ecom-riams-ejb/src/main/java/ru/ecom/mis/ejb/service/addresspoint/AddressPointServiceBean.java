@@ -13,6 +13,7 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +33,9 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
+import ru.ecom.mis.ejb.domain.patient.MedPolicy;
+import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
@@ -68,10 +72,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     }
     
     public String setInsuranceCompany(String needUpdateAll) {
-    	try{
+    	
     		StringBuilder sql = new StringBuilder();
-    		sql.append("update lpuattachedbydepartment att set company_id=(select smo.id from medpolicy mp left join reg_ic smo on smo.id=mp.company_id "+ 
-    				"where mp.patient_id=att.patient_id and mp.actualdatefrom is not null "+
+    		try{
+/*    		sql.append("update lpuattachedbydepartment att set company_id=(select smo.id from medpolicy mp left join reg_ic smo on smo.id=mp.company_id "+ 
+    				"where mp.patient_id=att.patient_id and mp.actualdatefrom is not null and mp.dtype='MedPolicyOmc' "+
     				"and smo.omccode !=''order by actualdatefrom desc limit 1) ");
     		if (needUpdateAll!=null && needUpdateAll.equals("YES")) {
     			
@@ -79,11 +84,41 @@ public class AddressPointServiceBean implements IAddressPointService {
     			 sql.append(" where company_id is null");
     		}
         	int i = theManager.createNativeQuery(sql.toString()).executeUpdate();
-        	return "Успешно обновлено "+i+ " записей";
+        	return "Успешно обновлено "+i+ " записей";*/
+    			sql.append("from LpuAttachedByDepartment ");
+        		if (needUpdateAll!=null && needUpdateAll.equals("YES")) {
+        		} else {
+        			 sql.append(" where company_id is null");
+        		}
+        		List<LpuAttachedByDepartment> attList = theManager.createQuery(sql.toString()).getResultList();
+        		int i =0;
+        		for (LpuAttachedByDepartment att: attList) {
+        			try {
+						List<MedPolicyOmc> mpList =  theManager.createQuery("from MedPolicyOmc where patient_id=:pat and actualDateFrom is not null order by actualdatefrom desc")
+								.setParameter("pat", att.getPatient().getId())
+								.getResultList();
+						if (!mpList.isEmpty()) {
+							i++;
+						//	System.out.println("-----CREATE COMPANY in LABD, i="+i+", pat = "+att.getPatient().getPatientInfo());
+							att.setCompany(mpList.get(0).getCompany());
+							theManager.persist(att);	
+						}
+					} catch (javax.persistence.NoResultException e) {
+						// TODO Auto-generated catch block
+						System.out.println("NoResultExceprion: "+att.getPatient().getPatientInfo());
+						e.printStackTrace();
+					}
+        			
+        		}
+        		return "Обновлено " + i + " записей";
         	} catch (Exception e) {
-        		e.printStackTrace();
-        		return "Ошибка:" +e.toString();
+        		sql.setLength(0);
+        		
+        		
+        		//e.printStackTrace();
+        		e.printStackTrace();//+e.toString();
         	}
+    		return "ERROR";
     }
     public String exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
