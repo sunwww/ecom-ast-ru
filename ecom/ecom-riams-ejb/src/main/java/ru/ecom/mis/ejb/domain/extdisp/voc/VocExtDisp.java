@@ -27,7 +27,13 @@ public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;
 /** Флаг медосмотра */
 private Boolean theIsComission;
 	
+/** Оказывается только прикрепленному населению */
+@Comment("Оказывается только прикрепленному населению")
+public Boolean getAttachmentPopulation() {return theAttachmentPopulation;}
+public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmentPopulation = aAttachmentPopulation;}
+/** Оказывается только прикрепленному населению */
+private Boolean theAttachmentPopulation;
 
-	/** Тип */
-	private String theType;
+/** Тип *//*
+	private String theType;*/
 }
