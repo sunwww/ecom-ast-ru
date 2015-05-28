@@ -72,6 +72,16 @@ function check(aForm,aCtx) {
 				throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -" ;
 			}
 		}
+		if (aForm.getDateRegistration()!=null&&aForm.getDateRegistration()!='') {
+			var curDate = java.util.Calendar.getInstance();
+			var maxVisit = java.util.Calendar.getInstance();
+			var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
+			maxVisit.setTime(dateVisit);
+			maxVisit.add(java.util.Calendar.HOUR,24);
+			if (curDate>maxVisit) {
+				throw "Запрещено создавать дневники с датой регистрации больше суток с текущей даты";
+				} 
+		}
 		
 	}
 	
