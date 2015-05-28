@@ -42,4 +42,12 @@ public class VocExtDispForm extends IdEntityForm {
 	public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;}
 	/** Флаг Медкомиссия */
 	private Boolean theIsComission;
+	
+	/** Оказывается только прикрепленному населению */
+	@Comment("Оказывается только прикрепленному населению")
+	@Persist
+	public Boolean getAttachmentPopulation() {return theAttachmentPopulation;}
+	public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmentPopulation = aAttachmentPopulation;}
+	/** Оказывается только прикрепленному населению */
+	private Boolean theAttachmentPopulation;
 }
