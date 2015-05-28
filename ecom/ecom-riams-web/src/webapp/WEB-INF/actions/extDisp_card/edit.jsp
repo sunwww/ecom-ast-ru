@@ -160,8 +160,8 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     			callback: function (aResult) {
     				if (aResult=='0') {
     					alert ("Диспансеризация оказывается только прикрепленному населению,"+
-    							"\nпо данным последней проверке ФОМС пациент не прикреплен"+
-    							"\nсоздание карты невозможно");
+    							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
+    							"\nСоздание карты невозможно");
     					document.getElementById('submitButton').disabled=false;
 						document.getElementById('submitButton').value='Создать';
     				}
