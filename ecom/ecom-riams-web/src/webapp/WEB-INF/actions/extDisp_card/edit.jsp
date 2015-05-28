@@ -149,6 +149,33 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+		<msh:ifNotInRole roles="/Policy/Mis/ExtDisp/Card/IgnoreAttachmentDisp">
+		<msh:ifFormTypeIsCreate formName="extDisp_cardForm">
+		<script type="text/javascript">
+		var oldaction = document.forms['extDisp_cardForm'].action ;
+		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached()";
+		
+		function checkDispAttached() {
+    		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
+    			callback: function (aResult) {
+    				if (aResult=='0') {
+    					alert ("Диспансеризация оказывается только прикрепленному населению,"+
+    							"\nпо данным последней проверке ФОМС пациент не прикреплен"+
+    							"\nсоздание карты невозможно");
+    					document.getElementById('submitButton').disabled=false;
+						document.getElementById('submitButton').value='Создать';
+    				}
+    				else {
+    					document.forms['extDisp_cardForm'].action=oldaction ;
+    					document.forms['extDisp_cardForm'].submit();
+    				} 
+    					
+    			}
+    		});
+    	}
+		</script>
+		</msh:ifFormTypeIsCreate>
+		</msh:ifNotInRole>
 		<script type="text/javascript">
     	function updateAge() {
     		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
@@ -165,6 +192,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	} catch(e) {
 
     	}
+    	
 		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
@@ -175,6 +203,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_card" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 				<msh:sideLink confirm="Удалить доп.диспансеризацию?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_card" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Delete"/>
+				
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
