@@ -18,6 +18,9 @@
 				<msh:row>
 					<msh:checkBox property="isComission" label="Медосмотр"/>
 				</msh:row>
+				<msh:row>
+					<msh:checkBox property="attachmentPopulation" label="Оказывается только прикрепленному населению"/>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
