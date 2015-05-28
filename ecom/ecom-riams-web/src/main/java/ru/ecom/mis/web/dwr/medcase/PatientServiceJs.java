@@ -20,6 +20,15 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String isDispAttachment = service.executeNativeSql("select case when attachmentpopulation ='1' then '1' else '0' end " +
+				"from vocextdisp where id='"+aDispTypeId+"'", 1).iterator().next().get1().toString();
+		String isPatAttached = isPatientAttached(aPatientId, aRequest);
+		if (isDispAttachment.equals("1")&&isPatAttached.substring(0,1).equals("0")) {
+			return "0";
+		} else return "1";
+	}
 	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy') from patient p " +
