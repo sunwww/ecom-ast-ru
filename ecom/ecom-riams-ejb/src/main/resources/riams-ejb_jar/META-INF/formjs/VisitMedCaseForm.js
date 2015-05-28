@@ -43,7 +43,7 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoBefore")){
 					if (curDate.before(calFrom)) {
 						check=false ;
-						message="У Вас стоит ограничение "+interval+" мин. разрешенной регистрации до начала приема" ;
+						message="У Вас стоит ограничение "+interval+" мин. для регистрации посещения до начала приема" ;
 					}
 				}
 				if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableRegistraionIntervalNoAfter")){
