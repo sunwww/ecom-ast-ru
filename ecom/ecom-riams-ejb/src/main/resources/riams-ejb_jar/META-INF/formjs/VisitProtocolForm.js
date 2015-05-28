@@ -88,13 +88,12 @@ function check(aForm,aCtx) {
 			maxVisit.setTime(dateVisit);
 			var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx) ;
 			maxVisit.add(java.util.Calendar.HOUR,cntHour);
-			if (curDate>maxVisit) {
+			if (curDate.after(maxVisit)) {
 				var param1 = new java.util.HashMap() ;
 				param1.put("obj","Protocol") ;
 				param1.put("permission" ,"editAfterCertainHour") ;
 				param1.put("id", +aForm.id) ;
 				var isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-				//throw isDeleteClose ;
 				if (+isCheck!=1) throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
 			}
 		}
