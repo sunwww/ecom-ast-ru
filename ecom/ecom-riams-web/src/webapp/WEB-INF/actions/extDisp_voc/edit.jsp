@@ -15,9 +15,11 @@
 				<msh:row>
 					<msh:textField property="name" label="Наименование" fieldColSpan="3" size="100" horizontalFill="true"/>
 				</msh:row>
+				<msh:ifInRole roles="/Policy/Mis/ExtDisp/ExtDispCom">
 				<msh:row>
 					<msh:checkBox property="isComission" label="Медосмотр"/>
 				</msh:row>
+				</msh:ifInRole>
 				<msh:row>
 					<msh:checkBox property="attachmentPopulation" label="Оказывается только прикрепленному населению"/>
 				</msh:row>
