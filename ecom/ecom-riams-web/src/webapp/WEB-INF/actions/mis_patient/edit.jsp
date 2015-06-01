@@ -844,6 +844,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
   <tiles:put name="javascript" type="string">
       <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
       <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
+      <msh:ifFormTypeIsView formName="mis_patientForm">
 		<script type="text/javascript">
 		onload=function checkIsAttachment() {
 	    	PatientService.isPatientAttached($('id').value, {
@@ -859,6 +860,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	    	});
 	    }
 		</script>
+		</msh:ifFormTypeIsView>
       </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/Patient/EditColorType">
     <script type="text/javascript">
