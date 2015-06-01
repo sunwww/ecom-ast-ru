@@ -410,5 +410,29 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
 
 	/** Кем выдан паспорт */
 	private String theDocWhom;
+
+	/** Идентификатор ФОМС */
+	@Comment("Идентификатор ФОМС")
+	@AFormatFieldSuggest({"PID"})
+	public String getFondId() {return theFondId;}
+	public void setFondId(String aFondId) {theFondId = aFondId;}
+	/** Идентификатор ФОМС */
+	private String theFondId;
+	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	@AFormatFieldSuggest({"KODPODR"})
+	public String getDepartment() {return theDepartment;}
+	public void setDepartment(String aDepartment) {theDepartment = aDepartment;}
+	/** Код подразделения */
+	private String theDepartment;
+	
+	/** СНИЛС участкового врача */
+	@Comment("СНИЛС участкового врача")
+	@AFormatFieldSuggest({"SSD"})
+	public String getDoctorSnils() {return theDoctorSnils;}
+	public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
+	/** СНИЛС участкового врача */
+	private String theDoctorSnils;
 	
 }
