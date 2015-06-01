@@ -159,7 +159,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
     				if (aResult=='0') {
-    					alert ("Диспансеризация оказывается только прикрепленному населению,"+
+    					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
     							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
     							"\nСоздание карты невозможно");
     					document.getElementById('submitButton').disabled=false;
