@@ -128,6 +128,7 @@
         	<td colspan="2">Внимание! Следующие записи не выгружены!</td>
        </tr>
        <tr>
+       		<td>Пациент</td>
         	<td>Номер ЛН</td>
         	<td>Ошибка</td>
         </tr>
@@ -345,6 +346,7 @@
         var td2 = document.createElement("TD");
         var td3 = document.createElement("TD");
         var td4 = document.createElement("TD");
+       
         row.appendChild(td1);
     	row.appendChild(td2);
     	row.appendChild(td3);
@@ -372,15 +374,18 @@
 
       var td1 = document.createElement("TD");
       var td2 = document.createElement("TD");
+      var td5 = document.createElement("TD");
            ///td2.colSpan="2";
       
+     row.appendChild(td5);
   	 row.appendChild(td1);
   	 row.appendChild(td2);
   	 
      
       // Наполняем ячейки  
-      td1.innerHTML = "<a href='/riams/entityParentView-dis_document.do?id="+aData[1]+"' target='_blank'><span>\t"+aData[0]+"</span></a>";
-      td2.innerHTML = "<span> "+aData[2]+"</span>";
+    td1.innerHTML = "<a href='/riams/entityParentView-dis_document.do?id="+aData[1]+"' target='_blank'><span>\t"+aData[0]+"</span></a>";
+    td2.innerHTML = "<span> "+aData[2]+"</span>";
+	td5.innerHTML="<a href='/riams/entityView-mis_patient.do?id="+aData[3]+"' target='_blank'><span>"+aData[4]+"</span></a>";
 
       
      
