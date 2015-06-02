@@ -380,5 +380,12 @@ public class PatientFond extends BaseEntity{
 	public void setAttachedDate(Date aAttachedDate) {theAttachedDate = aAttachedDate;}
 	/** Дата прикрепления */
 	private Date theAttachedDate;
+	
+	/** Дата смерти */
+	@Comment("Дата смерти")
+	public Date getDeathDate() {return theDeathDate;}
+	public void setDeathDate(Date aDeathDate) {theDeathDate = aDeathDate;}
+	/** Дата смерти */
+	private Date theDeathDate;
 
 }
