@@ -154,6 +154,8 @@ public class FondWebService {
         	*/
         	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
         	String attachedDate = null; String attachedType = null; String attachedLpu = null;
+        	String c = null;
+        	String dateDeath = null;
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 			//String commonNumber;
         	InputStream in = new ByteArrayInputStream(result.getBytes());
@@ -185,7 +187,7 @@ public class FondWebService {
             	String i = e.getChildText("i") ;
             	String o = e.getChildText("o") ;
             	String dr = upDate(e.getChildText("dr")) ;
-            	String dateDeath=upDate(e.getChildText("datadead")) ;
+            	 dateDeath=upDate(e.getChildText("datadead")) ;
             	String ss =e.getChildText("ss") ;
             	String attDate = upDate(e.getChildText("date_prik"));
             	String attType = e.getChildText("sp_prik");
@@ -452,7 +454,7 @@ public class FondWebService {
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
             		, companyCode, "", "", ""
             		, documentType, documentSeries, documentNumber
-            		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType);
+            		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath);
             return sb.toString() ;
         }
 		
