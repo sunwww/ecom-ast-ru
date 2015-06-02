@@ -311,7 +311,7 @@ public class PatientServiceBean implements IPatientService {
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
 			if ( aIsPatient) {
-				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&aIsPolicy) {
+				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
 					StringBuilder sql = new StringBuilder() ;
 					if (!fiodr[0].startsWith("?")) {
 						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
@@ -605,6 +605,22 @@ public class PatientServiceBean implements IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException {
+		insertCheckFondData(aLastname,aFirstname,aMiddlename,aBirthday,aSnils,aCommonNumber,aPolicySeries,aPolicyNumber
+				,aPolicyDateFrom,aPolicyDateTo,aUsername,aCheckType,aCompanyCode,aCompabyCodeF,aCompanyOgrn, aCompanyOkato
+				,aDocumentType,aDocumentSeries,aDocumentNumber, aKladr,aHouse,aHouseBuilding,aFlat
+				,aLpuAttached,aAttachedDate,aAttachedType,null);
+	}
+	public void insertCheckFondData(
+			String aLastname,String aFirstname,String aMiddlename,String aBirthday
+			,String aSnils
+			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
+			,String aPolicyDateFrom, String aPolicyDateTo
+			,String aUsername, String aCheckType
+			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
+			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
+			) throws ParseException {
 		PatientFond fond = new PatientFond() ;
 		fond.setLastname(aLastname) ;
 		fond.setFirstname(aFirstname) ;
@@ -634,6 +650,7 @@ public class PatientServiceBean implements IPatientService {
 		fond.setAttachedType(aAttachedType);
 		fond.setAttachedDate(DateFormat.parseSqlDate(aAttachedDate));
 		fond.setLpuAttached(aLpuAttached);
+		fond.setDeathDate(DateFormat.parseSqlDate(dateDeath));
 		theManager.persist(fond) ;
 		return ;
 	}

@@ -27,6 +27,17 @@ public interface IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException ;
+	public void insertCheckFondData(
+			String aLastname,String aFirstname,String aMiddlename,String aBirthday
+			,String aSnils
+			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
+			,String aPolicyDateFrom, String aPolicyDateTo
+			,String aUsername, String aCheckType
+			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
+			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
+			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
+			) throws ParseException ;
 	public String getCodeByMedPolicyOmc(Long aType) ;
 	public boolean isNaturalPerson(Long aPatient) ;
 	public void createNaturalPerson(Long aPatient) ;	
