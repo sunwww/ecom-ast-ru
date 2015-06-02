@@ -138,7 +138,7 @@
        
 	   </msh:row>
        <msh:row>
-      	 <td colspan="1">  <label>Импорт дефектов: </label>    	
+      	 <td colspan="11">  <label>Импорт дефектов: </label>    	
             <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
            <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
        	 </td>
