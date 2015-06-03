@@ -30,6 +30,21 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+	
+	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
+		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
+		System.out.println("isMedcaseIsDepartment, dtype="+dtype);
+		if (dtype!=null&&dtype.equals("DepartmentMedCase")) {
+			return true;
+		} else if (dtype!=null&&dtype.equals("HospitalMedCase")) {
+			return false;
+		} else {
+			System.out.println("isMedcaseIsDepartment, STRANGE dtype="+dtype);
+			return false;
+		}
+	}
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
