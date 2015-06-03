@@ -63,6 +63,7 @@
 			if (confirm("Место забора необходимо указывать, если оно отличается от отделения, где лежит пациент!!!")){
 				$('labDepartmentName').style.visibility='visible';
 				$('labDepartmentLabel').style.visibility='visible';
+				$('btnChangeDepartment').style.visibility='hidden';
 			}
 			
 		}
@@ -875,7 +876,6 @@
   	<msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
   		<msh:sideMenu title="Шаблоны">
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
-  			<msh:sideLink action=" javascript:isInDepartment()" name="555555555" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="555555555" />
   		</msh:sideMenu>
   		<tags:templatePrescription record="2" parentId="${param.id}" name="add" />
   		<tags:pres_vocPrescTypes title="Выбор типа листа назначения" name="check" parentType = "medCase" parentID="${param.id}"/>
