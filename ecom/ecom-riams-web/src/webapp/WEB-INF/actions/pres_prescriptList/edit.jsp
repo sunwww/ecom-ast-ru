@@ -18,7 +18,7 @@
     			window.history.back();
     		}
      	}
-        
+        //$('labDepartmentDiv').style.visibility='hidden';
         var currentDate = new Date;
 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 		var textMonth = currentDate.getMonth()+1;
@@ -59,13 +59,37 @@
         </script>
 
 		<script type="text/javascript">
+		function showChangeDepartment() {
+			if (confirm("Место забора необходимо указывать, если оно отличается от отделения, где лежит пациент!!!")){
+				$('labDepartmentName').style.visibility='visible';
+				$('labDepartmentLabel').style.visibility='visible';
+			}
+			
+		}
+		function isInDepartment () {
+			 PrescriptionService.isMedcaseIsDepartment($('medCase').value,{
+				callback: function(aResult) {
+					if (aResult==true||aResult=='true') {
+						$('labDepartmentName').style.visibility='hidden';
+						$('labDepartmentLabel').style.visibility='hidden';
+						$('btnChangeDepartment').style.visibility='visible';
+						
+					} else {
+						$('labDepartmentName').style.visibility='visible';
+						$('labDepartmentLabel').style.visibility='visible';
+						$('btnChangeDepartment').style.visibility='hidden';
+					}
+					
+				}
+			}); 
+		}
 		var oldaction = document.forms['pres_prescriptListForm'].action ;
 		document.forms['pres_prescriptListForm'].action="javascript:checkDoubles()";
 		var num=0; var labNum=0; var funcNum=0; var drugNum=0;
 		var labList=""; var drugList=""; var allDrugList="";
 		
 		
- 		onload=checkPrescriptExists();
+ 		onload=function() {isInDepartment();checkPrescriptExists();}
  		
  		// Проверяем, есть ли другие ЛН в данном СЛО 
 		function checkPrescriptExists() {
@@ -553,7 +577,7 @@
 	    td4.innerHTML = dt4+"<span>. Дозировка: "+aDrugAmount+" "+aDrugAmountUnitName+"</span>" ;
 	   	td5.innerHTML = dt5+"<span>. Продолжительность: "+aDrugDuration+" "+aDrugDurationUnitName+"</span>";
 	    td6.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
-	   	new dateutil.DateField($(type+'Date'+num));
+	    new dateutil.DateField($(type+'Date'+num));
 					   
 	   	drugNum = num;
 		$('drugForm1.drug').value='';
@@ -680,6 +704,7 @@
             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
            
           <input type='button' name='btnChangePrescriptionType' onclick='showcheckPrescTypes();' value='Изменить тип назначения' />
+          <input type='button' style="visibility:hidden" id="btnChangeDepartment" name='btnChangeDepartment' onclick='showChangeDepartment();' value='Изменить место забора' />
         </msh:row>
          </msh:ifFormTypeIsNotView>
       <msh:row>
@@ -762,9 +787,6 @@
         </tbody>
         </table>
 	    </msh:panel>
-	   
-	    
-	     
         <%-- --------------------------------------------------Конец блока "Лекарственное обеспечение" --%>
         <%-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ --%>
        
@@ -784,8 +806,8 @@
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
             </td>
             </msh:row>
-            <msh:row>
-            	<msh:autoComplete property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
+            <msh:row> 
+            	<msh:autoComplete  property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
             </msh:row>
            </tbody>
     		</table>
@@ -853,6 +875,7 @@
   	<msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
   		<msh:sideMenu title="Шаблоны">
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
+  			<msh:sideLink action=" javascript:isInDepartment()" name="555555555" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="555555555" />
   		</msh:sideMenu>
   		<tags:templatePrescription record="2" parentId="${param.id}" name="add" />
   		<tags:pres_vocPrescTypes title="Выбор типа листа назначения" name="check" parentType = "medCase" parentID="${param.id}"/>
