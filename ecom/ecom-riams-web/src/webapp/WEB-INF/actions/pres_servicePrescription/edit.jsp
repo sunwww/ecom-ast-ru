@@ -17,8 +17,40 @@
 	var labNum=0;
 	var funcNum=0;
 	var labList="";
-	
-	onload =function () {
+	function showChangeDepartment() {
+		if (confirm("Место забора необходимо указывать, если оно отличается от отделения, где лежит пациент!!!")){
+			$('labDepartmentName').style.visibility='visible';
+			$('labDepartmentLabel').style.visibility='visible';
+			$('btnChangeDepartment').style.visibility='hidden';
+		}
+		
+	}
+	onload =function isInDepartment () {
+		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value,{
+			callback: function(aResult) {
+				PrescriptionService.isMedcaseIsDepartment(aResult,{
+					callback: function(aResults) {
+						if (aResults==true||aResults=='true') {
+							$('labDepartmentName').style.visibility='hidden';
+							$('labDepartmentLabel').style.visibility='hidden';
+							$('btnChangeDepartment').style.visibility='visible';
+							
+						} else {
+							$('labDepartmentName').style.visibility='visible';
+							$('labDepartmentLabel').style.visibility='visible';
+							$('btnChangeDepartment').style.visibility='hidden';
+						}
+						
+					}
+				}); 
+				startLoad();
+			}
+		
+		});
+		
+		
+	}
+	function startLoad () {
 		var date = new Date();
 		var month = date.getMonth()+1; if (month<10) {month="0"+month;}
 		var day = date.getDate(); if (day<10) {day="0"+day;}
@@ -293,6 +325,7 @@
       <msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
       <msh:row>
       <input type='button' name='btnChangePrescriptionType' onclick='showcheckPrescTypes();' value='Изменить тип назначения' />
+      <input type='button' style="visibility:hidden" id="btnChangeDepartment" name='btnChangeDepartment' onclick='showChangeDepartment();' value='Изменить место забора' />
        	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="100" />
       </msh:row>
  </msh:ifFormTypeIsNotView>
