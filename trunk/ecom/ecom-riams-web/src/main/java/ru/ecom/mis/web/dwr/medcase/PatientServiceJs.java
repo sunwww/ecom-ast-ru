@@ -31,7 +31,7 @@ public class PatientServiceJs {
 	}
 	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy') from patient p " +
+		Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy'),case when pf.deathdate is not null then to_char(pf.deathdate,'dd.mm.yyyy') else '' end from patient p " +
 				"left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
 				"and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and (pf.lpuattached is not null and pf.lpuattached!='') order by pf.checkdate desc", 1);
 		Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
@@ -42,13 +42,22 @@ public class PatientServiceJs {
 		String defaultLpuName = defLpu.iterator().next().get2().toString(); 
 		
 		if (!list.isEmpty()) {
-			String lastAttachment = list.iterator().next().get1().toString();
-			String checkDate = list.iterator().next().get2().toString();
-			if (lastAttachment.equals(defaultLpu)) {
-				return "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName;
+			String res = null;
+			WebQueryResult wqr = list.iterator().next();
+			String lastAttachment = wqr.get1().toString();
+			String checkDate = wqr.get2().toString();
+			String deathDate = wqr.get3().toString();
+			
+			if (deathDate!=null&&deathDate.length()==10) {
+				res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
 			} else {
-				return "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName;
+				if (lastAttachment.equals(defaultLpu)) {
+					res = "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName;
+				} else {
+					res =  "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName;
+				}
 			}
+			return res;
 		}
 		return "0Необходимо выполнить проверку по базе ФОМС";
 	}
