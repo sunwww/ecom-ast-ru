@@ -239,6 +239,7 @@ public class PatientServiceJs {
 		return res ;
 	}
 	public Object checkPatientBySnils(Long aPatientId, String aSnils,HttpServletRequest aRequest) throws Exception {
+		if (aSnils!=null&&!aSnils.equals("")){
 		Object res = null;
 		//System.out.println("checking snils...") ;
 		//System.out.println("---username:"+LoginInfo.find(aRequest.getSession(true)).getUsername()) ;
@@ -247,6 +248,10 @@ public class PatientServiceJs {
 		res = FondWebService.checkPatientBySnils(aRequest, getPatientInfo(aPatientId, service),aSnils) ;
 		
 		return res ;
+		} else {
+			return "Не заполнено поле \"СНИЛС\"";	
+		}
+		
 	}
 	public Object checkPatientByFioDr(Long aPatientId, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday,HttpServletRequest aRequest) throws Exception {
