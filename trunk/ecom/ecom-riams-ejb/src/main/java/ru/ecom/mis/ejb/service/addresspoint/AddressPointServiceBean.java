@@ -18,8 +18,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.record.formula.DividePtg;
 import org.w3c.dom.Element;
 
 import ru.ecom.address.ejb.domain.address.Address;
@@ -131,6 +133,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
+    	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
+    			, aNReestr, aNPackage,null,true);
+    }
+    public String exportAll(String aAge, String aFilenameAddSuffix
+    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+    		, String aDateFrom, String aDateTo, String aPeriodByReestr
+    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	if (aAge!=null) {
@@ -140,61 +149,103 @@ public class AddressPointServiceBean implements IAddressPointService {
     	//Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String filename=null;
+    	StringBuilder sql = new StringBuilder() ;
+    //	File outFile = null;
+    	List<Object[]> listPat = null;
+    	if (needDivide) {
+    		StringBuilder sqlGroup = new StringBuilder() ;
+        	sqlGroup.append("select lp.company_id,vri.smocode") ;
+        	sqlGroup.append(" from Patient p") ;
+        	sqlGroup.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
+        	sqlGroup.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+        	sqlGroup.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
+        	sqlGroup.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
+        	sqlGroup.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+        	sqlGroup.append(" left join REG_IC vri on vri.id=lp.company_id") ;
+        	sqlGroup.append(" where ") ;
+        	if (aCompany!=null&&aCompany!=0) sqlGroup.append("lp.company_id='").append(aCompany).append("' and ");
+        	if (aLpuCheck) sqlGroup.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
+        	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sqlGroup.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        	sqlGroup.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+        	sqlGroup.append(" ").append(addSql) ;
+        	sqlGroup.append(" group by lp.company_id,vri.smocode") ;
+        	sqlGroup.append(" order by lp.company_id,vri.smocode") ;
+        	System.out.println("------------------- Need_DIVIDE_COMP = "+sqlGroup.toString());
+        	List<Object[]> listComp = theManager.createNativeQuery(sqlGroup.toString())
+        			.setMaxResults(90000).getResultList() ;
+        	
+        	for (Object[] comp:listComp) {
+        	filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp[1]==null?"-":comp[1])
+        		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+        	filenames.append("#").append(filename+".xml") ;
+        
+        	sql.setLength(0);
+        	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
+        	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
+        	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
+        	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
+        	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
+            sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
+        	sql.append(" from Patient p") ;
+        	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
+        	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+        	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
+            sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
+        	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+        	sql.append(" where ") ;
+        	sql.append(" lp.company_id") ;
+        	if (comp[0]!=null) {sql.append("=").append(comp[0]) ;} else {sql.append(" is null ") ;}
+        	sql.append(" and ");
+        	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
+        	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+        	sql.append(" ").append(addSql) ;
+        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+        	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+        	System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
+        	 listPat = theManager.createNativeQuery(sql.toString())
+        			.setMaxResults(90000).getResultList() ;
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat);
+        	//xmlDoc.saveDocument(outFile) ;
+        	}
+    	} else {
+    		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    		filenames.append("#").append(filename+".xml") ;
+    		sql.setLength(0);
+    		sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
+        	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
+        	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
+        	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
+        	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
+            sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
+        	sql.append(" from Patient p") ;
+        	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
+        	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+        	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
+            sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
+        	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+        	sql.append(" where ") ;
+        	
+        	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
+        	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+        	sql.append(" ").append(addSql) ;
+        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+        	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+        	System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
+        	listPat = theManager.createNativeQuery(sql.toString())
+        			.setMaxResults(90000).getResultList() ;
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat);
+    	}
     	
-    	StringBuilder sqlGroup = new StringBuilder() ;
-    	sqlGroup.append("select lp.company_id,vri.smocode") ;
-    	sqlGroup.append(" from Patient p") ;
-    	sqlGroup.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
-    	sqlGroup.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
-    	sqlGroup.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
-    	sqlGroup.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
-    	sqlGroup.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
-    	sqlGroup.append(" left join REG_IC vri on vri.id=lp.company_id") ;
-    	sqlGroup.append(" where ") ;
-    	if (aCompany!=null&&aCompany!=0) sqlGroup.append("lp.company_id='").append(aCompany).append("' and ");
-    	if (aLpuCheck) sqlGroup.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
-    	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sqlGroup.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
-    	sqlGroup.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-    	sqlGroup.append(" ").append(addSql) ;
-    	sqlGroup.append(" group by lp.company_id,vri.smocode") ;
-    	sqlGroup.append(" order by lp.company_id,vri.smocode") ;
-    	List<Object[]> listComp = theManager.createNativeQuery(sqlGroup.toString())
-    			.setMaxResults(90000).getResultList() ;
     	
-    	for (Object[] comp:listComp) {
-    	String filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp[1]==null?"-":comp[1])
-    		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-    	filenames.append("#").append(filename+".xml") ;
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	return filenames.length()>0?filenames.substring(1):"";
+    }
+    public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
-    	
-    	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
-    	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
-    	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
-    	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
-    	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
-        sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
-    	sql.append(" from Patient p") ;
-    	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
-    	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
-    	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
-        sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
-    	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
-    	sql.append(" where ") ;
-    	sql.append(" lp.company_id") ;
-    	if (comp[0]!=null) {sql.append("=").append(comp[0]) ;} else {sql.append(" is null ") ;}
-    	sql.append(" and ");
-    	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
-    	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
-    	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-    	sql.append(" ").append(addSql) ;
-    	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
-    	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-    	
-    	List<Object[]> listPat = theManager.createNativeQuery(sql.toString())
-    			.setMaxResults(90000).getResultList() ;
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
@@ -220,9 +271,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     		xmlDoc.newElement(zap, "REFREASON", "") ;
     	}
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
-    	//xmlDoc.saveDocument(outFile) ;
-    	}
-    	return filenames.length()>0?filenames.substring(1):"";
     }
     public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge,"","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
