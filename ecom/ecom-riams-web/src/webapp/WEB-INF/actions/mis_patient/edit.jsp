@@ -843,27 +843,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
   </tiles:put>
   <tiles:put name="javascript" type="string">
       <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
-      <msh:ifFormTypeIsView formName="mis_patientForm">
-		<script type="text/javascript">
-		onload=function checkIsAttachment() {
-	    	PatientService.isPatientAttached($('id').value, {
-	    		callback: function (aResult) {
-	    			if (aResult.substring(0,1)=='1') {
-	    				$('syncRow').style.backgroundColor="green";
-	    				$('syncRow').style.color="white";
-	    			} else if (aResult.substring(0,1)=='0'){
-	    				$('syncRow').style.backgroundColor="yellow";
-	    			} else {
-	    				$('syncRow').style.backgroundColor="red";
-	    			}
-	    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
-	    		}
-	    	});
-	    }
-		</script>
-		</msh:ifFormTypeIsView>
-      </msh:ifInRole>
+      
     <msh:ifInRole roles="/Policy/Mis/Patient/EditColorType">
     <script type="text/javascript">
 	function updateColorPatient() {
@@ -880,7 +860,23 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
-    	
+    function checkIsAttachedOrDead(isDead, isAttached) {
+    	PatientService.checkPatientAttachedOrDead($('id').value,isDead, isAttached, {
+    		callback: function (aResult) {
+    			if (aResult){
+    			if (aResult.substring(0,1)=='1') {
+    				$('syncRow').style.backgroundColor="green";
+    				$('syncRow').style.color="white";
+    			} else if (aResult.substring(0,1)=='0'){
+    				$('syncRow').style.backgroundColor="yellow";
+    			} else if (aResult.substring(0,1)=='2'){
+    				$('syncRow').style.backgroundColor="red";
+    			}
+    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
+    			}
+    		}
+    	});
+    }	
     function checkPatientByCommonNumber(a) {
     		showPatientFindPatientByFond("Подождите идет поиск...") ;
     		PatientButtonView(0) ;
@@ -953,6 +949,23 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
     </script>
   </msh:ifInRole>
+  <msh:ifFormTypeIsView formName="mis_patientForm">
+      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
+      	<script type="text/javascript">
+			onload=checkIsAttachedOrDead(0,1);
+		</script>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondDead">
+      	<script type="text/javascript">
+			onload=checkIsAttachedOrDead(1,0);
+		</script>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachmentAndDead">
+      	<script type="text/javascript">
+			onload=checkIsAttachedOrDead(1,1);
+		</script>
+      </msh:ifInRole>
+      </msh:ifFormTypeIsView>
  <msh:ifFormTypeIsCreate formName="mis_patientForm">
   <script type="text/javascript">
   if ('${param.lastname}'!="") {
