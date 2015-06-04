@@ -29,38 +29,54 @@ public class PatientServiceJs {
 			return "0";
 		} else return "1";
 	}
-	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy'),case when pf.deathdate is not null then to_char(pf.deathdate,'dd.mm.yyyy') else '' end from patient p " +
-				"left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
-				"and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and (pf.lpuattached is not null and pf.lpuattached!='') order by pf.checkdate desc", 1);
-		Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
-		if (defLpu.isEmpty()) {
-			return "0Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)";
-		}
-		String defaultLpu = defLpu.iterator().next().get1().toString(); 
-		String defaultLpuName = defLpu.iterator().next().get2().toString(); 
+	public String checkPatientAttachedOrDead(String aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException {
 		
-		if (!list.isEmpty()) {
-			String res = null;
-			WebQueryResult wqr = list.iterator().next();
-			String lastAttachment = wqr.get1().toString();
-			String checkDate = wqr.get2().toString();
-			String deathDate = wqr.get3().toString();
-			
-			if (deathDate!=null&&deathDate.length()==10) {
-				res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
-			} else {
-				if (lastAttachment.equals(defaultLpu)) {
-					res = "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName;
+		boolean checkDeath = (isDeath!=null&&isDeath.equals("1"))?true:false;	
+		boolean checkAttachment = (isAttached!=null&&isAttached.equals("1"))?true:false;
+		String res = "-";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy'),case when pf.deathdate is not null then to_char(pf.deathdate,'dd.mm.yyyy') else '' end from patient p " +
+					"left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
+					"and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and (pf.lpuattached is not null and pf.lpuattached!='') order by pf.checkdate desc", 1);
+			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
+			String defaultLpu = null, defaultLpuName = null;
+			if (checkAttachment) {
+				if (defLpu.isEmpty()) {
+					return "0Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)";
 				} else {
-					res =  "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName;
+					defaultLpu = defLpu.iterator().next().get1().toString(); 
+					defaultLpuName = defLpu.iterator().next().get2().toString();
+				}	
+			}			
+			if (!list.isEmpty()) {
+				
+				WebQueryResult wqr = list.iterator().next();
+				String lastAttachment = wqr.get1().toString();
+				String checkDate = wqr.get2().toString();
+				String deathDate = wqr.get3().toString();
+					if (checkAttachment) {
+						if (lastAttachment.equals(defaultLpu)) {
+							res = "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName;
+						} else {
+							res =  "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName;
+						}
+					}
+					if (checkDeath&&deathDate!=null&&deathDate.length()==10) {
+						res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
+					} 
+				
+			} else {
+				if (checkAttachment) {
+					res = "0Необходимо выполнить проверку по базе ФОМС";
 				}
-			}
+			} 
 			return res;
 		}
-		return "0Необходимо выполнить проверку по базе ФОМС";
+	
+	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
+		return checkPatientAttachedOrDead(aPatientId,"0","1",aRequest);
 	}
+	
 	public String getSexByOmccode(String aOmccode,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocSex where omcCode='"+aOmccode+"'",1) ;
