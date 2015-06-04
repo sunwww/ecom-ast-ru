@@ -35,6 +35,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeDefect = ActionUtil.updateParameter("PatientAttachment","typeDefect","3", aRequest) ; 
     		String typeChange = ActionUtil.updateParameter("PatientAttachment","typeChange","1", aRequest) ; 
     		String typeCompany = ActionUtil.updateParameter("PatientAttachment","typeCompany","3", aRequest) ; 
+    		String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1",aRequest);
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -97,9 +98,16 @@ public class AttachmentByLpuAction extends BaseAction {
     		}
     		
     		if (typeRead!=null&&typeRead.equals("1")) {
-		    	String fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    			String fs = null;
+    			boolean bNeedDivide = true;
+    			if (typeDivide!=null&&typeDivide.equals("2")) {
+    				bNeedDivide = false;
+    			}
+    			fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-		        		, form.getNumberPackage());
+		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
+    			
+		    	
 		        if (fs!=null) {
 		        	String[] files = fs.split("#") ;
 		        	StringBuilder sb = new StringBuilder() ;
