@@ -33,6 +33,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "medCase" })
 ,@AIndex(properties={"patient"})
+,@AIndex(properties={"expertDate"})
 })
 public class ClinicExpertCard extends BaseEntity {
 	
