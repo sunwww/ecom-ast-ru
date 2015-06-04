@@ -43,6 +43,10 @@
         	<input type="radio" name="typeEmergency" value="3">  все
         </td>
       </msh:row>
+              <msh:row>
+          <msh:autoComplete vocName="vocExpertType" property="type" label="Тип ВК" 
+          	horizontalFill="true" fieldColSpan="3" />
+        </msh:row>
       <msh:row>
         <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
@@ -74,7 +78,7 @@
           	horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" label="Причина подачи"
+        	<msh:autoComplete property="reasonDirect" fieldColSpan="5" parentAutocomplete="type" label="Причина подачи"
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
@@ -170,6 +174,7 @@
     	ActionUtil.setParameterFilterSql("deviationStandards","cec.deviationStandards_id", request) ;
     	ActionUtil.setParameterFilterSql("conclusionSent","cec.conclusionSent_id", request) ;
     	ActionUtil.setParameterFilterSql("conclusion","cec.conclusion_id", request) ;
+    	ActionUtil.setParameterFilterSql("type","cec.type_id", request) ;
     	//modeCase patientStatus reasonDirect deviationStandards conclusion conclusionSent
     	//${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
     	//patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}
@@ -231,7 +236,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
-${lpuSql}
+${lpuSql} ${typeSql}
     order by cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -302,13 +307,13 @@ left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
-${lpuSql}
+${lpuSql} ${typeSql}
 	group by ml.id,ml.name
     order by ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-    viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
-     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >
+    viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
+     action="expert_journal_ker.do?dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
       <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />
