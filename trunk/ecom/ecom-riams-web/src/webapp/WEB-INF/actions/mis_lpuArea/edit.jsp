@@ -26,7 +26,7 @@
           <msh:textField property="codeDepartment" label="Код подразделения"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="workFunction" label="Участковый" vocName="workFunction" horizontalFill="true" labelColSpan="3"/>
+        	<msh:autoComplete property="workFunction" label="Участковый" vocName="workFunction" horizontalFill="true" fieldColSpan="3" labelColSpan="1"/>
         </msh:row>
         <msh:row guid="c3c9de7b-88e7-42f5-a7e9-2e1a8d5651b8">
           <msh:autoComplete guid="type123" property="type" label="Тип участка" vocName="vocAreaType" size="20" />
