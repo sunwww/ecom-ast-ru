@@ -80,4 +80,12 @@ public class ExpertJournalForm extends BaseValidatorForm {
 	private String theDateEnd;
 	/** Дата начала периода */
 	private String theDateBegin;
+	
+	/** Тип ВК */
+	@Comment("Тип ВК")
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
+
+	/** Тип ВК */
+	private Long theType;
 }
