@@ -20,6 +20,7 @@
 	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
 	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
 	String typeCompany=ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
+	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -101,6 +102,15 @@
         	<input type="radio" name="typeChange" value="3">  полностью база пациентов
         </td>
       </msh:row>
+          <msh:row>
+        <td class="label" title="Разбивать по СК  (typeDivide)" colspan="1"><label for="typeDivideName" id="typeDivideLabel">Разбивать по СК:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDivide" value="1">  Разбивать
+        </td>
+	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	    	<input type="radio" name="typeDivide" value="2">  Не разбивать
+	    </td>
+       </msh:row>
       <msh:row>
         <td class="label" title="Пациенты  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отображать пациентов:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -134,6 +144,7 @@
 	    	<input type="radio" name="typeRead" value="2">  на экране (первые 250 записей)
 	    </td>
        </msh:row>
+  
        <msh:row>
        
 	   </msh:row>
@@ -190,6 +201,7 @@
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       checkFieldUpdate('typeCompany','${typeCompany}',3) ;
+      checkFieldUpdate('typeDivide','${typeDivide}',3) ;
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
