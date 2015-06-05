@@ -95,10 +95,10 @@
       <msh:row>
         <td class="label" title="Пациенты  (typePatientFond)" colspan="1"><label for="typePatientFondName" id="typePatientFondLabel">Пациенты (ДЛЯ БАЗЫ ПО ФОНДУ!):</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatientFond" value="1">  добавленные в базу
+        	<input type="radio" name="typePatientFond" value="1">  есть в базе
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typePatientFond" value="2">  существовавшие в базе 
+	        	<input type="radio" name="typePatientFond" value="2">  нет в базе 
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	        	<input type="radio" name="typePatientFond" value="3">  все без ограничения
