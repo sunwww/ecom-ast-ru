@@ -882,7 +882,7 @@ public class PatientServiceBean implements IPatientService {
 			StringBuilder sql = new StringBuilder() ;
 			sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 			sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
-			sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+			sql.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 			sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 			sql.append(" from Patient p") ;
 			sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
@@ -918,7 +918,7 @@ public class PatientServiceBean implements IPatientService {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
-		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 		sql.append(" from MedPolicy mp") ;
 		sql.append(" left join Patient p on p.id=mp.patient_id") ;
@@ -947,7 +947,7 @@ public class PatientServiceBean implements IPatientService {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
-		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 		sql.append(" from Medcard m") ;
 		sql.append(" left join Patient p on m.person_id = p.id") ;
@@ -968,7 +968,7 @@ public class PatientServiceBean implements IPatientService {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
-		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 		sql.append(" from Patient p") ;
 		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
