@@ -835,7 +835,7 @@ public class PatientServiceBean implements IPatientService {
 			String username = theSessionContext.getCallerPrincipal().toString() ;
 			QueryClauseBuilder builder = new QueryClauseBuilder();
 			StringBuilder sql = new StringBuilder() ;
-			sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,case when p.colorType='1' then p.ColorType else null end as ColorType from patient p ") ;
+			sql.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType from patient p ") ;
 			sql.append(" left join psychiatricCareCard pcc on pcc.patient_id=p.id") ;
 			sql.append(" left join lpuareapsychcarecard lpcc on lpcc.careCard_id=pcc.id") ;
 			sql.append(" left join lpuarea la on la.id = lpcc.lpuarea_id") ;
@@ -859,7 +859,7 @@ public class PatientServiceBean implements IPatientService {
 				if (st.hasMoreTokens())
 					builder.addLike("p.middlename", st.nextToken() + "%");
 				
-				Query query = builder.buildNative(theManager, sql.toString()," order by p.lastname,p.firstname");
+				Query query = builder.buildNative(theManager, sql.toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
 				appendNativeToList(query, ret);
 			}
 		} else {
@@ -868,66 +868,34 @@ public class PatientServiceBean implements IPatientService {
 						+ aLpuAreaId + ", aLastname = " + aLastname);
 			}
 			QueryClauseBuilder builder = new QueryClauseBuilder();
-			builder.add("lpu_id", aLpuId);
-			builder.add("lpuArea_id", aLpuAreaId);
+			builder.add("att.lpu_id", aLpuId);
+			builder.add("att.area_id", aLpuAreaId);
 			if (!StringUtil.isNullOrEmpty(aLastname)) {
 				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
 				if (st.hasMoreTokens())
-					builder.addLike("lastname", st.nextToken() + "%");
+					builder.addLike("p.lastname", st.nextToken() + "%");
 				if (st.hasMoreTokens())
-					builder.addLike("firstname", st.nextToken() + "%");
+					builder.addLike("p.firstname", st.nextToken() + "%");
 				if (st.hasMoreTokens())
-					builder.addLike("middlename", st.nextToken() + "%");
+					builder.addLike("p.middlename", st.nextToken() + "%");
 			}
-			Query query = builder.build(theManager, "from Patient where",
-					" order by lastname,firstname");
+			StringBuilder sql = new StringBuilder() ;
+			sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
+			sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+			sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+			sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+			sql.append(" from Patient p") ;
+			sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
+			sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
+			sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
+			sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+			sql.append(" where") ;
+			Query query = builder.buildNative(theManager, sql.toString(),
+					"group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by lastname,firstname");
 	
 			///List<PatientForm> ret = new LinkedList<PatientForm>();
-			appendToList(query, ret);
+			appendNativeToList(query, ret);
 	
-			// Поиск по специальному прикреплению
-			builder = new QueryClauseBuilder();
-			builder.add("LpuAttachedByDepartment.lpu_id", aLpuId);
-			// builder.add("LpuAttachedByDepartment.area_id", aLpuAreaId);
-			if (!StringUtil.isNullOrEmpty(aLastname)) {
-				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
-				if (st.hasMoreTokens())
-					builder.addLike("lastname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("firstname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("middlename", st.nextToken() + "%");
-			}
-	
-			if (aLpuId != null && aLpuId != 0 && ret.isEmpty()) {
-				StringBuilder sb = new StringBuilder();
-				sb
-						.append("SELECT patient.id, lastname, firstname, middlename 					");
-				sb.append("       , MisLpu.name ,  ,case when patient.colorType='1' then patient.ColorType else null end as ColorType					");
-				sb.append("  FROM Patient, LpuAttachedByDepartment, MisLpu ");
-				sb.append(" WHERE 													");
-				sb
-						.append("       MisLpu.id      = LpuAttachedByDepartment.lpu_id	");
-				// sb.append(" AND LpuArea.id = LpuAttachedByDepartment.area_id ") ;
-				sb
-						.append("   AND Patient.id = LpuAttachedByDepartment.patient_id 	");
-				// sb.append(" AND LpuAttachedByDepartment.lpu_id = :lpu ") ;
-				// sb.append(" ORDER BY lastname, firstname ") ;
-	
-				Query query2 = builder.buildNative(theManager, sb.toString(),
-						"ORDER BY lastname, firstname");
-	
-				// , "select p.lastname, p.firstname, from Patient p,
-				// LpuAttachedByDepartment lpuat" +
-				// " where p.lpu=lpuat.lpu"
-				// , " order by p.lastname,p.firstname");
-				// appendToList(query2, ret);
-				// Query query2 = theManager.createNativeQuery(sb.toString());
-				// query2.setParameter("lpu", aLpuId);
-				// List l = query2.getResultList();
-				appendNativeToList(query2, ret);
-	
-			}
 			
 			// поиск по полису
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
@@ -942,23 +910,23 @@ public class PatientServiceBean implements IPatientService {
 			}
 		}
 		return ret;
-		// new query
-		// StringBuilder sb = new StringBuilder() ;
-		// sb.append("select OBJECT(p) from Patient p"
-		// +" left join p.attachedByDepartments lpuat "
-		// +" where p.lastname like 'ТЕС%' "
-		// +" and lpuat.lpu=1113654"
-		// ) ;
-		// return createList(theManager.createQuery(sb.toString()));
+		
 	}
 
 	private Query findByPolicy(Long aLpuId, Long aLpuAreaId, String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
-		String query = 
-			  "select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday,case when patient.colorType='1' then patient.ColorType else null end as ColorType from MedPolicy " 
-			+ " inner join Patient on MedPolicy.patient_id = Patient.id"
-			+ " where"
-			;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
+		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+		sql.append(" from MedPolicy mp") ;
+		sql.append(" left join Patient p on p.id=mp.patient_id") ;
+		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
+		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
+		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+		sql.append(" where") ;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
@@ -968,39 +936,51 @@ public class PatientServiceBean implements IPatientService {
 			number = series ;
 			series = null ;
 		}
-		b.add("MedPolicy.series", series);
-		b.add("MedPolicy.polNumber", number);
-		return b.buildNative(theManager, query, "") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		b.add("mp.series", series);
+		b.add("mp.polNumber", number);
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 
 	private Query findByMedCardNumber(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		String query = 
-				"select Patient.id, Patient.lastname, Patient.firstname, Patient.middlename, Patient.birthday,case when patient.colorType='1' then patient.ColorType else null end as ColorType from Medcard " 
-						+ " inner join Patient on Medcard.person_id = Patient.id"
+				"select p.id, p.lastname, p.firstname, p.middlename, p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType "
+						+",list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname"
+						+",list(case when att.dateto is null then ma.name else null end) as lpuname"
+						+" from Medcard m" 
+						+ " left join Patient p on m.person_id = p.id"
+						+" left join LpuAttachedByDepartment att on att.patient_id=p.id"
+						+" left join Mislpu ml on ml.id=att.lpu_id"
+						+" left join lpuarea ma on ma.id=att.area_id"
+						+" left join VocAttachedType vat on vat.id=att.type_id"
 						+ " where"
 						;
-		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
-		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
-		b.add("\"number\"", number);
-		return b.buildNative(theManager, query, "") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		b.add("m.number", number);
+		return b.buildNative(theManager, query, "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 	private Query findByPatientSync(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
-		String query = 
-			  "select id, lastname, firstname, middlename, birthday,case when colorType='1' then ColorType else null end as ColorType from Patient "
-			+ " where"
-			;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
+		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+		sql.append(" from Patient p") ;
+		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
+		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
+		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+		sql.append(" where") ;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("patientSync", number);
-		return b.buildNative(theManager, query, "") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 	
@@ -1010,13 +990,14 @@ public class PatientServiceBean implements IPatientService {
 		for (Object[] arr : list) {
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
-			if (arr.length>5 && arr[5]!=null) {
+			if (arr.length>6 && arr[6]!=null) {
 				f.setLastname(new StringBuilder().append("<font color='red'>").append(arr[1]).append("</font>").toString());
 				f.setFirstname(new StringBuilder().append("<font color='red'>").append(arr[2]).append("</font>").toString());
 				f.setMiddlename(new StringBuilder().append("<font color='red'>").append(arr[3]).append("</font>").toString());
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
+				f.setPatientSync(arr[5]!=null?(String) arr[5]:"") ;
 			} else {
 				f.setLastname((String) arr[1]);
 				f.setFirstname((String) arr[2]);
@@ -1024,33 +1005,16 @@ public class PatientServiceBean implements IPatientService {
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
+				f.setPatientSync(arr[5]!=null?(String) arr[5]:"") ;
 			}
+			if (arr.length>7 && arr[7]!=null) {f.setLpuName((String)arr[7]) ;}
+			if (arr.length>8 && arr[8]!=null) {f.setLpuAreaName((String)arr[8]) ;}
 			ret.add(f);
 		}
 
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<PatientForm> appendToList(Query aQuery, List<PatientForm> ret) {
-		List<Patient> list = aQuery.setMaxResults(50).getResultList();
-
-		for (Patient patient : list) {
-			try {
-				PatientForm frm = theEntityFormService.loadForm(PatientForm.class,
-						patient) ;
-				if (patient.getColorType()!=null &&patient.getColorType()) {
-					frm.setLastname(new StringBuilder().append("<font color='red'>").append(frm.getLastname()).append("</font>").toString());
-					frm.setFirstname(new StringBuilder().append("<font color='red'>").append(frm.getFirstname()).append("</font>").toString());
-					frm.setMiddlename(new StringBuilder().append("<font color='red'>").append(frm.getMiddlename()).append("</font>").toString());
-					
-				}
-				ret.add(frm);
-			} catch (EntityFormException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-		return ret;
-	}
+	
 
 	/**
 	 * Обновление прикрепления
