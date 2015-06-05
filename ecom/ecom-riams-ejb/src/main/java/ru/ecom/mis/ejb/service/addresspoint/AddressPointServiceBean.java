@@ -170,7 +170,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	,		{"pai.house","DOM" ,"1"} ,			{"pai.housing","KOR" ,"1"}
     	,		{"pai.apartment","KV" ,"1"} ,		{"pai.lpu","LPU" ,"1"}
     	,		{"pai.lpuauto","LPUAUTO" ,"1"} ,	{"pai.lpuDateFrom","LPUDT" ,"1"}
-    	,		{"department","KODPODR","1"},		{"doctorSnils","SSD","1"} 
+    	,		{"pai.department","KODPODR","1"},		{"pai.doctorSnils","SSD","1"} 
     } ;
     	StringBuilder fld = new StringBuilder() ;
     	StringBuilder fldGroup = new StringBuilder() ;
@@ -188,7 +188,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		sqlGroup.append(" left join REG_IC vri on vri.smocode=pai.insCompName") ;
     		sqlGroup.append(" where pai.time=(select max(pai1.time) from patientattachedimport pai1 )") ;
     		
-    		if (aCompany!=null&&aCompany!=0) sqlGroup.append(" and vri.='").append(aCompany).append("' and ");
+    		if (aCompany!=null&&aCompany!=0) sqlGroup.append(" and vri.id='").append(aCompany).append("'  ");
     		sqlGroup.append(" group by pai.insCompName") ;
     		sqlGroup.append(" order by pai.insCompName") ;
     		System.out.println("------------------- Need_DIVIDE_COMP = "+sqlGroup.toString());
@@ -367,7 +367,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     			String[] prop = aProps[ind] ; 
 				Object value = pat[ind] ;
 	    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
-	    		xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[2])) ;
+	    		xmlDoc.newElement(zap, prop[ind], XmlUtil.getStringValue(pat[2])) ;
 				
 			}
     	}
