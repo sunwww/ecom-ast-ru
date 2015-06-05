@@ -89,6 +89,7 @@ public class LpuArea extends BaseEntity {
     
     /** Участковый */
 	@Comment("Участковый")
+	@OneToOne
 	public WorkFunction getWorkFunction() {return theWorkFunction;}
 	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
 
