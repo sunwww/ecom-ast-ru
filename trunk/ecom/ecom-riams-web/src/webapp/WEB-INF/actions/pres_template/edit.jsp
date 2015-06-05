@@ -315,9 +315,7 @@
 	    var dt=spanTag("",aLabName,"")+hiddenInput(type, "Service",num,aLabID,"");
 	    var dt2=(aLabCabinet!=null&&aLabCabinet!='')?spanTag("Кабинет",aLabCabinetName,"")+hiddenInput(type, "Cabinet",num,aLabCabinet,""):"";
 	    var dt3 =(aLabDepartment!=null&&aLabDepartment!='')?spanTag("Место забора", aLabDepartmentName,"") + hiddenInput(type,"Department",num,aLabDepartment,""):"";
-	    td2.innerHTML = dt ;
-	   	td2.innerHTML += dt2;
-	   	td2.innerHTML += dt3;
+	    td2.innerHTML = dt +dt2+dt3;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='javascript:deletePrescription("+aLabID+");var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 	   
 					   
@@ -635,7 +633,7 @@
 			<msh:ifFormTypeIsNotView formName="pres_templateForm">
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
-	            <input type="button" name="subm" onclick="showLabDirMedService();" value="++" tabindex="4" />
+	            <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />
             </td>
             </msh:ifFormTypeIsNotView>
             </tr>
