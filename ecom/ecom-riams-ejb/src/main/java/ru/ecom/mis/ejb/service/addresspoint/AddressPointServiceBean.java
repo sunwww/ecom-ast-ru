@@ -291,7 +291,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	filenames.append("#").append(filename+".xml") ;
         
         	sql.setLength(0);
-        	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
+        	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
         	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
         	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
         	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
@@ -323,7 +323,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     		filenames.append("#").append(filename+".xml") ;
     		sql.setLength(0);
-    		sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
+    		sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
         	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
         	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
         	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
