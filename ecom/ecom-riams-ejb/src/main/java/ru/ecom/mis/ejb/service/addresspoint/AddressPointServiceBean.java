@@ -203,7 +203,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     			sql.setLength(0);
     			sql.append("select ").append(fld) ;
     			sql.append(" from PatientAttachedImport pai") ;
-    			sql.append(" left join Patient p") ;
+    			sql.append(" left join Patient p on p.id=pai.patient_id") ;
     			
     			sql.append(" where ") ;
     			sql.append("  pai.time=(select max(pai1.time) from patientattachedimport pai1 ) and (pai.insCompName") ;
@@ -211,8 +211,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     			sql.append(") and ");
     			sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
     			sql.append(" ").append(addSql) ;
-    			sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
-    			sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+        		sql.append(" group by ").append(fldGroup) ;
+        		sql.append(" order by pai.lastname,pai.firstname,pai.middlename,pai.birthday") ;
     			System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
     			listPat = theManager.createNativeQuery(sql.toString())
     					.getResultList() ;
@@ -235,11 +235,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     		if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" and (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("')  ") ;
     		sql.append(" and (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
     		sql.append(" ").append(addSql) ;
-    		sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
-    		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+    		sql.append(" group by ").append(fldGroup) ;
+    		sql.append(" order by pai.lastname,pai.firstname,pai.middlename,pai.birthday") ;
     		System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
     		listPat = theManager.createNativeQuery(sql.toString())
-    				.setMaxResults(90000).getResultList() ;
+    				.getResultList() ;
     		createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
     	}
     	
