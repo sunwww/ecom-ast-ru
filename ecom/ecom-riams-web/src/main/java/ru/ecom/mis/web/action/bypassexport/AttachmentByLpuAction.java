@@ -36,6 +36,8 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeChange = ActionUtil.updateParameter("PatientAttachment","typeChange","1", aRequest) ; 
     		String typeCompany = ActionUtil.updateParameter("PatientAttachment","typeCompany","3", aRequest) ; 
     		String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1",aRequest);
+    		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
+    		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -59,7 +61,7 @@ public class AttachmentByLpuAction extends BaseAction {
 	    		if (typeAge.equals("1")||typeAge.equals("2")) {
 	    			sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
 	    		}
-	    		}
+	    	}
 	    		
 	    	
 	    	
@@ -83,6 +85,11 @@ public class AttachmentByLpuAction extends BaseAction {
  	        	sqlAdd.append(" and (coalesce(lp.editDate,lp.createDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )") ;
  	        	
 	        } 
+    		if (typeAreaCheck!=null&&typeAreaCheck.equals("1")) {
+    			sqlAdd.append(" and lp.area_id is not null ") ;
+    		} else if (typeAreaCheck!=null&&typeAreaCheck.equals("2")) {
+    			sqlAdd.append(" and lp.area_id is null ") ;
+    		}
     		if (typeDefect!=null&&typeDefect.equals("1")) {
     			sqlAdd.append(" and lp.defectText!='' and lp.defectText is not null") ;
     		} else if (typeDefect!=null&&typeDefect.equals("2")) {
@@ -103,10 +110,15 @@ public class AttachmentByLpuAction extends BaseAction {
     			if (typeDivide!=null&&typeDivide.equals("2")) {
     				bNeedDivide = false;
     			}
-    			fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    			if (typeWork.equals("1")) { 
+    				fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
-    			
+    			} else {
+    				fs = service.exportFondAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
+    		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
+    			}
 		    	
 		        if (fs!=null) {
 		        	String[] files = fs.split("#") ;
