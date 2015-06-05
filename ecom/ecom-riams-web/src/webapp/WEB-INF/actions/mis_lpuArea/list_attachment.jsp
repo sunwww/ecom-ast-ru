@@ -68,7 +68,8 @@
 	        
        </msh:row>
        <msh:row>
-        <td onclick="this.childNodes[1].checked='checked';">
+       <td class="label" title="База  (typeWork)" colspan="1"><label for="typeWorkName" id="typeWorkLabel">База:</label></td>
+         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeWork" value="1"> системная
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
@@ -245,7 +246,9 @@
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       checkFieldUpdate('typeCompany','${typeCompany}',3) ;
-      checkFieldUpdate('typeDivide','${typeDivide}',3) ;
+      checkFieldUpdate('typeCompany','${typeCompany}',3) ;
+      checkFieldUpdate('typeWork','${typeWork}',3) ;
+      checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
