@@ -121,9 +121,7 @@
   <msh:ifInRole roles="/Policy/MainMenu/Patient">
     <msh:form action="/mis_patients.do" defaultField="lastname" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
       <msh:panel colsWidth="10%, 10%, 70%" guid="354f9651-7a86-447b-9066-43af5b3bf277">
-        <msh:row guid="7648279d-8e6a-4004-aaee-efe8ba8287dc">
-          <msh:autoComplete guid="lpuGuid" fieldColSpan="2" property="lpu" label="ЛПУ" horizontalFill="true" vocName="lpu" viewAction="hidden" />
-        </msh:row>
+        
         <msh:row guid="df2f72c4-96d1-49ff-a57d-9caade9a77a1">
           <msh:autoComplete fieldColSpan="2" property="lpuArea" label="Участок" horizontalFill="true" vocName="lpuAreaWithParent" guid="92c3087f-9109-4109-8659-151717d81beb" />
         </msh:row>
@@ -154,7 +152,7 @@
           <msh:tableColumn columnName="Имя" property="firstname" guid="88842354-b7d1-4c67-a43e-9837c179d5d1" />
           <msh:tableColumn columnName="Отчество" property="middlename" guid="4b8cb842-fcfb-4e91-b57f-ed881a1881c5" />
           <msh:tableColumn columnName="Дата рождения" property="birthday" guid="e63b0a34-7d09-4345-98c9-d9c0e37b69f4" />
-          <msh:tableColumn columnName="Прикрепленное ЛПУ" property="lpuName" guid="210f1c10-2013-4a05-8ceb-af7d2d06694e" />
+          <msh:tableColumn columnName="Дата прикрепления (тип) и ЛПУ" property="lpuName" guid="210f1c10-2013-4a05-8ceb-af7d2d06694e" />
           <msh:tableColumn columnName="Участок" property="lpuAreaName" guid="44b16e3d-45a1-49a9-9b53-9a17320e0c67" />
         </msh:table>
       </msh:section>
