@@ -40,6 +40,7 @@ import ru.ecom.mis.ejb.domain.patient.MedPolicy;
 import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
+import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 
 /**
@@ -135,6 +136,115 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
     			, aNReestr, aNPackage,null,true);
+    }
+    public String exportFondAll(String aAge, String aFilenameAddSuffix
+    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+    		, String aDateFrom, String aDateTo, String aPeriodByReestr
+    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
+    	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
+    	StringBuilder filenames = new StringBuilder() ;
+    	if (aAge!=null) {
+    		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
+    	}
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	//Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String filename=null;
+    	StringBuilder sql = new StringBuilder() ;
+    	//	File outFile = null;
+    	List<Object[]> listPat = null;
+    	String[][] props = {
+    			{"fondId","pid","1"},				{"pai.commonNumber","ENP","1"}
+    	,		{"pai.lastname","FAM" ,"1"} ,		{"pai.firstname","IM" ,"1"}
+    	,		{"pai.middlename","OT" ,"1"} ,		{"pai.birthday","DR" ,"1"}
+    	,		{"pai.sex","W" ,"1"} ,				{"pai.snils","SS" ,"1"}
+    	,		{"pai.birthPlace","MR" ,"1"} ,		{"pai.insCompName","Q" ,"1"}
+    	,		{"pai.policyType","OPDOC" ,"1"} ,	{"pai.policySeries","SPOL" ,"1"}
+    	,		{"pai.policyNumber","NPOL" ,"1"} ,	{"pai.docType","DOCTP" ,"1"}
+    	,		{"pai.docSeries","DOCS" ,"1"} ,		{"pai.docNumber","DOCN" ,"1"}
+    	,		{"pai.docWhom","DOCORG" ,"1"} ,		{"pai.country","CN" ,"1"}
+    	,		{"pai.rn","RN" ,"1"} ,				{"pai.index","INDX" ,"1"}
+    	,		{"pai.rayonName","RNNAME" ,"1"} ,	{"pai.city","CITY" ,"1"}
+    	,		{"pai.np","NP" ,"1"} ,				{"pai.street","UL" ,"1"}
+    	,		{"pai.house","DOM" ,"1"} ,			{"pai.housing","KOR" ,"1"}
+    	,		{"pai.apartment","KV" ,"1"} ,		{"pai.lpu","LPU" ,"1"}
+    	,		{"pai.lpuauto","LPUAUTO" ,"1"} ,	{"pai.lpuDateFrom","LPUDT" ,"1"}
+    	,		{"department","KODPODR","1"},		{"doctorSnils","SSD","1"} 
+    } ;
+    	StringBuilder fld = new StringBuilder() ;
+    	StringBuilder fldGroup = new StringBuilder() ;
+    	for (int ind =0;ind<props.length;ind++) {
+    		String[] p=props[ind];
+    		if (ind!=0) {fld.append(",") ;fldGroup.append(",");}
+    		fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
+    		fldGroup.append(" ").append(p[0]) ;
+    	}
+    	if (needDivide) {
+    		StringBuilder sqlGroup = new StringBuilder() ;
+    		sqlGroup.append("select pai.insCompName") ;
+    		sqlGroup.append(" from PatientAttachedImport pai") ;
+    		
+    		sqlGroup.append(" left join REG_IC vri on vri.smocode=pai.insCompName") ;
+    		sqlGroup.append(" where pai.time=(select max(pai1.time) from patientattachedimport pai1 )") ;
+    		
+    		if (aCompany!=null&&aCompany!=0) sqlGroup.append(" and vri.='").append(aCompany).append("' and ");
+    		sqlGroup.append(" group by pai.insCompName") ;
+    		sqlGroup.append(" order by pai.insCompName") ;
+    		System.out.println("------------------- Need_DIVIDE_COMP = "+sqlGroup.toString());
+    		List<Object> listComp = theManager.createNativeQuery(sqlGroup.toString())
+    				.getResultList() ;
+    		
+    		for (Object comp:listComp) {
+    			filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp==null?"-":comp)
+    					+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    			filenames.append("#").append(filename+".xml") ;
+    			
+    			sql.setLength(0);
+    			sql.append("select ").append(fld) ;
+    			sql.append(" from PatientAttachedImport pai") ;
+    			sql.append(" left join Patient p") ;
+    			
+    			sql.append(" where ") ;
+    			sql.append("  pai.time=(select max(pai1.time) from patientattachedimport pai1 ) and (pai.insCompName") ;
+    			if (comp!=null) {sql.append("=").append(comp) ;} else {sql.append(" is null or pai.insCompName=''") ;}
+    			sql.append(") and ");
+    			sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+    			sql.append(" ").append(addSql) ;
+    			sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+    			sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+    			System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
+    			listPat = theManager.createNativeQuery(sql.toString())
+    					.getResultList() ;
+    			createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
+    			//xmlDoc.saveDocument(outFile) ;
+    		}
+    	} else {
+    		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    		filenames.append("#").append(filename+".xml") ;
+    		sql.setLength(0);
+    		sql.append("select ").append(fld) ;
+    		sql.append(" from PatientAttachedImport pai") ;
+    		sql.append(" left join Patient p on pai.patient_id=p.id") ;
+    		sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
+    		sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
+    		sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
+    		sql.append(" where  pai.time=(select max(pai1.time) from patientattachedimport pai1 ) ") ;
+    		
+    		if (aLpuCheck) sql.append(" and (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("')  ") ;
+    		if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" and (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("')  ") ;
+    		sql.append(" and (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+    		sql.append(" ").append(addSql) ;
+    		sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+    		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+    		System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
+    		listPat = theManager.createNativeQuery(sql.toString())
+    				.setMaxResults(90000).getResultList() ;
+    		createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
+    	}
+    	
+    	
+    	return filenames.length()>0?filenames.substring(1):"";
     }
     public String exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
@@ -241,6 +351,27 @@ public class AddressPointServiceBean implements IAddressPointService {
     	
     	
     	return filenames.length()>0?filenames.substring(1):"";
+    }
+    public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
+    	xmlDoc.newElement(title, "N_REESTR", aNReestr);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	int i=0 ;
+    	for (Object[] pat:listPat) {
+    		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
+    		for(int ind=0;ind<aProps.length; ind++) {
+    			String[] prop = aProps[ind] ; 
+				Object value = pat[ind] ;
+	    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
+	    		xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[2])) ;
+				
+			}
+    	}
+    	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
     public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
