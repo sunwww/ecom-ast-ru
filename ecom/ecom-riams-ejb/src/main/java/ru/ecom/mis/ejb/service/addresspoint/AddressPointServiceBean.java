@@ -207,7 +207,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     			
     			sql.append(" where ") ;
     			sql.append("  pai.time=(select max(pai1.time) from patientattachedimport pai1 ) and (pai.insCompName") ;
-    			if (comp!=null) {sql.append("=").append(comp) ;} else {sql.append(" is null or pai.insCompName=''") ;}
+    			if (comp!=null) {sql.append("='").append(comp).append("'") ;} else {sql.append(" is null or pai.insCompName=''") ;}
     			sql.append(") and ");
     			sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
     			sql.append(" ").append(addSql) ;
@@ -363,11 +363,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
+    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
 				Object value = pat[ind] ;
-	    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
-	    		xmlDoc.newElement(zap, prop[ind], XmlUtil.getStringValue(pat[2])) ;
+	    		xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 				
 			}
     	}
