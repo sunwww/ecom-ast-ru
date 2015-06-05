@@ -888,7 +888,7 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 			sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
 			sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
-			sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+			sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
 			sql.append(" where") ;
 			Query query = builder.buildNative(theManager, sql.toString(),
 					"group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by lastname,firstname");
@@ -925,7 +925,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
 		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
-		sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
 		sql.append(" where") ;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
@@ -953,7 +953,7 @@ public class PatientServiceBean implements IPatientService {
 						+" left join LpuAttachedByDepartment att on att.patient_id=p.id"
 						+" left join Mislpu ml on ml.id=att.lpu_id"
 						+" left join lpuarea ma on ma.id=att.area_id"
-						+" left join VocAttachedType vat on vat.id=att.type_id"
+						+" left join VocAttachedType vat on vat.id=att.AttachedType_id"
 						+ " where"
 						;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
@@ -973,7 +973,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
 		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
-		sql.append(" left join VocAttachedType vat on vat.id=att.type_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
 		sql.append(" where") ;
 		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
