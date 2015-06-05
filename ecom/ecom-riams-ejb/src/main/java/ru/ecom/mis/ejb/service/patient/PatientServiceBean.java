@@ -883,7 +883,7 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 			sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
 			sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
-			sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+			sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 			sql.append(" from Patient p") ;
 			sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 			sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
@@ -919,7 +919,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
 		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
-		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 		sql.append(" from MedPolicy mp") ;
 		sql.append(" left join Patient p on p.id=mp.patient_id") ;
 		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
@@ -944,22 +944,23 @@ public class PatientServiceBean implements IPatientService {
 
 	private Query findByMedCardNumber(String aPolicyQuery) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
-		String query = 
-				"select p.id, p.lastname, p.firstname, p.middlename, p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType "
-						+",list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname"
-						+",list(case when att.dateto is null then ma.name else null end) as lpuname"
-						+" from Medcard m" 
-						+ " left join Patient p on m.person_id = p.id"
-						+" left join LpuAttachedByDepartment att on att.patient_id=p.id"
-						+" left join Mislpu ml on ml.id=att.lpu_id"
-						+" left join lpuarea ma on ma.id=att.area_id"
-						+" left join VocAttachedType vat on vat.id=att.AttachedType_id"
-						+ " where"
-						;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
+		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
+		sql.append(" from Medcard m") ;
+		sql.append(" left join Patient p on m.person_id = p.id") ;
+		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
+		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
+		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
+		sql.append(" where") ;
+		
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("m.number", number);
-		return b.buildNative(theManager, query, "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 	private Query findByPatientSync(String aPolicyQuery) {
@@ -968,7 +969,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sql.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
 		sql.append(" ,list(case when att.dateto is null then vat.code||' '||to_char(att.datefrom,'dd.mm.yyyy')||' '||ml.name else null end) as lpuname") ;
-		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as lpuname") ;
+		sql.append(" ,list(case when att.dateto is null then ma.name else null end) as areaname") ;
 		sql.append(" from Patient p") ;
 		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
