@@ -20,7 +20,10 @@
 	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
 	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
 	String typeCompany=ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
+	String typeAreaCheck=ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
+	String typeWork=ActionUtil.updateParameter("PatientAttachment","typeWork","1", request) ;
 	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
+
   %>
   
     <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -64,6 +67,14 @@
 	        </td>
 	        
        </msh:row>
+       <msh:row>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeWork" value="1"> системная
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeWork" value="2"> фонда 
+	        </td>
+       </msh:row>
       <msh:row>
         <td class="label" title="Прикрепление  (typeAttachment)" colspan="1"><label for="typeAttachmentName" id="typeAttachmentLabel">Прикрепление:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -77,6 +88,39 @@
 	        </td>
 	        
        </msh:row>
+       </msh:panel>
+       <msh:panel colsWidth="fondTable">
+       
+      <msh:row>
+        <td class="label" title="Пациенты  (typePatientFond)" colspan="1"><label for="typePatientFondName" id="typePatientFondLabel">Пациенты:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatientFond" value="1">  добавленные в базу
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typePatientFond" value="2">  существовавшие в базе 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typePatientFond" value="3">  все без ограничения
+	        </td>
+	        
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Участок  (typeAreaCheck)" colspan="1"><label for="typeAreaCheckName" id="typeAreaCheckLabel">Прикрепление к участку:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAreaCheck" value="1">  существует
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAreaCheck" value="2">  нет прикрепления к участку 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAreaCheck" value="3">  все без ограничения
+	        </td>
+	        
+       </msh:row>
+              
+       </msh:panel>
+       <msh:panel colsWidth="systemTable">
+
       <msh:row>
         <td class="label" title="Отобразить  (typeDefect)" colspan="1"><label for="typeDefectName" id="typeDefectLabel">Отображать:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
