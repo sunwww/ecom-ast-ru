@@ -157,7 +157,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	String[][] props = {
     			{"fondId","pid","1"},				{"pai.commonNumber","ENP","1"}
     	,		{"pai.lastname","FAM" ,"1"} ,		{"pai.firstname","IM" ,"1"}
-    	,		{"pai.middlename","OT" ,"1"} ,		{"pai.birthday","DR" ,"1"}
+    	,		{"pai.middlename","OT" ,"1"} ,		{"to_char(pai.birthday,'yyyy-MM-dd')","DR" ,"1"}
     	,		{"pai.sex","W" ,"1"} ,				{"pai.snils","SS" ,"1"}
     	,		{"pai.birthPlace","MR" ,"1"} ,		{"pai.insCompName","Q" ,"1"}
     	,		{"pai.policyType","OPDOC" ,"1"} ,	{"pai.policySeries","SPOL" ,"1"}
@@ -169,7 +169,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	,		{"pai.np","NP" ,"1"} ,				{"pai.street","UL" ,"1"}
     	,		{"pai.house","DOM" ,"1"} ,			{"pai.housing","KOR" ,"1"}
     	,		{"pai.apartment","KV" ,"1"} ,		{"pai.lpu","LPU" ,"1"}
-    	,		{"pai.lpuauto","LPUAUTO" ,"1"} ,	{"pai.lpuDateFrom","LPUDT" ,"1"}
+    	,		{"pai.lpuauto","LPUAUTO" ,"1"} ,	{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","LPUDT" ,"1"}
     	,		{"pai.department","KODPODR","1"},		{"pai.doctorSnils","SSD","1"} 
     } ;
     	StringBuilder fld = new StringBuilder() ;
@@ -366,7 +366,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
-				Object value = pat[ind] ;
+				//Object value = pat[ind] ;
 	    		xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 				
 			}
