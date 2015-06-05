@@ -246,8 +246,9 @@
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       checkFieldUpdate('typeCompany','${typeCompany}',3) ;
-      checkFieldUpdate('typeCompany','${typeCompany}',3) ;
-      checkFieldUpdate('typeWork','${typeWork}',3) ;
+      checkFieldUpdate('typePatientFond','${typePatientFond}',3) ;
+      checkFieldUpdate('typeDivide','${typeDivide}',1) ;
+      checkFieldUpdate('typeWork','${typeWork}',1) ;
       checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
       $('aView').innerHTML=$('filename').value ;
      
