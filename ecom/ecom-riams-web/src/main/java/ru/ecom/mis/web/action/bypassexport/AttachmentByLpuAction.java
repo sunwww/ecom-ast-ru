@@ -38,6 +38,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1",aRequest);
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
+    		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -115,7 +116,13 @@ public class AttachmentByLpuAction extends BaseAction {
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     			} else {
-    				fs = service.exportFondAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    				StringBuilder sqlAdd1= new StringBuilder() ;
+    				if (typePatientFond.equals("1")) {
+    					sqlAdd1.append(" and pai.patient_id is not null") ;
+    				} else if (typePatientFond.equals("2")){
+    					sqlAdd1.append(" and pai.patient_id is null") ;
+    				}
+    				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     			}
