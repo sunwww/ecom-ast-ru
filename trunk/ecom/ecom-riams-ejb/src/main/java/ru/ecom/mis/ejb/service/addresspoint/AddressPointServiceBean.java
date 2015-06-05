@@ -155,22 +155,22 @@ public class AddressPointServiceBean implements IAddressPointService {
     	//	File outFile = null;
     	List<Object[]> listPat = null;
     	String[][] props = {
-    			{"fondId","pid","1"},				{"pai.commonNumber","ENP","1"}
-    	,		{"pai.lastname","FAM" ,"1"} ,		{"pai.firstname","IM" ,"1"}
-    	,		{"pai.middlename","OT" ,"1"} ,		{"to_char(pai.birthday,'yyyy-MM-dd')","DR" ,"1"}
-    	,		{"pai.sex","W" ,"1"} ,				{"pai.snils","SS" ,"1"}
-    	,		{"pai.birthPlace","MR" ,"1"} ,		{"pai.insCompName","Q" ,"1"}
-    	,		{"pai.policyType","OPDOC" ,"1"} ,	{"pai.policySeries","SPOL" ,"1"}
-    	,		{"pai.policyNumber","NPOL" ,"1"} ,	{"pai.docType","DOCTP" ,"1"}
-    	,		{"pai.docSeries","DOCS" ,"1"} ,		{"pai.docNumber","DOCN" ,"1"}
-    	,		{"pai.docWhom","DOCORG" ,"1"} ,		{"pai.country","CN" ,"1"}
-    	,		{"pai.rn","RN" ,"1"} ,				{"pai.index","INDX" ,"1"}
-    	,		{"pai.rayonName","RNNAME" ,"1"} ,	{"pai.city","CITY" ,"1"}
-    	,		{"pai.np","NP" ,"1"} ,				{"pai.street","UL" ,"1"}
-    	,		{"pai.house","DOM" ,"1"} ,			{"pai.housing","KOR" ,"1"}
-    	,		{"pai.apartment","KV" ,"1"} ,		{"pai.lpu","LPU" ,"1"}
-    	,		{"pai.lpuauto","LPUAUTO" ,"1"} ,	{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","LPUDT" ,"1"}
-    	,		{"pai.department","KODPODR","1"},		{"pai.doctorSnils","SSD","1"} 
+    			{"pai.fondId","pid","pai.fondId"},				{"pai.commonNumber","ENP","pai.commonNumber"}
+    	,		{"pai.lastname","FAM" ,"pai.lastname"} ,		{"pai.firstname","IM" ,"pai.firstname"}
+    	,		{"pai.middlename","OT" ,"pai.middlename"} ,		{"to_char(pai.birthday,'yyyy-MM-dd')","DR" ,"pai.birthday"}
+    	,		{"pai.sex","W" ,"pai.sex"} ,				{"pai.snils","SS" ,"pai.snils"}
+    	,		{"pai.birthPlace","MR" ,"pai.birthPlace"} ,		{"pai.insCompName","Q" ,"pai.insCompName"}
+    	,		{"pai.policyType","OPDOC" ,"pai.policyType"} ,	{"pai.policySeries","SPOL" ,"pai.policySeries"}
+    	,		{"pai.policyNumber","NPOL" ,"pai.policyNumber"} ,	{"pai.docType","DOCTP" ,"pai.docType"}
+    	,		{"pai.docSeries","DOCS" ,"pai.docSeries"} ,		{"pai.docNumber","DOCN" ,"pai.docNumber"}
+    	,		{"pai.docWhom","DOCORG" ,"pai.docWhom"} ,		{"pai.country","CN" ,"pai.country"}
+    	,		{"pai.rn","RN" ,"pai.rn"} ,				{"pai.index","INDX" ,"pai.index"}
+    	,		{"pai.rayonName","RNNAME" ,"pai.rayonName"} ,	{"pai.city","CITY" ,"pai.city"}
+    	,		{"pai.np","NP" ,"pai.np"} ,				{"pai.street","UL" ,"pai.street"}
+    	,		{"pai.house","DOM" ,"pai.house"} ,			{"pai.housing","KOR" ,"pai.housing"}
+    	,		{"pai.apartment","KV" ,"pai.apartment"} ,		{"pai.lpu","LPU" ,"pai.lpu"}
+    	,		{"pai.lpuauto","LPUAUTO" ,"pai.lpuauto"} ,	{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","LPUDT" ,"pai.lpuDateFrom"}
+    	,		{"pai.department","KODPODR","pai.department"},		{"pai.doctorSnils","SSD","pai.doctorSnils"} 
     } ;
     	StringBuilder fld = new StringBuilder() ;
     	StringBuilder fldGroup = new StringBuilder() ;
@@ -178,7 +178,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		String[] p=props[ind];
     		if (ind!=0) {fld.append(",") ;fldGroup.append(",");}
     		fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
-    		fldGroup.append(" ").append(p[0]) ;
+    		fldGroup.append(" ").append(p[2]) ;
     	}
     	if (needDivide) {
     		StringBuilder sqlGroup = new StringBuilder() ;
