@@ -91,24 +91,14 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	/** Участок */
 	@Comment("Участок")
 	@Persist @Required
-	public Long getArea() {
-		return theArea;
-	}
-
-	public void setArea(Long aArea) {
-		theArea = aArea;
-	}
+	public Long getArea() {return theArea;}
+	public void setArea(Long aArea) {theArea = aArea;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Long aPatient) {
-		thePatient = aPatient;
-	}
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
 
 	/** Пациент */
 	private Long thePatient;
