@@ -827,7 +827,7 @@ public class PatientServiceBean implements IPatientService {
 	 */
 	public List<PatientForm> findPatient(Long aLpuId, Long aLpuAreaId,
 			String aLastname) {
-		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", null, theManager);
+		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", theManager);
 		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
 		System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
 		System.out.print(isEnableLimitAreas) ;
@@ -841,8 +841,8 @@ public class PatientServiceBean implements IPatientService {
 		sqlFld.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname") ;
 		sqlFld.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
 		sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
-		sqlFld.append(" ||case when pf1.lpuattached!='300026' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
-		sqlFld.append(" when pf1.lpuattached='300026' then ' прикреплен к ЛПУ с '||to_char(pf1.checkdate,'dd.mm.yyyy') ");
+		sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+		sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.checkdate,'dd.mm.yyyy') ");
 		sqlFld.append(" else '' end end from PatientFond pf1 ");
 		sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
 		sqlFld.append(" ) as fondinfo ");
