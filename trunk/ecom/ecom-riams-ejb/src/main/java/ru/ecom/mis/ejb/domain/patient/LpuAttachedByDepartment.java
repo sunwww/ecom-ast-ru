@@ -198,4 +198,18 @@ public class LpuAttachedByDepartment extends BaseEntity {
 
 	/** Подача производилась по неактуальному полису */
 	private Boolean theNoActualPolicy;
+
+	/** Прикрепление не актуально */
+	@Comment("Прикрепление не актуально")
+	public Boolean getNoActuality() {return theNoActuality;}
+	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+	/** Прикрепление не актуально */
+	private Boolean theNoActuality;
+	
+	/** Результаты последней проверки */
+	@Comment("Результаты последней проверки")
+	public String getCheckResult() {return theCheckResult;}
+	public void setCheckResult(String aCheckResult) {theCheckResult = aCheckResult;}
+	/** Результаты последней проверки */
+	private String theCheckResult;
 }
