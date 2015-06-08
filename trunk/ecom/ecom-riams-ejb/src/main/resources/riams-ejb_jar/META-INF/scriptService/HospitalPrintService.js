@@ -1197,9 +1197,17 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		slsId = medCase.id ;
 		recordDiagnosis(aCtx,slsId,"2","0","diagnosis.order.main") ;
 		recordDiagnosis(aCtx,slsId,"1","1","diagnosis.admission.main") ;
-		recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main") ;
-		recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related") ;
-		recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
+		if (medCase.deniedHospitalizating==null) {
+			recordDiagnosis(aCtx,slsId,"3","1","diagnosis.clinic.main") ;
+			recordDiagnosis(aCtx,slsId,"3","3","diagnosis.clinic.related") ;
+			recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
+			map.put("ambtype","СТАЦИОНАРНОГО") ;
+		} else {
+			recordDiagnosis(aCtx,slsId,"1","1","diagnosis.clinic.main") ;
+			recordDiagnosis(aCtx,slsId,"1","3","diagnosis.clinic.related") ;
+			recordDiagnosis(aCtx,slsId,"1","4","diagnosis.clinic.complication") ;
+			map.put("ambtype","АМБУЛАТОРНОГО") ;
+		}
 		recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
 		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
 		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
@@ -1566,8 +1574,21 @@ function printBilling(aCtx, aParams)
 	map.put("sls.Start",medCase.dateStart) ;
 	map.put("sls.Finish",medCase.dateFinish) ;
 	//выписной диагноз
-	getDiagnos("sls.diagnosConcluding",medCase.diagnosConcluding);
-	recordMultiText("sls.dischargeRecord",medCase.dischargeEpicrisis);
+	if (medCase.deniedHospitalizating==null) {
+		//getDiagnos("sls.diagnosConcluding",medCase.diagnosConcluding);
+		recordMultiText("sls.dischargeRecord",medCase.dischargeEpicrisis);
+	} else {
+		var list_prot = aCtx.manager.createNativeQuery("select upper(to_char(d.dateregistration,'dd.mm.yyyyy')||' '||cast(d.timeregistration as varchar(5)) ||' '||vwf.name||' '||pat.lastname),d.record from diary d left join WorkFunction wf on wf.id=d.specialist_id left join worker w on w.id=wf.worker_id left join patient pat on pat.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join medcase m on m.id=d.medcase_id where m.id="+medCase.id+" or (m.patient_id="+medCase.patient.id+" and m.dateStart-to_date('"+medCase.dateStart+"','yyyy-mm-dd') between 0 and 1) order by d.dateregistration,d.timeregistration").getResultList() ;
+		
+		var text = "" ;
+		for (var i = 0; i< list_prot.size();i++) {
+			text += list_prot.get(i)[0] ;
+			text += '\n' ;
+			text += list_prot.get(i)[1] ;
+			text += '\n\n' ;
+		}
+		recordMultiText("sls.dischargeRecord",text);
+	}
 	//текущая дата
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;

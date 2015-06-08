@@ -29,6 +29,14 @@ import ru.ecom.jaas.ejb.domain.SoftConfig;
 @Stateless
 @Remote(ISoftConfigService.class )
 public class SoftConfigServiceBean implements ISoftConfigService {
+	public static  String getDefaultParameterByConfig(String aParameter, String aValueDefault, EntityManager aManager) {
+		List<Object[]> l = aManager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
+		if (l.isEmpty()) {
+			return aValueDefault ;
+		} else {
+			return new StringBuilder().append(l.get(0)[1]).toString() ;
+		}
+	}
 	public String getDir(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get(aKey, aDefaultValue) ;
