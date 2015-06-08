@@ -117,12 +117,14 @@ public class AttachmentByLpuAction extends BaseAction {
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     			} else {
     				StringBuilder sqlAdd1= new StringBuilder() ;
+    				boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
     				if (typePatientFond.equals("1")) {
     					sqlAdd1.append(" and pai.patient_id is not null") ;
     				} else if (typePatientFond.equals("2")){
     					sqlAdd1.append(" and pai.patient_id is null") ;
+    					checkLpu=false ;
     				}
-    				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     			}
