@@ -350,6 +350,7 @@ public class PatientServiceBean implements IPatientService {
 				if (fiodr.length>7 && fiodr[7]!=null&&!fiodr[7].equals("")) { //Импорт данных прикрепления
 					SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig where key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 					String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
+					
 					RegInsuranceCompany insCompany =null; 
 					if (aPolicy!=null&&!aPolicy.equals("")) {
 						String[] policies = aPolicy.split("&");
@@ -366,22 +367,22 @@ public class PatientServiceBean implements IPatientService {
 						}
 					}
 			if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
-					
+					System.out.println("-----------Создаем прикрепления!!");
 					List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 							.setParameter("pat", aPatientId).getResultList();
 					VocAttachedType attType = (VocAttachedType) theManager.createQuery("from VocAttachedType where code=:code")
 							.setParameter("code", attachedType).getResultList().get(0);
 					
 					if (attachments.isEmpty()) { // Создаем новое 
-				//		System.out.println("------ ATT NOT FOUND, Создаем новое!!!");
+						System.out.println("--------------- ATT NOT FOUND, Создаем новое!!!");
 						String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig where key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
 						MisLpu lpuAtt = null;
-						if (lpuId!=null&&lpuId.equals("")) {
+						if (lpuId!=null&&!lpuId.equals("")) {
 							lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
 						}
 						
 						if (lpuAtt!=null) {
-				//			System.out.println("Найденное ЛПУ - "+lpuAtt.getFullname());
+							System.out.println("+++++++++++++++++++Найденное ЛПУ - "+lpuAtt.getFullname());
 							LpuAttachedByDepartment att = new LpuAttachedByDepartment();
 							att.setPatient(theManager.find(Patient.class, aPatientId));
 							att.setLpu(lpuAtt);
