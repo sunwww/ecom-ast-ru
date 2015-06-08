@@ -63,7 +63,7 @@
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
    ,ml.name as m15lname
-  ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null and p.medcase_id is not null then mc.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
+  ,  case when mc.dateStart is null and mc.id is not null then mc.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!\n' else '' end || d.record as drecord
     from prescription p
@@ -96,7 +96,7 @@
                 <msh:table name="listPres" action="javascript:void(0)" idField="1">
 	      <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
-	      <msh:tableButton property="12" buttonFunction="viewResult" buttonName="Просмотр" buttonShortName="Просмотр" hideIfEmpty="true"/>
+	      <msh:tableButton property="12" buttonFunction="viewBioResult" buttonName="Просмотр" buttonShortName="Просмотр" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Ход работ" property="2"  />
 	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>

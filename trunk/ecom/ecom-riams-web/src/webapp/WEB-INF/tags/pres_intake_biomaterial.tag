@@ -153,7 +153,7 @@
 			
 		}
      function enter${name}Result(aSmoId,aPrescriptId,aServiceId,aServiceName,aProtocolId,aTempId,aFunctionSave) {
-    	 	alert(aTempId) ; 
+    	 	//alert(aTempId) ; 
 			PrescriptionService.getParameterByTemplate(aSmoId,aPrescriptId,aServiceId,aProtocolId,aTempId, {
 				callback: function (aResult) {
 					$('BioIntakeInfoTitle').innerHTML = "ВВОД РЕЗУЛЬТАТА" ;
@@ -235,10 +235,11 @@
 		        txt += "</div>";
 	        } else {
 		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
-		        if (aParam.type='4') {txt += " ("+aParam.cntdecimal+") ";}
+		        
 	        }
 	        txt += "</td>" ;
 	        txt += "<td>" ;
+	        if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
 	        txt += aParam.unitname ;
 	        txt += "</td>" ;
 	        txt += "</tr>" ;
