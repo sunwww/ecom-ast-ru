@@ -87,45 +87,54 @@ function printInfoByPatient(aPatient,aCtx) {
 	var ddList = new java.util.ArrayList() ;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
 		var sqlD = "select to_char(lpcc.startdate,'dd.mm.yyyy') as p1ocode";
-		 +"  , to_char(lpcc.finishdate,'dd.mm.yyyy')  as p2ocode";
-		 +" ,(select mkb.code||'#'||mkb.name from diagnosis d left";
-		 +" join vocidc10 mkb on mkb.id=d.idc10_id";
-		 +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id";
-		 +" where d.patient_id=pcc.patient_id and d.medcase_id is ";
-		 +" null and vpd.code='1'";
-		 +" and d.establishDate=(select max(d1.establishDate) from";
-		 +" diagnosis d1";
-		 +" left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id";
-		 +" where d1.patient_id=pcc.patient_id and d1.medcase_id";
-		 +"  is null and vpd1.code='1'";
-		 +"   and d1.establishDate<=coalesce(lpcc.finishdate,current_date))) as mkbcode";
+		sqlD =sqlD+"  , to_char(lpcc.finishdate,'dd.mm.yyyy')  as p2ocode";
+		sqlD =sqlD +" ,(select mkb.code||'#'||mkb.name from diagnosis d left";
+		sqlD =sqlD +" join vocidc10 mkb on mkb.id=d.idc10_id";
+		sqlD =sqlD +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id";
+		sqlD =sqlD +" where d.patient_id=pcc.patient_id and d.medcase_id is ";
+		sqlD =sqlD +" null and vpd.code='1'";
+		sqlD =sqlD +" and d.establishDate=(select max(d1.establishDate) from";
+		sqlD =sqlD +" diagnosis d1";
+		sqlD =sqlD +" left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id";
+		sqlD =sqlD +" where d1.patient_id=pcc.patient_id and d1.medcase_id";
+		sqlD =sqlD +"  is null and vpd1.code='1'";
+		sqlD =sqlD +"   and d1.establishDate<=coalesce(lpcc.finishdate,current_date))) as mkbcode";
 
-		 +"   from psychiaticObservation po";
-		 +"  left join LpuAreaPsychCareCard lpcc on lpcc.id=po.lpuAreaPsychCareCard_id";
-		 +"   left join VocpsychambulatoryCare vpac on";
-		 +"  vpac.id=po.ambulatoryCare_id";
+		sqlD =sqlD +"   from psychiaticObservation po";
+		sqlD =sqlD +"  left join LpuAreaPsychCareCard lpcc on lpcc.id=po.lpuAreaPsychCareCard_id";
+		sqlD =sqlD +"   left join VocpsychambulatoryCare vpac on";
+		sqlD =sqlD +"  vpac.id=po.ambulatoryCare_id";
 
-		 +" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id";
-		 +" where pcc.patient_id='"+aPatient+"' and vpac.code='Д'";
-         +" order by po.startdate" ;
+		sqlD =sqlD +" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id";
+		sqlD =sqlD +" where pcc.patient_id='"+aPatient.id+"' and vpac.code='Д'";
+		sqlD =sqlD +" order by po.startdate" ;
 			
 			
-			
+		
 		var listD = aCtx.manager.createNativeQuery(sqlD).getResultList() ;
-		var dd = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		if (listD.size()>0) {
-			var objD = listD.get(0) ;
-			if (objD[1]!=null ) {
-				dd.set1(objD[0]) ;
+		//throw "listD"+listD.size() ;
+		var d1=null ; var d2=null ;
+		var iF=null;
+		for (var i=0;i<listD.size();i++) {
+			var objD = listD.get(i) ;
+			
+			if (d2!=null && d1!=null&&d2!=(""+objD[0])||((listD.size()-1)==i)) {
+				var dd = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+				dd.set1(d1!=null?d1:objD[0]) ;
 				dd.set2(objD[1]) ;
 				dd.set3(objD[2]!=null?objD[2].split("#")[0]:null) ;
 				dd.set4(objD[2]!=null?objD[2].split("#")[1]:null) ;
+				ddList.add(dd) ;
+				d1=null;d2=null;
+			} else {
+				if (d1!=null) d1=objD[0] ;
+				d2 = objD[1] ;
 			}
 		}	
 	} 
-	map.put("ddates",ddD) ;
-	map.put("ddiag",ddMkb) ;
-	map.put("ddiagn",ddMkbn) ;
+	map.put("ddates",null) ;
+	map.put("ddiag",null) ;
+	map.put("ddiagn",null) ;
 	map.put("ddlist",ddList) ;
 	return map ;
 }

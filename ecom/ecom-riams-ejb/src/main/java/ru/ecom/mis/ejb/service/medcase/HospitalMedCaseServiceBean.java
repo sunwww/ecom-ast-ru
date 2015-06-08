@@ -1246,7 +1246,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,count(distinct sls.id) as cntHosp") ;
     	sql.append(" ,count(distinct case when sls.dateStart=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntEnter") ;
     	sql.append(" ,count(distinct case when sls.dateFinish=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntDischarge") ;
-    	sql.append(" ,count(distinct case when sls.dateFinish is null or sls.datefinish>=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntCurrent") ;
+    	sql.append(" ,count(distinct case when sls.dateFinish is null or sls.datefinish>=to_date('").append(aDateTo).append("','yyyy-mm-dd') then sls.id else null end) as cntCurrent") ;
     	sql.append(" ,(select sum(bf1.amount) from bedfund bf1 left join VocBedType vbt1 on bf1.bedtype_id=vbt1.id where vbt1.codef=vbt.codef and bf1.bedsubtype_id=bf1.bedsubtype_id) as sumBed") ;
     	sql.append(" from medcase sls") ;
     	sql.append(" left join medcase sloF on sloF.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloF.prevMedCase_id is null") ;
@@ -1256,7 +1256,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart>=to_date('").append(aDateFrom).append("','yyyy-mm-dd')") ;
-    	sql.append(" and sls.dateFinish>=coalesce(to_date('").append(aDateFrom).append("','yyyy-mm-dd'),current_date)") ;
+    	sql.append(" and sls.dateFinish>=coalesce(to_date('").append(aDateTo).append("','yyyy-mm-dd'),current_date)") ;
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and vbst.code='1'") ;
     	sql.append(" group by vbt.codef,vbt.name,bf.bedsubtype_id") ;
     	sql.append(" order by vbt.name");

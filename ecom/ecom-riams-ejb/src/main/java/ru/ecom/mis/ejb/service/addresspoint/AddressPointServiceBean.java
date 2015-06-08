@@ -363,7 +363,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
-    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
+    		//xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
 				//Object value = pat[ind] ;
