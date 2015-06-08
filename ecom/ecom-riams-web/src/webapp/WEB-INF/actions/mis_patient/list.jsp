@@ -154,6 +154,7 @@
           <msh:tableColumn columnName="Дата рождения" property="birthday" guid="e63b0a34-7d09-4345-98c9-d9c0e37b69f4" />
           <msh:tableColumn columnName="Дата прикрепления (тип) и ЛПУ" property="lpuName" guid="210f1c10-2013-4a05-8ceb-af7d2d06694e" />
           <msh:tableColumn columnName="Участок" property="lpuAreaName" guid="44b16e3d-45a1-49a9-9b53-9a17320e0c67" />
+          <msh:tableColumn columnName="Проверка по базе фонда" property="patientInfo" guid="44b16e3d-45a1-49a9-9b53-9a17320e0c67" />
         </msh:table>
       </msh:section>
       </msh:ifInRole>

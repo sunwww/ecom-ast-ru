@@ -37,23 +37,17 @@
     Calendar cal = Calendar.getInstance() ;
     int month = cal.get(Calendar.MONTH) ;
     int day = cal.get(Calendar.DAY_OF_MONTH) ;
-    String path_curdate = "" ;
-    switch (month) {
-    case Calendar.JANUARY: 
-    	if (day<10) {path_curdate="0101";break;}
-    	if (day==13) {path_curdate="0113";break;}
-    case Calendar.FEBRUARY:
-    	if (day==14) {path_curdate="0214";break;}
-    	if (day>20 && day<24) {path_curdate="0223";break;}
-    case Calendar.MARCH:
-    	if (day>5 && day<9) {path_curdate="0308";break;}
-    case Calendar.DECEMBER:
-    	if (day>20) {path_curdate="1231";break;}
-    default:
-    	path_curdate="default" ;
-    	
+    String path_curdate="default" ;
+    if (month == Calendar.JANUARY) { 
+    	if (day<10) {path_curdate="0101";}
+    	if (day==13) {path_curdate="0113";}
+    } else if (month ==  Calendar.FEBRUARY) {
+    	if (day==14) {path_curdate="0214";}
+    	if (day>20 && day<24) {path_curdate="0223";}
+    } else if (month == Calendar.MARCH) {
+    	if (day>5 && day<9) {path_curdate="0308";}
+    	if (day>20) {path_curdate="1231";}
     }
-    //request.setAttribute("curdate_MMdd", ""+path_curdate) ;
     String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
     request.setAttribute("style_addition_body", style) ;
     %>
@@ -209,7 +203,11 @@
 	<!-- Additional Javascript -->
     <tiles:insert attribute="javascript" ignore='true'/>
     <!-- Additional Javascript END -->
-
+<msh:ifInRole roles="/Policy/Mis/Config/EmergencyMessage">
+<script type="text/javascript">
+	setTimeout(120000,funcemergencymessage.func) ;
+</script>
+</msh:ifInRole>
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 

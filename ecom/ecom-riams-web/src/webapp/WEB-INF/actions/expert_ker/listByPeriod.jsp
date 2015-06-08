@@ -45,7 +45,7 @@
       </msh:row>
               <msh:row>
           <msh:autoComplete vocName="vocExpertType" property="type" label="Тип ВК" 
-          	horizontalFill="true" fieldColSpan="3" />
+          	horizontalFill="true" fieldColSpan="5" />
         </msh:row>
       <msh:row>
         <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
@@ -75,14 +75,14 @@
       </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocExpertPatientStatus" property="patientStatus" label="Статус пациента" 
-          	horizontalFill="true" fieldColSpan="3" />
+          	horizontalFill="true" fieldColSpan="5" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="reasonDirect" fieldColSpan="5" parentAutocomplete="type" label="Причина подачи"
         		vocName="vocExpertReason" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="modeCase" fieldColSpan="3" label="Вид экспертизы" horizontalFill="true" vocName="vocExpertModeCase"/>
+        	<msh:autoComplete property="modeCase" fieldColSpan="5" label="Вид экспертизы" horizontalFill="true" vocName="vocExpertModeCase"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="deviationStandards" label="Отклонения от стандарта" horizontalFill="true" vocName="vocExpertDeviationStandards"/>
