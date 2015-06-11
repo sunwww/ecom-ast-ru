@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.service.addresspoint;
 
 import java.io.File;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -163,7 +164,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     	,		{"pai.policyType","OPDOC" ,"pai.policyType"} ,	{"pai.policySeries","SPOL" ,"pai.policySeries"}
     	,		{"pai.policyNumber","NPOL" ,"pai.policyNumber"} ,	{"pai.docType","DOCTP" ,"pai.docType"}
     	,		{"pai.docSeries","DOCS" ,"pai.docSeries"} ,		{"pai.docNumber","DOCN" ,"pai.docNumber"}
+    	,		{"to_char(pai.docDateIssued,'yyyy-MM-dd')","DOCDT","pai.docDateIssued"}
     	,		{"pai.docWhom","DOCORG" ,"pai.docWhom"} ,		{"pai.country","CN" ,"pai.country"}
+    	,		{"pai.region","SUBJ","pai.region"}
     	,		{"pai.rn","RN" ,"pai.rn"} ,				{"pai.index","INDX" ,"pai.index"}
     	,		{"pai.rayonName","RNNAME" ,"pai.rayonName"} ,	{"pai.city","CITY" ,"pai.city"}
     	,		{"pai.np","NP" ,"pai.np"} ,				{"pai.street","UL" ,"pai.street"}
@@ -196,7 +199,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     				.getResultList() ;
     		
     		for (Object comp:listComp) {
-    			filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp==null?"-":comp)
+    			filename = aFilenameAddSuffix+"_"+aNReestr+"S"+(comp==null?"-":comp)
     					+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     			filenames.append("#").append(filename+".xml") ;
     			
@@ -220,7 +223,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     			//xmlDoc.saveDocument(outFile) ;
     		}
     	} else {
-    		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    		filename = aFilenameAddSuffix+"_"+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     		filenames.append("#").append(filename+".xml") ;
     		sql.setLength(0);
     		sql.append("select ").append(fld) ;
@@ -354,11 +357,17 @@ public class AddressPointServiceBean implements IAddressPointService {
     }
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
+    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat format2 = new SimpleDateFormat("yyyy");
+    	
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
+       	xmlDoc.newElement(title, "VERSION","1.0");
+    	xmlDoc.newElement(title, "DATE", format.format(new java.util.Date()));
+    	xmlDoc.newElement(title, "YEAR", format2.format(new java.util.Date()));
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
-    	xmlDoc.newElement(title, "N_REESTR", aNReestr);
+ //   	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
     	int i=0 ;
     	for (Object[] pat:listPat) {
@@ -378,6 +387,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
+ 
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
