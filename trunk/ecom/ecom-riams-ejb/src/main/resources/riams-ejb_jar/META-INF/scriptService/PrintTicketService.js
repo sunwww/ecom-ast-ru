@@ -100,7 +100,7 @@ function printInfo(aCtx, aParams) {
 	var ticket = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, new java.lang.Long(aParams.get("id"))) ;
 	var mc = ticket.medcard;
-    var prs = mc.person;
+	var prs = mc.person;
     var plc = null;
     record("pat",prs) ;
     var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
@@ -127,6 +127,39 @@ function printInfo(aCtx, aParams) {
     	map.put("policyInfoSN","") ;
     	map.put("policyInfoC","") ;
     }
+    var medservice_list_sql = "select mc.id, mss.name, mss.code from medcase mc left join medservice mss on mss.id=mc.medservice_id " +
+    		"where mc.dtype='ServiceMedCase' and mc.parent_id='"+ticket.id+"'";
+    var ms_list = aCtx.manager.createNativeQuery(medservice_list_sql).getResultList();
+    var medServiceName=["",""];
+    var medServiceCode=["",""];
+    if (ms_list.size()>0) {
+    	for (var i=0;i<ms_list.size();i++) {
+    		if (i==2) break;
+    		var obj = ms_list.get(i);
+    		medServiceName[i]=obj[1];
+        	medServiceCode[i]=obj[2];
+        }    	
+    } 
+    map.put("medService0Name",medServiceName[0]);
+    map.put("medService0Code",medServiceCode[0]);
+    map.put("medService1Name",medServiceName[1]);
+    map.put("medService1Code",medServiceCode[1]);
+    
+    
+    var diag_list_sql = "select vip.name as vname, idc.name as iname, idc.code as icode from diagnosis ds left join vocidc10 idc on idc.id=ds.idc10_id " +
+    		"left join vocillnesprimary vip on vip.id=ds.illnesprimary_id where ds.medcase_id='"+ticket.id+"'";
+    var diag_list = aCtx.manager.createNativeQuery(diag_list_sql).getResultList();
+    if (diag_list.size()>0) {
+    	var obj_diag=diag_list.get(0);
+    	map.put("mainDiagChar",""+obj_diag[0]);
+    	map.put("mainDiagName",""+obj_diag[1]);
+    	map.put("mainDiagMKB",""+obj_diag[2]);
+    } else {
+    	map.put("mainDiagMKB","");
+    	map.put("mainDiagName","");
+    	map.put("mainDiagChar","");
+    }
+   
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
     record("ticketd",ticket.dateFinish!=null?FORMAT.format(ticket.dateFinish):"") ;
