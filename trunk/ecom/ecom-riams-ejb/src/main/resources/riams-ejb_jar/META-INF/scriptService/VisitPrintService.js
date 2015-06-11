@@ -338,8 +338,9 @@ function printVisit(aCtx, aParams) {
 	var protocol = !list.isEmpty()?list.iterator().next().record:"";
 	map.put("protocol", recordMultiText(protocol)) ;
 	//map.put("protocol",protocol);
-	map.put("id", visit.getId()) ;
+	map.put("id", +visit.getId()) ;
 	map.put("visit", visit) ;
+	map.put("ticket", visit) ;
 	map.put("pat", visit.patient) ;
 	var zac="ЗАКЛЮЧЕНИЕ";
 	map.put("zac",zac);
@@ -396,6 +397,42 @@ function printVisit(aCtx, aParams) {
 	map.put("diagPrimary",diagPrimary);
 	map.put("diagTravm",diagTravm);
 	map.put("diagTravmMkb",diagTravmMkb);
+	var policy_list_sql = "select mp.series, mp.polnumber, mp.commonnumber, ri.name from medpolicy mp " +
+			" left join reg_ic ri on ri.id=mp.company_id where mp.patient_id='"+visit.patient.id+"' and mp.actualdateto is null" +
+			" order by actualdatefrom desc";
+	var policySeries = "",policyNumber="", policyRZ="",policyCompany="";
+	var policy_list = aCtx.manager.createNativeQuery(policy_list_sql).setMaxResults(1).getResultList();
+	if (policy_list.size()>0) {
+		var obj = policy_list.get(0);
+		policySeries=obj[0];
+		policyNumber=obj[1];
+		policyRZ=obj[2];
+		policyCompany=obj[3];
+	}
+	
+	
+	map.put("policySeries",policySeries);
+	map.put("policyNumber",policyNumber);
+	map.put("policyRZ",policyRZ);
+	map.put("policyCompany",policyCompany);
+		
+	var medservice_list_sql = "select mc.id, mss.name, mss.code from medcase mc left join medservice mss on mss.id=mc.medservice_id " +
+	"where mc.dtype='ServiceMedCase' and mc.parent_id='"+visit.id+"'";
+	var ms_list = aCtx.manager.createNativeQuery(medservice_list_sql).getResultList();
+	var medServiceName=["",""];
+	var medServiceCode=["",""];
+	if (ms_list.size()>0) {
+		for (var i=0;i<ms_list.size();i++) {
+			if (i==2) break;
+			var obj = ms_list.get(i);
+			medServiceName[i]=obj[1];
+			medServiceCode[i]=obj[2];
+		}    	
+	} 
+	map.put("medService0Name",medServiceName[0]);
+	map.put("medService0Code",medServiceCode[0]);
+	map.put("medService1Name",medServiceName[1]);
+	map.put("medService1Code",medServiceCode[1]);
 	/*var vacText="";
 	var vaccination=visit.getVaccinations();
 	for(var i=0;i<vaccination.size();i++){
