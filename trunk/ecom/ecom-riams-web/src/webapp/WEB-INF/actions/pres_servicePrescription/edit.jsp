@@ -352,7 +352,7 @@
 
     		<tr>
    		    <msh:textField property="labDate" label="Дата " size="10"/>
-   		    <msh:autoComplete property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+   		    <msh:autoComplete parentId="pres_servicePrescriptionForm.prescriptType" property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
    		    <td>        	
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
             </td>
