@@ -300,12 +300,23 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
         	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
             sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
+            //NEW FORMAT 
+            sql.append(" , p.passportdateissued"); //15
+            sql.append(" , case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end"); //16
+            sql.append(" ,wp.snils as ssd");//17
+            sql.append(" ,case when (lp.newAddress is true or lp.newAddress='1') then '1' else '0' end as newAddress");
         	sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
         	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
             sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
         	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+        	sql.append(" left join lpuArea la on la.id=lp.area_id") ;
+        	sql.append(" left join mislpu ml3 on ml3.id= la.lpu_id");
+        	sql.append(" left join workfunction wf on wf.id=la.workfunction_id");
+        	sql.append(" left join worker w on w.id=wf.worker_id");
+        	sql.append(" left join patient wp on wp.id=w.person_id");
+        	
         	sql.append(" where ") ;
         	sql.append(" lp.company_id") ;
         	if (comp[0]!=null) {sql.append("=").append(comp[0]) ;} else {sql.append(" is null ") ;}
@@ -314,7 +325,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code,p.passportdateissued,la.codeDepartment, ml3.codeDepartment,lp.newaddress,wp.snils") ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
         	 listPat = theManager.createNativeQuery(sql.toString())
@@ -332,19 +343,29 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
         	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
             sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
+            sql.append(" , p.passportdateissued"); //15
+            sql.append(" , case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end"); //16
+            sql.append(" ,wp.snils as ssd");//17
+            sql.append(" ,case when (lp.newAddress is true or lp.newAddress='1') then '1' else '0' end as newAddress");
         	sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
         	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
             sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id") ;
         	sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+        	sql.append(" left join lpuArea la on la.id=lp.area_id") ;
+        	sql.append(" left join mislpu ml3 on ml3.id=la.lpu_id");
+        	sql.append(" left join workfunction wf on wf.id=la.workfunction_id");
+        	sql.append(" left join worker w on w.id=wf.worker_id");
+        	sql.append(" left join patient wp on wp.id=w.person_id");
+        	
         	sql.append(" where ") ;
         	
         	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code") ;
+        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code,p.passportdateissued,la.codeDepartment, ml3.codeDepartment,lp.newaddress,wp.snils") ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
@@ -403,11 +424,14 @@ public class AddressPointServiceBean implements IAddressPointService {
     		xmlDoc.newElement(zap, "DOCTYPE", XmlUtil.getStringValue(pat[6])) ;
     		xmlDoc.newElement(zap, "DOCSER", XmlUtil.getStringValue(pat[7])) ;
     		xmlDoc.newElement(zap, "DOCNUM", XmlUtil.getStringValue(pat[8])) ;
+    		xmlDoc.newElement(zap, "DOCDT", XmlUtil.getStringValue(pat[14])) ;
     		xmlDoc.newElement(zap, "RZ", XmlUtil.getStringValue(pat[9])) ;
-    		
     		xmlDoc.newElement(zap, "SP_PRIK", XmlUtil.getStringValue(pat[10])) ; // 1-территориал, 2-заявление
     		xmlDoc.newElement(zap, "T_PRIK", XmlUtil.getStringValue(pat[13])) ; // 1-прикрепление, 2-открепление
     		xmlDoc.newElement(zap, "DATE_1", XmlUtil.getStringValue(pat[12]!=null?pat[12]:pat[11])) ;
+    		xmlDoc.newElement(zap, "N_ADR", XmlUtil.getStringValue(pat[17])); //Заполняется при подтверждении смены адреса и переходе в новую терр. поликлинику
+    		xmlDoc.newElement(zap, "KODPODR", XmlUtil.getStringValue(pat[15]));
+    		xmlDoc.newElement(zap, "SSD", XmlUtil.getStringValue(pat[16]));
     		
     		xmlDoc.newElement(zap, "REFREASON", "") ;
     	}
