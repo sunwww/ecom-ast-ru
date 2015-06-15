@@ -132,7 +132,7 @@ public class FondWebService {
 			
 			IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			String defaultLpu =null;
-			Collection<WebQueryResult> list = serviceWQS.executeNativeSql("select keyvalue from SoftConfig where key='DEFAULT_LPU_OMCCODE'") ;
+			Collection<WebQueryResult> list = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
 			if (!list.isEmpty()) {
 				defaultLpu = list.iterator().next().get1().toString();
 			}
