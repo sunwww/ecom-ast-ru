@@ -237,4 +237,12 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 
 	/** Подача производилась по неактуальному полису */
 	private Boolean theNoActualPolicy;
+
+	/** Новый адрес */
+	@Comment("Новый адрес")
+	@Persist
+	public Boolean getNewAddress() {return theNewAddress;}
+	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
+	/** Новый адрес */
+	private Boolean theNewAddress;
 }
