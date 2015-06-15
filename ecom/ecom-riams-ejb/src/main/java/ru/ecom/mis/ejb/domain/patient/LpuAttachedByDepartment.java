@@ -212,4 +212,11 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	public void setCheckResult(String aCheckResult) {theCheckResult = aCheckResult;}
 	/** Результаты последней проверки */
 	private String theCheckResult;
+	
+	/** Пациент сменил адрес */
+	@Comment("Пациент сменил адрес")
+	public Boolean getNewAddress() {return theNewAddress;}
+	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
+	/** Пациент сменил адрес */
+	private Boolean theNewAddress;
 }
