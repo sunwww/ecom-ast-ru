@@ -34,6 +34,9 @@
 		        <msh:row>
 		        	<msh:checkBox property="noActualPolicy" fieldColSpan="5" label="Подача производилась по неактуальному полису"/>
 		        </msh:row>
+		        <msh:row>
+		        	<msh:checkBox property="newAddress" fieldColSpan="5" label="Пациент подтвердил смену адреса"/>
+		        </msh:row>
 		        
 			</msh:panel>
 			<msh:panel>
@@ -44,7 +47,7 @@
         	<msh:textField property="defectPeriod"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="defectText" fieldColSpan="200"/>
+        	<msh:textField property="defectText" fieldColSpan="200" horizontalFill="true"/>
         </msh:row>
 		</msh:panel>
 			<msh:panel>
