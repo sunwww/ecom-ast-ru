@@ -150,7 +150,7 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 	private SoftConfig findOrCreateSoftConfig(String aKey, Map<String,String> aDefault) {
 		SoftConfig config = null ;
 		if (aKey!=null && !aKey.equals("")) {
-			List<SoftConfig> list = theManager.createQuery("from SoftConfig where key=:key")
+			List<SoftConfig> list = theManager.createQuery("from SoftConfig sc where sc.key=:key")
 				.setParameter("key", aKey)
 				.getResultList();
 			if (list.size()==0) {
