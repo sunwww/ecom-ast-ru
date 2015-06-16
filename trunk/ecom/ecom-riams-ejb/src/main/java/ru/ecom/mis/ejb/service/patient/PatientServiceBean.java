@@ -349,7 +349,7 @@ public class PatientServiceBean implements IPatientService {
 			}
 			if (aIsAttachment){
 				if (fiodr.length>7 && fiodr[7]!=null&&!fiodr[7].equals("")) { //Импорт данных прикрепления
-					SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig where key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
+					SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 					String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 					
 					RegInsuranceCompany insCompany =null; 
@@ -376,7 +376,7 @@ public class PatientServiceBean implements IPatientService {
 					
 					if (attachments.isEmpty()) { // Создаем новое 
 						System.out.println("--------------- ATT NOT FOUND, Создаем новое!!!");
-						String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig where key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
+						String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
 						MisLpu lpuAtt = null;
 						if (lpuId!=null&&!lpuId.equals("")) {
 							lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
@@ -860,7 +860,8 @@ public class PatientServiceBean implements IPatientService {
 			sqlFld.append(" else '' end end from PatientFond pf1 ");
 			sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
 			sqlFld.append(" ) as fondinfo ");
-			sql.append(" from patient p ") ;
+			//sql ;
+			//sql. ;
 			sql.append(" left join psychiatricCareCard pcc on pcc.patient_id=p.id") ;
 			sql.append(" left join lpuareapsychcarecard lpcc on lpcc.careCard_id=pcc.id") ;
 			sql.append(" left join lpuarea la on la.id = lpcc.lpuarea_id") ;
@@ -870,65 +871,128 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" left join secuser su on su.id=wf.secuser_id") ;
 			
 			sql.append(" where ((su.login='").append(username).append("' or p.createUsername='").append(username).append("') and lpcc.transferDate is null and lpcc.finishDate is null)") ;
-			//builder.add("su.login", username) ;
-			
-			//builder.addIsNull("lpcc.transferDate", "") ;
-			//builder.addIsNull("lpcc.finishDate", "") ;
 
 			if (!StringUtil.isNullOrEmpty(aLastname)) {
 				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
-				if (st.hasMoreTokens())
-					builder.addLike("p.lastname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("p.firstname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("p.middlename", st.nextToken() + "%");
-				
-				Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld).append(sql).toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
-				appendNativeToList(query, ret);
+				StringBuilder p1 = new StringBuilder() ;
+				StringBuilder p2 = new StringBuilder() ;
+				if (st.hasMoreTokens()) {
+					p1.append(" p.lastname like :plastname ");
+					p2.append(" jcp.lastname like :plastname ");
+					builder.addParameter("plastname", st.nextToken() + "%");
+				}
+				if (st.hasMoreTokens()) {
+					p1.append(" and p.firstname like :pfirstname ");
+					p2.append(" and jcp.firstname like :pfirstname ");
+					builder.addParameter("pfirstname", st.nextToken() + "%");
+				}
+				if (st.hasMoreTokens()) {
+					p1.append(" and p.middlename like :pmiddlename ");
+					p2.append(" and jcp.middlename like :pmiddlename ");
+					builder.addParameter("pmiddlename", st.nextToken() + "%");
+				}
+				Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
+						.append(" from patient p ").append(sql)
+						.append(" and ").append(p1).toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
+				appendNativeToList(query, ret,null);
+				sqlFld = new StringBuilder() ;
+				sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
+				sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end)");
+				sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end),p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType");
+				sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
+				sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
+				sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+				sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+				sqlFld.append(" else '' end end from PatientFond pf1 ");
+				sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
+				sqlFld.append(" ) as fondinfo ");
+				Query query1 = builder.buildNative(theManager, new StringBuilder()
+				.append(sqlFld)
+				.append(" from JournalChangePatient jcp ")
+				.append(" left join patient p on jcp.patient_id=p.id ")
+				.append(sql)
+				.append(" and ").append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
+				appendNativeToList(query1, ret,"Изменены персональные данные");
 			}
 		} else {
 			if (CAN_DEBUG) {
 				LOG.debug("findPatient() aLpuId = " + aLpuId + ", aLpuAreaId = "
 						+ aLpuAreaId + ", aLastname = " + aLastname);
 			}
-			QueryClauseBuilder builder = new QueryClauseBuilder();
-			builder.add("att.lpu_id", aLpuId);
-			builder.add("att.area_id", aLpuAreaId);
-			if (!StringUtil.isNullOrEmpty(aLastname)) {
-				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
-				if (st.hasMoreTokens())
-					builder.addLike("p.lastname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("p.firstname", st.nextToken() + "%");
-				if (st.hasMoreTokens())
-					builder.addLike("p.middlename", st.nextToken() + "%");
-			}
-			StringBuilder sql = new StringBuilder() ;/*
-			*/
-			sql.append(" from Patient p") ;
+			StringBuilder sql = new StringBuilder() ;
+			StringBuilder sqlFld1 = new StringBuilder() ;
+			sqlFld1.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
+			sqlFld1.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end)");
+			sqlFld1.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end)");
+			sqlFld1.append(" ,p.birthday") ;
+			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+			sqlFld1.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
+			sqlFld1.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname") ;
+			sqlFld1.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
+			sqlFld1.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
+			sqlFld1.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+			sqlFld1.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+			sqlFld1.append(" else '' end end from PatientFond pf1 ");
+			sqlFld1.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
+			sqlFld1.append(" ) as fondinfo ");
+
+			//sql.append(" from Patient p") ;
+			//sql.append(" left join JournalChangePatient jcp on jcp.patient_id=p.id") ;
 			sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
 			sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
 			sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
 			sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
 			sql.append(" where") ;
-			Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld).append(sql).toString(),
-					"group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by lastname,firstname");
+			StringBuilder p1 = new StringBuilder() ;
+			StringBuilder p2 = new StringBuilder() ;
 	
-			///List<PatientForm> ret = new LinkedList<PatientForm>();
-			appendNativeToList(query, ret);
+			QueryClauseBuilder builder = new QueryClauseBuilder();
+			if (!StringUtil.isNullOrEmpty(aLastname)) {
+				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
+				if (st.hasMoreTokens()) {
+					p1.append(" p.lastname like :plastname ");
+					p2.append(" jcp.lastname like :plastname ");
+					builder.addParameter("plastname", st.nextToken() + "%");
+				}
+				if (st.hasMoreTokens()) {
+					p1.append(" and p.firstname like :pfirstname ");
+					p2.append(" and jcp.firstname like :pfirstname ");
+					builder.addParameter("pfirstname", st.nextToken() + "%");
+				}
+				if (st.hasMoreTokens()) {
+					p1.append(" and p.middlename like :pmiddlename ");
+					p2.append(" and jcp.middlename like :pmiddlename ");
+					builder.addParameter("pmiddlename", st.nextToken() + "%");
+				}
+				//sql.append(" ((").append(p1).append(") or (").append(p2).append("))") ;
+			}
+			
+			builder.add("att.lpu_id", aLpuId);
+			builder.add("att.area_id", aLpuAreaId);
+			Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
+					.append(" from patient p ").append(sql)
+					.append(p1).toString(),
+					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by p.lastname,p.firstname");
+			appendNativeToList(query, ret,null);
+			Query query1 = builder.buildNative(theManager, new StringBuilder().append(sqlFld1)
+					.append(" from JournalChangePatient jcp ")
+					.append(" left join patient p on jcp.patient_id=p.id ")
+					.append(sql)
+					.append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString(),
+					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by p.lastname,p.firstname");
+			appendNativeToList(query1, ret,null);
 	
 			
 			// поиск по полису
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByMedCardNumber(sqlFld,aLastname), ret);
+				appendNativeToList(findByMedCardNumber(sqlFld,aLastname), ret,null);
 			}
 			// Поиск по коду синхронизации
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByPatientSync(sqlFld,aLastname), ret);
+				appendNativeToList(findByPatientSync(sqlFld,aLastname), ret,null);
 			}
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname), ret);
+				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname), ret,null);
 			}
 		}
 		return ret;
@@ -999,7 +1063,7 @@ public class PatientServiceBean implements IPatientService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void appendNativeToList(Query aQuery, List<PatientForm> ret) {
+	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
 		for (Object[] arr : list) {
 			PatientForm f = new PatientForm();
@@ -1008,6 +1072,14 @@ public class PatientServiceBean implements IPatientService {
 				f.setLastname(new StringBuilder().append("<font color='red'>").append(arr[1]).append("</font>").toString());
 				f.setFirstname(new StringBuilder().append("<font color='red'>").append(arr[2]).append("</font>").toString());
 				f.setMiddlename(new StringBuilder().append("<font color='red'>").append(arr[3]).append("</font>").toString());
+				if(arr[4]!=null) {
+					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
+				}
+				f.setPatientSync(arr[5]!=null?(String) arr[5]:"") ;
+			} else if (aAddInfo!=null) {
+				f.setLastname(new StringBuilder().append(aAddInfo).append("<font color='blue'>").append(arr[1]).append("</font>").toString());
+				f.setFirstname(new StringBuilder().append("<font color='blue'>").append(arr[2]).append("</font>").toString());
+				f.setMiddlename(new StringBuilder().append("<font color='blue'>").append(arr[3]).append("</font>").toString());
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
@@ -1195,7 +1267,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append("")
 			.append(" from Patient p")
 			.append(" where (")
-			.append(" (UPPER(p.lastname) =:lastname and UPPER(p.firstname) = :firstname and UPPER(p.middlename)=:middlename and ");
+			.append(" (p.lastname =:lastname and p.firstname = :firstname and p.middlename=:middlename and ");
 		String birthyear ;
 		if (!aIsFullBirthdayCheck) {
 			birthyear= aBirthday.substring(6) ;
@@ -1215,19 +1287,9 @@ public class PatientServiceBean implements IPatientService {
 		
 		sql.append(")") ;
 			
-		if (aId!=null && !aId.equals("")) {
+		if (aId!=null && !aId.equals("") && !aId.equals("0")) {
 			sql.append(" and p.id!='").append(aId).append("'") ;
 		}
-		Object cntdoubles = theManager.createNativeQuery(
-				"select count(*) "+sql.toString())
-				.setParameter("lastname", aLastname)
-				.setParameter("firstname", aFirstname)
-				.setParameter("middlename", aMiddlename)
-				.setParameter("birthyear", birthyear)
-				//			.setParameter("snils", aSnils)
-				//			.setParameter("pnumber", aPassportNumber)
-				//			.setParameter("pseries", aPassportSeries)
-				.getSingleResult() ;
 		List<Object[]> doubles = theManager.createNativeQuery(
 				"select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils "+sql.toString())
 				.setParameter("lastname", aLastname)
@@ -1243,8 +1305,18 @@ public class PatientServiceBean implements IPatientService {
 		if (doubles.size()>0) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
+			Object cntdoubles = theManager.createNativeQuery(
+			"select count(*) "+sql.toString())
+			.setParameter("lastname", aLastname)
+			.setParameter("firstname", aFirstname)
+			.setParameter("middlename", aMiddlename)
+			.setParameter("birthyear", birthyear)
+			//			.setParameter("snils", aSnils)
+			//			.setParameter("pnumber", aPassportNumber)
+			//			.setParameter("pseries", aPassportSeries)
+			.getSingleResult() ;
+			ret.append("<li>Количество найденных дублей: <b>").append(cntdoubles).append("</b></li>") ;
 			for (Object[] res:doubles) {
-				ret.append("<li>Количество найденных дублей: <b>").append(cntdoubles).append("</b></li>") ;
 				ret.append("<li>")
 				.append("<a href='") ;
 				if (aAction.toLowerCase().indexOf("javascript")!=-1) {
