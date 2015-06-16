@@ -259,13 +259,34 @@ public class AddressPointServiceBean implements IAddressPointService {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    	//Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	String filename=null;
     	StringBuilder sql = new StringBuilder() ;
-    //	File outFile = null;
     	List<Object[]> listPat = null;
+    	String[][] props = {
+    			{"p.lastname","FAM","p.lastname"},				{"p.firstname","IM","p.firstname"}
+    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename"} 
+    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday"} ,		{"p.snils","SNILS" ,"p.snils"}
+    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries"}
+    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued"}
+    	,		{"cast('' as varchar(1))","TEL" ,"p.phone"} ,		{"p.commonNumber","RZ" ,"p.commonNumber"}
+    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code"} 
+    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo"}
+    	,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom"} 
+    	,		{"case when lp.newAddress='1' then '1' else '0' end","N_ADR" ,"lp.newAddress"}
+    	,		{"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end","KODPODR" ,"la.codeDepartment,ml3.codeDepartment"} 
+    	,		{"wp.snils","SSD" ,"wp.snils"}
+    	
+    } ;
+    	StringBuilder fld = new StringBuilder() ;
+    	StringBuilder fldGroup = new StringBuilder() ;
+    	for (int ind =0;ind<props.length;ind++) {
+    		String[] p=props[ind];
+    		if (ind!=0) {fld.append(",") ;fldGroup.append(",");}
+    		fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
+    		fldGroup.append(" ").append(p[2]) ;
+    	}
     	if (needDivide) {
     		StringBuilder sqlGroup = new StringBuilder() ;
         	sqlGroup.append("select lp.company_id,vri.smocode") ;
@@ -294,17 +315,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	filenames.append("#").append(filename+".xml") ;
         
         	sql.setLength(0);
-        	sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
-        	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
-        	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
-        	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
-        	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
-            sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
-            //NEW FORMAT 
-            sql.append(" , p.passportdateissued"); //15
-            sql.append(" , case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end"); //16
-            sql.append(" ,wp.snils as ssd");//17
-            sql.append(" ,case when (lp.newAddress is true or lp.newAddress='1') then '1' else '0' end as newAddress");
+        	sql.append("select ").append(fld);
         	sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
@@ -325,29 +336,20 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code,p.passportdateissued,la.codeDepartment, ml3.codeDepartment,lp.newaddress,wp.snils") ;
+        	sql.append(" group by ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
         	 listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
-        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat);
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
         	//xmlDoc.saveDocument(outFile) ;
         	}
     	} else {
     		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     		filenames.append("#").append(filename+".xml") ;
     		sql.setLength(0);
-    		sql.append("select p.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday") ;
-        	sql.append(" , p.snils, vic.omcCode as passportType, p.passportSeries,p.passportNumber,p.commonNumber") ;
-        	sql.append(" , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik") ;
-        	sql.append(" , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik") ;
-        	sql.append(" , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate") ;
-            sql.append(" , case when lp.dateTo is null then '1' else '2' end as otkorprik") ;
-            sql.append(" , p.passportdateissued"); //15
-            sql.append(" , case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end"); //16
-            sql.append(" ,wp.snils as ssd");//17
-            sql.append(" ,case when (lp.newAddress is true or lp.newAddress='1') then '1' else '0' end as newAddress");
-        	sql.append(" from Patient p") ;
+    		sql.append("select ").append(fld);
+            sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
         	sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id") ;
@@ -365,12 +367,12 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils, vic.omcCode,p.passportSeries,p.passportNumber,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code,p.passportdateissued,la.codeDepartment, ml3.codeDepartment,lp.newaddress,wp.snils") ;
+        	sql.append(" group by ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
-        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat);
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
     	}
     	
     	
@@ -396,14 +398,15 @@ public class AddressPointServiceBean implements IAddressPointService {
     		//xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
-				//Object value = pat[ind] ;
-	    		xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
+				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 				
 			}
     	}
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
-    public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+    public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
+    		, List<Object[]> listPat, String[][] aProps
+    		) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
@@ -416,25 +419,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "ZAP", null);
     		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
-    		xmlDoc.newElement(zap, "FAM", XmlUtil.getStringValue(pat[1])) ;
-    		xmlDoc.newElement(zap, "IM", XmlUtil.getStringValue(pat[2])) ;
-    		xmlDoc.newElement(zap, "OT", XmlUtil.getStringValue(pat[3])) ;
-    		xmlDoc.newElement(zap, "DR", XmlUtil.getStringValue(pat[4])) ;
-    		xmlDoc.newElement(zap, "SNILS", XmlUtil.getStringValue(pat[5])) ;
-    		xmlDoc.newElement(zap, "DOCTYPE", XmlUtil.getStringValue(pat[6])) ;
-    		xmlDoc.newElement(zap, "DOCSER", XmlUtil.getStringValue(pat[7])) ;
-    		xmlDoc.newElement(zap, "DOCNUM", XmlUtil.getStringValue(pat[8])) ;
-    		xmlDoc.newElement(zap, "DOCDT", XmlUtil.getStringValue(pat[14])) ;
-    		xmlDoc.newElement(zap, "RZ", XmlUtil.getStringValue(pat[9])) ;
-    		xmlDoc.newElement(zap, "SP_PRIK", XmlUtil.getStringValue(pat[10])) ; // 1-территориал, 2-заявление
-    		xmlDoc.newElement(zap, "T_PRIK", XmlUtil.getStringValue(pat[13])) ; // 1-прикрепление, 2-открепление
-    		xmlDoc.newElement(zap, "DATE_1", XmlUtil.getStringValue(pat[12]!=null?pat[12]:pat[11])) ;
-    		xmlDoc.newElement(zap, "N_ADR", XmlUtil.getStringValue(pat[17])); //Заполняется при подтверждении смены адреса и переходе в новую терр. поликлинику
-    		xmlDoc.newElement(zap, "KODPODR", XmlUtil.getStringValue(pat[15]));
-    		xmlDoc.newElement(zap, "SSD", XmlUtil.getStringValue(pat[16]));
-    		
-    		xmlDoc.newElement(zap, "REFREASON", "") ;
+    		for(int ind=0;ind<aProps.length; ind++) {
+    			String[] prop = aProps[ind] ; 
+				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
+				
+			}
     	}
+    	
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
     public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
