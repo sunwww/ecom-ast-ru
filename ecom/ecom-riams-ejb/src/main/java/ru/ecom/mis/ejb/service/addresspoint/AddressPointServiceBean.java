@@ -265,9 +265,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
     	String[][] props = {
-    			{"p.lastname","FAM","p.lastname"},				{"p.firstname","IM","p.firstname"}
-    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename"} 
-    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday"} ,		{"p.snils","SNILS" ,"p.snils"}
+    			{"p.lastname","FAM","p.lastname","1"},				{"p.firstname","IM","p.firstname","1"}
+    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null} 
+    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1"} ,		{"p.snils","SNILS" ,"p.snils"}
     	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries"}
     	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued"}
     	,		{"cast('' as varchar(1))","TEL" ,"p.phone"} ,		{"p.commonNumber","RZ" ,"p.commonNumber"}
