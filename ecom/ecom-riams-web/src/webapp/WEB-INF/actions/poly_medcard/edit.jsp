@@ -74,7 +74,7 @@
 			    	left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 			    	left join worker w on w.id=wf.worker_id
 			    	left join patient wp on wp.id=w.person_id
-					where UPPER(smc.dtype)='SHORTMEDCASE' and card.id='${param.id}'
+					where card.id='${param.id}' and UPPER(smc.dtype)='SHORTMEDCASE'
 					and smc.dateStart is null 
 					and smc.medCard_id='${param.id}'
 					"
