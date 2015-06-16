@@ -7,6 +7,7 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import ru.ecom.alg.common.IsPensioner;
 import ru.nuzmsh.util.StringUtil;
 
 /**
@@ -23,7 +24,10 @@ public class QueryClauseBuilder {
     }
 
     public void add(String aParameterName, Object aValue) {
-        thePameters.add(new QueryParameter(aParameterName, aValue, false)) ;
+    	thePameters.add(new QueryParameter(aParameterName, aValue, false)) ;
+    }
+    public void addParameter(String aParameterName, Object aValue) {
+        thePameters.add(new QueryParameter(aParameterName, aValue)) ;
     }
 
     public void addIsNull(String aParameterName, Object aValue) {
@@ -47,7 +51,7 @@ public class QueryClauseBuilder {
     private Query build(EntityManager aManager, String aPrefix, String aSuffix, boolean aNative) {
         StringBuilder sb = new StringBuilder(aPrefix.trim());
         for (QueryParameter parameter : thePameters) {
-            appendClause(sb, parameter.name, parameter.value, parameter.isNull, parameter.isNot, parameter.isLike, parameter.isBetween);
+            appendClause(sb, parameter.name, parameter.value, parameter.isNull, parameter.isNot, parameter.isLike, parameter.isBetween,parameter.isParam);
         }
         String q = sb.toString().trim() ;
         if(q.endsWith("where")) {
@@ -73,8 +77,10 @@ public class QueryClauseBuilder {
             aQuery.setParameter(aParameterName.replace(".", ""), aValue) ;
         }
     }
-    private static void appendClause(StringBuilder aSb, String aParameterName, Object aValue, boolean aIsNullSupports, boolean isNot, boolean aIsLike, boolean aIsBetween) {
-        if(!isNullOrZeroOrEmpty(aValue)) {
+    
+    private static void appendClause(StringBuilder aSb, String aParameterName, Object aValue, boolean aIsNullSupports, boolean isNot, boolean aIsLike, boolean aIsBetween,boolean aIsParam) {
+        if (!aIsParam) {
+    	if(!isNullOrZeroOrEmpty(aValue)) {
             if(!aSb.toString().endsWith("where")) aSb.append(" and ") ;
             aSb.append(' ') ;
             aSb.append(aParameterName) ;
@@ -103,7 +109,7 @@ public class QueryClauseBuilder {
             aSb.append(" and ") ;
             aSb.append(":").append(aParameterName.replace(".", "")).append("To ");
         }
-        
+        }
     }
 
     private static boolean isNullOrZeroOrEmpty(Object aObject) {
@@ -132,6 +138,7 @@ public class QueryClauseBuilder {
             isNot = aIsNot ;
             isLike = aIsLike ;
             isBetween = false ;
+            isParam = false ;
         }
         public QueryParameter(String aName, Object aValue,Object aValueTo) {
             name = aName ;
@@ -141,6 +148,7 @@ public class QueryClauseBuilder {
             isLike = false ;
             isNot = false ;
             isBetween = true ;
+            isParam = false ;
         }        
         public QueryParameter(String aName, Object aValue, boolean aIsNullSupports, boolean aIsNot) {
             name = aName ;
@@ -150,16 +158,30 @@ public class QueryClauseBuilder {
             isLike = false ;
             isNot = aIsNot ;
             isBetween = false ;
+            isParam = false ;
         }
         public QueryParameter(String aName, Object aValue, boolean aIsNullSupports) {
+        	name = aName ;
+        	value = aValue ;
+        	valueTo = null ;
+        	isNull = aIsNullSupports ;
+        	isNot = false ;
+        	isLike = false ;
+        	isBetween = false ;
+        	isParam = false ;
+        }
+        
+        public QueryParameter(String aName, Object aValue) {
             name = aName ;
             value = aValue ;
             valueTo = null ;
-            isNull = aIsNullSupports ;
+            isNull = false ;
             isNot = false ;
             isLike = false ;
             isBetween = false ;
+            isParam = true ;
         }
+        
 
         private final String name ;
         private final Object value ;
@@ -168,6 +190,7 @@ public class QueryClauseBuilder {
         private final boolean isNot ;
         private final boolean isLike ;
         private final boolean isBetween ;
+        private final boolean isParam ;
     }
     LinkedList<QueryParameter> thePameters = new LinkedList<QueryParameter>();
 //    Map<String, Object> theParameters = new TreeMap<String, Object>();
