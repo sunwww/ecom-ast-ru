@@ -99,6 +99,7 @@ function printInfo(aCtx, aParams) {
 	
 	var ticket = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, new java.lang.Long(aParams.get("id"))) ;
+	var visit=ticket;
 	var mc = ticket.medcard;
 	var prs = mc.person;
     var plc = null;
@@ -159,7 +160,43 @@ function printInfo(aCtx, aParams) {
     	map.put("mainDiagName","");
     	map.put("mainDiagChar","");
     }
-   
+    var otherVisits = [];
+	var otherVisits_list_sql = "select to_char(m2.datestart,'dd.MM.yyyy') from medcase m" +
+			" left join medcase m1 on m1.id=m.parent_id" +
+			" left join medcase m2 on m2.parent_id=m1.id" +
+			" where m.id='"+ticket.getId()+"' and (m2.dtype='Visit' or m2.dtype='ShortMedCase') order by m2.datestart desc";
+	var otherVisit_list = aCtx.manager.createNativeQuery(otherVisits_list_sql).getResultList();
+	for (var i=0;i<14;i++) {
+		otherVisits[i]="";
+	}
+	if (otherVisit_list.size()>0) {
+		for (var i=0;i<otherVisit_list.size();i++) {
+			otherVisits[i]=""+otherVisit_list.get(i);
+		}
+	}
+	for (var i=0;i<14;i++) {
+		map.put("otherVisit"+i,otherVisits[i]);
+	}
+	
+	var invalidity_list_sql = "select vi.name" +
+			" ,case when (i.initial is true or i.initial='1') then 'ВПЕРВЫЕ' else 'ПОВТОРНО' end as c1" +
+			" ,case when (i.childhoodinvalid is true or i.childhoodinvalid='1') then 'ДА' else 'НЕТ' end as c2" +
+			" from invalidity i " +
+			" left join vocinvalidity vi on vi.id=i.group_id " +
+			"where i.patient_id='"+visit.patient.getId()+"' order by i.id desc";
+	var inv_primary="", inv_group="",inv_childhood="";
+	var invalidity_list = aCtx.manager.createNativeQuery(invalidity_list_sql).getResultList();
+	if (invalidity_list.size()>0) {
+		var i_obj = invalidity_list.get(0);
+		inv_group=i_obj[0];
+		inv_primary=i_obj[1];
+		inv_childhood=i_obj[2];
+	}
+	map.put("invalid_primary",inv_primary);
+	map.put("invalid_group",inv_group);
+	map.put("invalid_childhood",inv_childhood);
+	
+    
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
     record("ticketd",ticket.dateFinish!=null?FORMAT.format(ticket.dateFinish):"") ;
