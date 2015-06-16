@@ -60,8 +60,46 @@ function onPreDelete(aEntityId, aContext) {
  */
 function onPreSave(aForm, aEntity, aContext) {
 	updateAddress(aForm) ;
+	changeData(aForm,aEntity,aContext) ;
+	
 }
-
+function changeData(aForm,aEntity,aCtx) {
+	var isChange = false ;
+	if (!aForm.lastname.equals(aEntity.lastname)) {
+		isChange=true ;
+	} 
+	if (!aForm.firstname.equals(aEntity.firstname)) {
+		isChange=true ;
+	} 
+	if (!aForm.middlename.equals(aEntity.middlename)) {
+		isChange=true ;
+	} 
+	var birthday = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.birthday) ;
+	if (aEntity.birthday!=null && birthday.getTime() != aEntity.birthday.getTime()) {
+		isChange=true ;
+	} 
+	if (aEntity.address!=null && (+aForm.address)>0 && (+aEntity.address)!=(+aForm.address)) {
+		isChange=true;
+	}
+	if (aEntity.realAddress!=null && (+aForm.realAddress)>0 && (+aEntity.realAddress)!=(+aForm.realAddress)) {
+		isChange=true;
+	}
+	if (isChange) {
+		var jcp = Packages.ru.ecom.mis.ejb.domain.patient.JournalChangePatient() ;
+		jcp.lastname = aEntity.lastname ;
+		jcp.firstname = aEntity.firstname ;
+		jcp.middlename = aEntity.middlename ;
+		jcp.birthday = birthday ;
+		jcp.patient = aEntity ;
+		jcp.address = aEntity.address ;
+		jcp.realAddress = aEntity.realAddress ;
+		var date = new java.util.Date() ;
+		jcp.changeDate = new java.sql.Date(date.getTime()) ;
+		jcp.changeTime = new java.sql.Time (date.getTime()) ;
+		jcp.changeUsername = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+		aCtx.manager.persist(jcp) ;
+	}
+}
 /**
  * Перед созданием
  */
