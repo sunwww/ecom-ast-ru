@@ -718,19 +718,19 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		          <ecom:webQuery name="openedSLSs" nativeSql="select 
 		          sls.id as slsid, sls.dateStart as slsdatestart, ss.code as sscode,vdh.name as vdhname
 		          ,case when sls.emergency='1' then 'Экстренно' else 'Планово' end emerg
-		          ,ml.name as mlname,ml1.name as ml1name
+		          ,ml.name as mlname,(select list(distinct ml1.name) from MedCase slo 
+					left join MisLpu ml1 on ml1.id=slo.department_id where slo.parent_id=sls.id and UPPER(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null ) as ml1name
 					from MedCase sls
 					left join MisLpu ml on ml.id=sls.department_id
 					left join StatisticStub ss on sls.statisticStub_id = ss.id 
 					left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id
-					left join MedCase slo on slo.parent_id=sls.id 
-					left join MisLpu ml1 on ml1.id=slo.department_id
+					
 					where sls.patient_id=${param.id} 
 						and UPPER(sls.DTYPE)='HOSPITALMEDCASE'  
 					and  sls.dischargeTime is null
 					and (sls.dateStart=CURRENT_DATE
-					 or sls.deniedHospitalizating_id is null and slo.transferDate is null)
-					 AND (UPPER(slo.dtype)='DEPARTMENTMEDCASE')
+					 or sls.deniedHospitalizating_id is null )
+					 
 					"  />
 		          <msh:table idField="1" name="openedSLSs"
 		          viewUrl="entityShortView-stac_ssl.do"
