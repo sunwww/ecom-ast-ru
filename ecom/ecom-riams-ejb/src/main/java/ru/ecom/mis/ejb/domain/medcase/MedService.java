@@ -15,6 +15,7 @@ import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
@@ -209,4 +210,27 @@ public class MedService extends BaseEntity{
 
 	/** Короткое наименование */
 	private String theShortName;
+	
+	/** В другом ЛПУ выполняется */
+	@Comment("В другом ЛПУ выполняется")
+	public Boolean getIsOtherLpu() {return theIsOtherLpu;}
+	public void setIsOtherLpu(Boolean aIsOtherLpu) {theIsOtherLpu = aIsOtherLpu;}
+
+	/** Префикс шаблона печати */
+	@Comment("Префикс шаблона печати")
+	public String getPrefixTemplate() {return thePrefixTemplate;}
+	public void setPrefixTemplate(String aPrefixTemplate) {thePrefixTemplate = aPrefixTemplate;}
+
+	/** Организация */
+	@Comment("Организация")
+	@OneToOne
+	public ContractPerson getOrganization() {return theOrganization;}
+	public void setOrganization(ContractPerson aOrganization) {theOrganization = aOrganization;}
+
+	/** Организация */
+	private ContractPerson theOrganization;
+	/** Префикс шаблона печати */
+	private String thePrefixTemplate;
+	/** В другом ЛПУ выполняется */
+	private Boolean theIsOtherLpu;
 }
