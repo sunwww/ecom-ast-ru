@@ -8,6 +8,7 @@ import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
@@ -220,4 +221,29 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Короткое наименование */
 	private String theShortName;
+
+	/** В другом ЛПУ выполняется */
+	@Comment("В другом ЛПУ выполняется")
+	@Persist
+	public Boolean getIsOtherLpu() {return theIsOtherLpu;}
+	public void setIsOtherLpu(Boolean aIsOtherLpu) {theIsOtherLpu = aIsOtherLpu;}
+
+	/** Префикс шаблона печати */
+	@Comment("Префикс шаблона печати")
+	@Persist
+	public String getPrefixTemplate() {return thePrefixTemplate;}
+	public void setPrefixTemplate(String aPrefixTemplate) {thePrefixTemplate = aPrefixTemplate;}
+
+	/** Организация */
+	@Comment("Организация")
+	@Persist
+	public Long getOrganization() {return theOrganization;}
+	public void setOrganization(Long aOrganization) {theOrganization = aOrganization;}
+
+	/** Организация */
+	private Long theOrganization;
+	/** Префикс шаблона печати */
+	private String thePrefixTemplate;
+	/** В другом ЛПУ выполняется */
+	private Boolean theIsOtherLpu;
 }
