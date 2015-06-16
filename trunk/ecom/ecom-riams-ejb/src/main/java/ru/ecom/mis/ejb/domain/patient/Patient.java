@@ -63,18 +63,13 @@ import ru.nuzmsh.util.format.DateFormat;
 @Entity
 //@EntityListeners(PatientListener.class) // теперь вызывается при сохранении формы
 @AIndexes({
-   	    @AIndex(unique = false, properties= {"dtype"})
-   	  , @AIndex(unique = false, properties= {"patientSync"})
+   	   @AIndex(unique = false, properties= {"patientSync"})
    	    , @AIndex(unique = false, properties= {"snils"})
-   	    , @AIndex(unique = false, properties= {"passportNumber"})
-   	    , @AIndex(unique = false, properties= {"passportSeries"})
+   	    , @AIndex(unique = false, properties= {"passportNumber","passportSeries"})
    	    , @AIndex(unique = false, properties= {"editDate"})
    	  , @AIndex(unique = false, properties= {"createDate"})
       //, @AIndex(unique = false, properties= {"sex"})
       , @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthday"})
-      , @AIndex(unique = false, properties= {"lastname"})
-      , @AIndex(unique = false, properties= {"lastname","firstname"})
-      , @AIndex(unique = false, properties= {"lastname","firstname","middlename"})
       , @AIndex(unique = false, properties= ("lpuArea"))
       , @AIndex(unique = false, properties= ("lpuAreaAddressText"))
       , @AIndex(unique = false, properties= ("lpu"))
