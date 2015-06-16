@@ -55,6 +55,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
+    StringBuilder def = new StringBuilder();
     //Создаем lpuAttachedByDepartment у пациентов, у которых нет спец. прикреплений
     //Передаем YES - еще и обновляем поле "Страх. компания"
     public String createAttachmentFromPatient(String needUpdateIns) {
@@ -265,18 +266,18 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
     	String[][] props = {
-    			{"p.lastname","FAM","p.lastname","1"},				{"p.firstname","IM","p.firstname","1"}
-    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null} 
-    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1"} ,		{"p.snils","SNILS" ,"p.snils"}
-    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries"}
-    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued"}
-    	,		{"cast('' as varchar(1))","TEL" ,"p.phone"} ,		{"p.commonNumber","RZ" ,"p.commonNumber"}
-    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code"} 
-    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo"}
-    	,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom"} 
-    	,		{"case when lp.newAddress='1' then '1' else '0' end","N_ADR" ,"lp.newAddress"}
-    	,		{"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end","KODPODR" ,"la.codeDepartment,ml3.codeDepartment"} 
-    	,		{"wp.snils","SSD" ,"wp.snils"}
+    			{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
+    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
+    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
+    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
+    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued","1","Дата выдачи документа"}
+    	,		{"cast('' as varchar(1))","TEL" ,"p.phone",null,"Телефон"} ,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
+    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
+    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
+    	,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom","1","Дата прикрепления"} 
+    	,		{"case when lp.newAddress='1' then '1' else '0' end","N_ADR" ,"lp.newAddress",null,""}
+    	,		{"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end","KODPODR" ,"la.codeDepartment,ml3.codeDepartment","1","Код подразделения"} 
+    	,		{"wp.snils","SSD" ,"wp.snils","1","СНИЛС врача"}
     	
     } ;
     	StringBuilder fld = new StringBuilder() ;
@@ -316,6 +317,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         
         	sql.setLength(0);
         	sql.append("select ").append(fld);
+        	sql.append(" ,p.id as pid, lp.id as lpid");
         	sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
@@ -349,6 +351,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		filenames.append("#").append(filename+".xml") ;
     		sql.setLength(0);
     		sql.append("select ").append(fld);
+    		sql.append(" ,p.id as pid, lp.id as lpid");
             sql.append(" from Patient p") ;
         	sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id") ;
         	sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id") ;
@@ -376,7 +379,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	}
     	
     	
-    	return filenames.length()>0?filenames.substring(1):"";
+    	return (filenames.length()>0?filenames.substring(1):"")+(def.length()>0?"@"+def.toString():"");
     }
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -392,6 +395,10 @@ public class AddressPointServiceBean implements IAddressPointService {
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
  //   	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
+    	
+    	@TODO
+    	упс, еррор
+    	//    	Вот тут надо кой-чего подправить, сегодня не успел. 
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
@@ -421,12 +428,26 @@ public class AddressPointServiceBean implements IAddressPointService {
     		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
-				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
+    			if (checkIsRequiedValueIsNotEmpty(pat[ind],prop[3])) {
+    				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
+    			} else {
+    				def.append(pat[pat.length-2]).append(":").append(pat[pat.length-1]).append(":").append("Пациент \"").append(XmlUtil.getStringValue(pat[0])).append(" ").append(XmlUtil.getStringValue(pat[1])).append(" ").append(XmlUtil.getStringValue(pat[2]))
+    				.append("\". Неверно заполнено поле ").append(prop[4]).append(" - ").append(pat[ind]).append("#");
+    				break;
+    			}
+    			
+				
 				
 			}
     	}
     	
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
+    }
+    private boolean checkIsRequiedValueIsNotEmpty(Object aValue, String isRequid) {
+    	if (isRequid!=null&&isRequid.equals("1")) {
+    		if (aValue==null||aValue.toString().equals("")) return false;
+    	}
+    	return true;
     }
     public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge,"","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
