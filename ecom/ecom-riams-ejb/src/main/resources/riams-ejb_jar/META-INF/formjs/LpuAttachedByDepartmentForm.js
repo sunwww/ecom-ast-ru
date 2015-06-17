@@ -18,6 +18,9 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
+		aEntity.setNoActuality(true);
+	}
 }
 
 /**
@@ -29,4 +32,7 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
+		aEntity.setNoActuality(true);
+	}
 }
