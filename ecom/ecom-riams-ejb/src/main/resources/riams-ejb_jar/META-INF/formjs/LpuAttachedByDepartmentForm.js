@@ -20,7 +20,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
 		aEntity.setNoActuality(true);
-	}
+	} else {aEntity.setNoActuality(false);}
 }
 
 /**
@@ -34,5 +34,5 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
 		aEntity.setNoActuality(true);
-	}
+	}else {aEntity.setNoActuality(false);}
 }
