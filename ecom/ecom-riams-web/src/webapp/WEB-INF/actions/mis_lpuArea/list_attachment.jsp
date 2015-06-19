@@ -1,3 +1,5 @@
+<%@page import="java.util.Collection"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -23,6 +25,7 @@
 	String typeAreaCheck=ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
 	String typeWork=ActionUtil.updateParameter("PatientAttachment","typeWork","1", request) ;
 	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
+	
 
   %>
   
@@ -209,8 +212,10 @@
       <msh:row>
            <td colspan="11">
             <input type="submit" value="Найти" />
+           
           </td>
       </msh:row>
+        
       <msh:row>
            <td colspan="11" align="right">
             <input type="button" onclick="document.getElementById('attachmentDiv').style.display='block'"  value="X" />
@@ -355,6 +360,12 @@
     	   }
       </script>
     </msh:panel>
+     <%if (request.getAttribute("defectWQR")!=null){ %>
+     <p style="color:red">Внимание! Следующие записи не выгружены!</p>
+         <msh:table   viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="defectWQR" action="entityView-mis_lpuAttachedByDepartment.do" idField="2" noDataMessage="Не найдено">
+			<msh:tableColumn columnName="Ошибка" property="3"/>
+        </msh:table>
+            <%} %>
     </msh:form>
     
    
@@ -364,6 +375,13 @@
     String date = (String)request.getParameter("period") ;
     String date1 = (String)request.getParameter("periodTo") ;
     String sqlAdd = (String)request.getAttribute("sqlAdd");
+    String exportDefects = (String)request.getAttribute("exportDefects");
+    if (exportDefects!=null &&!exportDefects.equals("")) {
+    	/* String[] err = exportDefects.split("#");
+    	for (int i=0;i<err.length;i++) {
+    		addRow (err[i]);
+    	} */
+    }
     if (sqlAdd!=null &&date!=null && !date.equals("") && typeRead!=null)  {
     	if (date1==null ||date1.equals("")) {
     		request.setAttribute("periodTo", date);
@@ -397,7 +415,7 @@
          , lp.defecttext, smo.name
     	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     
-        <msh:table viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
+        <msh:table   viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn columnName="Фамилия" property="2"/>
 			<msh:tableColumn columnName="Имя" property="3"/>
