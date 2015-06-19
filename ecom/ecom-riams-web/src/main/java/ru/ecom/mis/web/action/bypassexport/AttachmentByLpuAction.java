@@ -1,8 +1,11 @@
 package ru.ecom.mis.web.action.bypassexport;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +15,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
@@ -106,7 +110,8 @@ public class AttachmentByLpuAction extends BaseAction {
     		}
     		
     		if (typeRead!=null&&typeRead.equals("1")) {
-    			String fs = null;
+//    			String fs = null;
+    			WebQueryResult fs = new WebQueryResult();
     			boolean bNeedDivide = true;
     			if (typeDivide!=null&&typeDivide.equals("2")) {
     				bNeedDivide = false;
@@ -125,18 +130,26 @@ public class AttachmentByLpuAction extends BaseAction {
     					checkLpu=false ;
     				}
     				prefix="PRIKREP";
+    				//@TODO WRONG
     				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     			}
 		    	
 		        if (fs!=null) {
-		        	String[] files = fs.split("#") ;
+		        	Collection<WebQueryResult> def = (Collection<WebQueryResult>)fs.get2(); 
+		        	String[] files = fs.get1().toString().split("#") ;
 		        	StringBuilder sb = new StringBuilder() ;
 		        	for (String file:files) {
 		        		sb.append("<a href='../rtf/"+file+"'>"+file+"</a> ") ;
 		        	}
 		        	form.setFilename(sb.toString()) ;
+		        	if (def!=null&&!def.isEmpty()){
+		        		aRequest.setAttribute("defectWQR", def);
+		        	}
+		        	
+		        	
+		        	
 		        } else {
 		        	form.setFilename("---") ;
 		        }
