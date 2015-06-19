@@ -3,7 +3,9 @@ package ru.ecom.mis.ejb.service.addresspoint;
 import java.io.File;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +31,7 @@ import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.service.AddressPointCheck;
 import ru.ecom.address.ejb.service.AddressPointCheckHelper;
 import ru.ecom.address.ejb.service.IAddressService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.xml.XmlUtil;
@@ -56,6 +59,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     StringBuilder def = new StringBuilder();
+    WebQueryResult result = new WebQueryResult();
     //Создаем lpuAttachedByDepartment у пациентов, у которых нет спец. прикреплений
     //Передаем YES - еще и обновляем поле "Страх. компания"
     public String createAttachmentFromPatient(String needUpdateIns) {
@@ -125,21 +129,21 @@ public class AddressPointServiceBean implements IAddressPointService {
         	}
     		return "ERROR";
     }
-    public String exportAll(String aAge, String aFilenameAddSuffix
+    public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
     			, aNReestr, aNPackage,null);
     }
-    public String exportAll(String aAge, String aFilenameAddSuffix
+    public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
     			, aNReestr, aNPackage,null,true);
     }
-    public String exportFondAll(String aAge, String aFilenameAddSuffix
+    public WebQueryResult exportFondAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
@@ -247,10 +251,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     		createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
     	}
     	
-    	
-    	return filenames.length()>0?filenames.substring(1):"";
+    	WebQueryResult r = new WebQueryResult();
+    	r.set1(filenames.length()>0?filenames.substring(1):"");
+    	return r;
     }
-    public String exportAll(String aAge, String aFilenameAddSuffix
+    public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
@@ -338,7 +343,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by ").append(fldGroup) ;
+        	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
         	 listPat = theManager.createNativeQuery(sql.toString())
@@ -370,7 +375,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" ").append(addSql) ;
-        	sql.append(" group by ").append(fldGroup) ;
+        	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
@@ -378,8 +383,9 @@ public class AddressPointServiceBean implements IAddressPointService {
         	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
     	}
     	
-    	
-    	return (filenames.length()>0?filenames.substring(1):"")+(def.length()>0?"@"+def.toString():"");
+    	res.set1(filenames.length()>0?filenames.substring(1):"");
+    	return res;
+    	//     	return (filenames.length()>0?filenames.substring(1):"")+(def.length()>0?"@"+def.toString():"");
     }
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -396,8 +402,6 @@ public class AddressPointServiceBean implements IAddressPointService {
  //   	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
     	
-    	@TODO
-    	упс, еррор
     	//    	Вот тут надо кой-чего подправить, сегодня не успел. 
     	int i=0 ;
     	for (Object[] pat:listPat) {
@@ -411,10 +415,12 @@ public class AddressPointServiceBean implements IAddressPointService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
+    WebQueryResult res = new WebQueryResult();
     public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
     		, List<Object[]> listPat, String[][] aProps
     		) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
+    	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
@@ -424,24 +430,35 @@ public class AddressPointServiceBean implements IAddressPointService {
     	xmlDoc.newElement(title, "FILENAME", filename);
     	int i=0 ;
     	for (Object[] pat:listPat) {
-    		Element zap = xmlDoc.newElement(root, "ZAP", null);
-    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
-    		for(int ind=0;ind<aProps.length; ind++) {
-    			String[] prop = aProps[ind] ; 
-    			if (checkIsRequiedValueIsNotEmpty(pat[ind],prop[3])) {
-    				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
-    			} else {
-    				def.append(pat[pat.length-2]).append(":").append(pat[pat.length-1]).append(":").append("Пациент \"").append(XmlUtil.getStringValue(pat[0])).append(" ").append(XmlUtil.getStringValue(pat[1])).append(" ").append(XmlUtil.getStringValue(pat[2]))
-    				.append("\". Неверно заполнено поле ").append(prop[4]).append(" - ").append(pat[ind]).append("#");
-    				break;
+    		int errorZap=0;
+    		for(int j=0;j<aProps.length; j++) {
+    			String[] prop = aProps[j] ;
+    			if (!checkIsRequiedValueIsNotEmpty(pat[j],prop[3])) {
+    				WebQueryResult ress = new WebQueryResult();
+    				ress.set1(pat[pat.length-2]);
+    				ress.set2(pat[pat.length-1]);
+    				ress.set3("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+". Неверно заполнено поле \""+prop[4]+"\" - "+pat[j]);
+    				errList.add(ress);
+    				//def.append(pat[pat.length-2]).append(":").append(pat[pat.length-1]).append(":").append("Пациент \"")
+    				//.append("\". Неверно заполнено поле ").append(prop[4]).append(" - ").append(pat[ind]).append("#");
+    				errorZap=1;
     			}
-    			
-				
-				
-			}
+    		}
+    		if (errorZap==0) {
+    			Element zap = xmlDoc.newElement(root, "ZAP", null);
+        		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
+	    		for(int ind=0;ind<aProps.length; ind++) {
+	    			String[] prop = aProps[ind] ; 
+					xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
+	    		}
+	    		xmlDoc.newElement(zap, "REFREASON", "");
+	    	}
+    		
+    		
     	}
     	
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
+    	res.set2(errList);
     }
     private boolean checkIsRequiedValueIsNotEmpty(Object aValue, String isRequid) {
     	if (isRequid!=null&&isRequid.equals("1")) {
@@ -449,11 +466,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     	}
     	return true;
     }
-    public String export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    public WebQueryResult export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge,"","",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
 
-    public String exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
+    public WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
     	return exportAll(aAge,"_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
