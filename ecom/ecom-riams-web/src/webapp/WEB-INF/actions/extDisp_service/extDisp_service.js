@@ -29,6 +29,7 @@ function editPlan(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/extDisp_vocPlan/service.jsp") ;
 }
 function save(aForm,aCtx) {
+	
 	var cntExam = +aCtx.request.getParameter("cntExam");
 	var cntVisit = +aCtx.request.getParameter("cntVisit");
 	var card = aCtx.request.getParameter("card");
@@ -37,6 +38,8 @@ function save(aForm,aCtx) {
 	var fldPv = "" ;
 	var fldVisit = ["visitId","visitServiceType","visitServiceDate","visitRecommendation","visitIsEtdccSuspicion","workFunction","Idc10"] ;
 	//var fldPv = ["","","","",""] ;
+	
+	aCtx.invokeScript("ExpertService", "deleteExtDispServices", card, "ExtDispExam");
 	for (var i=0;i<cntExam;i++) {
 		var fldPe=card+":" ;
 		for (var j=0; j<fldExam.length;j++) {
@@ -50,6 +53,7 @@ function save(aForm,aCtx) {
 		aCtx.invokeScript("ExpertService", "createExtDispExamService",fldPe) ;
 	}
 	//throw "fsadf"+cntVisit ;
+	aCtx.invokeScript("ExpertService", "deleteExtDispServices", card, "ExtDispVisit");
 	for (var i=0;i<cntVisit;i++) {
 		var fldPv=card+":" ;
 		for (var j=0; j<fldVisit.length;j++) {
