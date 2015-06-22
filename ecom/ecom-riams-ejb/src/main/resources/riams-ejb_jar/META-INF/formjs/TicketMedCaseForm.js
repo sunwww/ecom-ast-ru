@@ -17,6 +17,14 @@ function onPreCreate(aForm, aCtx) {
 		//throw isDeleteClose ;
 		if (+isCreateClose!=1) throw "У вас стоит запрет на создание данных в закрытом периоде";
 	}
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableCreateTicketInHoliday")){
+		var startDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.dateStart);
+		var calHoliday = java.util.Calendar.getInstance();
+		calHoliday.setTime(startDate);
+		if (calHoliday.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+			throw "У вас стоит запрет на создание талонов в воскресенье ("+aForm.dateStart+")";
+		}	
+	}
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
@@ -70,6 +78,14 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+isCreateClose!=1) throw "У вас стоит запрет на создание данных в закрытом периоде";
 	}
 	var date = new java.util.Date() ;
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/EnableCreateTicketInHoliday")){
+		var startDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.dateStart);
+		var calHoliday = java.util.Calendar.getInstance();
+		calHoliday.setTime(startDate);
+		if (calHoliday.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+			throw "У вас стоит запрет на создание талонов в воскресенье ("+aForm.dateStart+")";
+		}	
+	}
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
