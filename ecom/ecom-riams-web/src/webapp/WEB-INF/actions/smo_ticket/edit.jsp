@@ -274,6 +274,8 @@
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
       	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
   			<script type="text/javascript">
+  			
+  			
   			eventutil.addEventListener($('mkb'), 'change', function(){
   				if ($('mkb'.value!='')) {
   				TicketService.findMkbByCode($('mkb').value,{
@@ -341,7 +343,7 @@
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="smo_ticketForm">
   <script type="text/javascript">
-  TicketService.getWorkFunction(
+   TicketService.getWorkFunction(
     		 {
                    callback: function(aResult) {
                       workFunctionExecuteAutocomplete.setParentId(aResult) ;
@@ -378,6 +380,10 @@
   </script>
   	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
   	 <script type="text/javascript">
+  	 
+  	
+  		
+
 		TicketService.isEditCheck($('id').value, $('workFunctionExecute').value,
 			{
 				callback: function(aResult) {
@@ -397,7 +403,7 @@
     	
     	var oldaction = document.forms[0].action ;
     	var oldValue = $('dateStart').value ;
-    	document.forms[0].action = 'javascript:isExistTicket()';
+    	document.forms[0].action = 'javascript:checkIsHoliday()';
     	concludingMkbAutocomplete.addOnChangeCallback(function() {
     		setDiagnosisText('concludingMkb','concludingDiagnos') ;
     		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
@@ -465,6 +471,28 @@
 		  	}) ;
 		function changeParentMedService() {
 		}
+  		function checkIsHoliday() {
+  			var v =$('emergency').checked;  			
+  			if (v=='1' || v=='true') {
+  				isExistTicket();
+  			} else {
+	  			TicketService.isHoliday($('dateStart').value,{
+	  				callback: function(aResult) {
+	  					if (aResult=='1') {
+	  						if (confirm("Прием приходится на воскресенье, точно создать талон?")) {
+		  						isExistTicket();
+	  						} else {
+	  							document.getElementById('submitButton').disabled=false;
+	  							document.getElementById('submitButton').value='Создать';
+	  						}
+	  					} else {
+	  						isExistTicket();
+	  						}
+	  				}
+	  			});
+  			}
+  			
+  		}
     	function isExistTicket() {
     		 if ($('dateStart').value!="") {
     		TicketService.findDoubleBySpecAndDate($('id').value,document.forms[0].medcard.value,$('workFunctionExecute').value, $('dateStart').value
@@ -502,7 +530,8 @@
                        }
                    }
 	        	}
-	        	) } else {
+	        	); 
+    			}else {
 	        		
 	        	}
     		}
