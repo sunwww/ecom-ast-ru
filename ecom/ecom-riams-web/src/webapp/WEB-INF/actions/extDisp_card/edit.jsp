@@ -153,21 +153,26 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		<msh:ifFormTypeIsCreate formName="extDisp_cardForm">
 		<script type="text/javascript">
 		var oldaction = document.forms['extDisp_cardForm'].action ;
-		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached()";
+		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached('1')";
 		
-		function checkDispAttached() {
+		function checkDispAttached(r) {
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
     				if (aResult=='0') {
     					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
     							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
     							"\nСоздание карты невозможно");
-    					document.getElementById('submitButton').disabled=false;
-						document.getElementById('submitButton').value='Создать';
+    					if (r=='1') {
+	    					document.getElementById('submitButton').disabled=false;
+							document.getElementById('submitButton').value='Создать';
+    					}
     				}
     				else {
-    					document.forms['extDisp_cardForm'].action=oldaction ;
-    					document.forms['extDisp_cardForm'].submit();
+    					if (r=='1') {
+    						document.forms['extDisp_cardForm'].action=oldaction ;
+    						document.forms['extDisp_cardForm'].submit();
+    					}
+    					
     				} 
     					
     			}
@@ -186,10 +191,10 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	}
     	updateAge() ;
     	try {
-    		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';});
+    		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
     		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
     		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
-    	} catch(e) {
+    		} catch(e) {
 
     	}
     	
