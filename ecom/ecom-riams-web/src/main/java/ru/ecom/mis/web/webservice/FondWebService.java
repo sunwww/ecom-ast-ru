@@ -404,7 +404,7 @@ public class FondWebService {
             sb.append("<th>").append("Город").append("</th>") ;
             sb.append("<th>").append("Улица").append("</th>") ;
             sb.append("<th>").append("Дом").append("</th>") ;
-            sb.append("<th>").append("Копр").append("</th>") ;
+            sb.append("<th>").append("Корп").append("</th>") ;
             sb.append("<th>").append("Кв").append("</th>") ;
             sb.append("</tr>") ;
             for (Element el:list_cur) {
