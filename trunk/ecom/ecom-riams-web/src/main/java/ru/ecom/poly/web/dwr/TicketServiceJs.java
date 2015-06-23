@@ -1,6 +1,8 @@
 package ru.ecom.poly.web.dwr;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,15 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	
+	public String isHoliday (String aDate) throws ParseException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
+		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+			 return "1";
+		 }
+		return "0";
+	}
 	public String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
 		return HospitalMedCaseServiceJs.getDataByReference(aMedCase, aType, aRequest) ;
 	}
