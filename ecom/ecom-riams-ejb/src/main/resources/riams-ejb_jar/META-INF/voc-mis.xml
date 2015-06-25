@@ -1,5 +1,26 @@
 <vocconfig>
 
+<voc id="hospServicies" type="NativeVocService">
+	<NativeVocService
+		from="MedService ms"
+		nameId="ms.id"
+		queryAppend="vst.code = 'к/д'" 
+		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
+		names="ms.code||' '|| ms.name"
+		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+	/>
+</voc>
+	
+<voc id="surgicalOperations" type="NativeVocService">
+	<NativeVocService
+		from="MedService ms"
+		nameId="ms.id"
+		queryAppend="vst.code = 'OPERATION'" 
+		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
+		names="ms.code||' '|| ms.name"
+		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+	/>
+</voc>
 <voc id='serviceWorkFunction' type='NativeVocService'>
     	<NativeVocService
     			from = 'WorkFunction as wf '
