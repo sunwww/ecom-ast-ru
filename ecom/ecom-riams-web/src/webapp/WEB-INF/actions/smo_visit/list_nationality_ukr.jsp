@@ -328,7 +328,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 					String[] arrPrice =arr[j].split("%23"); 
 					String price = arrPrice[0].substring(7,arrPrice[0].length());
 					//wqr.set1(price);
-					wqr.set10(price+" руб.");
+					wqr.set10(price.length()>0?price+" руб.":"---");
 					listPol.set(i,wqr);
 					/* out.print(" ");out.print(price);out.print(" руб"); */
 					break;
