@@ -58,6 +58,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
+	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
+
     StringBuilder def = new StringBuilder();
     WebQueryResult result = new WebQueryResult();
     //Создаем lpuAttachedByDepartment у пациентов, у которых нет спец. прикреплений
@@ -261,6 +263,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
+    	errList.clear();
     	if (aAge!=null) {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
@@ -420,7 +423,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, List<Object[]> listPat, String[][] aProps
     		) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
-    	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
+    	
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
@@ -444,6 +447,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     				errorZap=1;
     			}
     		}
+    		System.out.println("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+": ErrorZAP="+errorZap);
     		if (errorZap==0) {
     			Element zap = xmlDoc.newElement(root, "ZAP", null);
         		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
