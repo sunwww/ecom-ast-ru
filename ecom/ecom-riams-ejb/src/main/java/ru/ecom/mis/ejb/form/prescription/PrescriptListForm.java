@@ -100,6 +100,26 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	public Boolean getIsLabSurvey() {return theIsLabSurvey;}
 	public void setIsLabSurvey(Boolean aIsLabSurvey) {theIsLabSurvey = aIsLabSurvey;}
 
+	/** Добавить операцию */
+	@Comment("Добавить операцию")
+	public Boolean getIsSurgOperation() {return theIsSurgOperation;}
+	public void setIsSurgOperation(Boolean aIsSurgOperation) {theIsSurgOperation = aIsSurgOperation;	}
+
+	/** Добавить койко-день */
+	@Comment("Добавить койко-день")
+	public Boolean getIsHospital() {
+		return theIsHospital;
+	}
+
+	public void setIsHospital(Boolean aIsHospital) {
+		theIsHospital = aIsHospital;
+	}
+
+	/** Добавить койко-день */
+	private Boolean theIsHospital;
+	/** Добавить операцию */
+	private Boolean theIsSurgOperation;
+	
 	/** Добавить информацию по лаборатории */
 	private Boolean theIsLabSurvey;
 	/** Добавить информацию по функциональной диагностике */
@@ -179,6 +199,22 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 	@Comment("Лек. ср-во 11")
 	public DrugPrescriptionForm getDrugForm11() {return theDrugForm11;}
 	public void setDrugForm11(DrugPrescriptionForm aDrugForm11) {theDrugForm11 = aDrugForm11;}
+
+	/** Дата начала койко-дня */
+	@Comment("Дата начала койко-дня")
+	@DateString @DoDateString
+	public String getHospDate() {return theHospDate;}
+	public void setHospDate(String aHospDate) {theHospDate = aHospDate;}
+	/** Дата начала койко-дня */
+	private String theHospDate;
+
+	/** Койко-день */
+	@Comment("Койко-день")
+	
+	public String getHospServicies() {return theHospServicies;}
+	public void setHospServicies(String aHospServicies) {theHospServicies = aHospServicies;}
+	/** Койко-день */
+	private String theHospServicies;
 
 	/** Лабораторные исследования */
 	@Comment("Лабораторные исследования")
@@ -318,4 +354,20 @@ public class PrescriptListForm extends AbstractPrescriptionListForm{
 
 	/** Время для направления на диагностику */
 	private Long theFuncCalTime;
+	
+	/** Операци */
+	@Comment("Операци")
+	public String getSurgServicies() {return theSurgServicies;}
+	public void setSurgServicies(String aSurgServicies) {theSurgServicies = aSurgServicies;	}
+	/** Операци */
+	private String theSurgServicies;
+	
+	/** Дата операции */
+	@Comment("Дата операции")
+	@DateString @DoDateString
+	public String getSurgDate() {return theSurgDate;}
+	public void setSurgDate(String aSurgDate) {theSurgDate = aSurgDate;}
+	/** Дата операции */
+	private String theSurgDate;
+
 }
