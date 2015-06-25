@@ -31,8 +31,9 @@
         eventutil.addEventListener($('isMode'), 'click', function () {showTable('tblMode','isMode');}) ;
         eventutil.addEventListener($('isFuncDiag'), 'click', function () {showTable('tblFuncDiag','isFuncDiag');}) ;
         eventutil.addEventListener($('isLabSurvey'), 'click', function () {showTable('tblLabSurvey','isLabSurvey');}) ;
+        eventutil.addEventListener($('isSurgOperation'), 'click', function () {showTable('tblSurgOperation','isSurgOperation');}) ;
         showTable('tblDrug','isDrug'); showTable('tblMode','isMode') ;showTable('tblDiet','isDiet') ;
-        showTable('tblFuncDiag','isFuncDiag'); showTable('tblLabSurvey','isLabSurvey') ;
+        showTable('tblFuncDiag','isFuncDiag'); showTable('tblLabSurvey','isLabSurvey') ;showTable('tblSurgOperation','isSurgOperation') ;
         $('isLabSurvey').click();
 	    function showTable(aTableId, aCheckFld ) {
 	    	var aFld = '';
@@ -41,6 +42,7 @@
 	    	else if (aTableId=='tblDrug') {aFld='drugForm1.planStartDate';}
 	    	else if (aTableId=='tblDiet') {aFld='dietForm.planStartDate';}
 	    	else if (aTableId=='tblMode') {aFld='modeForm.planStartDate';}
+	    	else if (aTableId=='tblSurgOperation') {aFld='surgDate';}
 	    	
 	    	if (aFld!=''&&$(aFld).value==''){$(aFld).value=textDate;}
     		//alert(aTableId+"--"+aCheckFld) ;
@@ -86,7 +88,7 @@
 		}
 		var oldaction = document.forms['pres_prescriptListForm'].action ;
 		document.forms['pres_prescriptListForm'].action="javascript:checkDoubles()";
-		var num=0; var labNum=0; var funcNum=0; var drugNum=0;
+		var num=0; var labNum=0; var funcNum=0; var drugNum=0;var surgNum=0; var hospNum=0;
 		var labList=""; var drugList=""; var allDrugList="";
 		
 		
@@ -188,14 +190,20 @@
 				typeNum = funcNum;
 				reqFld = [0,1,2,4] ;
 				fld = [['Service',1],['Date',1],['Cabinet',1],['',1],['CalTime',1]] ;
+			} else if (type=='surg') {
+				typeNum=surgNum;
+				reqFld=[0,1];
+				fld = [['Service',1],['Date',1],['',1],['',1],['',1]] ;
+			} else if (type=='hosp') {
+				typeNum=hospNum;
+				reqFld=[0,1];
+				fld = [['Service',1],['Date',1],['',1],['',1],['',1]] ;
 			}
 			var isDoubble=0;
 			while (typeNum>0) {
 				if (document.getElementById(type+"Element"+typeNum)) {
-					if (document.getElementById(type+"Element"+typeNum)) {
-						var ar = getArrayByFld(type, typeNum, fld, reqFld, type+'Servicies', 0) ;
-						labList += ar [0] ; isDoubble=ar[2] ; 
-					}
+					var ar = getArrayByFld(type, typeNum, fld, reqFld, type+'Servicies', 0) ;
+					labList += ar [0] ; isDoubble=ar[2] ; 
 				}
 	       		typeNum-=1;
 		 	}
@@ -341,6 +349,8 @@
 			if ($('funcServicies')) {
 				writeServicesToList('func');
 			}
+			writeServicesToList('surg');
+			writeServicesToList('hosp');
 			$('labList').value=labList ;
 			writeDrugsToList();
 			$('drugList').value = drugList;
@@ -348,6 +358,7 @@
 			//alert("labList = "+$('labList').value); 
 			//alert("funcList = "+$('funcList').value); 
 			//alert("drugList = "+$('drugList').value); 
+		//	alert($('labList').value);
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
@@ -361,6 +372,17 @@
 		}
 		function prepareLabRow(type) {
 			var fldList,reqList =[];
+			if (type=='surg') {
+				var error = [
+						      [type+'Date','', 'Укажите дату операции!','isEmptyUnit']
+							  , [type+'Servicies','Name', 'Выбирите операцию!','isEmptyUnit']
+							];
+				num = surgNum;
+				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['',1]
+				,['',1],['',1],['',1],['',1],['',1]
+			] ;
+			
+			}
 			if (type=='lab') {
 				var error = [
 			      [type+'Date','', 'Укажите дату исследования!','isEmptyUnit']
@@ -384,6 +406,16 @@
 				num = funcNum;
 				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['Cabinet',1]
 				,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1]
+			] ;
+			}
+			else if (type=='hosp') {
+				var error = [
+				   [type+'Date','', 'Укажите дату начала госпитализации!','isEmptyUnit']
+				  , [type+'Servicies','Name', 'Выбирите тип койко-дня!','isEmptyUnit']
+				  ] ;
+				num = hospNum;
+				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['',1]
+				,['',1],['',1],['',1],['',1],['',1]
 			] ;
 			}
 			if (checkError(error)) return ;
@@ -428,7 +460,11 @@
 				type='lab'; num = labNum;
 			} else if (type=='DIAGNOSTIC' || type=='func') {
 				type='func'; num = funcNum; 
-			}	
+			} else if (type=='surg') {
+				num = surgNum;
+			} else if (type='hosp') {
+				num = hospNum;
+			}
 			num+=1;
 		    
 	 		var tbody = document.getElementById('add'+type+'Elements');
@@ -456,6 +492,8 @@
 		   		funcNum = num;
 		   		$(type+'Cabinet').value='';
 				$(type+'CabinetName').value='';
+		   	} else if (type=='surg') {
+		   		surgNum=num;
 		   	}
 		   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 		   	new dateutil.DateField($(type+'Date'+num));
@@ -601,6 +639,7 @@
 			if (type=='lab') {rType=labNum; labNum=0;}
 			else if (type=='func') {rType=funcNum;funcNum=0;}
 			else if (type=='drug') {rType=drugNum;drugNum=0;}
+			else if (type=='surg') {rType=surgNum;surgNum=0;}
 			else return;
 			 
 			if (rType>0) {
@@ -619,9 +658,12 @@
 			$('labServiciesName').value="";
 			$('funcServicies').value="";
 			$('funcServiciesName').value="";
+			$('surgServicies').value="";
+			$('surgServiciesName').value="";
 			if (labNum>0)  {removeRows('lab'); }
 			if (funcNum>0) {removeRows('func');}
 			if (drugNum>0) {removeRows('drug');}
+			if (surgNum>0) {removeRows('surg');}
 		}
 		
 		//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
@@ -730,6 +772,7 @@
         	<msh:checkBox property="isMode" label="режим"/>
 	       <msh:checkBox property="isFuncDiag" label="функц.диагн. (консультации)"/>
         	<msh:checkBox property="isLabSurvey" label="лаб. исследования"/>
+        	<msh:checkBox property="isSurgOperation" label="Операцию"/>
         </msh:row>
         </msh:panel>
         <msh:panel styleId="tblMode">
@@ -845,9 +888,68 @@
     		</td></tr></msh:row>
         </msh:panel>
         </msh:ifFormTypeIsCreate>
-        <msh:panel>
         <%-- -- --------------------------------------------------Конец блока "Функциональная диагностика" ------ --%>
-         
+        <%-- --------------------------------------------------Начало блока "Операции" ------ --%>
+         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
+        <msh:panel styleId="tblSurgOperation">
+       	 <msh:row>
+        	<msh:separator label="Операции" colSpan="10"/>
+        </msh:row>
+        <msh:row>
+        <tr><td>
+        <table id="surgTable">
+        <tbody id="addsurgElements">
+    		<tr>
+    			<msh:textField property="surgDate" label="Дата " size="10"/>
+    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" />
+    			<td>        	
+	            <input type="button" name="subm" onclick="prepareLabRow('surg');" value="Добавить" tabindex="4" />
+	            </td>
+			 </tr>
+			 <tr>
+			<%-- <msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			<msh:autoComplete property="funcCalTime" label="Время" vocName="workCalendarTimeByDate"/>
+			 --%>
+			 </tr>
+			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
+			</msh:ifFormTypeIsNotView>
+           </tbody>
+    		</table>
+    		</td></tr></msh:row>
+        </msh:panel>
+        </msh:ifFormTypeIsCreate>
+        <%-- -- --------------------------------------------------Конец блока "Операции" ------ --%>
+        <%-- --------------------------------------------------Начало блока "Койко-день" ------ --%>
+         <msh:ifFormTypeIsCreate formName="pres_prescriptListForm"> 
+        <msh:panel styleId="tblHospBad">
+       	 <msh:row>
+        	<msh:separator label="Койко-день" colSpan="10"/>
+        </msh:row>
+        <msh:row>
+        <tr><td>
+        <table id="hospTable">
+        <tbody id="addhospElements">
+    		<tr>
+    			<msh:textField property="hospDate" label="Дата " size="10"/>
+    			<msh:autoComplete property="hospServicies" label="Тип к/д" vocName="hospServicies" horizontalFill="true" size="90" />
+    			<td>        	
+	            <input type="button" name="subm" onclick="prepareLabRow('hosp');" value="Добавить" tabindex="4" />
+	            </td>
+			 </tr>
+			 <tr>
+			<%-- <msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+			<msh:autoComplete property="funcCalTime" label="Время" vocName="workCalendarTimeByDate"/>
+			 --%>
+			 </tr>
+			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
+			</msh:ifFormTypeIsNotView>
+           </tbody>
+    		</table>
+    		</td></tr></msh:row>
+        </msh:panel>
+        </msh:ifFormTypeIsCreate>
+        <%-- -- --------------------------------------------------Конец блока "Операции" ------ --%>
+          <msh:panel>
           <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="10"/>
         </msh:row>
