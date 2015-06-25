@@ -108,4 +108,51 @@
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
+    <msh:section>
+    	<ecom:webQuery name="pres" nativeSql="select 
+    	p.id as pid,pl.id as plid,ms.name as drname
+    	
+ ,p.planStartDate,p.planEndDate,vpt.name as vptname
+ 
+ from Prescription p 
+ left join PrescriptionList pl on pl.id=p.prescriptionList_id 
+ left join mislpu ml on ml.id=p.department_id
+ left join medservice ms on ms.id=p.medService_id
+ left join vocservicetype as vms on vms.id=ms.serviceType_id 
+ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
+ where ${field } and p.DTYPE='ServicePrescription' 
+ and vms.code='OPERATION'
+ order by p.planStartDate"/>
+    	<msh:sectionTitle>Список назначений на операции</msh:sectionTitle>
+    	<msh:sectionContent>
+    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    			<msh:tableColumn property="3" columnName="Операция"/>
+    			<msh:tableColumn property="6" columnName="Тип назначения"/>
+    			<msh:tableColumn property="4" columnName="Дата начала"/>
+    			<msh:tableColumn property="5" columnName="Дата окончания"/>
+    		</msh:table>
+    	</msh:sectionContent>
+    </msh:section>
+    <msh:section>
+    	<ecom:webQuery name="pres" nativeSql="select 
+    	p.id as pid,pl.id as plid,ms.name as drname
+ ,p.planStartDate,p.planEndDate
+ from Prescription p 
+ left join PrescriptionList pl on pl.id=p.prescriptionList_id 
+ left join mislpu ml on ml.id=p.department_id
+ left join medservice ms on ms.id=p.medService_id
+ left join vocservicetype as vms on vms.id=ms.serviceType_id 
+ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
+ where ${field } and p.DTYPE='ServicePrescription' 
+ and vms.code='к/д'
+ order by p.planStartDate"/>
+    	<msh:sectionTitle>Список койко-дней</msh:sectionTitle>
+    	<msh:sectionContent>
+    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    			<msh:tableColumn property="3" columnName="Тип услуги"/>
+    			<msh:tableColumn property="4" columnName="Дата начала"/>
+    			<msh:tableColumn property="5" columnName="Дата окончания"/>
+    		</msh:table>
+    	</msh:sectionContent>
+    </msh:section>
 
