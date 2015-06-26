@@ -279,8 +279,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     				{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
     				,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
     				,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
-    				,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
-    				,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"}
+    				,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode",null,"Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
+    				,		{"p.passportNumber","DOCNUM" ,"p.passportNumber",null,"Номер паспорта"}
     				,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
     				,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
     				,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
