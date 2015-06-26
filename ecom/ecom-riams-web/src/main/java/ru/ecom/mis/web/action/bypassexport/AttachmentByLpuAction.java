@@ -43,6 +43,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
     		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
+    		String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "0", aRequest);
 	    	 
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -119,7 +120,7 @@ public class AttachmentByLpuAction extends BaseAction {
     			if (typeWork.equals("1")) { 
     				fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
+		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, typeXmlFormat);
     			} else {
     				StringBuilder sqlAdd1= new StringBuilder() ;
     				boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
