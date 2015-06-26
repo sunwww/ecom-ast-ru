@@ -143,7 +143,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
-    			, aNReestr, aNPackage,null,true);
+    			, aNReestr, aNPackage,null,true,"1");
     }
     public WebQueryResult exportFondAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
@@ -260,7 +260,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
-    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide) throws ParserConfigurationException, TransformerException {
+    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String xmlFormat) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	errList.clear();
@@ -273,28 +273,58 @@ public class AddressPointServiceBean implements IAddressPointService {
     	String filename=null;
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
-    	String[][] props = {
-    			{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
-    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
-    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
-    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
-    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued","1","Дата выдачи документа"}
-    	,		{"cast('' as varchar(1))","TEL" ,"p.phone",null,"Телефон"} ,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
-    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
-    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
-    	,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom","1","Дата прикрепления"} 
-    	,		{"case when lp.newAddress='1' then '1' else '0' end","N_ADR" ,"lp.newAddress",null,""}
-    	,		{"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end","KODPODR" ,"la.codeDepartment,ml3.codeDepartment","1","Код подразделения"} 
-    	,		{"wp.snils","SSD" ,"wp.snils","1","СНИЛС врача"}
+    	String[][] props = null;
+    	if (xmlFormat!=null&&xmlFormat.equals("0")){ //OLD FORMAT
+    		props = new String[][] {
+    				{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
+    				,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
+    				,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
+    				,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
+    				,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"}
+    				,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
+    				,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
+    				,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
+    				,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom","1","Дата прикрепления"} 
+    				
+    				 
+    				
+    				
+    		} ;
+    	} else if (xmlFormat!=null&&xmlFormat.equals("1")){ //NEW FORMAT (01.07.2015)
+    		props = new String[][] {
+        			{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
+        	    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
+        	    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
+        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
+        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued","1","Дата выдачи документа"}
+        	    	,		{"cast('' as varchar(1))","TEL" ,"p.phone",null,"Телефон"} ,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
+        	    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
+        	    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
+        	    	,		{"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')","DATE_1" ,"lp.dateTo,lp.dateFrom","1","Дата прикрепления"} 
+        	    	,		{"case when lp.newAddress='1' then '1' else '0' end","N_ADR" ,"lp.newAddress",null,""}
+        	    	,		{"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end","KODPODR" ,"la.codeDepartment,ml3.codeDepartment","1","Код подразделения"}
+        	    	,		{"la.number", "LPUUCH", "la.number", null},{"wp.snils","SSD" ,"wp.snils","1","СНИЛС врача"}
+        	    	, {"cast('1' as varchar(1))","MEDRAB","",null,"Врач/медработник"}
+        	    	
+        	    	
+        	    } ;
+    	}
     	
-    } ;
     	StringBuilder fld = new StringBuilder() ;
     	StringBuilder fldGroup = new StringBuilder() ;
     	for (int ind =0;ind<props.length;ind++) {
     		String[] p=props[ind];
-    		if (ind!=0) {fld.append(",") ;fldGroup.append(",");}
-    		fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
-    		fldGroup.append(" ").append(p[2]) ;
+    		if (ind!=0&&!p[0].equals("")) {
+    			fld.append(",") ;
+    			if (!p[2].equals("")){
+    				fldGroup.append(",");
+    			}
+    		}
+    		if (!p[0].equals("")) {
+    			fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
+    			fldGroup.append(" ").append(p[2]) ;
+    		}    		
+    		
     	}
     	if (needDivide) {
     		StringBuilder sqlGroup = new StringBuilder() ;
@@ -405,7 +435,6 @@ public class AddressPointServiceBean implements IAddressPointService {
  //   	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
     	
-    	//    	Вот тут надо кой-чего подправить, сегодня не успел. 
     	int i=0 ;
     	for (Object[] pat:listPat) {
     		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
