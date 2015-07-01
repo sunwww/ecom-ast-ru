@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Работа с данными</h2>
 				<ul>
+					<li><msh:link roles='/Policy/Mis/Patient' action="mis_patientFondCheckList.do">
+                            Автоматическая проверка по базе ФОМС
+                        </msh:link></li>
 					<li><msh:link roles='/Policy/Exp/Document/View' action="js-ecom_vocEntity-list.do">
                             Редактор справочников
                         </msh:link></li>
