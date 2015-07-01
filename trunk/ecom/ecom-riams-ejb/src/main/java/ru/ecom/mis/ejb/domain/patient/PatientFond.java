@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.patient;
 
 import java.sql.Date;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -387,5 +389,55 @@ public class PatientFond extends BaseEntity{
 	public void setDeathDate(Date aDeathDate) {theDeathDate = aDeathDate;}
 	/** Дата смерти */
 	private Date theDeathDate;
+	
+	/** Код подразделения */
+	@Comment("Код подразделения")
+	public String getDepartment() {return theDepartment;}
+	public void setDepartment(String aDepartment) {theDepartment = aDepartment;}
+	/** Код подразделения */
+	private String theDepartment;
+	
+	/** СНИЛС участкового врача */
+	@Comment("СНИЛС участкового врача")
+	public String getDoctorSnils() {return theDoctorSnils;}
+	public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
+	/** СНИЛС участкового врача */
+	private String theDoctorSnils;
+	
+	/** Дата выдачи документа */
+	@Comment("Дата выдачи документа")
+	public String getDocumentDateIssued() {return theDocumentDateIssued;}
+	public void setDocumentDateIssued(String aDocumentDateIssued) {theDocumentDateIssued = aDocumentDateIssued;}
+	/** Дата выдачи документа */
+	private String theDocumentDateIssued;
+	
+	/** Кем выдан документа */
+	@Comment("Кем выдан документа")
+	public String getDocumentWhomIssued() {return theDocumentWhomIssued;}
+	public void setDocumentWhomIssued(String aDocumentWhomIssued) {theDocumentWhomIssued = aDocumentWhomIssued;}
+	/** Кем выдан документа */
+	private String theDocumentWhomIssued;
+	
+	/** Пациент */
+	@Comment("Пациент")
+	@OneToOne
+	public Patient getPatient() {return thePatient;}
+	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	/** Пациент */
+	private Patient thePatient;
 
+	/** Пациент обновлен */
+	@Comment("Пациент обновлен")
+	public Boolean getIsPatientUpdate() {return theIsPatientUpdate;}
+	public void setIsPatientUpdate(Boolean aIsPatientUpdate) {theIsPatientUpdate = aIsPatientUpdate;}
+	/** Пациент обновлен */
+	private Boolean theIsPatientUpdate;
+	
+	/** Данные проверки */
+	@Comment("Данные проверки")
+	@ManyToOne
+	public PatientFondCheckData getCheckTime() {return theCheckTime;}
+	public void setCheckTime(PatientFondCheckData aCheckTime) {theCheckTime = aCheckTime;}
+	/** Данные проверки */
+	private PatientFondCheckData theCheckTime;
 }
