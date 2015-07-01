@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.rpc.ServiceException;
 
+import org.apache.ecs.xhtml.applet;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -19,7 +22,9 @@ import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
+import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.login.LoginInfo;
@@ -37,6 +42,7 @@ public class FondWebService {
 			,String aType, String aSeries,String aNumber) {
 		return "" ;
 	}
+
 	public static Object checkPatientBySnils(HttpServletRequest aRequest, PatientForm aPatFrm, String aSnils)   throws Exception{
 		
 		String result = null ;
@@ -45,7 +51,7 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_SS(aSnils, theLpu);
-        System.out.println("result rz:") ;
+        System.out.println("result:") ;
         System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
@@ -73,7 +79,7 @@ public class FondWebService {
         return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText());
 		
     }
-	
+
 	public static Object checkPatientByFioDr(HttpServletRequest aRequest, PatientForm aPatFrm, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday) throws Exception  {
 		String result = null ;
@@ -127,6 +133,264 @@ public class FondWebService {
         //in.close() ;
         return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber);
     }
+	public static StringBuilder checkAllPatientsByFond(HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
+		// Создаем список пациентов
+		try {
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		StringBuilder str = new StringBuilder();
+		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql("select p.id, p.lastname, p.firstname, p.middlename, p.birthday " +
+				" from patient p" +
+				" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null ");
+		if (!pats.isEmpty()) {
+			PatientFondCheckData pfc = service.getNewPFCheckData();
+			String defaultLpu =null;
+			Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
+			if (!listSC.isEmpty()) {
+				defaultLpu = listSC.iterator().next().get1().toString();
+			}
+			int i=0;
+			System.out.println("FWS - Количество найденных пациентов а базе = "+pats.size());
+			for (WebQueryResult pat: pats) {
+				//if (i==10)break; 
+				i++;
+				String pid = pat.get1().toString(); String lastname = pat.get2().toString(); String firstname = pat.get3().toString();
+				String middlename = pat.get4().toString(); String birthday = pat.get5().toString();
+				String aa =  lastname+" "+ firstname+" "+middlename+" "+birthday+" "+pid;
+				System.out.println("Проверка по базе ФОМС. Запись №= "+i +" "+ aa);
+				str.append(aa).append("#");
+				//Для отладки
+				
+		
+		//return  str.toString();
+		//------------------
+		String resultRZ = null ;
+		WSLocator serviceLocator = new WSLocator() ;
+		serviceLocator.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
+		WS_MES_SERVERSoapPort aSoap = serviceLocator.getWS_MES_SERVERSoapPort();
+		resultRZ = (String)aSoap.get_RZ_from_FIODR(lastname, firstname
+				, middlename, birthday, theLpu);
+		System.out.println(i+" ResultRZ = "+resultRZ);
+		InputStream in = new ByteArrayInputStream((resultRZ).getBytes());
+		Document doc = new SAXBuilder().build(in);
+		Element root = doc.getRootElement();
+		Element cur1 = root.getChild("cur1") ;
+		Element rze = cur1.getChild("rz") ;
+		String aRz = rze.getText() ;
+		in.close() ;
+		//------------------
+		if (!aRz.equals("")) {			
+			StringBuilder sb = new StringBuilder() ;
+			String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
+		//	System.out.println("result info:") ;
+		//	System.out.println(result) ;
+			result = updateXml(result) ;
+			
+			
+			String snils = null;
+			String attachedDate = null; String attachedType = null; String attachedLpu = null;
+			String doctorSnils=null; String codeDepartment=null;
+			String c = null;
+			String dateDeath = null;
+			//String commonNumber;
+			in = new ByteArrayInputStream(result.getBytes());
+			doc = new SAXBuilder().build(in);
+			root = doc.getRootElement();
+			@SuppressWarnings("unchecked")
+			List<Element> list_cur = root.getChildren("cur1");
+			StringBuilder fiodr = new StringBuilder();
+			StringBuilder policy = new StringBuilder();
+			StringBuilder docs = new StringBuilder();
+			boolean isStart = true ;
+			for (Element e:list_cur) {
+				//F:I:O:DR:RZ:DEAD:SNILS:DATEPRIK:SP_PRIK:LPU:SSD:KODPODR
+				lastname = e.getChildText("f"); firstname = e.getChildText("i"); middlename =e.getChildText("o");
+				birthday = upDate(e.getChildText("dr")); snils=e.getChildText("ss");attachedDate = upDate(e.getChildText("date_prik"));
+				attachedType=e.getChildText("sp_prik");attachedLpu=e.getChildText("lpu");
+				doctorSnils=e.getChildText("ssd"); codeDepartment=e.getChildText("kodpodr");
+				dateDeath = e.getChildText("datedead");
+				fiodr.append(lastname).append(":") ;
+				fiodr.append(firstname).append(":") ;
+				fiodr.append(middlename).append(":") ;
+				fiodr.append(birthday).append(":") ;
+				fiodr.append(aRz).append(":");
+				fiodr.append(dateDeath).append(":") ;
+				fiodr.append(snils).append(":") ;
+				fiodr.append(attachedDate).append(":");
+				fiodr.append(attachedType).append(":");
+				fiodr.append(attachedLpu).append(":");
+				fiodr.append(doctorSnils).append(":");
+				fiodr.append(codeDepartment);
+			}
+			
+			in.close() ;
+			result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
+			
+			result = updateXml(result) ;
+			//System.out.println(result);
+			in = new ByteArrayInputStream(result.getBytes());
+			doc = new SAXBuilder().build(in);
+			root = doc.getRootElement();
+			list_cur.clear() ;
+			//@SuppressWarnings("unchecked")
+			list_cur = root.getChildren("cur1");
+			String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
+			sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
+			
+			try {
+				for (Element el:list_cur) {
+					//System.out.println(result);
+					String[] pol = el.getChildText("sn_pol").split(" ") ;
+					String serPol;
+					String numPol;
+					String sk = el.getChildText("sk") ;
+					String dpp = upDate(el.getChildText("datapp")) ;
+					String dpe = upDate(el.getChildText("datape")) ;
+					String ddosr = upDate(el.getChildText("d_dosrochno")) ;
+					if (pol.length>2) {
+						serPol = pol[0]+" "+pol[1] ;
+						numPol = pol[2] ;
+					} else if (pol.length>1){
+						serPol = pol[0] ;
+						numPol = pol[1] ;
+					} else {
+						if (pol[0].length()>10) {
+							serPol = pol[0].substring(0,2)+" "+pol[0].substring(2,4) ;
+							numPol = pol[0].substring(4) ;
+						} else {
+							serPol = pol[0].substring(0,3) ;
+							numPol = pol[0].substring(3) ;
+						}
+					}
+					String current = el.getChildText("pz_actual") ;
+					String ac = "" ;
+					
+					if (current.equals("1")) {
+						String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
+						policy.append(serPol).append(":").append(numPol).append(":").append(sk).append(":")
+						.append(dpp).append(":").append(datEnd);
+						
+	            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
+												
+					}
+				}
+				in.close() ;
+			}catch(Exception e) {
+				e.printStackTrace() ;
+			}
+			//System.out.println(sb) ;
+			result = (String)aSoap.get_DOCS_from_RZ(aRz, theLpu) ;
+			//System.out.println("result document:") ;
+			//System.out.println(result) ;
+			result = updateXml(result) ;
+			//System.out.println(result) ;
+			in = new ByteArrayInputStream(result.getBytes());
+			doc = new SAXBuilder().build(in);
+			root = doc.getRootElement();
+			list_cur.clear() ;
+			
+			//@SuppressWarnings("unchecked")
+			list_cur = root.getChildren("cur1");
+			String documentType = null, documentSeries = null, documentNumber = null ;
+			String documentDateIssued = null; String documentWhomIssued = null;
+			isStart=true ;
+			sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
+			sb.append("<tr>");
+			sb.append("<th>").append("").append("</th>") ;
+			sb.append("<th>").append("Тип").append("</th>") ;
+			sb.append("<th>").append("Серия").append("</th>") ;
+			sb.append("<th>").append("Номер").append("</th>") ;
+			sb.append("<th>").append("Дата выдачи").append("</th>") ;
+			sb.append("<th>").append("Кем выдан").append("</th>") ;
+			sb.append("</tr>") ;
+			Date maxDate = null;
+			for (Element el:list_cur) {
+				//System.out.println(result);
+				sb.append("<tr>") ;
+				String ac = "" ;
+				Date currentDocDate = DateFormat.parseDate(el.getChildText("doc_d"), "yyyy-MM-dd");
+				if (maxDate==null||currentDocDate.getTime()>maxDate.getTime()) {
+					maxDate = currentDocDate;
+					documentType=el.getChildText("doc_t"); documentSeries=el.getChildText("doc_s"); documentNumber=el.getChildText("doc_n") ;
+					documentDateIssued=upDate(el.getChildText("doc_d")); documentWhomIssued=el.getChildText("doc_v");
+					
+				}
+			}
+			//Зачем это мне?
+			docs.append(documentType).append(":");
+			docs.append(documentSeries).append(":") ;
+			docs.append(documentNumber).append(":") ;
+			docs.append(documentDateIssued).append(":") ;
+			docs.append(documentWhomIssued) ;
+			in.close() ;
+			
+			
+			result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
+			//System.out.println("result adress:") ;
+			//System.out.println(result) ;
+			
+			result = updateXml(result) ;
+			//System.out.println(result) ;
+			in = new ByteArrayInputStream(result.getBytes());
+			doc = new SAXBuilder().build(in);
+			root = doc.getRootElement();
+			list_cur.clear() ;
+			list_cur = root.getChildren("cur1");
+			sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
+			String kladr = null, house = null, houseBuilding = null, flat = null ;
+			isStart=true ;
+			sb.append("<tr>") ;
+			sb.append("<th></th>") ;
+			sb.append("<th>").append("КЛАДР").append("</th>") ;
+			sb.append("<th>").append("Индекс").append("</th>") ;
+			sb.append("<th>").append("Регион").append("</th>") ;
+			sb.append("<th>").append("Район").append("</th>") ;
+			sb.append("<th>").append("Город").append("</th>") ;
+			sb.append("<th>").append("Улица").append("</th>") ;
+			sb.append("<th>").append("Дом").append("</th>") ;
+			sb.append("<th>").append("Корп").append("</th>") ;
+			sb.append("<th>").append("Кв").append("</th>") ;
+			sb.append("</tr>") ;
+			for (Element el:list_cur) {
+				//System.out.println(result);
+				sb.append("<tr>") ;
+				String ac = "" ;
+				String hn = el.getChildText("house") ;
+				String hb = el.getChildText("section") ;
+				String fn = el.getChildText("apartment") ;
+				String kl = el.getChildText("street_gni") ;
+				String r = el.getChildText("rayon") ; 
+				String sity = el.getChildText("sity") ;
+				String street = el.getChildText("street");
+				String streetT = el.getChildText("street_t");
+				String provance = el.getChildText("province") ;
+				String index = el.getChildText("ssity") ;
+				kladr=kl; house=hn; houseBuilding=hb; flat =fn;
+					
+			}
+			in.close() ;
+			service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
+					, aRz
+					, policySeries, policyNumber, policyDateFrom, policyDateTo
+					, username, PatientFond.STATUS_CHECK_TYPE_AUTOMATIC 
+					, companyCode, "", "", ""
+					, documentType, documentSeries, documentNumber
+					, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
+					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pid, pfc);
+			
+		}
+			}
+			pfc.setFinishDate(new java.util.Date());
+			return new StringBuilder().append("Проверено ").append(i).append(" записей");
+		}
+		return new StringBuilder().append("нет данных") ;
+	} catch (Exception e) {
+		e.printStackTrace();
+
+		return new StringBuilder(e.getMessage());
+	}
+	}
 	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException, NamingException, ParseException {
 		if (!aRz.equals("")) {
 			
@@ -139,8 +403,7 @@ public class FondWebService {
 			
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-        	System.out.println(result);
-            System.out.println("result info:") ;
+        	System.out.println("getInfoByPatient , result info:") ;
             System.out.println(result) ;
         	result = updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
@@ -154,7 +417,7 @@ public class FondWebService {
         	*/
         	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
         	String attachedDate = null; String attachedType = null; String attachedLpu = null;
-        	String c = null;
+        	String c = null; String doctorSnils=null; String codeDepartment=null;
         	String dateDeath = null;
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 			//String commonNumber;
@@ -217,6 +480,7 @@ public class FondWebService {
             	if (isStart) {
             		isStart=false ;
             		lastname = f ; firstname = i ; middlename = o; birthday = dr ;snils=ss;
+            		doctorSnils=e.getChildText("ssd"); codeDepartment=e.getChildText("kodpodr");
             		attachedLpu = attLpu; attachedDate = attDate; attachedType = attType;
             	}
             }
@@ -380,8 +644,7 @@ public class FondWebService {
             sb.append("</table>") ;
             in.close() ;
             
-
-        	result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
+            result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
             //System.out.println("result adress:") ;
             //System.out.println(result) ;
         	
@@ -446,7 +709,7 @@ public class FondWebService {
         			isStart=false ;
         		}
             }
-            sb.append("</table>") ;
+            sb.append("</table>") ; 
             in.close() ;
             service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
             		, aRz
@@ -454,7 +717,8 @@ public class FondWebService {
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
             		, companyCode, "", "", ""
             		, documentType, documentSeries, documentNumber
-            		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath);
+            		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath,"","",doctorSnils,codeDepartment
+            		,null,null);
             return sb.toString() ;
         }
 		
