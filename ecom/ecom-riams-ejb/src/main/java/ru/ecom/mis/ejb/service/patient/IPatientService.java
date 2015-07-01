@@ -7,12 +7,16 @@ import java.util.List;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 
 /**
  */
 public interface IPatientService {
+	public boolean updateDataByFondAutomatic(Long aPatientId, Long aPatientFondId, Long aCheckId
+			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
+	public PatientFondCheckData getNewPFCheckData(); 
 	public float getImageCompress() ;
 	public String getImageDir();
 	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
@@ -37,6 +41,8 @@ public interface IPatientService {
 			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
+			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment
+			,String aPatientId, PatientFondCheckData aCheckTime
 			) throws ParseException ;
 	public String getCodeByMedPolicyOmc(Long aType) ;
 	public boolean isNaturalPerson(Long aPatient) ;
