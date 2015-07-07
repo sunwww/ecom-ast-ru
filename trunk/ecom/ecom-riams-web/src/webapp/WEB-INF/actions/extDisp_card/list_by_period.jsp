@@ -1194,7 +1194,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
-    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value, {
+    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {
     	callback: function(aResult) {
     		
     	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
