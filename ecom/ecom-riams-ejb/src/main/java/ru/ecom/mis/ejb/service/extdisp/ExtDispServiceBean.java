@@ -61,7 +61,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+ ", закаливание, профилактика вредных привычек."; //Рекомендации
 		String aFizGroup = "1"; //"1"; //Группа здоровья для физкультуры
 		String aAnalysesText = "Без патологий"; // Результат анализов
-		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend,"200" );
+		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend,"200",null );
 	}
 	
 	public String createArchive(String archiveName) {
@@ -97,10 +97,11 @@ public class ExtDispServiceBean implements IExtDispService {
 				return fileNames[0];
 		}} return "Нет данных";
 	}
+	
 	public String exportOrph(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String divideNum) throws ParseException,
+			String aZOJReccomend, String aReccomend, String divideNum, String aLpu) throws ParseException,
 			NamingException {
 		try{
 //		System.out.println("DEBUG ------------ExportOrph---------------");
@@ -115,6 +116,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		  theFileSuffix=aFileNameSuffix;
 		  theFinishDate=aFinishDate;
 		String theArchiveFileName="orph-"+theFileSuffix+theFinishDate;
+		String aLpuSqlAdd = (aLpu!=null&&!aLpu.equals("")&&Long.valueOf(aLpu)>0)?"and edc.lpu_id="+aLpu:"";
 		  aFileNames="";
 	/** Сделано:
 	 * Проверка на пасп. данные, номер полиса.
@@ -169,7 +171,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join VocIdc10 mkb on mkb.id=edc.idcMain_id "
 				+"left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null "
 				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy') " 
-				+"and ved.code='CHILD_PROF_1' "  
+				+aLpuSqlAdd
+				+" and ved.code='CHILD_PROF_1' "  
 	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
 //				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
 //				+"and (p.commonnumber is not null and p.commonnumber!='') " 
