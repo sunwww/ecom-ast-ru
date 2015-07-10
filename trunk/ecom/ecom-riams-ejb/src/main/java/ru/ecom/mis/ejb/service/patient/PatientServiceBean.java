@@ -67,9 +67,33 @@ import ru.nuzmsh.util.format.DateFormat;
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
 
-	public PatientFondCheckData getNewPFCheckData() {
+	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException {
+		StringBuilder str = new StringBuilder();
+		Patient pat = theManager.find(Patient.class, aPatientId);
+		str.append("insert into JournalPatientFondCheck (lastname, firstname, middlename, birthday, patient_id, checktime_id, isFound) values ")
+		.append("('").append(pat.getLastname()).append("'")
+		.append(",'").append(pat.getFirstname()).append("'")
+		.append(",'").append(pat.getMiddlename()).append("'")
+		.append(",to_date('").append(DateFormat.formatToLogic(pat.getBirthday())).append("','yyyyMMdd')")
+		.append(",").append(aPatientId)
+		.append(",").append(aCheckTimeId)
+		.append(",'0'").append(")");
+		try {
+			theManager.createNativeQuery(str.toString()).executeUpdate();
+		} catch (org.hibernate.exception.ConstraintViolationException e) {
+			String sql = "ALTER TABLE journalpatientfondcheck ALTER COLUMN id SET DEFAULT NEXTVAL('journalpatientfondcheck_sequence');";
+			theManager.createNativeQuery(sql).executeUpdate();
+			theManager.createNativeQuery(str.toString()).executeUpdate();
+		}
+		
+	}
+	public PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment) {
 		PatientFondCheckData pfcd = new PatientFondCheckData ();
-		pfcd.setStartDate(new java.util.Date());
+		pfcd.setStartDate(new java.sql.Date(new java.util.Date().getTime()));
+		pfcd.setNeedUpdatePatient(aNeedUpdatePatient);
+		pfcd.setNeedUpdateDocument(aNeedUpdateDocument);
+		pfcd.setNeedUpdatePolicy(aNeedUpdatePolicy);
+		pfcd.setNeedUpdateAttachment(aNeedUpdateAttachment);
 		theManager.persist(pfcd);
 		return pfcd;
 	}
@@ -322,7 +346,18 @@ public class PatientServiceBean implements IPatientService {
 			return new String(aComma+aField+"='"+aValue+"'");
 		} else return "";
 	}
-	public boolean updateDataByFondAutomatic (Long aPatientId, Long aPatientFondId, Long aCheckId
+	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday1, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
+		List<Object[]> list = theManager.createNativeQuery("select pf.id from patientfond pf where pf.lastname='"+aLastName+"' and " +
+				"pf.firstname = '"+aFirstName+"' and pf.middlename = '"+aMiddleName+"' and pf.birthday=to_date('"+aBirthday1 +
+				"','dd.MM.yyyy') and pf.checkTime_id='"+aCheckTimeId+"'").getResultList();
+		if (!list.isEmpty()) {
+			Long patF = Long.valueOf(list.get(0)[0].toString());
+			return updateDataByFondAutomatic(patF, aCheckTimeId, needUpdatePatient, needUpdateDocuments, needUpdatePolicy, needUpdateAttachment);
+		}
+		return false;
+	}
+	
+	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
 			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
 		try{
 		if (needUpdateAttachment||needUpdateDocuments||needUpdatePatient||needUpdatePolicy) {
@@ -339,19 +374,20 @@ public class PatientServiceBean implements IPatientService {
 					" from patientfond pf where pf.id='"+aPatientFondId+"' ").getResultList();
 			if (!listZ.isEmpty()) {
 			Object[] arr = listZ.get(0);
-			if (aPatientId==null || aPatientId.equals("")){
-				aPatientId=Long.valueOf(arr[20].toString());
-			}
+			PatientFond patF = theManager.find(PatientFond.class, aPatientFondId);
 			String aLastname = toStr(arr[1]), aFirstname = toStr(arr[2]), aMiddlename=toStr(arr[3]),aRz = toStr(arr[4])
 					,aSnils = toStr(arr[5]),aDocNumber = toStr(arr[6]),aDocSeries = toStr(arr[7]),aDocType = toStr(arr[8])
 					,aDocDateIssued = toStr(arr[9]), aDocWhomIssued =toStr(arr[10])
 					,aAttachedLpu=toStr(arr[11]),aAttachedType=toStr(arr[12]),aAttachedDate=toStr(arr[13])
 					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
 					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21]);
+					Long aPatientId =Long.valueOf(arr[20].toString()); 
 			if (needUpdatePatient) {
 				o=1;
 				str.append(prepSql("snils",aSnils,"")).append(prepSql("commonnumber",aRz,str.length()>23?",":""));
+				patF.setIsPatientUpdate(true);
 				}
+			
 			if (needUpdateDocuments) {
 				if (o==1) {
 					str.append(",");
@@ -361,6 +397,7 @@ public class PatientServiceBean implements IPatientService {
 				.append(", passportdateissued=to_date('").append(aDocDateIssued).append("','dd.MM.yyyy')")
 				.append(prepSql("passportwhomissued",aDocWhomIssued,","));
 				o=1;
+				patF.setIsDocumentUpdate(true);
 			}
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
@@ -369,15 +406,18 @@ public class PatientServiceBean implements IPatientService {
 				theManager.createNativeQuery(str.toString()).executeUpdate();
 			}
 			if (needUpdatePolicy) {
-				updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
-						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate);
+				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
+						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
+				
 				
 			}
 			if (needUpdateAttachment) {
-				updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate);
+				patF.setIsAttachmentUpdate(updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate,true));
+				
 			}
-			PatientFond patF = theManager.find(PatientFond.class, aPatientFondId);
-			patF.setIsPatientUpdate(true);
+			
+			
+			
 			theManager.persist(patF);
 			return true;
 			
@@ -395,7 +435,7 @@ public class PatientServiceBean implements IPatientService {
 		
 		
 	}
-	public boolean updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate) {
+	public boolean updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, boolean ignoreType) {
 		SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
@@ -434,6 +474,7 @@ if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Созда
 					//Указать участок!!!
 					theManager.persist(att);
 					System.out.println("------- Прикрепление создано! Пациент = "+aPatientId);
+					return true;
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					System.out.println("Дата не распознана "+attachedDate);
@@ -445,21 +486,23 @@ if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Созда
 			
 		} else  { // Обновляем существующее 
 			for (LpuAttachedByDepartment a: attachments) {
-				if (a.getAttachedType().equals(attType)) {
+				if (a.getAttachedType().equals(attType)||ignoreType) {
 //						System.out.println("------ ATT FOUND!!!, обновляем существующее, "+a.getId());
 					StringBuilder str = new StringBuilder();
 					str.append("update LpuAttachedByDepartment set dateFrom=to_date('").append(attachedDate)
-						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"',editusername='fond_check' where id='").append(a.getId()).append("'");
+						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"',editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') where id='").append(a.getId()).append("'");
 					theManager.createNativeQuery(str.toString()).executeUpdate();
 					System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
+					return true;
 					} else {
 						System.out.println("Найдено прикрепление с другим типом, прикрепление не создано");
 					}
 			}
 		}
 	}
-return true;
+return false;
 	}
+	
 	public boolean updateDataByFond(String aUsername, Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress
 			,boolean aIsPatient, boolean aIsPolicy
@@ -518,7 +561,7 @@ return true;
 							}
 						}
 					}
-					updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9]);
+					updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],false);
 				
 			}
 		}
@@ -900,6 +943,9 @@ return true;
 			theManager.createNativeQuery("	update WorkCalendarHospitalBed set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ExtDispCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ClinicExpertCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update PatientFond set patient_id=null where patient_id=:idOld ").setParameter("idOld", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update JournalPatientFondCheck set patient_id=null where patient_id=:idOld ").setParameter("idOld", aIdOld).executeUpdate();
+			
 			
 		}
 	}
