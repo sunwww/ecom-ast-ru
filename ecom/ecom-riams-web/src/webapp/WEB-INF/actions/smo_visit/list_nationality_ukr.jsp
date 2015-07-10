@@ -321,7 +321,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 		out.print("<td>") ;out.print(wqr.get7()!=null?wqr.get7():"");out.print("</td>") ;
 		out.print("<td>") ; */
 		try {
-			String[] arr =HospitalMedCaseServiceJs.getDataByReference(Long.valueOf(wqr.get1().toString()),"SPO", request).split("&");
+			String[] arr =HospitalMedCaseServiceJs.getDataByReferencePrintNotOnlyOMS(Long.valueOf(wqr.get1().toString()),"SPO",false,"OTHER", request).split("&");
 			for (int j=0;j<arr.length;j++)
 			{
 				if (arr[j].startsWith("render")) {
@@ -439,7 +439,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 		out.print("<td>") ;out.print(wqr.get7()!=null?wqr.get7():"");out.print("</td>") ;	//8
 		out.print("<td>") ;	//4 */
 	 	try {
-			String[] arr =HospitalMedCaseServiceJs.getDataByReference(Long.valueOf(wqr.get1().toString()),"HOSP", request).split("&");
+			String[] arr =HospitalMedCaseServiceJs.getDataByReferencePrintNotOnlyOMS(Long.valueOf(wqr.get1().toString()),"HOSP",false,"OTHER", request).split("&");
 			for (int j=0;j<arr.length;j++)
 			{
 				if (arr[j].startsWith("render")) {
