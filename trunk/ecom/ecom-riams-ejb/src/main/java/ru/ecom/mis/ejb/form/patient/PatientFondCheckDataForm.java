@@ -25,6 +25,38 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 
 public class PatientFondCheckDataForm extends IdEntityForm {
     
+	/** Необходимо автоматически обновлять данные пациента */
+	@Comment("Необходимо автоматически обновлять данные пациента")
+	@Persist
+	public Boolean  getNeedUpdatePatient() {return theNeedUpdatePatient;}
+	public void setNeedUpdatePatient(Boolean  aNeedUpdatePatient) {theNeedUpdatePatient = aNeedUpdatePatient;}
+	/** Необходимо автоматически обновлять данные пациента */
+	private Boolean  theNeedUpdatePatient;
+	
+	/** Необходимо обновлять данные паспорта */
+	@Comment("Необходимо обновлять данные паспорта")
+	@Persist
+	public Boolean getNeedUpdateDocument() {return theNeedUpdateDocument;}
+	public void setNeedUpdateDocument(Boolean aNeedUpdateDocument) {theNeedUpdateDocument = aNeedUpdateDocument;}
+	/** Необходимо обновлять данные паспорта */
+	private Boolean theNeedUpdateDocument;
+	
+	/** Необходимо обновлять данные полиса */
+	@Comment("Необходимо обновлять данные полиса")
+	@Persist
+	public Boolean getNeedUpdatePolicy() {return theNeedUpdatePolicy;}
+	public void setNeedUpdatePolicy(Boolean aNeedUpdatePolicy) {theNeedUpdatePolicy = aNeedUpdatePolicy;}
+	/** Необходимо обновлять данные полиса */
+	private Boolean theNeedUpdatePolicy;
+	
+	/** Необходимо обновлять данные прикрепления */
+	@Comment("Необходимо обновлять данные прикрепления")
+	@Persist
+	public Boolean getNeedUpdateAttachment() {return theNeedUpdateAttachment;}
+	public void setNeedUpdateAttachment(Boolean aNeedUpdateAttachment) {theNeedUpdateAttachment = aNeedUpdateAttachment;}
+	/** Необходимо обновлять данные прикрепления */
+	private Boolean theNeedUpdateAttachment;
+
 	/** Статус(текст) */
 	@Comment("Статус(текст)")
 	@Persist
