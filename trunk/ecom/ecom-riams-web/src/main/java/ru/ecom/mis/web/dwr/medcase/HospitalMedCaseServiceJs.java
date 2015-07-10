@@ -253,6 +253,9 @@ public class HospitalMedCaseServiceJs {
 		return getDataByReferencePrint( aMedCase, aType, true, aRequest) ;
 	}
 	public static String getDataByReferencePrint(Long aMedCase,String aType, boolean aIsUrl, HttpServletRequest aRequest) throws Exception {
+		return getDataByReferencePrintNotOnlyOMS(aMedCase, aType, aIsUrl,"",aRequest);
+	}
+	public static String getDataByReferencePrintNotOnlyOMS(Long aMedCase,String aType, boolean aIsUrl, String aSqlAdd, HttpServletRequest aRequest) throws Exception {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		ISoftConfigService sservice = Injection.find(aRequest).getService(ISoftConfigService.class) ;
@@ -273,7 +276,11 @@ public class HospitalMedCaseServiceJs {
 		StringBuilder res = new StringBuilder() ;
 		res.append(param("address_lpu",address_lpu)) ;
 		res.append(param("name_lpu",name_lpu)) ;
-		
+		if (aSqlAdd!=null) {
+			if (!aSqlAdd.equals("")) {
+				aSqlAdd=" or vss.code in ('"+aSqlAdd+"') ";
+			}
+		} else {aSqlAdd = "";}
 		boolean isf = true ;
 		if (aType!=null &&aType.equals("HOSP")) {
 			//Дополнительная диспансеризация
@@ -308,7 +315,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join medpolicy mp on mcmp.policies_id=mp.id") ;
 			sql.append(" left join VocHospitalizationResult vhr on vhr.id=sls.result_id") ;
 			sql.append(" left join MisLpu ml on ml.id=sls.lpu_id") ;
-			sql.append(" where sls.id=").append(aMedCase).append(" and vss.code='OBLIGATORYINSURANCE' and sls.dischargeTime is not null") ;
+			sql.append(" where sls.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and sls.dischargeTime is not null") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
 			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
@@ -509,7 +516,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
 			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
-			sql.append(" where vis.id=").append(aMedCase).append(" and vss.code='OBLIGATORYINSURANCE'  and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
 			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
@@ -685,7 +692,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
 			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
-			sql.append(" where vis.id=").append(aMedCase).append(" and vss.code='OBLIGATORYINSURANCE'  and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
 			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
@@ -845,7 +852,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
 			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
-			sql.append(" where vis.id=").append(aMedCase).append(" and vss.code='OBLIGATORYINSURANCE' and (spo.dateFinish is not null or vis.emergency='1') and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and (spo.dateFinish is not null or vis.emergency='1') and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
 			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
