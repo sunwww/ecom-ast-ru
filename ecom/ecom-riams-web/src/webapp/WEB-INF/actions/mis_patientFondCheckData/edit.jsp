@@ -2,20 +2,39 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page = '/WEB-INF/tiles/mainLayout.jsp' flush = 'true'>
+
 
   <tiles:put name="body" type="string">
     <msh:form action="entitySaveGoView-mis_patientFondCheckData.do" defaultField="id" guid="10826cd9-7e71-480c-9d53-c96e6805ce24">
       <msh:hidden property="id" guid="332d968f-182e-4108-b1de-df71738d7b8a" />
       <msh:panel guid="070b9d1e-c50f-4423-9d72-274f6b1dc045">
-        <msh:row guid="numberRow123">
-          <msh:textField property="comment" label="Примечание" guid="9f8be45a-773a-4ca4-a12c-8f50d63e3ffc" />
+        <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
+        <msh:row>
+        <msh:checkBox property="needUpdatePatient" label="Автоматически обновлять данные пациента"/>
+        <msh:checkBox property="needUpdateDocument" label="Автоматически обновлять данные документов"/>
+        </msh:row><msh:row>
+        <msh:checkBox property="needUpdatePolicy" label="Автоматически обновлять данные мед. полиса"/>
+        <msh:checkBox property="needUpdateAttachment" label="Автоматически обновлять данные прикрепления"/>
+        </msh:row>
+        </msh:ifFormTypeIsCreate>
+        <msh:ifFormTypeAreViewOrEdit formName="mis_patientFondCheckDataForm">
+        <msh:row>
+        <msh:checkBox property="needUpdatePatient" label="Автоматически обновлять данные пациента" viewOnlyField="true"/>
+        <msh:checkBox property="needUpdateDocument" label="Автоматически обновлять данные документов" viewOnlyField="true"/>
+        </msh:row><msh:row>
+        <msh:checkBox property="needUpdatePolicy" label="Автоматически обновлять данные мед. полиса" viewOnlyField="true"/>
+        <msh:checkBox property="needUpdateAttachment" label="Автоматически обновлять данные прикрепления" viewOnlyField="true"/>
+        </msh:row>
+        </msh:ifFormTypeAreViewOrEdit>
+        <msh:row>
+          <msh:textField property="startDate" label="Дата проверки" viewOnlyField="true"/>
         </msh:row>
         <msh:row>
-          <msh:textField property="startDate" label="Дата проверки"/>
-        </msh:row>
-        <msh:row>
+        <input type="button" onclick="javascript:test();">
+        <msh:ifFormTypeIsView formName="mis_patientFondCheckDataForm">
         <msh:section>
         <ecom:webQuery name="dataList" nameFldSql="dataListSQL" nativeSql="select pf.id, pf.lastname ||' '|| pf.firstname||' '||pf.middlename||' г.р. '||to_char(pf.birthday,'dd.MM.yyyy') as f2
         ,'ЕНП '||case when pf.commonnumber!='' then pf.commonnumber else '' end || case when pf.snils!='' then ', СНИЛС '||pf.snils else '' end as f3_fondPat
@@ -51,40 +70,64 @@ order by pf.lastname, pf.firstname, pf.middlename
         	<msh:table name="dataList" action="javascript:void(0)" idField="1">
         		<msh:tableColumn columnName="#" property="sn"/>
 	        	<msh:tableColumn columnName="Пациент" property="2"/>
-	        	<msh:tableButton property="13" hideIfEmpty="true" buttonFunction="updatePatient" addParam="1,0,0,0" buttonShortName="O" buttonName="Обновить данные пациента" />
+	        	<msh:tableButton property="13" hideIfEmpty="true" buttonFunction="updatePatient" addParam="1,0,0,0);this.style.display='none';javascript:void(0" buttonShortName="O" buttonName="Обновить данные пациента" />
 	        	<msh:tableColumn columnName="Данные МедОС" property="4"/>
 	        	<msh:tableColumn columnName="Данные ФОМС" property="3"/>
-	        	<msh:tableButton property="11" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,1,0,0" buttonShortName="O" buttonName="Обновить данные документа" />
+	        	<msh:tableButton property="11" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,1,0,0);this.style.display='none';javascript:void(0" buttonShortName="O" buttonName="Обновить данные документа" />
 	        	<msh:tableColumn columnName="Пасп. данные МедОС" property="6"/>  	
 	        	<msh:tableColumn columnName="Пасп. данные ФОМС" property="5"/>  	
-	        	<msh:tableButton property="12" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,0,1,0" buttonShortName="O" buttonName="Обновить данные полиса ОМС" />
+	        	<msh:tableButton property="12" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,0,1,0);this.style.display='none';javascript:void(0" buttonShortName="O" buttonName="Обновить данные полиса ОМС" />
 	        	<msh:tableColumn columnName="Полис ОМС МедОС" property="8"/>  	
 	        	<msh:tableColumn columnName="Полис ОМС ФОМС" property="7"/>  	
-	        	<msh:tableButton property="14" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,0,0,1" buttonShortName="O" buttonName="Обновить данные прикрепления" />
+	        	<msh:tableButton property="14" hideIfEmpty="true" buttonFunction="updatePatient" addParam="0,0,0,1);this.style.display='none';javascript:void(0" buttonShortName="O" buttonName="Обновить данные прикрепления" />
 	        	<msh:tableColumn columnName="Прикрепление МедОС" property="10"/>  	
 	        	<msh:tableColumn columnName="Прикрепление ФОМС"  property="9"/>  	
         	</msh:table>
         </msh:section>
+        </msh:ifFormTypeIsView>
         </msh:row>
         <msh:row>
         </msh:row>
       </msh:panel>
-       <msh:submitCancelButtonsRow colSpan="2" guid="a332e241-83f4-4e61-ad6f-d0f69cc6076e" />
+      <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
+       	<msh:submitCancelButtonsRow colSpan="2" guid="a332e241-83f4-4e61-ad6f-d0f69cc6076e" />
+       </msh:ifFormTypeIsCreate>
     </msh:form>
 
   </tiles:put>
-  <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <tiles:put name="javascript" type="string">
+<tiles:put name="javascript" type="string">
+    
+ <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
+    <script type="text/javascript">
+ 
+	document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
+		
+	 function checkAllPatients() {
+	    	PatientService.checkAllPatients($('needUpdatePatient').checked, 
+	    		$('needUpdateDocument').checked, $('needUpdatePolicy').checked, 
+	    		$('needUpdateAttachment').checked, {
+	    		callback: function (aResult) {
+	    			document.location="mis_patientFondCheckList.do";
+	    		}
+	    	});
+	    	
+	    }
+</script>
+
+</msh:ifFormTypeIsCreate> 
+<msh:ifFormTypeIsView formName="mis_patientFondCheckDataForm">
     <script type="text/javascript">
 	    function updatePatient(aPatientFondId, updatePat, updateDoc, updatePol, updateAtt) {
-	    	PatientService.updatePatientByAutoFondOneRecord(aPatientFondId, $('id').value, ""+updatePat=='1'?true:false, ""+updateDoc=='1'?true:false, ""+updatePol=='1'?true:false, ""+updateAtt=='1'?true:false,{
+	    	PatientService.updateDataByFondAutomatic(aPatientFondId, $('id').value, ""+updatePat=='1'?true:false, ""+updateDoc=='1'?true:false, ""+updatePol=='1'?true:false, ""+updateAtt=='1'?true:false,{
 	    		callback: function(aResult) {
-	    			alert(aResult);
-	    			window.document.location.reload();
+	    			//alert(aResult);
+	    			//window.document.location.reload();
 	    		}
 	    	});
 	    }
 	    </script>
+	    </msh:ifFormTypeIsView>
 	    </tiles:put>
 </tiles:insert>
 
