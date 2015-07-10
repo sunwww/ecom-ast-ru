@@ -133,8 +133,16 @@ public class FondWebService {
         //in.close() ;
         return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber);
     }
-	public static StringBuilder checkAllPatientsByFond(HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
+	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
 		// Создаем список пациентов
+		System.out.println("updPatient ="+updPatient +":"+updDocument);
+		boolean needUpdate = false, updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;  
+		if (updPatient!=null&&(updPatient.equals("1")||updPatient.toLowerCase().equals("true")||updPatient.toLowerCase().equals("on"))) {updatePatient=true; needUpdate = true;} 
+		if (updDocument!=null&&(updDocument.equals("1")||updDocument.toLowerCase().equals("true")||updDocument.toLowerCase().equals("on"))) {updateDocument=true; needUpdate = true;} 
+		if (updPolicy!=null&&(updPolicy.equals("1")||updPolicy.toLowerCase().equals("true")||updPolicy.toLowerCase().equals("on"))) {updatePolicy=true; needUpdate = true;} 
+		if (updAttachment!=null&&(updAttachment.equals("1")||updAttachment.toLowerCase().equals("true")||updAttachment.toLowerCase().equals("on"))) {updateAttachment=true; needUpdate = true;} 
+		System.out.println("-----UPDATЫЫЫЫ1 = "+ updatePatient +" : "+updateDocument+" : "+updatePolicy+" : "+updateAttachment);
+		System.out.println("-----UPDATЫЫЫЫ2 = "+ updPatient +" : "+updDocument+" : "+updPolicy+" : "+updAttachment);
 		try {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -144,7 +152,7 @@ public class FondWebService {
 				" from patient p" +
 				" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null ");
 		if (!pats.isEmpty()) {
-			PatientFondCheckData pfc = service.getNewPFCheckData();
+			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
 			String defaultLpu =null;
 			Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
 			if (!listSC.isEmpty()) {
@@ -171,16 +179,25 @@ public class FondWebService {
 		WS_MES_SERVERSoapPort aSoap = serviceLocator.getWS_MES_SERVERSoapPort();
 		resultRZ = (String)aSoap.get_RZ_from_FIODR(lastname, firstname
 				, middlename, birthday, theLpu);
-		System.out.println(i+" ResultRZ = "+resultRZ);
+	//	System.out.println(i+" ResultRZ = "+resultRZ);
+		String aRz = "";
 		InputStream in = new ByteArrayInputStream((resultRZ).getBytes());
 		Document doc = new SAXBuilder().build(in);
-		Element root = doc.getRootElement();
-		Element cur1 = root.getChild("cur1") ;
-		Element rze = cur1.getChild("rz") ;
-		String aRz = rze.getText() ;
+		Element root = null;
+		Element cur1 = null;
+		Element rze = null;
+		try {
+			root = doc.getRootElement();
+			cur1 = root.getChild("cur1") ;
+			rze = cur1.getChild("rz") ;
+			aRz = rze.getText() ;
+		} catch (NullPointerException e) {
+			
+		}
+		
 		in.close() ;
 		//------------------
-		if (!aRz.equals("")) {			
+		if (!aRz.equals("")) {		
 			StringBuilder sb = new StringBuilder() ;
 			String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
 		//	System.out.println("result info:") ;
@@ -378,10 +395,21 @@ public class FondWebService {
 					, documentType, documentSeries, documentNumber
 					, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
 					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pid, pfc);
+		//	service.updateDataByFondAutomaticByFIO(lastname,firstname, middlename, birthday, pfc.getId(), updatePatient, updateDocument
+		//			,updatePolicy, updateAttachment);
+			
+		} else {
+			//System.out.println("Проверка по базе ФОМС. Пациент не найден №= "+i +" "+ aa);
+			try {
+				service.insertPatientNotFound(Long.valueOf(pid), pfc.getId());
+			} catch (Exception e) {
+				
+				
+			}
 			
 		}
 			}
-			pfc.setFinishDate(new java.util.Date());
+			pfc.setFinishDate(new java.sql.Date(new java.util.Date().getTime()));
 			return new StringBuilder().append("Проверено ").append(i).append(" записей");
 		}
 		return new StringBuilder().append("нет данных") ;
