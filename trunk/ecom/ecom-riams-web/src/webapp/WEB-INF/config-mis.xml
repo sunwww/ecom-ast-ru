@@ -277,6 +277,14 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+	 <action path='/mis_bypass_report' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
+                name='mis_attachmentForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_bypass.jsp" />
+        </action>
+        
 		<action path="/mis_patientFondCheckList" type='ru.ecom.web.actions.base.ForwardAction'
 			name="" validate="false" scope="session" input="/WEB-INF/actions/mis_patientFondCheckData/list.jsp">
 			<forward name="success" redirect="false" path="/WEB-INF/actions/mis_patientFondCheckData/list.jsp"/>
