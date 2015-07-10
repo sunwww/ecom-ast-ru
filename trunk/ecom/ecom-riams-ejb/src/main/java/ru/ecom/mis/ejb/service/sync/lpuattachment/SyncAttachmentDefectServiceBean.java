@@ -41,6 +41,16 @@ import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 @Remote(ISyncAttachmentDefectService.class)
 
 public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectService {
+	
+	public String changeAttachmentArea (Long aOldAreaId, Long aNewLpuId, Long aNewAreaId) {
+		String sql = "update LpuAttachedByDepartment set area_id="+aNewAreaId+", lpu_id="+aNewLpuId+" where area_id="+aOldAreaId;
+		try {
+			return "Изменено записей: "+theManager.createNativeQuery(sql).executeUpdate();
+		} catch (Exception e) {
+			return "Ошибка: "+e.toString();
+		}
+		}
+	
 	/*
 	 * 1. Находим человека в базе
 	 * Есть человек найден, ищем его прикрепление по типу и по дате.
