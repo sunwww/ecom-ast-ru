@@ -15,7 +15,7 @@
         <msh:sideMenu>
             <msh:sideLink key="ALT+1" params="id" action="/entityView-mis_lpu" name="⇧ К ЛПУ"/>
             <msh:sideLink key='ALT+N' params="id" action="/entityParentPrepareCreate-mis_stateList" name="Добавить должность в штатное расписание" />
-            <msh:link action="javascript:checkAllPatients()">Запустить новую проверку всех пациентов</msh:link>
+            <msh:link action="/entityPrepareCreate-mis_patientFondCheckData.do">Запустить новую проверку всех пациентов</msh:link>
         </msh:sideMenu>
     </tiles:put>
 
