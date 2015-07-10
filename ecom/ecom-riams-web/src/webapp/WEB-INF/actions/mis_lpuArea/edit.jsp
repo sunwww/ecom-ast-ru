@@ -39,6 +39,15 @@
     </msh:form>
     <msh:ifFormTypeIsView formName="mis_lpuAreaForm" guid="8c94403e-3dda-408e-85f8-78081f8c8ea1">
       <msh:section guid="b67c5be3-5330-4589-8da8-7888453aaeb8">
+        
+        <msh:sectionContent guid="6dd31b9f-5068-4961-9033-417c6e01ff13">
+          <ecom:webQuery name="countPopulation" nativeSql="select count(*) from lpuattachedbydepartment where area_id=${param.id}" />
+          <msh:table name="countPopulation" action="/javascript:void()" idField="1">
+            <msh:tableColumn columnName="Количество прикрепленного населения на участке" property="1" guid="e7ee8550-c34b-40bb-9aac-fcdd4da970e0" />
+          </msh:table>
+        </msh:sectionContent>
+      </msh:section>
+      <msh:section guid="b67c5be3-5330-4589-8da8-7888453aaeb8">
         <msh:sectionTitle guid="3ae2d769-07ed-4109-b6cc-75bf939a86d2">Список прикрепленных домов</msh:sectionTitle>
         <msh:sectionContent guid="6dd31b9f-5068-4961-9033-417c6e01ff13">
           <ecom:parentEntityListAll formName="mis_lpuAreaAddressTextForm" attribute="areas" guid="2afdc402-f549-49b1-b9c8-a0c5cb012785" />
@@ -47,6 +56,12 @@
           </msh:table>
         </msh:sectionContent>
       </msh:section>
+      <div id='changeArea' style='display:none'>
+      <msh:separator label="Перекрепление населения" colSpan="10"></msh:separator>
+      <msh:autoComplete label="ЛПУ для прикрепления" vocName="lpu" property="changeLpu" fieldColSpan="10" size="50" />
+      <msh:autoComplete label="Участок для прикрепления" vocName='lpuAreaWithParent' property="changeLpuArea" size="50" parentAutocomplete="changeLpu" fieldColSpan="10"/>
+      <input type='button' value="Перекрепить"  onclick="javascript:changeAttachmentArea()">
+      </div>
      
     </msh:ifFormTypeIsView>
     
@@ -62,11 +77,29 @@
         <msh:sideLink key="ALT+5" roles="/Policy/Jaas/SecPolicy/Create" params="id" action="/mis_lpuAreaUpdateJaasPolicy" name="Перекрепить" title="Перекрепить население" guid="525ebc5e-181a-4ded-84ec-228d01869605" confirm="Перекрепить все население?" />
         <msh:sideLink key="ALT+6" roles="/Policy/Mis/LpuArea/View" params="id" action="/mis_bypassAreaExcelExport.do?type=area" name="Печать обходного листа" guid="b2a729f4-c83e-45af-ae91-a905d22ec44f" />
         <msh:sideLink key="ALT+DEL" roles="/Policy/Mis/LpuArea/Delete" params="id" action="/entityParentDeleteGoParentView-mis_lpuArea" name="Удалить" confirm="Удалить участок?" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+        <msh:sideLink roles="/Policy/Mis/LpuArea/View" action="/javascript:{$('changeArea').style.display='block';}" name="Перекрепить на другой участок" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Lpu" beginForm="mis_lpuAreaForm" guid="04eb4fb1-03b4-4011-9e85-30cd955d2c41" />
   </tiles:put>
+  <tiles:put name="javascript" type="string">
+    
+ <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
+ <script type="text/javascript">
+ function changeAttachmentArea() {
+	 if ($('changeLpu').value==''||$('changeLpuArea').value=='') {
+		 alert ('Укажите ЛПУ и участок!');
+	 } else {
+		 AttachmentService.changeArea($('id').value, $('changeLpu').value, $('changeLpuArea').value,{
+			 callback: function (aResult) {
+				 alert (aResult);
+			 }
+		 });
+	 }
+ }
+ </script>
+ </tiles:put>
 </tiles:insert>
 
