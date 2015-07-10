@@ -28,8 +28,8 @@ public class AttachmentByLpuAction extends BaseAction {
     	
     	if (form!=null ) {
     		ActionErrors  erros = form.validate(aMapping, aRequest) ;
-    		//System.out.println(erros) ;
-    		if (erros.isEmpty()&&form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0))
+    	//	System.out.println(erros) ;
+    		if (erros.isEmpty()&&((form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0)))||(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)))
     			) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
     		String typeRead = ActionUtil.updateParameter("PatientAttachment","typeRead","1", aRequest) ; 
@@ -44,7 +44,8 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
     		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
     		String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "0", aRequest);
-	    	 
+    		String typeSex=ActionUtil.updateParameter("PatientAttachment", "typeSex", "3", aRequest);
+    		boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
@@ -71,7 +72,13 @@ public class AttachmentByLpuAction extends BaseAction {
 	    		
 	    	
 	    	
-	        if (typeView!=null && typeView.equals("2")) {
+	        if (typeSex!=null&&typeSex.equals("1")) {
+	        	sqlAdd.append(" and vs.omccode='1'");
+	        	
+	        } else if (typeSex!=null&&typeSex.equals("2")) {
+	        	sqlAdd.append(" and vs.omccode='2'");
+	        }
+	    	if (typeView!=null && typeView.equals("2")) {
 	        	prefix="_no_addresss" ;
 	        	sqlAdd.append(" and p.address_addressid is null ") ;
 	        }
@@ -111,6 +118,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		}
     		
     		if (typeRead!=null&&typeRead.equals("1")) {
+    			System.out.println("ФФФФФФ = typeRead=1");
 //    			String fs = null;
     			WebQueryResult fs = new WebQueryResult();
     			boolean bNeedDivide = true;
@@ -123,7 +131,7 @@ public class AttachmentByLpuAction extends BaseAction {
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, typeXmlFormat);
     			} else {
     				StringBuilder sqlAdd1= new StringBuilder() ;
-    				boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
+    				
     				if (typePatientFond.equals("1")) {
     					sqlAdd1.append(" and pai.patient_id is not null") ;
     				} else if (typePatientFond.equals("2")){
@@ -131,7 +139,7 @@ public class AttachmentByLpuAction extends BaseAction {
     					checkLpu=false ;
     				}
     				prefix="PRIKREP";
-    				//@TODO WRONG
+    				
     				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
@@ -155,9 +163,20 @@ public class AttachmentByLpuAction extends BaseAction {
 		        	form.setFilename("---") ;
 		        }
 	    	} else {
+	    		System.out.println("ФФФФФФ = typeRead=2");
+	    		//if (checkLpu) {
+		    		if (form.getLpu()!=null&&form.getLpu()>0) {	
+		    			sqlAdd.append(" and lp.lpu_id = ").append(form.getLpu());
+		    		}
+		    		if (form.getArea()!=null&&form.getArea()>0) {
+		    			sqlAdd.append(" and lp.area_id=").append(form.getArea());
+		    		}
+	    		//}
+	    		
 	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
 	    	}
-        }}
+        } 
+    		}
         return aMapping.findForward("success") ;
     }
 }
