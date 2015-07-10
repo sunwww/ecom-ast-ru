@@ -219,4 +219,11 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
 	/** Пациент сменил адрес */
 	private Boolean theNewAddress;
+
+	/** Дата последнего экспорта в ФОМС */
+	@Comment("Дата последнего экспорта в ФОМС")
+	public Date getExportDate() {return theExportDate;}
+	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
+	/** Дата последнего экспорта в ФОМС */
+	private Date theExportDate;
 }
