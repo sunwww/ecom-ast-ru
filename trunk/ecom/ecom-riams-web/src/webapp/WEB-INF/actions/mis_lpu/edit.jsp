@@ -194,11 +194,27 @@
         <tr>
           <td width="50%" valign="top" style="padding-right: 1em">
             <msh:ifInRole roles="/Policy/Mis/LpuArea/View" guid="f5cfaca8-9a26-4a1e-8ca9-819aeaa15ca3">
-              <msh:section title="Список участков" guid="8250a7a7-0eda-45ce-86d1-16e43572a813">
+              <msh:section title="Список участков ЛПУ" guid="8250a7a7-0eda-45ce-86d1-16e43572a813">
                 <ecom:parentEntityListAll formName="mis_lpuAreaForm" attribute="areas" guid="8deb695e-26d6-41fa-aade-93bbf6e11870" />
                 <msh:table name="areas" action="entityParentView-mis_lpuArea.do" idField="id" guid="0c4751af-fab8-4406-9aaa-41551c505a4a">
                   <msh:tableColumn columnName="Номер участка" property="number" guid="26f55aee-878d-4e4f-acc2-58cd16049353" />
                   <msh:tableColumn columnName="Тип" property="typeName" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
+                </msh:table>
+              </msh:section>
+              <msh:section title="Список участков подразделений ЛПУ" guid="8250a7a7-0eda-45ce-86d1-16e43572a813">
+              <ecom:webQuery name="areaList" nativeSql="select la.id  
+              	,la.number as number
+				,vat.name as vatName
+				,lpu.name as lpuName
+				from mislpu lpu
+				left join lpuarea la on la.lpu_id=lpu.id
+				left join vocareatype vat on vat.id=la.type_id
+				where lpu.parent_id=${param.id} and la.id is not null "/>
+                <ecom:parentEntityListAll formName="mis_lpuAreaForm" attribute="areas" guid="8deb695e-26d6-41fa-aade-93bbf6e11870" />
+                <msh:table name="areaList" action="entityParentView-mis_lpuArea.do" idField="1" guid="0c4751af-fab8-4406-9aaa-41551c505a4a">
+                  <msh:tableColumn columnName="Номер участка" property="2" guid="26f55aee-878d-4e4f-acc2-58cd16049353" />
+                  <msh:tableColumn columnName="Тип" property="3" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
+                  <msh:tableColumn columnName="Подразделение" property="4" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
                 </msh:table>
               </msh:section>
             </msh:ifInRole>
