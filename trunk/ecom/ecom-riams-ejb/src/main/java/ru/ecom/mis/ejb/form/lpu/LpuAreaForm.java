@@ -31,7 +31,21 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ADynamicParentSecurityInterceptor(LpuAreaDynamicSecurity.class)
 
 public class LpuAreaForm extends IdNameCommentEntityForm {
-    /** ЛПУ */
+    /** ЛПУ для изменения */
+	@Comment("ЛПУ для изменения")
+	public Long getChangeLpu() {return theChangeLpu;}
+	public void setChangeLpu(Long aChangeLpu) {theChangeLpu = aChangeLpu;}
+	/** ЛПУ для изменения */
+	private Long theChangeLpu;
+	
+	/** Участок для изменения */
+	@Comment("Участок для изменения")
+	public Long getChangeLpuArea() {return theChangeLpuArea;}
+	public void setChangeLpuArea(Long aChangeLpuArea) {theChangeLpuArea = aChangeLpuArea;}
+	/** Участок для изменения */
+	private Long theChangeLpuArea;
+	
+	/** ЛПУ */
     @Persist
     public Long getLpu() { return theLpu ; }
     public void setLpu(Long aLpu) { theLpu = aLpu ; }
