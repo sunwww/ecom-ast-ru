@@ -426,6 +426,26 @@ public class PatientFond extends BaseEntity{
 	/** Пациент */
 	private Patient thePatient;
 
+	/** Прикрепление обновлено */
+	@Comment("Прикрепление обновлено")
+	public Boolean getIsAttachmentUpdate() {return theIsAttachmentUpdate;}
+	public void setIsAttachmentUpdate(Boolean aIsAttachmentUpdate) {theIsAttachmentUpdate = aIsAttachmentUpdate;}
+	/** Прикрепление обновлено */
+	private Boolean theIsAttachmentUpdate;
+	
+	/** Полис обновлен */
+	@Comment("Полис обновлен")
+	public Boolean getIsPolicyUpdate() {return theIsPolicyUpdate;}
+	public void setIsPolicyUpdate(Boolean aIsPolicyUpdate) {theIsPolicyUpdate = aIsPolicyUpdate;}
+	/** Полис обновлен */
+	private Boolean theIsPolicyUpdate;
+
+	/** Документы обновлены */
+	@Comment("Документы обновлены")
+	public Boolean getIsDocumentUpdate() {return theIsDocumentUpdate;}
+	public void setIsDocumentUpdate(Boolean aIsDocumentUpdate) {theIsDocumentUpdate = aIsDocumentUpdate;}
+	/** Документы обновлены */
+	private Boolean theIsDocumentUpdate;
 	/** Пациент обновлен */
 	@Comment("Пациент обновлен")
 	public Boolean getIsPatientUpdate() {return theIsPatientUpdate;}
