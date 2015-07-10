@@ -986,7 +986,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 } else if (value instanceof String) {
                 	val2 = new BigDecimal((String)value) ;
                 } else {
-                	val2 = new BigDecimal((String)value);
+                	val2 = new BigDecimal(value!=null?"0"+(String)value:"0");
                 }
                 //val2 = val1+val2 ;
                 String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
