@@ -20,17 +20,17 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
-	public boolean updatePatientByAutoFondOneRecord(String aPatientFondId, String aCheckId
+	public boolean updateDataByFondAutomatic(String aPatientFondId, String aCheckId
 			, boolean isUpdatePatient, boolean isUpdateDocument, boolean isUpdatePolicy, boolean isUpdateAttachment
 			, HttpServletRequest aRequest) throws NamingException {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
-		return service.updateDataByFondAutomatic(null, Long.valueOf(aPatientFondId)
+		return service.updateDataByFondAutomatic(Long.valueOf(aPatientFondId)
 				, Long.valueOf(aCheckId), isUpdatePatient, isUpdateDocument
 				, isUpdatePolicy, isUpdateAttachment);
 		
 	}
-	public String checkAllPatients(HttpServletRequest aRequest) throws Exception {
-		return FondWebService.checkAllPatientsByFond(aRequest).toString(); 
+	public String checkAllPatients(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) throws Exception {
+		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aRequest).toString(); 
 	}
 	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
