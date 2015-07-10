@@ -46,6 +46,7 @@ import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 /**
  * @author  azviagin
@@ -448,6 +449,12 @@ public class AddressPointServiceBean implements IAddressPointService {
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
     WebQueryResult res = new WebQueryResult();
+    public void setExportDate (String aDate, String aAttachmentId) {
+    	if (aDate==null||aDate.equals("")) {
+    		aDate=DateFormat.formatToDate(new java.util.Date());
+    	}
+    	theManager.createNativeQuery("update lpuattachedbydepartment set exportDate=to_date('"+aDate+"','dd.MM.yyyy') where id="+aAttachmentId).executeUpdate();
+    }
     public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
     		, List<Object[]> listPat, String[][] aProps
     		) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
@@ -485,6 +492,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 					xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 	    		}
 	    		xmlDoc.newElement(zap, "REFREASON", "");
+	    		setExportDate(null, pat[pat.length-1].toString());
 	    	}
     		
     		
