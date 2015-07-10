@@ -14,9 +14,11 @@ import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 /**
  */
 public interface IPatientService {
-	public boolean updateDataByFondAutomatic(Long aPatientId, Long aPatientFondId, Long aCheckId
+	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException; 
+	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday1, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
+	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
 			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
-	public PatientFondCheckData getNewPFCheckData(); 
+	public PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment); 
 	public float getImageCompress() ;
 	public String getImageDir();
 	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
