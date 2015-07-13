@@ -43,7 +43,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
     		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
-    		String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "0", aRequest);
+    		//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "1", aRequest);
     		String typeSex=ActionUtil.updateParameter("PatientAttachment", "typeSex", "3", aRequest);
     		boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -92,7 +92,9 @@ public class AttachmentByLpuAction extends BaseAction {
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
 	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
 	        } else if (typeChange!=null&&typeChange.equals("2")) {
-	        	sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
+	        	sqlAdd.append(" and (lp.dateFrom<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')" +
+	        	" or (lp.dateTo is not null and lp.dateTo<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')))");
+	        	//sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
 	        }
     		if (form.getChangedDateFrom()!=null&&!form.getChangedDateFrom().equals("")) {
  	        	sqlAdd.append(" and (coalesce(lp.editDate,lp.createDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )") ;
@@ -118,7 +120,6 @@ public class AttachmentByLpuAction extends BaseAction {
     		}
     		
     		if (typeRead!=null&&typeRead.equals("1")) {
-    			System.out.println("ФФФФФФ = typeRead=1");
 //    			String fs = null;
     			WebQueryResult fs = new WebQueryResult();
     			boolean bNeedDivide = true;
@@ -128,7 +129,7 @@ public class AttachmentByLpuAction extends BaseAction {
     			if (typeWork.equals("1")) { 
     				fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, typeXmlFormat);
+		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, "1");
     			} else {
     				StringBuilder sqlAdd1= new StringBuilder() ;
     				
@@ -163,15 +164,14 @@ public class AttachmentByLpuAction extends BaseAction {
 		        	form.setFilename("---") ;
 		        }
 	    	} else {
-	    		System.out.println("ФФФФФФ = typeRead=2");
-	    		//if (checkLpu) {
+	    		if (checkLpu) {
 		    		if (form.getLpu()!=null&&form.getLpu()>0) {	
 		    			sqlAdd.append(" and lp.lpu_id = ").append(form.getLpu());
 		    		}
 		    		if (form.getArea()!=null&&form.getArea()>0) {
 		    			sqlAdd.append(" and lp.area_id=").append(form.getArea());
 		    		}
-	    		//}
+	    		}
 	    		
 	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
 	    	}
