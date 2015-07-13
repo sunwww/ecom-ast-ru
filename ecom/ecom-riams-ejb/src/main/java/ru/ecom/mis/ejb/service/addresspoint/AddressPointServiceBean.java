@@ -87,7 +87,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	
     		StringBuilder sql = new StringBuilder();
     		try{
-/*    		sql.append("update lpuattachedbydepartment att set company_id=(select smo.id from medpolicy mp left join reg_ic smo on smo.id=mp.company_id "+ 
+    		sql.append("update lpuattachedbydepartment att set company_id=(select smo.id from medpolicy mp left join reg_ic smo on smo.id=mp.company_id "+ 
     				"where mp.patient_id=att.patient_id and mp.actualdatefrom is not null and mp.dtype='MedPolicyOmc' "+
     				"and smo.omccode !=''order by actualdatefrom desc limit 1) ");
     		if (needUpdateAll!=null && needUpdateAll.equals("YES")) {
@@ -96,8 +96,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     			 sql.append(" where company_id is null");
     		}
         	int i = theManager.createNativeQuery(sql.toString()).executeUpdate();
-        	return "Успешно обновлено "+i+ " записей";*/
-    			sql.append("from LpuAttachedByDepartment ");
+        	return "Успешно обновлено "+i+ " записей";
+    			
+        	} catch (Exception e) {
+        		sql.setLength(0);
+        		sql.append("from LpuAttachedByDepartment ");
         		if (needUpdateAll!=null && needUpdateAll.equals("YES")) {
         		} else {
         			 sql.append(" where company_id is null");
@@ -111,26 +114,17 @@ public class AddressPointServiceBean implements IAddressPointService {
 								.getResultList();
 						if (!mpList.isEmpty()) {
 							i++;
-						//	System.out.println("-----CREATE COMPANY in LABD, i="+i+", pat = "+att.getPatient().getPatientInfo());
 							att.setCompany(mpList.get(0).getCompany());
 							theManager.persist(att);	
 						}
-					} catch (javax.persistence.NoResultException e) {
+					} catch (javax.persistence.NoResultException ee) {
 						// TODO Auto-generated catch block
 						System.out.println("NoResultExceprion: "+att.getPatient().getPatientInfo());
-						e.printStackTrace();
+						ee.printStackTrace();
 					}
-        			
         		}
-        		return "Обновлено " + i + " записей";
-        	} catch (Exception e) {
-        		sql.setLength(0);
-        		
-        		
-        		//e.printStackTrace();
-        		e.printStackTrace();//+e.toString();
+        		return "Обновлено " + i + " записей.";
         	}
-    		return "ERROR";
     }
     public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
@@ -275,7 +269,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
     	String[][] props = null;
-    	if (xmlFormat!=null&&xmlFormat.equals("0")){ //OLD FORMAT
+    	if (xmlFormat!=null&&xmlFormat.equals("0")){ //OLD FORMAT  //Не используем
     		props = new String[][] {
     				{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
     				,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
