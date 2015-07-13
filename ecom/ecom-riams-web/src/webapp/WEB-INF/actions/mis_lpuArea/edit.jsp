@@ -74,8 +74,7 @@
       <hr />
       <msh:ifFormTypeAreViewOrEdit formName="mis_lpuAreaForm" guid="b0b9ca4d-8f54-4f15-87a7-34b467ed10d5">
         <msh:sideLink key="ALT+3" roles="/Policy/Mis/LpuAreaAddressText/Create" params="id" action="/entityParentPrepareCreate-mis_lpuAreaAddressText" name="Добавить прикрепленные дома" guid="84c60b19-bebb-4109-9e22-8a20e6dcc0b0" />
-        <msh:sideLink key="ALT+5" roles="/Policy/Jaas/SecPolicy/Create" params="id" action="/mis_lpuAreaUpdateJaasPolicy" name="Перекрепить" title="Перекрепить население" guid="525ebc5e-181a-4ded-84ec-228d01869605" confirm="Перекрепить все население?" />
-        <msh:sideLink key="ALT+6" roles="/Policy/Mis/LpuArea/View" params="id" action="/mis_bypassAreaExcelExport.do?type=area" name="Печать обходного листа" guid="b2a729f4-c83e-45af-ae91-a905d22ec44f" />
+        <msh:sideLink key="ALT+6" roles="/Policy/Mis/LpuArea/View" params="id" action="/javascript:window.location.href='mis_bypass_report.do?.do?area='+$('id').value+'&lpu='+$('lpu').value" name="Печать обходного листа" guid="b2a729f4-c83e-45af-ae91-a905d22ec44f" />
         <msh:sideLink key="ALT+DEL" roles="/Policy/Mis/LpuArea/Delete" params="id" action="/entityParentDeleteGoParentView-mis_lpuArea" name="Удалить" confirm="Удалить участок?" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
         <msh:sideLink roles="/Policy/Mis/LpuArea/View" action="/javascript:{$('changeArea').style.display='block';}" name="Перекрепить на другой участок" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
       </msh:ifFormTypeAreViewOrEdit>
