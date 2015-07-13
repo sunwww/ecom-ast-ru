@@ -406,11 +406,11 @@
     
 	 <%    if (typeRead!=null && (typeRead.equals("2"))) {%>
    <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="250" nativeSql="
-		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'yyyy-mm-dd') as birthday
+		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
     	 , p.commonNumber
     	 , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik
-    	 , case when lp.id is null then '2013-01-01' else coalesce(to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01') end as tprik
-    	 , to_char(lp.dateTo,'yyyy-mm-dd') as otkprikdate
+    	 , case when lp.id is null then '01.01.2013' else coalesce(to_char(lp.dateFrom,'dd.MM.yyyy'),'01.01.2014') end as tprik
+    	 , to_char(lp.dateTo,'dd.MM.yyyy') as otkprikdate
          , case when lp.dateTo is null then 'Прикреплен' else 'Откреплен' end as otkorprik
          , lp.defectperiod
          , lp.defecttext
