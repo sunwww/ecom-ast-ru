@@ -1,4 +1,8 @@
 @charset "utf-8";
+@media print {
+	div#header ul#mainMenu,div#header ul#user,div#side { display: none; }
+	div#content {margin-left: 0em;}
+}
 
 .instant_message { padding: 5px; font-size: 12px; font-family: Arial; visibility: hidden;
 position: absolute;
