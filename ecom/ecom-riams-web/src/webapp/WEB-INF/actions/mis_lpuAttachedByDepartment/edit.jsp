@@ -23,7 +23,7 @@
 		            <msh:autoComplete fieldColSpan="5" property="area" label="Участок" horizontalFill="true"
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>	
-		                        <msh:row>
+		        <msh:row>
                     <msh:autoComplete vocName="vocInsuranceCompany" property="company" label="Страховая&nbsp;компания" horizontalFill="true" fieldColSpan="5"/>
                 </msh:row>	
 		        <msh:row>
@@ -41,10 +41,13 @@
 			</msh:panel>
 			<msh:panel>
 		 <msh:row>
-        	<msh:separator label="Информация о дефекте" colSpan="6"/>
+        	<msh:separator label="Информация о подаче в ФОМС" colSpan="6"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="defectPeriod"/>
+        	<msh:textField property="exportDate" label="Дата последней выгрузки в ФОМС/СК" viewOnlyField="true" />
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="defectPeriod" label="Дата импорта ответа из ФОМС/СК" viewOnlyField="true"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="defectText" fieldColSpan="200" horizontalFill="true"/>
@@ -69,6 +72,7 @@
         	<msh:label property="editDate" label="Дата редактирования"/>
         	<msh:label property="editTime" label="время"/>
         	<msh:label property="editUsername" label="пользователь"/>
+        	<input type='button' onclick='getAreaByPatient()' value='+'>
         </msh:row>   
                 <msh:submitCancelButtonsRow colSpan="2"/>
             </msh:panel>
@@ -99,7 +103,28 @@
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_lpuAttachedByDepartmentForm"/>
     </tiles:put>
     <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
+  <msh:ifFormTypeIsCreate formName="mis_lpuAttachedByDepartmentForm">
   <script type="text/javascript">
+  
+  onload=function() {
+	  AttachmentService.getAreaByPatient($('patient').value, {
+			  callback: function(aResult) {
+				  if (aResult!=null&&aResult!=':::::') {
+					  var arr = aResult.split(":");
+					  $('lpu').value=arr[0];
+					  $('lpuName').value=arr[1];
+					  $('area').value=arr[2];
+					  $('areaName').value=arr[3];
+					  $('company').value=arr[4];
+					  $('companyName').value=arr[5];
+					  
+				  }}
+			  });
+  }
+  </script>
+  </msh:ifFormTypeIsCreate>
+  <script type="text/javascript">
+ 
   function cleanDefect () {
 	  if (confirm("Очистить данные о дефекте?")){
 	  AttachmentService.cleanDefect($('id').value, {
