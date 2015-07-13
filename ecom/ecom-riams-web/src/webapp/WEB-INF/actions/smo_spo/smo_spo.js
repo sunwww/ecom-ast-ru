@@ -67,3 +67,16 @@ function createNewVisitByDenied(aForm,aCtx) {
 	aCtx.invokeScript("SmoVisitService", "createNewVisitByDenied",department,dateBegin,dateEnd) ;
 	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do?department="+department) ;
 }
+function createNewVisitByDeniedDiary(aForm,aCtx) {
+	var vocWorkFunctions = aCtx.request.getParameter("vocWorkFunctions") ;
+	var vocWorkFunction = aCtx.request.getParameter("vocWorkFunction") ;
+	var filterMkb = aCtx.request.getParameter("filterMkb") ;
+	var dateBegin = aCtx.request.getParameter("dateBegin") ;
+	var dateEnd = aCtx.request.getParameter("dateEnd") ;
+	
+	
+	
+	aCtx.invokeScript("SmoVisitService", "createNewVisitByDeniedDiary",vocWorkFunctions,vocWorkFunction,filterMkb,dateBegin,dateEnd) ;
+	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do") ;
+
+}
