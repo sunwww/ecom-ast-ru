@@ -25,7 +25,7 @@
 	String typeAreaCheck=ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
 	String typeWork=ActionUtil.updateParameter("PatientAttachment","typeWork","1", request) ;
 	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
-	String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "1", request);
+	//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "2", request);
 
   %>
   
@@ -160,7 +160,7 @@
 	    	<input type="radio" name="typeDivide" value="2">  Не разбивать
 	    </td>
        </msh:row>
-          <msh:row>
+         <%--  <msh:row>
         <td class="label" title="Формат файла  (typeXmlFormat)" colspan="1"><label for="typeXmlFormatName" id="typeXmlFormatLabel">Тип файла:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeXmlFormat" value="0">  Старый (до 01.07.2015)
@@ -168,7 +168,7 @@
 	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	    	<input type="radio" name="typeXmlFormat" value="1">  Новый (с 01.07.2015)
 	    </td>
-       </msh:row>
+       </msh:row> --%>
       <msh:row>
         <td class="label" title="Пациенты  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отображать пациентов:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -265,7 +265,7 @@
       checkFieldUpdate('typeDivide','${typeDivide}',1) ;
       checkFieldUpdate('typeWork','${typeWork}',1) ;
       checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
-      checkFieldUpdate('typeXmlFormat', '${typeXmlFormat}',1);
+      //checkFieldUpdate('typeXmlFormat', '${typeXmlFormat}',1);
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
