@@ -167,7 +167,7 @@
 
     	<!-- Время сборки -->
     	<tstamp>
-		      <format property="build.time" pattern="yyyy.MM.dd.hh.mm"/>
+		      <format property="build.time" pattern="yyyy.MM.dd HH:mm"/>
 	    </tstamp>
 		<echo file="./target/webapp/WEB-INF/buildnumber.txt" message="${build.time}" />
 
