@@ -87,6 +87,17 @@ function hideMessage(){
 	MessageObj.style.visibility="hidden";
 	MessageObj.innerHTML = "" ;
 }
+var funcemergencymessage = {
+		func: function() {
+			VocService.getMessage( {
+		        callback: function(aName) {
+		        	alert(aName) ;
+		        	hideEmergencyUserMessage(aName) ;
+		        	setTimeout(120000,funcemergencymessage.func) ;
+		        }
+		    } ) ;
+		}
+}
 function hideUserMessage(aId) {
 	VocService.hiddenMessage(aId, {
         callback: function(aName) {
