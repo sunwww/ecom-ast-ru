@@ -18,6 +18,7 @@
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="result_death_sql" nativeSql="select id,name from VocHospitalizationResult where code='11'"/>
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="orderType_amb_sql" nativeSql="select id,name from Omc_Frm where voc_code='К'"/>
+  ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_direct_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='2'"/>
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
   ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
@@ -159,7 +160,8 @@
   	StringBuilder paramHref= new StringBuilder() ;
   	
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
-  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
+  	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
+  	paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("departments","departments", "sloa.department_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("serviceStream", "sls.serviceStream_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
@@ -185,6 +187,7 @@
   	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
   	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
   	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
+  	ActionUtil.getValueByList("diag_typeReg_direct_sql", "diag_typeReg_direct", request) ;
   	//request.setAttribute("diag_typeReg_cl", "4") ;
   	//request.setAttribute("diag_typeReg_pat", "5") ;
   	//request.setAttribute("diag_priority_m", "1") ;
@@ -262,24 +265,36 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="2"> по нозоологиям (выписанные)
         </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="3"> по нозоологиям (переведенные)
+        </td>
+       </msh:row>
+        <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="4"> по нозоологиям (выпис.+перев.)
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="5"> по нозоологиям (направит.)
+        </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="3"> по нозоологиям (умершие)
+        	<input type="radio" name="typeView" value="6"> по нозоологиям (умершие)
         </td>
        </msh:row>
         <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="4"> по операциям
+        	<input type="radio" name="typeView" value="7"> по операциям
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-        	<input type="radio" name="typeView" value="5"> по выбывшие по доп.статусу
+        	<input type="radio" name="typeView" value="8"> по выбывшие по доп.статусу
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="6"> по операции без кода
+        	<input type="radio" name="typeView" value="9"> по операции без кода
         </td>
        </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+	        <ecom:oneToManyOneAutocomplete label="Отделения" vocName="vocLpuHospOtdAll" property="departments" colSpan="10"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип стационара" vocName="vocHospType"/>
@@ -371,172 +386,212 @@
     String view = (String)request.getAttribute("typeView") ;
     
     if (view.equals("1")) {
-    if (date!=null && !date.equals("")) {
-    	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
-    	%>
-    
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
-    <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" 
-   nameFldSql="v1_report14swod" nativeSql="
-select 
-'&department='||sloa.department_id,ml.name as mlname
-,count(case when sls.result_id!=${result_death} then sls.id else null end) as cntNoDeath
-,count(case when sls.result_id!=${result_death} and sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
-,count(case when sls.result_id!=${result_death} and sls.emergency='1' and sls.orderType_id='3' then sls.id else null end) as cntNoDeathEmerSk
-,sum(case when sls.result_id!=${result_death} then
-case 
- when (sls.dateFinish-sls.dateStart)=0 then 1 
- when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
- else (sls.dateFinish-sls.dateStart)
-end
-else 0 end) as sumDays
-,count(case when sls.result_id=${result_death} then sls.id else null end) as cntDeath
-,count(distinct sls.patient_id) as cntPat
-,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
-,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
-,sum(case when sls.result_id=${result_death} then
-case 
- when (sls.dateFinish-sls.dateStart)=0 then 1 
- when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
- else (sls.dateFinish-sls.dateStart)
-end
-else 0 end) as sumDaysDeath
- from medcase sls
-left join Patient p on p.id=sls.patient_id
-left join MedCase sloa on sloa.parent_id=sls.id
-left join MisLpu ml on ml.id=sloa.department_id
-left join BedFund bf on bf.id=sloa.bedFund_id
-left join Address2 ad on p.address_AddressId=ad.addressid
-left join Omc_Oksm oo on oo.id=p.nationality_id
-where 
-sls.dtype='HospitalMedCase' and sls.dateFinish 
-between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-${paramSql} and sloa.dateFinish is not null
-${age_sql}
-group by sloa.department_id,ml.name
-order by ml.name
-" />
-    <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
-      <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="6"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Умерло" property="7"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Умерло (койко-дней)" property="11"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="8"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="9"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="10"/>
-    </msh:table>
-    
-    </msh:sectionContent>
-    </msh:section>
-    <%} else if (period!=null && !period.equals("") 
-    ) {
-    	
-    	String[] obj = period.split("-") ;
-    	String dateBegin=obj[0] ;
-    	dateEnd=obj[1];
-    	request.setAttribute("dateBegin", dateBegin);
-    	request.setAttribute("dateEnd", dateEnd);
-    	request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin, dateEnd,request));
-    	
-    		%>
-    <msh:section>
-    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
-    </msh:section>
-   
-    <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
-select 
-sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-where vrspt.classname='F14_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
-) as listStr
-,ss.code as sscode
-,p.lastname||' '||p.firstname||' '||p.middlename as fio
-,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
--cast(to_char(p.birthday,'yyyy') as int)
-+(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(sls.${dateAgeFld},'dd') as int) 
-- cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
-<0)
-then -1 else 0 end) as age
-,to_char(sls.dateStart,'dd.mm.yyyy') as slsdateStart
-,to_char(sls.dateFinish,'dd.mm.yyyy') as slsdateFinish
-,case 
- when (sls.dateFinish-sls.dateStart)=0 then 1 
- when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
- else (sls.dateFinish-sls.dateStart)
-end
- as cntDays
- ,mkb.code as mkbcode
- ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
-,case when sls.emergency='1' then 'Да' else null end as emer
-,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
+        if (date!=null && !date.equals("")) {
+           
+            request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
+            %>
+       
+        <msh:section>
+        <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+        </msh:section>
+      
+        <msh:section>
+        <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
+        <msh:sectionContent>
+        ${isReportBase}
+        <ecom:webQuery isReportBase="${isReportBase}" name="report14swod"
+       nameFldSql="v1_report14swod" nativeSql="
+    select
+    ${departmentsSqlId} as mlid,ml.name as mlname
+    ,count(case when sls.result_id!=${result_death}  and vho.code='1' then sls.id else null end) as cntNoDeath
+    ,count(case when sls.result_id!=${result_death}  and vho.code='1' and sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
+    ,count(case when sls.result_id!=${result_death}  and vho.code='1' and sls.emergency='1' and sls.orderType_id='3' then sls.id else null end) as cntNoDeathEmerSk
+    ,sum(case when sls.result_id!=${result_death} then
+    case
+     when (sls.dateFinish-sls.dateStart)=0 then 1
+     when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1)
+     else (sls.dateFinish-sls.dateStart)
+    end
+    else 0 end) as sumDays
+    ,count(case when sls.result_id=${result_death} then sls.id else null end) as cntDeath
+    ,count(distinct sls.patient_id) as cntPat
+    ,count(distinct case when (oo.id is null or oo.voc_code='643') and (ad.addressid is null or ad.kladr not like '30%') then sls.patient_id else null end) as cntPatInog
+    ,count(distinct case when (oo.id is not null and oo.voc_code!='643') then sls.patient_id else null end) as cntPatInostr
+    ,sum(case when sls.result_id=${result_death} then
+    case
+     when (sls.dateFinish-sls.dateStart)=0 then 1
+     when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1)
+     else (sls.dateFinish-sls.dateStart)
+    end
+    else 0 end) as sumDaysDeath
+    ,count(case when sls.result_id!=${result_death} and vho.code!='1' then sls.id else null end) as cntNoDeathTransfer
+     from medcase sls
+    left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+    left join Patient p on p.id=sls.patient_id
+    left join MedCase sloa on sloa.parent_id=sls.id
+    left join MisLpu ml on ml.id=sloa.department_id
+    left join BedFund bf on bf.id=sloa.bedFund_id
+    left join Address2 ad on p.address_AddressId=ad.addressid
+    left join Omc_Oksm oo on oo.id=p.nationality_id
+    where
+    sls.dtype='HospitalMedCase' and sls.dateFinish
+    between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+    ${paramSql} and sloa.dateFinish is not null
+    ${age_sql}
+    group by sloa.department_id,ml.name
+    order by ml.name
+    " />
+        <msh:table name="report14swod"
+        viewUrl="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}"
+         action="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+          <msh:tableColumn columnName="Отделение" property="2" />
+          <msh:tableColumn isCalcAmount="true" columnName="Кол-во переведнных" property="12"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Кол-во выписанных" property="3"/>
+          <msh:tableColumn isCalcAmount="true" columnName="из них доставленых по экстренным показаниям" property="4"/>
+          <msh:tableColumn isCalcAmount="true" columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="5"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Проведено выписанными койко-дней" property="6"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Умерло" property="7"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Умерло (койко-дней)" property="11"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="8"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="9"/>
+          <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностр (чел)" property="10"/>
+        </msh:table>
+       
+        </msh:sectionContent>
+        </msh:section>
+        <%} else if (period!=null && !period.equals("")
+        ) {
+           
+            String[] obj = period.split("-") ;
+            String dateBegin=obj[0] ;
+            dateEnd=obj[1];
+            request.setAttribute("dateBegin", dateBegin);
+            request.setAttribute("dateEnd", dateEnd);
+            request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin, dateEnd,request));
+           
+                %>
+        <msh:section>
+        <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+        </msh:section>
+      
+        <msh:section>
+        <msh:sectionTitle>Список пациентов ${param.strname}
+       
+        </msh:sectionTitle>
+        <msh:sectionContent>
+        ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    select
+    sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt 
+    left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
+    where vrspt.classname='F14_DIAG' and coalesce(
+        (select mkb.code from Diagnosis diag
+        left join vocidc10 mkb on mkb.id=diag.idc10_id
+        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+        where sls.id=diag.medcase_id 
+        and vdrt.id='${diag_typeReg_pat}'
+        and vpd.id='${diag_priority_m}'
+        )
+        ,
+        (select mkb.code from Diagnosis diag
+        left join vocidc10 mkb on mkb.id=diag.idc10_id
+        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+        where sls.id=diag.medcase_id 
+        and vdrt.id='${diag_typeReg_cl}'
+        and vpd.id='${diag_priority_m}'
+        )
+        ) between rspt.codefrom and rspt.codeto
+    ) as listStr
+    ,ss.code as sscode
+    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
+    ,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
+    -cast(to_char(p.birthday,'yyyy') as int)
+    +(case when (cast(to_char(sls.${dateAgeFld}, 'mm') as int)
+    -cast(to_char(p.birthday, 'mm') as int)
+    +(case when (cast(to_char(sls.${dateAgeFld},'dd') as int)
+    - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
+    <0)
+    then -1 else 0 end) as age
+    ,to_char(sls.dateStart,'dd.mm.yyyy') as slsdateStart
+    ,to_char(sls.dateFinish,'dd.mm.yyyy') as slsdateFinish
+    ,case
+     when (sls.dateFinish-sls.dateStart)=0 then 1
+     when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1)
+     else (sls.dateFinish-sls.dateStart)
+    end
+     as cntDays
+     ,coalesce(
+        (select mkb.code from Diagnosis diag
+        left join vocidc10 mkb on mkb.id=diag.idc10_id
+        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+        where sls.id=diag.medcase_id 
+        and vdrt.id='${diag_typeReg_pat}'
+        and vpd.id='${diag_priority_m}'
+        )
+        ,
+        (select mkb.code from Diagnosis diag
+        left join vocidc10 mkb on mkb.id=diag.idc10_id
+        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+        where sls.id=diag.medcase_id 
+        and vdrt.id='${diag_typeReg_cl}'
+        and vpd.id='${diag_priority_m}'
+        )
+        ) as mkbcode
+     ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
+    ,case when sls.emergency='1' then 'Да' else null end as emer
+    ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
+    ,vho.name as vhoname
+     from medcase sls
+    left join StatisticStub ss on ss.id=sls.statisticStub_id
+    left join VocHospitalizationResult vhr on vhr.id=sls.result_id
+    left join MedCase sloa on sloa.parent_id=sls.id
+    left join BedFund bf on bf.id=sloa.bedFund_id
+    left join Patient p on p.id=sls.patient_id
+    left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 
- from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join diagnosis diag on sls.id=diag.medcase_id
-left join vocidc10 mkb on mkb.id=diag.idc10_id
-left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-left join MedCase sloa on sloa.parent_id=sls.id
-left join BedFund bf on bf.id=sloa.bedFund_id
-left join Patient p on p.id=sls.patient_id
-where sls.dtype='HospitalMedCase' 
-and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy')
+    where sls.dtype='HospitalMedCase'
+    and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')
+        and to_date('${dateEnd}','dd.mm.yyyy')
 
-and sloa.dateFinish is not null
-${paramSql}
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-${age_sql}  
+    and sloa.dateFinish is not null
+    ${paramSql}
+    ${age_sql} 
 
-group by sls.id
-,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
-,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,bf.addCaseDuration,sls.result_id,mkb.code
-order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
-    viewUrl="entityShortView-stac_ssl.do" 
-     action="entityView-stac_ssl.do" idField="1">
-      <msh:tableColumn columnName="##" property="sn" />
-      <msh:tableColumn columnName="Строки отчета" property="2" />
-      <msh:tableColumn columnName="№стат. карт" property="3" />
-      <msh:tableColumn columnName="ФИО пациента" property="4" />
-      <msh:tableColumn columnName="Возраст" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6"/>
-      <msh:tableColumn columnName="Дата выписки" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="9"/>
-      <msh:tableColumn columnName="Умер?" property="10"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-      <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>    		
-    		<%
-    	} else {%>
-    	<i>Нет данных </i>
-    	<% }
-    } 
+    group by sls.id
+    ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
+    ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
+    ,bf.addCaseDuration,sls.result_id,vho.name
+    order by p.lastname,p.firstname,p.middlename " />
+        <msh:table name="journal_surOperation"
+        viewUrl="entityShortView-stac_ssl.do"
+         action="entityView-stac_ssl.do" idField="1">
+          <msh:tableColumn columnName="##" property="sn" />
+          <msh:tableColumn columnName="Строки отчета" property="2" />
+          <msh:tableColumn columnName="№стат. карт" property="3" />
+          <msh:tableColumn columnName="ФИО пациента" property="4" />
+          <msh:tableColumn columnName="Возраст" property="5" />
+          <msh:tableColumn columnName="Дата поступления" property="6"/>
+          <msh:tableColumn columnName="Дата выписки" property="7"/>
+          <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
+          <msh:tableColumn columnName="Диагноз" property="9"/>
+          <msh:tableColumn columnName="Умер?" property="10"/>
+          <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
+          <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+          <msh:tableColumn columnName="Исход" property="13"/>
+
+        </msh:table>
+        </msh:sectionContent>
+        </msh:section>           
+                <%
+            } else {%>
+            <i>Нет данных </i>
+            <% }
+        } 
     
-    if (view.equals("5")) {
+    if (view.equals("8")) {
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
@@ -586,8 +641,8 @@ group by vas.id,vas.name
 order by vas.name
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&department=${param.department}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}${departmentsUrlId}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}${departmentsUrlId}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Доп.статус" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во больных (чел)" property="3"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног (чел)" property="4"/>
@@ -700,8 +755,36 @@ order by p.lastname,p.firstname,p.middlename " />
     	<% }
     } 
     
-    if (view.equals("2")) {
+    if (view.equals("2")||view.equals("3")||view.equals("4")||view.equals("5")) {
+    	if (view.equals("2")) {
+    		request.setAttribute("outcomeSql", "and vho.code='1'") ;
+    		request.setAttribute("outcomeInfo", "выписанные");
+    	} else if (view.equals("3")) {
+    		request.setAttribute("outcomeSql", " and vho.code!='1'") ;
+    		request.setAttribute("outcomeInfo", "переведенные");
+    	} else if (view.equals("4")) {
+    		request.setAttribute("outcomeSql", " ") ;
+    		request.setAttribute("outcomeInfo", "выписанные и переведенные");
+    	} else if (view.equals("5")) {
+    		request.setAttribute("outcomeSql", " ") ;
+    		request.setAttribute("outcomeInfo", "направленные");
+    	} 
+    	if (view.equals("5")) {
+    		request.setAttribute("diagnosisCodeSql", " and vdrt.id='"+request.getAttribute("diag_typeReg_direct")+"' ") ;
+    	} else {
+    		request.setAttribute("diagnosisCodeSql", " and vdrt.id='"+request.getAttribute("diag_typeReg_cl")+"' and vpd.id='"+request.getAttribute("diag_priority_m")+"' and sls.result_id!='"+request.getAttribute("result_death")+"'") ;
+    	}
     if (date!=null && !date.equals("")) {
+	if (view.equals("2")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("3")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("4")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("5")) {
+		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.prevmedcase_id is null") ;
+    	} 
+
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
     
@@ -732,24 +815,23 @@ left join BedFund bf on bf.id=sloa.bedFund_id
 left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
 left join Patient p on p.id=sls.patient_id
+left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 where 
-sls.dtype='HospitalMedCase' and sls.dateFinish 
-between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+sls.dtype='HospitalMedCase' ${periodSql}
 and mkb.code between rspt.codefrom and rspt.codeto 
-${paramSql} and sloa.dateFinish is not null
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-and sls.result_id!='${result_death}'
+${paramSql} ${diagnosisCodeSql}
+ ${outcomeSql}
 ${age_sql} 
  
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
-    <msh:sectionTitle>Свод по нозоологиям (выписанные)
+    <msh:sectionTitle>Свод по нозоологиям (${outcomeInfo})
     
     	    <form action="print-report_14_2.do" method="post" target="_blank">
-	    Свод по нозоологиям (выписанные)
+	    Свод по нозоологиям (${outcomeInfo})
 	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (${outcomeInfo}) за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -757,13 +839,14 @@ order by vrspt.strCode
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
+
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
-      <msh:tableColumn columnName="Кол-во выписанных" property="5"/>
+      <msh:tableColumn columnName="Кол-во госпитализаций (${outcomeInfo})" property="5"/>
       <msh:tableColumn columnName="из них доставленых по экстренным показаниям" property="6"/>
       <msh:tableColumn columnName="из них экст. пациентов, доставленных скорой мед.помощью" property="7"/>
       <msh:tableColumn columnName="Проведено выписанными койко-дней" property="8"/>
@@ -780,17 +863,24 @@ order by vrspt.strCode
     	request.setAttribute("dateBegin", dateBegin);
     	request.setAttribute("dateEnd", dateEnd);
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin, dateEnd,request));
+	if (view.equals("2")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("3")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("4")) {
+		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
+    	} else if (view.equals("5")) {
+		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.prevmedcase_id is null") ;
+    	} 
+
     		%>
     <msh:section>
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Список пациентов ${param.strname}
-    
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    <msh:sectionTitle> 
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_surOperation_sql" name="journal_surOperation" nativeSql="
 select 
 sls.id as slsid,list(vrspt1.strCode) as listStr
 ,ss.code as sscode
@@ -815,7 +905,7 @@ end
  ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
 ,case when sls.emergency='1' then 'Да' else null end as emer
 ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
-
+,vho.name as vhoname
  from medcase sls
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
@@ -830,20 +920,30 @@ left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
 left join ReportSetTYpeParameterType rspt1 on mkb.code between rspt1.codefrom and rspt1.codeto
 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id
 left join Patient p on p.id=sls.patient_id
-where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy')
-and vrspt.id='${param.strcode}'
-and sloa.dateFinish is not null
+left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+where sls.dtype='HospitalMedCase' ${periodSql} and vrspt.id='${param.strcode}'
 ${paramSql}
-and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
-and sls.result_id!='${result_death}'
+${diagnosisCodeSql}
+ ${outcomeSql}
 ${age_sql}  
 and vrspt1.classname='F14_DIAG' 
 group by sls.id
 ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,bf.addCaseDuration,sls.result_id,mkb.code
+,bf.addCaseDuration,sls.result_id,mkb.code,vho.name
 order by p.lastname,p.firstname,p.middlename " />
+    <form action="print-stac_report14_r2.do" method="post" target="_blank">
+	    Реестр пациентов (${outcomeInfo}) ${param.strname}
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_surOperation_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр пациентов (${outcomeInfo}) ${param.strname} за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    ${isReportBase}
     <msh:table name="journal_surOperation" 
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
@@ -858,6 +958,7 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Диагноз" property="9"/>
       <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
       <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+      <msh:tableColumn columnName="Исход" property="13"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
@@ -866,7 +967,7 @@ order by p.lastname,p.firstname,p.middlename " />
     	<i>Нет данных </i>
     	<% }} 
     
-    if (view.equals("3")) {
+    if (view.equals("6")) {
         if (date!=null && !date.equals("")) {
         	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
         	%>
@@ -900,7 +1001,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
      
     ${paramSql} and sloa.dateFinish is not null
     and sls.result_id='${result_death}'
-    and case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then 
+    and 
+    coalesce(
     (select mkb.code from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
@@ -909,9 +1011,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vdrt.id='${diag_typeReg_pat}'
     and vpd.id='${diag_priority_m}'
     )
-    else 
-    (
-    select mkb.code from Diagnosis diag 
+    ,
+    (select mkb.code from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -919,7 +1020,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vdrt.id='${diag_typeReg_cl}'
     and vpd.id='${diag_priority_m}'
     )
-    end between rspt.codefrom and rspt.codeto
+    ) between rspt.codefrom and rspt.codeto
     ${age_sql}  
      
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
@@ -937,8 +1038,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table name="report14swod" 
-        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+        viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+         action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -1091,7 +1192,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
         	<i>Нет данных </i>
         	<% }} 
 
-    if (view.equals("6")) {
+    if (view.equals("9")) {
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
@@ -1136,8 +1237,8 @@ group by ms.id,ms.code,ms.name
 order by ms.code
 " />
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Код" property="2" />
       <msh:tableColumn columnName="Наименование" property="3" />
@@ -1223,7 +1324,7 @@ order by p.lastname,p.firstname,p.middlename " />
     
     } 
     }
-    if (view.equals("4")) {
+    if (view.equals("7")) {
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	%>
@@ -1269,9 +1370,10 @@ ${age_sql}
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
+
     <msh:table name="report14swod" 
-    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}&department=${param.department}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
+    viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Кол-во операций" property="4"/>
