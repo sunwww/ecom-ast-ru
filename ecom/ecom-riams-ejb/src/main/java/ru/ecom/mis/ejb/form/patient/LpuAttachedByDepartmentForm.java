@@ -203,22 +203,22 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	/** Дата создания */
 	private String theCreateDate;
 	
-	/** Период дефекта */
-	@Comment("Дата импорта")
+	/** Дата импорта результатов ФОМС */
+	@Comment("Дата импорта результатов ФОМС")
 	@Persist
 	public String getDefectPeriod() {return theDefectPeriod;}
 	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
-
+	/** Дата импорта результатов ФОМС */
+	private String theDefectPeriod;
+	
 	/** Текст дефекта */
 	@Comment("Текст дефекта")
 	@Persist
 	public String getDefectText() {return theDefectText;}
 	public void setDefectText(String aDefectText) {theDefectText = aDefectText;}
-
 	/** Текст дефекта */
 	private String theDefectText;
-	/** Дата импорта ( стар. Период дефекта ) */
-	private String theDefectPeriod;
+
 	
 	/** Страховая компания */
 	@Comment("Страховая компания")
@@ -245,4 +245,12 @@ public class LpuAttachedByDepartmentForm extends IdEntityForm {
 	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
 	/** Новый адрес */
 	private Boolean theNewAddress;
+	
+	/** Дата последней выгрузки в ФОМС */
+	@Comment("Дата последней выгрузки в ФОМС")
+	@Persist @DateString @DoDateString
+	public String getExportDate() {return theExportDate;}
+	public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
+	/** Дата последней выгрузки в ФОМС */
+	private String theExportDate;
 }
