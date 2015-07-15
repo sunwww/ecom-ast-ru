@@ -41,7 +41,7 @@
       <msh:section guid="b67c5be3-5330-4589-8da8-7888453aaeb8">
         
         <msh:sectionContent guid="6dd31b9f-5068-4961-9033-417c6e01ff13">
-          <ecom:webQuery name="countPopulation" nativeSql="select count(*) from lpuattachedbydepartment where area_id=${param.id}" />
+          <ecom:webQuery name="countPopulation" nativeSql="select count(distinct patient_id) from lpuattachedbydepartment where area_id=${param.id} and dateTo is null" />
           <msh:table name="countPopulation" action="/javascript:void()" idField="1">
             <msh:tableColumn columnName="Количество прикрепленного населения на участке" property="1" guid="e7ee8550-c34b-40bb-9aac-fcdd4da970e0" />
           </msh:table>
