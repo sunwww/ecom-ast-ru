@@ -46,4 +46,19 @@ public class VocExtDispHealthGroup extends VocBaseEntity{
 
 	/** Код диспансеризации */
 	private String theDispCode;
+	
+	/** Архивная */
+	@Comment("Архивная")
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** Архивная */
+	private Boolean theIsArchival;
+	
+	/** Срок действия */
+	@Comment("Срок действия")
+	public Long getValidityDays() {return theValidityDays;}
+	public void setValidityDays(Long aValidityDays) {theValidityDays = aValidityDays;}
+
+	/** Срок действия */
+	private Long theValidityDays;
 }
