@@ -25,4 +25,5 @@ public class VocVisitResult extends VocIdNameOmcCode {
 	private String theCodefamb;
 	/** Код федеральный по поликлинике */
 	private String theCodefpl;
+	
 }

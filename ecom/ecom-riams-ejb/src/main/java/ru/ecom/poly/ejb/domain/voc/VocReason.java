@@ -11,4 +11,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocReason extends VocIdNameOmcCode {
+	/** Код для талона */
+	@Comment("Код для талона")
+	public String getCodeTicket() {return theCodeTicket;}
+	public void setCodeTicket(String aCodeTicket) {theCodeTicket = aCodeTicket;}
+
+	/** Код для талона */
+	private String theCodeTicket;
 }

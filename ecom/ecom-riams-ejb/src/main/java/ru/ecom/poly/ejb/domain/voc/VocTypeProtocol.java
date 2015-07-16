@@ -38,4 +38,12 @@ public class VocTypeProtocol extends VocBaseEntity {
 	private Boolean theIsPrintTitle;
 	/** Печать подписи зав. отделения */
 	private Boolean theIsPrintAdministrator;
+	
+	/** Префикс к файлу */
+	@Comment("Префикс к файлу")
+	public String getPrefixPrint() {return thePrefixPrint;}
+	public void setPrefixPrint(String aPrefixPrint) {thePrefixPrint = aPrefixPrint;}
+
+	/** Префикс к файлу */
+	private String thePrefixPrint;
 }
