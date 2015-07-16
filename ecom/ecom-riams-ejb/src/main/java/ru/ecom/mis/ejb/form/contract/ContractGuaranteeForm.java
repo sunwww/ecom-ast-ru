@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -49,4 +50,13 @@ public class ContractGuaranteeForm extends IdEntityForm{
 	 * Договорная персона
 	 */
 	private Long theContractPerson;
+	
+	/** Лимит денег */
+	@Comment("Лимит денег")
+	@Persist
+	public String getLimitMoney() {return theLimitMoney;}
+	public void setLimitMoney(String aLimitMoney) {theLimitMoney = aLimitMoney;}
+
+	/** Лимит денег */
+	private String theLimitMoney;
 }
