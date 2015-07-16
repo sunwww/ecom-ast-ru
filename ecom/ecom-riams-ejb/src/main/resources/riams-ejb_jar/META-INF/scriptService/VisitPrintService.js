@@ -435,8 +435,8 @@ function printVisit(aCtx, aParams) {
 	}
 	
 	var invalidity_list_sql = "select vi.name" +
-			" ,case when (i.initial is true or i.initial='1') then 'ВПЕРВЫЕ' else 'ПОВТОРНО' end as c1" +
-			" ,case when (i.childhoodinvalid is true or i.childhoodinvalid='1') then 'ДА' else 'НЕТ' end as c2" +
+			" ,case when (i.initial='1') then 'ВПЕРВЫЕ' else 'ПОВТОРНО' end as c1" +
+			" ,case when (i.childhoodinvalid='1') then 'ДА' else 'НЕТ' end as c2" +
 			" from invalidity i " +
 			" left join vocinvalidity vi on vi.id=i.group_id " +
 			"where i.patient_id='"+visit.patient.getId()+"' order by i.id desc";
