@@ -86,8 +86,9 @@ function printInfoByPatient(aPatient,aCtx) {
 	map.put("areaText", areaText) ;
 	var ddList = new java.util.ArrayList() ;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
+		
 		var sqlD = "select to_char(lpcc.startdate,'dd.mm.yyyy') as p1ocode";
-		sqlD =sqlD+"  , to_char(lpcc.finishdate,'dd.mm.yyyy')  as p2ocode";
+		sqlD =sqlD+"  , to_char(coalesce(lpcc.finishdate,lpcc.transferdate),'dd.mm.yyyy')  as p2ocode";
 		sqlD =sqlD +" ,(select mkb.code||'#'||mkb.name from diagnosis d left";
 		sqlD =sqlD +" join vocidc10 mkb on mkb.id=d.idc10_id";
 		sqlD =sqlD +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id";
@@ -98,7 +99,7 @@ function printInfoByPatient(aPatient,aCtx) {
 		sqlD =sqlD +" left join vocprioritydiagnosis vpd1 on vpd1.id=d1.priority_id";
 		sqlD =sqlD +" where d1.patient_id=pcc.patient_id and d1.medcase_id";
 		sqlD =sqlD +"  is null and vpd1.code='1'";
-		sqlD =sqlD +"   and d1.establishDate<=coalesce(lpcc.finishdate,current_date))) as mkbcode";
+		sqlD =sqlD +"   and case when coalesce(lpcc.finishdate,lpcc.transferdate) is not null and d1.establishDate<coalesce(lpcc.finishdate,lpcc.transferdate) then '1' when coalesce(lpcc.finishdate,lpcc.transferdate) is null and d1.establishDate<=current_date then '1' else null end ='1')) as mkbcode";
 
 		sqlD =sqlD +"   from psychiaticObservation po";
 		sqlD =sqlD +"  left join LpuAreaPsychCareCard lpcc on lpcc.id=po.lpuAreaPsychCareCard_id";
@@ -106,10 +107,10 @@ function printInfoByPatient(aPatient,aCtx) {
 		sqlD =sqlD +"  vpac.id=po.ambulatoryCare_id";
 
 		sqlD =sqlD +" left join PsychiatricCareCard pcc on pcc.id=po.careCard_id";
-		sqlD =sqlD +" where pcc.patient_id='"+aPatient.id+"' and vpac.code='Д'";
+		sqlD =sqlD +" where pcc.patient_id='"+aPatient.id+"' and vpac.code='Д' and po.lpuAreaPsychCareCard_id is not null";
 		sqlD =sqlD +" order by po.startdate" ;
 			
-			
+		//throw sqlD ;
 		
 		var listD = aCtx.manager.createNativeQuery(sqlD).getResultList() ;
 		//throw "listD"+listD.size() ;
@@ -118,17 +119,35 @@ function printInfoByPatient(aPatient,aCtx) {
 		for (var i=0;i<listD.size();i++) {
 			var objD = listD.get(i) ;
 			
-			if (d2!=null && d1!=null&&d2!=(""+objD[0])||((listD.size()-1)==i)) {
+			if ((d2!=null && d1!=null &&(""+d2)!=(""+objD[0])
+					)||
+					((listD.size()-1)==i)) {
+				if (listD.size()-1==i) {
+					if (d2!=null && d1!=null &&(""+d2)!=(""+objD[0])) {
+						var dd1 = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+						//throw ""+d2 ;
+						dd1.set1(d1) ;
+						dd1.set2(d2) ;
+						dd1.set3(d3!=null?d3.split("#")[0]:null) ;
+						dd1.set4(d3!=null?d3.split("#")[1]:null) ;
+						ddList.add(dd1) ;
+						d1=objD[0];d2=null;
+					}
+				}
 				var dd = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 				dd.set1(d1!=null?d1:objD[0]) ;
-				dd.set2(objD[1]) ;
+				if (listD.size()-1==i) {
+					dd.set2(objD[1]) ;
+				} else {
+					dd.set2(d2!=null?d2:objD[1]) ;
+				}
 				dd.set3(objD[2]!=null?objD[2].split("#")[0]:null) ;
 				dd.set4(objD[2]!=null?objD[2].split("#")[1]:null) ;
 				ddList.add(dd) ;
 				d1=null;d2=null;
 			} else {
-				if (d1!=null) d1=objD[0] ;
-				d2 = objD[1] ;
+				if (d1==null) d1=objD[0] ;
+				d2 = objD[1] ; d3 = objD[2] ;
 			}
 		}	
 	} 
