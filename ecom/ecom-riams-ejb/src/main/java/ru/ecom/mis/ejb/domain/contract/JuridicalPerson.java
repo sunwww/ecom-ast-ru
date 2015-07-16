@@ -7,10 +7,12 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.contract.voc.VocJuridicalPerson;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServedPersonStatus;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServiceProgram;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Юридическое лицо
@@ -299,4 +301,20 @@ public class JuridicalPerson extends ContractPerson{
 	public String getInformation() {
 		return new StringBuilder().append("Юрид. лицо: ").append(theName).toString() ;
 	}
+	/** Страховая компания */
+	@Comment("Страховая компания")
+	@OneToOne
+	public RegInsuranceCompany getRegCompany() {return theRegCompany;}
+	public void setRegCompany(RegInsuranceCompany aRegCompany) {theRegCompany = aRegCompany;}
+
+	/** Страховая компания */
+	private RegInsuranceCompany theRegCompany;
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	public VocServiceStream getServiceStream() {return theServiceStream;}
+	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+
+	/** Поток обслуживания */
+	private VocServiceStream theServiceStream;
 }

@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.domain.contract;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -270,4 +271,12 @@ public class MedContract extends BaseEntity{
 	private Time theCreateTime;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Лимит денег */
+	@Comment("Лимит денег")
+	public BigDecimal getLimitMoney() {return theLimitMoney;}
+	public void setLimitMoney(BigDecimal aLimitMoney) {theLimitMoney = aLimitMoney;}
+
+	/** Лимит денег */
+	private BigDecimal theLimitMoney;
 }

@@ -222,4 +222,12 @@ public class ContractRule extends BaseEntity{
 	 * Раздельный учет по каждому виду медицинских услуг
 	 */
 	private Boolean theForEachMedservice;
+	
+	/** Название правила */
+	@Comment("Название правила")
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+
+	/** Название правила */
+	private String theName;
 }
