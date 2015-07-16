@@ -304,7 +304,7 @@ function printBillings(aCtx, aParams)
 		mapS.set5(medCase.dateFinish) ;//"sls.Finish",
 		//выписной диагноз
 		mapS.set6(getDiagnos(medCase.diagnosConcluding)); //"sls.diagnosConcluding",
-		mapS.set7(recordMultiText(medCase.dischargeEpicrisis)); //"sls.dischargeRecord",
+		mapS.set7(recordMultiText(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aCtx.manager))); //"sls.dischargeRecord",
 		var ret2 = new java.util.ArrayList() ;
 		var ret1 = new java.util.ArrayList() ;
 		var retwq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
