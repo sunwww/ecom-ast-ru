@@ -111,10 +111,10 @@
 			  callback: function(aResult) {
 				  if (aResult!=null&&aResult!=':::::') {
 					  var arr = aResult.split(":");
-					  $('lpu').value=arr[0];
-					  $('lpuName').value=arr[1];
-					  $('area').value=arr[2];
-					  $('areaName').value=arr[3];
+					  $('lpu').value=(arr[0]!=null&&arr[0]!='')?arr[0]:$('lpu').value;
+					  $('lpuName').value=(arr[1]!=null&&arr[1]!='')?arr[1]:$('lpuName').value;
+					  $('area').value=(arr[2]!=null&&arr[2]!='')?arr[2]:$('area').value;
+					  $('areaName').value=(arr[2]!=null&&arr[2]!='')?arr[3]:$('areaName').value;
 					  $('company').value=arr[4];
 					  $('companyName').value=arr[5];
 					  
