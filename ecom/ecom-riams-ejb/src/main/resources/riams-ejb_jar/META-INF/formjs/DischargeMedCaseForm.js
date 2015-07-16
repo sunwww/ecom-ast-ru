@@ -1,6 +1,9 @@
 function onPreCreate(aForm, aCtx) {
 	onPreSave(aForm,aCtx)
 }
+function onSave(aForm,aEntity, aCtx) {
+	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisis(aForm.id,aForm.getDischargeEpicrisis(),aCtx.manager) ;
+}
 function onPreSave(aForm,aEntity, aCtx) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	checkAllDiagnosis (aCtx, aForm.id) ;
@@ -62,15 +65,17 @@ function onPreSave(aForm,aEntity, aCtx) {
 	}
 	if (stat) {
 		
-			var cal1 = java.util.Calendar.getInstance() ;
-			var cal2 = java.util.Calendar.getInstance() ;
-			cal2.setTime(dateCur) ;		
-			cal1.setTime(dateFinish) ;
-			
-			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
-				cal1.get(java.util.Calendar.MONTH)==cal2.get(java.util.Calendar.MONTH) &&
-				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE) 
-			) {
+
+		var cal1 = java.util.Calendar.getInstance() ;
+		var cal2 = java.util.Calendar.getInstance() ;
+		var cal3 = java.util.Calendar.getInstance() ;
+		cal3.setTime(dateCur) ;		
+		cal2.setTime(dateCur) ;		
+		cal1.setTime(dateFinish) ;
+		
+		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-24)) ;
+		
+		if (cal1.after(cal3)) {
 			
 			} else{
 				var param = new java.util.HashMap() ;
@@ -79,11 +84,11 @@ function onPreSave(aForm,aEntity, aCtx) {
 				param.put("id", aForm.id) ;
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
-				//var check=0 ;
 				if (+check==0) {
-				 throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом!";
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение 24 часов.";
+					
 				}
-		}
+			}
 	}
 	
 
