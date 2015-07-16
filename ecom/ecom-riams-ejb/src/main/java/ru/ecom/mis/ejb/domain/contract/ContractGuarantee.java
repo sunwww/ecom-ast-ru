@@ -1,4 +1,6 @@
 package ru.ecom.mis.ejb.domain.contract;
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -49,4 +51,12 @@ public abstract class ContractGuarantee extends BaseEntity{
 	 * Договорная персона
 	 */
 	private ContractPerson theContractPerson;
+	
+	/** Лимит денег */
+	@Comment("Лимит денег")
+	public BigDecimal getLimitMoney() {return theLimitMoney;}
+	public void setLimitMoney(BigDecimal aLimitMoney) {theLimitMoney = aLimitMoney;}
+
+	/** Лимит денег */
+	private BigDecimal theLimitMoney;
 }
