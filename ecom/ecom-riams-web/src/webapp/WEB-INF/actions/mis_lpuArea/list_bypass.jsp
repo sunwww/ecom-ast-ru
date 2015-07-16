@@ -168,10 +168,10 @@
 <%if (typeGroup!=null && typeGroup.equals("1")) {%>
     
 	   
-   <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="240" nativeSql="
+   <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="1000" nativeSql="
 		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
-    	 , case when lp.id is null then 'Территориально' else coalesce(vat.name,'2') end as f5_spprik
-    	 , case when lp.id is null then '01.01.2013' else coalesce(to_char(lp.dateFrom,'dd.MM.yyyy'),'01.01.2013') end as f6_tprik
+    	 ,vat.name as f5_spprik
+    	 ,to_char(lp.dateFrom,'dd.MM.yyyy') as f6_tprik
     	 ,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
     	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end  	||case 
 when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as f7_address
@@ -179,10 +179,7 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     	 left join Patient p on lp.patient_id=p.id
     	 left join vocsex vs on vs.id=p.sex_id
     	 left join address2 a on a.addressid=p.address_addressid
-    	 left join MisLpu ml1 on ml1.id=p.lpu_id
-    	 left join MisLpu ml2 on ml2.id=lp.lpu_id
-         left join VocAttachedType vat on lp.attachedType_id=vat.id
-
+    	 left join VocAttachedType vat on lp.attachedType_id=vat.id
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null and lp.dateto is null ${sqlAdd} 
    		group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,lp.id,lp.dateFrom,vat.name
    		,a.fullname,p.houseNumber,p.houseBuilding,p.flatNumber
@@ -191,7 +188,7 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     <form action="print-bypass_journal1.do" method="post" target="_blank">
 Реестр прикрепленного населения за период ${param.period}-${param.periodTo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр прикрепленного населения за период с ${param.period} по ${param.periodTo}.">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр прикрепленного населения за период с ${param.period} по ${param.periodTo}. Участок № ${param.areaName}">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
