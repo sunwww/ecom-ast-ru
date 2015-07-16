@@ -17,6 +17,8 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		AdmissionMedCaseForm form=(AdmissionMedCaseForm)aForm ;
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
+		form.setDischargeEpicrisis(HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
+		
 		if (!form.isTypeCreate() && form.getSaveType()==form.TYPE_SAVE) {
 			try {
 				SecPolicy.checkPolicyEditHour(aContext.getSessionContext(), medCase) ;
