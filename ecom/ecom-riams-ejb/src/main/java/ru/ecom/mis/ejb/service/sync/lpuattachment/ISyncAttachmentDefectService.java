@@ -8,6 +8,6 @@ import org.jdom.JDOMException;
 public interface ISyncAttachmentDefectService {
     public void sync(long aMonitorId, long aTimeId) ;
     public String importDefectFromXML(String aFileName);
-    public String cleanDefect(long aAttachmentId);
+    public String cleanDefect(long aAttachmentId); 
     public String changeAttachmentArea (Long aOldAreaId, Long aNewLpuId, Long aNewAreaId);
 }
