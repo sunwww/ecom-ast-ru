@@ -87,6 +87,17 @@ import ru.nuzmsh.util.format.DateFormat;
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
 public class Patient extends BaseEntity{
+	@Transient
+	public String getStyleInfo() {
+		String style = "" ;
+		if (theDeathDate!=null) {
+			style ="border: 2px solid;font-size: 14px; color: black;font-weight:bold;text-decoration:blink" ;
+		} else if (theColorType!=null &&theColorType.equals(Boolean.TRUE)) {
+			style = "font-size: 14px; color: red;font-weight:bold;text-decoration:blink" ;
+					
+		}
+		return style ;
+	}
 	/** Телефон */
 	@Comment("Телефон")
 	public String getPhone() {return thePhone;}
