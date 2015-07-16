@@ -1,5 +1,9 @@
 var map = new java.util.HashMap() ;	
 
+function updateForNewTicket(aCtx,aParams) {
+	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+}
+
 function printBakExp(aCtx, aParams) {
 	
 	var ticket = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.Ticket
@@ -94,22 +98,82 @@ function recordMultiText(aKey, aValue) {
 	}
 	map.put(aKey,list) ;
 }
-	
+function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
+	l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
+	if (l.isEmpty()) {
+		return aValueDefault ;
+	} else {
+		return l.get(0)[1] ;
+	}
+}
+function recordDisability(aContext,aPatId,aDateStart,aDateFinish,aField) {
+	var sql="select dd.id,list(distinct to_char(dr.dateFrom,'yyyymmdd')) as datelist"
+		+" , case when count(case when dr.dateto is null then dr.id else null end)=0 and dd.disabilityCase_id is not null then to_char(max(dr.dateFrom),'yyyymmdd') else '_____._____._________' end as maxdrdate"
+		+", case when vdr.codef in ('01','02','04','06','07','10','11','12','13','14','15') then cast('заболевание' as varchar(50))"
+		+" when vdr.codef='09' then cast('уход за больным членом семьи' as varchar(50))"
+		+" when vdr.codef='03' then cast('в связи с карантином' as varchar(50))"
+		+" when vdr.codef='08' then cast('на период санаторно-куротного лечения' as varchar(50))"
+		+" when vdr.codef='05' then cast('по беременности и родам' as varchar(50)) else '' end as vreason"
+		+" from DisabilityCase dc"
+		+" 	left join DisabilityDocument dd on dd.disabilityCase_id=dc.id"
+		+" 	left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id"
+		+" 	left join VocDisabilityDocumentCloseReason vddcr on dd.closeReason_id=vddcr.id"
+		+" 	left join VocDisabilityReason vdr on dd.disabilityReason_id=vdr.id"
+		+" 	where dc.patient_id='"+aPatId+"' and dd.anotherlpu_id is null"
+		+" 	group by dc.id,dd.id,dd.number,vddcr.name,dd.issueDate,vdr.codef,dd.disabilityCase_id"
+		+" 	having min(dr.dateFrom) between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy')"
+		+"  order by dd.issueDate"
+	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
+	if (list.size()>0) {
+		var obj=list.get(0) ;
+		var disdoc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument,
+				new java.lang.Long(obj[0])
+		); 
+		map.put(aField,disdoc) ;
+		map.put(aField+"DateClose",obj[2]) ;
+		map.put(aField+"Reason",obj[3]) ;
+		var dats = (obj[1]!=null?""+obj[1]:"").split("") ;
+		
+		for (var i=0;i<6;i++) {
+			
+		}
+	} else {
+		map.put(aField,null) ;
+		for (var i=0;i<6;i++) {
+			map.put(aField+"Date"+(i+1),"") ;
+		}
+		map.put(aField+"DateClose","") ;
+		map.put(aField+"Reason","") ;
+		
+	}
+}
 function printInfo(aCtx, aParams) {
-	
+	map.put("address_lpu",getDefaultParameterByConfig("address_lpu","___________________",aCtx)) ;
+	map.put("name_lpu",getDefaultParameterByConfig("name_lpu","___________________",aCtx)) ;
+	map.put("ogrn_lpu",getDefaultParameterByConfig("ogrn_lpu","___________________",aCtx)) ;
+	map.put("okud_lpu",getDefaultParameterByConfig("okud_lpu","_________",aCtx)) ;
+	map.put("okpo_lpu",getDefaultParameterByConfig("okpo_lpu","_________",aCtx)) ;
+
 	var ticket = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
 		, new java.lang.Long(aParams.get("id"))) ;
 	var visit=ticket;
 	var mc = ticket.medcard;
 	var prs = mc.person;
+	if (mc!=null) {
+		map.put("mcnumber",mc.number) ;
+	} else {
+		map.put("mcnumber",prs.patientSync) ;
+	}
     var plc = null;
     record("pat",prs) ;
     var listPriv =  aCtx.manager.createQuery("from Privilege where person=:pat and endDate is null order by beginDate desc")
 	.setParameter("pat",prs).setMaxResults(1).getResultList() ;
 	var priv = listPriv.size()>0?listPriv.get(0):null ;
-	map.put("priv.info",priv) ;
+	map.put("priv.info","") ;
+	map.put("priv.obj",priv) ;
 	map.put("priv.doc",priv!=null?priv.document:null) ;
-	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
+	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode.code!=null?priv.privilegeCode.code:null:null):null) ;
+	map.put("priv.endDate",priv!=null?(priv.endDate!=null?priv.endDate:null):null) ;
 
     var FORMAT = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var policy_list_sql = "select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end"
@@ -179,8 +243,8 @@ function printInfo(aCtx, aParams) {
 	}
 	
 	var invalidity_list_sql = "select vi.name" +
-			" ,case when (i.initial is true or i.initial='1') then 'ВПЕРВЫЕ' else 'ПОВТОРНО' end as c1" +
-			" ,case when (i.childhoodinvalid is true or i.childhoodinvalid='1') then 'ДА' else 'НЕТ' end as c2" +
+			" ,case when ( i.initial='1') then 'ВПЕРВЫЕ' else 'ПОВТОРНО' end as c1" +
+			" ,case when ( i.childhoodinvalid='1') then 'ДА' else 'НЕТ' end as c2" +
 			" from invalidity i " +
 			" left join vocinvalidity vi on vi.id=i.group_id " +
 			"where i.patient_id='"+visit.patient.getId()+"' order by i.id desc";
@@ -196,6 +260,7 @@ function printInfo(aCtx, aParams) {
 	map.put("invalid_group",inv_group);
 	map.put("invalid_childhood",inv_childhood);
 	
+	recordDisability(aCtx,visit.patient.id,"01.01.2015","01.01.2015","dis") ;
     
     record("bd",FORMAT.format(prs.birthday)) ;
     record("ticket",ticket) ;
@@ -217,8 +282,78 @@ function printInfo(aCtx, aParams) {
     	record("DoctorFunction","") ;
     	record("LPUName","") ;
     }
-    
-    
+    // 14. Занятость
+    var socStatus=prs.socialStatus!=null &&prs.socialStatus.code!=null?prs.socialStatus:null ;
+    if (socStatus!=null) {
+    	if (socStatus=="10") {
+    		record("socStatus","работает") ;
+    	} else if (socStatus=="05") {
+    		record("socStatus","проходит военную службу или приравненную к ней службу") ;
+    	} else if (socStatus=="20") {
+    		record("socStatus","пенсионер(ка)") ;
+    	} else if (socStatus=="80") {
+    		record("socStatus","студент(ка)") ;
+    	} else if (socStatus=="00" ||socStatus=="77"||socStatus=="70"||socStatus== "90") {
+    		record("socStatus","не работет") ;
+    	} else  {
+    		record("socStatus","прочие") ;
+    	}
+    } else {
+    	record("socStatus","прочие") ;
+    }
+    var vis1="" ; var vis2=""; var vis3="" ;
+    var isPsych = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry") ;
+    if (obj_diag[2]!=null && obj_diag[2]!="") {
+    	var ct = ticket.visitResult!=null
+		&&ticket.visitReason.codeTicket!=null
+		&&ticket.visitReason.codeTicket!=""?ticket.visitReason.codeTicket:null ;
+    	if (obj_diag[2].startsWith("Z")) {
+    		vis1="с профилактическими и иными целями (Z00-Z99)" ;
+    		vis2="с профилактической целью (Z00-Z99) " ;
+    		
+    		if (ct=="2.1") {
+    			if (isPsych) {
+        			if (obj_diag[2]=="Z00.0" || obj_diag[2]=="Z00.4") {
+            			vis3="медицинские осмотры" ;
+        			} else {
+        				vis3="другие обстоятельства" ;
+        			}
+        		} else {
+        			vis3="медицинские осмотры" ;
+        		}
+			} else if (ct=="2.2") {
+				vis3="диспансеризация" ;
+			} else if (ct=="2.3") {
+				vis3="комплексное обследование" ;
+			} else if (ct=="2.4") {
+				vis3="паллиативная медицинская помощь" ;
+			} else if (ct=="2.5") {
+				vis3="патронаж" ;
+			} else {
+				vis3="другие обстоятельства" ;
+			}
+    	} else {
+    		vis1="по заболеваниям (A00-T98)" ;
+    		vis2="по заболеванию (A00-T98)" ;
+    		if (ticket.emergency)  {
+    			vis3="в неотложной форме" ;
+    		} else if (ticket.workplaceType!=null &&ticket.workplaceType.code!=null
+    				&&ticket.workplaceType.code=="HOMEACTIVE") {
+    			vis3="активное посещение" ;
+    		} else if (ct!=null) {
+    			if (ct=="1.1") {
+    				vis3="в неотложной форме" ;
+    			} else if (ct=="1.2") {
+    				vis3="активное посещение" ;
+    			} else if (ct=="1.3") {
+    				vis3="диспансенрное наблюдение" ;
+    			}
+    		}
+    	}
+    }
+	record("visit1",vis1);
+	record("visit2",vis2);
+	record("visit3",vis3);
     return map ;
 }
 
