@@ -76,4 +76,10 @@ public class ContractReportsForm extends BaseValidatorForm{
 
 	/** Тип отделения */
 	private Long theDepartmentType;
+	/** Номер контракта */
+	public String getContractNumber() {return theContractNumber;}
+	public void setContractNumber(String aContractNumber) {theContractNumber = aContractNumber;}
+
+	/** Номер контракта */
+	private String theContractNumber;
 }
