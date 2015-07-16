@@ -292,4 +292,86 @@ public class HospitalDataFond extends BaseEntity {
 
 	/** Отказ от госпитализации */
 	private Long theDeniedHospital;
+	
+	/** Файл */
+	@Comment("Файл")
+	public String getFilename5() {return theFilename5;}
+	public void setFilename5(String aFilename5) {theFilename5 = aFilename5;}
+
+	/** Файл */
+	private String theFilename5;
+	
+	/** Дата импорта */
+	@Comment("Дата импорта")
+	public Date getDateImport5() {return theDateImport5;}
+	public void setDateImport5(Date aDateImport5) {theDateImport5 = aDateImport5;}
+
+	/** Дата импорта */
+	private Date theDateImport5;
+	
+	/** Файл */
+	@Comment("Файл")
+	public String getFilename4() {return theFilename4;}
+	public void setFilename4(String aFilename4) {theFilename4 = aFilename4;}
+
+	/** Файл */
+	private String theFilename4;
+	
+	/** Дата импорта */
+	@Comment("Дата импорта")
+	public Date getDateImport4() {return theDateImport4;}
+	public void setDateImport4(Date aDateImport4) {theDateImport4 = aDateImport4;}
+
+	/** Дата импорта */
+	private Date theDateImport4;
+	
+	/** Файл */
+	@Comment("Файл")
+	public String getFilename3() {return theFilename3;}
+	public void setFilename3(String aFilename3) {theFilename3 = aFilename3;}
+
+	/** Файл */
+	private String theFilename3;
+	
+	/** Дата импорта */
+	@Comment("Дата импорта")
+	public Date getDateImport3() {return theDateImport3;}
+	public void setDateImport3(Date aDateImport3) {theDateImport3 = aDateImport3;}
+
+	/** Дата импорта */
+	private Date theDateImport3;
+	
+	/** Файл */
+	@Comment("Файл")
+	public String getFilename2() {return theFilename2;}
+	public void setFilename2(String aFilename2) {theFilename2 = aFilename2;}
+
+	/** Файл */
+	private String theFilename2;
+	
+	/** Дата импорта */
+	@Comment("Дата импорта")
+	public Date getDateImport2() {return theDateImport2;}
+	public void setDateImport2(Date aDateImport2) {theDateImport2 = aDateImport2;}
+
+	/** Дата импорта */
+	private Date theDateImport2;
+	
+
+	/** Файл */
+	@Comment("Файл")
+	public String getFilename1() {return theFilename1;}
+	public void setFilename1(String aFilename1) {theFilename1 = aFilename1;}
+
+	/** Файл */
+	private String theFilename1;
+	
+	/** Дата импорта */
+	@Comment("Дата импорта")
+	public Date getDateImport1() {return theDateImport1;}
+	public void setDateImport1(Date aDateImport1) {theDateImport1 = aDateImport1;}
+
+	/** Дата импорта */
+	private Date theDateImport1;
+	
 }
