@@ -23,7 +23,8 @@
 				left join VocSex vs on vs.id=edps.sex_id
 				left join VocExtDispService veds on veds.id=edps.serviceType_id
 				left join VocExtDispAgeGroup vedag on vedag.id=edps.ageGroup_id
-					where edps.plan_id=${param.id}
+					where edps.plan_id=${param.id} and (vedag.IsArchival='0' or vedag.IsArchival is null)
+		
 					group by vs.name 
 				,veds.name,veds.code ,vs.id,veds.id
 				order by veds.code

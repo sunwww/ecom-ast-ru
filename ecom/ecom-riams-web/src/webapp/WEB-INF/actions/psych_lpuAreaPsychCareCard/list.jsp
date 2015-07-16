@@ -37,8 +37,12 @@
   	,lapc.startDate,lapc.finishDate,la.number as lanumber
   	from LpuAreaPsychCareCard lapc
   		left join LpuArea la on la.id=lapc.lpuArea_id
-  		left join PsychiatricCareCard pcc on pcc.id=lapc.careCard_id   	where ${queryDop})   	"/>
-    <msh:table name="listd" action="entityParentView-psych_lpuAreaPsychCareCard.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+  		left join PsychiatricCareCard pcc on pcc.id=lapc.careCard_id   	where ${queryDop}  
+  		order by  lapc.startDate	"/>
+    <msh:table name="listd"
+     action="entityParentView-psych_lpuAreaPsychCareCard.do" 
+     editUrl="entityParentEdit-psych_lpuAreaPsychCareCard.do"
+     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="1" columnName="ИД"/>
               <msh:tableColumn property="2" columnName="№карты"/>

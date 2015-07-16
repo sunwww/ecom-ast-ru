@@ -130,8 +130,8 @@
     <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
     <msh:sideMenu title="Печать" >
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol" 
-    	name="Печать дневника" params="id"  
-    	action='/print-protocol.do?m=printProtocol&s=HospitalPrintService' title='Печать дневника' />
+    	name="Печать дневника"   
+    	action='/javascript:printProtocol(".do")' title='Печать дневника' />
     
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -143,6 +143,20 @@
     
 
     <tiles:put name='javascript' type='string'>
+    <script type="text/javascript">
+    function printProtocol() {
+    	HospitalMedCaseService.getPrefixByProtocol(${param.id},
+    		{
+        callback: function(prefix) {
+        	if (prefix==null) prefix="" ;
+        	window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
+            
+         }
+     }
+    ) ;
+    }
+    
+    </script>
     	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     	<script type="text/javascript">
     	var isChangeSizeEpicrisis=1 ;

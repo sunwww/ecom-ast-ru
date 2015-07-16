@@ -54,7 +54,7 @@ left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
 where po.careCard_id=pcc.id and
 (select max(po1.startDate)
 from PsychiaticObservation po1 
-where po1.careCard_id=pcc.id)=po.startDate) 
+where po1.careCard_id=pcc.id)=po.startDate) as diag1
 ,(select list(distinct mkb.code) from Diagnosis d 
 left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
 left join vocidc10 mkb on mkb.id=d.idc10_id 
@@ -64,6 +64,17 @@ and
 select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
  where d1.patient_id=pcc.patient_id and d1.medcase_id is null and vpd1.code='1' 
 )=d.establishDate ) 
+,(select list(distinct mkb.code) from Diagnosis d 
+left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
+left join vocidc10 mkb on mkb.id=d.idc10_id 
+where d.patient_id=pcc.patient_id and d.medcase_id is null and vpd.code='1' 
+and 
+(
+select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+ where d1.patient_id=pcc.patient_id and d.medcase_id is not null and vpd1.code='1' 
+)=d.establishDate ) as diag2
+
+
 from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		         "
 		         />
@@ -71,7 +82,8 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 			        <msh:table viewUrl="entityShortView-psych_careCard.do" hideTitle="false" disableKeySupport="false" idField="1" name="psychCard" action="entityParentView-psych_careCard.do" disabledGoFirst="false" disabledGoLast="false">
 			            <msh:tableColumn columnName="Номер карты" identificator="false" property="2" />
 			            <msh:tableColumn columnName="Наблюдения" identificator="false" property="3" />
-			            <msh:tableColumn columnName="МКБ10" identificator="false" property="4" />
+			            <msh:tableColumn columnName="МКБ10 для ОМКО" identificator="false" property="4" />
+			            <msh:tableColumn columnName="МКБ10 по СМО" identificator="false" property="4" />
 			        </msh:table>
 		        </msh:tableNotEmpty>
 		        <msh:tableEmpty name="psychCard">
@@ -768,6 +780,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         </msh:ifFormTypeIsView>
         <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
           <msh:sideLink roles="/Policy/Mis/Patient/Delete" key="ALT+DEL" params="id" action="/entityDelete-mis_patient" name="Удалить" confirm="Удалить персону?" guid="3322c218-9d9b-4996-9ba9-7d5bef9d0b00" />
+          <msh:sideLink roles="/Policy/Mis/Patient/View" styleId="viewShort" action="/javascript:getDefinition('js-mis_patient-viewChange.do?id=${param.id}&short=Short')" name="Изменения ПД" title="Изменения персональных данных" />
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>

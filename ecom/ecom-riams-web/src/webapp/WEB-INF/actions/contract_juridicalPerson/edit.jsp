@@ -63,6 +63,33 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_juridicalPersonForm">
+		
+		      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
+      	 title="Список последних 10 договоров заказчика">
+      	<ecom:webQuery name="medContracts" nativeSql="
+      	select mc.id as mcid ,mc.contractNumber as mccontractNumber
+,mc.dateFrom as mcdateFrom 
+,mc.dateTo as mcdateTo,pl.name as plname 
+,(select sum(ca.balanceSum)
+			from ContractAccount ca
+			where ca.contract_id=mc.id) as sumbalance
+from MedContract mc 
+left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
+left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
+left join PriceList pl on pl.id=mc.priceList_id 
+where mc.customer_id='${param.id}'
+group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
+order by mc.dateFrom desc
+      	" maxResult="10"/>
+      	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
+      		<msh:tableColumn property="2" columnName="№ договора"/>
+      		<msh:tableColumn property="3" columnName="Дата начала"/>
+      		<msh:tableColumn property="4" columnName="Дата окончания"/>
+      		<msh:tableColumn property="6" columnName="Оплачено по договору"/>
+      		<msh:tableColumn property="5" columnName="Прейкурант"/>
+      	</msh:table>
+      </msh:section>
+		
 		</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="title" type="string">

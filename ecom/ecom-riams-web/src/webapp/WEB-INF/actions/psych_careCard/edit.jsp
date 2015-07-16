@@ -112,9 +112,9 @@
 	    		left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
 	    		where t.patient_id=cc.patient_id 
 	    		and (t.dtype='ShortMedCase' or t.DTYPE='VISIT' or t.DTYPE='POLYCLINICMEDCASE')
-	    		and t.dateStart is not null and (t.istalk is null or t.istalk=0)
+	    		and t.dateStart is not null and (t.istalk is null or t.istalk='0')
 	    		 and mkb.id is not null
-	    		group by d.idc10_id,mkb.code,mkb.name,d.priority_id,vpd.name
+	    		group by d.idc10_id,mkb.code,mkb.name,d.priority_id,vpd.name,cc.id,t.idc10_id
 	    		
 	    		"/>
 	    	<msh:table name="diag" action="js-smo_ticket-listDiag.do" idField="1">
@@ -200,7 +200,7 @@
           
             <ecom:webQuery name="lpuAreas" nativeSql="select pl.id as plid,pl.startDate as plStartDate
             ,coalesce(pl.finishDate,pl.transferDate) as plFinishDate ,la.number as laname
-            ,(select list(coalesce(to_char(po.startDate,'dd.mm.yyyy'),'')||' '||isnull(vpdg.name,isnull(vpac.name,' '))) 
+            ,(select list(coalesce(to_char(po.startDate,'dd.mm.yyyy'),'')||' '||coalesce(vpdg.name,vpac.name,' ')) 
             	from PsychiaticObservation po  
             	left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
             	left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
@@ -323,10 +323,8 @@
             select ct.id,ct.orderNumber,ct.registrationDate,ct.decisionDate,vlc.name as vlcname
             	,vcca.name as vccaname
             	,vpct.name as vkname 
-            	,to_char(COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))-cast(ct.decisionDate as integer),'9 999') as day1 
-            	,to_char(
-            		COALESCE(cast(ct.dateReplace as integer),cast(current_date as integer))
-            		-(select min(cast(ct1.decisionDate as integer))  from CompulsoryTreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.orderNumber=ct.orderNumber)
+            	,to_char(COALESCE(ct.dateReplace,current_date)-ct.decisionDate,'9 999') as day1 
+ ,to_char( COALESCE(ct.dateReplace,current_date) -(select min(ct1.decisionDate )  from CompulsoryTreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.orderNumber=ct.orderNumber)
             	
             	,'9 999') as day2
             	 ,vpctdR.name as vpctdRcode,ct.dateReplace as ctdateReplace,vlcR.name as vlcRcode
@@ -412,19 +410,25 @@
       <msh:ifInRole roles="/Policy/Mis/MedCase/View">
       	<msh:section title="Госпитализации по псих.профилю ЛПУ">
       		<ecom:webQuery name="hospitalMedCase" nativeSql="
-      		select h.id,h.dateStart,h.dateFinish,h.lawCourtDesicionDate, case when h.incapacity=1 then 'Да' else 'Нет' end  as hincapacity
-				, (select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=h.id)
+      		select h.id,h.dateStart,h.dateFinish,h.lawCourtDesicionDate, case when h.incapacity='1' then 'Да' else 'Нет' end  as hincapacity
+				, (select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=h.id) as diag
+				,vdh.name as vdhname
+				,(select mldep.name from medcase slo left join mislpu mldep on mldep.id=slo.department_id where slo.parent_id=h.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferdate is null) as slodepname
       		from MedCase h 
+      		left join VocDeniedHospitalizating vdh on vdh.id=h.deniedHospitalizating_id
       		left join PsychiatricCareCard cc on cc.patient_id=h.patient_id
       		left join mislpu lpu on lpu.id=h.lpu_id
       		left join VocMzDepType vmdt on vmdt.id=lpu.profile_id
-      		where cc.id=${param.id} and upper(h.dtype) in ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') and vmdt.code='К25'"/>
+      		where cc.id=${param.id} and upper(h.dtype) in ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') 
+      		and vmdt.code='К25'"/>
       		<msh:table viewUrl="entitySubclassShortView-mis_medCase.do" name="hospitalMedCase" action="entitySubclassView-mis_medCase.do" idField="1">
       			<msh:tableColumn property="2" columnName="Дата поступления"/>
       			<msh:tableColumn property="3" columnName="Дата выписки"/>
       			<msh:tableColumn property="4" columnName="Дата суда"/>
       			<msh:tableColumn property="5" columnName="Статья 29"/>
       			<msh:tableColumn property="6" columnName="Диагноз"/>
+      			<msh:tableColumn property="7" columnName="Отказ от госпит."/>
+      			<msh:tableColumn property="8" columnName="Отделение"/>
       		</msh:table>
       	</msh:section>
       </msh:ifInRole>

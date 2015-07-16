@@ -16,7 +16,7 @@
 		left join MisLpu lpu on lpu.id=edc.lpu_id 
 		left join VocExtDisp ved on ved.id=edc.dispType_id
 		left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
-		where edc.patient_id=${param.id} and (ved.isComission is true or ved.isComission='1')
+		where edc.patient_id=${param.id} and (ved.isComission='1')
 		"/>
 		<msh:table name="list" action="entityView-extDispCom_card.do" idField="1" >
 			<msh:tableColumn columnName="#" property="sn" />

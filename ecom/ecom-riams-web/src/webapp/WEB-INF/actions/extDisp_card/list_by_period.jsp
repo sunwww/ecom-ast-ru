@@ -40,7 +40,10 @@
 				<msh:autoComplete property="service" label="Услуга" vocName="vocExtDispService" fieldColSpan="3" horizontalFill="true"/>
 			</msh:row>
 			<msh:row>
-				<msh:autoComplete property="workFunction" label="Рабочая функция" vocName="workFunction" fieldColSpan="3" horizontalFill="true"/>
+				<msh:autoComplete property="vocWorkFunction" label="Рабочая функция" vocName="vocWorkFunction" fieldColSpan="3" horizontalFill="true"/>
+			</msh:row>
+			<msh:row>
+				<msh:autoComplete property="workFunction" label="Специалист" vocName="workFunction" fieldColSpan="3" horizontalFill="true"/>
 			</msh:row>
 			<msh:row>
 				<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" fieldColSpan="3" horizontalFill="true"/>
@@ -281,6 +284,7 @@
 		StringBuilder sqlAdd = new StringBuilder() ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("dispType","edc.dispType_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("workFunction","edc.workFunction_id", request)) ;
+		sqlAdd.append(ActionUtil.setParameterFilterSql("vocWorkFunction","wf.workFunction_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("lpu","lpu.id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("ageGroup","edc.ageGroup_id", request)) ;
 		sqlAdd.append(ActionUtil.setParameterFilterSql("healthGroup","edc.healthGroup_id", request)) ;
@@ -532,7 +536,7 @@ order by ved.code
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Тип доп.диспансеризации" property="2" />
 					<msh:tableColumn isCalcAmount="true" columnName="Код" property="3" />
@@ -572,7 +576,7 @@ order by vedag.name
 			"/>
 
 				<msh:table name="extDispAgeSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
 					<msh:tableColumn columnName="Прошли диспансеризацию мужчин" isCalcAmount="true" property="5" />
@@ -610,7 +614,7 @@ order by vedr.id,vedag.name
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Фактор риска" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
@@ -660,7 +664,7 @@ order by vedhg.name,vedag.name
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
 					<tr>
@@ -726,7 +730,7 @@ order by veds.id
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
 					<tr>
@@ -778,7 +782,7 @@ order by substring(mkb.code,1,3),vedag.name
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
@@ -819,7 +823,7 @@ order by wp.lastname
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Раб.функция" property="2" />
 					<msh:tableColumn columnName="Кол-во мужчин" isCalcAmount="true" property="3" />
@@ -859,7 +863,7 @@ order by lpu.name
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Раб.функция" property="2" />
 					<msh:tableColumn columnName="Кол-во мужчин" isCalcAmount="true" property="3" />
@@ -905,7 +909,7 @@ order by vedarg.code
 			"/>
 
 				<msh:table name="extDispAgeSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
 					<msh:tableColumn columnName="Прошли диспансеризацию мужчин" isCalcAmount="true" property="5" />
@@ -944,7 +948,7 @@ order by vedr.id,vedarg.code
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Фактор риска" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
@@ -995,7 +999,7 @@ order by vedhg.name,vedarg.code
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
 					<tr>
@@ -1058,7 +1062,7 @@ order by substring(mkb.code,1,3),vedarg.name
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
 					<msh:tableColumn columnName="Возрасная группа" property="4" />
@@ -1106,7 +1110,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 			"/>
 
 				<msh:table name="extDispSwod" 
-				action="extDisp_journal_card.do?beginDate=${beginDate}&finishDate=${finishDate}" 
+				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
 					<tr>
@@ -1194,7 +1198,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
-    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {
+    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value, {
     	callback: function(aResult) {
     		
     	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;

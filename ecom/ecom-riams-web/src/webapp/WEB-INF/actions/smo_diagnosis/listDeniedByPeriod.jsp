@@ -24,22 +24,78 @@
     
   <tiles:put name="body" type="string">
   <%
-	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","3", request) ;
+	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","1", request) ;
+	String typeMode =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeMode","1", request) ;
+	String typeDiag =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeDiag","2", request) ;
   
 
   %>
     <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:panel>
+		<msh:row>
+        	<msh:separator label="Параметры поиска" colSpan="7" />
+		</msh:row>
+		<msh:row>
+			<td class="label" title="Поиск по параметрам (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Поиск:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;">
+	        	<input type="radio" name="typeMode" value="1"> по отделению(ям)
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
+	        	<input type="radio" name="typeMode" value="2" > по дневникам
+	        </td>
+	        
+		</msh:row>
+
+		</msh:panel>
+	<msh:panel styleId="pnlDiary">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
- 
+      		<msh:row>
+			<td class="label" title="Поиск по параметрам (typeDiag)" colspan="1"><label for="typeModeName" id="typeModeLabel">Диагнозы (для реестра):</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDiag" value="1"> есть
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDiag" value="2" > нет
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDiag" value="3" > все
+	        </td>
+		</msh:row>
+				<msh:row>
+			<td class="label" title="Отобразить (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Поиск:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="1"> свод
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="2" > реестр
+	        </td>
+	        
+		</msh:row>
+		<msh:row>
+			<ecom:oneToManyOneAutocomplete label="Раб.функции для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" colSpan="5"/>
+		</msh:row>
+		<msh:row>
+			<msh:autoComplete property="vocWorkFunction" horizontalFill="true" vocName="vocWorkFunction" label="Раб.функция для генерации" fieldColSpan="5"/>
+		</msh:row>
+		<msh:row>
+			<msh:textArea property="filterMkb" label="Фильтр МКБ" fieldColSpan="5"/>
+		</msh:row>
+	</msh:panel>
+    <msh:panel styleId="pnlDepartment">
+      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      </msh:row>
+
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="5"
-        	label="ЛПУ" horizontalFill="true" vocName="lpu"/>
+        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
         </msh:row>
         </msh:ifInRole>
+    </msh:panel>
+    <msh:panel>
         <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="5"
         	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
@@ -56,7 +112,42 @@
         </msh:row>
     </msh:panel>
     </msh:form>
-    
+    <script type="text/javascript">
+    checkFieldUpdate('typeView','${typeView}',1) ;
+    checkFieldUpdate('typeMode','${typeMode}',1) ;
+    checkFieldUpdate('typeDiag','${typeDiag}',1) ;
+    function checkFieldUpdate(aField,aValue,aDefaultValue) {
+       	eval('var chk =  document.forms[0].'+aField) ;
+       	var max = chk.length ;
+       	aValue=+aValue ;
+       	if (aValue==0 || (aValue>max)) {aValue=+aDefaultValue}
+       	if (aValue==0 || (aValue>max)) {
+       		chk[max-1].checked='checked' ;
+       	} else {
+       		chk[aValue-1].checked='checked' ;
+       	}
+    }
+    function checkMode() {
+    	var chk =  document.forms[0].typeMode ;
+ 	   if (chk[0].checked) {
+		   showTable("pnlDepartment", true ) ;
+		   showTable("pnlDiary", false ) ;
+    	} else {
+ 		   showTable("pnlDepartment", false ) ;
+		   showTable("pnlDiary", true ) ;
+    	}
+    }
+    function showTable(aTableId, aCanShow ) {
+		try {
+			$(aTableId).style.display = aCanShow ? 'table' : 'none' ;
+		} catch (e) {
+			try{
+			$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
+			}catch(e) {}
+		}	
+	}
+	checkMode() ;
+    </script>
     <%
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
@@ -113,6 +204,7 @@
         "
         />
         <%
+        if (typeMode.equals("1")) {
         	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
         	List list= (List)request.getAttribute("infoByLogin");
 	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
@@ -229,7 +321,114 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     	
     	
     	
-    <% } else { %>
+    <% 
+        } else if (typeMode.equals("2")) {
+        	StringBuilder paramSql= new StringBuilder() ;
+          	StringBuilder paramHref= new StringBuilder() ;
+          	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
+          	paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+          	//paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunction", "vwf.id", request)) ;
+          	paramSql.append(" ").append(ActionUtil.setParameterFilterMkb("filterMkb","filterMkb", "mkb.code", request)) ;
+          	 if (typeDiag.equals("1")) {
+          		request.setAttribute("diagSql", " and diag.id is not null") ;
+          	 } else if (typeDiag.equals("2")) {
+           		request.setAttribute("diagSql", " and diag.id is null") ;
+          		 
+          	 }
+          	int type=1 ;
+        	if (request.getAttribute("vocWorkFunctions")!=null) {
+        		type=2 ;
+       		}
+          	//if (request.getParameter("filterMkb")!=null) {
+         %>
+         
+    <%if (typeView.equals("1")) { %>
+    <msh:section>
+    <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="datelist" nativeSql="
+    select ${vocWorkFunctionsSqlId} as vwfid,vwf.name as vwfname
+    ,count(distinct sls.id) as cntSls
+    ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
+    ,count(distinct case when diag.id is not null ${filterMkbSql} then sls.id else null end) as diagFilter
+	 from MedCase sls
+	 left join diary d on d.medcase_id=sls.id
+left join mislpu ml on ml.id=sls.department_id
+left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join workFunction wf on wf.id=d.specialist_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+and sls.deniedHospitalizating_id is not null
+and sls.medicalAid='1'
+ ${vocWorkFunctionsSql}
+ ${serviceStreamSql}
+	${diagSql}
+	group by vwf.id,vwf.name 
+	order by vwf.name" 
+	/>
+    <msh:table name="datelist" 
+    viewUrl="stac_journal_denied_without_diagnosis.do?short=Short&typeView=2&typeMode=${typeMode}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}"
+    action="stac_journal_denied_without_diagnosis.do?typeView=2&typeMode=${typeMode}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}" idField="1">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn columnName="Кол-во отказов" property="3" isCalcAmount="true" />
+      <msh:tableColumn columnName="из них без диагноза" property="4" isCalcAmount="true" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section> 
+    <% } %>
+
+         <%if (typeView.equals("2"))  {	%>
+    <msh:section>
+    <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="datelist" nativeSql="
+select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
+,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
+,to_char(p.birthday,'dd.mm.yyyy') as birthday
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
+,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
+,case when diag.id is not null ${filterMkbSql} then mkb.code else null end as diag
+ from MedCase sls
+left join patient p on p.id=sls.patient_id
+left join diary d on d.medcase_id=sls.id
+left join workfunction wf on wf.id=d.specialist_id
+left join worker w on w.id=wf.worker_id
+left join patient wp on wp.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id
+left join workfunction dwf on dwf.id=diag.medicalWorker_id
+left join worker dw on dw.id=dwf.worker_id
+left join patient dwp on dwp.id=dw.person_id
+left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id
+left join vocidc10 mkb on mkb.id=diag.idc10_id
+where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+and sls.deniedHospitalizating_id is not null
+ and sls.medicalAid='1'
+ ${vocWorkFunctionsSql}
+ ${serviceStreamSql}
+${diagSql}
+order by sls.dateStart,p.lastname,p.firstname,p.middlename
+    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    <msh:table name="datelist" 
+    viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
+    action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
+      <msh:tableColumn columnName="Диагноз" property="7"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <% } %>         
+         <% 	
+        }
+        //}
+    }else { %>
     	<i>Выберите параметры и нажмите найти </i>
     <% }   %>
     
@@ -238,21 +437,10 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     //var typeDate = document.forms[0].typeDate ;
     //checkFieldUpdate('typeSwod','${typeSwod}',2,1) ;
     //checkFieldUpdate('typeDate','${typeDate}',2) ;
-    //checkFieldUpdate('typeView','${typeView}',3) ;
+    
     //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
     //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
-    
-    function checkFieldUpdate(aField,aValue,aDefaultValue) {
-       	eval('var chk =  document.forms[0].'+aField) ;
-       	var max = chk.length ;
-       	aValue=+aValue ;
-       	if (aValue==0 || (aValue>max)) {aValue=+aDefaultValue}
-       	if (aValue==0 || (aValue>max)) {
-       		chk[max-1].checked='checked' ;
-       	} else {
-       		chk[aValue-1].checked='checked' ;
-       	}
-    }
+
     function find() {
     	var frm = document.forms[0] ;
     	frm.target='' ;
@@ -266,7 +454,28 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     function createNewVisitByDenied() {
   		var ids = true ;
         if (ids) {
-            window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
+        	var chk =  document.forms[0].typeMode ;
+      	   if (chk[0].checked) {
+            	window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
+      	   } else {
+      		   
+      		 var obj = JSON.parse($('vocWorkFunctions').value) ;
+      		
+      		var sb ="" ;
+      		for (var i = 0; i < obj.childs.length; i++) {
+      			var child = obj.childs[i];
+      			if (sb.length!=0) {
+      				sb+="," ;
+      			}
+      			sb += child.value ;
+      		} 
+      		//alert(sb) ;
+      		 window.location = 'js-smo_spo-createNewVisitByDeniedDiary.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value
+      				 +"&vocWorkFunction="+$('vocWorkFunction').value
+      				 +"&vocWorkFunctions="+sb
+      				 +"&filterMkb="+$('filterMkb').value 
+      				 ;
+      	   }
         } else {
             alert("Не заданы все параметры");
         }

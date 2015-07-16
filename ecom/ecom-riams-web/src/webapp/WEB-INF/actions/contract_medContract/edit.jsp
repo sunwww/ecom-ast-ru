@@ -34,6 +34,9 @@
 					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3"  vocName="actualPriceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
+					<msh:textField property="limitMoney"/>
+				</msh:row>
+				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>
@@ -139,6 +142,7 @@
 			from MedContract mc
 			left join ContractPerson cp on cp.id=mc.customer_id
 			left join Patient p on p.id=cp.patient_id
+			left join reg_ic reg on reg.id=cp.regcompany_id
 			left join MisLpu ml on ml.id=mc.lpu_id
 			left join VocContractRulesProcessing vcrp on vcrp.id=mc.rulesProcessing_id
 			left join PriceList pl on pl.id=mc.priceList_id
@@ -156,21 +160,37 @@
 					
 				</msh:table>
 			</msh:section>
-			<%-- 
-			<msh:section title="Гарантийные документы">
-			<ecom:parentEntityListAll formName="contract_contractGuaranteeForm" attribute="contract" />
-				<msh:table name="contract" action="entitySubclassView-contract_contractGuarantee.do" idField="id">
+			
+			<msh:section title="Гарантийные документы (последние 20)" listUrl="js-contract_contractGuarantee-listAll.do?id=${param.id}" 
+				createUrl="entityParentPrepareCreate-contract_contractGuaranteeLetter.do?id=${param.id}"
+				createRoles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create">
+				<ecom:webQuery name="contractGuaranteeList" nativeSql="
+				select cg.id as cgid
+				,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name else 'Страховая компания'||reg.name  END as cpid
+				,cg.limitMoney as cglimitMoney
+				
+				 from ContractGuarantee cg
+				 left join ContractPerson cp on cp.id=cg.contractPerson_id
+				left join Patient p on p.id=cp.patient_id
+				left join reg_ic reg on reg.id=cp.regcompany_id
+				 where cg.contract_id='${param.id}'
+				"/>
+				<msh:table name="contractGuaranteeList" action="entitySubclassView-contract_contractGuarantee.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Договорная персона" property="contractPerson" />
+					<msh:tableColumn columnName="Договорная персона" property="2" />
+					<msh:tableColumn columnName="Лимит" property="3" />
 				</msh:table>
-			</msh:section>--%>
-			<msh:section title="Договорные правила">
+			</msh:section>
+			<msh:section title="Договорные правила" createRoles="/Policy/Mis/Contract/MedContract/ContractRule/Create"
+			createUrl="entityParentPrepareCreate-contract_contractRule.do?id=${param.id}">
 			<ecom:webQuery name="rules" nativeSql="select cr.id,cr.dateFrom,cr.dateTo
 			,cr.medserviceAmount,cr.courseAmount,cr.medserviceCourseAmount
 			,cng.name as cngname, cmsg.name as cmsgname,cgg.name as cggname
 			,vcp.name as vcpname,vcrp.name as vcrpname
-			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			
+			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') 
+			when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name 
+			else 'Страховая компания'||reg.name  END as personinfo
+			,cr.name as crname
 			from ContractRule cr 
 			left join ContractNosologyGroup cng on cng.id=cr.nosologyGroup_id
 			left join ContractMedServiceGroup cmsg on cmsg.id=cr.medServiceGroup_id
@@ -180,9 +200,11 @@
 			left join ServedPerson sp on sp.id=cr.servedPerson_id
 			left join ContractPerson cp on cp.id=sp.person_id
 			left join Patient p on p.id=cp.patient_id
+			left join reg_ic reg on reg.id=cp.regcompany_id
 			where cr.contract_id=${param.id}"/>
 				<msh:table name="rules" action="entityParentView-contract_contractRule.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Название" property="13"/>
 					<msh:tableColumn columnName="Период действия" property="11"/>
 					<msh:tableColumn columnName="Дата начала" property="2"/>
 					<msh:tableColumn columnName="Дата окончания" property="3"/>

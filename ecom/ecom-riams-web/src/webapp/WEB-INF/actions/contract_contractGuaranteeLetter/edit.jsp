@@ -6,14 +6,20 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
+	545646
 		<msh:form action="/entityParentSaveGoParentView-contract_contractGuaranteeLetter.do" defaultField="contractPersonName">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="contract" />
 			<msh:panel>
 			<msh:row>
+			
 				<msh:autoComplete property="contractPerson" size="150" vocName="contractPerson" label="Договорная персона"/>
 			</msh:row>
+							<msh:row>
+					<msh:textField property="limitMoney"/>
+				</msh:row>
+			
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>

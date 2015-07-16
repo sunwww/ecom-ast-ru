@@ -6,13 +6,16 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-contract_contractRule.do" defaultField="">
+		<msh:form action="/entitySaveGoView-contract_contractRule.do" defaultField="name">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="contract" />
 			<msh:panel>
 				<msh:row>
 					<msh:separator label="Правила" colSpan="4"/>
+				</msh:row>
+				<msh:row>
+					<msh:textField property="name" label="Название правила" fieldColSpan="3" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete viewAction="entityView-contract_contractNosologyGroup.do" property="nosologyGroup" label="Нозологическая группа" vocName="contractNosologyGroup" horizontalFill="true" fieldColSpan="3"/>

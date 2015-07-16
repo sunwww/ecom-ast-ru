@@ -161,7 +161,13 @@
   	
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
   	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
-  	paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("departments","departments", "sloa.department_id", request)) ;
+  	String view = (String)request.getAttribute("typeView") ;
+
+  	if (view.equals("5")) {
+  		paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("departments","departments", "sls.department_id", request)) ;
+  	} else {
+  		paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("departments","departments", "sloa.department_id", request)) ;
+  	}
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("serviceStream", "sls.serviceStream_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
@@ -383,7 +389,6 @@
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     //request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));));
-    String view = (String)request.getAttribute("typeView") ;
     
     if (view.equals("1")) {
         if (date!=null && !date.equals("")) {
@@ -659,7 +664,8 @@ order by vas.name
     
     </msh:sectionContent>
     </msh:section>
-    <%} else if (period!=null && !period.equals("") 
+    <%
+    } else if (period!=null && !period.equals("") 
     ) {
     	
     	String[] obj = period.split("-") ;
@@ -1003,7 +1009,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and sls.result_id='${result_death}'
     and 
     coalesce(
-    (select mkb.code from Diagnosis diag 
+    (select max(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -1012,7 +1018,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vpd.id='${diag_priority_m}'
     )
     ,
-    (select mkb.code from Diagnosis diag 
+    (select max(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -1131,7 +1137,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ${age_sql}  
     and 
     coalesce(
-    (select mkb.code from Diagnosis diag 
+    (select max(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -1140,7 +1146,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vpd.id='${diag_priority_m}'
     )
     ,
-    (select mkb.code from Diagnosis diag 
+    (select max(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
