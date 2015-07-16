@@ -55,7 +55,7 @@
 	<NativeVocService
 		from="vocExtDisp as ved"
 		nameId='ved.id'
-		queryAppend="(ved.isComission is true or ved.isComission='1')" 
+		queryAppend="(ved.isComission='1')" 
 		order=""
 		names= "ved.name "
     	queried="upper(ved.name) like upper(:query)" 
@@ -459,12 +459,14 @@
         <NativeVocService
                 from  = 'ServedPerson sp'
     			parent=" sp.contract_id=:parent "
-    			names = "CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END"
+    			names = "CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name else ''  END"
     			nameId="sp.id"
     			queryAppend=''
-    			join=' left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id'
+    			join=' left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id '
     			order=''
-    			queried = " sp.id like :querId or UPPER(cp.name) like :query or p.lastname like upper(:querId) or (p.lastname like $piece(upper(:querId),' ',1)||'%' and (p.firstname like $piece(upper(:querId),' ',2)||'%' or $piece(upper(:querId),' ',2) is null) and (p.middlename like $piece(upper(:querId),' ',3)||'%' or $piece(:querId,' ',3) is null))"
+    			queried = " cast(sp.id as varchar(20)) like :querId  or cp.name like upper(:query) or (p.lastname like :querId or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)))"
+    			
+    		queriedSplitCount="3"
                 />
     </voc>
     <voc id='priceList' type='NativeVocService'>
