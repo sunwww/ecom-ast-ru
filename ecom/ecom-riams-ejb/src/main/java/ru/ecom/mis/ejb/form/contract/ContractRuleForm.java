@@ -201,4 +201,14 @@ public class ContractRuleForm extends IdEntityForm{
 	 * Обслуживаемая персона
 	 */
 	private Long theServedPerson;
+	
+	/** Название правила */
+	@Comment("Название правила")
+	@Persist
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+
+	/** Название правила */
+	private String theName;
+
 }
