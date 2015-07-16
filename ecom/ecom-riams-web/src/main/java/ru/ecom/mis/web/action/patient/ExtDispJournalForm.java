@@ -185,31 +185,44 @@ private int theExpFizGroup;
 	/** Рекомендации ЗОЖ (для экспорта) */
 	private String theExpZOJRecommend;
 	
-/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
-@Comment("Рекомендации по дисп. наблюдению, лечению (для экспорта)")
-public String getExpRecommend() {
-	return theExpRecommend;
-}
+	/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
+	@Comment("Рекомендации по дисп. наблюдению, лечению (для экспорта)")
+	public String getExpRecommend() {
+		return theExpRecommend;
+	}
+	
+	public void setExpRecommend(String aExpRecommend) {
+		theExpRecommend = aExpRecommend;
+	}
+	
+	/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
+	private String theExpRecommend;
+	
+	/** Кол-во записей в файле */
+	@Comment("Кол-во записей в файле")
+	public String getExpDivideNum() {
+		return theExpDivideNum;
+	}
+	
+	public void setExpDivideNum(String aExpDivideNum) {
+		theExpDivideNum = aExpDivideNum;
+	}
+	
+	/** Кол-во записей в файле */
+	private String theExpDivideNum;
 
-public void setExpRecommend(String aExpRecommend) {
-	theExpRecommend = aExpRecommend;
-}
-
-/** Рекомендации по дисп. наблюдению, лечению (для экспорта) */
-private String theExpRecommend;
-
-/** Кол-во записей в файле */
-@Comment("Кол-во записей в файле")
-public String getExpDivideNum() {
-	return theExpDivideNum;
-}
-
-public void setExpDivideNum(String aExpDivideNum) {
-	theExpDivideNum = aExpDivideNum;
-}
-
-/** Кол-во записей в файле */
-private String theExpDivideNum;
+	/** vocworkfunction */
+	@Comment("vocworkfunction")
+	public Long getVocWorkFunction() {
+		return theVocWorkFunction;
+	}
+	
+	public void setVocWorkFunction(Long aVocWorkFunction) {
+		theVocWorkFunction = aVocWorkFunction;
+	}
+	
+	/** vocworkfunction */
+	private Long theVocWorkFunction;
 }
 
 
