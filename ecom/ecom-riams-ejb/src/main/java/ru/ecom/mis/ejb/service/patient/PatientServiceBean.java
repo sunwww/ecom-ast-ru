@@ -1028,9 +1028,8 @@ return true;
 			theManager.createNativeQuery("	update WorkCalendarHospitalBed set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ExtDispCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ClinicExpertCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("  delete from PatientFond where patient_id=:idOld ").setParameter("idOld", aIdOld).executeUpdate();
-			theManager.createNativeQuery("  delete from JournalPatientFondCheck where patient_id=:idOld ").setParameter("idOld", aIdOld).executeUpdate();
-			
+			theManager.createNativeQuery("  update from PatientFond set patient_id =:idnew where patient_id =:idold ").setParameter("idOld", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update from JournalPatientFondCheck set patient_id =:idnew where patient_id =:idold ").setParameter("idOld", aIdOld).executeUpdate();
 			
 		}
 	}
@@ -1157,8 +1156,8 @@ return true;
 				appendNativeToList(query, ret,null);
 				sqlFld = new StringBuilder() ;
 				sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
-				sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end)");
-				sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end),p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType");
+				sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) as firstname");
+				sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename,p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType");
 				sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
 				sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
 				sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
@@ -1182,8 +1181,8 @@ return true;
 			StringBuilder sql = new StringBuilder() ;
 			StringBuilder sqlFld1 = new StringBuilder() ;
 			sqlFld1.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
-			sqlFld1.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end)");
-			sqlFld1.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end)");
+			sqlFld1.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) firstname");
+			sqlFld1.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename");
 			sqlFld1.append(" ,p.birthday") ;
 			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
 			sqlFld1.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
@@ -1238,7 +1237,10 @@ return true;
 					.append(" from JournalChangePatient jcp ")
 					.append(" left join patient p on jcp.patient_id=p.id ")
 					.append(sql)
-					.append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString(),
+					.append(p2)
+					.append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)")
+					.append(" and not (").append(p1).append(")") 
+					.toString(),
 					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by p.lastname,p.firstname");
 			appendNativeToList(query1, ret,null);
 	

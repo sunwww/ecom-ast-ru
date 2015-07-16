@@ -84,6 +84,4 @@ public interface IPatientService {
     LpuAreaAddressPoint findPoint(Address aAddress, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
     
     public void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;
-    
-    
 }
