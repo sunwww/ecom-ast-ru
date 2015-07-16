@@ -365,4 +365,11 @@ public class ClinicExpertCard extends BaseEntity {
 
 	/** ТИп ВК */
 	private VocExpertType theType;
+	/** Порядковый номер в журнале */
+	@Comment("Порядковый номер в журнале")
+	public String getNumberInJournal() {return theNumberInJournal;}
+	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
+
+	/** Порядковый номер в журнале */
+	private String theNumberInJournal;
 }
