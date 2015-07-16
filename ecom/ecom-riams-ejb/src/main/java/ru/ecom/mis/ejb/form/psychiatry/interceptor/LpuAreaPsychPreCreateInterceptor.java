@@ -21,7 +21,7 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 
 	public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
 		LpuAreaPsychCareCardForm form = (LpuAreaPsychCareCardForm) aForm ;
-		String sql = "select count(*),count(case when transferDate is null and finishDate is null then 1 else null end),to_char(max(coalesce(transferDate,finishDate)),'dd.mm.yyyy') from LpuAreaPsychCareCard where careCard_id='"+aParentId+"'" ;
+		String sql = "select count(*) as cnt1,count(case when transferDate is null and finishDate is null then 1 else null end) as cnt2,to_char(max(coalesce(transferDate,finishDate)),'dd.mm.yyyy') as maxdat from LpuAreaPsychCareCard where careCard_id='"+aParentId+"'" ;
 		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql)
 				.setMaxResults(1).getResultList() ;
 		if (list.size()>0) {
