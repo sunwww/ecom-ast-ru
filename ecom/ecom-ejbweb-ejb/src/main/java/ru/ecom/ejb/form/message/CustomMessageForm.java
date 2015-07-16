@@ -1,5 +1,7 @@
 package ru.ecom.ejb.form.message;
 
+import java.sql.Time;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.live.domain.CustomMessage;
@@ -129,5 +131,21 @@ public class CustomMessageForm extends IdEntityForm{
 	private String theDateReceipt;
 	/** Пользователь */
 	private String theUsername;
+	/** Эксренное */
+	@Comment("Эксренное")
+	@Persist
+	public Boolean getIsEmergency() {return theIsEmergency;}
+	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+
+	/** Эксренное */
+	private Boolean theIsEmergency;
 	
+	/** Время действия */
+	@Comment("Время действия")
+	@Persist @TimeString @DoTimeString
+	public String getValidityTime() {return theValidityTime;}
+	public void setValidityTime(String aValidityTime) {theValidityTime = aValidityTime;}
+
+	/** Время действия */
+	private String theValidityTime;
 }

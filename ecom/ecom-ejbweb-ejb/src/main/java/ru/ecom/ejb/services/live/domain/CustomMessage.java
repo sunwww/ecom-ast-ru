@@ -136,5 +136,21 @@ public class CustomMessage {
 	private Date theDateReceipt;
 	/** Пользователь */
 	private String theUsername;
+	
+	/** Эксренное */
+	@Comment("Эксренное")
+	public Boolean getIsEmergency() {return theIsEmergency;}
+	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+
+	/** Эксренное */
+	private Boolean theIsEmergency;
+	
+	/** Время действия */
+	@Comment("Время действия")
+	public Time getValidityTime() {return theValidityTime;}
+	public void setValidityTime(Time aValidityTime) {theValidityTime = aValidityTime;}
+
+	/** Время действия */
+	private Time theValidityTime;
 }
 

@@ -135,7 +135,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 
 	public List<Object[]> executeNativeSqlGetObj(String aQuery,
 			Integer aMaxResult) {
-		Query query = theManager.createQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
+		Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
 		List<Object[]> list ;
 		if (aMaxResult!=null) {
 			list= query.setMaxResults(aMaxResult).getResultList() ;

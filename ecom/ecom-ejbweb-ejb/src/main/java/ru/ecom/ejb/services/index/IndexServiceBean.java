@@ -158,12 +158,13 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 	private void createIndex(Class aEntityClass, String aTableName,
 			AIndex aIndex, Statement aStatement, HashSet<String> indexes)
 			throws NoSuchMethodException {
-		createIndex(aEntityClass, aTableName, aIndex, aStatement, false,
-				indexes);
 		if (!(aIndex.properties() != null && aIndex.properties().length == 1 && aIndex
 				.properties()[0].equalsIgnoreCase("dtype"))) {
 			createIndex(aEntityClass, aTableName, aIndex, aStatement,
 					canCreateDtype(aEntityClass), indexes);
+		} else {
+			createIndex(aEntityClass, aTableName, aIndex, aStatement, false,
+					indexes);
 		}
 	}
 

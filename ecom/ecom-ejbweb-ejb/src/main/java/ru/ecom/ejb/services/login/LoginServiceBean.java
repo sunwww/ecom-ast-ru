@@ -78,6 +78,7 @@ public class LoginServiceBean implements ILoginService {
     	mes.setDispatchTime(new Time(date)) ;
     	mes.setRecipient(aRecipient) ;
     	mes.setIsSystem(true) ;
+    	mes.setIsEmergency(false) ;
     	theManager.persist(mes) ;
     	return mes.getId() ;
     }
