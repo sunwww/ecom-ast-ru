@@ -11,7 +11,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
-	 * Пациент ФОМС
+	 * Пациент ФОМС 
 	 */
 	@Comment("Пациент ФОМС")
 @Entity
