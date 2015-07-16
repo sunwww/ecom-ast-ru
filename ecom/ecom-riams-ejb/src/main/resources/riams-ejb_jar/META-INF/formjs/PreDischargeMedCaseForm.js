@@ -7,3 +7,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
+function onSave(aForm,aEntity, aCtx) {
+	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisis(aForm.id,aForm.getDischargeEpicrisis(),aCtx.manager) ;
+}
