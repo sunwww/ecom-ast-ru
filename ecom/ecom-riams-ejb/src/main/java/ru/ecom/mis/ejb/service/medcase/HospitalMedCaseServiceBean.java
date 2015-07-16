@@ -38,6 +38,7 @@ import org.w3c.dom.Element;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
@@ -93,6 +94,30 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
+    public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
+    	aManager.createNativeQuery("delete from diary d where d.medcase_id= "+aMedCaseId+" and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate() ;
+    	int len = 25000 ;
+    	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aMedCaseId) ;
+    	int lend = aDischargeEpicrisis.length() ;
+    	int cnt = lend/len;
+    	System.out.println("len = "+len) ;
+    	System.out.println("lend = "+lend) ;
+    	System.out.println("cnt = "+cnt) ;
+    	System.out.println("cnt%len = "+(lend%len)) ;
+    	for (int i=0;i<cnt;i++) {
+    		DischargeEpicrisis prot = new DischargeEpicrisis() ;
+    		prot.setRecord(aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
+    		prot.setMedCase(medCase) ;
+    		aManager.persist(prot);
+    	}
+    	if (lend%len>0) {
+    		DischargeEpicrisis prot = new DischargeEpicrisis() ;
+    		prot.setRecord(aDischargeEpicrisis.substring(len*cnt)) ;
+    		prot.setMedCase(medCase) ;
+    		aManager.persist(prot);
+    	}
+    	return true ;
+    }
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;
     	try {
@@ -1192,7 +1217,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	//sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
     	sql.append(" ") ;
     	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
     	sql.append(" and (hdf.istable2='1' or hdf.istable3='1')") ;
@@ -1474,8 +1499,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	
     	HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
     	if (sls.getDateFinish()!=null) throw new IllegalArgumentException("На выписанных пациентов, предварительная выписка не оформляется!!!!");
-    	sls.setDischargeEpicrisis(aDischargeEpicrisis) ;
-    	theManager.persist(sls) ;
+    	saveDischargeEpicrisis(aMedCaseId,aDischargeEpicrisis,theManager);
+    	//theManager.persist(sls) ;
     }
     public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException {
     	String[] ids = aIds.split(",") ;
