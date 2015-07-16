@@ -373,4 +373,34 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Порядковый номер */
 	private Long theNumberInJournal;
+	
+	/** Отделения */
+	@Comment("Отделения")
+	public String getDepartments() {return theDepartments;}
+	public void setDepartments(String aDepartments) {theDepartments = aDepartments;}
+
+	/** Отделения */
+	private String theDepartments;
+	
+	/** Раб.функции (спр) */
+	@Comment("Раб.функции (спр)")
+	public String getVocWorkFunctions() {return theVocWorkFunctions;}
+	public void setVocWorkFunctions(String aVocWorkFunctions) {theVocWorkFunctions = aVocWorkFunctions;}
+
+	/** Раб.функции (спр) */
+	private String theVocWorkFunctions;
+	/** Раб.функция */
+	@Comment("Раб.функция")
+	public Long getVocWorkFunction() {return theVocWorkFunction;}
+	public void setVocWorkFunction(Long aVocWorkFunction) {theVocWorkFunction = aVocWorkFunction;}
+
+	/** Раб.функция */
+	private Long theVocWorkFunction;
+	/** Фильтр мкб */
+	@Comment("Фильтр мкб")
+	public String getFilterMkb() {return theFilterMkb;}
+	public void setFilterMkb(String aFilterMkb) {theFilterMkb = aFilterMkb;}
+
+	/** Фильтр мкб */
+	private String theFilterMkb;
 }
