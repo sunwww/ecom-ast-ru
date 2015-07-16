@@ -301,7 +301,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	
 	/** Выписной эпикриз */
 	@Comment("Выписной эпикриз")
-	@Persist
 	public String getDischargeEpicrisis() {return theDischargeEpicrisis;}
 	public void setDischargeEpicrisis(String aDischargeEpicrisis) {theDischargeEpicrisis = aDischargeEpicrisis;}
 
