@@ -23,6 +23,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		EntityManager manager = aContext.getEntityManager() ;
 		long id = form.getId() ;
+		form.setDischargeEpicrisis(HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		//System.out.println("----------------1") ;
 		if (medCase.getDateFinish()==null || medCase.getDischargeTime()==null){
 			if (medCase instanceof ExtHospitalMedCase) {}else{
@@ -159,48 +160,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
 			}
 		}
-		/*
-		//System.out.println("----------------1") ;
-		if (medCase!=null && medCase.getDiagnosis()!=null) {
-			List<Diagnosis> diagList = medCase.getDiagnosis() ;
-			for(Diagnosis diag:diagList) {
-				if (diag.getRegistrationType()!=null && diag.getPriority()!=null) {
-					String regType = diag.getRegistrationType().getCode() ;
-					String prior = diag.getPriority().getCode() ;
-					Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-					//Long actuity = diag.getAcuity()!=null?diag.getAcuity().getId():null;
-					Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
-					
-					// Entrance
-					if (regType.equals("1")&& prior.equals("1")){
-						form.setEntranceDiagnos(diag.getName());
-						if (mkb!=null) form.setEntranceMkb(mkb) ;
-					}
-					// Concluding
-					if (regType.equals("3")&& prior.equals("1")){
-						form.setConcludingDiagnos(diag.getName());
-						if (mkb!=null) form.setConcludingMkb(mkb) ;
-					}
-				    //Clinical
-					if ( regType.equals("4") && prior.equals("1")){
-						form.setClinicalDiagnos(diag.getName());
-						if (mkb!=null) form.setClinicalMkb(mkb) ;
-						//if (actuity!=null) form.setClinicalActuity(actuity) ;
-						if (illnes!=null) form.setClinicalActuity(illnes) ;
-					}
-				    //Pathanatomical
-					if (regType.equals("5") && prior.equals("1")) {
-						form.setPathanatomicalDiagnos(diag.getName());
-						if (mkb!=null) form.setPathanatomicalMkb(mkb) ;
-					}	
-					//Concomitant
-					if (regType.equals("4") && prior.equals("3")) {
-						form.setConcomitantDiagnos(diag.getName());
-						if (mkb!=null) form.setConcomitantMkb(mkb) ;
-					}	
-				}
-			}
-		}*/
+		
 	}
 	public static DiagnosisForm getDiagnosis(EntityManager aManager, Long aHospitalMedCase
 			,String aRegType, String aPriority, boolean aIsDepartmentSearch) {
