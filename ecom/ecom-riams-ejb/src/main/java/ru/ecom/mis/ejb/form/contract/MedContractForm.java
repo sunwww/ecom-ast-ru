@@ -1,12 +1,12 @@
 package ru.ecom.mis.ejb.form.contract;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -228,4 +228,12 @@ public class MedContractForm extends IdEntityForm{
 	/** Дата создания */
 	private String theCreateDate;
 	
+	/** Лимит денег */
+	@Comment("Лимит денег")
+	@Persist
+	public String getLimitMoney() {return theLimitMoney;}
+	public void setLimitMoney(String aLimitMoney) {theLimitMoney = aLimitMoney;}
+
+	/** Лимит денег */
+	private String theLimitMoney;	
 }
