@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -17,6 +19,7 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 		HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		//System.out.println("form view only ="+form.isViewOnly());
+		form.setDischargeEpicrisis(getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		if (!form.isViewOnly()) {
 			try {
 				SecPolicy.checkPolicyEditHour(aContext.getSessionContext(), medCase) ;
@@ -70,6 +73,21 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 			}
 		}
 		
+	}
+	public static String getDischargeEpicrisis(long aMedCaseId,EntityManager aManager) {
+		List<Object[]> l2=aManager.createNativeQuery("select id,DischargeEpicrisis from medcase where id= "+aMedCaseId).getResultList() ;
+		List<Object[]> l1= aManager.createNativeQuery("select d.id,d.record from diary d where d.medcase_id= "+aMedCaseId+" and upper(d.dtype)='DISCHARGEEPICRISIS' order by d.id").getResultList() ;
+		StringBuilder ret = new StringBuilder() ;
+		if (l1.size()>0) {
+			for (Object[] obj:l1) {
+				ret.append(obj[1]!=null?obj[1]:"") ;
+			}
+		} else {
+			for (Object[] obj:l2) {
+				ret.append(obj[1]!=null?obj[1]:"") ;
+			}
+		}
+		return ret.toString() ;
 	}
 
 }
