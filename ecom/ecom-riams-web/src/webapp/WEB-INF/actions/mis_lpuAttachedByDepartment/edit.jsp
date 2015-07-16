@@ -72,7 +72,6 @@
         	<msh:label property="editDate" label="Дата редактирования"/>
         	<msh:label property="editTime" label="время"/>
         	<msh:label property="editUsername" label="пользователь"/>
-        	<input type='button' onclick='getAreaByPatient()' value='+'>
         </msh:row>   
                 <msh:submitCancelButtonsRow colSpan="2"/>
             </msh:panel>
