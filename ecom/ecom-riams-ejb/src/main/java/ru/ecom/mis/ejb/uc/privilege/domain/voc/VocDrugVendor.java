@@ -15,5 +15,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocDrugVendor extends VocBaseEntity{
+	/** Страна */
+	@Comment("Страна")
+	public String getCountry() {return theCountry;}
+	public void setCountry(String aCountry) {theCountry = aCountry;}
 
+	/** Страна */
+	private String theCountry;
 }
