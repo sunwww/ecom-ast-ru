@@ -141,8 +141,8 @@ public class FondWebService {
 		if (updDocument!=null&&(updDocument.equals("1")||updDocument.toLowerCase().equals("true")||updDocument.toLowerCase().equals("on"))) {updateDocument=true; needUpdate = true;} 
 		if (updPolicy!=null&&(updPolicy.equals("1")||updPolicy.toLowerCase().equals("true")||updPolicy.toLowerCase().equals("on"))) {updatePolicy=true; needUpdate = true;} 
 		if (updAttachment!=null&&(updAttachment.equals("1")||updAttachment.toLowerCase().equals("true")||updAttachment.toLowerCase().equals("on"))) {updateAttachment=true; needUpdate = true;} 
-		System.out.println("-----UPDATЫЫЫЫ1 = "+ updatePatient +" : "+updateDocument+" : "+updatePolicy+" : "+updateAttachment);
-		System.out.println("-----UPDATЫЫЫЫ2 = "+ updPatient +" : "+updDocument+" : "+updPolicy+" : "+updAttachment);
+		//System.out.println("-----UPDATЫЫЫЫ1 = "+ updatePatient +" : "+updateDocument+" : "+updatePolicy+" : "+updateAttachment);
+		//System.out.println("-----UPDATЫЫЫЫ2 = "+ updPatient +" : "+updDocument+" : "+updPolicy+" : "+updAttachment);
 		try {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -150,7 +150,7 @@ public class FondWebService {
 		StringBuilder str = new StringBuilder();
 		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql("select p.id, p.lastname, p.firstname, p.middlename, p.birthday " +
 				" from patient p" +
-				" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null ");
+				" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id ");
 		if (!pats.isEmpty()) {
 			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
 			String defaultLpu =null;
@@ -334,12 +334,7 @@ public class FondWebService {
 					
 				}
 			}
-			//Зачем это мне?
-			docs.append(documentType).append(":");
-			docs.append(documentSeries).append(":") ;
-			docs.append(documentNumber).append(":") ;
-			docs.append(documentDateIssued).append(":") ;
-			docs.append(documentWhomIssued) ;
+			//System.out.println();
 			in.close() ;
 			
 			
@@ -395,11 +390,11 @@ public class FondWebService {
 					, documentType, documentSeries, documentNumber
 					, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
 					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pid, pfc);
-		//	service.updateDataByFondAutomaticByFIO(lastname,firstname, middlename, birthday, pfc.getId(), updatePatient, updateDocument
-		//			,updatePolicy, updateAttachment);
+			service.updateDataByFondAutomaticByFIO(lastname,firstname, middlename, birthday, pfc.getId(), updatePatient, updateDocument
+					,updatePolicy, updateAttachment);
 			
 		} else {
-			//System.out.println("Проверка по базе ФОМС. Пациент не найден №= "+i +" "+ aa);
+			System.out.println("Пациент не найден №= "+i +" "+ aa);
 			try {
 				service.insertPatientNotFound(Long.valueOf(pid), pfc.getId());
 			} catch (Exception e) {
@@ -622,6 +617,8 @@ public class FondWebService {
             //System.out.println("result document:") ;
             //System.out.println(result) ;
         	result = updateXml(result) ;
+        	
+        	
         	//System.out.println(result) ;
         	in = new ByteArrayInputStream(result.getBytes());
             doc = new SAXBuilder().build(in);
