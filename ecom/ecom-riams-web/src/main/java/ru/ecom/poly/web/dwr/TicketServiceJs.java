@@ -466,7 +466,7 @@ public class TicketServiceJs {
     	}
     	return true ;
     }
-    private boolean checkPermission(IScriptService aService, String aObject, String aPermission,  Long aIdTicket, HttpServletRequest aRequest) throws Exception {
+    public static boolean checkPermission(IScriptService aService, String aObject, String aPermission,  Long aIdTicket, HttpServletRequest aRequest) throws Exception {
     	HashMap<String, Comparable> param = new HashMap<String, Comparable>() ;
     	long res1 ;
     	Object res ;
