@@ -15,7 +15,7 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** № пакета */
 	@Comment("№ пакета")
-	//@Required
+	@Required
 	public String getNumberPackage() {return theNumberPackage;}
 	public void setNumberPackage(String aNumberPackage) {theNumberPackage = aNumberPackage;}
 
@@ -27,7 +27,7 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** NumberReestr */
 	@Comment("NumberReestr")
-	//@Required
+	@Required
 	public String getNumberReestr() {return theNumberReestr;}
 	public void setNumberReestr(String aNumberReestr) {theNumberReestr = aNumberReestr;}
 
