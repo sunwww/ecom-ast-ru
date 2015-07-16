@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.medcase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 
 import javax.naming.NamingException;
@@ -10,10 +11,12 @@ import javax.servlet.jsp.JspException;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
+import ru.ecom.poly.web.dwr.TicketServiceJs;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
@@ -24,7 +27,16 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
-
+	public String getPrefixByProtocol(Long aDiaryId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select vtp.prefixprint from Diary d left join voctypeprotocol vtp on vtp.id=d.type_id where d.id="+aDiaryId+" and vtp.prefixprint is not null") ;
+		if (list.isEmpty()) {
+			return null ;
+		} else {
+			return new StringBuilder().append(list.iterator().next().get1()).toString() ;
+		}
+		
+	}
 	public String viewTable263sls(Long aHDFid,String aPreHospDate,String aLastname,String aFirstname, String aMiddlename, String aBirthday, String aMode, String aDenied, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -1096,12 +1108,29 @@ public class HospitalMedCaseServiceJs {
 		service.deniedHospitalizatingSls(aMedCaseId,aDeniedHospitalizatingId) ;
 		return "Обновлены" ;
 	}
-	public String preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis,HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		service.preRecordDischarge(aMedCaseId, aDischargeEpicrisis) ;
-		return "Обновлены" ;
+	public String preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis,HttpServletRequest aRequest) throws Exception {
+		IWebQueryService service1 = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		boolean isEdit =true ;
+		boolean isCurentOnly = RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay",aRequest) ;
+		if (isCurentOnly) {
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select SLS.id from medcase SLS  left join vochospitalizationresult vhr on vhr.id= SLS.result_id where SLS.id='").append(aMedCaseId).append("' and (sls.dateFinish is not null or (vhr.code='11' and (current_date-sls.datefinish)<4))") ;
+			Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString()) ;
+			if (list.size()>0) {
+				IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
+	        	isEdit = TicketServiceJs.checkPermission(service, "DischargeMedCase", "editDischargeEpicrisis", aMedCaseId, aRequest) ;
+			}
+		}
+		if (isEdit) {
+			IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+			service.preRecordDischarge(aMedCaseId, aDischargeEpicrisis) ;
+			return "Сохранено" ;
+		} 
+		throw new IllegalAccessError("У Вас стоит запрет на редактирование выписанного пациента!!!") ;
+		
 	}
 	public String updateDischargeDateByInformationBesk(String aIds, String aDate,HttpServletRequest aRequest) throws Exception {
+		
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.updateDischargeDateByInformationBesk(aIds, aDate) ;
 		return "Обновлены" ;
