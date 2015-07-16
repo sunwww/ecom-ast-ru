@@ -42,7 +42,7 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 @Comment("Персона")
 @WebTrail(comment = "Персона", nameProperties = {"patientInfo","patientSync"}
 	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do"
-			,journal=true)
+			,journal=true,style="styleInfo")
 @EntityFormSecurityPrefix("/Policy/Mis/Patient")
 @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
 
@@ -58,7 +58,19 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
         @AEntityFormInterceptor(PatientViewInterceptor.class)
 )
 public class PatientForm extends IdEntityForm {
-    
+    /** Стиль webtrail */
+	@Comment("Стиль webtrail")
+	@Persist
+	public String getStyleInfo() {
+		return theStyleInfo;
+	}
+
+	public void setStyleInfo(String aStyleInfo) {
+		theStyleInfo = aStyleInfo;
+	}
+
+	/** Стиль webtrail */
+	private String theStyleInfo;
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist
