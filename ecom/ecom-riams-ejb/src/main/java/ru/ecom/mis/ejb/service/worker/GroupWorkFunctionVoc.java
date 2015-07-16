@@ -73,7 +73,7 @@ public class GroupWorkFunctionVoc implements IAllValue {
 				return ret ;
 			}
 			Worker worker = aContext.getEntityManager().find(Worker.class, workerId) ;
-			sql.append("from GroupWorkFunction where lpu_id=:lpu and (workFunction_id=:function or  hasServiceStuff is true)");
+			sql.append("from GroupWorkFunction where lpu_id=:lpu and (workFunction_id=:function or  hasServiceStuff ='1')");
 			//sql.append("from BedFund where lpu_id=:lpu");
 			System.out.println(sql.toString()) ;
 			List<GroupWorkFunction> groups = null ;
