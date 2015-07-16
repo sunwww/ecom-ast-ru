@@ -163,6 +163,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         
     	
         String[] propertyNames = WebTrailUtil.getPropertiesName(aClazz) ;
+        String style = WebTrailUtil.getStyle(aClazz) ;
         WebTrail webTrail = (WebTrail) aClazz.getAnnotation(WebTrail.class) ;
         String comment = webTrail.comment() ;
         
@@ -181,10 +182,11 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         StringBuilder sb = new StringBuilder();
         StringBuilder sbTitle = new StringBuilder();
         String entityName = aFirst && aCreateState ? "Создание" : getEntityName(aService, aClazzName, aId, propertyNames, aLoader) ;
+        String sbStyle = aCreateState||style==null||style.equals("") ? "" : getEntityName(aService, aClazzName, aId, style.split(","), aLoader) ;
         if (CAN_DEBUG)
 			LOG.debug("    print: entityName = " + entityName); 
 
-        printLi(sb, sbTitle, entityName , comment, aId, webTrail.view(),webTrail.shortView(), aFirst, aSecond);
+        printLi(sb, sbTitle, entityName , comment, aId, webTrail.view(),webTrail.shortView(), aFirst, aSecond,sbStyle);
         
         aSb.insert(0, sb) ;
         aSbTitle.insert(0, sbTitle) ;
@@ -279,12 +281,15 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     
     private void printLi(StringBuilder aSb, StringBuilder aSbTitle, String aValue, String aComment, Object aId, String aDefaultViewAction
     		, String aDefaultShortAction
-            , boolean aFirst, boolean aSecond) throws IOException {
-        aSb.append("<span>") ;
+            , boolean aFirst, boolean aSecond, String aSbStyle) throws IOException {
+        aSb.append("<span");
+        if (aSbStyle!=null && !aSbStyle.equals("")) aSb.append(" style ='").append(aSbStyle).append("'") ;
+        aSb.append(">") ;
         final boolean firstIsLink = ! aFirst || !StringUtil.isNullOrEmpty(theTitle) ;
         if(firstIsLink) {
         	//TODO делаем
             aSb.append("<a ") ;
+            if (aSbStyle!=null && !aSbStyle.equals("")) aSb.append("style ='").append(aSbStyle).append(";text-decoration:underline;'") ;
             aSb.append(" href='") ;
             aSb.append(aDefaultViewAction) ;
             if (aDefaultViewAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}

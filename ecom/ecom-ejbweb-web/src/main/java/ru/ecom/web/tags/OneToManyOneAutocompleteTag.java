@@ -65,7 +65,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 			        if(name==null) name="" ;
 			        jsonNew.append(",\"name\":");
 			        jsonNew.append("\"");
-			        jsonNew.append(name);
+			        jsonNew.append(name.replace("\"", "\\\""));
 			        jsonNew.append("\"}");
 			       
 				}
