@@ -1576,7 +1576,7 @@ function printBilling(aCtx, aParams)
 	//выписной диагноз
 	if (medCase.deniedHospitalizating==null) {
 		//getDiagnos("sls.diagnosConcluding",medCase.diagnosConcluding);
-		recordMultiText("sls.dischargeRecord",medCase.dischargeEpicrisis);
+		recordMultiText("sls.dischargeRecord",Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aCtx.manager));
 	} else {
 		var list_prot = aCtx.manager.createNativeQuery("select upper(to_char(d.dateregistration,'dd.mm.yyyyy')||' '||cast(d.timeregistration as varchar(5)) ||' '||vwf.name||' '||pat.lastname),d.record from diary d left join WorkFunction wf on wf.id=d.specialist_id left join worker w on w.id=wf.worker_id left join patient pat on pat.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join medcase m on m.id=d.medcase_id where m.id="+medCase.id+" or (m.patient_id="+medCase.patient.id+" and m.dateStart-to_date('"+medCase.dateStart+"','yyyy-mm-dd') between 0 and 1) order by d.dateregistration,d.timeregistration").getResultList() ;
 		
