@@ -62,4 +62,17 @@ public class JournalPatientNotFoundFondCheck extends BaseEntity{
 	public void setIsFound(Boolean aIsFound) {theIsFound = aIsFound;}
 	/** Найден в базе */
 	private Boolean theIsFound;
+	/** ИД пациента (текст) */
+	@Comment("ИД пациента (текст)")
+	public String getRemovedPatientId() {return theRemovedPatientId;}
+	public void setRemovedPatientId(String aRemovedPatientId) {theRemovedPatientId = aRemovedPatientId;}
+	/** ИД пациента (текст) */
+	private String theRemovedPatientId;
+	
+	/** Пациент удален */
+	@Comment("Пациент удален")
+	public Boolean getIsPatientRemoved() {return theIsPatientRemoved;}
+	public void setIsPatientRemoved(Boolean aIsPatientRemoved) {theIsPatientRemoved = aIsPatientRemoved;}
+	/** Пациент удален */
+	private Boolean theIsPatientRemoved;
 }
