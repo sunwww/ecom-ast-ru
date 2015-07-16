@@ -460,4 +460,11 @@ public class PatientFond extends BaseEntity{
 	public void setCheckTime(PatientFondCheckData aCheckTime) {theCheckTime = aCheckTime;}
 	/** Данные проверки */
 	private PatientFondCheckData theCheckTime;
+	
+	/** Расхождение данных */
+	@Comment("Расхождение данных")
+	public Boolean getIsDifference() {return theIsDifference;}
+	public void setIsDifference(Boolean aIsDifference) {theIsDifference = aIsDifference;}
+	/** Расхождение данных */
+	private Boolean theIsDifference;
 }
