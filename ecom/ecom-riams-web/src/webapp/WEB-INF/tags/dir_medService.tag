@@ -31,7 +31,8 @@
 <div id='${name}DirMedServiceDialog' class='dialog'>
     <h2>${title}. <a href='javascript:void(0)' onclick='save${name}DirMedService()'>Закрыть</a></h2>
     <div class='rootPane'>
-    
+    <input type="hidden" name='${name}IsViewButton' id='${name}IsViewButton' value=''/>
+    <input type="hidden" name='${name}ListIds' id='${name}ListIds' value=''/>
 <form action="javascript:void(0)">
     <msh:panel>
     	<msh:row>
@@ -96,6 +97,10 @@
     	 get${name}Category("${name}DirMedServiceMainMenu",0,0) ;
      	 
      }
+     function clear${name}DirMedServiceDialog() {
+    	 $("${name}DirMedServiceMainMenu").innerHTML="" ;
+    	 theIs${name}DirMedServiceDialogInitialized = false
+     }
      function get${name}CategoryAdd(aId,aName) {
     	 if ('${functionAdd}'!='') {
     		${functionAdd}(aId,aName);
@@ -103,11 +108,12 @@
     	 }
      }
      
-     function get${name}Category(aDiv,aParent,aLevel,aAddParam) {
+     function get${name}Category(aDiv,aParent,aLevel,aAddParam,aViewButton,aListIdCheck) {
    		if ($(aDiv).innerHTML=="") {
    			
     		 CategoryTreeService.getCategoryMedService('${name}DirMedService','get${name}Category', '${table}', +aParent,+aLevel
-    				 ,theIs${name}DirMedServiceAddParam , {
+    				 ,theIs${name}DirMedServiceAddParam ,$('${name}IsViewButton').value==""?null:$('${name}IsViewButton').value
+    						 ,$('${name}ListIds').value==""?null:$('${name}ListIds').value, {
 	    		 callback: function(aResult) {
 	    			 //the${name}DirMedServiceDialog.hide() ;
 	    			 $(aDiv).innerHTML = aResult ; 
