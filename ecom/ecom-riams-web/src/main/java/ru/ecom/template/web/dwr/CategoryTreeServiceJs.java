@@ -29,11 +29,13 @@ public class CategoryTreeServiceJs {
 //            return "Mkb" ;
         }
     }
-    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam, HttpServletRequest aRequest) throws NamingException {
+    public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam,String aViewButton,String aCheckId, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String table , fldId, fldView, fldParent , fldOrderBy , fldIsChild,join="",whereAdd="" ;
     	String isOnceViewFld ="0>0";
     	int level=aLevel+1;
+    	String[] checkId = (aCheckId!=null?aCheckId.split(","):"".split(""));
+    	String viewButton = "" ;
     	if (aTable.toUpperCase().equals("PRICEMEDSERVICE")) {
     		table="PricePosition pp" ;fldId="case when pp.dtype='PriceGroup' then pp.id else pms.id end";
     				fldView="case when pp.dtype='PriceGroup' then '<b>'||pp.code||'</b> '||replace(pp.name,'\"','') else '<b>'||pp.code||'</b> '||' '||replace(pp.name,'\"','')||' ('||pp.cost||')' end" 
@@ -50,7 +52,12 @@ public class CategoryTreeServiceJs {
     				//whereAdd=" and pp.dateTo is null "+whereAdd;
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else if (aTable.toUpperCase().equals("MEDSERVICE")) {
-    		if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {aParent=4056L;} //Только лабораторные исследования!
+    		if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
+    			aParent=4056L;
+    		} //Только лабораторные исследования!
+    		if (aViewButton!=null) {
+    			viewButton = "case when ms.id not in (select mss.id from medservice mss  left join workfunctionservice wfss on wfss.medservice_id=mss.id  left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= '"+aViewButton+"'   and mss.dtype='MedService'  and vsts.code='LABSURVEY'  ) then null else ms.id end as checkbut";
+    		}
     		table="MedService ms" ;fldId="ms.id"; 
 			fldView="case when ms.dtype='MedServiceGroup' then '<b>'||ms.code||'</b> '||replace(ms.name,'\"','') else '<b>'||ms.code||'</b> '||' '||replace(ms.name,'\"','') end" 
 			;fldParent="parent_id";fldOrderBy="case when ms.dtype='MedServiceGroup' then 1 else 0 end,ms.code";
@@ -64,8 +71,11 @@ public class CategoryTreeServiceJs {
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select ").append(fldId).append(" as fldId, ").append(fldView).append(" as fldView")
     	.append(", case when ").append(fldIsChild).append(">0 then 1 else null end as ascntChild")
-    		.append(", case when ").append(isOnceViewFld).append(" then 1 else null end as asView")
-    		.append(" from ").append(table)
+    		.append(", case when ").append(isOnceViewFld).append(" then 1 else null end as asView") ;
+    		if (aViewButton!=null) {
+    			sql.append(",").append(viewButton) ;
+    		}
+    		sql.append(" from ").append(table)
     		.append(" ").append(join)
     		.append(" where ").append(fldParent) ;
     	if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
@@ -88,7 +98,7 @@ public class CategoryTreeServiceJs {
 	    		if (wqr.get4()!=null) {
 	    			rs.append("<span class='dirN' id='").append(aName).append(wqr.get1()).append("DirV'> - </span><span class='dirV'>") ;
 		    		rs.append(wqr.get2()).append("</span></div><div id='").append(aName).append(wqr.get1()).append("Dir'>") ;
-		    		rs.append(getCategoryMedService(aName,aFunction, aTable, ConvertSql.parseLong(wqr.get1()),level, aAddParam, aRequest));
+		    		rs.append(getCategoryMedService(aName,aFunction, aTable, ConvertSql.parseLong(wqr.get1()),level, aAddParam,aViewButton,aCheckId, aRequest));
 		    		rs.append("</div>") ;
 	    		} else {
 	    			rs.append("<span class='dirN' id='").append(aName).append(wqr.get1()).append("DirV'> + </span><span class='dirV'>") ;
@@ -97,18 +107,30 @@ public class CategoryTreeServiceJs {
 	    		
     		} else {
     			rs.append("<div id='").append(aName).append(wqr.get1()).append("m' ondblclick='").append(aFunction)
-    			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>") ;
+    			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'");
+    			if (checkId(checkId,""+wqr.get1())) {
+    				rs.append(" style='color: blue;'");
+    			}
+    			rs.append(">") ;
 	    		for (int i=0;i<aLevel;i++) {
 	    			rs.append("<span class='ygtvdepthcell'>&nbsp;|&nbsp;</span>") ;
 	    		}
-	    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
-    			.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
+	    		if (wqr.get5()==null) {
+		    		rs.append("<input type='button' value='Д' onclick='").append(aFunction)
+	    				.append("Add(").append("\"").append(wqr.get1()).append("\",\"").append(wqr.get2()).append("\")").append("'>");
+	    		}
 	    		rs.append(wqr.get2()).append("</div>");
 	    		//rs.append("<div id='").append(aName).append(wqr.get1()).append("Dir'></div>") ;
     		}
     	}
     	
     	return rs.toString() ;
+    }
+    public boolean checkId(String[] aArr, String aId) {
+    	for (String val:aArr) {
+    		if (val.equals(aId)) return true ;
+    	}
+    	return false ;
     }
     
 }
