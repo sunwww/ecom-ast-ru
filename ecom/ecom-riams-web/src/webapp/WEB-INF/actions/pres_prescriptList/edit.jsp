@@ -10,7 +10,18 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
-      
+      	function prepare1Row(aId,aName) {
+      		
+      		$('labServicies').value=aId ;
+      		$('labServiciesName').value=aName ;
+      		show2EnterDate() 		
+      	}
+    	function prepare1RowByDate(aDate) {
+    		$('labDate').value=aDate ;
+    		prepareLabRow('lab') ;
+      		$('labServicies').value='' ;
+      		$('labServiciesName').value='' ;
+    	}
         function createUrl( aTitleConfirm,aUrlCreate,aMessageNoRight) {
          	if (confirm(aTitleConfirm)) {
     			window.location.href = aUrlCreate  ;
@@ -61,6 +72,15 @@
         </script>
 
 		<script type="text/javascript">
+		function getCostByContract() {
+			 PrescriptionService.getCostByContract(('medCase').value
+					 ,{
+					callback: function(aResult) {
+						alert(aResult) ;
+						
+					}
+				}); 
+		}
 		function showChangeDepartment() {
 			if (confirm("Место забора необходимо указывать, если оно отличается от отделения, где лежит пациент!!!")){
 				$('labDepartmentName').style.visibility='visible';
@@ -149,14 +169,35 @@
 
 		}  
 		
-		 
+		 function preShowDir() {
+			 $('1IsViewButton').value=$('prescriptType').value ;
+			 var list = +$('labServicies').value;
+			 clear1DirMedServiceDialog() ;
+			 var typeNum = 0;
+				type='lab';
+					typeNum = labNum;
+					
+				
+				while (typeNum>0) {
+					if (document.getElementById(type+"Element"+typeNum)) {
+						var ar = $(type+"Service"+typeNum).value ;
+						list+="," ;
+						list+=ar ;
+					}
+		       		typeNum-=1;
+			 	}
+				
+			 $('1ListIds').value=list;
+		 }
 		//При изменении типа ЛН, удаляем все лаб. исследования, прогоняем через PrescriptionService, 
 		//Заполняем только теми исследованиями, у которых соответствующий тип 
 
 		function changePrescriptionType() {
+			clear1DirMedServiceDialog() ;
 			 writeServicesToList('lab');
 				$('labServicies').value="";
 				$('labServiciesName').value="";
+				
 				labServiciesAutocomplete.setParentId($('prescriptType').value) ;
 				if (labList.length>0) {
 					 removeRows('lab');
@@ -848,6 +889,7 @@
 			<msh:autoComplete parentId="pres_prescriptListForm.prescriptType" property="labServicies" label="Исследование" vocName="labMedService" horizontalFill="true" size="90"/>
 			<td>        	
             <input type="button" name="subm" onclick="prepareLabRow('lab');" value="Добавить" tabindex="4" />
+	            <input type="button" name="subm" onclick="preShowDir() ;show1DirMedService();" value="++" tabindex="4" />
             </td>
             </msh:row>
             <msh:row> 
@@ -934,6 +976,7 @@
     			<msh:autoComplete property="hospServicies" label="Тип к/д" vocName="hospServicies" horizontalFill="true" size="90" />
     			<td>        	
 	            <input type="button" name="subm" onclick="prepareLabRow('hosp');" value="Добавить" tabindex="4" />
+	            
 	            </td>
 			 </tr>
 			 <tr>
@@ -966,7 +1009,8 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
-    
+    <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id" />
+    <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
       <msh:ifInRole roles="/Policy/Mis/Prescription/DrugPrescription/View" guid="bf331972-44d3-4b35-9f3e-627a9be109e8">
     	<tags:pres_prescriptByList field="pl.id='${param.id}'" />
