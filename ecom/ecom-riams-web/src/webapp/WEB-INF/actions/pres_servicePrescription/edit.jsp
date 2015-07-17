@@ -10,6 +10,18 @@
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 	<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
 	<script type="text/javascript">
+	function prepare1Row(aId,aName) {
+  		
+  		$('labServicies').value=aId ;
+  		$('labServiciesName').value=aName ;
+  		show2EnterDate() 		
+  	}
+	function prepare1RowByDate(aDate) {
+		$('labDate').value=aDate ;
+		addRow('lab') ;
+  		$('labServicies').value='' ;
+  		$('labServiciesName').value='' ;
+	}
 	var oldaction = document.forms['pres_servicePrescriptionForm'].action ;
 	document.forms['pres_servicePrescriptionForm'].action="javascript:checkDoubles()";
 	
@@ -25,6 +37,26 @@
 		}
 		
 	}
+	function preShowDir() {
+		 $('1IsViewButton').value=$('prescriptType').value ;
+		 var list = +$('labServicies').value;
+		 clear1DirMedServiceDialog() ;
+		 var typeNum = 0;
+			type='lab';
+				typeNum = labNum;
+				
+			
+			while (typeNum>0) {
+				if (document.getElementById(type+"Element"+typeNum)) {
+					var ar = $(type+"Service"+typeNum).value ;
+					list+="," ;
+					list+=ar ;
+				}
+	       		typeNum-=1;
+		 	}
+			
+		 $('1ListIds').value=list;
+	 }
 	onload =function isInDepartment () {
 		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value,{
 			callback: function(aResult) {
@@ -355,6 +387,8 @@
    		    <msh:autoComplete parentId="pres_servicePrescriptionForm.prescriptType" property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
    		    <td>        	
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
+            	            <input type="button" name="subm" onclick="preShowDir() ;show1DirMedService();" value="++" tabindex="4" />
+            
             </td>
 			</tr>
 			<tr>
@@ -426,7 +460,8 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
-    
+    <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id" />
+    <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="pres_servicePrescriptionForm">
       <msh:section guid="sectionChilds" title="Исполнения">
         <ecom:parentEntityListAll guid="parentEntityListChilds" formName="pres_prescriptionFulfilmentForm" attribute="fulfilments" />
