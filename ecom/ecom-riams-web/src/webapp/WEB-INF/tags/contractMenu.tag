@@ -35,7 +35,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		action="/entityList-contract_priceList" name="прейскурантов" title="Список прейскурантов"
 		roles="/Policy/Mis/Contract/PriceList/View"/>
 	<msh:sideLink styleId="medContract" 
-		action="/entityList-contract_medContract" name="мед.договоров" title="Список мед. договоров"
+		action="/contract_find_by_number.do" name="мед.договоров" title="Поиск договора"
 			roles="/Policy/Mis/Contract/MedContract/View"/>
 	<msh:sideLink styleId="medServiceGroup" 
 		action="/entityList-contract_contractMedServiceGroup" 
