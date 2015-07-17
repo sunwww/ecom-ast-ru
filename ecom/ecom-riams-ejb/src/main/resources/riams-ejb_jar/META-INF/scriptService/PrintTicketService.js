@@ -228,14 +228,15 @@ function printInfo(aCtx, aParams) {
 	var otherVisits_list_sql = "select to_char(m2.datestart,'dd.MM.yyyy') from medcase m" +
 			" left join medcase m1 on m1.id=m.parent_id" +
 			" left join medcase m2 on m2.parent_id=m1.id" +
-			" where m.id='"+ticket.getId()+"' and (m2.dtype='Visit' or m2.dtype='ShortMedCase') order by m2.datestart desc";
+			" where m.id='"+ticket.getId()+"' and (m2.dtype='Visit' or m2.dtype='ShortMedCase') group by m2.datestart order by m2.datestart desc";
 	var otherVisit_list = aCtx.manager.createNativeQuery(otherVisits_list_sql).getResultList();
 	for (var i=0;i<14;i++) {
 		otherVisits[i]="";
 	}
 	if (otherVisit_list.size()>0) {
-		for (var i=0;i<otherVisit_list.size();i++) {
-			otherVisits[i]=""+otherVisit_list.get(i);
+		var j=0 ;
+		for (var i=otherVisit_list.size();i>0;i--) {
+			otherVisits[j++]=""+otherVisit_list.get(i-1);
 		}
 	}
 	for (var i=0;i<14;i++) {
