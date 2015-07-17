@@ -13,7 +13,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ContractNosologyGroup.class)
 @Comment("Нозологическая группа по договору")
-@WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityParentList-contract_contractNosologyGroup.do", view="entityParentView-contract_contractNosologyGroup.do")
+@WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityList-contract_contractNosologyGroup.do", view="entityView-contract_contractNosologyGroup.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractNosologyGroup")
 public class ContractNosologyGroupForm extends IdEntityForm{
 	/**
@@ -31,4 +31,17 @@ public class ContractNosologyGroupForm extends IdEntityForm{
 	 * Название
 	 */
 	private String theName;
+	
+	/** Диапозон */
+	@Comment("Диапозон")
+	public String getRangeMkb() {
+		return theRangeMkb;
+	}
+
+	public void setRangeMkb(String aRangeMkb) {
+		theRangeMkb = aRangeMkb;
+	}
+
+	/** Диапозон */
+	private String theRangeMkb;
 }
