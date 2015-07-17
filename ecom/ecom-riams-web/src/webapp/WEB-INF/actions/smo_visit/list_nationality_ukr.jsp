@@ -27,6 +27,7 @@
 	String typeAge =ActionUtil.updateParameter("Report_nationality","typeAge","3", request) ;
 	String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","2", request) ;
 	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
+	String typeDate =ActionUtil.updateParameter("Report_nationality","typeDate","1",request) ;
 
   %>
     <msh:form action="/journal_nationality_ukraine.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -106,6 +107,15 @@
         	<input type="radio" name="typePatient" value="5">  иностранцы+соотечественники
         </td>
       </msh:row>
+      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="1">  Дата начала госпитализации
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDate" value="2">  Дата окончания госпитализации
+        </td>
+      </msh:row>
        <msh:row>
        	<msh:autoComplete property="department" fieldColSpan="4"
        	label="Отделение" horizontalFill="true" vocName="lpu"/>
@@ -137,7 +147,12 @@
     	 || request.getParameter("id")!=null && !request.getParameter("id").equals("")
     	) {
     		
-        	if (typeEmergency!=null && typeEmergency.equals("1")) {
+        	if (typeDate!=null&&typeDate.equals("1")){
+        		request.setAttribute("dateSql","smo.dateStart" );
+        	} else if (typeDate!=null&&typeDate.equals("2")) {
+        		request.setAttribute("dateSql", "smo.dateFinish");
+        	}
+    		if (typeEmergency!=null && typeEmergency.equals("1")) {
         		request.setAttribute("emergencySql", " and m.emergency='1' ") ;
         		request.setAttribute("emergencyInfo", ", поступивших по экстренным показаниям") ;
         		request.setAttribute("emergencyTicketSql", " and t.emergency='1' ") ;
@@ -391,7 +406,7 @@ left join diagnosis ds on ds.medcase_id=smo.id and ds.registrationtype_id='3' an
 left join vocidc10 mkb on mkb.id=ds.idc10_id
 left join vocsocialstatus vsst on vsst.id=p.socialstatus_id 
 where  
-m.DTYPE='DepartmentMedCase' and m.dateFinish between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+m.DTYPE='DepartmentMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
 and (m.noActuality is null or m.noActuality='0')
 and smo.deniedHospitalizating_id is null
 ${emergencySql} ${departmentSql} 
@@ -789,7 +804,7 @@ group by ${groupSqlId},${groupSql}
   	<script type="text/javascript">
   	checkFieldUpdate('typeView','${typeView}',2) ;
   	checkFieldUpdate('typeGroup','${typeGroup}',2) ;
-  	//checkFieldUpdate('typeDate','${typeDate}',2) ;
+  	checkFieldUpdate('typeDate','${typeDate}',1) ;
   	//checkFieldUpdate('typeUser','${typeUser}',3) ;
     checkFieldUpdate('typePatient','${typePatient}',1) ;
     checkFieldUpdate('typeAge','${typeAge}',3) ;
