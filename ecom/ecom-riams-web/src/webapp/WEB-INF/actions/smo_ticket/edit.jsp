@@ -123,14 +123,7 @@
         	<msh:checkBox label="Недействующий талон" property="noActuality"/>
         </msh:row>
 	    <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
-	    <msh:ifFormTypeIsCreate formName="smo_ticketForm">
-        <msh:row guid="1283d16a-e417-4add-acf5-5185dbb7737d">
-        <msh:textField label="Дата другого приема" property="otherTicketDate"/>
-        <td>
-        <input type='button' value='Добавить дату' onclick='addOtherDate()'>
-        </td>
-        </msh:row>
-        </msh:ifFormTypeIsCreate>
+
         <msh:row>
         <table id="otherDates">
         </table>
@@ -286,62 +279,7 @@
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
     
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
-      	<script type="text/javascript"> 
-    onload=function(){
-    	if ($('otherTicketDates').value!=null&&$('otherTicketDates').value!='') {
-    		var arr = $('otherTicketDates').value.split(":");
-    		for (var i=0;i<arr.length;i++) {
-    			addRow(arr[i]);
-    		}
-    	}
-    }
-      	function createOtherDates() {
-      		var dates = document.getElementById('otherDates').childNodes;
-      		var str = ""; $('otherTicketDates').value='';
-      		for (var i=1;i<dates.length;i++) {
-      			if ($('dateStart').value!=dates[i].childNodes[0].innerHTML) {
-      				str+=dates[i].childNodes[0].innerHTML+":";
-          			}
-      		}
-      		str=str.length>0?str.trim().substring(0,str.length-1):"";
-      		$('otherTicketDates').value=str;
-      		//alert (str);
-      	}
-      	function addRow (aValue) {
-      		var table = document.getElementById('otherDates');
-      		var row = document.createElement('TR');
-      		var td = document.createElement('TD');
-      		var tdDel = document.createElement('TD');
-      		table.appendChild(row);
-      		row.appendChild(td);
-      		td.innerHTML=""+aValue;
-      		row.appendChild(tdDel);
-      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
-      		$('otherTicketDate').value='';
 
-      	}
-      	
-      	function addOtherDate() {
-      		var otherDate = $('otherTicketDate').value;
-      		if (otherDate!='') {      			
-      			var dates = document.getElementById('otherDates').childNodes;
-      			if (otherDate==$('dateStart').value) {
-  					alert (otherDate+" является датой талона");
-  					return;
-  				} 
-      			var l = dates.length;
-      			for (var i=1; i<l;i++) {
-      				if (otherDate==dates[i].childNodes[0].innerHTML) {
-      					alert ("Такая дата "+otherDate+" уже есть в обращении");
-      					return;
-      				}
-      				
-      			}
-      			addRow (otherDate);
-      		}
-      		
-      	}
-      	</script>
       	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
   			<script type="text/javascript">
   			
@@ -565,7 +503,7 @@
   			
   		}
     	function isExistTicket() {
-    		createOtherDates();
+    		
     		 if ($('dateStart').value!="") {
     		TicketService.findDoubleBySpecAndDate($('id').value,document.forms[0].medcard.value,$('workFunctionExecute').value, $('dateStart').value
     		, {
