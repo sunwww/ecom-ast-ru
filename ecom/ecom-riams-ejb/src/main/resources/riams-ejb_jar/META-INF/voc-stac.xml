@@ -256,6 +256,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult'
                 names   = 'name'
                 queried = 'name'
+                queryAppend="(isArchival is null or isArchival='0')"
                 />
     </voc> 
     
