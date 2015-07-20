@@ -34,4 +34,11 @@ public class VocHospitalizationResult extends VocBaseEntity {
 	private String theCodefkl;
 	/** Омс код */
 	private String theOmcCode;
+	
+	/** В архиве */
+	@Comment("В архиве")
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** В архиве */
+	private Boolean theIsArchival;
 }
