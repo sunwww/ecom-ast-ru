@@ -206,7 +206,7 @@
 		}
 		
 		$('labList').value=labList ;
-	alert($('labList').value);
+	//alert($('labList').value);
 		document.forms['pres_servicePrescriptionForm'].action=oldaction ;
 		document.forms['pres_servicePrescriptionForm'].submit();
 	}
