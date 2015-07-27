@@ -228,6 +228,7 @@
 	        <msh:sideLink action="/javascript:viewProtocolByMedcard(1,'.do')" name='Заключения диаг. служб<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
 	        <msh:sideLink action="/javascript:viewProtocolByMedcard(0,'.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
 	        <msh:sideLink action="/javascript:infoDiagByMedcard('.do')" name='Диагнозы<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	                <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/javascript:checkCrossSPO();" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
   		</msh:sideMenu>
     <msh:ifFormTypeIsView formName="smo_ticketForm" guid="8f-4d80-856b-ce3095ca1d">
       <msh:sideMenu guid="e6c81315-888f-4d80-856b-ce3095ca1d55" title="Талон" >
@@ -266,6 +267,7 @@
     	action='.javascript:printReference(".do")' title='Печать справки'
     	/>
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
+
         <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" guid="5138-f936-45d0-ac70-066c" key="SHIFT+9" title="Печатать направления на бак.исследование" />
         
       </msh:sideMenu>
@@ -279,6 +281,59 @@
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
     
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
+      	<script type="text/javascript"> 
+    onload=function(){
+    	if ($('otherTicketDates').value!=null&&$('otherTicketDates').value!='') {
+    		var arr = $('otherTicketDates').value.split(":");
+    		for (var i=0;i<arr.length;i++) {
+    			addRow(arr[i]);
+    		}
+    	}
+    }
+    
+    	function checkCrossSPO () {
+    		TicketService.getCrossSPO($('dateStart').value,$('patient').value,$('workFunctionExecute').value,{
+    			callback: function(aResult) {
+					if (aResult!=null&&aResult!='') {
+						var arr = aResult.split(':');
+						if (confirm('Случай пересекается с закрытым СПО (Период с '+arr[1]+' по '+arr[2]+'). Продолжить?')) {
+							checkIsHoliday();
+						} else {
+  							document.getElementById('submitButton').disabled=false;
+  							document.getElementById('submitButton').value='Создать';
+						}
+					} else {
+						checkIsHoliday();
+					}
+					
+    			}
+    		});
+    	}
+      	function createOtherDates() {
+      		var dates = document.getElementById('otherDates').childNodes;
+      		var str = ""; $('otherTicketDates').value='';
+      		for (var i=1;i<dates.length;i++) {
+      			if ($('dateStart').value!=dates[i].childNodes[0].innerHTML) {
+      				str+=dates[i].childNodes[0].innerHTML+":";
+          			}
+      		}
+      		str=str.length>0?str.trim().substring(0,str.length-1):"";
+      		$('otherTicketDates').value=str;
+      		//alert (str);
+      	}
+      	function addRow (aValue) {
+      		var table = document.getElementById('otherDates');
+      		var row = document.createElement('TR');
+      		var td = document.createElement('TD');
+      		var tdDel = document.createElement('TD');
+      		table.appendChild(row);
+      		row.appendChild(td);
+      		td.innerHTML=""+aValue;
+      		row.appendChild(tdDel);
+      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+      		$('otherTicketDate').value='';
+      	}
+</script>
 
       	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
   			<script type="text/javascript">
@@ -411,7 +466,7 @@
     	
     	var oldaction = document.forms[0].action ;
     	var oldValue = $('dateStart').value ;
-    	document.forms[0].action = 'javascript:checkIsHoliday()';
+    	document.forms[0].action = 'javascript:checkCrossSPO()';
     	concludingMkbAutocomplete.addOnChangeCallback(function() {
     		setDiagnosisText('concludingMkb','concludingDiagnos') ;
     		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
@@ -482,25 +537,23 @@
   		function checkIsHoliday() {
   			var v =$('emergency').checked;  			
   			if (v=='1' || v=='true') {
-  				isExistTicket();
+  				
   			} else {
 	  			TicketService.isHoliday($('dateStart').value,{
 	  				callback: function(aResult) {
 	  					if (aResult=='1') {
 	  						if (confirm("Прием приходится на воскресенье, точно создать талон?")) {
-	  							isExistTicket();
+	  			//				isExistTicket();
 		  						} else {
 	  							document.getElementById('submitButton').disabled=false;
 	  							document.getElementById('submitButton').value='Создать';
+	  							return;
 	  						}
-	  					} else {
-	  						
-	  						isExistTicket();
-	  						}
+	  					} 
 	  				}
 	  			});
   			}
-  			
+  			isExistTicket();
   		}
     	function isExistTicket() {
     		
