@@ -27,21 +27,18 @@ public class AttachmentServiceJs {
 	
 	public String getAreaByPatient (Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "";
 		try {
-			sql = "select la.id as laId,la.number ||' '||vat.name as laName, lpu.id as lpuId,lpu.name as lpuName, mp.company_id, ri.name as skName from patient p " +
+			String sql = "select la.id as laId,la.number ||' '||vat.name as laName, lpu.id as lpuId,lpu.name as lpuName, mp.company_id, ri.name as skName from patient p " +
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
+					" 	and ((laap.housenumber is null or laap.housenumber='') or laap.housenumber=p.housenumber)" +
+					"	and ((laap.housebuilding is null or laap.housebuilding='') or laap.housebuilding=p.housebuilding)" +
 					" left join lpuareaaddresstext lat on lat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=lat.area_id " +
 					" left join vocareatype vat on vat.id=la.type_id" +
 					" left join mislpu lpu on lpu.id=la.lpu_id " +
-					" left join medpolicy mp on mp.patient_id = p.id" +
+					" left join medpolicy mp on mp.patient_id = p.id and mp.dtype='MedPolicyOmc' and mp.id=(select max(id) from medpolicy where patient_id=p.id and dtype='MedPolicyOmc')" +
 					" left join reg_ic ri on ri.id=mp.company_id" +
-					
-					" where p.id="+aPatientId +
-					" and ((laap.housenumber is null or laap.housenumber='') or laap.housenumber=p.housenumber) " +
-					" and ((laap.housebuilding is null or laap.housebuilding='') or laap.housebuilding=p.housebuilding)"+
-					" and mp.dtype='MedPolicyOmc' and mp.id=(select max(id) from medpolicy where patient_id=p.id and dtype='MedPolicyOmc')";
+					" where p.id="+aPatientId;
 			Collection<WebQueryResult> res = service.executeNativeSql(sql);
 			if (!res.isEmpty()) {
 				WebQueryResult r = res.iterator().next();
@@ -54,9 +51,9 @@ public class AttachmentServiceJs {
 				return lpuId+":"+lpuName+":"+areaId+":"+areaName+":"+companyId+":"+companyName;
 			}
 		} catch (Exception e) {
-			return ":::::";
+			return e.getMessage();
 		}
-		return sql;
+		return "";
 		
 	}
 	
