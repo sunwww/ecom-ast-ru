@@ -65,9 +65,11 @@
         <msh:row>
         	<msh:separator label="ОПИСАНИЕ" colSpan="4"/>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/ClinicExpertCard/NumberInJournal">
         <msh:row>
-        	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале"/>
+                	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале"/>
         </msh:row>
+        </msh:ifInRole>
         <msh:row>
         	<msh:textField property="expertDate" label="Дата экспертизы"/>
         	<msh:autoComplete property="patternCase" fieldColSpan="1" label="Характеристика" vocName="vocExpertPatternCase" horizontalFill="true"/>
