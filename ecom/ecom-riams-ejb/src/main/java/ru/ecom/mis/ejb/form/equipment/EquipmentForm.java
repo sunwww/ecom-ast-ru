@@ -22,7 +22,15 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
 public class EquipmentForm extends IdEntityForm {
 
-    /** Марка оборудования */
+    /** Название */
+	@Comment("Название")
+	@Persist
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+	/** Название */
+	private String theName;
+	
+	/** Марка оборудования */
     @Persist
     @Comment("Марка оборудования")
     public Long getMarka() {    return theMarka ;}
