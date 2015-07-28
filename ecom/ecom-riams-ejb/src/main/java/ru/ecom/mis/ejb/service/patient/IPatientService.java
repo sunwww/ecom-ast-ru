@@ -33,7 +33,7 @@ public interface IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException ;
-	public void insertCheckFondData(
+	public Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
 			,String aCommonNumber,String aPolicySeries,String aPolicyNumber

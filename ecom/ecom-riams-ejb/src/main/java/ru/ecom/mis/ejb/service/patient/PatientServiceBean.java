@@ -413,7 +413,7 @@ public class PatientServiceBean implements IPatientService {
 		
 	}
 	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
-		Object list = theManager.createNativeQuery("select pf.id from patientfond pf where pf.lastname='"+aLastName+"' and " +
+		Object list = theManager.createNativeQuery("select max(pf.id) from patientfond pf where pf.lastname='"+aLastName+"' and " +
 				"pf.firstname = '"+aFirstName+"' and pf.middlename = '"+aMiddleName+"' and pf.birthday=to_date('"+aBirthday +
 				"','dd.MM.yyyy') and pf.checkTime_id='"+aCheckTimeId+"'").getSingleResult();
 		if (list!=null) {			
@@ -451,7 +451,10 @@ public class PatientServiceBean implements IPatientService {
 			if (needUpdatePatient) {
 			//	System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
-				str.append(prepSql("snils",aSnils)).append(prepSql(str.length()>23?", commonnumber":"commonnumber",aRz));
+				if (aSnils!=null&&aSnils.equals("")) {
+					str.append(prepSql("snils",aSnils));
+				}
+				str.append(prepSql(str.length()>23?", commonnumber":"commonnumber",aRz));
 				patF.setIsPatientUpdate(true);
 			} else {patF.setIsPatientUpdate(false);}
 			
@@ -851,7 +854,7 @@ return true;
 	}
 		
 	
-	public void insertCheckFondData(
+	public Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
 			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
@@ -908,10 +911,11 @@ return true;
 		}
 		theManager.persist(fond) ;
 		if (pat!=null) {
-			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId())); 
+			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId()));
+			theManager.persist(fond) ;
 		}
-		theManager.persist(fond) ;
-		return ;
+		
+		return fond.getId();
 	}
 	public PatientForm getPatientById(Long aId) {
 		//Patient p = theManager.find(Patient.class, aId) ;
@@ -1028,8 +1032,9 @@ return true;
 			theManager.createNativeQuery("	update WorkCalendarHospitalBed set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ExtDispCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ClinicExpertCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("  update from PatientFond set patient_id =:idnew where patient_id =:idold ").setParameter("idOld", aIdOld).executeUpdate();
-			theManager.createNativeQuery("  update from JournalPatientFondCheck set patient_id =:idnew where patient_id =:idold ").setParameter("idOld", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update PatientFond set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update JournalPatientFondCheck set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update JournalChangePatient set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			
 		}
 	}
