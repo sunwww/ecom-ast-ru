@@ -101,6 +101,12 @@
         </td>
        </msh:row>
         <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeGroup" value="5"> по отделению
+        </td>
+       </msh:row>
+        <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
@@ -254,11 +260,18 @@
        			request.setAttribute("groupName2", "Услуга") ;
        			request.setAttribute("groupGroup", "vpt.id,vpt.name,"+ms+"") ;
        			request.setAttribute("groupOrder", "vpt.name,"+ms_o+"") ;
+			} else if (typeGroup.equals("5")) {
+				request.setAttribute("groupSql", "ml.name as mlname, cast('' as varchar(1))") ;
+       			request.setAttribute("groupSqlId", "'&department='||ml.id") ;
+       			request.setAttribute("groupName1", "Отделение") ;
+       			request.setAttribute("groupName2", "") ;
+       			request.setAttribute("groupGroup", "ml.id,ml.name") ;
+       			request.setAttribute("groupOrder", "ml.name") ;
 			}
 		
   		if (typeGroup!=null &&
   				(typeGroup.equals("1")|| typeGroup.equals("2")
-  						|| typeGroup.equals("3")|| typeGroup.equals("4"))
+  						|| typeGroup.equals("3")|| typeGroup.equals("4")|| typeGroup.equals("5"))
   				) {
   	//and w.lpu_id='${lpu_id}'
   	%>
