@@ -108,7 +108,7 @@
   onload=function() {
 	  AttachmentService.getAreaByPatient($('patient').value, {
 			  callback: function(aResult) {
-				  if (aResult!=null&&aResult!=':::::') {
+				  if (aResult!=null&&aResult!=''&&aResult!=':::::') {
 					  var arr = aResult.split(":");
 					  $('lpu').value=(arr[0]!=null&&arr[0]!='')?arr[0]:$('lpu').value;
 					  $('lpuName').value=(arr[1]!=null&&arr[1]!='')?arr[1]:$('lpuName').value;
