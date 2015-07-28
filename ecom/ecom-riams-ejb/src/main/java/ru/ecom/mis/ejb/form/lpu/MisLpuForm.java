@@ -47,6 +47,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(RepMisLpuChildInterceptor.class)
 )
 public class MisLpuForm extends IdNameEntityForm {
+	
+	/** Стандарт оказания мед. помощи */
+	@Comment("Стандарт оказания мед. помощи")
+	@Persist
+	public Long getMedicalStandard() {return theMedicalStandard;}
+	public void setMedicalStandard(Long aMedicalStandard) {theMedicalStandard = aMedicalStandard;}
+	/** Стандарт оказания мед. помощи */
+	private Long theMedicalStandard;
+	
 	/** Не входит в оплату по ОМС */
 	@Comment("Не входит в оплату по ОМС")
 	@Persist
