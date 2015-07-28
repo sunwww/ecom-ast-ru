@@ -216,7 +216,7 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 	
 	/** Порядковый номер в журнале */
 	@Comment("Порядковый номер в журнале")
-	@Persist @Required
+	@Persist 
 	public String getNumberInJournal() {return theNumberInJournal;}
 	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
 
