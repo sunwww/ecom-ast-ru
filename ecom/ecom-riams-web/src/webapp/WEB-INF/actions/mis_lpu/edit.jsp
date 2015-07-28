@@ -83,6 +83,9 @@
        		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipment" horizontalFill="true" label="Принтер"/>
         </msh:row>
         <msh:row>
+        <msh:autoComplete property="medicalStandard" vocName="vocMedStandard" label="Стандарт оказания мед. помощи"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row>
@@ -269,13 +272,15 @@
         <msh:sideLink key="ALT+6" params="id" action="/js-mis_worker-all" title="Список сотрудников" name="Сотрудников" guid="92fa6023-206c-40c6-974f-155ccc7689e1" roles="/Policy/Mis/Worker/Worker/View" />
         <msh:sideLink roles="/Policy/Mis/Diet/View" params="id" action="/entityParentList-diet_diet" name="Диеты" title="Показать диеты" guid="163ca91b-6130-4bf4-b6e6-f4266a33c60f" />
         <msh:sideLink key="ALT+7" params="id" action="/entityParentList-work_staff" name="Штатное расписание" title="Штатное расписание" guid="7cef38f4-b980-4a43-b9f3-245e46c0f86b" roles="/Policy/Mis/Worker/Staff/View" />
-        <msh:sideLink key="ALT+8" params="id" action="/entityParentList-mis_equipment" title="Список оборудования" name="Оборудование" guid="4d5beb13-c643-4b90-adce-26c88b21a56f" roles="/Policy/Mis/Equipment/Equipment/View" />
+        <msh:sideLink key="ALT+8" params="id" action="/entityParentList-mis_medicalEquipment" title="Список мед. оборудования" name="Медицинское оборудование" guid="4d5beb13-c643-4b90-adce-26c88b21a56f" roles="/Policy/Mis/Equipment/Equipment/View" />
+        <%-- <msh:sideLink key="ALT+8" params="id" action="/entityParentList-mis_equipment" title="Список оборудования" name="Оборудование" guid="4d5beb13-c643-4b90-adce-26c88b21a56f" roles="/Policy/Mis/Equipment/Equipment/View" /> --%>
         <msh:sideLink key="ALT+9" params="id" action="/entityParentList-work_groupWorkFunction" title="Список групповых рабочих функций" name="Групповые рабочие функции" guid="07b9e245-deed-4b36-94a7-187a623533d0" roles="/Policy/Mis/Worker/WorkFunction/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_bedFund" title="Коечный фонд" name="Коечный фонд" guid="0745-deed-4b36-94a7-187a3d0" roles="/Policy/Mis/BedFund/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_mortalityReportDate" name="Сведения о смертности" title="Показать сведения о смертности" guid="2db116bf-5d40-4eea-913e-6787399ecc73" roles="/Policy/Mis/Report/Mortality/View" />
         <msh:sideLink params="id" action="/entityParentList-voc_cardIndex" name="Сведения о картотеках" roles="/Policy/Voc/VocCardIndex/View" />
         <msh:sideLink roles="/Policy/Mis/Report/Birth/View" params="id" action="/entityParentList-mis_birthReportDate" name="Сведения по рождаемости" title="Показать сведения по рождаемости" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/js-mis_worker-pattern" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />
+        <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" params="id" action="/js-mis_lpu-showStandard" name="Оснащение по стандарту" title="Шаблоны по стандарту" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
