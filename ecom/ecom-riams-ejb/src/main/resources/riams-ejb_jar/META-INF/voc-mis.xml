@@ -1,5 +1,26 @@
 <vocconfig>
 
+<voc id="vocMedStandard" type="NativeVocService">
+	<NativeVocService
+		from="MedicalStandard ms"
+		nameId="ms.id"
+		order="ms.name"
+		names="ms.code||' '|| ms.name"
+		queryAppend="ms.finishDate is null"
+		queried=" upper(ms.name) like upper(:query) "
+	/>
+</voc>
+
+<voc id="vocEquipmentType" type="NativeVocService">
+	<NativeVocService
+		from="VocTypeEquip vte"
+		nameId="vte.id"
+		order="vte.name"
+		names="vte.id||' '|| vte.name"
+		queried=" upper(vte.name) like upper(:query) "
+	/>
+</voc>
+
 <voc id="hospServicies" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
