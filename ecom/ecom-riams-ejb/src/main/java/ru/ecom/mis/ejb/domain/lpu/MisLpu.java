@@ -29,6 +29,7 @@ import ru.ecom.mis.ejb.domain.lpu.voc.VocPropertyAdmin;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocSubordination;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
+import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
 import ru.ecom.mis.ejb.domain.worker.Staff;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
@@ -49,6 +50,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class MisLpu extends BaseEntity {
 	
+	/** Стандарт оказания мед. помощи */
+	@Comment("Стандарт оказания мед. помощи")
+	@OneToOne
+	public MedicalStandard getMedicalStandard() {return theMedicalStandard;}
+	public void setMedicalStandard(MedicalStandard aMedicalStandard) {theMedicalStandard = aMedicalStandard;}
+	/** Стандарт оказания мед. помощи */
+	private MedicalStandard theMedicalStandard;
 	/** Уровень рабочего места */
 	@Comment("Уровень рабочего места")
 	@OneToOne
@@ -265,6 +273,14 @@ public class MisLpu extends BaseEntity {
 
      /** Оборудование */
      private List<Equipment> theEquipment ;
+     
+     /** Оборудование, используемое из других отделений */
+	@ManyToOne
+    @Comment("Оборудование, используемое из других отделений")
+	public Equipment getOtherEquipment() {return theOtherEquipment;}
+	public void setOtherEquipment(Equipment aOtherEquipment) {theOtherEquipment = aOtherEquipment;}
+	/** Оборудование, используемое из других отделений */
+	private Equipment theOtherEquipment;
      
      /** Коечный фонд */
 	@Comment("Коечный фонд")
