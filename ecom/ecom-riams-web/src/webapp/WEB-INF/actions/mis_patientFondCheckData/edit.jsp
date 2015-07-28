@@ -105,7 +105,7 @@ order by pf.lastname, pf.firstname, pf.middlename
             <msh:section title="Пациенты, не найденные в базе ФОМС">
         <ecom:webQuery name="dataList" nameFldSql="dataListSQL" nativeSql="
         select jpfc.patient_id, jpfc.lastname,jpfc.firstname,jpfc.middlename,to_char(jpfc.birthday,'dd.MM.yyyy')
-from journalpatientfondcheck jpfc where jpfc.checkTime_id=${param.id} and isFound='0'
+from journalpatientfondcheck jpfc where jpfc.checkTime_id=${param.id} and jpfc.isFound='0' and jpfc.patient_id is not null 
 order by jpfc.lastname, jpfc.firstname, jpfc.middlename
  "/>
         	<msh:table name="dataList" action="entityView-mis_patient.do" idField="1">
