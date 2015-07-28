@@ -1,7 +1,13 @@
 package ru.ecom.mis.ejb.domain.equipment;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -9,10 +15,13 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocCreater;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocMarka;
+import ru.ecom.mis.ejb.domain.equipment.voc.VocOKOF;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocProvider;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
 /**
  * @author  azviagin
@@ -22,7 +31,23 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class Equipment extends BaseEntity {
 
-    /** Марка оборудования */
+	/** ЛПУ, в которых используются */
+	@Comment("ЛПУ, в которых используются")
+	@OneToMany(mappedBy="otherEquipment")
+	public List<MisLpu> getOtherLpu() {return theOtherLpu;}
+	public void setOtherLpu(List<MisLpu> aOtherLpu) {theOtherLpu = aOtherLpu;}
+	/** ЛПУ, в которых используются */
+	private List<MisLpu> theOtherLpu;
+
+	/** Название */
+	@Comment("Название")
+	@Persist
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+	/** Название */
+	private String theName;
+	
+	/** Марка оборудования */
     @OneToOne
     public VocMarka getMarka() { return theMarka ; }
     public void setMarka(VocMarka aMarka) { theMarka = aMarka ; }
@@ -78,6 +103,7 @@ public class Equipment extends BaseEntity {
     /** Производитель */
     private VocCreater theCreater ;
     /** Год установки */
+    @Deprecated
     private Integer theStayYear;
     /** Год выпуска */
     private Integer theCreateYear;
