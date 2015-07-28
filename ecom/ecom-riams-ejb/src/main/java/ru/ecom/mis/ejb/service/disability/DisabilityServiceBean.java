@@ -78,7 +78,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
 		System.out.println(snilsCN);
 		if (currentSnils.length()!=11) {
-			System.out.println("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
+		//	System.out.println("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
 			return false;
 		} 
 		int sum = 0;
@@ -93,10 +93,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			controlNumber=sum;
 		} 
 		if (snilsCN==controlNumber) {
-			System.out.println("==isRightSnils, СНИЛС верный! "+currentSnils);
+		//	System.out.println("==isRightSnils, СНИЛС верный! "+currentSnils);
 			return true;	
 		} else {
-			System.out.println("==isRightSnils, Неправильный СНИЛС!"+currentSnils);
+		//	System.out.println("==isRightSnils, Неправильный СНИЛС!"+currentSnils);
 			return false;
 		}
 			
@@ -503,7 +503,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String date1 = rs.getString("sanDateFrom");
 				if (reason3!=null&&!reason3.equals("")) {
 					if (date1!=null&&!date1.equals("")) {
-						rowLpuLn.addContent(new Element("DATE1").addContent(rs.getString("sandatefrom")));
+						rowLpuLn.addContent(new Element("DATE1").addContent(date1));
 					} else {
 						defect.append(ln).append(":").append(ln_id).append(":Нет даты начала путевки, reason3=").append(reason3).append(":")
 						.append(patId).append(":").append(patInfo).append("#");
