@@ -898,4 +898,11 @@ public class PatientForm extends IdEntityForm {
 	/** Прикрепление по участку */
 	private LpuAttachedByDepartmentForm theAttachedForm = new LpuAttachedByDepartmentForm();
 	
+	/** Создать прикрепление */
+	@Comment("Создать прикрепление")
+	public Boolean getCreateNewAttachment() {return theCreateNewAttachment;}
+	public void setCreateNewAttachment(Boolean aCreateNewAttachment) {theCreateNewAttachment = aCreateNewAttachment;}
+	/** Создать прикрепление */
+	private Boolean theCreateNewAttachment;
+	
 }
