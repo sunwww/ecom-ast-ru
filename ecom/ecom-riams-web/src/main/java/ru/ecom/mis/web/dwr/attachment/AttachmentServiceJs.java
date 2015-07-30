@@ -35,10 +35,15 @@ public class AttachmentServiceJs {
 					" left join lpuareaaddresstext lat on lat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=lat.area_id " +
 					" left join vocareatype vat on vat.id=la.type_id" +
+					" and vat.code= case when cast(to_char(current_date,'yyyy') as int) " +
+					" -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int) " +
+					" -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) " +
+					" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) <18 then '2' else '1' end" +
 					" left join mislpu lpu on lpu.id=la.lpu_id " +
 					" left join medpolicy mp on mp.patient_id = p.id and mp.dtype='MedPolicyOmc' and mp.id=(select max(id) from medpolicy where patient_id=p.id and dtype='MedPolicyOmc')" +
 					" left join reg_ic ri on ri.id=mp.company_id" +
-					" where p.id="+aPatientId;
+					" where p.id="+aPatientId
+					;
 			Collection<WebQueryResult> res = service.executeNativeSql(sql);
 			if (!res.isEmpty()) {
 				WebQueryResult r = res.iterator().next();
