@@ -245,7 +245,8 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+"  from MedCase sls"
 		+" left join patient p on p.id=sls.patient_id"
 		+" left join medcard mp on mp.person_id=p.id"
-		+" left join workfunction wf on wf.id=sls.ownerFunction_id"
+		+" left join diary d on d.medcase_id=sls.id"
+		+" left join workfunction wf on wf.id=d.specialist_id"
 		+" left join worker w on w.id=wf.worker_id"
 		+" left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
 		+" left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
@@ -287,8 +288,8 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" 	where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
 		+" 	and sls.deniedHospitalizating_id is not null"
 		+" and vwf.id in ("+aVocWorkFunctions+") and sls.medicalAid='1'"
-		+" and diag.id is not null and mp.id is null "+filterMkbSql
-		+" 	and diag.id is not null and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
+		+" and diag.id is not null and mp.id is not null "+filterMkbSql
+		+"  and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
 		+" 	and wfN.id is not null and wfN.workFunction_id="+aVocWorkFunction
 		+" 	order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
 	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
