@@ -594,7 +594,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					}
 					
 				}
-				System.out.println(rs.getString("preg12week"));
+				//System.out.println(rs.getString("preg12week"));
 				if (rs.getString("preg12week")!=null&&rs.getString("preg12week").equals("1")) {
 					rowLpuLn.addContent(new Element("PREGN12W_FLAG").addContent("1"));
 				}
@@ -730,7 +730,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			if (rootElement.getChildren().isEmpty()) {
 				return "Записей не найдено";
 			} else {
-				return createNewFile(rootElement, aSocCode, aPacketNumber)+"@"+defect.toString();
+				return createNewFile(rootElement, aSocCode, aPacketNumber)+"@"+defect.toString()+"@"+numAll+"@"+rightNum;
 			}
 			
 			}
