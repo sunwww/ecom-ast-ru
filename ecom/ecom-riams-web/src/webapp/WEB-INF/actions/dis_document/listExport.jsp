@@ -122,7 +122,10 @@
        	 </tr><tr>
           <td id='aViewTD' style="display: none">
        		Файл <span id='aView'></span>
-       	</td></tr></table>
+       		<span id='aDesc'></span>
+       	</td></tr>
+       	
+       	</table>
       <table id="exportTable" border="1" style="padding: 15px; display: none">
        <tr style="color: red">
         	<td colspan="2">Внимание! Следующие записи не выгружены!</td>
@@ -306,9 +309,9 @@
     				$('exportTable').style.display = 'none' ;
     				var aData = aResult.split("@");
     				$('aView').innerHTML="<a href='../rtf/"+aData[0]+"' target='_blank'>"+aData[0]+"</a>" ;
+    				$('aDesc').innerHTML="<p>Найдено записей всего: "+(aData[2]!=null?aData[2]:"")+". Выгружено в файл: "+(aData[3]!=null?aData[3]:"")+"</p>";
     				flushTable("exportElements");
     				if (aData[1].length>0){
-    					
         				aData[1] = aData[1].substring(0,aData[1].length-1);
     	    			var rows = aData[1].split("#");
     	    			
@@ -317,6 +320,7 @@
     	    			}
     	    			$('exportTable').style.display = 'block' ;
     				}
+    				
     			} else {
     				alert ("Ошибка: "+aResult);
     			}
