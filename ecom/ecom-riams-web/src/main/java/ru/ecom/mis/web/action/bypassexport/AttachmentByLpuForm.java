@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.action.bypassexport;
 
+import org.apache.struts.upload.FormFile;
+
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
@@ -94,4 +96,18 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** FilenameError */
 	private String theFilenameError;
+
+	/** Файл с прик. населением */
+	@Comment("Файл с прик. населением")
+	public FormFile getAttachmentFile() {return theAttachmentFile;}
+	public void setAttachmentFile(FormFile aAttachmentFile) {theAttachmentFile = aAttachmentFile;}
+	/** Файл с прик. населением */
+	private FormFile theAttachmentFile;
+	
+	/** Формат импорта прик. населения */
+	@Comment("Формат импорта прик. населения")
+	public Long getImportFormat() {return theImportFormat;}
+	public void setImportFormat(Long aImportFormat) {theImportFormat = aImportFormat;}
+	/** Формат импорта прик. населения */
+	private Long theImportFormat;
 }
