@@ -14,10 +14,16 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
+import ru.ecom.expomc.ejb.services.importservice.ImportException;
+import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.web.util.ActionUtil;
+import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
@@ -28,6 +34,7 @@ public class AttachmentByLpuAction extends BaseAction {
     	
     	if (form!=null ) {
     		ActionErrors  erros = form.validate(aMapping, aRequest) ;
+    		
     	//	System.out.println(erros) ;
     		if (erros.isEmpty()&&((form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0)))||(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)))
     			) {
@@ -43,8 +50,6 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
     		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
-    		//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "1", aRequest);
-    		String typeSex=ActionUtil.updateParameter("PatientAttachment", "typeSex", "3", aRequest);
     		boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
@@ -69,15 +74,6 @@ public class AttachmentByLpuAction extends BaseAction {
 	    			sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
 	    		}
 	    	}
-	    		
-	    	
-	    	
-	        if (typeSex!=null&&typeSex.equals("1")) {
-	        	sqlAdd.append(" and vs.omccode='1'");
-	        	
-	        } else if (typeSex!=null&&typeSex.equals("2")) {
-	        	sqlAdd.append(" and vs.omccode='2'");
-	        }
 	    	if (typeView!=null && typeView.equals("2")) {
 	        	prefix="_no_addresss" ;
 	        	sqlAdd.append(" and p.address_addressid is null ") ;
