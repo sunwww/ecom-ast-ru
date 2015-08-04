@@ -6,6 +6,10 @@
 
 	<form-beans>
 		
+		<form-bean name="mis_medicalEquipmentPositionForm" type="ru.ecom.mis.ejb.form.equipment.MedicalEquipmentPositionForm" />
+		<form-bean name="mis_medicalStandardForm" type="ru.ecom.mis.ejb.form.medstandard.MedicalStandardForm" />
+		<form-bean name="voc_typeEquipForm" type="ru.ecom.mis.ejb.form.equipment.voc.VocTypeEquipForm" />
+		<form-bean name="mis_medicalEquipmentForm" type="ru.ecom.mis.ejb.form.equipment.MedicalEquipmentForm" />
 		<form-bean name="mis_patientFondCheckDataForm" type="ru.ecom.mis.ejb.form.patient.PatientFondCheckDataForm" />
 		<!--  Медицинские осмотры -->
 		<form-bean name="extDispCom_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispComCardForm" />
@@ -277,7 +281,15 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
-	 <action path='/mis_bypass_report' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
+	        <action path='/mis_attachmentUpload' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuImportAction'
+                name='mis_attachmentForm'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/upload_attachment.jsp" />
+        </action>
+        
+	 <action path='/mis_bypass_report' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuBypassAction'
                 name='mis_attachmentForm'
                 validate='false'
                 scope="session"
@@ -349,6 +361,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript_cab.jsp" />
         </action>
+
         <action path='/mis_attachment' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
                 name='mis_attachmentForm'
                 validate='false'
