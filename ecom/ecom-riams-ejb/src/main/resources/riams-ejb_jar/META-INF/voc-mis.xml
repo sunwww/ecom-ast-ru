@@ -1,5 +1,17 @@
 <vocconfig>
 
+<voc id="patientAttachmentFormats" type="NativeVocService">
+	<NativeVocService
+		from="efformat ef"
+		nameId="ef.id"
+		order="ef.comment"
+		names="ef.id||' '|| ef.comment"
+		join="left join impdoc id on id.id=ef.document_id"
+		queryAppend="ef.actualdateto is null and id.entityclassname='ru.ecom.mis.ejb.domain.patient.PatientAttachedImport'"
+		queried=" upper(ms.name) like upper(:query) "
+	/>
+</voc>
+
 <voc id="vocMedStandard" type="NativeVocService">
 	<NativeVocService
 		from="MedicalStandard ms"
