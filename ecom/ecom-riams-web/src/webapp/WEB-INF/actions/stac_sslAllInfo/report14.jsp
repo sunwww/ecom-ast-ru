@@ -265,7 +265,7 @@
        </msh:row>
       <msh:row>
         <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="1"> по выбывшие по отд.
         </td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
@@ -283,7 +283,7 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="5"> по нозоологиям (направит.)
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="6"> по нозоологиям (умершие)
         </td>
        </msh:row>
