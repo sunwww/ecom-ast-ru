@@ -1,18 +1,19 @@
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ include file="/WEB-INF/tiles/header.jsp" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
-<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
-
+<%--     <tiles:put name='side' type='string'>
+        <msh:sideMenu>
+        	<msh:sideLink action="/mis_attachmentUpload.do" name="Импорт прик. населения"/>
+         </msh:sideMenu>
+    </tiles:put> --%>
   <tiles:put name="body" type="string">
   <%
     String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
@@ -29,11 +30,12 @@
 
   %>
   
-    <msh:form action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form  action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" >
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-  <%--  <msh:hidden property="filenameDefect"></msh:hidden> --%>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-       <a href='mis_bypass_report.do'> <input type="button" value="Работа с прик. населением" /> </a>
+       <a href='mis_bypass_report.do'> 
+       		<input type="button" value="Работа с прик. населением" /> 
+       </a>
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
        <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
@@ -56,7 +58,7 @@
         <msh:textField  property="periodTo" label="до" />
       </msh:row>
       <msh:row>
-        <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
+        <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ" />
        </msh:row>
       <msh:row>
         <td class="label" title="Возраст  (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
@@ -160,15 +162,6 @@
 	    	<input type="radio" name="typeDivide" value="2">  Не разбивать
 	    </td>
        </msh:row>
-         <%--  <msh:row>
-        <td class="label" title="Формат файла  (typeXmlFormat)" colspan="1"><label for="typeXmlFormatName" id="typeXmlFormatLabel">Тип файла:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeXmlFormat" value="0">  Старый (до 01.07.2015)
-        </td>
-	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	    	<input type="radio" name="typeXmlFormat" value="1">  Новый (с 01.07.2015)
-	    </td>
-       </msh:row> --%>
       <msh:row>
         <td class="label" title="Пациенты  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отображать пациентов:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -209,10 +202,16 @@
        <msh:row>
       	 <td colspan="11">  <label>Импорт дефектов: </label>    	
             <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
+          
            <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
        	 </td>
+       	
        </msh:row>
-       
+     <%--   <msh:row>
+       <td>
+         <html:file property="attachmentFile" />
+         </td>
+       </msh:row> --%>
        <msh:row>
        	<msh:hidden property="filename" />
        	<td colspan="4">
@@ -387,12 +386,7 @@
     String date1 = (String)request.getParameter("periodTo") ;
     String sqlAdd = (String)request.getAttribute("sqlAdd");
     String exportDefects = (String)request.getAttribute("exportDefects");
-    if (exportDefects!=null &&!exportDefects.equals("")) {
-    	/* String[] err = exportDefects.split("#");
-    	for (int i=0;i<err.length;i++) {
-    		addRow (err[i]);
-    	} */
-    }
+
     if (sqlAdd!=null &&date!=null && !date.equals("") && typeRead!=null)  {
     	if (date1==null ||date1.equals("")) {
     		request.setAttribute("periodTo", date);

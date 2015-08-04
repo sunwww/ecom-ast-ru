@@ -24,7 +24,7 @@
 
   %>
   
-    <msh:form action="/mis_bypass_report.do" defaultField="lpuName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/mis_bypass_report.do" defaultField="lpuName" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
    
   
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
@@ -45,11 +45,13 @@
                               parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
         </msh:row>	
       <msh:row>
+      </msh:row>
       <msh:row>
         <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ"/>
        </msh:row>
+       <msh:row>
         <msh:textField  property="period" label="Дата прикрепления с " />
-        <msh:textField  property="periodTo" label="поs" />
+        <msh:textField  property="periodTo" label="по" />
       </msh:row>
       <msh:row>
         <td class="label" title="Возраст  (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
@@ -74,6 +76,9 @@
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	        	<input type="radio" name="typeAttachment" value="3">  все 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAttachment" value="4">  не указано 
 	        </td>
 	        
        </msh:row>
@@ -103,6 +108,19 @@
         	<input type="radio" name="typeCompany" value="3">  все
         </td>
        </msh:row>
+        <msh:row>
+        <td class="label" title="Участок  (typeAreaCheck)" colspan="1"><label for="typeAreaCheckName" id="typeAreaCheckLabel">Прикрепление к участку:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAreaCheck" value="1">  существует
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAreaCheck" value="2">  нет прикрепления к участку 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeAreaCheck" value="3">  все без ограничения
+	        </td>
+	        
+       </msh:row>
       <msh:row>
         <td class="label" title="Отображать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Отображать:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -130,6 +148,7 @@
       checkFieldUpdate('typeCompany','${typeCompany}',3) ;
       checkFieldUpdate('typeGroup','${typeGroup}',0) ;
       checkFieldUpdate('typeSex','${typeSex}',3) ;
+      checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
      
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
     	   	eval('var chk =  document.forms[0].'+aField) ;
@@ -188,13 +207,13 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     <form action="print-bypass_journal1.do" method="post" target="_blank">
 Реестр прикрепленного населения за период ${param.period}-${param.periodTo}
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр прикрепленного населения за период с ${param.period} по ${param.periodTo}. Участок № ${param.areaName}">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр прикрепленного населения за период с ${param.period} по ${param.periodTo}. Участок № ${param.areaName}. ">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
     </form>
-        <msh:table name="journal_ticket" action="/javascript:void(0)" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn columnName="Фамилия" property="2"/>
 			<msh:tableColumn columnName="Имя" property="3"/>
