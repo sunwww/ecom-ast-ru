@@ -191,4 +191,14 @@ public class LpuServiceBean implements ILpuService {
 			.setParameter("lpu", aLpu).executeUpdate();
 		//theManager.flush();
 	}
+	public void createOtherEquipment(long aLpu, long aEquipment) {
+		theManager.createNativeQuery("insert into equipment_mislpu (equipment_id, otherLpu_id) values ( :equipment, :lpu )")
+			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
+		//theManager.flush();
+	}
+	public void removeOtherEquipment(long aLpu, long aEquipment) {
+		theManager.createNativeQuery("delete from equipment_mislpu where equipment_id=:equipment and otherLpu_id=:lpu")
+			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
+		//theManager.flush();
+	}
 }
