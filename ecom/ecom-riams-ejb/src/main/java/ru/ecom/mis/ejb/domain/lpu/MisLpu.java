@@ -274,14 +274,6 @@ public class MisLpu extends BaseEntity {
      /** Оборудование */
      private List<Equipment> theEquipment ;
      
-     /** Оборудование, используемое из других отделений */
-	@ManyToOne
-    @Comment("Оборудование, используемое из других отделений")
-	public Equipment getOtherEquipment() {return theOtherEquipment;}
-	public void setOtherEquipment(Equipment aOtherEquipment) {theOtherEquipment = aOtherEquipment;}
-	/** Оборудование, используемое из других отделений */
-	private Equipment theOtherEquipment;
-     
      /** Коечный фонд */
 	@Comment("Коечный фонд")
 	@OneToMany(mappedBy="lpu", cascade = ALL)
