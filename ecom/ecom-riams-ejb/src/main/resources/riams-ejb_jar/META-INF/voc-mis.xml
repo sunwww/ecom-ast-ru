@@ -1,5 +1,16 @@
 <vocconfig>
 
+<voc id="allMedicalEquipment" type="NativeVocService">
+	<NativeVocService
+		from="equipment e"
+		nameId="e.id"
+		order="e.name"
+		names="e.id||' '|| e.name"
+		queryAppend="e.dtype='MedicalEquipment'"
+		queried=" upper(e.name) like upper(:query) or upper(e.inventoryNumber) like upper(:query) "
+	/>
+</voc>
+
 <voc id="patientAttachmentFormats" type="NativeVocService">
 	<NativeVocService
 		from="efformat ef"
