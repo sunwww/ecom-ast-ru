@@ -25,11 +25,15 @@
 	            <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>
-<msh:ifFormTypeIsView formName="">
+<msh:ifFormTypeIsView formName="mis_medicalStandardForm">
 	<msh:section>
-	<ecom:webQuery name="listEquip" nativeSql="select vte.name, mep.amount from MedicalEquipmentPosition mep
-	left hoin VocTypeEquip vte on vte.id=mep.equipmentType_id
+	<ecom:webQuery name="listEquip" nativeSql="select vte.id, vte.name, mep.amount from MedicalEquipmentPosition mep
+	left join VocTypeEquip vte on vte.id=mep.equipmentType_id
 	where standard_id=${param.id}"/>
+	<msh:table name="listEquip" action="entityView-mis_medicalEquipmentPosition.do" idField="1">
+            <msh:tableColumn columnName="Тип" property="2"/>
+            <msh:tableColumn columnName="Количество" property="3"/>
+        </msh:table>
 	</msh:section>
 </msh:ifFormTypeIsView>
     </tiles:put>

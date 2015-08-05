@@ -70,17 +70,17 @@
                 </msh:row>
                 <msh:ifFormTypeIsView formName="mis_medicalEquipmentForm">
 				<msh:row>
-			<%-- <msh:section>
+			<msh:section>
 			<msh:sectionTitle>Оборудование используется в другими отделениями</msh:sectionTitle>
 			<msh:sectionContent>
-			<ecom:webQuery name="list" nativeSql="select lpu.id, lpu.name from equipmentlpu el 
-			left join mislpu lpu on lpu.id=el.lpu_id and el.equip.id=${param.id}
+			<ecom:webQuery name="list" nativeSql="select lpu.id, lpu.name from equipment_mislpu el 
+			left join mislpu lpu on lpu.id=el.otherlpu_id and el.equip.id=${param.id}
 			order by lpu.name"/>
 			<msh:table name="list" action="entityView-mis_lpu.do" idField="1">
 			            <msh:tableColumn columnName="Подразделение" property="2"/>
 			            </msh:table>
 			</msh:sectionContent>
-			</msh:section> --%>
+			</msh:section>
 		</msh:row>
 	</msh:ifFormTypeIsView>
                 <msh:submitCancelButtonsRow colSpan="4"/>
@@ -107,7 +107,7 @@
 <tiles:put name="javascript" type="string">
       <script type="text/javascript">
       onload=function() {
-    	  var val = (+$('wearout').value) /(+$('price').value)*100;
+    	  var val = Math.seil((+$('wearout').value) /(+$('price').value)*100);
     	  $('wearoutPercent').value=""+val+" %";
       }
       </script>
