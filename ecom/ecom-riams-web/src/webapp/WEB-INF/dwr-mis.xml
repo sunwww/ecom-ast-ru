@@ -7,6 +7,11 @@
     </init>
 
     <allow>
+		<!-- Редактирование ЛПУ -->
+        <create creator="new" javascript="LpuService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.lpu.LpuJs"/>
+        </create>
+        
 		<!-- Вывод строки адреса -->
         <create creator="new" javascript="AddressService" scope="application">
             <param name="class" value="ru.ecom.address.web.dwr.AddressServiceJs"/>
