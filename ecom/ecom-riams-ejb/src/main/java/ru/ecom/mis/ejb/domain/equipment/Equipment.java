@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -33,7 +34,7 @@ public class Equipment extends BaseEntity {
 
 	/** ЛПУ, в которых используются */
 	@Comment("ЛПУ, в которых используются")
-	@OneToMany(mappedBy="otherEquipment")
+	@ManyToMany//(mappedBy="otherEquipment")
 	public List<MisLpu> getOtherLpu() {return theOtherLpu;}
 	public void setOtherLpu(List<MisLpu> aOtherLpu) {theOtherLpu = aOtherLpu;}
 	/** ЛПУ, в которых используются */

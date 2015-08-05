@@ -65,6 +65,7 @@ public class MedicalEquipment extends Equipment {
 	
 	/** ОКОФ */
 	@Comment("ОКОФ")
+	@OneToOne
 	public VocOKOF getOkof() {return theOkof;}
 	public void setOkof(VocOKOF aOkof) {theOkof = aOkof;}
 	/** ОКОФ */
