@@ -578,9 +578,19 @@ function printReport007(aCtx,aParams) {
 	if (listDep.size()>0) {
 		map.put("lpuMainInfo",listDep.get(0)[0]) ;
 		map.put("titleInfo",listDep.get(0)[1]+' за '+date1) ;
+		map.put("date1", date1);
 	} else {
 		throw "Не найдено отделение "+department+"!!!" ;
 	}
+	var sqlBType = "select distinct list(vbt.name) from mislpu ml" +
+			" left join bedfund bf on bf.lpu_id=ml.id" +
+			" left join vocbedtype vbt on vbt.id=bf.bedtype_id" +
+			" where ml.id="+department;
+	var listBedTypes = aCtx.manager.createNativeQuery(sqlBType).getResultList() ;
+	if (listBedTypes.size()>0) {
+		map.put("allBedTypes",listBedTypes.get(0));
+	}
+	
 	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,bf.bedtype_id as bfbedtype,vbst.name as vbstname,vbt.name as vbtname,lpu.name" 
 		+"  from medcase slo"
 		+"  left join patient pat on pat.id=slo.patient_id"
@@ -730,7 +740,7 @@ function printReport007(aCtx,aParams) {
 	//throw sql1 ;
 	var BSTnameAll = "" ;
 	var BTnameAll = "" ;
-	var lpu = "" ;
+	var lpu = listDep.get(0)[1] ;
 	if (list1.size()>0) {
 		var retBST = new java.util.ArrayList() ;
 		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
