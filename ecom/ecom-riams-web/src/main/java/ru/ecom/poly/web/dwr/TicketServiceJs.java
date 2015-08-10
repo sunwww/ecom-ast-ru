@@ -25,7 +25,19 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
-	
+	public String getCrossSPO(String aDate, String aPatientId, String aWorkfuntionId, HttpServletRequest aRequest) throws NamingException {
+        String result = "";
+        StringBuilder str = new StringBuilder();
+        IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService((Class)IWebQueryService.class);
+        str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish from medcase spo where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null").append(" and spo.patient_id=").append(aPatientId).append(" and spo.ownerfunction_id=").append(aWorkfuntionId).append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')").append(" and spo.datefinish >=to_date('").append(aDate).append("','dd.MM.yyyy')");
+        Collection res = service.executeNativeSql(str.toString(), Integer.valueOf(1));
+        if (!res.isEmpty()) {
+            WebQueryResult r = (WebQueryResult)res.iterator().next();
+            result = r.get1().toString() + ":" + r.get2().toString() + ":" + r.get3().toString();
+        }
+        System.out.println("STRRRRRR" + result);
+        return result;
+    }
 	public String isHoliday (String aDate) throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
