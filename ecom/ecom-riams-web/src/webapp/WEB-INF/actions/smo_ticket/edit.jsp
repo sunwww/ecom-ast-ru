@@ -296,11 +296,15 @@
     			callback: function(aResult) {
 					if (aResult!=null&&aResult!='') {
 						var arr = aResult.split(':');
-						if (confirm('Случай пересекается с закрытым СПО (Период с '+arr[1]+' по '+arr[2]+'). Продолжить?')) {
-							checkIsHoliday();
+						if ($('parent')!=null&&$('parent').value!=arr[0]) {
+							if (confirm('Случай пересекается с закрытым СПО (Период с '+arr[1]+' по '+arr[2]+'). Продолжить?')) {
+								checkIsHoliday();
+							} else {
+	  							document.getElementById('submitButton').disabled=false;
+	  							document.getElementById('submitButton').value='Создать';
+							}
 						} else {
-  							document.getElementById('submitButton').disabled=false;
-  							document.getElementById('submitButton').value='Создать';
+							checkIsHoliday();
 						}
 					} else {
 						checkIsHoliday();
