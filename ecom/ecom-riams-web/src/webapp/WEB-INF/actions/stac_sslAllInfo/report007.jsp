@@ -118,12 +118,14 @@
     	var frm = document.forms[0] ;
     	frm.m.value="printReport007" ;
     	frm.target='_blank' ;
-    	var act='print-stac_report007.do';
-    	var div = document.getElementsByClassName("sectionContent")[0];
+    	frm.action='print-stac_report007.do';
+    	/* var div = document.getElementsByClassName("sectionContent")[0];
     	if (div.innerHTML.startsWith('<p>Нет данных</p>')) {
-    		act='print-stac_report007Empty.do' ;
-    	}
-    	frm.action=act ;
+    		frm.action='print-stac_report007Empty.do' ;
+    		
+    	} */
+    	//frm.action=act ;
+    	//frm.submit();
    // 	$('id').value = getCheckeddepartmentRadio(frm,"typeEmergency")+":"
    // 		+getCheckedRadio(frm,"typeHour")+":"
    // 		+getCheckedRadio(frm,"typeDate")+":"
