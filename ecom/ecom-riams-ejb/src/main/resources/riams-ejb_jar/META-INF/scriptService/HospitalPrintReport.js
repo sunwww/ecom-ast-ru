@@ -587,9 +587,7 @@ function printReport007(aCtx,aParams) {
 			" left join vocbedtype vbt on vbt.id=bf.bedtype_id" +
 			" where ml.id="+department;
 	var listBedTypes = aCtx.manager.createNativeQuery(sqlBType).getResultList() ;
-	if (listBedTypes.size()>0) {
-		map.put("allBedTypes",listBedTypes.get(0));
-	}
+	
 	
 	var sql1 = "select bf.bedsubtype_id as bfbudsubtypeid,bf.bedtype_id as bfbedtype,vbst.name as vbstname,vbt.name as vbtname,lpu.name" 
 		+"  from medcase slo"
@@ -741,13 +739,12 @@ function printReport007(aCtx,aParams) {
 	var BSTnameAll = "" ;
 	var BTnameAll = "" ;
 	var lpu = listDep.get(0)[1] ;
-	if (list1.size()>0) {
-		var retBST = new java.util.ArrayList() ;
-		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		
+	var retBST = new java.util.ArrayList() ;
+	var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	if (list1.size()>0) {		
 		for (var i=0; i < list1.size(); i++) {
 			var ret = new java.util.ArrayList() ;
-			var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			
 			var objBST = list1.get(i) ;
 			var BSTname = ""+ objBST[2];
 			var BTname = ""+ objBST[3];
@@ -778,9 +775,20 @@ function printReport007(aCtx,aParams) {
 			}
 			parBST.set2(ret) ;
 			parBST.set3(parSum) ;
-			retBST.add(parBST) ;
+			
+		}
+	} else {
+		parBST.set2(new java.util.ArrayList());
+		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		for (var i=2;i<17;i++) {
+			eval("par.set"+i+"('0')");
+		}
+		parBST.set3(par);
+		if (listBedTypes.size()>0) {
+			BTnameAll=listBedTypes.get(0);
 		}
 	}
+	retBST.add(parBST) ;
 	map.put("bedSubType",BSTnameAll) ;
 	map.put("bedType",BTnameAll) ;
 	map.put("lpu",lpu) ;
