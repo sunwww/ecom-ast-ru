@@ -601,14 +601,20 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String hospital_Dt1 = rs.getString("HOSPITAL_DT1");
 				String hospital_Dt2 = rs.getString("HOSPITAL_DT2");	
 				if ((hospital_Dt1!=null &&!hospital_Dt1.equals(""))) {
-//попробуем всегда заполнять поля "Дата начала" и "Дата окончания госпитализации"
 					/*&&(reason1!=null && (reason1.equals("09") ||reason1.equals("12") ||reason1.equals("13") ||
-						reason1.equals("14") ||reason1.equals("15")))) {*/
+					reason1.equals("14") ||reason1.equals("15")))) {*/
 					rowLpuLn.addContent(new Element("HOSPITAL_DT1").addContent(hospital_Dt1));
 					if (hospital_Dt2!=null&&!hospital_Dt2.equals("")) {
+						Date hosp_d1 = new java.sql.Date(DateFormat.parseDate(hospital_Dt1,"yyyy-MM-dd").getTime());
+						Date hosp_d2 = new java.sql.Date(DateFormat.parseDate(hospital_Dt2,"yyyy-MM-dd").getTime());
+						if (hosp_d1.getTime()>hosp_d2.getTime()) {
+							defect.append(ln).append(":").append(ln_id).append(":ELN-054 - Дата начала госпитализации (").append(hospital_Dt1).append(") больше даты окончания госпитализации (").append(hospital_Dt2).append("):")
+							.append(patId).append(":").append(patInfo).append("#");
+							continue;
+						}
 						rowLpuLn.addContent(new Element("HOSPITAL_DT2").addContent(hospital_Dt2));
 					} else {
-						defect.append(ln).append(":").append(ln_id).append(":Не указана дата выписки (HOSPITAL_DT2), reason1=").append(reason1).append(":")
+						defect.append(ln).append(":").append(ln_id).append(":Не указана дата выписки (HOSPITAL_DT2), Причина нетрудоспособности=").append(reason1).append(":")
 						.append(patId).append(":").append(patInfo).append("#");
 						continue;
 						
