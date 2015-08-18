@@ -281,6 +281,14 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+	        <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/mortality_patient_list.jsp" />
+        </action>
+	
 	        <action path='/mis_attachmentUpload' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuImportAction'
                 name='mis_attachmentForm'
                 validate='false'
