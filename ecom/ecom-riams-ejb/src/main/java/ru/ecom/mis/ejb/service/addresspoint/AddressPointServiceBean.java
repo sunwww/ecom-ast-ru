@@ -290,7 +290,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         			{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
         	    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
         	    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
-        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries","1","Серия документа"}
+        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
         	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued","1","Дата выдачи документа"}
         	    	,		{"cast('' as varchar(1))","TEL" ,"p.phone",null,"Телефон"} ,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
         	    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
@@ -477,7 +477,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     				errorZap=1;
     			}
     		}
-    		System.out.println("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+": ErrorZAP="+errorZap);
+    		//System.out.println("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+": ErrorZAP="+errorZap);
     		if (errorZap==0) {
     			Element zap = xmlDoc.newElement(root, "ZAP", null);
         		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
