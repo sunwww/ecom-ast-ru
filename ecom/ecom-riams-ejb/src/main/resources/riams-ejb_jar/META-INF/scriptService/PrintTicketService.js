@@ -214,8 +214,9 @@ function printInfo(aCtx, aParams) {
     var diag_list_sql = "select vip.name as vname, idc.name as iname, idc.code as icode from diagnosis ds left join vocidc10 idc on idc.id=ds.idc10_id " +
     		"left join vocillnesprimary vip on vip.id=ds.illnesprimary_id where ds.medcase_id='"+ticket.id+"'";
     var diag_list = aCtx.manager.createNativeQuery(diag_list_sql).getResultList();
+    var obj_diag = null;
     if (diag_list.size()>0) {
-    	var obj_diag=diag_list.get(0);
+    	obj_diag=diag_list.get(0);
     	map.put("mainDiagChar",""+obj_diag[0]);
     	map.put("mainDiagName",""+obj_diag[1]);
     	map.put("mainDiagMKB",""+obj_diag[2]);
@@ -304,7 +305,7 @@ function printInfo(aCtx, aParams) {
     }
     var vis1="" ; var vis2=""; var vis3="" ;
     var isPsych = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry") ;
-    if (obj_diag[2]!=null && obj_diag[2]!="") {
+    if (obj_diag!=null&&obj_diag[2]!=null && obj_diag[2]!="") {
     	var ct = ticket.visitResult!=null
 		&&ticket.visitReason.codeTicket!=null
 		&&ticket.visitReason.codeTicket!=""?ticket.visitReason.codeTicket:null ;
