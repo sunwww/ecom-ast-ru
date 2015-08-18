@@ -219,6 +219,9 @@
 	                        <li><msh:link action="blood_report.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
 	                            Госпитализации с болезнями системы кровообращения
 	                        </msh:link></li>
+	                        <li><msh:link action="mis_mortality_report.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
+	                            Анализ летальности в отделениях
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
