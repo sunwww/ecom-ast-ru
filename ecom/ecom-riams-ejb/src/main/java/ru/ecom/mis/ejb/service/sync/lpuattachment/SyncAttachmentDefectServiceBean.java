@@ -76,15 +76,21 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		}
 		
 	}
-	public LpuAttachedByDepartment getAttachment (long aPatientId, Date aDate, String aMethodType) {
+	public LpuAttachedByDepartment getAttachment (long aPatientId, Date aDate, String aMethod, String aType) {
+		LpuAttachedByDepartment lpu = null;
 		try{
-		LpuAttachedByDepartment list = (LpuAttachedByDepartment) theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateFrom =:dateFrom and attachedType_id=:aTypeId ")
+		Object list = theManager.createNativeQuery("Select id from LpuAttachedByDepartment where patient_id=:pat and :dateType =:dateFrom and attachedType_id=(select id from vocattachedtype where code=:aType) ")
 					.setParameter("pat", aPatientId)
+					.setParameter("dateType", (aType!=null&&aType.equals("2"))?"dateTo":"dateFrom")
 					.setParameter("dateFrom", aDate)
-					.setParameter("aTypeId", Integer.valueOf(aMethodType))
+					.setParameter("aType", aMethod)
 					.getSingleResult();
+		if (list!=null) {
+			System.out.println("OBJECT = "+list+": STRING="+list.toString());
+			lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.toString()));
+		} 
 					
-		return list;
+		return lpu;
 		} catch (Exception e) {return null;}
 	}
 	public String importDefectFromXML (String aFileName) {
@@ -125,34 +131,28 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 							String datePrik= el.getChildText("DATE_1");
 							String birthday2 = formatOutput.format(format.parse(birthday))+" г.р.";
 							Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(format.parse(birthday).getTime()));
-							if (refreason!=null&&refreason !="" && patientId!=null &&patientId!=0) {
-								if (patientId!=null && patientId!=0) {									
-				    				LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik);
-				    				if (att!=null) {
-				    					att.setDefectText(refreason);
-				    					att.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime())));  
-										att.setEditUsername("fond_base");
-									//	att.setEditDate(new Date(new java.util.Date().getTime()));
-										theManager.persist(att);
+							if (patientId!=null&&patientId!=0) {
+								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
+								if (refreason!=null&&refreason !="") { //Дефект
+					    			if (att!=null) {
 										sb.append("red:"+i+":"+patientId+":"+att.getId()+":Прикрепление пациента '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'обновлено. Дефект='"+refreason+"'#");
-				    				} else {
-				    					sb.append("blue:"+i+":"+patientId+"::Прикрепление не найдено в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
-				    				}
-								} else { //Дефект, пациент не найден.
-									sb.append("orange:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+					    			} else {
+					    				sb.append("blue:"+i+":"+patientId+"::Прикрепление не найдено в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+					    			}									 
+								} else { //Не дефект
+									if (att!=null) {
+										sb.append("green:"+i+":"+patientId+"::Прикрепление принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+									}								
 								}
-							} else if (patientId!=null && patientId!=0){ //Не дефект
-								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik);
 								if (att!=null) {
-									att.setDefectText("");
-									att.setDefectPeriod(formatOutput.format(new java.util.Date().getTime()));
+			    					att.setDefectText(refreason);
+			    					att.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime())));  
 									theManager.persist(att);
 								}
-								sb.append("green:"+i+":"+patientId+"::Прикрепление принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
-								
 							} else {
 								sb.append("black:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
-							}				
+							}
+							 				
 				}
 				
 				return sb.toString();
@@ -189,7 +189,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 				patientId = theSyncService.findPatientId(defect.getLastname(), defect.getFirstname(), defect.getMiddlename(), defect.getBirthday());
 				if (patientId!=null){ 
 					patient = theManager.find(Patient.class, patientId);
-					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType());
+					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType(), "1");
 					if (attachment!=null) {
 						attachment.setDefectText(defect.getRefreason());
 						attachment.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime()))); // Изменить !!! 
