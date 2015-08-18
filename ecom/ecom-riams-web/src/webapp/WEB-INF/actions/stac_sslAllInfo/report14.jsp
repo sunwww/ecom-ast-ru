@@ -1298,9 +1298,9 @@ then -1 else 0 end)
 ,ms.code as vacode,ms.name as vaname,ms.additionCode as msadditionCode
 from SurgicalOperation so
 left join MedService ms on so.medService_id=ms.id
-left join MedCase slo on slo.id=so.medCase_id
-left join patient p on p.id=slo.patient_id
-left join MedCase sls on sls.id=slo.parent_id
+left join MedCase sloa on sloa.id=so.medCase_id
+left join patient p on p.id=sloa.patient_id
+left join MedCase sls on sls.id=sloa.parent_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
@@ -1436,9 +1436,9 @@ left join ReportSetTYpeParameterType rspt on ms.additioncode between rspt.codefr
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
 left join ReportSetTYpeParameterType rspt1 on ms.additioncode between rspt.codefrom and rspt.codeto
 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id
-left join MedCase slo on slo.id=so.medCase_id
-left join patient p on p.id=slo.patient_id
-left join MedCase sls on sls.id=slo.parent_id
+left join MedCase sloa on sloa.id=so.medCase_id
+left join patient p on p.id=sloa.patient_id
+left join MedCase sls on sls.id=sloa.parent_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
