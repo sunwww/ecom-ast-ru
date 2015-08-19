@@ -173,9 +173,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    				if (wqr.get22()!=null) {sql1.append("PreHospDate,") ; sql2.append("to_date('").append(wqr.get22()).append("','yyyy-mm-dd'),") ;}
 	    				if (wqr.get23()!=null) {sql1.append("HospDate,") ; sql2.append("to_date('").append(wqr.get23()).append("','yyyy-mm-dd'),") ;}
 	    				if (wqr.get24()!=null) {sql1.append("StatCard,") ; sql2.append("'").append(wqr.get24()).append("',") ;}
-	    				if (wqr.get25()!=null) {sql1.append("HospTime,") ; sql2.append("cast('").append(wqr.get25()).append("' as time),") ;}
+	    				if (wqr.get25()!=null) {sql1.append("HospTime,") ; sql2.append("'").append(wqr.get25()).append("',") ;}
 			    		if (wqr.get26()!=null) {sql1.append("HospDischargeDate,") ; sql2.append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd'),") ;}
-			    		if (aFileType.equals("N1")) {
+			    		
+	    				if (aFileType.equals("N1")) {
 			    			sql1.append("IsTable1") ; sql2.append("'1'") ;
 			    		} else if (aFileType.equals("N2")) {
 			    			sql1.append("IsTable2") ; sql2.append("'1'") ;
@@ -233,14 +234,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    		}
 			    		sql1.append(" where id=").append(id) ;
 	    			}
-	    			try {
+	    			//try {
+	    				System.out.println("sql="+sql1) ;
 	    				theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
-	    			}catch(Exception e) {
-	    				if (id==null) {
+	    			//}catch(Exception e) {
+	    			//	e.printStackTrace() ;
+	    			//	if (id==null) {
 	    					//theManager.createNativeQuery("alter table hospitaldatafond alter column id set default nextval('hospitaldatafond_sequence')").executeUpdate() ;
 	    					//theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
-	    				}
-	    			}
+	    			//	}
+	    			//}
 	    		}
 	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
 	    		if(size>0&&i%size==0) monitor.advice(1);
