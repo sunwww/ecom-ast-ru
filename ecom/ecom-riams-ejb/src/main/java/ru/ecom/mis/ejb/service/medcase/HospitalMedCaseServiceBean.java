@@ -235,7 +235,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    		sql1.append(" where id=").append(id) ;
 	    			}
 	    			//try {
-	    				System.out.println("sql="+sql1) ;
+	    				//System.out.println("sql="+sql1) ;
 	    				theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
 	    			//}catch(Exception e) {
 	    			//	e.printStackTrace() ;
