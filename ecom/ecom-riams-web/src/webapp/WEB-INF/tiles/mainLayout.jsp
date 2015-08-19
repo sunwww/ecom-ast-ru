@@ -124,7 +124,7 @@
 
 
                           
-            <msh:sideLink params="" styleId="mainMenuContract" action="/contract_reports_finance.do" name="Договоры"
+            <msh:sideLink params="" styleId="mainMenuContract" action="/contract_find_by_number.do" name="Договоры"
                           title="Договоры" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
 
 			<msh:sideLink params="" styleId="mainMenuVoc" action="/js-ecom_vocEntity-list.do" name="Справочники"
