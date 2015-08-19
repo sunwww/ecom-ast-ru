@@ -281,6 +281,7 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+
 	        <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -369,7 +370,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript_cab.jsp" />
         </action>
-
         <action path='/mis_attachment' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuAction'
                 name='mis_attachmentForm'
                 validate='false'
@@ -513,6 +513,12 @@
 			name="contract_reportsForm" validate='false' scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_priceList/listAnalisisByMedService.jsp" />
+		</action>
+		<action path='/contract_find_by_number'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
 		</action>
 		<!-- Услуги -->	
 		<action path='/contract_policlinic_render'
