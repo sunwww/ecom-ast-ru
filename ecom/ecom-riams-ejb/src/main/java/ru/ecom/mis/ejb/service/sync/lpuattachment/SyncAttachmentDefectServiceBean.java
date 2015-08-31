@@ -78,20 +78,20 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	}
 	public LpuAttachedByDepartment getAttachment (long aPatientId, Date aDate, String aMethod, String aType) {
 		LpuAttachedByDepartment lpu = null;
+		String aDateType = (aType!=null&&aType.equals("2"))?"dateTo":"dateFrom";
 		try{
-		Object list = theManager.createNativeQuery("Select id from LpuAttachedByDepartment where patient_id=:pat and :dateType =:dateFrom and attachedType_id=(select id from vocattachedtype where code=:aType) ")
-					.setParameter("pat", aPatientId)
-					.setParameter("dateType", (aType!=null&&aType.equals("2"))?"dateTo":"dateFrom")
-					.setParameter("dateFrom", aDate)
-					.setParameter("aType", aMethod)
-					.getSingleResult();
+			String req = "Select id from LpuAttachedByDepartment where patient_id="+aPatientId+" and "+aDateType+" =to_date('"+aDate+"','yyyy-MM-dd') and attachedType_id=(select id from vocattachedtype where code='"+aMethod+"') ";
+		//System.out.println("REQ==="+req);
+			Object list = theManager.createNativeQuery(req).getSingleResult();
 		if (list!=null) {
-			System.out.println("OBJECT = "+list+": STRING="+list.toString());
 			lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.toString()));
 		} 
 					
+		
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
 		return lpu;
-		} catch (Exception e) {return null;}
 	}
 	public String importDefectFromXML (String aFileName) {
 		try{
@@ -114,7 +114,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 						if (r.getText().toLowerCase().equals("включен в регистр")){
 							refrSB.setLength(0); break;
 						}
-						if (r.getText().equals("3")||r.getText().equals("4")||r.getText().equals("5")||r.getText().equals("6")) {
+						if (r.getText()==null||r.getText().equals("")||r.getText().equals("3")||r.getText().equals("4")||r.getText().equals("5")||r.getText().equals("6")) {
 							
 						} else {
 							refrSB.append(r.getText()).append(",");
