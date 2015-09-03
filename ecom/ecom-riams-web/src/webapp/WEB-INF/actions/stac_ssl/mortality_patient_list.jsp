@@ -64,6 +64,18 @@
         	<input type="radio" name="typeDate" value="2">  выписки
         </td>
         </msh:row>
+        <msh:row>
+        <td class="label" title="Поиск по пациентам (typeNewborn)" colspan="1"><label for="typeNewbornName" id="typeNewbornLabel">Пациенты:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeNewborn" value="1"  >  Только новорожденные 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeNewborn" value="2"  >  Без учета новорожденных
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeNewborn" value="3"  >  Все
+	        </td>
+	      </msh:row>
     <%--   <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -84,11 +96,21 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="2"  >  свод по отделениям без учета отд., которые не входят в ОМС 
 	        </td>
+	        </msh:row>
+	        <msh:row><td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="3"  >  свод по типам госпитализации (экстренно/планово) 
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="4"  >  свод по дате смерти 
+	        </td>
+        </msh:row> 
+	        <msh:row><td></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="5"  >  Свод по возрастным группам 
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="6"  >  Летальность иногородних/иностранных граждан
 	        </td>
         </msh:row> 
          <msh:row>
@@ -112,6 +134,9 @@
     String result = (String)request.getParameter("result") ;
     String view = (String)request.getAttribute("typeView") ;
     String department=(String) request.getAttribute("department");
+    String dateT = (String) request.getAttribute("dateT"); 
+    String sex = (String) request.getParameter("sex");
+    
     
     if (date!=null && !date.equals(""))  {
     //	ActionUtil.setParameterFilterSql("result","vhr.id", request) ;
@@ -119,30 +144,67 @@
     	if (dateEnd==null||dateEnd.equals("")) {
     		dateEnd=date ;
     	}
+    	if (sex!=null&&!sex.equals("")) {
+    			sex="and pat.sex_id="+sex;    		
+    	} else {sex="";}
     	request.setAttribute("dateEnd", dateEnd) ;
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	String dep = (String) request.getParameter("department") ; 
     	String cellF = (String) request.getParameter("addCell");
     	if (cellF!=null) {
     		if (cellF.equals("dead")) {
-    			request.setAttribute("cellAdd", "and vhr.omccode='11'");
+    			request.setAttribute("cellAdd", sex+"and vhr.omccode='11'");
     		} else if (cellF.equals("planDead")) {
-    			request.setAttribute("cellAdd", "and (hmc.emergency is null or hmc.emergency='0') and vhr.omccode='11'") ;
+    			request.setAttribute("cellAdd", sex+" and (hmc.emergency is null or hmc.emergency='0') and vhr.omccode='11'") ;
     		} else if (cellF.equals("emmergDead")) {
-    			request.setAttribute("cellAdd", "and hmc.emergency='1' and vhr.omccode='11'") ;
+    			request.setAttribute("cellAdd", sex+" and hmc.emergency='1' and vhr.omccode='11'") ;
     		} else if (cellF.equals("dead6")) {
-    			request.setAttribute("cellAdd","and vhr.omccode='11' and (hmc.datestart=hmc.datefinish and"+ 
+    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and (hmc.datestart=hmc.datefinish and"+ 
     					" (hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)<=cast('06:00:00' as time))  "+
     					" or (hmc.datefinish-hmc.datestart=1 and hmc.entrancetime>hmc.dischargetime and ((cast('24:00:00' as time) -"+ 
     					" hmc.entrancetime))+hmc.dischargetime<=cast('06:00:00' as time) and ((cast('24:00:00' as time)"+ 
     					" - hmc.entrancetime)<=cast('06:00:00' as time))))");
     		} else if (cellF.equals("dead624")){
-    			request.setAttribute("cellAdd","and vhr.omccode='11' and ((hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)>cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.dischargetime<=hmc.entrancetime and (((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime>cast('06:00:00' as time))or hmc.dischargetime=hmc.entrancetime))");
+    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and ((hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)>cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.dischargetime<=hmc.entrancetime and (((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime>cast('06:00:00' as time))or hmc.dischargetime=hmc.entrancetime))");
     			
     		} else if (cellF.equals("deadUp5")){
-    			request.setAttribute("cellAdd","and vhr.omccode='11' and ((hmc.datefinish-hmc.datestart=1 and hmc.dischargetime>hmc.entrancetime) or (hmc.datefinish-hmc.datestart between 2 and 4) or (hmc.datefinish-hmc.datestart =5 and hmc.dischargetime<=hmc.entrancetime))");
+    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and ((hmc.datefinish-hmc.datestart=1 and hmc.dischargetime>hmc.entrancetime) or (hmc.datefinish-hmc.datestart between 2 and 4) or (hmc.datefinish-hmc.datestart =5 and hmc.dischargetime<=hmc.entrancetime))");
     		} else if (cellF.equals("dead5More")) {
-    			request.setAttribute("cellAdd", "and vhr.omccode='11' and (hmc.datefinish-hmc.datestart>5 or (hmc.datefinish-hmc.datestart=5 and hmc.dischargetime>hmc.entrancetime))");
+    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and (hmc.datefinish-hmc.datestart>5 or (hmc.datefinish-hmc.datestart=5 and hmc.dischargetime>hmc.entrancetime))");
+    		} else if (cellF.equals("age1")) {
+    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
+    					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
+    					" then -1 else 0 end)<0) then -1 else 0 end)<18)");
+    		}else if (cellF.equals("age2")) {
+    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
+    					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 18 and 45)");
+    		}else if (cellF.equals("age3")) {
+    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
+    					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 46 and 60)");
+    		}else if (cellF.equals("age4")) {
+    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
+    					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 61 and 75)");
+    		}else if (cellF.equals("age5")) {
+    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
+    					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
+    					" then -1 else 0 end)<0) then -1 else 0 end)>75)");
+    				
+    		} else if (cellF.equals("allAge")) {
+    			request.setAttribute("cellAdd", sex+ " and vhr.omccode='11'");
+    		} else if (cellF.equals("foreign")) {
+    			request.setAttribute("cellAdd", sex+" and vhr.omcode='11' and (ok.voc_code!='643' or adr.kladr not like '30%')");
+    		} else if (cellF.equals("inostr")) {
+    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and ok.voc_code!='643'");
+    		} else if (cellF.equals("inogor")) {
+    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and adr.kladr not like '30%' and ok.voc_code='643' ");
     		}
     		
     	}
@@ -178,7 +240,7 @@
 	
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
-    	${depIsNoOmc}
+    	${depIsNoOmc} ${addNewborn}
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f5_percentOtdel desc , f2_lpuName
@@ -214,6 +276,7 @@
     ,to_char(hmc.dateStart,'dd.mm.yyyy') as slsdateStart
     ,to_char(hmc.dateFinish,'dd.mm.yyyy') as slsdateFinish
     ,case when hmc.emergency='1' then 'Да' else null end as emer
+    ,mkb.code
     from medcase hmc 
      left join StatisticStub ss on ss.id=hmc.statisticStub_id
 	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
@@ -222,10 +285,17 @@
 	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
 	left join mislpu d on d.id=dmc.department_id
 	left join mislpu pd on pd.id=pdmc.department_id
+	left join address2 adr on adr.addressid=pat.address_addressid
+	left join Omc_oksm ok on ok.id=pat.nationality_id
+	left join diagnosis diag on diag.medcase_id = hmc.id
+	left join vocdiagnosisregistrationtype vdrt on vdrt.id=diag.registrationtype_id
+	left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id
+	left join vocidc10 mkb on mkb.id=diag.idc10_id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-	and hmc.datefinish is not null 
+	and hmc.datefinish is not null and vdrt.code='3' and vpd.code='1' 
     	${depIsNoOmc}
-    ${cellAdd}
+    ${cellAdd} ${addNewborn}
+    
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:table name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do"
@@ -238,6 +308,7 @@
           <msh:tableColumn columnName="Дата поступления" property="6"/>
           <msh:tableColumn columnName="Дата выписки" property="7"/>
           <msh:tableColumn columnName="Экстренно?" property="8"/>
+          <msh:tableColumn columnName="Диагноз выписной" property="9"/>
 		  </msh:table>
         </msh:sectionContent>
         </msh:section>  
@@ -262,7 +333,7 @@ left join vochospitalizationresult vhr on vhr.id=hmc.result_id
 	left join mislpu pd on pd.id=pdmc.department_id
 where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and hmc.datefinish is not null and hmc.dischargetime is not null 
 
-    	${depIsNoOmc}
+    	${depIsNoOmc} ${addNewborn}
     
 "/>
         <msh:table name="journal_hospType" cellFunction="true"
@@ -299,7 +370,7 @@ from medcase hmc
 	where hmc.dtype='HospitalMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
 	and hmc.deniedhospitalizating_id is null
-	and vhr.omccode='11'	 ${depIsNoOmc}
+	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
 
    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_swod" cellFunction="true"
@@ -313,7 +384,132 @@ from medcase hmc
     </msh:sectionContent>
     </msh:section>    		
     		<%
+    	} else if (view!=null&&view.equals("5")) {
+    		%>
+    		<msh:section title="Свод по возрастным группам">
+    <msh:sectionContent>
+    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+select 
+
+count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end)<18) then 1 else null end) as f1_age1
+,count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 18 and 45) then 1 else null end) as f2_age2
+,count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 46 and 60) then 1 else null end) as f3_age3
+,count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 61 and 75) then 1 else null end) as f4_age4
+,count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end)>75) then 1 else null end) as f5_age5
+,count(hmc.id) as f6_all
+,round(count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end)<18) then 1 else null end)/cast(count(hmc.id)as numeric(9,2))*100,2) as f7_age1_per
+,round(count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 18 and 45) then 1 else null end)/cast(count(hmc.id)as numeric(9,2))*100,2) as f8_age2_per
+,round(count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 46 and 60) then 1 else null end)/cast(count(hmc.id)as numeric(9,2))*100,2) as f9_age3_per
+,round(count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end) between 61 and 75) then 1 else null end)/cast(count(hmc.id)as numeric(9,2))*100,2) as f10_age4_per
+,round(count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+(case when (cast(to_char(${dateT}, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
+	+(case when (cast(to_char(${dateT},'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)
+	then -1 else 0 end)<0) then -1 else 0 end)>75) then 1 else null end)/cast(count(hmc.id)as numeric(9,2))*100,2) as f11_age5_per
+
+,cast('&department=${param.department}&sex=' as varchar)||vs.id as f12_cntId
+,vs.name as f13_sex
+from medcase hmc 
+	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
+	left join patient pat on pat.id=hmc.patient_id
+	left join medcase dmc on dmc.parent_id=hmc.id and dmc.dtype='DepartmentMedCase' and dmc.datefinish is not null
+	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
+	left join mislpu d on d.id=dmc.department_id
+	left join mislpu pd on pd.id=pdmc.department_id
+	left join vocsex vs on vs.id=pat.sex_id
+	
+	where hmc.dtype='HospitalMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+	and hmc.datefinish is not null and hmc.dischargetime is not null
+	and hmc.deniedhospitalizating_id is null
+	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
+group by vs.name, vs.id
+   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <msh:table name="journal_list_swod" cellFunction="true"
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="12" noDataMessage="Не найдено" >
+            <msh:tableColumn columnName="#" property="sn"/>
+               <msh:tableColumn columnName="Пол" property="13" addParam=""/>
+            <msh:tableColumn columnName="от 0 до 17 лет" property="1" addParam="&addCell=age1" isCalcAmount="true"/>
+            <msh:tableColumn columnName="%" property="7" addParam="" />
+            <msh:tableColumn columnName="18 - 45 лет" property="2" addParam="&addCell=age2"isCalcAmount="true"/>
+            <msh:tableColumn columnName="%" property="8" addParam="" />
+            <msh:tableColumn columnName="46 - 60 лет" property="3" addParam="&addCell=age3"isCalcAmount="true"/>
+            <msh:tableColumn columnName="%" property="9" addParam="" />
+            <msh:tableColumn columnName="61 - 75 лет" property="4" addParam="&addCell=age4"isCalcAmount="true"/>
+            <msh:tableColumn columnName="%" property="10" addParam="" />
+            <msh:tableColumn columnName="76 лет и более" property="5" addParam="&addCell=age5"isCalcAmount="true"/>
+            <msh:tableColumn columnName="%" property="11" addParam="" />
+            <msh:tableColumn columnName="Итого" property="6" addParam=""isCalcAmount="true" addParam="&addCell=allAge"/>
+            
+       </msh:table>
+    </msh:sectionContent>
+    </msh:section>   
+    	<%
+    	} else if (view.equals("6")) {
+    	%>
+    	<msh:section title="Свод по иногородним и иностранным гражданам">
+    <msh:sectionContent>
+    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+	select '&department='||case when d.isNoOmc='1' then pd.id else d.id end as id 
+	,case when d.isnoomc='1' then pd.id else d.id end as f2_lpuId
+	,case when d.isnoomc='1' then pd.name else d.name end  as f3_lpuName
+	,count (case when ok.voc_code!='643' then pat.id else null end) as f4_inostrPat
+	,count (case when adr.kladr not like '30%' and ok.voc_code='643' then 1 else null end) as f5_inogPat
+	,count(hmc.id) as f6_all
+	from medcase hmc 
+	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
+	left join patient pat on pat.id=hmc.patient_id
+	left join medcase dmc on dmc.parent_id=hmc.id and dmc.dtype='DepartmentMedCase' and dmc.datefinish is not null
+	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
+	left join mislpu d on d.id=dmc.department_id
+	left join mislpu pd on pd.id=pdmc.department_id
+	left join address2 adr on adr.addressid=pat.address_addressid
+	left join Omc_oksm ok on ok.id=pat.nationality_id
+	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+	and vhr.omccode='11' and hmc.datefinish is not null and hmc.dischargetime is not null and (ok.voc_code!='643' or adr.kladr not like '30%')
+    	${depIsNoOmc} ${addNewborn}
+	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
+	
+	order by f3_lpuName
+   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <msh:table name="journal_list_swod" cellFunction="true"
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Отделение" property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иногородние" property="5" addParam="&addCell=inogor"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иностранные" property="4" addParam="&addCell=inostr"/>
+            <msh:tableColumn columnName="Всего" property="6" addParam="&addParam=foreign"/>
+         </msh:table>
+    </msh:sectionContent>
+    </msh:section>	
+    	<%
     	}
+    	
     	} else {%>
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
@@ -321,7 +517,8 @@ from medcase hmc
     
      checkFieldUpdate('typeDate','${typeDate}',2) ;
     // checkFieldUpdate('typePatient','${typePatient}',3) ;
-    checkFieldUpdate('typeView','${typeView}',4); 
+    checkFieldUpdate('typeView','${typeView}',6); 
+    checkFieldUpdate('typeNewborn','${typeNewborn}',3); 
      
      
    
