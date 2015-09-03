@@ -23,7 +23,15 @@ public class ResultPatientListAction extends BaseAction {
 		//ActionUtil.updateParameter("DeathPatient","period","2", aRequest) ;
 		String typeDate = ActionUtil.updateParameter("ResultPatientList","typeDate","2", aRequest) ;
 		String typeDuration = ActionUtil.updateParameter("ResultPatientList","typeDuration","3", aRequest) ;
+		String typeNewborn = ActionUtil.updateParameter("ResultPatientList","typeNewborn","3", aRequest) ;
 		//Проживание пациента
+		if (typeNewborn.equals("1")) {
+			aRequest.setAttribute("addNewborn", "and pat.birthday=hmc.datestart");
+		} else if (typeNewborn.equals("2")) {
+			aRequest.setAttribute("addNewborn", "and pat.birthday<hmc.datestart");
+		} else {
+			aRequest.setAttribute("addNewborn", "");
+		}
 		if (typePat.equals("1")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			aRequest.setAttribute("addPat", " and (ok.id is not null and ok.voc_code!='643') ") ;
