@@ -732,6 +732,7 @@ function printReport007(aCtx,aParams) {
 		//+" and (slo.transferdate is null or slo.transferdate >= to_date('"+date1+"','dd.mm.yyyy') or"
 		//+" slo.transferdate = to_date('"+date2+"','dd.mm.yyyy') and cast('"+timeSql+"' as time)>slo.transfertime)"
 		+" and bf.bedType_id=";
+	//throw ""+sql1;
 	var sql2 = " and bf.bedsubtype_id=" ;
 	var sqlGr = " group by lpu.id,vbst.name,bf.serviceStream_id,vss.name" ;
 	var list1 = aCtx.manager.createNativeQuery(sql1).getResultList() ;
@@ -740,11 +741,11 @@ function printReport007(aCtx,aParams) {
 	var BTnameAll = "" ;
 	var lpu = listDep.get(0)[1] ;
 	var retBST = new java.util.ArrayList() ;
-	var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	
 	if (list1.size()>0) {		
 		for (var i=0; i < list1.size(); i++) {
 			var ret = new java.util.ArrayList() ;
-			
+			var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var objBST = list1.get(i) ;
 			var BSTname = ""+ objBST[2];
 			var BTname = ""+ objBST[3];
@@ -775,9 +776,10 @@ function printReport007(aCtx,aParams) {
 			}
 			parBST.set2(ret) ;
 			parBST.set3(parSum) ;
-			
+			retBST.add(parBST) ;
 		}
 	} else {
+		var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		parBST.set2(new java.util.ArrayList());
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		for (var i=2;i<17;i++) {
@@ -787,12 +789,15 @@ function printReport007(aCtx,aParams) {
 		if (listBedTypes.size()>0) {
 			BTnameAll=listBedTypes.get(0);
 		}
+
+		retBST.add(parBST) ;
 	}
-	retBST.add(parBST) ;
+	
 	map.put("bedSubType",BSTnameAll) ;
 	map.put("bedType",BTnameAll) ;
 	map.put("lpu",lpu) ;
 	map.put("listSwod",retBST) ;
+	//throw ""+retBST.get(3).get1();
 	// Список поступивших
 	var asql1 = "select ss.code as sscode"
 		+"     	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevMedCase_id is not null then '('||pdep.name||')' else '' end as fio"
