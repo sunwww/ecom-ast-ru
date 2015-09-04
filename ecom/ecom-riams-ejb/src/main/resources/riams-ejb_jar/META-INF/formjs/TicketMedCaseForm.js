@@ -156,10 +156,13 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 				if (spo.getDateStart()>ticket.getDateStart()){
 					spo.setDateStart(ticket.getDateStart());
 				}
+				if (spo.getDateFinish()<ticket.getDateStart()) {
+					spo.setDateFinish(ticket.getDateStart());
+				}
+					
 			}
 			
 			if (aForm.getConcludingDiagnos()!=null) {
-				//var vipObj = VocIllnesPrimary.class
 				var vip = (aForm.getConcludingActuity()==null||aForm.getConcludingActuity()=='')?null:aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary, aForm.getConcludingActuity()) ;
 				var vtt = (aForm.getConcludingTrauma()==null||aForm.getConcludingTrauma()=='')?null:aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType, aForm.getConcludingTrauma()) ;
 				var mkb = (aForm.getConcludingMkb()==null||aForm.getConcludingMkb()=='')?null:aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10, aForm.getConcludingMkb()) ;
