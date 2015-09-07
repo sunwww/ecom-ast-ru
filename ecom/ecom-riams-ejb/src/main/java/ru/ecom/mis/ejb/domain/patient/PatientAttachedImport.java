@@ -400,6 +400,7 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
 	private Date theLpuDateTo;
 	/** Кем выдан паспорт */
 	@Comment("Кем выдан паспорт")
+	@AFormatFieldSuggest({"DOCORG" })
 	public String getDocWhom() {
 		return theDocWhom;
 	}
