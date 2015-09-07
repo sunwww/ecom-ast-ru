@@ -157,6 +157,24 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	//	File outFile = null;
     	List<Object[]> listPat = null;
+    	String[][] props = new String[][] {
+    			{"pai.lastname","FAM","pai.lastname","1","Фамилия"},				{"pai.firstname","IM","pai.firstname","1","Имя"}
+    	    	,		{"case when pai.middlename='' or pai.middlename='Х' or pai.middlename is null then '' else pai.middlename end","OT" ,"pai.middlename",null,"Отчество"} 
+    	    	,		{"to_char(pai.birthday,'yyyy-mm-dd')","DR" ,"pai.birthday","1","Дата рождение"} ,		{"pai.snils","SNILS" ,"pai.snils",null,"СНИЛС"}
+    	    	,		{"pai.docType","DOCTYPE" ,"pai.docType","1","Тип документа"} ,		{"pai.docSeries","DOCSER" ,"pai.docSeries",null,"Серия документа"}
+    	    	,		{"pai.docNumber","DOCNUM" ,"pai.docNumber","1","Номер паспорта"} ,		{"to_char(pai.docdateissued,'yyyy-mm-dd')","DOCDT" ,"pai.docdateissued","1","Дата выдачи документа"}
+    	    	,		{"coalesce(pai.phone,'')","TEL" ,"pai.phone",null,"Телефон"} ,		{"pai.commonNumber","RZ" ,"pai.commonNumber",null,"ЕПН"}
+    	    	,		{"pai.lpuauto","SP_PRIK" ,"pai.lpuauto","1","Тип прикрепления"} 
+    	    	,		{"cast('' as varchar(1))","T_PRIK" ,"pai.lpuauto","1","прикреплениt/открепление"}
+    	    	,		{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","DATE_1" ,"pai.lpuDateFrom","1","Дата прикрепления"} 
+    	    	,		{"cast('' as varchar(1))","N_ADR" ,"pai.lpudatefrom",null,""}
+    	    	,		{"pai.department","KODPODR" ,"pai.department","1","Код подразделения"}
+    	    	,		{"coalesce(pai.areaNumber,'')", "LPUUCH", "pai.areaNumber", null},{"pai.doctorsnils","SSD" ,"pai.doctorsnils","1","СНИЛС врача"}
+    	    	, {"cast('1' as varchar(1))","MEDRAB","",null,"Врач/медработник"}
+    	    	
+    	    	
+    	    } ;
+    	/*
     	String[][] props = {
     			{"pai.fondId","pid","pai.fondId"},				{"pai.commonNumber","ENP","pai.commonNumber"}
     	,		{"pai.lastname","FAM" ,"pai.lastname"} ,		{"pai.firstname","IM" ,"pai.firstname"}
@@ -177,6 +195,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	,		{"pai.lpuauto","LPUAUTO" ,"pai.lpuauto"} ,	{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","LPUDT" ,"pai.lpuDateFrom"}
     	,		{"pai.department","KODPODR","pai.department"},		{"pai.doctorSnils","SSD","pai.doctorSnils"} 
     } ;
+    */
     	StringBuilder fld = new StringBuilder() ;
     	StringBuilder fldGroup = new StringBuilder() ;
     	for (int ind =0;ind<props.length;ind++) {
