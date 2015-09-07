@@ -226,10 +226,10 @@ public class AddressPointServiceBean implements IAddressPointService {
     				.getResultList() ;
     		
     		for (Object comp:listComp) {
-    			filename = aFilenameAddSuffix+"_"+aNReestr+"S"+(comp==null?"-":comp)
-    					+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-    			filenames.append("#").append(filename+".xml") ;
-    			
+    			filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp==null?"-":comp)
+    	        		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
+    	        filenames.append("#").append(filename+".xml") ;
+    	        
     			sql.setLength(0);
     			sql.append("select ").append(fld) ;
     			sql.append(" from PatientAttachedImport pai") ;
@@ -448,17 +448,25 @@ public class AddressPointServiceBean implements IAddressPointService {
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
+ 
+    	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
+    	xmlDoc.newElement(title, "N_REESTR", aNReestr);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	/*
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
        	xmlDoc.newElement(title, "VERSION","1.0");
     	xmlDoc.newElement(title, "DATE", format.format(new java.util.Date()));
     	xmlDoc.newElement(title, "YEAR", format2.format(new java.util.Date()));
     	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
  //   	xmlDoc.newElement(title, "N_REESTR", aNReestr);
     	xmlDoc.newElement(title, "FILENAME", filename);
-    	
+    	*/
     	int i=0 ;
     	for (Object[] pat:listPat) {
-    		Element zap = xmlDoc.newElement(root, "PRIKREP", null);
-    		//xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
+    		Element zap = xmlDoc.newElement(root, "ZAP", null);
+    		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
     		for(int ind=0;ind<aProps.length; ind++) {
     			String[] prop = aProps[ind] ; 
 				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
