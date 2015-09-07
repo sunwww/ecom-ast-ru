@@ -435,4 +435,29 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
 	/** СНИЛС участкового врача */
 	private String theDoctorSnils;
 	
+	/** Телефон */
+	@Comment("Телефон")
+	public String getPhone() {
+		return thePhone;
+	}
+
+	public void setPhone(String aPhone) {
+		thePhone = aPhone;
+	}
+
+	/** Телефон */
+	private String thePhone;
+	
+	/** Участок */
+	@Comment("Участок")
+	public String getAreaNumber() {
+		return theAreaNumber;
+	}
+
+	public void setAreaNumber(String aAreaNumber) {
+		theAreaNumber = aAreaNumber;
+	}
+
+	/** Участок */
+	private String theAreaNumber;
 }
