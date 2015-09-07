@@ -200,7 +200,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder fldGroup = new StringBuilder() ;
     	for (int ind =0;ind<props.length;ind++) {
     		String[] p=props[ind];
-    		if (ind!=0) {fld.append(",") ;fldGroup.append(",");}
+    		if (ind!=0&&!p[0].equals("")) {
+    			fld.append(",") ;
+    			if (!p[2].equals("")) {
+    				fldGroup.append(",");
+    			} 
+    			
+    		}
     		fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
     		fldGroup.append(" ").append(p[2]) ;
     	}
