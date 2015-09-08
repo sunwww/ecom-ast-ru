@@ -12,7 +12,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Госпитализации данные фонда таблица импорта")
 @Entity
 @Table(schema="SQLUser")
-public class HospitalDataFondImport extends BaseEntity{
+public class FondImport extends BaseEntity{
 	/** Дата импорта */
 	@Comment("Дата импорта")
 	public Date getImportDate() {return theImportDate;}

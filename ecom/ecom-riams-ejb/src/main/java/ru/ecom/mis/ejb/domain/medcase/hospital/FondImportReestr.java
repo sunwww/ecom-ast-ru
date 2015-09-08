@@ -16,7 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 		@AIndex(properties = { "numberFond" }),
 		@AIndex(properties = { "importType" })
 		})
-public class HospitalDataFondImportReestr extends BaseEntity{
+public class FondImportReestr extends BaseEntity{
 	/** Номер направления */
 	@Comment("Номер направления")
 	public String getNumberFond() {return theNumberFond;}
@@ -28,11 +28,11 @@ public class HospitalDataFondImportReestr extends BaseEntity{
 	/** Импорт */
 	@Comment("Импорт")
 	@OneToOne
-	public HospitalDataFondImport getImportType() {return theImportType;}
-	public void setImportType(HospitalDataFondImport aImportType) {theImportType = aImportType;}
+	public FondImport getImportType() {return theImportType;}
+	public void setImportType(FondImport aImportType) {theImportType = aImportType;}
 
 	/** Импорт */
-	private HospitalDataFondImport theImportType;
+	private FondImport theImportType;
 	
 	/** Результат */
 	@Comment("Результат")
