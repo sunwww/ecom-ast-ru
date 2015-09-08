@@ -167,7 +167,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	    	,		{"pai.lpuauto","SP_PRIK" ,"pai.lpuauto","1","Тип прикрепления"} 
     	    	,		{"cast('' as varchar(1))","T_PRIK" ,"pai.lpuauto","1","прикреплениt/открепление"}
     	    	,		{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","DATE_1" ,"pai.lpuDateFrom","1","Дата прикрепления"} 
-    	    	,		{"cast('' as varchar(1))","N_ADR" ,"pai.lpudatefrom",null,""}
+    	    	,		{"cast('0' as varchar(1))","N_ADR" ,"pai.lpudatefrom",null,""}
     	    	,		{"pai.department","KODPODR" ,"pai.department","1","Код подразделения"}
     	    	,		{"coalesce(pai.areaNumber,'')", "LPUUCH", "pai.areaNumber", null},{"pai.doctorsnils","SSD" ,"pai.doctorsnils","1","СНИЛС врача"}
     	    	, {"cast('1' as varchar(1))","MEDRAB","",null,"Врач/медработник"}
@@ -472,6 +472,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 				xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 				
 			}
+    		xmlDoc.newElement(zap, "REFREASON", "");
     	}
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
