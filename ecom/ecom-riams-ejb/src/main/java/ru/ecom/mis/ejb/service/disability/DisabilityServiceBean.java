@@ -198,7 +198,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		
     	return aNumber;
     }
-    
+     
     public String checkIsNull(Object aField) {
     	if (aField==null) return "";
     	else return aField.toString();
@@ -632,9 +632,30 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				
 				
 				//МСЭ
-				 
+				String mseResult = rs.getString("mseResult");
+				String mseSql = "select mss.assignmentdate as mse_dt1 " +
+						" ,mss.registrationdate as mse_dt2" +
+						" ,mss.examinationdate as mse_dt3" +
+						" ,vi.code  from medsoccommission mss" +
+						"  left join vocinvalidity vi on vi.id=mss.invalidity_id" +
+						"  where mss.disabilitydocument_id="+ln_id;
+				List<Object[]> mseList = theManager.createNativeQuery(mseSql).getResultList();
+				if (!mseList.isEmpty()) {
+					for (Object[] o: mseList) {
+						rowLpuLn.addContent(new Element("MSE_DT1").addContent(o[0].toString()));
+						rowLpuLn.addContent(new Element("MSE_DT2").addContent(o[1].toString()));
+						rowLpuLn.addContent(new Element("MSE_DT3").addContent(o[2].toString()));
+						rowLpuLn.addContent(new Element("MSE_INVALID_GROUP").addContent(o[3].toString()));						
+					}					
+				} else if (mseResult.equals("32")||mseResult.equals("33")) {
+					defect.append(ln).append(":").append(ln_id).append(":ELN-087 - При указании инвалидости должны быть заполнены поля МСЭ!!!").append(":")
+					.append(patId).append(":").append(patInfo).append("#");
+					continue;
+				}
+				
 				statement = dbh.createStatement();
 				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom");
+				
 				 int i=0;
 				 String returnDate = null;
 				// String lpuName = null, lpuAddress=null, lpuOgrn=null;
@@ -664,6 +685,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					}
 					returnDate = dateTo;
 					}
+				
 				if (lpuName!=null) {
 					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_OGRN").addContent(lpuOgrn));
 					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_ADDRESS").addContent(lpuAddress));
@@ -673,8 +695,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					.append(patId).append(":").append(patInfo).append("#");
 					continue;
 				}
-				String mseResult = rs.getString("mseResult");
+				
 				String nextDocument = rs.getString("nextDocument");
+				
 				
 				//Если указан mseResult (codef), return_date=null
 				if (mseResult!=null&&!mseResult.equals("")) {
