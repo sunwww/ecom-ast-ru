@@ -379,9 +379,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			while (rs.next()) 
 				{
 				numAll++;
-				String ln = rs.getString("ln_number");
+				String ln = rs.getString("ln_number")!=null?rs.getString("ln_number").trim():null;
 				String ln_id=rs.getString("ddid");
-				String prevDocument= rs.getString("prevDocument");
+				String prevDocument= rs.getString("prevDocument")!=null?rs.getString("prevDocument").trim():null;
 				String surname = rs.getString("lastname");
 				String name = rs.getString("firstname");
 				String patronimic = rs.getString("middlename");
@@ -392,7 +392,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		//		String dateFrom = "";
 				String startDate = rs.getString("startDate");
 				String snils = rs.getString("snils");
-				String parentCode = rs.getString("osnWorkplaceNumber");
+				String parentCode = rs.getString("osnWorkplaceNumber").trim();
 				Matcher m = lnPattern.matcher(ln);
 				System.out.println("======Текущий ЛН = "+ln);
 				if (!m.matches()) {
