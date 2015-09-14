@@ -47,6 +47,10 @@ function onPreDelete(aId, aCtx) {
 		if (+isDeleteClose==1) {}else{throw "У вас стоит запрет на удаление данных в закрытом периоде";}
 	}
 	aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
+	aCtx.manager.createNativeQuery("delete from ambulancecard where medcase_id='"+aId+"'").executeUpdate() ;
+	if (+aForm.ambulance>0 && (aForm.ambulanceCard==null ||aForm.ambulanceCard=="")) {
+		throw "Необходимо указать номер карты скорой помощи!!!" ;
+	}
 }
 
 /**
@@ -78,7 +82,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+isCreateClose!=1) throw "У вас стоит запрет на создание данных в закрытом периоде";
 	}
 	var date = new java.util.Date() ;
-
+	
+	if (+aForm.ambulance>0 && (aForm.ambulanceCard==null ||aForm.ambulanceCard=="")) {
+		throw "Необходимо указать номер карты скорой помощи!!!" ;
+	}
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
@@ -101,6 +108,13 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		aCtx.manager.createNativeQuery(sql.toString()).executeUpdate();
 	}
 	var spo = null;
+	if (+aForm.id>0) aCtx.manager.createNativeManager("delete * from AmbulanceCard where medCase_id="+aForm.id).executeUpdate() ;
+	if (+aForm.ambulance>0 && (aForm.ambulanceCard!=null &&aForm.ambulanceCard!="")) {
+		var amcCard = new Packages.ru.ecom.mis.ejb.domain.ambulance.AmbulanceCard() ;
+		ambCard.setMedCase(aEntity) ;
+		ambCard.setNumberCard(aForm.ambulanceCard) ;
+		aCtx.manager.persist(ambCard) ;
+	}
 	if(aEntity.parent==null) {
 		spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase() ;
 		var workFunction = aEntity.getWorkFunctionExecute() ; 
@@ -130,58 +144,6 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		}	
 	}
 	
-	if (aForm.getOtherTicketDates()!=null&&aForm.getOtherTicketDates()!='') {
-		var otherDates = aForm.getOtherTicketDates().split(":");
-	if (otherDates.length>0) {
-		for (var i=0;i<otherDates.length;i++) {
-			var ticket = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
-			ticket.setPatient(aEntity.getPatient());
-			ticket.setWorkFunctionExecute(aEntity.getWorkFunctionExecute());
-			ticket.setUsername(aEntity.getUsername());
-			ticket.setCreateDate(aEntity.getCreateDate());
-			ticket.setNoActuality(aEntity.getNoActuality());
-			ticket.setServiceStream(aEntity.getServiceStream());
-			ticket.setVisitReason(aEntity.getVisitReason());
-			ticket.setVisitResult(aEntity.getVisitResult());
-			ticket.setWorkPlaceType(aEntity.getWorkPlaceType());
-			ticket.setCreateTime(aEntity.getCreateTime());
-			ticket.setMedcard(aEntity.getMedcard());
-			ticket.setParent(aEntity.getParent());
-			ticket.setEmergency(aEntity.getEmergency());
-			ticket.setDateStart(new java.sql.Date(Packages.ru.nuzmsh.util.format.DateFormat.parseDate(""+otherDates[i]).getTime()));
-			
-			ticket.setIsTalk(aEntity.getIsTalk());
-			aCtx.manager.persist(ticket);
-			if (spo!=null) {
-				if (spo.getDateStart()>ticket.getDateStart()){
-					spo.setDateStart(ticket.getDateStart());
-				}
-				if (spo.getDateFinish()<ticket.getDateStart()) {
-					spo.setDateFinish(ticket.getDateStart());
-				}
-					
-			}
-			
-			if (aForm.getConcludingDiagnos()!=null) {
-				var vip = (aForm.getConcludingActuity()==null||aForm.getConcludingActuity()=='')?null:aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary, aForm.getConcludingActuity()) ;
-				var vtt = (aForm.getConcludingTrauma()==null||aForm.getConcludingTrauma()=='')?null:aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType, aForm.getConcludingTrauma()) ;
-				var mkb = (aForm.getConcludingMkb()==null||aForm.getConcludingMkb()=='')?null:aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10, aForm.getConcludingMkb()) ;
-				var vocConcomType = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor.getVocByCode(aCtx.manager,"VocPriorityDiagnosis","1");
-				var diag = new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis;
-				diag.setIllnesPrimary(vip) ;
-				diag.setTraumaType(vtt) ;
-				diag.setIdc10(mkb) ;
-				diag.setName(aForm.getConcludingDiagnos()) ;
-				diag.setEstablishDate(ticket.getDateStart()) ;
-				diag.setMkbAdc(aForm.getMkbAdc());
-				diag.setMedCase(ticket); 
-				diag.setPriority(vocConcomType) ;
-				aCtx.manager.persist(diag) ;
-			}
-			
-		}
-		aCtx.manager.persist(spo);
-	}}
 	
 	// Сопутствующий диагноз
 	saveArray(aEntity,aCtx.manager,aForm.getConcomitantDiseases()
