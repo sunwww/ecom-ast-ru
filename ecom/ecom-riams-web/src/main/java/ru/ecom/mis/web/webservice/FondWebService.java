@@ -133,9 +133,24 @@ public class FondWebService {
         //in.close() ;
         return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber);
     }
+	
 	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
+	 return checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment,"1", aRequest);
+	}
+
+	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, String aType, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
 		// Создаем список пациентов
-		System.out.println("updPatient ="+updPatient +":"+updDocument);
+		String typePat=(aType!=null&&aType.equals("2"))?"2":"1";
+		StringBuilder patSql = new StringBuilder().append("select p.id, p.lastname, p.firstname, p.middlename, p.birthday ");
+		if (typePat.equals("1")) {
+			patSql.append(" from patient p" +
+					" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id");
+		} else if (typePat.equals("2")) {
+			patSql.append("from lpuattachedbydepartment att " +
+					" left join patient p on p.id=att.patient_id" +
+					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id limit 20");
+		}
+	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
 		boolean needUpdate = false, updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;  
 		if (updPatient!=null&&(updPatient.equals("1")||updPatient.toLowerCase().equals("true")||updPatient.toLowerCase().equals("on"))) {updatePatient=true; needUpdate = true;} 
 		if (updDocument!=null&&(updDocument.equals("1")||updDocument.toLowerCase().equals("true")||updDocument.toLowerCase().equals("on"))) {updateDocument=true; needUpdate = true;} 
@@ -148,11 +163,14 @@ public class FondWebService {
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		StringBuilder str = new StringBuilder();
-		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql("select p.id, p.lastname, p.firstname, p.middlename, p.birthday " +
-				" from patient p" +
-				" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id ");
+		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql(patSql.toString());
 		if (!pats.isEmpty()) {
 			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
+			if (typePat.equals("2")) {
+				pfc.setComment(pfc.getComment()+"Проверка только прикрепленного населения");
+			} else if (typePat.equals("1")) {
+				pfc.setComment(pfc.getComment()+"Проверка всей базы пациентов");
+			} 
 			String defaultLpu =null;
 			Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
 			if (!listSC.isEmpty()) {
