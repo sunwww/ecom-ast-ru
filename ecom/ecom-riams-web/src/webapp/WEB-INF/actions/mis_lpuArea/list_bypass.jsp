@@ -31,6 +31,9 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
        <input type='hidden' name="typeRead" id="typeRead" value="2">
       <a href='mis_attachment.do'> <input type="button" value="Выгрузка населения в ФОМС" /> </a>
+      <a href='mis_attachmentUpload.do'> 
+       		<input type="button" value="Импорт населения" /> 
+       </a>
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
        <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">

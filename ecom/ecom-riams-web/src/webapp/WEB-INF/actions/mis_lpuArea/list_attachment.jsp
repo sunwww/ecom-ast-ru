@@ -9,11 +9,6 @@
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
-<%--     <tiles:put name='side' type='string'>
-        <msh:sideMenu>
-        	<msh:sideLink action="/mis_attachmentUpload.do" name="Импорт прик. населения"/>
-         </msh:sideMenu>
-    </tiles:put> --%>
   <tiles:put name="body" type="string">
   <%
     String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
@@ -35,6 +30,9 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
        <a href='mis_bypass_report.do'> 
        		<input type="button" value="Работа с прик. населением" /> 
+       </a>
+       <a href='mis_attachmentUpload.do'> 
+       		<input type="button" value="Импорт населения" /> 
        </a>
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
