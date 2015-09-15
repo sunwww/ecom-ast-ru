@@ -165,7 +165,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	    	,		{"pai.docNumber","DOCNUM" ,"pai.docNumber","1","Номер паспорта"} ,		{"to_char(pai.docdateissued,'yyyy-mm-dd')","DOCDT" ,"pai.docdateissued","1","Дата выдачи документа"}
     	    	,		{"coalesce(pai.phone,'')","TEL" ,"pai.phone",null,"Телефон"} ,		{"pai.commonNumber","RZ" ,"pai.commonNumber",null,"ЕПН"}
     	    	,		{"pai.lpuauto","SP_PRIK" ,"pai.lpuauto","1","Тип прикрепления"} 
-    	    	,		{"cast('' as varchar(1))","T_PRIK" ,"pai.lpuauto","1","прикреплениt/открепление"}
+    	    	,		{"cast('1' as varchar(1))","T_PRIK" ,"pai.lpuauto","1","прикреплениt/открепление"}
     	    	,		{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","DATE_1" ,"pai.lpuDateFrom","1","Дата прикрепления"} 
     	    	,		{"cast('0' as varchar(1))","N_ADR" ,"pai.lpudatefrom",null,""}
     	    	,		{"pai.department","KODPODR" ,"pai.department","1","Код подразделения"}
