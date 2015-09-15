@@ -135,7 +135,7 @@ public class AttachmentByLpuAction extends BaseAction {
     					sqlAdd1.append(" and pai.patient_id is null") ;
     					checkLpu=false ;
     				}
-    				prefix="PRIKREP";
+    				//prefix="PRIKREP";
     				
     				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
