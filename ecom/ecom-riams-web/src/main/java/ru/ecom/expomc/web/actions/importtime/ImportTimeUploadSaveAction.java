@@ -49,7 +49,7 @@ public class ImportTimeUploadSaveAction extends BaseAction {
         new Thread() {
             public void run() {
                 try {
-                    if (CAN_TRACE) LOG.trace("Improting file " + filename);
+                    if (CAN_TRACE) LOG.trace("Importing file " + filename);
                     ImportFileResult result = service.importFile(
                     		form.getFile().getFileName(), monitorId, filename, timeForm) ;
                 } catch (ImportException e) {
