@@ -12,6 +12,16 @@
       <msh:panel guid="070b9d1e-c50f-4423-9d72-274f6b1dc045">
         <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
         <msh:row>
+	        <td class="label" title="Обновлять данных пациентов (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Обновлять данные:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typePatient" value="1">  всех пациентов
+	        </td>
+	        
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typePatient" value="2"> только прикрепленных к ЛПУ
+	        </td>
+        </msh:row>
+        <msh:row>
         <msh:checkBox property="needUpdatePatient" label="Автоматически обновлять данные пациента"/>
         <msh:checkBox property="needUpdateDocument" label="Автоматически обновлять данные документов"/>
         </msh:row>
@@ -19,6 +29,9 @@
         <msh:checkBox property="needUpdatePolicy" label="Автоматически обновлять данные мед. полиса"/>
         <msh:checkBox property="needUpdateAttachment" label="Автоматически обновлять данные прикрепления"/>
         </msh:row>
+         <td>
+        <input type='button' onclick='test()' value='2'>
+        </td>
         </msh:ifFormTypeIsCreate>
         <msh:ifFormTypeAreViewOrEdit formName="mis_patientFondCheckDataForm">
         <msh:row>
@@ -31,7 +44,9 @@
         </msh:row>
         
         <msh:row>
+       
           <msh:textField property="startDate" label="Дата проверки" viewOnlyField="true"/>
+        
         </msh:row>
         
         <msh:row>
@@ -68,7 +83,7 @@
 =case when (mp.series is not null and mp.series!='')then mp.series else '' end 
 ||'#'||case when (mp.polnumber is not null and mp.polnumber!='') then mp.polnumber end ||'#'|| ri.omccode then null else pf.id end as f12_changePolicy
 ,case when ((pf.commonnumber is null or pf.commonnumber='') and p.commonnumber!='') then null when ((pf.snils is null or pf.snils='') and p.snils!='') then null when case when (pf.commonnumber is not null) then pf.commonnumber else '' end ||'#'|| case when pf.snils is not null then pf.snils else '' end=case when p.commonnumber is not null then p.commonnumber else '' end||'#'|| case when p.snils is not null then p.snils else '' end then null else pf.id end as f13_changePat
-,case when pf.lpuattached=(select sc.keyvalue from softconfig sc where key='DEFAULT_LPU_OMCCODE') and (pf.attacheddate||'#'||pf.attachedtype)!=(att.dateFrom||'#'||vat.code) then pf.id else null end as f14_changeAttachment
+,case when pf.lpuattached=(select sc.keyvalue from softconfig sc where key='DEFAULT_LPU_OMCCODE') and ((pf.attacheddate||'#'||pf.attachedtype)!=(att.dateFrom||'#'||vat.code) or att.id is null) then pf.id else null end as f14_changeAttachment
 from patientfond pf 
 left join patient p on p.id=pf.patient_id
 left join vocidentitycard vic on vic.id=p.passporttype_id
@@ -125,6 +140,7 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
     <msh:ifFormTypeIsView formName="mis_patientFondCheckDataForm">
     <script type='text/javascript'>
      checkFieldUpdate('typeView','${typeView}',1) ;
+    // checkFieldUpdate('typePatient','${typePatient}',2) ;
      checkMode();
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
   	   	eval('var chk =  document.forms[0].'+aField) ;
@@ -158,30 +174,8 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
  			}catch(e) {}
  		}	
  	}
-    </script>
- 	</msh:ifFormTypeIsView>
-    <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
-    <script type="text/javascript">
- 
-   
-    document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
-		
-	 function checkAllPatients() {
-	    	PatientService.checkAllPatients($('needUpdatePatient').checked, 
-	    		$('needUpdateDocument').checked, $('needUpdatePolicy').checked, 
-	    		$('needUpdateAttachment').checked, {
-	    		callback: function () {
-	    			document.location="mis_patientFondCheckList.do";
-	    		}
-	    	});
-	    		
-	    	}
-</script>
-
-</msh:ifFormTypeIsCreate> 
-<msh:ifFormTypeIsView formName="mis_patientFondCheckDataForm">
-    <script type="text/javascript">
-	    function updatePatient(aPatientFondId, updatePat, updateDoc, updatePol, updateAtt) {
+    
+    function updatePatient(aPatientFondId, updatePat, updateDoc, updatePol, updateAtt) {
 	    	PatientService.updateDataByFondAutomatic(aPatientFondId, $('id').value, ""+updatePat=='1'?true:false, ""+updateDoc=='1'?true:false, ""+updatePol=='1'?true:false, ""+updateAtt=='1'?true:false,{
 	    		callback: function(aResult) {
 	    			//alert(aResult);
@@ -190,7 +184,49 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
 	    	});
 	    }
 	    </script>
-	    </msh:ifFormTypeIsView>
+ 	</msh:ifFormTypeIsView>
+    <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
+    <script type="text/javascript">
+ 
+   
+    document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
+	
+    function test () {
+    	alert ($('needUpdatePatient').checked+' = '+
+	    		$('needUpdateDocument').checked+' = ' +$('needUpdatePolicy').checked+' = '+ 
+	    		$('needUpdateAttachment').checked);
+    }
+	 function checkAllPatients() {
+		 var typePat='1';
+		 var p=document.forms[0].typePatient;
+			for (var i=0; i<p.length;i++) {
+				if (p[i].checked) {
+					typePat=p[i].value;
+				}
+			} 
+	    	PatientService.checkAllPatients($('needUpdatePatient').checked, 
+	    		$('needUpdateDocument').checked, $('needUpdatePolicy').checked, 
+	    		$('needUpdateAttachment').checked, typePat, {
+	    		callback: function () {
+	    			document.location="mis_patientFondCheckList.do";
+	    		}
+	    	});
+	    		
+	    	}
+          checkFieldUpdate('typePatient','${typePatient}',2) ;
+   function checkFieldUpdate(aField,aValue,aDefaultValue) {
+  	   	eval('var chk =  document.forms[0].'+aField) ;
+  	   	var aMax=chk.length ;
+  	   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+  	   		chk[+aDefaultValue-1].checked='checked' ;
+  	   	} else {
+  	   		chk[+aValue-1].checked='checked' ;
+  	   	}
+  	   }
+   
+  
+    </script>
+</msh:ifFormTypeIsCreate> 
 	    </tiles:put>
 </tiles:insert>
 
