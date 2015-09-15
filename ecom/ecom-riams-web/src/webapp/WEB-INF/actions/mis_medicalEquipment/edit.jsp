@@ -54,7 +54,7 @@
                <label>Износ (%)</label>
                </td>
                <td colspan="3">
-               <input type='text' name= "wearoutPercent" id="wearoutPercent" value="" size="50">
+               <input readonly="readonly" type='text' name= "wearoutPercent" id="wearoutPercent" value="" size="50">
                </td>
                </msh:row>
                </msh:ifFormTypeIsView>
@@ -71,10 +71,10 @@
                 <msh:ifFormTypeIsView formName="mis_medicalEquipmentForm">
 				<msh:row>
 			<msh:section>
-			<msh:sectionTitle>Оборудование используется в другими отделениями</msh:sectionTitle>
+			<msh:sectionTitle>Оборудование используется в других отделениях</msh:sectionTitle>
 			<msh:sectionContent>
 			<ecom:webQuery name="list" nativeSql="select lpu.id, lpu.name from equipment_mislpu el 
-			left join mislpu lpu on lpu.id=el.otherlpu_id and el.equip.id=${param.id}
+			left join mislpu lpu on lpu.id=el.otherlpu_id and el.equipment_id=${param.id}
 			order by lpu.name"/>
 			<msh:table name="list" action="entityView-mis_lpu.do" idField="1">
 			            <msh:tableColumn columnName="Подразделение" property="2"/>
@@ -107,8 +107,9 @@
 <tiles:put name="javascript" type="string">
       <script type="text/javascript">
       onload=function() {
-    	  var val = Math.seil((+$('wearout').value) /(+$('price').value)*100);
-    	  $('wearoutPercent').value=""+val+" %";
+    	  alert("HELLO");
+    	  var val = (+$('wearout').value) /(+$('price').value)*100;
+    	  $('wearoutPercent').value=""+(val.toFixed(2))+" %";
       }
       </script>
       </tiles:put>
