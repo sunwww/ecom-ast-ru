@@ -280,7 +280,7 @@
         <msh:sideLink params="id" action="/entityParentList-voc_cardIndex" name="Сведения о картотеках" roles="/Policy/Voc/VocCardIndex/View" />
         <msh:sideLink roles="/Policy/Mis/Report/Birth/View" params="id" action="/entityParentList-mis_birthReportDate" name="Сведения по рождаемости" title="Показать сведения по рождаемости" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/js-mis_worker-pattern" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />
-        <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" params="id" action="/js-mis_lpu-showStandard" name="Оснащение по стандарту" title="Шаблоны по стандарту" />
+        <msh:sideLink roles="/Policy/Mis/Equipment/Equipment/View" params="id" action="/js-mis_lpu-showStandard" name="Оснащение по стандарту" title="Шаблоны по стандарту" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
