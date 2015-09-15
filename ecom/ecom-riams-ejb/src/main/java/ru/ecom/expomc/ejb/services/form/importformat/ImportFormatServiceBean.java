@@ -1261,7 +1261,6 @@ public class ImportFormatServiceBean implements IImportFormatService {
             ImportTime time = null;
             Date importDate = new Date();
             monitor.setValue(2);
-
             /////////////////////////////////
             // Загрузка импортируемого XML документа
             log("Загрузка импортируемого XML");
@@ -1319,7 +1318,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                     theImportLogger.getImportReportWriter().close();
                     theLogFile = null;
                     theImportLogger = null;
-                } catch (IOException e) {}
+                } catch (Exception e) {}
             }
         }
     }
