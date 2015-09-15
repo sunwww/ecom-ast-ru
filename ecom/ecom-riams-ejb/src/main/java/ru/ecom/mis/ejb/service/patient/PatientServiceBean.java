@@ -449,12 +449,12 @@ public class PatientServiceBean implements IPatientService {
 					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21]);
 					Long aPatientId =Long.valueOf(arr[20].toString()); 
 			if (needUpdatePatient) {
-			//	System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
+				System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
-				if (aSnils!=null&&aSnils.equals("")) {
+				if (aSnils!=null&&!aSnils.equals("")) {
 					str.append(prepSql("snils",aSnils));
 				}
-				str.append(prepSql(str.length()>23?", commonnumber":"commonnumber",aRz));
+				str.append(prepSql((str.length()>23?", commonnumber":"commonnumber"),aRz));
 				patF.setIsPatientUpdate(true);
 			} else {patF.setIsPatientUpdate(false);}
 			
@@ -475,9 +475,12 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsDocumentUpdate(false);}
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
+				if (aDocType.equals("3"));{
+				System.out.println("------------- UPDATE SQL STRING FIO = "+aLastname+" "+ aFirstname+" "+aMiddlename);
 				System.out.println("------------- UPDATE SQL STRING = "+str.toString());
+				}
 				
-				theManager.createNativeQuery(str.toString()).executeUpdate();
+				System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
 				System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
@@ -488,7 +491,8 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
 				System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
-				patF.setIsAttachmentUpdate(updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate,true));
+				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate,true, false);
+				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
 				
 			} else {patF.setIsAttachmentUpdate(false);}
 			theManager.persist(patF);
@@ -517,73 +521,94 @@ public class PatientServiceBean implements IPatientService {
 		
 		
 	}
-	public boolean updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, boolean ignoreType) {
+	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
+			, boolean ignoreType, boolean updateEditDate) {
+		String updateDate = updateEditDate?" editdate=current_date, ":""; 
 		SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
+		StringBuilder ret = new StringBuilder();
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
+	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
+		RegInsuranceCompany insCompany =null; 
+		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
+				.setParameter("code", aCompany).getResultList(); 
+		if (companies.isEmpty()) {
+			companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where smoCode = :code and (deprecated is null or deprecated='0')")
+					.setParameter("code", aCompany).getResultList(); 
+		}
+		if (!companies.isEmpty()) {
+			insCompany=companies.get(0);
+		}
 		
-//		RegInsuranceCompany insCompany =null; 
-		RegInsuranceCompany insCompany =(RegInsuranceCompany) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
-				.setParameter("code", aCompany).getSingleResult(); 
-		
-		
-if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
-		System.out.println("-----------Создаем прикрепления!!");
+	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
+	//	System.out.println("====-----------Создаем прикрепления!!");
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
-				.setParameter("pat", aPatientId).getResultList();
-		VocAttachedType attType = (VocAttachedType) theManager.createQuery("from VocAttachedType where code=:code")
-				.setParameter("code", attachedType).getResultList().get(0);
+			.setParameter("pat", aPatientId).getResultList();
+			
+		VocAttachedType attType = (VocAttachedType) (!theManager.createQuery("from VocAttachedType where code=:code")
+			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
+			.setParameter("code", attachedType).getResultList().get(0):null);
 		
 		if (attachments.isEmpty()) { // Создаем новое 
-			System.out.println("--------------- ATT NOT FOUND, Создаем новое!!!");
-			String lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
+			String lpuId = null;
+			try {
+				 lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
+			} catch (Exception e) {
+				
+			}
 			MisLpu lpuAtt = null;
 			if (lpuId!=null&&!lpuId.equals("")) {
 				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
 			}
-			
 			if (lpuAtt!=null) {
-				System.out.println("+++++++++++++++++++Найденное ЛПУ - "+lpuAtt.getFullname());
+			//	System.out.println("+++++++++++++++++++Найденное ЛПУ - "+lpuAtt.getFullname());
 				LpuAttachedByDepartment att = new LpuAttachedByDepartment();
 				att.setPatient(theManager.find(Patient.class, aPatientId));
 				att.setLpu(lpuAtt);
 				att.setAttachedType(attType);
 				try {
-					Date dat = DateFormat.parseSqlDate(attachedDate) ;
-					att.setDateFrom(dat);
+					att.setDateFrom(DateFormat.parseSqlDate(attachedDate));
 					att.setCompany(insCompany);
+					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
 					//Указать участок!!!
 					theManager.persist(att);
-					System.out.println("------- Прикрепление создано! Пациент = "+aPatientId);
-					return true;
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					System.out.println("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
+				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
+						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+". ");
 			} else {
-				System.out.println("ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано");
+				ret.append("0ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано. ");
 			}
 			
 		} else  { // Обновляем существующее 
 			for (LpuAttachedByDepartment a: attachments) {
-				if (a.getAttachedType().equals(attType)||ignoreType) {
-//						System.out.println("------ ATT FOUND!!!, обновляем существующее, "+a.getId());
-					StringBuilder str = new StringBuilder();
-					str.append("update LpuAttachedByDepartment set dateFrom=to_date('").append(attachedDate)
-						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"',editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') where id='").append(a.getId()).append("'");
+				StringBuilder str = new StringBuilder();
+				if (a.getAttachedType()==null||a.getAttachedType().equals(attType)||ignoreType) {
+					ret.append("Обновлено прикрепление. Старый тип - " +
+						(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
+						", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
+						". Новый тип - "+attType.getCode()+ ", дата - "+ attachedDate+". ");
+					str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
+						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') where id='").append(a.getId()).append("'");
 					theManager.createNativeQuery(str.toString()).executeUpdate();
-					System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
-					return true;
-					} else {
-						System.out.println("Найдено прикрепление с другим типом, прикрепление не создано");
-					}
+			//		System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
+				} else {
+				ret.append("Обновлена дата прикрепления. Тип - " +
+					(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
+					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
+					". Новая дата - "+ attachedDate+". ");
+				str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
+					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check' where id='").append(a.getId()).append("'");
+				theManager.createNativeQuery(str.toString()).executeUpdate();						
+				}
 			}
 		}
 	}
-return true;
-	}
+	return ret.toString();
+}
 	
 	public boolean updateDataByFond(String aUsername, Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress
@@ -643,7 +668,7 @@ return true;
 							}
 						}
 					}
-					updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],false);
+					updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],false, false);
 				
 			}
 		}

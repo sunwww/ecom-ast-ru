@@ -14,6 +14,8 @@ import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 /**
  */
 public interface IPatientService {
+	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
+			, boolean ignoreType, boolean updateEditDate);
 	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException; 
 	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
 	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
