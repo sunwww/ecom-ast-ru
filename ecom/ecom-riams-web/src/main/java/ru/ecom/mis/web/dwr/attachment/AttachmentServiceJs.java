@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jdom.JDOMException;
 
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.expomc.ejb.services.sync.ISyncService;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.sync.lpuattachment.ISyncAttachmentDefectService;
@@ -24,6 +26,22 @@ import ru.ecom.web.util.Injection;
  *
  */
 public class AttachmentServiceJs {
+	
+	public String syncUpload(String aEntity, HttpServletRequest aRequest) throws NamingException {
+		 IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+		 IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		long monitorId = monitorService.createMonitor(); 
+		ISyncService service = Injection.find(aRequest).getService(ISyncService.class);
+		service.syncByEntity(monitorId, aEntity);
+		try{
+			String s = wqs.executeNativeSql("select max(id) from fondimport").iterator().next().get1().toString(); 
+			aRequest.setAttribute("impResult", "");
+			return "Синхронизация успешно завершена. <a href='js-exp_importtime-checkByTime.do?id="+s+"' target='_blank'>Просмотреть результаты</a>";
+		} catch (Exception e) { 
+			return ""+e.toString();
+		}
+		
+	} 
 	
 	public String getAreaByPatient (Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
