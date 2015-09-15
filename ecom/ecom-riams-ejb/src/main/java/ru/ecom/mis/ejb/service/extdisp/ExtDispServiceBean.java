@@ -209,7 +209,6 @@ public class ExtDispServiceBean implements IExtDispService {
 			
 			return createArchive(theArchiveFileName+"_"+new Random().nextInt(99999999)+".zip")+"@"+getBadCards();
 		} catch (Exception e) {
-			System.out.println("Exception happens !199_line ");
 			e.printStackTrace();
 			return null;
 			
