@@ -66,4 +66,11 @@ public class FondImport extends BaseEntity{
 
 	/** Кол-во дефектных данных */
 	private Long theCntDefect;
+	
+	/** Номер импорта */
+	@Comment("Номер импорта")
+	public String getImportNumber() {return theImportNumber;}
+	public void setImportNumber(String aImportNumber) {theImportNumber = aImportNumber;}
+	/** Номер импорта */
+	private String theImportNumber;
 }
