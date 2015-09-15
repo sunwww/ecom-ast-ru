@@ -20,9 +20,21 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 //@TransactionManagement(TransactionManagementType.BEAN)
 public class SyncServiceBean implements ISyncService {
 
+	public void syncByEntity(Long aMonitorId, String aEntity) {
+		try{
+		Long aTimeId = Long.valueOf(theEntityManager.createNativeQuery("select max(impt.id)from Impdoc impd left join Imptime impt on impt.document_id=impd.id " +
+				"where impd.entityClassName=:aEntity")
+				.setParameter("aEntity", aEntity).getSingleResult().toString());
+		
+		sync(aMonitorId,aTimeId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
     public void sync(long aMonitorId, long aTimeId) {
         ImportTime time = theEntityManager.find(ImportTime.class, aTimeId) ;
-        try {
+        try {        
             ISync sync = instanceNewSync(time.getDocument()) ;
             SyncContext ctx = new SyncContext(aMonitorId,time,theEntityManager);
             ctx.setMonitorService(theMonitorService);
