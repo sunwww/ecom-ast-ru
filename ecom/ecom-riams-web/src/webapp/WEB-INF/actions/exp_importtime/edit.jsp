@@ -68,6 +68,16 @@
 	            	<msh:tableColumn columnName="Количество" property="2"/>
 	            </msh:table>  
             </msh:section>
+            <msh:section title='Список синхронизаций'>
+	            <ecom:webQuery name='syncT' 
+	              nativeSql="select fi.importdate, fi.importtime, fi.id from fondimport fi where fi.importnumber='${param.id}' 
+	              	order by fi.importdate, fi.importtime" />
+	            <msh:table name="syncT" action="js-exp_importtime-checkByTime.do" idField="3">
+	            	<msh:tableColumn columnName="№" property="sn"/>
+	            	<msh:tableColumn columnName="Дата синхронизации" property="1"/>
+	            	<msh:tableColumn columnName="Время синхронизации" property="2"/>
+	            </msh:table>  
+            </msh:section>
             
     </tiles:put>
 
