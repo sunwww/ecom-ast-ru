@@ -58,10 +58,23 @@
      </msh:section>
     </msh:tableNotEmpty>
 	  <msh:ifInRole roles="/Policy/Poly/Ticket/View">
-	      <msh:section title="Открытые талоны" createRoles="/Policy/Poly/Ticket/Create" viewRoles="/Policy/Poly/Ticket/View" 
+	      <msh:section title="
+	      " createRoles="/Policy/Poly/Ticket/Create" viewRoles="/Policy/Poly/Ticket/View" 
 	      shortList="js-smo_ticket-list.do?short=Short&id=${param.id}" 
 	      createUrl="entityParentPrepareCreate-smo_ticket.do?id=${param.id}" 
 	      listUrl="js-smo_ticket-list.do?id=${param.id}">
+	      <msh:sectionTitle>
+	      Открытые талоны
+	       <msh:ifInRole roles="/Policy/Poly/Ticket/Create">
+	       <a href='entityParentPrepareCreate-smo_ticket.do?id=${param.id}'><img src='/skin/images/main/plus.png' alt='Добавить запись' title='Добавить запись' height='14' width='14'>Добавить посещение</a>
+	       <msh:ifInRole roles="/Policy/Poly/ShortTicket/Create">
+	       <a href='entityParentPrepareCreate-smo_short_ticket.do?id=${param.id}'><img src='/skin/images/main/plus.png' alt='Добавить запись' title='Добавить запись' height='14' width='14'>Добавить талон на прием</a>
+	       </msh:ifInRole>
+	       <a href='entityParentPrepareCreate-smo_short_spo.do?id=${param.id}'><img src='/skin/images/main/plus.png' alt='Добавить запись' title='Добавить запись' height='14' width='14'>Добавить обращение</a>
+	       </msh:ifInRole>
+	       <a onclick="getDefinition(&quot;js-smo_ticket-list.do?short=Short&amp;id=${param.id}&quot;,event); " href="javascript:void(0);"><img width="14" height="14" title="Просмотр списка" alt="Просмотр списка" src="/skin/images/main/view1.png">Просмотр списка</a>
+	       <a href="js-smo_ticket-list.do?id=${param.id}"><img width="14" height="14" title="Переход к списку" alt="Переход к списку" src="/skin/images/main/list.png">Перейти к списку</a>
+	      </msh:sectionTitle>
 	        <msh:sectionContent guid="6963aae2-0581-4f08-8844-279f55ea6b45">
 	        <ecom:webQuery name="tickets"
 	        	nativeSql="select 
