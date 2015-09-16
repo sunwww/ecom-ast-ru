@@ -14,6 +14,10 @@
       <msh:hidden property="patient" />
       <msh:hidden property="medcard" />
             <msh:hidden property="otherTicketDates"/>
+            <msh:ifFormTypeIsView formName="smo_short_spoForm">
+            <script type="text/javascript">
+            window.document.location = 'entityView-smo_spo.do?id=${param.id}';
+            </script>
             <msh:panel guid="panel">
         <msh:row guid="row1">
           <msh:row guid="e6d5b1ac-787d-4a77-b571-81f9ce83c8b8">
@@ -37,6 +41,7 @@
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
+      </msh:ifFormTypeIsView>
       <msh:panel guid="panel">
 
 
