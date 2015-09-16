@@ -18,6 +18,7 @@
     
     <form-bean name="work_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.PersonalWorkFunctionForm" />
+    <form-bean name="work_extPersonalWorkFunction" type="ru.ecom.mis.ejb.form.worker.ExtPersonalWorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionByGroupForm" type="$$map$$work_personalWorkFunctionByGroupForm" />
     <form-bean name="work_groupWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.GroupWorkFunctionForm" />
     <form-bean name="work_workFunctionByWorkerForm" type="$$map$$work_workFunctionByWorkerForm" />
@@ -26,11 +27,10 @@
     
     <form-bean name="work_timeBySpecialistForm" type="ru.ecom.mis.web.action.worker.TimeBySpecialistForm" />
 
-<!--     <form-bean name="smo_visitForm" type="$$map$$smo_visitForm" /> -->
     <form-bean name="smo_visitForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm" />
 
-    <form-bean name="smo_smoForm" type="$$map$$smo_smoForm" />
-    <form-bean name="smo_spoForm" type="$$map$$smo_spoForm" />
+    <form-bean name="smo_spoForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm" />
+    <form-bean name="smo_short_spoForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm" />
     
     <!-- Нетрудоспособность -->
     
