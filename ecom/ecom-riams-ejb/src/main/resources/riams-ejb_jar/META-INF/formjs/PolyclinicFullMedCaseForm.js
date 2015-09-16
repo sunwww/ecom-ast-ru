@@ -8,6 +8,7 @@ function onCreate(aForm, aEntity, aContext) {
 function getObject(aCtx,aId,aClazz) {
 	return (aId==null||aId=='0'||aId=='')?null:aCtx.manager.find(aClazz, aId) ;
 }
+
 function saveAdditionData(aForm,aEntity,aCtx) {
 	//aEntity.setFinishFunction
 	//aEntity.setOwnerFunction
