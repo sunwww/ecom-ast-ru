@@ -335,6 +335,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/find_prescription.jsp" />
         </action>
+        <action path='/pres_lab_print' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_print.jsp" />
+        </action>
         <action path='/pres_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
