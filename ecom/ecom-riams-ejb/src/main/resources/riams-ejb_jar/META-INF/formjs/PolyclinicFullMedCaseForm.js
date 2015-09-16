@@ -16,10 +16,23 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 	var medcard = getObject(aCtx, aForm.getMedcard(), Packages.ru.ecom.poly.ejb.domain.Medcard);
 	//throw ""+medcard ;
 	if (aEntity.patient==null) aEntity.patient=medcard.person;
+	aEntity.setFinishFunction(aEntity.getOwnerFunction());
+	aEntity.setStartFunction(aEntity.getOwnerFunction());
 	aCtx.manager.persist(aEntity) ;
 	//throw ""+ aForm.getOtherTicketDates() ;
 		if (aForm.getOtherTicketDates()!=null&&aForm.getOtherTicketDates()!='') {
 			var otherDates = aForm.getOtherTicketDates().split(":");
+			var ddate = true;
+			var date = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aEntity.getDateStart());
+			//throw ""+date;
+			for (var i=0;i<otherDates.length;i++) {
+				if (otherDates[i].equals(date)) {
+					ddate=false;
+				}
+			}
+			if (ddate) {
+				otherDates = (aForm.getOtherTicketDates()+":"+date).split(":");
+			}
 			//var servStream = getObject(aCtx, aForm.getServiceStream(), Packages.ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream);
 			var visitReason = getObject(aCtx, aForm.getVisitReason(), Packages.ru.ecom.poly.ejb.domain.voc.VocReason);
 			var visitResult = getObject(aCtx, aForm.getVisitResult(), Packages.ru.ecom.poly.ejb.domain.voc.VocVisitResult);
