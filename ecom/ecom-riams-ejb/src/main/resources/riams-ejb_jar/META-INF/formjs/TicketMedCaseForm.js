@@ -30,6 +30,9 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	//aCtx.getSessionContext().set("dCreate","123");
+	if (+aForm.ambulance>0 && (aForm.ambulanceCard==null ||aForm.ambulanceCard=="")) {
+		throw "Необходимо указать номер карты скорой помощи!!!" ;
+	}
 }
 function onPreDelete(aId, aCtx) {
 	var param = new java.util.HashMap() ;
@@ -48,9 +51,7 @@ function onPreDelete(aId, aCtx) {
 	}
 	aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
 	aCtx.manager.createNativeQuery("delete from ambulancecard where medcase_id='"+aId+"'").executeUpdate() ;
-	if (+aForm.ambulance>0 && (aForm.ambulanceCard==null ||aForm.ambulanceCard=="")) {
-		throw "Необходимо указать номер карты скорой помощи!!!" ;
-	}
+	
 }
 
 /**
