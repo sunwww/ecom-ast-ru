@@ -14,6 +14,29 @@
       <msh:hidden property="patient" />
       <msh:hidden property="medcard" />
             <msh:hidden property="otherTicketDates"/>
+            <msh:panel guid="panel">
+        <msh:row guid="row1">
+          <msh:row guid="e6d5b1ac-787d-4a77-b571-81f9ce83c8b8">
+            <msh:checkBox property="noActuality" label="Недействительность" guid="816475aa-6ff1-4743-93b7-a6399addd548" />
+          </msh:row>
+          <msh:textField guid="textFieldHello" property="dateStart" label="Дата начала" />
+          <msh:textField property="dateFinish" label="Дата окончания" guid="e71fa83a-c6c2-4221-bb72-77067f879971" />
+        </msh:row>
+        <msh:row guid="2ff2ea54-5a8f-4338-92ec-ca877c4a7d34">
+          <msh:label property="duration" label="Длительность" guid="eeedee49-a83e-4498-9d44-10be53474861" />
+        </msh:row>
+        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
+          <msh:autoComplete vocName="vocIdc10" property="idc10" label="МКБ-10" guid="b7d15793-841e-4779-b7ee-b44ac6eb7f08" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="startFunction" label="Кто начал" guid="7b8a49e5-653a-4490-bfcf-ff42801611f7" fieldColSpan="3" horizontalFill="true" />
+        <msh:row guid="b7488cc8-933c-406b-8589-8b852f78765e">
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="finishFunction" label="Кто завершил" guid="d30a17e6-b833-47e6-9699-417dce4cd008" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:row guid="976b032e-82b6-45c9-88ca-935b07a6b482">
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="ownerFunction" label="Владелец" guid="1d81b4df-9cdc-40f1-b496-a10a3a5080e0" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+      </msh:panel>
       <msh:panel guid="panel">
 
 
@@ -90,12 +113,10 @@
           <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Соп. заболевания" property="concomitantDiseases" colSpan="6" guid="1204d6c4-a3ff-44aa-a698-b99816d10337" />
         </msh:row>
         <msh:row>
-          <msh:textField label="Дата начала" property="dateStart" fieldColSpan="1" />
-          <msh:textField label="Дата окончания" property="dateFinish" fieldColSpan="1"/>
-        </msh:row>
-        <msh:row>
-        	<msh:textField property="otherTicketDate" label="Дата посещения"/>
-        	<td><input type="button" value="+" onclick="addOtherDate()"/></td>
+          <msh:textField label="Дата начала" property="dateStart" fieldColSpan="1" /><%-- 
+          <msh:textField label="Дата окончания" property="dateFinish" fieldColSpan="1"/> --%>
+        
+        	<td><input type="button" value="Добавить дату" onclick="addOtherDate()"/></td>
         </msh:row>
         <msh:row>
         <table id="otherDates">
@@ -278,12 +299,8 @@ order by vis.dateStart
         	}
         }
         function addOtherDate() {
-            var otherDate = $('otherTicketDate').value;
+            var otherDate = $('dateStart').value;
             if (otherDate!='') {
-            if (otherDate==$('dateStart').value) {
-        alert (otherDate+" является датой талона");
-        return;
-        } 
             TicketService.getCrossSPO(otherDate,$('patient').value,$('ownerFunction').value, {
             callback: function(aResult) {
             if (aResult!=null&&aResult!='') {
@@ -298,28 +315,24 @@ order by vis.dateStart
             var dates = document.getElementById('otherDates').childNodes;
                   var l = dates.length;
                   for (var i=1; i<l;i++) {
-                  if (otherDate==dates[i].childNodes[0].innerHTML) {
-                  alert ("Такая дата ("+otherDate+") уже есть в обращении");
-                  return;
-                  }
-                 
-                  }
+                 	 if (otherDate==dates[i].childNodes[0].innerHTML) {
+                 		 alert ("Такая дата ("+otherDate+") уже есть в обращении");
+                  	return;
+                    }                 
+                 }
                   addRow (otherDate);
             }
             });      
             }      
-            }
+         }
       	function createOtherDates() {
       		var dates = document.getElementById('otherDates').childNodes;
       		var str = ""; $('otherTicketDates').value='';
       		for (var i=1;i<dates.length;i++) {
-      			if ($('dateStart').value!=dates[i].childNodes[0].innerHTML) {
-      				str+=dates[i].childNodes[0].innerHTML+":";
-          			}
+      			str+=dates[i].childNodes[0].innerHTML+":";
       		}
       		str=str.length>0?str.trim().substring(0,str.length-1):"";
       		$('otherTicketDates').value=str;
-      		//alert (str);
       	}
       	function addRow (aValue) {
       		var table = document.getElementById('otherDates');
