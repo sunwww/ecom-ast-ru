@@ -40,11 +40,13 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			var vip =  getObject(aCtx, aForm.getConcludingActuity(), Packages.ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary);
 			var vtt = getObject(aCtx, aForm.getConcludingTrauma(), Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType) ;
 			var mkb = getObject(aCtx, aForm.getIdc10(),Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10) ;
+			var ordLpu = getObject(aCtx, aForm.getOrderLpu(), Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu) ;
 			var vocConcomType = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor.getVocByCode(aCtx.manager,"VocPriorityDiagnosis","1");
 			//throw aForm.getServiceStream()+""+servStream ;
 		if (otherDates.length>0) {
 			for (var i=0;i<otherDates.length;i++) {
 				var ticket = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
+				ticket.setOrderLpu(ordLpu);
 				ticket.setPatient(aEntity.getPatient());
 				ticket.setWorkFunctionExecute(aEntity.getOwnerFunction());
 				ticket.setUsername(aEntity.getUsername());
