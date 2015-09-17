@@ -29,10 +29,14 @@
         <msh:row guid="e3c328fa-adbc-4a2d-bcd7-ac189b052f41">
           <msh:autoComplete vocName="timeOmcLpu" property="omcCode" label="Код ФОНДА" fieldColSpan="3" horizontalFill="true" guid="947bb0fe-365f-4147-b6cb-0ed0b07c43b2" />
         </msh:row>
+
         <msh:row guid="2df6f0d2-a60d-44a5-b64b-3aeb3f298d04">
           <msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3" size="50" guid="f1d2a4ec-81ad-48bb-afe9-8983e4017245" />
         </msh:row>
-        <msh:row>
+         <msh:row>
+        	<msh:textField property="shortName" label="Корот. наименование" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+               <msh:row>
           <msh:textField property="printName" label="Название для печати" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
         <msh:row>
