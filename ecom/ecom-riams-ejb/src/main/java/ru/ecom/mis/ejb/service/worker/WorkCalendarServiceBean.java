@@ -126,6 +126,9 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			dj.setObjectId(String.valueOf(wct.getId())) ;
 			dj.setLoginName(aUsername) ;
 			
+			wct.setServiceStream(null) ;
+			wct.setPhone(null) ;
+			wct.setService(null) ;
 			wct.setPrePatient(null) ;
 			wct.setPrePatientInfo(null) ;
 			theManager.persist(wct) ;
@@ -253,7 +256,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		
 	}
 	public void preRecordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime
-			,String aPatientInfo,Long aPatientId, Long aServiceStream) {
+			,String aPatientInfo,Long aPatientId, Long aServiceStream,String aPhone,Long aService) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select wct.id,wc.id from workcalendartime wct")
 			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
@@ -267,6 +270,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 		System.out.println("sql="+sql) ;
 		StringBuilder serviceStream = new StringBuilder() ;
 		if (aServiceStream!=null&&!aServiceStream.equals(Long.valueOf(0))) serviceStream.append(" serviceStream_id='").append(aServiceStream).append("' ,");
+		if (aPhone!=null&&!aPhone.equals("")) serviceStream.append(" phone='").append(aPhone).append("' ,");
+		if (aService!=null&&!aService.equals(Long.valueOf(0))) serviceStream.append(" service='").append(aService).append("' ,");
 		List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (l.size()>0) {
 			//System.out.println("patid="+aPatientId) ;
@@ -275,7 +280,11 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 				sql.append("update WorkCalendarTime set ").append(serviceStream).append("createPreRecord='").append(aUsername).append("',prePatient_id='").append(aPatientId).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
 			} else {
 				String info = aPatientInfo.replace("#", " ").toUpperCase() ;
-				sql.append("update WorkCalendarTime set ").append(serviceStream).append(" createPreRecord='").append(aUsername).append("',prePatientInfo='").append(info).append("',").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord")).append(" where id='").append(aTime).append("'") ;
+				sql.append("update WorkCalendarTime set ")
+				.append(serviceStream).append(" createPreRecord='").append(aUsername).append("'")
+				.append(",prePatientInfo='").append(info).append("'")
+				.append(",").append(getInfoByCreate("createDatePreRecord", "createTimePreRecord"))
+				.append(" where id='").append(aTime).append("'") ;
 			}
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 			

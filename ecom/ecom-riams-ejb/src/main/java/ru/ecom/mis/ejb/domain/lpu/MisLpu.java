@@ -509,4 +509,12 @@ public class MisLpu extends BaseEntity {
 
 	/** Код подразделения */
 	private String theCodeDepartment;
+	
+	/** Короткое наименование */
+	@Comment("Короткое наименование")
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое наименование */
+	private String theShortName;
 }

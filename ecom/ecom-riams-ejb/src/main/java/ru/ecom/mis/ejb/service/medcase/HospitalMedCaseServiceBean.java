@@ -59,6 +59,7 @@ import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.ExtHospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
 import ru.ecom.mis.ejb.domain.medcase.hospital.HospitalDataFond;
@@ -94,10 +95,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     
-    public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
-    	aManager.createNativeQuery("delete from diary d where d.medcase_id= "+aMedCaseId+" and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate() ;
-    	int len = 25000 ;
-    	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aMedCaseId) ;
+    public static boolean saveDischargeEpicrisisByCase(MedCase aMedCase,String aDischargeEpicrisis,EntityManager aManager) {
+    	aManager.createNativeQuery("delete from diary d where d.medcase_id= "+aMedCase.getId()+" and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate() ;
+    	int len = 15000 ;
     	int lend = aDischargeEpicrisis.length() ;
     	int cnt = lend/len;
     	System.out.println("len = "+len) ;
@@ -106,17 +106,24 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	System.out.println("cnt%len = "+(lend%len)) ;
     	for (int i=0;i<cnt;i++) {
     		DischargeEpicrisis prot = new DischargeEpicrisis() ;
+    		System.out.println("record1="+aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
     		prot.setRecord(aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
-    		prot.setMedCase(medCase) ;
+    		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
     	}
     	if (lend%len>0) {
     		DischargeEpicrisis prot = new DischargeEpicrisis() ;
+    		System.out.println("record2="+aDischargeEpicrisis.substring(len*cnt)) ;
     		prot.setRecord(aDischargeEpicrisis.substring(len*cnt)) ;
-    		prot.setMedCase(medCase) ;
+    		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
     	}
     	return true ;
+    	
+    }
+    public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
+    	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aMedCaseId) ;
+    	return saveDischargeEpicrisisByCase(medCase, aDischargeEpicrisis, aManager) ; 
     }
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;

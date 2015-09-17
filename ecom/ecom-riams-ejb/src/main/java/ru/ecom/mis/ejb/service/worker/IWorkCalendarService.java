@@ -28,7 +28,7 @@ public interface IWorkCalendarService {
 	 public void deleteCalendarDaysByWorkFunction(WorkCalendar aCalendar,  Date aDateFrom, Date aDateTo);
 	 public void addBusyPatternByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate, Long aPattern);
 	 public void preRecordByPatient(String aUsername,Long aFunction, Long aSpecialist, Long aDay, Long aTime
-				,String aPatientInfo,Long aPatientId,Long aServiceStream) ;
+				,String aPatientInfo,Long aPatientId,Long aServiceStream,String aPhone,Long aService) ;
 	 public String preRecordByPatient(String aUsername,Long aTime
 				,String aPatientInfo,Long aPatientId);
 	 public void recordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime

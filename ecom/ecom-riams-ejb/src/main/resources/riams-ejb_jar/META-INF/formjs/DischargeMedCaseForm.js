@@ -2,7 +2,7 @@ function onPreCreate(aForm, aCtx) {
 	onPreSave(aForm,aCtx)
 }
 function onSave(aForm,aEntity, aCtx) {
-	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisis(aForm.id,aForm.getDischargeEpicrisis(),aCtx.manager) ;
+	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisisByCase(aEntity,aForm.getDischargeEpicrisis(),aCtx.manager) ;
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"

@@ -1,3 +1,15 @@
+var map = new java.util.HashMap() ;
+
+function printPrescription(aCtx,aParams) {
+	var list = aCtx.createNativeQuery("").getResultList();
+	for (var i=0;i<list.size();i++) {
+		var obj = list.get(0) ;
+		
+	}
+	map.put("list",list) ;
+	return map ;
+}
+
 function updatePlanStartDate (aCtx, aIds, aDate,aTime) {
 	updatePlanDate(aCtx,aIds,"Start", aDate, aTime);
 	return ;
@@ -19,7 +31,7 @@ function updatePlanDate (aCtx,aIds, aField, aDate,aTime) {
 	for (var i = 0; i< ids.length ; i++) {
             var s = ids[i];
             
-      aCtx.manager.createNativeQuery("update Prescription set plan"+aField+"Date =:dt,plan"+aField+"Time =:tm where id="+s)
+    aCtx.manager.createNativeQuery("update Prescription set plan"+aField+"Date =:dt,plan"+aField+"Time =:tm where id="+s)
 		.setParameter("dt",dt)
 		.setParameter("tm",tm)
 		.executeUpdate() ;
