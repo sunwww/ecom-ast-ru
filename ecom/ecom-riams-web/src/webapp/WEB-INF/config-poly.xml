@@ -32,15 +32,6 @@
 
     <action-mappings>
     
-    	<action path='/clean_base' type='ru.ecom.web.actions.base.ForwardAction'               
-        		name='poly_journalBySpecForm'
-                validate='true'
-                scope='session'
-                input='/WEB-INF/actions/mis_patient/clean_patient_base.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_patient/clean_patient_base.jsp"/>
-        </action>
-    	
     	<action path='/journal_time_visit' type='ru.ecom.mis.web.action.medcase.journal.TimeVisitPatient'               
         		name='poly_journalBySpecForm'
                 validate='true'
