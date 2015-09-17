@@ -69,7 +69,7 @@ public class TicketServiceBean implements ITicketService {
 				theManager.persist(vis) ;
 			}
 			theManager.persist(spoNew) ;
-			spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
+			//spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
 			theManager.remove(spoOld) ;
     	}
     }
@@ -103,7 +103,7 @@ public class TicketServiceBean implements ITicketService {
     			System.out.print("удаление спо="+spo) ;
     			
     			PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, spo) ;
-    			spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
+    			//spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
     			theManager.remove(spoOld) ;
     		}
     	}
