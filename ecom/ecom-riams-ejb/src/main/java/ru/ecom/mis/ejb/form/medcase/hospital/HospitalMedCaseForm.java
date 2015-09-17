@@ -10,6 +10,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -624,4 +625,13 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theTransferTime;
 	/** Дата перевода */
 	private String theTransferDate;
+	
+	/** Причина выписки */
+	@Comment("Причина выписки")
+	@Persist 
+	public Long getReasonDischarge() {return theReasonDischarge;}
+	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
+
+	/** Причина выписки */
+	private Long theReasonDischarge;
 }

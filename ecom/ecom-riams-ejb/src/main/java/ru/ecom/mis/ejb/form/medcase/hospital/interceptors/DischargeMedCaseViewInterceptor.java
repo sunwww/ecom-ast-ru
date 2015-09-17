@@ -14,6 +14,7 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
+import sun.awt.windows.ThemeReader;
 
 
 public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
@@ -37,9 +38,8 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					throw new IllegalArgumentException("Необходимо перед выпиской распечатать все протоколы! <a href='printProtocolsBySLS.do?stNoPrint=selected&id="+id+"'>Есть "+(count.intValue())+" нераспечатанный(х) протокол(ов)</a>");
 				}
 			}
-			
-				if (medCase.getChildMedCase().size()==0)  
-				throw new IllegalArgumentException("Необходимо перед выпиской создать случай лечения в отделении");
+				List<Object[]> list1 = manager.createNativeQuery("select id,id from medcase where parent_id="+id).getResultList() ; 
+				if (list1.size()==0) throw new IllegalArgumentException("Необходимо перед выпиской создать случай лечения в отделении");
 			//System.out.println("----------------1") ;
 			
 			@SuppressWarnings("unchecked")

@@ -36,6 +36,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
+	/** Причина выписки */
+	@Comment("Причина выписки")
+	@Persist @Required
+	public Long getReasonDischarge() {return theReasonDischarge;}
+	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
+
+	/** Причина выписки */
+	private Long theReasonDischarge;
 	/** Время выписки */
 	@Comment("Время выписки")
 	@TimeString @DoTimeString

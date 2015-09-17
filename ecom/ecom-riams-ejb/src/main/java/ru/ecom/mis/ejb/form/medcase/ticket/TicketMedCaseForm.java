@@ -56,20 +56,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	
-	/** Даты визитов */
-	@Comment("Даты визитов")
-	public String getOtherTicketDates() {return theOtherTicketDates;}
-	public void setOtherTicketDates(String aOtherTicketDates) {theOtherTicketDates = aOtherTicketDates;}
-	/** Даты визитов */
-	private String theOtherTicketDates;
 
-	/** Дата другового визита */
-	@Comment("Дата другового визита")
-	@DoDateString @DateString
-	public String getOtherTicketDate() {return theOtherTicketDate;}
-	public void setOtherTicketDate(String aOtherTicketDate) {theOtherTicketDate = aOtherTicketDate;}
-	/** Дата другового визита */
-	private String theOtherTicketDate;
 	/** Планируемая дата исполнения */
 	@Comment("Планируемая дата исполнения")
 	@Persist
@@ -278,5 +265,13 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** Доп.код мкб */
 	private String theMkbAdc;
+	
+	/** Карта скорой помощи */
+	@Comment("Карта скорой помощи")
+	public String getAmbulanceCard() {return theAmbulanceCard;}
+	public void setAmbulanceCard(String aAmbulanceCard) {theAmbulanceCard = aAmbulanceCard;}
+
+	/** Карта скорой помощи */
+	private String theAmbulanceCard;
 }
 

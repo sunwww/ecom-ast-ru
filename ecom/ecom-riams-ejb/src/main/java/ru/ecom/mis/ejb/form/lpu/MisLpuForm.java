@@ -519,4 +519,12 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Код подразделения */
 	private String theCodeDepartment;
+	/** Короткое наименование */
+	@Comment("Короткое наименование")
+	@Persist
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+
+	/** Короткое наименование */
+	private String theShortName;
 }

@@ -57,6 +57,7 @@ public class TicketMedCaseSaveInterceptor implements IFormInterceptor {
 		diag.setMkbAdc(form.getMkbAdc());
 		aManager.persist(diag) ;
 		
+		
     }
 
 	public static boolean isEmpty(Long aLong) {

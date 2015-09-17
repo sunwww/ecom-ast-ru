@@ -42,13 +42,18 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		//TODO
 		//form.getConcomitantDiseases()
 		long aIdEntity = smc.getId() ;
-		if (aIdEntity>Long.valueOf(0)) ;
-		form.setConcomitantDiseases( getArray(manager,"Diagnosis","idc10_id"
-				,new StringBuilder().append("medCase_id='").append(aIdEntity).append("'").append(" and priority_id='").append(vocConcomType.getId()).append("'").toString()
+		if (aIdEntity>Long.valueOf(0)) {
+			form.setConcomitantDiseases( getArray(manager,"Diagnosis","idc10_id"
+					,new StringBuilder().append("medCase_id='").append(aIdEntity).append("'").append(" and priority_id='").append(vocConcomType.getId()).append("'").toString()
+					)) ;
+			form.setMedServices(getArray(manager,"MedCase","medService_id"
+					,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
 				)) ;
-		form.setMedServices(getArray(manager,"MedCase","medService_id"
-				,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
-			)) ;
+			List<Object[]> listac = manager.createNativeQuery("select id,numbercard from ambulanceCard where medcase_id="+aIdEntity).getResultList() ;
+			if (!listac.isEmpty()) {
+				form.setAmbulanceCard(""+listac.get(0)[1]) ;
+			}
+		}
     	List<Object[]> list =aContext.getEntityManager().createNativeQuery("select pat.categoryChild_id,mc.id from medcase mc left join patient pat on pat.id=mc.patient_id where mc.id='"+aIdEntity+"'")
     				.setMaxResults(1).getResultList() ;
     	if (list.size()>0) {

@@ -46,6 +46,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 	@AEntityFormInterceptor(DepartmentSaveInterceptor.class)
 })
 public class DepartmentMedCaseForm extends HospitalMedCaseForm {
+
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
