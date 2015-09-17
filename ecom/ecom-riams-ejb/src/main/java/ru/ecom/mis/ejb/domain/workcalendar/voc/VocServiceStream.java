@@ -20,9 +20,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class VocServiceStream extends VocIdNameOmcCode {
 	/** Источник финансирования */
 	@Comment("Источник финансирования")
-	@OneToOne
-	public VocFinanceSource getFinanceSource() {return theFinanceSource;}
-	public void setFinanceSource(VocFinanceSource aFinanceSource) {theFinanceSource = aFinanceSource;}
+	public String getFinanceSource() {return theFinanceSource;}
+	public void setFinanceSource(String aFinanceSource) {theFinanceSource = aFinanceSource;}
 
 	/** Двойная печать выписок по поликлинике */
 	@Comment("Двойная печать выписок по поликлинике")
@@ -32,5 +31,5 @@ public class VocServiceStream extends VocIdNameOmcCode {
 	/** Двойная печать выписок по поликлинике */
 	private Boolean theIsDoublePrintPolic;
 	/** Источник финансирования */
-	private VocFinanceSource theFinanceSource;
+	private String theFinanceSource;
 }
