@@ -60,7 +60,8 @@ function check(aForm,aCtx) {
 	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
 		
 		var t = aCtx.manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id="+aForm.medCase).getResultList() ;
-		
+		var hmc = aCtx.manager.createNativeQuery("select case when dtype='HospitalMedCase' or dtype='PolyclinicMedCase' then id else parent_id end from medcase where id="+aForm.medCase).getSingleResult(); 
+		//throw ""+hmc;
 		if (!t.isEmpty()) {
 			var dtype=""+t.get(0)[0] ;
 			//throw dtype ;
@@ -72,13 +73,21 @@ function check(aForm,aCtx) {
 				throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -" ;
 			}
 			var isCheck = null ;
-			if (t.get(0)[1]!=null) {
-				var param1 = new java.util.HashMap() ;
-				param1.put("obj","Protocol") ;
-				param1.put("permission" ,"editAfterDischarge") ;
-				param1.put("id", +aForm.id) ;
-				isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-				if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+
+			var param1 = new java.util.HashMap() ;
+			param1.put("obj","Protocol") ;
+			param1.put("permission" ,"editAllProtocolsInSLS") ;
+			param1.put("id", +hmc) ;
+			isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
+			//throw ""+isCheck;
+			if (+isCheck!=1){
+				if (t.get(0)[1]!=null) {
+					param1.put("obj","Protocol") ;
+					param1.put("permission" ,"editAfterDischarge") ;
+					param1.put("id", +aForm.id) ;
+					isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
+					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+				}
 			}
 		}
 		if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
