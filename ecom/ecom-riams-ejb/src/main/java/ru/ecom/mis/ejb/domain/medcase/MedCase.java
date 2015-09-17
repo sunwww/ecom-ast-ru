@@ -70,10 +70,10 @@ abstract public class MedCase extends BaseEntity {
 	public void setDateStart(Date aNewProperty) {theDateStart = aNewProperty;}
 	
 	/** Дочерние СМО */
-	@Comment("Дочерние СМО")
-	@OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
-	public List<MedCase> getChildMedCase() {return theChildMedCase;}
-	public void setChildMedCase(List<MedCase> aChildMedCase) {theChildMedCase = aChildMedCase;}
+	//@Comment("Дочерние СМО")
+	//@OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
+	//public List<MedCase> getChildMedCase() {return theChildMedCase;}
+	//public void setChildMedCase(List<MedCase> aChildMedCase) {theChildMedCase = aChildMedCase;}
 	
 
 	/**Родительский СМО */
@@ -112,10 +112,10 @@ abstract public class MedCase extends BaseEntity {
 	public void setIntoxication(VocIntoxication aIntoxication) {theIntoxication = aIntoxication;}
 	
 	/** Хирургические операции */
-	@Comment("Хирургические операции")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
-	public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
+	//@Comment("Хирургические операции")
+	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
+	//public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
+	//public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
 	
 	/** Оператор */
 	@Comment("Оператор")
@@ -310,7 +310,7 @@ abstract public class MedCase extends BaseEntity {
 	/** Дата начала */
 	private Date theDateStart;
 	/** Дочерние СМО */
-	private List<MedCase> theChildMedCase;
+	//private List<MedCase> theChildMedCase;
 	/**Родительский СМО */
 	private MedCase theParent;
 	/**Тип СМО */
@@ -321,7 +321,7 @@ abstract public class MedCase extends BaseEntity {
 	/**ЛПУ - место исполнения */
 	private MisLpu theLpu;
 	/** Хирургические операции */
-	private List<SurgicalOperation> theSurgicalOperations;
+	//private List<SurgicalOperation> theSurgicalOperations;
 	/** Опьянение */
 	private VocIntoxication theIntoxication;
     /** Вакцинации*/
