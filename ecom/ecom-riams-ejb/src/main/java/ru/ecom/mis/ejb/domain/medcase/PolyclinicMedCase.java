@@ -1,6 +1,10 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -19,7 +23,7 @@ public class PolyclinicMedCase extends LongMedCase{
 	@Comment("Количество визитов")
 	@Transient
 	public Integer getVisitsCount() {
-		return getChildMedCase().size();	
+		return 0 ;
 	}
 	@Transient
 	public String getInfo() {
