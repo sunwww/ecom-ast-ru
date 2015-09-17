@@ -236,4 +236,19 @@ public class WorkCalendarTime extends BaseEntity{
 	private Time theCreateTime;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Номер телефона */
+	@Comment("Номер телефона")
+	public String getPhone() {return thePhone;}
+	public void setPhone(String aPhone) {thePhone = aPhone;}
+
+	/** Услуга */
+	@Comment("Услуга")
+	public Long getService() {return theService;}
+	public void setService(Long aService) {theService = aService;}
+
+	/** Услуга */
+	private Long theService;
+	/** Номер телефона */
+	private String thePhone;
 }
