@@ -7,8 +7,10 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -33,6 +35,7 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -520,20 +523,10 @@ public class HospitalMedCase extends LongMedCase {
 	@Comment("Количество дней")
 	@Transient
 	public String getDaysCount() {
-		if (getDateFinish()==null) return "" ;
-		if (getChildMedCase()!=null) {
-			for (MedCase m:getChildMedCase()) {
-				if (m instanceof DepartmentMedCase) {
-					DepartmentMedCase d = (DepartmentMedCase) m ;
-					VocBedSubType vbst = (d.getBedFund()!=null&&d.getBedFund().getBedSubType()!=null)?d.getBedFund().getBedSubType():null ;
-					if (vbst!=null && vbst.getCode()!=null&&vbst.getCode().equals("2")) {
-						return DurationUtil.getDurationMedCase(getDateStart(), getDateFinish(),0,1);
-					}
-				}
-			}
-		}
-		return DurationUtil.getDurationMedCase(getDateStart(), getDateFinish(),0);
+		
+		return "";
 	}
+	
 	/** Кем направлен */
 	@Comment("Кем направлен")
 	@OneToOne
@@ -582,5 +575,18 @@ public class HospitalMedCase extends LongMedCase {
 	private VocJudgment theJudgment35;
 	/** Порядок поступления */
 	private VocAdmissionOrder theAdmissionOrder;
+	
+	/** Причина выписки */
+	@Comment("Причина выписки")
+	@OneToOne
+	public VocReasonDischarge getReasonDischarge() {
+		return theReasonDischarge;
+	}
 
+	public void setReasonDischarge(VocReasonDischarge aReasonDischarge) {
+		theReasonDischarge = aReasonDischarge;
+	}
+
+	/** Причина выписки */
+	private VocReasonDischarge theReasonDischarge;
 }
