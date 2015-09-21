@@ -35,7 +35,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -290,6 +289,17 @@ public class HospitalMedCase extends LongMedCase {
 			statCardNumber = theStatisticStub.getCode();
 		}
 		return statCardNumber;
+	}
+	
+	/** Номер стат.карты */
+	@Comment("Номер стат.карты")
+	@Transient
+	public Long getReasonDischarge() {
+		Long reasonDischarge = null;
+		if (theStatisticStub != null) {
+			reasonDischarge = theStatisticStub.getReasonDischarge()!=null?theStatisticStub.getReasonDischarge().getId():null;
+		}
+		return reasonDischarge;
 	}
 	
 	/*
@@ -576,17 +586,5 @@ public class HospitalMedCase extends LongMedCase {
 	/** Порядок поступления */
 	private VocAdmissionOrder theAdmissionOrder;
 	
-	/** Причина выписки */
-	@Comment("Причина выписки")
-	@OneToOne
-	public VocReasonDischarge getReasonDischarge() {
-		return theReasonDischarge;
-	}
 
-	public void setReasonDischarge(VocReasonDischarge aReasonDischarge) {
-		theReasonDischarge = aReasonDischarge;
-	}
-
-	/** Причина выписки */
-	private VocReasonDischarge theReasonDischarge;
 }

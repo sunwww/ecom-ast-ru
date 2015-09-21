@@ -1,8 +1,16 @@
 function onPreCreate(aForm, aCtx) {
 	onPreSave(aForm,aCtx)
 }
+function getObject(aCtx,aId,aClazz) {
+	return (aId==null||aId=='0'||aId=='')?null:aCtx.manager.find(aClazz, aId) ;
+}
 function onSave(aForm,aEntity, aCtx) {
 	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisisByCase(aEntity,aForm.getDischargeEpicrisis(),aCtx.manager) ;
+	if (+aForm.reasonDischarge>0 && aEntity.statisticStub!=null) {
+		var reasonDischarge = getObject(aCtx, aForm.reasonDischarge, Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge);
+		aEntity.statisticStub.setReasonDischarge(reasonDischarge) ;
+		aCtx.manager.persist(aEntity) ;
+	}
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"

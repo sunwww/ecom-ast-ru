@@ -10,6 +10,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -87,5 +88,12 @@ public abstract class StatisticStub extends BaseEntity {
 	private String theCode;
 	/** Год */
 	private Long theYear;
+	/** Причина выписки */
+	@Comment("Причина выписки")
+	@OneToOne
+	public VocReasonDischarge getReasonDischarge() {return theReasonDischarge;}
+	public void setReasonDischarge(VocReasonDischarge aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
 
+	/** Причина выписки */
+	private VocReasonDischarge theReasonDischarge;
 }

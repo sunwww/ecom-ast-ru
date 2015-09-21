@@ -38,7 +38,7 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Причина выписки */
 	@Comment("Причина выписки")
-	@Persist @Required
+	@Required @Persist
 	public Long getReasonDischarge() {return theReasonDischarge;}
 	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
 

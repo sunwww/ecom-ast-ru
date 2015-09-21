@@ -64,5 +64,13 @@ public class VocServiceReserveType extends VocBaseEntity{
 
 	/** Цвет текста */
 	private String theColorText;
+	
+	/** Потоки обслуживания */
+	@Comment("Потоки обслуживания")
+	public String getServiceStreams() {return theServiceStreams;}
+	public void setServiceStreams(String aServiceStreams) {theServiceStreams = aServiceStreams;}
+
+	/** Потоки обслуживания */
+	private String theServiceStreams;
 
 }

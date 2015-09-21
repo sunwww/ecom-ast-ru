@@ -1,5 +1,14 @@
 <vocconfig>
 
+<voc id="vocReasonDischarge" type="NativeVocService">
+	<NativeVocService
+		from="VocReasonDischarge vrd"
+		nameId="vrd.id"
+		order="vrd.name"
+		names="vrd.name"
+		queried="cast(vrd.id as varchar(2)) like :querId or upper(vrd.name) like upper(:query) "
+	/>
+</voc>
 <voc id="allMedicalEquipment" type="NativeVocService">
 	<NativeVocService
 		from="equipment e"

@@ -628,7 +628,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	
 	/** Причина выписки */
 	@Comment("Причина выписки")
-	@Persist 
+	@Persist
 	public Long getReasonDischarge() {return theReasonDischarge;}
 	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
 
