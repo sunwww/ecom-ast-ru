@@ -109,9 +109,9 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		aCtx.manager.createNativeQuery(sql.toString()).executeUpdate();
 	}
 	var spo = null;
-	if (+aForm.id>0) aCtx.manager.createNativeManager("delete * from AmbulanceCard where medCase_id="+aForm.id).executeUpdate() ;
+	if (+aForm.id>0) aCtx.manager.createNativeQuery("delete from AmbulanceCard where medCase_id="+aForm.id).executeUpdate() ;
 	if (+aForm.ambulance>0 && (aForm.ambulanceCard!=null &&aForm.ambulanceCard!="")) {
-		var amcCard = new Packages.ru.ecom.mis.ejb.domain.ambulance.AmbulanceCard() ;
+		var ambCard = new Packages.ru.ecom.mis.ejb.domain.ambulance.AmbulanceCard() ;
 		ambCard.setMedCase(aEntity) ;
 		ambCard.setNumberCard(aForm.ambulanceCard) ;
 		aCtx.manager.persist(ambCard) ;
