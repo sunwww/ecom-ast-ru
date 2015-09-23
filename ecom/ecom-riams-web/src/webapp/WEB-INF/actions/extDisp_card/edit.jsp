@@ -32,7 +32,7 @@
 		        		parentId="extDisp_cardForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
 		        </msh:row>				
 		        <msh:row>
-		        	<msh:autoComplete vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" 
+		        	<msh:autoComplete parentAutocomplete="lpu" vocName="workFunctionByLpu" hideLabel="false" property="workFunction" viewOnlyField="false" 
 		          		label="Раб.функция (терапевт)" fieldColSpan="3" horizontalFill="true" size="150" />
 		        </msh:row>
 				<msh:row>
