@@ -228,7 +228,7 @@
 	,count(case when vhr.omccode='11' then 1 else null end) as f3_deadPat
 	,count (pat.id) as f4_allPat
 	,round(cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/count (pat.id) ,2) as f5_percentOtdel
-	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select count (smo2.patient_id) from medcase smo2 where smo2.dtype='HospitalMedCase' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
+	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select count (smo2.patient_id) from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
 	
 	from medcase hmc 
 	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
@@ -252,8 +252,8 @@
             <msh:tableColumn isCalcAmount="true" columnName="Число пролеченных" property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="Число летальных исходов" property="4" addParam="&addCell=dead"/>
             <msh:tableColumn columnName="% летальных исходов по отделению" property="6"/>
-            <msh:tableColumn columnName="% летальных исходов всего" property="7"/>
-        </msh:table>
+            <msh:tableColumn columnName="%  от летальных исходов всего" property="7"/>
+        </msh:table>${journal_list_swod_sql}
     </msh:sectionContent>
     </msh:section>
     <%} 
