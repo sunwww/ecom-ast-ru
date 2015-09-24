@@ -72,5 +72,13 @@ public class VocServiceReserveType extends VocBaseEntity{
 
 	/** Потоки обслуживания */
 	private String theServiceStreams;
+	
+	/** Отделения */
+	@Comment("Отделения")
+	public String getDepartments() {return theDepartments;}
+	public void setDepartments(String aDepartments) {theDepartments = aDepartments;}
+
+	/** Отделения */
+	private String theDepartments;
 
 }
