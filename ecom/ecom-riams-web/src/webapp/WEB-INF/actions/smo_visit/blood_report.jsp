@@ -90,7 +90,7 @@
     		if (typeDiagnosis!=null && (typeDiagnosis.equals("1"))) {    			
     			 sqlAdd.append(" (mkb.code between 'I60' and 'I64.999') ");
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("2"))) {
-    			sqlAdd.append(" mkb.code='I20.2' ");    			
+    			sqlAdd.append(" mkb.code='I20.0' ");    			
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("3"))) {
     			sqlAdd.append(" (mkb.code between 'I21' and 'I23.999') ");
     		}
