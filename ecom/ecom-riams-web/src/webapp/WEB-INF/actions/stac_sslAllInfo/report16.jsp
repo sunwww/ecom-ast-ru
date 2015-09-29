@@ -1,7 +1,12 @@
 <%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.math.BigDecimal"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.Calendar"%>
+<%@page import="java.util.GregorianCalendar"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -84,6 +89,9 @@
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="7"  >  свод по отделениям с учетом с.ж. 
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="8"  >  анализ работы учреждения 
         </td>
        </msh:row>
       <msh:row guid="Дата">
@@ -195,7 +203,7 @@ if (date!=null && !date.equals("")) {
     cal.setTime(dat) ;
     cal.add(Calendar.DAY_OF_MONTH, 1) ;
     date1=format.format(cal.getTime()) ;
-    request.setAttribute("dateNextEnd", date1) ;    
+    request.setAttribute("dateNextEnd", date1) ;
     
 	
     String bedFund = request.getParameter("bedFund") ;
@@ -1025,7 +1033,7 @@ if (date!=null && !date.equals("")) {
 	    </td></tr></table>
 	    
 	    <%}} else {
-	    	if (view!=null &&(view.equals("5") || view.equals("6")|| view.equals("7"))) {} else {view="4";}
+	    	if (view!=null &&(view.equals("5") || view.equals("6")|| view.equals("7")||view.equals("8"))) {} else {view="4";}
 	    }
 	    	
 	    	if (view.equals("4") || view.equals("5") || view.equals("6")) {
@@ -1614,6 +1622,331 @@ if (date!=null && !date.equals("")) {
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
+	    		
+	    		<%
+	    	}  if (view.equals("8")) {
+	    		String serviceStream = (String) request.getAttribute("serviceStream") ;
+	    		String departmentBFC = "";
+	    		/* if (department!=null&&!department.equals("")) {
+	    			departmentBFC+= " and bfc.department=slo.department_id";
+	    		}
+	    		if (serviceStream!=null&&!serviceStream.equals("")) {
+	    			departmentBFC+=" and bfc.financeSource=vfs.id";
+	    		} */
+	    		request.setAttribute("departmentBFC",departmentBFC);
+	    		%>
+	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    cast ('&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}' as varchar) as vbstid,
+	    vbt.name||' '||vbst.name ||' '||list(ml.name) as vbstname,cast('' as varchar)
+	,count(distinct case when 
+	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
+	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
+	and (slo.datefinish is null 
+	or slo.datefinish > to_date('${dateBegin}','dd.mm.yyyy') 
+	or slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time))
+	and (slo.transferdate is null 
+	or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
+	or
+	slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
+
+	 then slo.id else null end)
+	as cnt5CurrentFrom
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) then slo.id else null end)
+	as cnt6Entrance
+	,count(distinct case when slo.prevmedcase_id is null and vht.code='DAYTIMEHOSP' and(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) then slo.id else null end)
+	as cnt7EntranceDayHosp
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
+	and (ad1.addressIsVillage='1')
+	then slo.id else null end)
+	as cnt8EntranceVillagers
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime)
+	and (
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)<18
+	then slo.id else null end)
+
+	as cnt9EntranceTo17
+	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.dateStart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
+	and 
+	60<=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)
+	then slo.id else null end)
+	as cnt10EntranceFrom60
+	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) then slo.id else null end)
+	as cnt11TransferOutOtherDepartment
+	,count(distinct case when  (slo.transferdate between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
+	or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime) then slo.id else null end) 
+	as cnt12TransferInOtherDepartment
+	,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
+	as cnt13Finished
+	,count(distinct case when vho.code='4' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
+	as cnt14FinishedOtherHospital
+	,count(distinct case when vho.code='3' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
+	as cnt15FinishedHourHospital
+	,count(distinct case when vho.code='2' and vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
+	as cnt16FinishedDayHospital
+	,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
+	as cnt17Death
+	,
+
+	count(distinct case when 
+			(
+				slo.transferdate is null
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time)
+			) and (
+				slo.datefinish is null or
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
+			)
+		 then slo.id else null end
+	)
+	 as cnt18CurrentTo
+	 
+	,count(distinct case when sls.hotelServices='1' and 
+	 (
+				slo.transferdate is null
+				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time)
+			) and (
+				slo.datefinish is null or
+				slo.datefinish > to_date('${dateNextEnd}','dd.mm.yyyy')
+				or slo.datefinish = to_date('${dateNextEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time)
+			) then slo.id else null end)
+	 as cnt19CurrentMother
+	 
+	 	,sum(	 	
+	 	
+	case when 
+		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime		
+		then slo.dateFinish
+			-case
+				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time) then 1
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime then 2
+				when cast('${timeSql}' as time)>slo.dischargetime then 2 
+				else 1 end
+		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.dischargetime then slo.dateFinish-2
+	     when 
+		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime		
+		then slo.transferDate
+			-case 
+			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time) then 1
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime then 2
+			when cast('${timeSql}' as time)>slo.transfertime then 2 else 1 end
+		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.transfertime then slo.transferDate-2
+		else to_date('${dateEnd}','dd.mm.yyyy')
+		
+		end
+	-
+	case when
+		(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
+		or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
+		and (slo.datefinish is null 
+		or slo.datefinish > to_date('${dateBegin}','dd.mm.yyyy') 
+		or slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time))
+		and (slo.transferdate is null 
+		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
+		or
+		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
+	else slo.dateStart - case 
+		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
+	end
+	
+	) as cntDays
+,sum(distinct cast(bfc.actualbedcount||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f21
+,sum(distinct cast(bfc.countdays||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f22
+,sum(distinct cast(bfc.counthospitals||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f23 
+,cast(avg(bfc.plantreatmentduration) as numeric(9,2))	 as f24
+,vfs.name as f25
+	from medcase slo
+	left join patient pat on pat.id=slo.patient_id
+	left join medcase sls on sls.id=slo.parent_id
+	left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+	left join vochospitalizationresult vhr on vhr.id=sls.result_id
+	left join bedfund bf on bf.id=slo.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
+	left join vocbedtype vbt on vbt.id=bf.bedtype_id
+	left join vocservicestream vss on vss.id=bf.servicestream_id
+	left join vochosptype vht on vht.id=sls.sourceHospType_id
+	LEFT JOIN Address2 ad1 on ad1.addressId=pat.address_addressId 
+	left join bedfundcapacity bfc on bfc.bedtype=vbt.id
+	left join vocfinancesource vfs on vfs.code=vss.financesource
+	left join mislpu ml on ml.id=bfc.department
+	where 
+	slo.dtype='DepartmentMedCase' 
+	and (to_date('${dateNextEnd}','dd.mm.yyyy')>slo.datestart
+	or to_date('${dateNextEnd}','dd.mm.yyyy')=slo.dateStart and cast('${timeSql}' as time)>slo.entrancetime
+	)
+	and (slo.datefinish is null 
+	or
+	slo.datefinish>to_date('${dateBegin}','dd.mm.yyyy')
+	or to_date('${dateBegin}','dd.mm.yyyy')=slo.datefinish and slo.dischargetime>=cast('${timeSql}' as time)
+	)
+	and (slo.transferdate is null 
+	or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy')
+	or to_date('${dateBegin}','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('${timeSql}' as time)
+	)
+	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
+	and bfc.financesource=vfs.id ${departmentBFC} 
+	and bfc.department=slo.department_id and bfc.bedsubtype=vbst.id
+	group by vbst.id, vbst.name,vbt.id, vbt.name ,bfc.plantreatmentduration,vfs.id,vfs.name
+	
+	      " />
+	    <%-- <form action="print-stac_report016_1.do" method="post" target="_blank">
+	    Анализ работы отделений и учреждения в целом
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="16 форма ${param.dateBegin}-${param.dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     --%> 
+	   
+	    		<%
+    List f16 = (List) request.getAttribute("journal_priem");
+    		List newList = new ArrayList();
+    if (!f16.isEmpty()) {
+    	Date dateStart = DateFormat.parseDate(date);
+    	Date dateFinish = DateFormat.parseDate(dateEnd);
+    	Calendar cale = new GregorianCalendar();
+    	cale.setTime(dateStart);
+    	int m=cale.get(Calendar.MONTH);
+    	cale.setTime(dateFinish);
+    	m=cale.get(Calendar.MONTH) -m +1;
+    	
+    	int s = f16.size();
+    	 for (int i=0;i<s;i++) {
+    		 //try{
+    		WebQueryResult newWQR = new WebQueryResult();
+    		WebQueryResult wqr = (WebQueryResult)f16.get(i);
+    		double cnt20Days = Double.valueOf((wqr.get19().toString())).doubleValue();
+    		double cnt17Dead = Double.valueOf(wqr.get16().toString()).doubleValue();
+    		double cnt13Finished = Double.valueOf(wqr.get12().toString()).doubleValue();
+    		double cnt6Entrance = Double.valueOf(wqr.get5().toString()).doubleValue();
+    		double usePatients = (cnt17Dead+cnt13Finished+cnt6Entrance)/2; //Пользованные пациенты
+    		System.out.println("usePatient="+usePatients);
+    		double f1_actualBedCount = Double.valueOf(wqr.get20().toString()).doubleValue();	newWQR.set1(new BigDecimal(f1_actualBedCount).setScale(2,2));
+    		double f2_countDays = Double.valueOf(wqr.get21().toString()).doubleValue()/12*m	;	newWQR.set2(new BigDecimal(f2_countDays).setScale(2,2));
+    		double f3_countHospitals = Double.valueOf(wqr.get22().toString()).doubleValue()/12*m;			newWQR.set3(new BigDecimal(f3_countHospitals).setScale(0,2));
+    		System.out.println("countHospit = "+f3_countHospitals+" base = "+wqr.get22().toString());
+    		double f4_obor_plan = (f3_countHospitals/f1_actualBedCount);				newWQR.set4(new BigDecimal(f4_obor_plan).setScale(2,2));
+    		double f5_obor_fact = (usePatients/f1_actualBedCount);						newWQR.set5(new BigDecimal(f5_obor_fact).setScale(2,2));
+    		double f6_obor_perc = (f5_obor_fact*100/f4_obor_plan)-100;					newWQR.set6(new BigDecimal(f6_obor_perc).setScale(2, 2));
+    		double f7_zan_plan = f2_countDays/f1_actualBedCount;						newWQR.set7(new BigDecimal(f7_zan_plan).setScale(2, 2));
+    		double f8_zan_fact = cnt20Days/f1_actualBedCount;							newWQR.set8(new BigDecimal(f8_zan_fact).setScale(2,2));
+    		double f9_zan_perc = (f8_zan_fact*100/f7_zan_plan)-100.0;						newWQR.set9(new BigDecimal(f9_zan_perc).setScale(2,2));
+    		double f10_dead = 0.00;
+    		double f11_perc_kd = cnt20Days*100/f2_countDays;							newWQR.set11(new BigDecimal(f11_perc_kd).setScale(2,2));
+    		double f12_perc_hosp = 0.00;
+    		double f13_aver_kd_plan = Double.valueOf(wqr.get23().toString()).doubleValue();			newWQR.set13(new BigDecimal(f13_aver_kd_plan).setScale(2,2));
+    		double f14_aver_kd_fact = 0.00;
+    		if (!Double.isInfinite(usePatients)&&!Double.isNaN(usePatients)) {
+	   			f10_dead = cnt17Dead*100/usePatients; 
+	   			f12_perc_hosp = usePatients*100/f3_countHospitals;
+	   			f14_aver_kd_fact = cnt20Days/usePatients;
+	   		}	
+    		double f15_otkl_kd = (f14_aver_kd_fact*100/f13_aver_kd_plan)-100;			newWQR.set15(new BigDecimal(f15_otkl_kd).setScale(2,2));
+    		double f16_fact_work_k = f1_actualBedCount*cnt20Days/f2_countDays;			newWQR.set16(new BigDecimal(f16_fact_work_k).setScale(2,2));
+    		double f17_nowork_k = f1_actualBedCount-f16_fact_work_k; 					newWQR.set17(f17_nowork_k>0.00?(new BigDecimal(f17_nowork_k).setScale(2,2)):null);
+    		 					newWQR.set18(wqr.get2());
+    		
+			
+			newWQR.set10(new BigDecimal(f10_dead).setScale(2,2));
+			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(2,2));
+			newWQR.set12(new BigDecimal(f12_perc_hosp).setScale(2,2));
+    		newList.add(i, newWQR);
+    	// } catch (Exception e) {
+    	//	 e.printStackTrace();
+    	// }
+    	} 
+    }
+    request.setAttribute("list_newform", newList);
+	    %> 
+	    <msh:section>
+	    <msh:sectionTitle>Отчет о деятельности отделений стационара</msh:sectionTitle>
+	    <msh:sectionContent>
+	    <msh:table  name="list_newform" action="javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      <msh:tableColumn columnName="#" property="sn" />
+	      <msh:tableColumn property="18" columnName="Профиль коек"/>
+	      <msh:tableColumn property="1" columnName="Факт коек"/>
+	      <msh:tableColumn property="2" columnName="План по к/д"/>
+	      <msh:tableColumn property="3" columnName="План по случ"/>
+	      <msh:tableColumn property="4" columnName="Оборот план"/>
+	      <msh:tableColumn property="5" columnName="Оборот факт"/>
+	      <msh:tableColumn property="6" columnName="Отклонение"/>
+	      <msh:tableColumn property="7" columnName="Занятость план"/>
+	      <msh:tableColumn property="8" columnName="Занятость факт"/>
+	      <msh:tableColumn property="9" columnName="Отклонение"/>
+	      <msh:tableColumn property="10" columnName="Летальность"/>
+	      <msh:tableColumn property="11" columnName="% выполнения по к/д"/>
+	      <msh:tableColumn property="12" columnName="% выполнения по случ"/>
+	      <msh:tableColumn property="13" columnName="Средний к/д план"/>
+	      <msh:tableColumn property="14" columnName="Средний к/д факт"/>
+	      <msh:tableColumn property="15" columnName="Отклонение"/>
+	      <msh:tableColumn property="16" columnName="Факт работало коек"/>
+	      <msh:tableColumn property="17" columnName="Не работало коек"/>
+	      </msh:table></msh:sectionContent></msh:section>
+	    <%-- <msh:section>
+	    <msh:sectionTitle>HELLLLO</msh:sectionTitle>
+	    <msh:sectionContent>
+	    <msh:table  name="list_newform" action="javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      <msh:tableColumn columnName="#" property="sn" />
+	      <msh:tableColumn property="18" columnName="f0_Профиль коек"/>
+	      <msh:tableColumn property="1" columnName="f1_Факт коек"/>
+	      <msh:tableColumn property="2" columnName="f2_План по к/д"/>
+	      <msh:tableColumn property="3" columnName="f3_План по случ"/>
+	      <msh:tableColumn property="4" columnName="f4_Оборот план"/>
+	      <msh:tableColumn property="5" columnName="f5_Оборот факт"/>
+	      <msh:tableColumn property="6" columnName="f6_Отклонение"/>
+	      <msh:tableColumn property="7" columnName="f7_Занятость план"/>
+	      <msh:tableColumn property="8" columnName="f8_Занятость факт"/>
+	      <msh:tableColumn property="9" columnName="f9_Отклонение"/>
+	      <msh:tableColumn property="10" columnName="f10_Летальность"/>
+	      <msh:tableColumn property="11" columnName="f11_% выполнения по к/д"/>
+	      <msh:tableColumn property="12" columnName="f12_% выполнения по случ"/>
+	      <msh:tableColumn property="13" columnName="f13_Средний к/д план"/>
+	      <msh:tableColumn property="14" columnName="f14_Средний к/д факт"/>
+	      <msh:tableColumn property="15" columnName="f15_Отклонение"/>
+	      <msh:tableColumn property="16" columnName="f16_Факт работало коек"/>
+	      <msh:tableColumn property="17" columnName="f17_Не работало коек"/>
+	      </msh:table></msh:sectionContent></msh:section> --%>
 	    		
 	    		<%
 	    	}
