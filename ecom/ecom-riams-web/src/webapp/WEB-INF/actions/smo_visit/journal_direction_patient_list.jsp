@@ -154,7 +154,7 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_reestr" nativeSql="
+<ecom:webQuery name="journal_reestr" nameFldSql="qqq" nativeSql="
 select t.id as tid
 , lpu.name as lpuname
 , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo
@@ -175,6 +175,12 @@ select t.id as tid
     mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=wcd.calendarDate and
     (mp.actualDateTo is null or mp.actualDateTo>=wcd.calendarDate)
     )>1 then 'Да' else '' end as more1Policy
+,cast(
+to_timestamp(to_char(t.dateStart,'dd.mm.yyyy')||to_char(t.timeexecute,'HH:MI'),'dd.MM.yyyyHH:MI') -
+to_timestamp(to_char(wcd.calendarDate,'dd.mm.yyyy')||to_char(wct.timefrom,'HH:MI'),'dd.MM.yyyyHH:MI')
+ as varchar) as time_wait
+,to_char(wct.timefrom,'HH:MI') as time_naprav
+,to_char(t.timeexecute,'HH:MI') as time_priem
  
  
 ${queryTextEnd}
@@ -191,14 +197,18 @@ ${queryTextEnd}
             <msh:tableColumn columnName="Дата создания напр." property="13"/>
             <msh:tableColumn columnName="Внут. направитель" property="7"/>
             <msh:tableColumn columnName="Дата направления" property="11"/>
+            <msh:tableColumn columnName="Время направления" property="17"/>
             <msh:tableColumn columnName="Дата приема" property="12"/>
+            <msh:tableColumn columnName="Время приема" property="18"/>
+            <msh:tableColumn columnName="Время ожидания" property="16"/>
+            
             <msh:tableColumn columnName="ЛПУ" property="2"/>
             <msh:tableColumn columnName="Направлен к врачу" property="3"/>
             <msh:tableColumn columnName="Поток обслуживания" property="4"/>
             <msh:tableColumn columnName="Место обслуживания" property="5"/>
             <msh:tableColumn columnName="Без полиса" property="14"/>
             <msh:tableColumn columnName="Более 1 полиса " property="15"/>
-        </msh:table>
+        </msh:table>${qqq}
     </msh:sectionContent>
 
     </msh:section>
