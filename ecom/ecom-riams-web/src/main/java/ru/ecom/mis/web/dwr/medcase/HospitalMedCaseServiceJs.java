@@ -27,6 +27,24 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	
+	public String getDiariesByHospital(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder res = new StringBuilder();
+		String sql = "select d.id, to_char(d.dateregistration,'dd.MM.yyyy')|| ' ' ||to_char(d.timeregistration,'HH:MI') as dt," +
+				" d.record from medcase sls left join medcase slo on slo.parent_id=sls.id" +
+				" left join diary d on d.medcase_id=slo.id" +
+				" where sls.id="+aMedcaseId +" order by d.dateregistration desc, d.timeregistration desc";
+		Collection<WebQueryResult> wqr = service.executeNativeSql(sql);
+		if (!wqr.isEmpty()) {
+			for (WebQueryResult w: wqr) {
+				res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("@");
+			}
+		}
+		
+		return res.length()>0?res.substring(0,res.length()-1):"";
+	}
+	
 	public String getPrefixByProtocol(Long aDiaryId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select vtp.prefixprint from Diary d left join voctypeprotocol vtp on vtp.id=d.type_id where d.id="+aDiaryId+" and vtp.prefixprint is not null") ;
