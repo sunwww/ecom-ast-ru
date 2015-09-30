@@ -91,6 +91,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_insurance_company.jsp" />
         </action>
+        <action path='/stac_elections' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/list_elections.jsp" />
+        </action>
         <action path='/stac_report_007' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

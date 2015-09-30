@@ -23,7 +23,6 @@
 	  ActionUtil.updateParameter("SurgicalOperation","typeView","1", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeOrder","1", request) ;
 	  ActionUtil.updateParameter("SurgicalOperation","typeEmergency","3", request) ;
-	  ActionUtil.updateParameter("SurgicalOperation","typeDiagnosis","1", request) ;
   }
   %>
     <msh:form action="/stac_journalRepeatCaseByHospital_list.do" defaultField="dateBegin" >
@@ -52,12 +51,12 @@
 	        	<input type="radio" name="typeView" value="5">  по обращениям к специалистам
 	        </td>
         </msh:row>
-	   <%--  <msh:row>
+	    <msh:row>
 	        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="6">  по результат госпитализация
 	        </td>
-        </msh:row> --%>
+        </msh:row>
         <msh:row>
 	        <td class="label" title="Поиск по показаниям (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -68,15 +67,6 @@
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeEmergency" value="3">  все
-	        </td>
-        </msh:row>
-        <msh:row>
-	        <td class="label" title="Поиск по показаниям (typeDiagnosis)" colspan="1"><label for="typeDiagnosisName" id="typeDiagnosisLabel">Отображать:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDiagnosis" value="1">  Все
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeDiagnosis" value="2"  >  По поводу одного и того же заболевания
 	        </td>
         </msh:row>
         <msh:row>
@@ -100,7 +90,6 @@
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',1) ;
-    checkFieldUpdate('typeDiagnosis','${typeDiagnosis}',1) ;
 <%--    checkFieldUpdate('typeOrder','${typeOrder}',1) ;--%>
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
@@ -118,7 +107,6 @@
     RepeatCaseJournalForm frm = (RepeatCaseJournalForm) session.getAttribute("stac_repeatCaseForm") ;
     String typeView = (String)request.getAttribute("typeView") ;
     String typeEmergency = (String)request.getAttribute("typeEmergency") ;
-    String typeDiagnosis = (String)request.getAttribute("typeDiagnosis") ;
     if (frm!=null && frm.getDateBegin()!=null 
     		&&!frm.getDateBegin().equals("")
     		&& frm.getDateEnd()!=null 
@@ -145,14 +133,6 @@
     		request.setAttribute("emergency", " and (mm.emergency is null or mm.emergency='0')") ;
     		request.setAttribute("emergencySql", " and (m.emergency is null or m.emergency=@0@)") ;
     	}
-    	if (typeDiagnosis.equals("2")) {
-    		request.setAttribute("leftJoinSql"," left join diagnosis diag on diag.medcase_id=mm.id"+
-    				" left join vocdiagnosisregistrationtype vdrt on vdrt.id=diag.registrationtype_id"+
-    				" left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id"+
-    				" left join vocidc10 mkb on mkb.id=diag.idc10_id");
-    		request.setAttribute("whereSql"," and (vdrt.code='3' and vpd.code='1')");
-    		request.setAttribute("groupSql"," substring(mkb.code,0,4),");
-    	}
     	
         if (typeView.equals("1")) {
     	%>
@@ -160,7 +140,7 @@
     <msh:section>
     <msh:sectionTitle>Повторные обращения по стационару</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_repeatCase" nameFldSql="journal_repeatCase_sql" nativeSql="select 
+    <ecom:webQuery name="journal_repeatCase" nativeSql="select 
     mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase' 
     ||': and m.deniedHospitalizating_id is null ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
@@ -170,11 +150,10 @@
      from medcase mm 
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
-${leftJoinSql}
+
 where mm.dtype='HospitalMedCase' and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') ${emergency}
-${whereSql}
-group by ${groupSql} mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
+group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -184,7 +163,7 @@ order by p.lastname,p.middlename,p.firstname
             <msh:tableColumn columnName="Кол-во случаев" property="3"/>
             <msh:tableColumn columnName="из них отказы" property="4"/>
         </msh:table>
-    </msh:sectionContent>${journal_repeatCase_sql}
+    </msh:sectionContent>
     </msh:section>
     <% }
         if (typeView.equals("2")) {%>
@@ -199,11 +178,10 @@ order by p.lastname,p.middlename,p.firstname
      from medcase mm 
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
-${leftJoinSql}
 where mm.dtype='HospitalMedCase'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') and mm.deniedHospitalizating_id is not null
-${whereSql}  ${emergency}
-group by ${groupSql} mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
+${emergency}
+group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -220,19 +198,17 @@ order by p.lastname,p.middlename,p.firstname
       <msh:section>
     <msh:sectionTitle>Повторные госпитализации</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_repeatCase" nameFldSql="journal_repeatCase_sql" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: ${emergencySql}' as id
+    <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(*) as cntAll
 
      from medcase mm 
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
-${leftJoinSql}
 where mm.dtype='HospitalMedCase'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') and mm.deniedHospitalizating_id is null
-${whereSql}
 ${emergency}
-group by ${groupSql} mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
+group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -241,7 +217,7 @@ order by p.lastname,p.middlename,p.firstname
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Кол-во случаев" property="3"/>
         </msh:table>
-    </msh:sectionContent>${journal_repeatCase_sql}
+    </msh:sectionContent>
     </msh:section>
     <% }
         if (typeView.equals("4")) {%>
@@ -259,13 +235,12 @@ left join patient p on mm.patient_id=p.id
 left join statisticstub ss on ss.id=mm.statisticstub_id
 left join workfunction wf on wf.id=mm.workFunctionExecute_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
-${leftJoinSql}
 where mm.dtype='Visit'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy')
-${emergency} ${whereSql}
+${emergency}
 and  (mm.noActuality='0' or mm.noActuality is null) 
 
-group by ${groupSql} mm.patient_id,mm.dateStart,p.lastname,p.middlename,p.firstname,p.birthday
+group by mm.patient_id,mm.dateStart,p.lastname,p.middlename,p.firstname,p.birthday
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -296,12 +271,11 @@ left join workfunction wf on wf.id=mm.workFunctionExecute_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
-${leftJoinSql}
 where mm.dtype='Visit'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') 
-${whereSql} ${emergency}
+${emergency}
 and  (mm.noActuality='0' or mm.noActuality is null)
-group by ${groupSql} mm.patient_id,wf.workFunction_id,p.lastname,p.middlename,p.firstname,p.birthday,vwf.name
+group by mm.patient_id,wf.workFunction_id,p.lastname,p.middlename,p.firstname,p.birthday,vwf.name
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />

@@ -29,23 +29,23 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select m.id,m.dateStart
-    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-    ,pat.birthday,sc.code
+    select m.id as m1id,m.dateStart as m2datestart
+    ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as m3fio
+    ,pat.birthday m4birthday,sc.code as m5sccode
     ,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) 
     ||list((current_Date-so1.operationDate)||' дн. после операции: '||ms1.name)
-    as oper
+    as m6oper
       
     ,	  case 
 			when (CURRENT_DATE-sls.dateStart)=0 then 1 
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1) 
 			else (CURRENT_DATE-sls.dateStart)
-		  end as cnt1
+		  end as c7nt1
     ,	  case 
 			when (CURRENT_DATE-m.dateStart)=0 then 1 
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1) 
 			else (CURRENT_DATE-m.dateStart)
-		  end as cnt2
+		  end as c8nt2
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
@@ -69,9 +69,9 @@
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
       <msh:tableColumn columnName="Операции" property="6"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
+      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

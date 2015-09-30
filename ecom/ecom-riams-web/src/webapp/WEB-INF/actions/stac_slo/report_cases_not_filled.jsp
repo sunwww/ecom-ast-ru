@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
 <%@page import="ru.ecom.ejb.services.util.ConvertSql"%>
@@ -12,7 +13,11 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более 2х дней </msh:title>
+          <%
+        	String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
+        	request.setAttribute("cntDays", cntDays) ;
+        %>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -21,6 +26,8 @@
         <%
         	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
         	request.setAttribute("login", login) ;
+        	String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
+        	request.setAttribute("cntDays", cntDays) ;
         %>
         <ecom:webQuery name="infoByLogin"
         maxResult="1" nativeSql="
@@ -75,7 +82,7 @@
 	where slo.dateFinish is null  
 	and slo.dtype='DepartmentMedCase' 
 	and slo.transferDate is null 
-	and slo.dateStart < current_date-2 
+	and slo.dateStart < current_date-${cntDays} 
 and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2)
 	group by ml.id,ml.name order by ml.name
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -104,7 +111,7 @@ left join Worker ow on owf.worker_id=ow.id
 left join Patient owp on ow.person_id=owp.id 
 where slo.department_id='${department}' and slo.dtype='DepartmentMedCase' 
 and slo.dateFinish is null and slo.transferDate is null 
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2)
+and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-${cntDays})
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -151,7 +158,7 @@ select slo.id,slo.dateStart
     group by  slo.id,slo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
-    having (current_date-2)>max(p.dateRegistration) 
+    having (current_date-${cntDays})>max(p.dateRegistration) 
 
     order by pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />

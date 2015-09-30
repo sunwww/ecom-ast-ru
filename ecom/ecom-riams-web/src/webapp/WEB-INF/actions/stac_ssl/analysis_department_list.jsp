@@ -95,8 +95,11 @@
         <msh:row>
         	<td></td>
 
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="5">
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
 	        	<input type="radio" name="typeView" value="10"  >  реестр операций с 0 уровнем сложности
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="5">
+	        	<input type="radio" name="typeView" value="11"  >  реестр операций по пациентам
 	        </td>
 	    </msh:row>
         <msh:row>
@@ -135,6 +138,98 @@
     	} else{
     		request.setAttribute("dep", "") ;
     	}
+    	if (view!=null && (view.equals("11"))) {
+    	%>
+    
+    <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
+    <msh:sectionContent>
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list" nativeSql="
+    
+select 
+hmc.id as soDepid,dep.name as depname
+,ss.code as sscode
+    ,pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'') as fio
+    ,(hmc.dateFinish-pat.birthday)/365 as age
+    ,case when hmc.emergency='1' then 'Э' else 'П' end
+    
+    ,vpat.name as vpatname
+    , case 
+		when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		end as countDays
+	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
+    , (select list(mkb.code||' '||mkb.name) from diagnosis diag
+    	left join VocIdc10 mkb on mkb.id=idc10_id 
+    	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    	where diag.medCase_id=hmc.id  
+    	and vpd.code='1' and vdrt.code='4'
+		) as diag
+		,count(distinct soDep.id)||'-'||list(to_char(soDep.operationDate,'dd.mm.yyyy')||' '||voDep.name)
+		
+from MedCase hmc
+    left join statisticstub ss on hmc.statisticstub_id=ss.id
+    left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id 
+    left join MedCase as admc on admc.dtype='DepartmentMedCase' and hmc.id=admc.parent_id 
+    left join vocservicestream as vss on vss.id=hmc.servicestream_id
+    left join VocPreAdmissionTime vpat on vpat.id=hmc.preAdmissionTime_id 
+    left join mislpu as dep on dep.id=dmc.department_id 
+    left join patient pat on pat.id=hmc.patient_id
+    left join VocHospType vht on vht.id=hmc.hospType_id
+    left join address2 adr on adr.addressId = pat.address_addressId
+    left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
+    left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
+    left join MedService voHosp on soHosp.medService_id=voHosp.id
+    left join SurgicalOperation soDep on soDep.medCase_id=admc.id
+    left join mislpu as soD on soD.id=soDep.department_id 
+    left join MedService voDep on soDep.medService_id=voDep.id
+    left join Omc_Oksm ok on pat.nationality_id=ok.id
+    left join VocHospitalAspect vhaHosp on vhaHosp.id=soHosp.aspect_id
+    left join VocHospitalAspect vhaDep on vhaDep.id=soDep.aspect_id
+    
+where hmc.DTYPE='HospitalMedCase' 
+    and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	
+    	and dmc.dateFinish is not null
+    	${dep}
+    	and soDep.id is not null
+    
+    ${addEmergency} 
+      group by hmc.id,dep.name
+    ,pat.lastname,pat.firstname,pat.middlename
+    ,pat.birthday
+    ,hmc.emergency
+    
+    ,vpat.name 
+    ,ss.code,vht.code
+	,hmc.dateStart,hmc.dateFinish
+ order by dep.name ,pat.lastname   
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+        <msh:table name="journal_list"
+        viewUrl="entityShortView-stac_surOperation.do"
+         action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Отделение выписки" property="2"/>
+            <msh:tableColumn columnName="Отделение, где производилась операция" property="17"/>
+            <msh:tableColumn columnName="№ стат. карты" property="5"/>
+            <msh:tableColumn columnName="ФАМИЛИЯ ИМЯ ОТЧЕСТВО" property="6"/>
+            <msh:tableColumn columnName="Возраст" property="7"/>
+            <msh:tableColumn columnName="Поступил" property="8"/>
+            <msh:tableColumn columnName="Доставлен в стационар" property="9"/>
+            <msh:tableColumn columnName="Кол-во койко дней" property="10"/>
+            <msh:tableColumn columnName="Дата поступления" property="11"/>
+            <msh:tableColumn columnName="Дата выписки" property="12"/>
+            <msh:tableColumn columnName="Дата операции" property="16"/>
+            <msh:tableColumn columnName="Диагноз" property="13"/>
+            <msh:tableColumn columnName="Операции" property="3"/>
+            <msh:tableColumn columnName="Показания" property="17"/>
+        </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%
+    } 
     	if (view!=null && (view.equals("1"))) {
     	%>
     

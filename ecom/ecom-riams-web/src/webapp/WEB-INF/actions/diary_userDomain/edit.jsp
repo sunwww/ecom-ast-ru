@@ -10,10 +10,10 @@
     <tags:style_currentMenu currentAction="diary_userDomain" />
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Пользовательский справочник">
       <msh:ifFormTypeIsView formName="diary_userDomainForm" guid="e2054544-85-a21c-3bb9b4569efc">
-        <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-diary_userDomain" name="Изменить" roles="/Policy/Diary/User/Domain/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+        <msh:sideLink key="ALT+1" params="id" action="/entityEdit-diary_userDomain" name="Изменить" roles="/Policy/Diary/User/Domain/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="diary_userDomainForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-diary_userDomain" name="Удалить" roles="/Policy/Diary/User/Domain/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-diary_userDomain" name="Удалить" roles="/Policy/Diary/User/Domain/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="diary_userDomainForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
@@ -30,7 +30,7 @@
     <!-- 
     	  - Медицинских услуг
     	  -->
-    <msh:form action="/entityParentSave-diary_userDomain.do" defaultField="name" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form action="/entitySaveGoView-diary_userDomain.do" defaultField="name" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="20% 30%">

@@ -32,6 +32,7 @@
       <msh:hidden property="rwDate" guid="9438b469-d5b6-4d11-8dc9-91a551e2f2d1" />
       <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
+      <msh:hidden property="reasonDischarge" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>

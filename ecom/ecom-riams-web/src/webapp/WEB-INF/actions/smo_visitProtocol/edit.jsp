@@ -26,9 +26,6 @@
     </tiles:put>
 
 <tiles:put name='body' type='string'>
-	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-    	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
-    </msh:ifFormTypeIsNotView>
     <msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do" 
     defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" >
         <msh:hidden property="id"/>
@@ -108,6 +105,9 @@
                 </msh:row>
             </msh:panel>
     </msh:form>
+	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
+    </msh:ifFormTypeIsNotView>
 </tiles:put>
 
 <tiles:put name='side' type='string'>
@@ -143,6 +143,16 @@
     
 
     <tiles:put name='javascript' type='string'>
+    <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    <script type="text/javascript">
+    setTimeout(checktime,600000) ;
+    function checktime() {
+    	if (confirm('Вы хотите сохранить дневник?')) {
+    		document.forms[1].submit() ;
+    	}
+    }
+    </script>
+    </msh:ifFormTypeIsNotView>
     <script type="text/javascript">
     function printProtocol() {
     	HospitalMedCaseService.getPrefixByProtocol(${param.id},

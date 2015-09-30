@@ -222,6 +222,9 @@
 	                        <li><msh:link action="mis_mortality_report.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
 	                            Анализ летальности в отделениях
 	                        </msh:link></li>
+	                        <li><msh:link action="stac_elections.do" roles="/Policy/Mis/MedCase/Stac/Journal/ReportElections">
+	                            Выборы
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>

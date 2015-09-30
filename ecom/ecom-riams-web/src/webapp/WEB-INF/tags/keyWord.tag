@@ -50,7 +50,9 @@
                             setFocus($(textkeyword),tempstring.length, 0)
                         }
 
-                    }
+                    },errorHandler: function(aMessage) {
+							    
+								}
             })
 
         }

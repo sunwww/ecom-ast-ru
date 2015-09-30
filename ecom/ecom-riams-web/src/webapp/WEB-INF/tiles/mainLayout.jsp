@@ -203,9 +203,9 @@
 	<!-- Additional Javascript -->
     <tiles:insert attribute="javascript" ignore='true'/>
     <!-- Additional Javascript END -->
-<msh:ifInRole roles="/Policy/Mis/Config/EmergencyMessage">
+<msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
-	setTimeout(120000,funcemergencymessage.func) ;
+theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
 </script>
 </msh:ifInRole>
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 

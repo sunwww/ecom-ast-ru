@@ -31,6 +31,9 @@
 	        <msh:row>
 	        	<msh:checkBox property="isAllUsers" label="Отправить всем пользователям" fieldColSpan="3" horizontalFill="true"/>
 	        </msh:row>
+	        <msh:row>
+	        	<msh:checkBox property="isEmergency" label="Экстренное сообщение?" fieldColSpan="3" horizontalFill="true"/>
+	        </msh:row>
         </msh:ifFormTypeIsCreate>
         <msh:row>
         	<msh:textField property="validityDate" label="Срок действия"/>

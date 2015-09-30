@@ -63,6 +63,9 @@
         <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="3">
         	<input type="radio" name="typeView" value="3">  иностран
         </td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="3">
+        	<input type="radio" name="typeView" value="4">  иногор.
+        </td>
       </msh:row>      
       <msh:row>
         <td class="label" title="Искать по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
@@ -106,7 +109,10 @@
     ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
     request.setAttribute("dateEnd", dateEnd) ;
     if (date!=null && !date.equals("")) {
-    	if (typeView!=null && typeView.equals("1")) {
+    	if (typeView!=null && (typeView.equals("1")||typeView.equals("4"))) {
+    		if (typeView.equals("4")) {
+    			request.setAttribute("addAdrSql", " and (adr.kladr is null or adr.kladr not like '30%')") ;
+    		}
     	%>
     
     <msh:section>
@@ -131,7 +137,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is null or ok.voc_code='643')
-	${pigeonHole} ${status} ${department} ${serviceStreamSql}
+	${pigeonHole} ${status} ${department} ${serviceStreamSql} ${addAdrSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">

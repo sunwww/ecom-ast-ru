@@ -23,6 +23,9 @@
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
+        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
+          <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
         <tr>
           <td class="separator" colspan="4">
             <div class="h3">
@@ -49,6 +52,16 @@
 	 
 	    </msh:row>
         <msh:ifFormTypeIsNotView formName="smo_directionForm">
+        <tr><td colspan="10"><table><tr><td valign="top"><table>
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Резервы" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4">
+        	<div id="divReserve"></div>
+        	</td>
+        </msh:row></table>
+        </td><td valign="top"><table>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
           <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
@@ -56,7 +69,9 @@
         <msh:row>
         	<td colspan="4" id="tdPreRecord"></td>
         </msh:row>
-        </msh:ifInRole>
+        </msh:ifInRole></table>
+        </td></tr></table></td></tr>
+        
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateNewTime">
 		        <msh:row>
 		        	<msh:separator label="<a href='javascript:getWorkFunctionByUsername()'>Создание дополнительного времени</a>" colSpan="4"/>
@@ -74,9 +89,7 @@
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
           <msh:separator label="Дополнительные параметры (необходимы для справки о стоимости МО)" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
         </msh:row>
-        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
-          <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
-        </msh:row>
+
         <msh:row guid="a970fa32-6038-4e0b-a0a8-c57b5ebd3a04">
           <msh:autoComplete showId="false" vocName="vocWorkPlaceType" property="workPlaceType" viewOnlyField="false" label="Рабочее место" guid="c61023b1-bf59-432f-8764-8a571b1eddf8" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -217,6 +230,29 @@
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
       <script type="text/javascript">
+      
+   	 function updateTime() {
+   		if (+$('datePlan').value>0 && +$('serviceStream').value>0) {
+   			WorkCalendarService.getReserveByDateAndService($('datePlan').value,$('serviceStream').value,$('patient').value
+	    			  
+	  		, {
+	                 callback: function(aResult) {
+	                	 //alert(aResult) ;
+	                	 $('divReserve').innerHTML = aResult ;
+	                 }
+		        	}
+		        	); 
+    }
+   		}
+   		 
+       	
+   	 	
+   	 
+   	
+   	serviceStreamAutocomplete.addOnChangeCallback(function() {
+	 	updateTime() ;
+	 });
+      
       //new dateutil.DateField($('datePlanName'));
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
@@ -413,6 +449,7 @@
   	  			  				else {
   	  			  					$('tdPreRecord').innerHTML="";
   	  			  				}
+  	  		  					updateTime()
   	  			  			}
   	  		  			}
   	  		  			) ;

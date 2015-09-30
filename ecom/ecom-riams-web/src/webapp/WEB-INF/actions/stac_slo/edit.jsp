@@ -268,18 +268,13 @@
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected'>Печать (весь список)</a>&nbsp;&nbsp;
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected'>Печать (список нераспеч.)</a>
         " guid="1f21294-8ea0-4b66-a0f3-62713c1">
-          <%--
-<ecom:parentEntityListAll formName="smo_visitProtocolForm" attribute="protocols" guid="30260c-7369-4ec7-a67c-882abcf" />          
-          <msh:table hideTitle="true" idField="id" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
-            <msh:tableColumn columnName="Дата" property="dateRegistration" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Время" property="timeRegistration" guid="b85b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Запись" property="record" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
-            <msh:tableColumn columnName="Специалист" property="specialistInfo" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
-          </msh:table>--%>
-      <ecom:webQuery maxResult="50" name="protocols"  nativeSql="
-      select d.id as did, d.dateRegistration as ddateRegistration
-      , d.timeRegistration as dtimeRegistration, d.record as drecord 
-     , vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
+          
+      <ecom:webQuery maxResult="50"  name="protocols"  nativeSql="
+      select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record 
+      ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
+      ,case when aslo.dtype='Visit' then 'background:#F6D8CE;' 
+      when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;'
+      else '' end
       from MedCase slo
       left join MedCase aslo on aslo.parent_id=slo.parent_id
       left join Diary as d on aslo.id=d.medCase_id
@@ -288,24 +283,36 @@
       left join Patient pw on pw.id=w.person_id
       
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-            	where slo.id='${param.id}' and d.DTYPE='Protocol'
+            	where slo.id='${param.id}' and upper(d.DTYPE)='PROTOCOL'
             	order by  d.dateRegistration desc,  d.timeRegistration desc"/>
+         
+          <msh:tableNotEmpty name="protocols">
+          <table>
+         	<msh:toolbar>
+         		<tr>
+         			<td colspan="12">
+         			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=1&short=Page',1,'divprotocolslo${param.id}')">Дневники</button>
+         			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=2&short=Page',1,'divprotocolslo${param.id}')">Лаб.исслед.</button>
+         			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=3&short=Page',1,'divprotocolslo${param.id}')">Диаг.исслед.</button>
+         			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&short=Page',1,'divprotocolslo${param.id}')">Все</button>
+         			</td>
+         		</tr>
+         	</msh:toolbar>
+         	</table>
+            	</msh:tableNotEmpty>
+            	<div id='divprotocolslo${param.id}'>
+          <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
 
-          <msh:table hideTitle="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableColumn columnName="Дата" property="2"/>
-                    <msh:tableColumn columnName="Время" property="3"/>
-                    <msh:tableColumn columnName="Протокол" property="4" cssClass="preCell"/>
-                    <msh:tableColumn columnName="Специалист" property="5"/>
+                    <msh:tableColumn columnName="Дата и время" property="2"/>
+                    <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
                 </msh:table>
-          
+          </div>
         </msh:section>
         
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
-       <%--  <ecom:parentEntityListAll formName="stac_diagnosisForm" attribute="diagnosis" guid="302c-7369-4ec7-a67c-882abcf" />
-		--%>
-		<ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
+       <ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
 		, vpd.name as vpdname, d.name as dname, mkb.code
 		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
 		from Diagnosis d
@@ -318,18 +325,8 @@
 		left join Patient wp on wp.id=w.person_id
 		where d.medcase_id='${param.id}'
 		"/>
-		<%-- 
-        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-            <msh:tableColumn columnName="Дата установления" property="establishDate" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-            <msh:tableColumn columnName="Тип регистрации" property="registrationTypeInfo" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Приоритет" property="priorityDiagnosisText" guid="6682eeef-12" />            
-            <msh:tableColumn columnName="Наименование" property="name" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Код МКБ" property="idc10Text" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-            <msh:tableColumn columnName="Специалист" property="workerInfo" guid="f31b12-3392-4978-b31f-5e54ff2e45" />
-          </msh:table>
-        </msh:section>
-        --%>
+		
+        
         <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
           <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916">
           	<msh:tableColumn property="sn" columnName="#"/>
@@ -382,17 +379,27 @@
       </msh:ifInRole>
       
       <msh:ifInRole roles="/Policy/Mis/MedCase/Transfusion/View">
-      	<ecom:parentEntityListAll attribute="transfusions" formName="trans_transfusionForm"/>
       	<msh:tableNotEmpty name="transfusions">
+      	<ecom:webQuery name="select tr.id as tr1id, tr.journalNumber as tr2journalnumber
+      	,coalesce(vbp.name,votr.name) as tr3information
+      	,tr.preparationDate as tr4preparationDate
+      	,tr.startDate as tr5startDate
+      	,tr.doze as tr6doze
+      	,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as tr7executorInfo
+      	from transfusion tr 
+      	left join VocBloodPreparation vbp on vbp.id=tr.bloodPreparation_id
+      	left join VocOtherTransfusPreparation votr on votr.id=tr.otherPreparation_id
+      	left join WorkFunction wf on wf.id=tr.executor_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf.id=wf.workfunction_id
+      	where tr.medcase_id=${param.id}"/>
       	<msh:section title="Переливание">
-      		<msh:table name="transfusions" action="entitySubclassView-trans_transfusion.do" idField="id">
-		      <msh:tableColumn columnName="Номер в журнале" property="journalNumber" guid="ed7e6ec7-524e-4b87-8b2c-5a722792a123" />
-		      <msh:tableColumn columnName="Трансфузионная среда" property="information" guid="c4b30e10-9ca0-42b1-94fb-88cf0f7afa2e" />
-		      <msh:tableColumn columnName="Дата приготовления" property="preparationDate" guid="1ef2e314-6eb6-4c85-be47-ca392566d371" />
-		      <msh:tableColumn columnName="Изготовитель" property="preparator" guid="dk29-5653-4920-bb78-168ha34" />
-		      <msh:tableColumn columnName="Дата начала" property="startDate" guid="2976f5c7-3844-4ae2-be91-2a395cae0f1f" />
-		      <msh:tableColumn columnName="Доза" property="doze" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-		      <msh:tableColumn columnName="Исполнитель" property="executorInfo" guid="8e832f90-6905-44cf-952e-76495689c35b" />
+      		<msh:table name="transfusions" action="entitySubclassView-trans_transfusion.do" idField="1">
+		      <msh:tableColumn columnName="Номер в журнале" property="2" guid="ed7e6ec7-524e-4b87-8b2c-5a722792a123" />
+		      <msh:tableColumn columnName="Трансфузионная среда" property="3" guid="c4b30e10-9ca0-42b1-94fb-88cf0f7afa2e" />
+		      <msh:tableColumn columnName="Дата приготовления" property="" guid="1ef2e314-6eb6-4c85-be47-ca392566d371" />
+		      <msh:tableColumn columnName="Изготовитель" property="4" guid="dk29-5653-4920-bb78-168ha34" />
+		      <msh:tableColumn columnName="Дата начала" property="5" guid="2976f5c7-3844-4ae2-be91-2a395cae0f1f" />
+		      <msh:tableColumn columnName="Доза" property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+		      <msh:tableColumn columnName="Исполнитель" property="7" guid="8e832f90-6905-44cf-952e-76495689c35b" />
       		</msh:table>
       		</msh:section>
       	</msh:tableNotEmpty>

@@ -58,4 +58,12 @@ public class PrescriptionForm extends BaseValidatorForm {
 	private String theEndDate;
 	/** Дата начала */
 	private String theBeginDate;
+	
+	/** Номер */
+	@Comment("Номер")
+	public String getNumber() {return theNumber;}
+	public void setNumber(String aNumber) {theNumber = aNumber;}
+
+	/** Номер */
+	private String theNumber;
 }

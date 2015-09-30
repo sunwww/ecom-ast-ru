@@ -163,7 +163,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
 
     private String getText(Element aEl, String aParameter) {
     	return aEl!=null?
-    			(aEl.getChild(aParameter)!=null?(aEl.getChild(aParameter).getText()).trim():null)
+    			(aEl.getChild(aParameter)!=null && !aEl.getChild(aParameter).getText().trim().equals("")?(aEl.getChild(aParameter).getText().trim()):null)
     			:
     				null ;
     }

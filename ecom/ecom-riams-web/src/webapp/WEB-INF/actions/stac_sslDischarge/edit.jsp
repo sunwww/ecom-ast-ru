@@ -246,7 +246,8 @@
           <msh:autoComplete label="Результат госп." property="result" fieldColSpan="1" horizontalFill="true" guid="63d091a8-90b9-479f-8aef-0064a789fade" vocName="vocHospitalizationResult" />
         </msh:row>
         <msh:row guid="03f46-99be-4d81-8696-9d39c38">
-          <msh:autoComplete label="Дефекты догоспитального этапа" property="preAdmissionDefect" fieldColSpan="3" horizontalFill="true" vocName="vocPreAdmissionDefect" guid="6d1a8-90b9-479f-8aef-0s789fade"/>
+          <msh:autoComplete label="Причина выписки" property="reasonDischarge"  horizontalFill="true" vocName="vocReasonDischarge" guid="6d1a8-90b9-479f-8aef-0s789fade"/>
+          <msh:autoComplete label="Дефекты догоспитального этапа" property="preAdmissionDefect"  horizontalFill="true" vocName="vocPreAdmissionDefect" guid="6d1a8-90b9-479f-8aef-0s789fade"/>
         </msh:row>
         <msh:row guid="3009274e-f253-4805-baeb-0ab4ac5ffca8">
           <msh:textField label="Дата выписки" property="dateFinish" guid="430fa31a-5126-4628-8617-4ae67b4829a3" />

@@ -66,6 +66,9 @@
         	<msh:textField property="finishDate" label="Дата окончания"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="isReqComment" label="Обязательно заполнить комментарий при назначении" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Услуга может оказываться:" colSpan="4"/>
         </msh:row>
         <msh:row>

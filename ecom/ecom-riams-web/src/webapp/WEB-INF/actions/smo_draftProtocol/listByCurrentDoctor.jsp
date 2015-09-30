@@ -140,7 +140,8 @@ select p.id,slo.dateStart
    
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
-    viewUrl="entityShortView-stac_slo.do"
+    deleteUrl="entityParentDelete-smo_draftProtocol.do"
+    viewUrl="entityView-stac_slo.do?short=Short" 
     action="entityParentEdit-smo_draftProtocol.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="5" />

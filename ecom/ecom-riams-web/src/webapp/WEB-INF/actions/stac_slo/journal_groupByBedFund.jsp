@@ -307,7 +307,7 @@
             when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1)
             else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
           end as cnt2
-    ,(select list(vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
+    ,(select list(distinct vdrt.name||' '||vpd.name||' '||mkb.code) from Diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id where diag.medcase_id=m.id) as diag
     ,vhr.name as vhrname,tml.name,vs.omcCode as vsomccode,p.lastname as plastname, p.firstname as pfirstname, p.middlename as pmiddlename
     ,mp.commonNumber as mpcommonNumber
     from MedCase as m

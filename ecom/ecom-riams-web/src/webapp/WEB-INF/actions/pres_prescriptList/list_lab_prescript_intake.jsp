@@ -160,7 +160,7 @@
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
        ,to_char(p.planStartDate,'dd.mm.yyyy') as f14planStartDate
-   
+   ,vst.name as vstname
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -189,6 +189,7 @@
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
+    ,vst.name
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -203,7 +204,7 @@
     , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
     , coalesce(case when list(p.materialId)='' then coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id)
     ||'#'||pat.lastname else list(p.materialId) end) as f4material
-    ,coalesce(vsst.name,'---') as f5vsstname
+    ,coalesce(vsst.name,'---')||' ('||coalesce(vpt.name)||')' as f5vsstname
     ,pat.lastname as f6last,pat.firstname as f7first,pat.middlename as f8middlename 
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
     ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
@@ -238,6 +239,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -247,7 +249,7 @@
     group by pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    ,p.planStartDate 
+    ,p.planStartDate , vst.name,vpt.name
     order by vsst.name,pat.lastname,pat.firstname,pat.middlename"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">

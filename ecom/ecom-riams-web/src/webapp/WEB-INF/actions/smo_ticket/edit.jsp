@@ -15,7 +15,7 @@
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="dateFinish"/>
       <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
-      <msh:hidden property="otherTicketDates"/>
+
       <msh:panel colsWidth="1%,1%,1%,97%">
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
@@ -90,6 +90,9 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	        <msh:row>
+	        	<msh:textField property="ambulanceCard" fieldColSpan="3" label="№карты СП" horizontalFill="true"/>
+	        </msh:row>
+	        <msh:row>
 	        	<msh:autoComplete vocName="vocAmbulance" property="ambulance" label="Бригада СП" horizontalFill="true" />
 	        	<msh:autoComplete vocName="vocVisitOutcome" property="visitOutcome" label="Исход СП" horizontalFill="true" />
 	        </msh:row>
@@ -124,10 +127,7 @@
         </msh:row>
 	    <msh:submitCancelButtonsRow colSpan="3" guid="13aa4bce-1133-48d6-896b-eb588a046d59" />
 
-        <msh:row>
-        <table id="otherDates">
-        </table>
-        </msh:row>
+
 	    
       </msh:panel>
     </msh:form>
@@ -281,14 +281,7 @@
     
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
       	<script type="text/javascript"> 
-    onload=function(){
-    	if ($('otherTicketDates').value!=null&&$('otherTicketDates').value!='') {
-    		var arr = $('otherTicketDates').value.split(":");
-    		for (var i=0;i<arr.length;i++) {
-    			addRow(arr[i]);
-    		}
-    	}
-    }
+   
     
     	function checkCrossSPO () {
     		TicketService.getCrossSPO($('dateStart').value,$('patient').value,$('workFunctionExecute').value,{
@@ -312,30 +305,7 @@
     			}
     		});
     	}
-      	function createOtherDates() {
-      		var dates = document.getElementById('otherDates').childNodes;
-      		var str = ""; $('otherTicketDates').value='';
-      		for (var i=1;i<dates.length;i++) {
-      			if ($('dateStart').value!=dates[i].childNodes[0].innerHTML) {
-      				str+=dates[i].childNodes[0].innerHTML+":";
-          			}
-      		}
-      		str=str.length>0?str.trim().substring(0,str.length-1):"";
-      		$('otherTicketDates').value=str;
-      		//alert (str);
-      	}
-      	function addRow (aValue) {
-      		var table = document.getElementById('otherDates');
-      		var row = document.createElement('TR');
-      		var td = document.createElement('TD');
-      		var tdDel = document.createElement('TD');
-      		table.appendChild(row);
-      		row.appendChild(td);
-      		td.innerHTML=""+aValue;
-      		row.appendChild(tdDel);
-      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
-      		$('otherTicketDate').value='';
-      	}
+      	
 </script>
 
       	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">

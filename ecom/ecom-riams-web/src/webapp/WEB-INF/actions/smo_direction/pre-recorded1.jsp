@@ -305,7 +305,13 @@ ul.listTimes li.first {
     		<msh:autoComplete property="rayon" label="Район" fieldColSpan="3" horizontalFill="true" vocName="vocRayon"/>
     	</msh:row>
     	<msh:row>
+    		<msh:textField property="phonePatient" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
+    	</msh:row>
+    	<msh:row>
     		<msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream"/>
+    	</msh:row>
+    	<msh:row>
+    		<msh:autoComplete property="service" label="Услуга" fieldColSpan="3" horizontalFill="true" vocName="medServiceByVocWorkFunction"/>
     	</msh:row>
     	<msh:row>
     		<td colspan="4" class="buttons" align="left">
@@ -486,6 +492,9 @@ ul.listTimes li.first {
   			if (func==null|| func=="") func = getCheckedRadio(frm,"rdFunction") ;
   			var fun = func.split("#") ;
   			spFunc = func ;
+  			serviceAutocomplete.setParentId(fun[0]) ;
+  			$('service').value="" ;
+  			$('serviceName').value="" ;
   			WorkCalendarService.getSpecialistsByWorkFunction(
 					false, fun[0],
 					
@@ -622,7 +631,11 @@ ul.listTimes li.first {
   			var patInfo = $('lastname').value+"#"
   			+$('firstname').value+"#"+$('middlename').value+"#"
 			+$('birthday').value+"#"+$('series').value+"#"
-			+$('number').value+"#"+$('rayonName').value ;
+			+$('number').value+"#"+$('rayonName').value 
+			//+"#"+$('phonePatient').value
+			//+"#"+$('service').value
+			//+"#"+$('serviceName').value
+			;
   			var idSpec = spSpec.lastIndexOf("#") ;
   			var patInfo1 = ($('lastname').value+" "
   			+$('firstname').value+" "+$('middlename').value+" "
@@ -747,7 +760,7 @@ ul.listTimes li.first {
   			//alert(servStream) ;
   			WorkCalendarService.preRecordByPatient(
   					aPatInfo,aPat,func[0],spec[0],day[1],time[1],
-					servStream,
+					servStream,$('phonePatient').value,$('service').value,
 			     {
 						callback: function(aResult) {
 							//alert(aResult) ;

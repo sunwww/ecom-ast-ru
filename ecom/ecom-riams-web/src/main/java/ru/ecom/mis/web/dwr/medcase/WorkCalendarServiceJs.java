@@ -368,6 +368,48 @@ public class WorkCalendarServiceJs {
 		}
 		return res.toString() ; 
 	}
+	public String getReserveByDateAndService(Long aWorkCalendarDay,Long aServiceStream
+			, Long aPatient, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.id="+aServiceStream ) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (list.isEmpty()) return "" ;
+		String dep = ""+list.iterator().next().get1() ;
+		res.append("<ul>") ;
+		list.clear() ;
+		sql = new StringBuilder() ;
+		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
+			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
+			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and vsrt.serviceStreams like '%,"+aServiceStream+",%' and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') order by wct.timefrom") ;
+
+		list = service.executeNativeSql(sql.toString(),50);
+
+		for (WebQueryResult wqr:list) {
+			res.append("<li style='padding-left:10px;list-style: none ");
+			if (wqr.get3()!=null) {
+				res.append("; background:").append(wqr.get3()) ;
+			}
+			if (wqr.get4()!=null) {
+				res.append(";color:").append(wqr.get4()).append("") ;
+			}
+			res.append("' ") ;
+			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
+				.append(wqr.get1()).append("','")
+				.append(wqr.get2()).append("','").append(wqr.get6()).append("')\">") ;
+			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
+
+			res.append(" value='")
+			.append(wqr.get1()).append("#").append(wqr.get2())
+			.append("'>") ;
+			res.append(wqr.get2()).append(" ").append(wqr.get5()!=null?wqr.get5():"") ;
+			res.append("</li>") ;
+		}
+		res.append("</ul>") ;
+		return res.toString();
+	}
 	public String getPreRecord(Long aWorkCalendarDay, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -379,7 +421,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!=''))") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th><th>Резервы</th></tr><tr><td><ul>") ;
@@ -414,7 +456,7 @@ public class WorkCalendarServiceJs {
 		sql.append(",vsrt.background,vsrt.colorText") ;
 		sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
 		sql.append(" and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
-		.append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))") ;
+		.append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom") ;
 		
 		list = service.executeNativeSql(sql.toString(),50);
 		
@@ -442,7 +484,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null  order by wct.timeFrom") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 
@@ -714,11 +756,12 @@ public class WorkCalendarServiceJs {
 		sql.append(" order by vwf.name") ;
 		
 		StringBuilder res = new StringBuilder() ;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		res.append("<form name='frmFunctions' id='frmFunctions' action='javascript:step3()'><ul id='listFunctions'>") ;
 		res.append("<li class='title'>Специалисты</li>");
+		System.out.print("list="+list.size()) ;
 		for (WebQueryResult wqr:list) {
-			
+			System.out.println(wqr.get1()+"---"+wqr.get3()) ;
 			if (aManyIs) {
 				res.append("<li onclick=\"if (this.childNodes[1].checked) {this.childNodes[1].checked=false;}else{this.childNodes[1].checked=true} step3('")
 				.append(wqr.get1()).append("#").append(wqr.get3()).append("')\">") ;
@@ -1057,8 +1100,9 @@ public class WorkCalendarServiceJs {
 			.append(" ,case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
-		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
-		sql.append(",wct.prepatientInfo) as fio") ;
+		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
+		sql.append("") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'') as fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
@@ -1079,6 +1123,7 @@ public class WorkCalendarServiceJs {
 		}
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
+		sql.append(" left join MedService ms on ms.id=wct.service");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
@@ -1240,12 +1285,13 @@ public class WorkCalendarServiceJs {
 	}
 	public String preRecordByPatient(String aPatInfo,Long aPatientId
 			,Long aFunction,Long aSpec,Long aDay,Long aTime
-			,Long aServiceStream,HttpServletRequest aRequest
+			,Long aServiceStream,String aPhone, Long aService,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		System.out.println("serve="+aServiceStream) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream) ;
+		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream,
+				aPhone,aService) ;
 		return "Сохранено" ;
 	}
 	public String preRecordByTimeAndPatient(String aPatInfo,Long aPatientId
