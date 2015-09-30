@@ -136,7 +136,23 @@ public class TableTag extends AbstractGuidSupportTag {
 
     /** Декоратор для класса стиля Css (ITableDecorator) */
     private String theDecorator;
+    
+    /** 
+     * Стиль строк 
+      * @jsp.attribute description="Стиль строк"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     * */
+    public String getStyleRow() {
+		return theStyleRow;
+	}
 
+	public void setStyleRow(String aStyleRow) {
+		theStyleRow = aStyleRow;
+	}
+
+	/** Стиль строк */
+	private String theStyleRow;
     /**
      * Название атррибута в request или в session
      *
@@ -492,7 +508,9 @@ public class TableTag extends AbstractGuidSupportTag {
 //                        out.print("<tr onclick=\"" + getGoFunctionName() + "(");
 //                        out.print(currentId);
 //                        out.print(")\" class='");
-                        out.print("<tr onclick='' class='") ;
+                        out.print("<tr onclick='' ");
+                        if (theStyleRow!=null && !theStyleRow.equals("")) {out.print(" style=\"");out.print(getValueByProperty(row,theStyleRow));out.print("\"");} ;
+                        out.print(" class='") ;
                         out.print(theName) ;
                         out.print(' ') ;
                         out.print(currentId) ;
@@ -620,7 +638,15 @@ public class TableTag extends AbstractGuidSupportTag {
         printIdeEnd();
         return EVAL_PAGE;
     }
-
+    private Object getValueByProperty(Object aObject,String aProperty) {
+    	Object value;
+    	try {
+    		value = PropertyUtil.getPropertyValue(aObject, aProperty) ;
+    	} catch (Exception e) {
+    		value = e + "";
+    	}
+    	return value ;
+    }
     private String getIdByIdField(Object aRow) throws JspException {
         try {
         	return String.valueOf(PropertyUtil.getPropertyValue(aRow, theIdField));
@@ -807,6 +833,8 @@ public class TableTag extends AbstractGuidSupportTag {
     	private final String theCssClass;
     	private final HttpServletRequest theServleRequest ;
     	private final String theAddParam ;
+    	
+    	
    }
     static final class Column {
         public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
@@ -860,6 +888,7 @@ public class TableTag extends AbstractGuidSupportTag {
         	aOut.print(aValue);
         	aOut.println("</td>");
         }
+        
         private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle) throws IOException {
         	String styleClass = "";
         	
@@ -986,7 +1015,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 } else if (value instanceof String) {
                 	val2 = new BigDecimal((String)value) ;
                 } else {
-                	val2 = new BigDecimal(value!=null?"0"+(String)value:"0");
+                	val2 = new BigDecimal((String)value);
                 }
                 //val2 = val1+val2 ;
                 String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
