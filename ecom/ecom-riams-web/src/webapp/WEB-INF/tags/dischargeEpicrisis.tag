@@ -77,6 +77,13 @@
 		        <msh:row>
 		            <msh:checkBox property="${name}Operations" label="Операции" fieldColSpan="2"/>
 		        </msh:row>
+		        <tr onclick='show${name}DiariesDiv()'>
+		            <msh:checkBox property="${name}Diaries" label="Дневники" fieldColSpan="2" />
+		           <%--  <td><input type='button' onclick="show${name}DiariesDiv"></td> --%>
+		        <msh:row><td colspan="5">
+		        <div id='${name}diariesDiv' style='display:none'>
+		        </div></td>
+		        </msh:row>
 		    </msh:panel>
 		        <msh:row>
 		            <td colspan="6">
@@ -93,6 +100,36 @@
      var theIs${name}EpicrisisDialogInitialized = false ;
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;
 
+     function show${name}DiariesDiv() {
+    	 
+     if ($('${name}Diaries').checked) {
+    	 HospitalMedCaseService.getDiariesByHospital($('id').value, {
+    		 callback: function (aResult) {
+    			 var p = '';
+    			 var r=aResult.split('@');
+    			 
+    			 if (r.length>0) {
+    				 p+='<table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
+    				 
+    				 for (var i=0;i<r.length;i++){
+    				 var text = r[i].split('#');
+    				 p+='<tr>';
+    				 p+='<td><input type=\'checkbox\' name=\'diary'+text[0]+'\'></td>';
+    				 p+='<td>'+text[1]+'</td>';
+    				 p+='<td id='+text[0]+'>'+text[2]+'</td>';
+    				 p+='</tr>';
+    				 }
+    				 p+='</tbody></table>'
+    			 }
+    			 
+    			 $('${name}diariesDiv').style='display:block';
+    			 $('${name}diariesDiv').innerHTML=p;	 
+    		 }
+    	 });
+     } else {
+		 $('${name}diariesDiv').style='display:none';
+     }
+     }
      // Показать
      function show${name}Epicrisis() {
          // устанавливается инициализация для диалогового окна
@@ -166,14 +203,33 @@
  					callback: function(aString) {
  						$('${property}').value += "\n" ;
  						$('${property}').value += aString ;
- 						get${name}DefaultInfo() ;
+ 						get${name}DiariesInfo() ;
  						
  					}
  			} ) ;
  		} else {
- 			get${name}DefaultInfo() ;
+ 			get${name}DiariesInfo() ;
  		}
       }
+     
+     function get${name}DiariesInfo() {
+    	 if ($('diariesTable')) {
+    		 var res = '';
+    		 var rows = $('diariesTable').childNodes;
+    		 for (var i=0;i<rows.length;i++){
+    			 var td = rows[i].childNodes;
+    			// alert ('tDD = '+td[2].innerHTML)
+    			 if (td[0].childNodes[0].checked){
+    			 	res+=td[2].innerHTML+'\n\n';
+    			 }
+    		 }
+    		 $('${property}').value+=res;
+    		 get${name}DefaultInfo() ;
+    	 } else {
+    		 get${name}DefaultInfo() ;
+    	 }
+     }
+     
      function get${name}DefaultInfo() {
        	if ($('${name}DefaultInfo').checked) {
       		var frm = document.forms["${name}EpicrisisParameterForm"]
