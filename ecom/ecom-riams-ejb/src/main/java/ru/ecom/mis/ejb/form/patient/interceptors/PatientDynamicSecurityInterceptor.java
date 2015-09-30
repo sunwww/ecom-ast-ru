@@ -32,6 +32,7 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 				if(person!=null && person instanceof Patient) {
 					Patient patient = (Patient) person ;
 					boolean okByDep = false ;
+					/*
 					if(!person.getAttachedByDepartments().isEmpty()) {
 							for(LpuAttachedByDepartment at: person.getAttachedByDepartments()) {
 								try {
@@ -55,7 +56,7 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 						if(lpu!=null) theMisLpuDynamicSecurity.check(aPolicyAction, lpu.getId(), aContext) ;
 						// FIXME если нет прикрепленного ЛПУ
 						else throw new IllegalStateException("Не прикреплен") ;
-					}
+					}*/
 				}
 			}
 		}

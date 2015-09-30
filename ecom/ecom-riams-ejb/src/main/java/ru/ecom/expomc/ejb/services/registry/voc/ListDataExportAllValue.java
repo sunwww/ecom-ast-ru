@@ -12,6 +12,8 @@ import org.jdom.input.SAXBuilder;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
@@ -24,6 +26,17 @@ public class ListDataExportAllValue implements IAllValue {
 
     private final String JBOSS_SERVER_DATA_EXPORT_DIR = System.getProperty("jboss.server.data.dir")+"/export";
 
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
     public Collection<VocValue> listAll(AllValueContext aContext) {
         File dir = new File(JBOSS_SERVER_DATA_EXPORT_DIR);
         File files[] = dir.listFiles() ;

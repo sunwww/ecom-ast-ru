@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import static javax.persistence.CascadeType.ALL;
-
 import java.sql.Date;
 import java.util.List;
 
@@ -25,33 +23,22 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcOksm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetT;
 import ru.ecom.mis.ejb.domain.birth.voc.VocNewBorn;
-import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.voc.VocAdditionStatus;
 import ru.ecom.mis.ejb.domain.patient.voc.VocCategoryChild;
-import ru.ecom.mis.ejb.domain.patient.voc.VocColorType;
 import ru.ecom.mis.ejb.domain.patient.voc.VocEthnicity;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
 import ru.ecom.mis.ejb.domain.patient.voc.VocLivelihoodSource;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMarriageStatus;
-//import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.patient.voc.VocPassportBirthPlace;
 import ru.ecom.mis.ejb.domain.patient.voc.VocPassportWhomIssue;
 import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
 import ru.ecom.mis.ejb.domain.patient.voc.VocResidenceConditions;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
-import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
-import ru.ecom.mis.ejb.domain.worker.Education;
-import ru.ecom.mis.ejb.domain.worker.LanguageSkill;
-import ru.ecom.mis.ejb.domain.worker.WorkBook;
-import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.mis.ejb.domain.worker.voc.VocEducationType;
-import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
-import ru.ecom.poly.ejb.domain.Medcard;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -117,12 +104,7 @@ public class Patient extends BaseEntity{
 	public List<Vaccination> getVaccinations() {return theVaccinations;}
 	public void setVaccinations(List<Vaccination> aVaccinations) {theVaccinations = aVaccinations;}
 	*/
-	/** Сотрудники */
-	@Comment("Сотрудники")
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	public List<Worker> getWorkers() {return theWorkers;}
-	public void setWorkers(List<Worker> aWorkers) {theWorkers = aWorkers;}
-
+	
 	/** Прикрепление по адресу */
 	public static String ATTACHED_TYPE_ADDRESS = null ;
 	
@@ -149,7 +131,7 @@ public class Patient extends BaseEntity{
     
     /** Название ЛПУ */
     @Transient
-    public String getLpuName() { return theLpu!=null ? theLpu.getFullname() : "" ; }
+    public String getLpuName() { return "" ; }
     public void setLpuName(String aLpuName) {}
 
     /** Название участка */
@@ -158,49 +140,27 @@ public class Patient extends BaseEntity{
     public void setLpuAreaName(String aLpuAreaName) {}
 
     /** Полис прикрепления */
-	@Comment("Полис прикрепления")
-	@OneToOne
-	public MedPolicyOmc getAttachedOmcPolicy() {return theAttachedOmcPolicy;}
-	public void setAttachedOmcPolicy(MedPolicyOmc aAttachedOmcPolicy) {theAttachedOmcPolicy = aAttachedOmcPolicy;}
+	//@Comment("Полис прикрепления")
+	//@OneToOne
+	//public MedPolicyOmc getAttachedOmcPolicy() {return theAttachedOmcPolicy;}
+	//public void setAttachedOmcPolicy(MedPolicyOmc aAttachedOmcPolicy) {theAttachedOmcPolicy = aAttachedOmcPolicy;}
 
     /** Ведомственное прикрепление */
-	@Comment("Ведомственное прикрепление")
-	@OneToMany(cascade=ALL, mappedBy="patient")
-	public List<LpuAttachedByDepartment> getAttachedByDepartments() {return theAttachedByDepartments;}
-	public void setAttachedByDepartments(List<LpuAttachedByDepartment> aAttachedByDepartments) {theAttachedByDepartments = aAttachedByDepartments;}
+	//@Comment("Ведомственное прикрепление")
+	//@OneToMany(cascade=ALL, mappedBy="patient")
+	//public List<LpuAttachedByDepartment> getAttachedByDepartments() {return theAttachedByDepartments;}
+	//public void setAttachedByDepartments(List<LpuAttachedByDepartment> aAttachedByDepartments) {theAttachedByDepartments = aAttachedByDepartments;}
 	
-	/** СМО */
-	@Comment("СМО")
-	@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
-	public List<MedCase> getMedCases() {return theMedCases;}
-	public void setMedCases(List<MedCase> aMedCases) {theMedCases = aMedCases;}
 
 //    /** Инвалидность */
 //    private Invalidity theInvalidity ;
 
 	/** Случаи нетрудоспособности */
-	@Comment("Случаи нетрудоспособности")
-	@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
-	public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
-	public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
+	//@Comment("Случаи нетрудоспособности")
+	//@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
+	//public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
+	//public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
 
-    /** Трудовые книги */
-    @Comment("Трудовые книги")
-    @OneToMany(mappedBy = "person", cascade= ALL)
-    public List<WorkBook> getWorkBook() { return theWorkBook ; }
-    public void setWorkBook(List<WorkBook> aWorkBook) { theWorkBook = aWorkBook ; }
-   
-	/** Знание языков */
-	@Comment("Знание языков")
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	public List<LanguageSkill> getLanguageSkills() {return theLanguageSkills;}
-	public void setLanguageSkills(List<LanguageSkill> aLanguageSkills) {theLanguageSkills = aLanguageSkills;}
-	
-    /** Образования */
-    @Comment("Образования")
-	@OneToMany(mappedBy = "person", cascade= ALL)
-    public List<Education> getEducations() { return theEducations ; }
-    public void setEducations(List<Education> aEducations) { theEducations = aEducations ; }
     
     /** Квалификации */
     //@Comment("Квалификации")
@@ -214,11 +174,6 @@ public class Patient extends BaseEntity{
 	//public List<Award> getAwards() {return theAwards;}
 	//public void setAwards(List<Award> aAwards) {theAwards = aAwards;}
 	
-	/** Медицинские карты */
-	@Comment("Медицинские карты")
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL) 
-	public List<Medcard> getMedcard() {return theMedcard;}
-	public void setMedcard(List<Medcard> aMedcard) {theMedcard = aMedcard;}
 	
 	/** Район города и области для фонда */
 	@Comment("Район города и области для фонда")
@@ -233,10 +188,10 @@ public class Patient extends BaseEntity{
 	}
 
     /** Льготы */
-	@Comment("Льготы")
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	public List<Privilege> getPrivileges() {return thePrivileges;}
-	public void setPrivileges(List<Privilege> aPrivileges) {thePrivileges = aPrivileges;}
+	//@Comment("Льготы")
+	//@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
+	//public List<Privilege> getPrivileges() {return thePrivileges;}
+	//public void setPrivileges(List<Privilege> aPrivileges) {thePrivileges = aPrivileges;}
 	
     /** Имя */
     @Comment("Имя")
@@ -280,11 +235,6 @@ public class Patient extends BaseEntity{
     public VocIdentityCard getPassportType() { return thePassportType ; }
     public void setPassportType(VocIdentityCard aPassportType) { thePassportType = aPassportType ; }
    
-    /** Полисы */
-    @Comment("Полисы")
-    @OneToMany(mappedBy = "patient", cascade= ALL)
-    public List<MedPolicy> getMedPolicies() { return theMedPolicies ; }
-    public void setMedPolicies(List<MedPolicy> aMedPolicies) { theMedPolicies = aMedPolicies ; }
 
     /** Социальный статус, в т.ч. и занятость */
     @Comment("Социальный статус, в т.ч. и занятость")
@@ -520,7 +470,7 @@ public class Patient extends BaseEntity{
     @Comment("Название пола")
     @Transient
     public String getSexName() {
-        return theSex!=null ? theSex.getName() : "" ;
+        return "" ;
     }
     private static void add(StringBuilder aSb, String aStr, String aPre) {
         if(!StringUtil.isNullOrEmpty(aStr)) {
@@ -737,7 +687,7 @@ public class Patient extends BaseEntity{
 	/** Вакцинации */
 	//private List<Vaccination> theVaccinations;
 	/** Сотрудники */
-	private List<Worker> theWorkers;
+	//private List<Worker> theWorkers;
 	/** Участок основного прикрепления */
     private LpuArea theLpuArea ;
     /** Адрес участка основного прикрепления */
@@ -745,29 +695,29 @@ public class Patient extends BaseEntity{
     /** ЛПУ основного прикрепления */
     private MisLpu theLpu ;
     /** Ведомственное прикрепление */
-	private List<LpuAttachedByDepartment> theAttachedByDepartments;
+	//private List<LpuAttachedByDepartment> theAttachedByDepartments;
 	/** СМО */
-	private List<MedCase> theMedCases;
+	//private List<MedCase> theMedCases;
 	/** Полис прикрепления */
-	private MedPolicyOmc theAttachedOmcPolicy;
+	//private MedPolicyOmc theAttachedOmcPolicy;
 	/** Случаи нетрудоспособности */
-	private List<DisabilityCase> theDisabilityCases;
+	//private List<DisabilityCase> theDisabilityCases;
 	 /** Трудовые книги */
-    private List<WorkBook> theWorkBook ;
+    //private List<WorkBook> theWorkBook ;
     /** Знание языков */
-	private List<LanguageSkill> theLanguageSkills;
+	//private List<LanguageSkill> theLanguageSkills;
 	/** Образования */
-    private List<Education> theEducations ;
+    //private List<Education> theEducations ;
     ///** Квалификации */
     //private List<Qualification> theQualifications ;
     /** Награды */
 	//private List<Award> theAwards;
 	/** Медицинские карты */
-	private List<Medcard> theMedcard;
+	//private List<Medcard> theMedcard;
 	/** Район города и области для фонда */
 	private VocRayon theRayon;
 	/** Льготы */
-	private List<Privilege> thePrivileges;
+	//private List<Privilege> thePrivileges;
 	/** Имя */
     private String theFirstname ;
     /** Фамилия */
@@ -785,7 +735,7 @@ public class Patient extends BaseEntity{
     /** Тип удостоверения личности */
     private VocIdentityCard thePassportType ;
     /** Полисы */
-    private List<MedPolicy> theMedPolicies ;
+    //private List<MedPolicy> theMedPolicies ;
     /** Социальный статус, в т.ч. и занятость */
     private VocSocialStatus theStatusSocial ;
     /** Номер паспорта */

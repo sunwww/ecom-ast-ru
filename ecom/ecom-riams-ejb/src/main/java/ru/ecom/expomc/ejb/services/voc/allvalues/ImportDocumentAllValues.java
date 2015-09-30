@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
@@ -14,7 +16,17 @@ import ru.nuzmsh.util.voc.VocValue;
  * Time: 11:18:19
  */
 public class ImportDocumentAllValues implements IAllValue {
-
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
     public Collection<VocValue> listAll(AllValueContext aContext) {
         Collection<ImportDocument> list = aContext.getEntityManager().createQuery("from ImportDocument i ").getResultList() ;
         LinkedList<VocValue> ret = new LinkedList<VocValue>();

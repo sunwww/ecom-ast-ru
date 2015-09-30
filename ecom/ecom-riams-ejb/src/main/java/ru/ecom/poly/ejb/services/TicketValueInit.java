@@ -31,8 +31,8 @@ public class TicketValueInit implements IValueGetter  {
         Medcard mc = theTicket.getMedcard();
         Patient prs = mc.getPerson();
         MedPolicy plc = null;
-        if (prs.getMedPolicies().size() > 0)
-            plc = prs.getMedPolicies().get(0);
+        //if (prs.getMedPolicies().size() > 0)
+          //  plc = prs.getMedPolicies().get(0);
 
         // номер мед. карты
         theMap.put("MedCardNum",mc.getNumber());

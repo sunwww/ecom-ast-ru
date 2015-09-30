@@ -420,11 +420,10 @@ public class PatientFond extends BaseEntity{
 	
 	/** Пациент */
 	@Comment("Пациент")
-	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
 	/** Пациент */
-	private Patient thePatient;
+	private Long thePatient;
 
 	/** Прикрепление обновлено */
 	@Comment("Прикрепление обновлено")

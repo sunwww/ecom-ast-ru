@@ -14,6 +14,8 @@ import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 public class MedServiceAllValueVoc  implements IAllValue {
@@ -23,7 +25,17 @@ public class MedServiceAllValueVoc  implements IAllValue {
 	public void destroy() {
 		
 	}
-
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
 	
 	//@SuppressWarnings("unchecked")
 	public Collection<VocValue> listAll(AllValueContext aContext) {

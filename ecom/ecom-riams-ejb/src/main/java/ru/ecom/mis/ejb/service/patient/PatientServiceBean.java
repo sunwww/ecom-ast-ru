@@ -926,16 +926,16 @@ public class PatientServiceBean implements IPatientService {
 		fond.setDocumentWhomIssued(aDocumentWhomIssued);
 		fond.setDoctorSnils(aDoctorSnils);
 		fond.setDepartment(aCodeDepartment);
-		Patient pat = null;
-		if (aPatientId!=null&&aPatientId!=""&&Long.valueOf(aPatientId)!=0) {
-			pat = theManager.find(Patient.class, Long.valueOf(aPatientId));
-			fond.setPatient(pat);
+		//Patient pat = null;
+		if (aPatientId!=null&&aPatientId!=""&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
+			//pat = theManager.find(Patient.class, Long.valueOf(aPatientId));
+			fond.setPatient(Long.valueOf(aPatientId));
 		}
 		if (aCheckTime!=null) {
 			fond.setCheckTime(aCheckTime);
 		}
 		theManager.persist(fond) ;
-		if (pat!=null) {
+		if (aPatientId!=null&&aPatientId!=""&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
 			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId()));
 			theManager.persist(fond) ;
 		}
@@ -1057,7 +1057,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("	update WorkCalendarHospitalBed set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ExtDispCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update ClinicExpertCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			theManager.createNativeQuery("  update PatientFond set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update PatientFond set patient =:idnew where patient =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update JournalPatientFondCheck set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update JournalChangePatient set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			
@@ -1400,6 +1400,7 @@ public class PatientServiceBean implements IPatientService {
 	 */
 	@RolesAllowed("/Policy/Mis/Patient/Edit")
 	public void updatePatientLpuByAddress(Patient aPatient) {
+		/*
 		// если не прикреплен по полису и все-таки есть адрес
 		if (aPatient.getAttachedOmcPolicy() == null && aPatient.getAddress() != null) {
 				// берем первую попавшуюся точку прикрепления
@@ -1417,7 +1418,7 @@ public class PatientServiceBean implements IPatientService {
 				aPatient.setLpu(lpu);
 				aPatient.setLpuArea(area);
 				aPatient.setLpuAreaAddressText(text);
-		}
+		}*/
 	}
 
 	@RolesAllowed("/Policy/Mis/Patient/Edit")

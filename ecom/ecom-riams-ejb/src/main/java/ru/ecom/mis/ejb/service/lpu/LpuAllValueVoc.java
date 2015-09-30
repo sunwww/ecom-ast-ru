@@ -8,10 +8,13 @@ import javax.persistence.EntityManager;
 
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.services.voc.VocContext;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 public class LpuAllValueVoc implements IAllValue {
@@ -19,6 +22,14 @@ public class LpuAllValueVoc implements IAllValue {
 	public void destroy() {
 		
 	}
+	public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+        String ret = null;
+        if (aId!=null && !aId.equals("") && !aId.equals("0")) {
+        	List<Object[]> lpus = aContext.getEntityManager().createNativeQuery("select id,name from MisLpu where id="+aId+" order by name").getResultList() ;
+    		if (lpus.size()>0) ret = ""+lpus.get(0)[1] ;
+        }
+        return ret;
+    }
 
 	
 	//@SuppressWarnings("unchecked")

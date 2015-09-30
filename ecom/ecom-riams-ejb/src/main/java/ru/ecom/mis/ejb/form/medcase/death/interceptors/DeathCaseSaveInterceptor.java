@@ -61,7 +61,7 @@ public class DeathCaseSaveInterceptor implements IFormInterceptor {
 		/*List<VocPriorityDiagnosis> listpr = aManager.createQuery("from VocPriorityDiagnosis where code=1").getResultList() ;
 		if (listpr.size()>0) vocPriorType=listpr.get(0) ;*/
 		
-		List<Diagnosis> diagList = medCase.getDiagnosis() ;
+		List<Diagnosis> diagList = aManager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 		if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 		for(Diagnosis diag:diagList){
 			if (!adding5) adding5=DischargeMedCaseSaveInterceptor.setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDate(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
@@ -73,14 +73,14 @@ public class DeathCaseSaveInterceptor implements IFormInterceptor {
 			if (!adding5) {
 				Diagnosis diag = new Diagnosis();
 				DischargeMedCaseSaveInterceptor.setDiagnosisByType(true,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDate(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
 			if (!adding3) {
 				Diagnosis diag = new Diagnosis();
 				DischargeMedCaseSaveInterceptor.setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDeathDate(), form.getConcludingMkb(), medCase, aManager,vocPriorType,form.getConcludingActuity()) ;
-				diagList.add(diag);
+				//diagList.add(diag);
 			}
-			medCase.setDiagnosis(diagList);
+			//medCase.setDiagnosis(diagList);
 		}
 		
 	}

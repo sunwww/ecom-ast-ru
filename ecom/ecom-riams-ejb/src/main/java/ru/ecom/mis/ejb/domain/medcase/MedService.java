@@ -233,4 +233,11 @@ public class MedService extends BaseEntity{
 	private String thePrefixTemplate;
 	/** В другом ЛПУ выполняется */
 	private Boolean theIsOtherLpu;
+	/** Обязательное заполнение комментария */
+	@Comment("Обязательное заполнение комментария")
+	public String getIsReqComment() {return theIsReqComment;}
+	public void setIsReqComment(String aIsReqComment) {theIsReqComment = aIsReqComment;}
+
+	/** Обязательное заполнение комментария */
+	private String theIsReqComment;
 }

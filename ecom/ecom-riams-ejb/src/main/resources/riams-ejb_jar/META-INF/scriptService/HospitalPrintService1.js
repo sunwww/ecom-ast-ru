@@ -35,7 +35,7 @@ function printStatCards(aCtx, aParams) {
 		//aCtx.manager.persist(medCase) ;
 		//throw "" + medCase + cur
 		var wqr = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		wqr.set1(recordPolicy(medCase.policies)) ;
+		wqr.set1(recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList())) ;
 		wqr.set2(recordPatient(medCase,aCtx)) ;
 		wqr.set3(recordMedCaseDefaultInfo(medCase,aCtx)) ;
 		wqr.set4(recordAttendant(medCase,aCtx)) ;

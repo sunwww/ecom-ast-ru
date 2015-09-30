@@ -163,10 +163,10 @@ public class ShortMedCase extends MedCase{
 	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
 	
 	/**Диагнозы */
-	@Comment("Диагнозы")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
+	//@Comment("Диагнозы")
+	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
+	//public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
+	//public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
 	
 
 	/** Результат визита */
@@ -202,8 +202,8 @@ public class ShortMedCase extends MedCase{
 	
 	/** Внешний направитель (ЛПУ) */
 	private MisLpu theOrderLpu;
-	/**Диагнозы*/
-	private List<Diagnosis> theDiagnosis;
+	///**Диагнозы*/
+	//private List<Diagnosis> theDiagnosis;
 	/** Результат визита */
 	private VocVisitResult theVisitResult;
 	/** Цель визита */

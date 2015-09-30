@@ -13,13 +13,25 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
  * Список свойств у документа
  */
 public class ImportDocumentPropertiesAllValues implements IAllValue {
-
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
     protected Collection<VocValue> listByDocumentId(String aDocumentId, EntityManager aEntityManager) {
     	if(StringUtil.isNullOrEmpty(aDocumentId)) {
     		throw new IllegalArgumentException("Нет аргумента "+aDocumentId) ;

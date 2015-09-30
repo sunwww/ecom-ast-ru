@@ -245,7 +245,7 @@ public class PatientForm extends IdEntityForm {
 
     /** Полис прикрепления */
 	@Comment("Полис прикрепления")
-	@Persist
+	
 	public Long getAttachedOmcPolicy() {return theAttachedPolicyOmc;}
 	public void setAttachedOmcPolicy(Long aAttachedPolicyOmc) {theAttachedPolicyOmc = aAttachedPolicyOmc;}
 	

@@ -9,6 +9,8 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
@@ -18,7 +20,17 @@ import ru.nuzmsh.util.voc.VocValue;
  */
 public class FormatByDocumentAllValues implements IAllValue {
 
-
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
     public Collection<VocValue> listAll(AllValueContext aContext) {
         LinkedList<VocValue> ret = new LinkedList<VocValue>();
         if(!StringUtil.isNullOrEmpty(aContext.getVocAdditional().getParentId())) {

@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.sql.Date;
-import java.sql.Time;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

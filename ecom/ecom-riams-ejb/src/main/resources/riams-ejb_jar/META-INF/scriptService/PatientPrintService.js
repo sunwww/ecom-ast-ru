@@ -14,7 +14,8 @@ function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 }
 function printInfoByPatient(aPatient,aCtx) {
 	var map = new java.util.HashMap() ;
-	var polList = aPatient.medPolicies ;
+	
+	var polList = aCtx.manager.createQuery("from MedPolicy where patient_id="+aPatient.id+" and actualDateTo is null order by actualDateFrom").getResultList() ; 
 	var policy = null ;
 	map.put("address_lpu",getDefaultParameterByConfig("address_lpu","___________________",aCtx)) ;
 	map.put("name_lpu",getDefaultParameterByConfig("name_lpu","___________________",aCtx)) ;
@@ -43,7 +44,8 @@ function printInfoByPatient(aPatient,aCtx) {
 	cal.add(java.util.Calendar.DATE,14) ;
 	map.put("dateTo",FORMAT_2.format(cal.getTime())) ;
 	map.put("policyText", policy!=null? policy.text : "") ;
-	var medcard = aPatient.medcard.size()>0?aPatient.medcard.get(0):null ;
+	var medcardL = aCtx.manager.createQuery("from Medcard where person_id="+aPatient.id).getResultList() ;
+	var medcard = medcardL.size()>0?medcardL.get(0):null ;
 	if (medcard!=null) {
 		map.put("card.code",medcard.number) ;
 		map.put("card.cardIndex",medcard.cardIndex!=null?medcard.cardIndex.name:"") ;

@@ -14,7 +14,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form = (DepartmentMedCaseForm)aForm ;
 		DepartmentMedCase dep = (DepartmentMedCase)aEntity ;
-		List<Diagnosis> diags= dep.getDiagnosis() ;
+		List<Diagnosis> diags=aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", dep).getResultList() ; 
 		for (Diagnosis diag:diags) {
 			
 			if (diag.getRegistrationType()!=null && diag.getPriority()!=null) {

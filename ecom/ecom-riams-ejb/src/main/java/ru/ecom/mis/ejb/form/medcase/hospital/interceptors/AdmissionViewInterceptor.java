@@ -33,8 +33,8 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
             form.addDisabledField("statCardNumber");
         }
         
-		if (medCase!=null && medCase.getDiagnosis()!=null) {
-			List<Diagnosis> diagList = medCase.getDiagnosis() ;
+		if (medCase!=null) {
+			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ; 
 			for(Diagnosis diag:diagList) {
 				String regType = diag.getRegistrationType()!=null?diag.getRegistrationType().getCode():"" ;
 				//String prior = diag.getPriority().getCode() ;

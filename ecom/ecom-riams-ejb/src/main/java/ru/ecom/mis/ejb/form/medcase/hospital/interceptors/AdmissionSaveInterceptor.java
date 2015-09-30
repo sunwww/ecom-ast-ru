@@ -90,7 +90,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			if (!adding2is) adding2 = true ;
 			VocDiagnosisRegistrationType vocTypeOrder = aContext.getEntityManager().find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
 			VocDiagnosisRegistrationType vocTypeEnter = aContext.getEntityManager().find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
-			List<Diagnosis> diagList = medCase.getDiagnosis() ;
+			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 			for(Diagnosis diag:diagList){
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, aContext.getEntityManager()) ;
@@ -102,14 +102,14 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				if (!adding1) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, aContext.getEntityManager()) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding2) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aContext.getEntityManager()) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
-				medCase.setDiagnosis(diagList);
+				//medCase.setDiagnosis(diagList);
 			}
 		}
 		

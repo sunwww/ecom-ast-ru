@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,6 +19,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -48,6 +50,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="department")
     }) 
 @Table(schema="SQLUser")
+@EntityListeners(DeleteListener.class)
 public class SurgicalOperation extends BaseEntity {
 	/** Дата операции */
 	@Comment("Дата операции")

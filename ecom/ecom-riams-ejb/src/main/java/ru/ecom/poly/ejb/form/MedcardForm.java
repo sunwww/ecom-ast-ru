@@ -57,29 +57,6 @@ public class MedcardForm extends IdEntityForm {
     public String getRegistrator() {return theRegistrator;}
     public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
 
-    /**Имя */
-    @Comment("Имя")
-    @Persist
-    public String getFirstname() {return theFirstname;}
-    public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
-
-    /** Фамилия */
-    @Comment("Фамилия")
-    @Persist
-    public String getLastname() {return theLastname;}
-    public void setLastname(String aLastname) {theLastname = aLastname;}
-
-    /** Отчество */
-    @Comment("Отчество")
-    @Persist
-    public String getMiddlename() {return theMiddlename;}
-    public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
-
-    /** Дата рождения */
-    @Comment("Дата рождения")
-    @Persist @DateString @DoDateString
-    public String getBirthday() {return theBirthday;}
-    public void setBirthday(String aBirthday) {theBirthday = aBirthday;}
 
     /** Лечебно-профилактическое учреждение */
 	@Comment("Лечебно-профилактическое учреждение")
@@ -94,14 +71,6 @@ public class MedcardForm extends IdEntityForm {
 	public void setCardIndex(Long aCardIndex) {theCardIndex = aCardIndex;}
 
 	/** Катротека */
-	@Comment("Катротека")
-	@Persist
-	public String getCardIndexInfo() {return theCardIndexInfo;}
-	public void setCardIndexInfo(String aCardIndexInfo) {theCardIndexInfo = aCardIndexInfo;}
-
-	/** Катротека */
-	private String theCardIndexInfo;
-	/** Катротека */
 	private Long theCardIndex;
 	/** Лечебно-профилактическое учреждение */
 	private Long theLpu;
@@ -113,14 +82,6 @@ public class MedcardForm extends IdEntityForm {
     private String theDateRegistration;
     /** Регистратор */
     private String theRegistrator;
-    /** Дата рождения */
-    private String theBirthday;
-    /** Отчество */
-    private String theMiddlename;
-    /** Фамилия  */
-    private String theLastname;
-    /** Имя */
-    private String theFirstname;
 
 
 }

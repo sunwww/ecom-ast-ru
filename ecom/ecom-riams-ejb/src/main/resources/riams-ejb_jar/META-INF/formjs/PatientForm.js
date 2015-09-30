@@ -51,8 +51,8 @@ function onPreDelete(aEntityId, aContext) {
 		}
 		
 		if(isErr) throw "Перед удалением необходимо удалить сведения: " + err_mes.substring(2) ;
-		aContext.manager.createNativeQuery("update patientattachedimport set patient_id=null where patient_id="+aEntityId).executeUpdate() ;
-		aContext.manager.createNativeQuery("update patientfond set patient_id=null where patient_id="+aEntityId).executeUpdate() ;
+		aContext.manager.createNativeQuery("update patientattachedimport set patient=null where patient="+aEntityId).executeUpdate() ;
+		aContext.manager.createNativeQuery("update patientfond set patient=null where patient="+aEntityId).executeUpdate() ;
 		aContext.manager.createNativeQuery("update journalpatientfondcheck set removedPatientId='"+aEntityId+"',patient_id=null where patient_id="+aEntityId).executeUpdate() ;
 		aContext.manager.createNativeQuery("update JournalChangePatient set patient_id=null where patient_id="+aEntityId).executeUpdate() ;
 		

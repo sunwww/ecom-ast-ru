@@ -66,22 +66,22 @@ public class HospitalMedCase extends LongMedCase {
 	private Time theTransferTime;
 	/** Дата перевода */
 	private Date theTransferDate;
-	/** Диагнозы */
-	@Comment("Диагнозы")
-	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
+	///** Диагнозы */
+	//@Comment("Диагнозы")
+	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
+	//public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
+	//public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
 
 	/** Внешний идентификатор */
 	@Comment("Внешний идентификатор")
 	public String getExternalId() {return theExternalId;}
 	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
 
-	/** Сообщения об инфекции */
-	@Comment("Сообщения об инфекции")
-	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<PhoneMessage> getMessages() {return theMessages;}
-	public void setMessages(List<PhoneMessage> aNewProperty) {theMessages = aNewProperty;}
+	///** Сообщения об инфекции */
+	//@Comment("Сообщения об инфекции")
+	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
+	//public List<PhoneMessage> getMessages() {return theMessages;}
+	//public void setMessages(List<PhoneMessage> aNewProperty) {theMessages = aNewProperty;}
 
 	/** Дефекты догоспитального этапа */
 	@Comment("Дефекты догоспитального этапа")
@@ -182,11 +182,11 @@ public class HospitalMedCase extends LongMedCase {
 	public Boolean getMedicalAid() {return theMedicalAid;}
 	public void setMedicalAid(Boolean aMedicalAid) {theMedicalAid = aMedicalAid;}
 
-	/** Полисы */
-	@Comment("Полисы")
-	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<MedCaseMedPolicy> getPolicies() {return thePolicies;}
-	public void setPolicies(List<MedCaseMedPolicy> aPolicies) {thePolicies = aPolicies;}
+	///** Полисы */
+	//@Comment("Полисы")
+	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
+	//public List<MedCaseMedPolicy> getPolicies() {return thePolicies;}
+	//public void setPolicies(List<MedCaseMedPolicy> aPolicies) {thePolicies = aPolicies;}
 
 	/** Характер заболевания */
 	@Comment("Характер заболевания")
@@ -478,13 +478,13 @@ public class HospitalMedCase extends LongMedCase {
 	private String theSupplyType;
 	/** Дефекты догоспитального этапа */
 	private VocPreAdmissionDefect thePreAdmissionDefect;
-	/** Сообщения об инфекции */
-	private List<PhoneMessage> theMessages;
+	///** Сообщения об инфекции */
+	//private List<PhoneMessage> theMessages;
 	/** Внешний идентификатор */
 	private String theExternalId;
 
-	/** Диагнозы */
-	private List<Diagnosis> theDiagnosis;
+	///** Диагнозы */
+	//private List<Diagnosis> theDiagnosis;
 
 	/** Рабочая функция направителя */
 	private WorkFunction theOrderWorkFunction;
@@ -494,8 +494,8 @@ public class HospitalMedCase extends LongMedCase {
 	private VocDeathCause theDeathCause;
 	/** Характер заболевания */
 	private OmcQz theIllessCharacter;
-	/** Полисы */
-	private List<MedCaseMedPolicy> thePolicies;
+	///** Полисы */
+	//private List<MedCaseMedPolicy> thePolicies;
 	/** Оказана мед. помощь в приемном отделении */
 	private Boolean theMedicalAid;
 	/** Профиль коек */

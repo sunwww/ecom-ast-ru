@@ -35,6 +35,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(PreDischargeMedCaseSaveInterceptor.class)
 )
 public class PreDischargeMedCaseForm extends DischargeMedCaseForm {
+	/** Причина выписки */
+	@Comment("Причина выписки")
+	@Persist
+	public Long getReasonDischarge() {return theReasonDischarge;}
+	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
+
+	/** Причина выписки */
+	private Long theReasonDischarge;
 
 	/** Время выписки */
 	@Comment("Время выписки")

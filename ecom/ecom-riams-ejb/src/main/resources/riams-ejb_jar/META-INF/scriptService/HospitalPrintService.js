@@ -942,7 +942,7 @@ function printPregHistoryByMC(aCtx, aParams) {
 		}
 	}
 	map.put("pregInspect",pregInspect) ;
-	recordPolicy(medCase.policies);
+	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList());
 	recordPatient(medCase,aCtx);
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
 	return map ;
@@ -965,7 +965,7 @@ function printPregHistory(aCtx, aParams) {
 		}
 	}
 	map.put("pregInspect",pregInspect) ;
-	recordPolicy(medCase.policies);
+	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList());
 	recordPatient(medCase,aCtx);
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
 	return map ;
@@ -1354,7 +1354,7 @@ function printStatCardInfo(aCtx, aParams) {
 		, new java.lang.Long(slsId)) ;
 	checkAllDiagnosis (aCtx, slsId) ;
 	
-	recordPolicy(medCase.policies) ;
+	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList()) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
 	recordAttendant(medCase,aCtx) ;

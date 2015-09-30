@@ -60,7 +60,7 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				VocPriorityDiagnosis vocConcomType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","3") ;
 				VocPriorityDiagnosis vocComplicationType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","4") ;
 				
-				List<Diagnosis> diagList = medCase.getDiagnosis() ;
+				List<Diagnosis> diagList = aManager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 				if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 				for(Diagnosis diag:diagList){
 					if (!adding4) adding4=setDiagnosisByType(false,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, aManager,vocPriorType,form.getClinicalActuity()) ;
@@ -74,34 +74,34 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				if (!adding4) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, aManager,vocPriorType,form.getClinicalActuity()) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding5) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding3) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDateFinish(), form.getConcludingMkb(), medCase, aManager,vocPriorType,form.getConcludingActuity()) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding1) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aManager,vocPriorType,null) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding6) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcomitantDiagnos(), form.getDateFinish(), form.getConcomitantMkb(), medCase, aManager,vocConcomType,null) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
 				if (!adding7) {
 					Diagnosis diag = new Diagnosis();
 					setDiagnosisByType(true,diag, vocTypeConcluding, form.getComplicationDiagnos(), form.getDateFinish(), form.getComplicationMkb(), medCase, aManager,vocComplicationType,null) ;
-					diagList.add(diag);
+					//diagList.add(diag);
 				}
-				medCase.setDiagnosis(diagList);
+				//medCase.setDiagnosis(diagList);
 				
 			}
 		}

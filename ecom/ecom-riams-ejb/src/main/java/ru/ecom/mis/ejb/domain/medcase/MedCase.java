@@ -185,9 +185,9 @@ abstract public class MedCase extends BaseEntity {
 	//public void setDeathCase(DeathCase aDeathCase) {theDeathCase = aDeathCase;	}
 	
 	/**Выписанные рецептурные бланки  */
-    @OneToMany(mappedBy = "medCase", cascade = ALL)
-    public List<PrescriptionBlank> getPrescriptionBlanks() {return thePrescriptionBlanks;}
-    public void setPrescriptionBlanks(List<PrescriptionBlank> aPrescriptionBlanks) { thePrescriptionBlanks = aPrescriptionBlanks; }
+    //@OneToMany(mappedBy = "medCase", cascade = ALL)
+    //public List<PrescriptionBlank> getPrescriptionBlanks() {return thePrescriptionBlanks;}
+    //public void setPrescriptionBlanks(List<PrescriptionBlank> aPrescriptionBlanks) { thePrescriptionBlanks = aPrescriptionBlanks; }
   
 
 	/** Представитель */
@@ -329,7 +329,7 @@ abstract public class MedCase extends BaseEntity {
     ///** Случай смерти */
 	//private DeathCase theDeathCase;
     /**Выписанные рецептурные бланки */
-    private List<PrescriptionBlank> thePrescriptionBlanks;
+    //private List<PrescriptionBlank> ;
     
 	/** Дата операции */
 	@Comment("Дата операции")

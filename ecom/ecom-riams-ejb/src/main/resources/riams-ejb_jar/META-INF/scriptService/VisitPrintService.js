@@ -47,7 +47,7 @@ function printVisits(aCtx, aParams) {
 		var diagPrimary= "";
 		var diagTravm="";
 		var diagTravmMkb = "";
-		var diagnosis = medCase.getDiagnosis() ;
+		var diagnosis = aCtx.manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 		for(var ii=0; ii<diagnosis.size(); ii++) {
 			var diag = diagnosis.get(ii);
 			
@@ -351,7 +351,7 @@ function printVisit(aCtx, aParams) {
 	var diagPrimary= "";
 	var diagTravm="";
 	var diagTravmMkb = "";
-	var diagnosis = visit.getDiagnosis() ;
+	var diagnosis = aCtx.manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", visit).getResultList() ;
 	for(var i=0; i<diagnosis.size(); i++) {
 		var diag = diagnosis.get(i);
 		

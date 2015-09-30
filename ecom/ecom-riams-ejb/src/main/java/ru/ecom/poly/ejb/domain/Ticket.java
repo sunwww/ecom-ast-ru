@@ -227,8 +227,7 @@ public class Ticket extends BaseEntity {
 
     @Transient
     public String getPatientName() {
-        return theMedcard != null ? theMedcard.getLastname() + " " +
-                theMedcard.getFirstname() + " " + theMedcard.getMiddlename() : "";
+        return  "";
     }
 
     @Transient

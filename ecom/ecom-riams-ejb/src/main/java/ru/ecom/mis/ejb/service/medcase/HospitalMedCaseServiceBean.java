@@ -868,7 +868,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,p.middlename as middlename");
     	sql.append(" ,vs.omcCode as vsomccode");
     	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
-    	sql.append(" ,case when p.phone is null or p.phone='' then '-' else p.phone end as phonepatient");
+    	sql.append(" ,case when p.phone is null or p.phone='' then '*' else p.phone end as phonepatient");
     	sql.append(" ,mkb.code as mkbcode");
     	sql.append(" ,vbt.codeF as vbtcodef");
     	sql.append(" ,bf.snilsDoctorDirect263 as wpsnils");
@@ -896,7 +896,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and (sls.emergency or sls.emergency='0') and slo.prevMedCase_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
     	sql.append(" and mkb.code is not null and (hdf.id is null)") ;
     	
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
@@ -1877,7 +1877,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCase);
 		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		List<MedPolicy> listPolicies =new ArrayList<MedPolicy>() ;
-		for (MedCaseMedPolicy mp : hospital.getPolicies()) {
+		List<MedCaseMedPolicy> hospmp = theManager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", hospital).getResultList() ;
+		for (MedCaseMedPolicy mp : hospmp) {
 			listPolicies.add(mp.getPolicies()) ;
 		}
 		return convert(listPolicies);
@@ -1920,7 +1921,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
 	public void addPolicies(long aMedCaseId, long[] aPolicies) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
-		List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
+		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		for (long policyId: aPolicies) {
 			
 			MedPolicy policy= theManager.find(MedPolicy.class, policyId);

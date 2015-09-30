@@ -46,10 +46,10 @@ public abstract class LongMedCase extends MedCase{
 
 
 	/** Случаи нетрудоспособности */
-	@Comment("Случаи нетрудоспособности")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
-	public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
+	//@Comment("Случаи нетрудоспособности")
+	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
+	//public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
+	//public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
 
 	/** Время поступления */
 	@Comment("Время поступления")
@@ -79,8 +79,8 @@ public abstract class LongMedCase extends MedCase{
 	private Time theDischargeTime;
 	/** Время поступления */
 	private Time theEntranceTime;
-	/** Случаи нетрудоспособности */
-	private List<DisabilityCase> theDisabilityCases;
+	///** Случаи нетрудоспособности */
+	//private List<DisabilityCase> theDisabilityCases;
 
 	/** Кто завершил */
 	private WorkFunction theFinishFunction;

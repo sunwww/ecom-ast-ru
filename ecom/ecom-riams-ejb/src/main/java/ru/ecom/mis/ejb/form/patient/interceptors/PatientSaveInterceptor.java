@@ -40,9 +40,9 @@ public class PatientSaveInterceptor implements IFormInterceptor {
 					MedPolicyOmc medPolicyOmc = aContext.getEntityManager().find(MedPolicyOmc.class, policyId) ;
 					//System.out.println("medPolicyOmc="+medPolicyOmc);
 					//patient.setAttachedOmcPolicy(medPolicyOmc);
-					if(patient.getMedPolicies()!=null) {
+					/*if(patient.getMedPolicies()!=null) {
 						patient.getMedPolicies().add(medPolicyOmc);
-					}
+					}*/
 				} catch (Exception e) {
 					throw new IllegalStateException(e.getMessage());
 				}

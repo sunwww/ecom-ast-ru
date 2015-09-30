@@ -9,4 +9,9 @@ function onPreSave(aForm,aEntity, aCtx) {
 }
 function onSave(aForm,aEntity, aCtx) {
 	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisis(aForm.id,aForm.getDischargeEpicrisis(),aCtx.manager) ;
+	if (+aForm.reasonDischarge>0 && aEntity.statisticStub!=null) {
+		var reasonDischarge = getObject(aCtx, aForm.reasonDischarge, Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge);
+		aEntity.statisticStub.setReasonDischarge(reasonDischarge) ;
+		aCtx.manager.persist(aEntity) ;
+	}
 }
