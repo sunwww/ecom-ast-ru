@@ -8,12 +8,25 @@ import java.util.StringTokenizer;
 import javax.persistence.EntityManager;
 
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
  */
 public class EntityVocAllValue implements IAllValue {
 
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
+    	String ret = null;
+        if (aId != null) {
+            for (VocValue value : listAll(aContext)) {
+                if (aId.equals(value.getId())) {
+                    ret = value.getName();
+                }
+            }
+        }
+        return ret;
+    }
     public EntityVocAllValue(String aEntity, String aId, String aProperties, String aSortBy) {
         theId = aId ;
         theNameProperties = aProperties ;

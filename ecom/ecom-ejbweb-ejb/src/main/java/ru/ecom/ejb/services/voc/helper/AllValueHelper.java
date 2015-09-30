@@ -31,7 +31,10 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-        String ret = null;
+    	AllValueContext ctx = new AllValueContext(
+        		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
+    	return theAllValue.getNameById(aId, aVocName, aAdditional, ctx) ;
+        /*String ret = null;
         if (aId != null) {
             for (VocValue value : listAll(aAdditional, aContext)) {
                 if (aId.equals(value.getId())) {
@@ -39,7 +42,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
                 }
             }
         }
-        return ret;
+        return ret;*/
     }
 
     public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {

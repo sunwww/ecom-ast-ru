@@ -2,6 +2,9 @@ package ru.ecom.ejb.services.voc.helper;
 
 import java.util.Collection;
 
+import ru.ecom.ejb.services.voc.VocContext;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
 /**
@@ -10,6 +13,7 @@ import ru.nuzmsh.util.voc.VocValue;
 public interface IAllValue {
 
     Collection<VocValue> listAll(AllValueContext aContext) ;
-
+    
+    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException ;
     void destroy() ;
 }
