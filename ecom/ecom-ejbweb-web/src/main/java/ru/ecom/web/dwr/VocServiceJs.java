@@ -29,21 +29,29 @@ public class VocServiceJs {
     	UserMessage.removeFromSession(aRequest,aIdMessage) ;
     	return true ;
     }
+    public boolean checkEmergencyMessages(String aIds,String aTxt,HttpServletRequest aRequest) throws NamingException {
+    	StringBuilder sqlA = new StringBuilder() ;
+    	sqlA.append("update CustomMessage set readDate=current_date,readtime=current_time") ;
+		sqlA.append(" where id in (").append(aIds).append(")") ;
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	service.executeUpdateNativeSql(sqlA.toString()) ;
+    	return true ;
+    }
     public boolean hiddenMessage(HttpServletRequest aRequest, Long aIdMessage) throws NamingException {
     	ILoginService serviceLogin = Injection.find(aRequest).getService(ILoginService.class) ;
     	serviceLogin.hideMessage(aIdMessage) ;
     	return true ;
     }
-    public String getMessage(HttpServletRequest aRequest) throws NamingException {
+    public String getEmergencyMessages(HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
     	String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
+		sqlA.append("select id,messagetitle,messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
 		sqlA.append(" where recipient='").append(username).append("'") ;
 		sqlA.append(" and readDate is null");
 		sqlA.append(" and (validitydate is null or validitydate>current_date or validitydate=current_date and validitytime>current_time)");
 		sqlA.append(" and isEmergency='1'");
-    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString());
+    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
     	StringBuilder sb = new StringBuilder() ;
     	sb.append("{");
 		sb.append("\"params\":[") ;

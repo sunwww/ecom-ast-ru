@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 import javax.ejb.EJBAccessException;
 import javax.naming.CommunicationException;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,8 @@ import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.messages.UserMessage;
@@ -140,6 +144,9 @@ public class LoginSaveAction extends LoginExitAction {
             
         }
     }
+    
+    
+    
     public static void checkMessage(HttpServletRequest aRequest,String aUsername) throws JspException, NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         ILoginService serviceLogin = Injection.find(aRequest).getService(ILoginService.class) ;
@@ -172,6 +179,7 @@ public class LoginSaveAction extends LoginExitAction {
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ShortProtocol", aRequest)) {
     		StringBuilder sql = new StringBuilder() ;
+    		String cntDays = ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",service); 
     		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
     			sql.append("select")
     			.append(" case when wf.isAdministrator='1' then owp.lastname||' '||owp.firstname||' '||owp.middlename else '' end as lechvr")
@@ -188,7 +196,7 @@ public class LoginSaveAction extends LoginExitAction {
     			.append(" and (wf.isAdministrator='1' or (wf.isAdministrator is null or wf.isAdministrator='0') and slo.ownerFunction_id=wf.id)")
     			.append(" and slo.dtype='DepartmentMedCase'")
     			.append(" and slo.dateFinish is null and slo.transferDate is null")
-    			.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ")
+    			.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-").append(cntDays).append(") ")
     			.append(" group by wf.isAdministrator")
     			.append(" ,owp.lastname,owp.middlename,owp.firstname")
     			.append(" order by owp.lastname,owp.middlename,owp.firstname")
@@ -202,7 +210,7 @@ public class LoginSaveAction extends LoginExitAction {
     			sql.append(" where slo.dateFinish is null ");
     			sql.append(" and slo.dtype='DepartmentMedCase'");
     			sql.append(" and slo.transferDate is null");
-    			sql.append(" and slo.dateStart < current_date-2");
+    			sql.append(" and slo.dateStart < current_date-").append("2");
     			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ") ;
     			sql.append(" group by ml.name");
     			//sql.append(" having max(p.dateRegistration)<current_date-2") ;
@@ -215,9 +223,9 @@ public class LoginSaveAction extends LoginExitAction {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
     			//System.out.println("get id message") ;
-    			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более 2х дней:", res1.toString(), aUsername) ;
+    			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(), aUsername) ;
     			//System.out.println("id="+id) ;
-    			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
+    			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
     		}
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/Hospital", aRequest)) {
@@ -338,7 +346,7 @@ public class LoginSaveAction extends LoginExitAction {
 	    	}
 	    	
     	}
-    	if ( RolesHelper.checkRoles("/Policy/Config/ViewMessages/ReceivedWithoutPolicy", aRequest)) {
+    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ReceivedWithoutPolicy", aRequest)) {
     		StringBuilder sql = new StringBuilder() ;
     		sql.append("select case when dmc.id is not null then ml1.name else ml.name end as mlname, count(distinct hmc.id) ")
 	    		.append(" ,count(distinct case when current_date-hmc.dateStart>3 then hmc.id else null end) ")

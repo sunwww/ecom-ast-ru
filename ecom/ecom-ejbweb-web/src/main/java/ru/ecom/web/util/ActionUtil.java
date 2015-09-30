@@ -306,4 +306,22 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		
 		
 	}
+	
+	public static  String getDefaultParameterByConfig(String aParameter, String aValueDefault, IWebQueryService aService) {
+		List<Object[]> l = aService.executeNativeSqlGetObj("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'");
+		if (l.isEmpty()) {
+			return aValueDefault ;
+		} else {
+			return new StringBuilder().append(l.get(0)[1]).toString() ;
+		}
+	}
+	public static  String getDefaultParameterByConfig(String aParameter, String aValueDefault, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		List<Object[]> l = service.executeNativeSqlGetObj("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'");
+		if (l.isEmpty()) {
+			return aValueDefault ;
+		} else {
+			return new StringBuilder().append(l.get(0)[1]).toString() ;
+		}
+	}
 }
