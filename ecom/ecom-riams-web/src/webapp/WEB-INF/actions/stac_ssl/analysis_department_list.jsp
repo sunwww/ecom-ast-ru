@@ -166,7 +166,8 @@ hmc.id as soDepid,dep.name as depname
     	where diag.medCase_id=hmc.id  
     	and vpd.code='1' and vdrt.code='4'
 		) as diag
-		,count(distinct soDep.id)||'-'||list(to_char(soDep.operationDate,'dd.mm.yyyy')||' '||voDep.name)
+		,count(distinct soDep.id) as cntOper
+		,list(to_char(soDep.operationDate,'dd.mm.yyyy')||' - '||voDep.code||'. '||voDep.name) as operlist
 		
 from MedCase hmc
     left join statisticstub ss on hmc.statisticstub_id=ss.id
@@ -208,23 +209,21 @@ where hmc.DTYPE='HospitalMedCase'
  order by dep.name ,pat.lastname   
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list"
-        viewUrl="entityShortView-stac_surOperation.do"
-         action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
+        viewUrl="entityShortView-stac_ssl.do"
+         action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение выписки" property="2"/>
-            <msh:tableColumn columnName="Отделение, где производилась операция" property="17"/>
-            <msh:tableColumn columnName="№ стат. карты" property="5"/>
-            <msh:tableColumn columnName="ФАМИЛИЯ ИМЯ ОТЧЕСТВО" property="6"/>
-            <msh:tableColumn columnName="Возраст" property="7"/>
-            <msh:tableColumn columnName="Поступил" property="8"/>
-            <msh:tableColumn columnName="Доставлен в стационар" property="9"/>
-            <msh:tableColumn columnName="Кол-во койко дней" property="10"/>
-            <msh:tableColumn columnName="Дата поступления" property="11"/>
-            <msh:tableColumn columnName="Дата выписки" property="12"/>
-            <msh:tableColumn columnName="Дата операции" property="16"/>
-            <msh:tableColumn columnName="Диагноз" property="13"/>
-            <msh:tableColumn columnName="Операции" property="3"/>
-            <msh:tableColumn columnName="Показания" property="17"/>
+            <msh:tableColumn columnName="№ стат. карты" property="3"/>
+            <msh:tableColumn columnName="ФАМИЛИЯ ИМЯ ОТЧЕСТВО" property="4"/>
+            <msh:tableColumn columnName="Возраст" property="5"/>
+            <msh:tableColumn columnName="Поступил" property="6"/>
+            <msh:tableColumn columnName="Доставлен в стационар" property="7"/>
+            <msh:tableColumn columnName="Кол-во койко дней" property="8"/>
+            <msh:tableColumn columnName="Дата поступления" property="9"/>
+            <msh:tableColumn columnName="Дата выписки" property="10"/>
+            <msh:tableColumn columnName="Кол-во операций" property="12"/>
+            <msh:tableColumn columnName="Операции (дата, наименование)" property="13"/>
+            <msh:tableColumn columnName="Диагноз" property="11"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -314,7 +313,7 @@ order by dep.name
             <msh:tableColumn columnName="Операции" property="3"/>
             <msh:tableColumn columnName="До операции" property="14"/>
             <msh:tableColumn columnName="После операции" property="15"/>
-            <msh:tableColumn columnName="Показания" property="17"/>
+            <msh:tableColumn columnName="Показания" property="18"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
