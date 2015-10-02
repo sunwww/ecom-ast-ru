@@ -5096,18 +5096,21 @@ msh.widget.VocValueEditDialog = function(theDialogId, theTitle, theController) {
 }
 
 
-
+var theDefaultTimeOut ;
+var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
 var theDefaultEvt ; 
-function adjustMessage(text) {
-	var MessageObj = document.getElementById('divInstantMessage');
+function adjustMessage(text,aDiv) {
+	var MessageObj = document.getElementById(aDiv);
 	var isThisMozilla = true ;
 	if (isThisMozilla) {var event=theDefaultEvt;}
 	var scroll = getScrollXY() ;
 	MessageObj.innerHTML = text;
+	if (aDiv=="divInstantMessage") {
 		MessageObj.style.top = (scroll[1]+50)+'px' ;
 		MessageObj.style.left = '100px'
-	MessageObj.style.visibility = "visible";
+		MessageObj.style.visibility = "visible";
+	}
 }
 function getScrollXY() {
   var scrOfX = 0, scrOfY = 0;
@@ -5123,16 +5126,20 @@ function getScrollXY() {
   }
   return [ scrOfX, scrOfY ];
 }
-function getDefinition(term,evt){
-	var MessageObj=document.getElementById('divInstantMessage');
+function getDefinition(term,evt,aDiv){
+	if (aDiv==null||aDiv=="") aDiv="divInstantMessage" ;
+	
+	var MessageObj=document.getElementById(aDiv);
+	MessageObj.innerHTML = "Загрузка..." ;
 	var param = term.split("?") ;
 	var query = param[1] ;
-        mshaDoRequest(param[0], query, onResponse1);
+        mshaDoRequest(param[0], query, function () {onResponse1(aDiv)});
     //theDefaultEvt = evt ;
 	
-	MessageObj.innerHTML = "Загрузка..." ;
+	
 	return false;
 }
+
 function goToPage(aPage,aId,aTableCell) {
 	//if (aTableCell==null) aTableCell="" ;
     if (aPage.indexOf('javascript:')!=-1) {
@@ -5159,20 +5166,20 @@ function goToPage(aPage,aId,aTableCell) {
     	}
     }
 }
-function onResponse1() {
+function onResponse1(aDiv) {
 	
     var aResponse = theMshaHttpRequest;
     if (theMshaHttpRequest.readyState == 4) {
         //alert(theMshaHttpRequest.status) ;
-        var MessageObj = document.getElementById('divInstantMessage');
+        var MessageObj = document.getElementById(aDiv);
         theIsSearching = false;
         if (theMshaHttpRequest.status == 200) {
             
             //MessageObj.innerHTML = ;
             
-            adjustMessage(aResponse.responseText);
+            adjustMessage(aResponse.responseText,aDiv);
         } else {
-        	adjustMessage(aResponse.status + " " + aResponse.statusText+" "+aResponse.responseText);
+        	adjustMessage(aResponse.status + " " + aResponse.statusText+" "+aResponse.responseText,aDiv);
         }
     } else {
 
@@ -5186,14 +5193,39 @@ function hideMessage(){
 }
 var funcemergencymessage = {
 		func: function() {
-			VocService.getMessage( {
+			clearTimeout(theDefaultTimeOut) ;
+			VocService.getEmergencyMessages( {
 		        callback: function(aName) {
-		        	alert(aName) ;
-		        	hideEmergencyUserMessage(aName) ;
-		        	setTimeout(120000,funcemergencymessage.func) ;
+		        	
+		        	viewEmergencyUserMessage(aName) ;
+		        	
 		        }
 		    } ) ;
 		}
+}
+function viewEmergencyUserMessage(aJsonId) {
+	//alert(aJsonId) ;
+	var fldJson = JSON.parse(aJsonId) ;
+	//alert(fldJson) ;
+	var cnt = fldJson.params.length ;
+	var txt="";var ids = "" ;
+	//alert(cnt) ;
+	if (cnt>0) {
+	    for (var ind=0;ind<cnt;ind++) {
+	    	var param = fldJson.params[ind] ;
+	    	txt += param.messageTitle+" "+param.messageText+" от "+param.infoReceipt+".\n" ;
+	    	if (ids!="") ids += "," ; ids+=param.id ;
+	    }
+	    
+	    VocService.checkEmergencyMessages(ids,txt, {
+	        callback: function(aName) {
+	        	alert(txt) ;
+	        	--theDefaultTimeOutCnt ;
+	        	if (theDefaultTimeOutCnt>0) theDefaultTimeOut = setTimeout(funcemergencymessage.func,180000) ;
+	        }}
+	    ) ;
+	    
+	}
 }
 function hideUserMessage(aId) {
 	VocService.hiddenMessage(aId, {
