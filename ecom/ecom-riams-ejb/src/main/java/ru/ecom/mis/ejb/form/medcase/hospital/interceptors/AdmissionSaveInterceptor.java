@@ -174,7 +174,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			if (aDiag.getRegistrationType()==null) aDiag.setRegistrationType(aType);
 			resault = true ;
 		}
-		
+		aManager.persist(aDiag) ;
 		return resault ;
 		
 	}
