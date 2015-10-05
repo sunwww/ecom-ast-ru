@@ -457,13 +457,13 @@ public class PrescriptionServiceJs {
 		
 		return ret ;
 	}
-	public String getTemplateByService(Long aSmoId, Long aService, String aFunctionGo, HttpServletRequest aRequest) throws NamingException {
+	public String getTemplateByService(Long aSmoId,Long aPrescriptId, Long aService, String aFunctionGo, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder ret = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		Long aProtocolId = null ;
 		Collection<WebQueryResult> list = null ;
-		if (aSmoId!=null) { 
+		if (aSmoId!=null && !aSmoId.equals(Long.valueOf(0))) { 
 			list = service.executeNativeSql("select id from diary where medcase_id="+aSmoId) ;
 		}
 		if (list!=null && !list.isEmpty()) {
@@ -512,7 +512,7 @@ public class PrescriptionServiceJs {
 					}
 					ret.append("<tr>") ;
 					ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';").append(aFunctionGo).append("('")
-					.append(aSmoId).append("','").append(aService)
+					.append(aSmoId).append("','").append(aPrescriptId).append("','").append(aService)
 					.append("','").append(wqr.get2())
 					.append("','").append(aProtocolId!=null?aProtocolId:"")
 					.append("','").append(wqr.get3())
@@ -532,6 +532,7 @@ public class PrescriptionServiceJs {
 	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException, JSONException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		
 		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username) ;
 	}
 	public String checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
@@ -561,11 +562,13 @@ public class PrescriptionServiceJs {
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "" ;
 	}
-	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> lwqr = null ;
 		
+		Long wfId = Long.valueOf(0) ;
+		String wfName = "" ;
 		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
@@ -591,6 +594,7 @@ public class PrescriptionServiceJs {
 			sql.append(" where d.id='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
+			
 		} 
 		if (lwqr==null || lwqr.isEmpty()) {
 			sql = new StringBuilder() ;
@@ -614,13 +618,28 @@ public class PrescriptionServiceJs {
 			sql.append(" where tp.id='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
+		} else {
+			sql = new StringBuilder() ;
+			sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where d.id="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
+			Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
+			if (!lwf.isEmpty()) {
+				WebQueryResult wqr = lwf.iterator().next() ;
+				wfId = ConvertSql.parseLong(wqr.get1()) ;
+				wfName = ""+wqr.get2() ;
+			}
 		}
 			
 			
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 			sb.append("{");
-			//sb.append("\"paramCount\":\""+lwqr.size()+"\",") ;
+			sb.append("\"workFunction\":\""+wfId+"\",") ;
+			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
+			if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
+				sb.append("\"isdoctoredit\":\"1\",") ;
+			} else {
+				sb.append("\"isdoctoredit\":\"0\",") ;
+			}
 			sb.append("\"params\":[") ;
 			boolean firstPassed = false ;
 			boolean firstError = false ;
