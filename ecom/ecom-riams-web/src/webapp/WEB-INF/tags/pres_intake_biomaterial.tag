@@ -66,10 +66,10 @@
 						
 		  					if (cntdecimal>0 ) {
 		  						if (v.length==1) {
-		  							errorutil.ShowFieldError($('param'+par.idEnter),"1Должна быть 1 точка или запятая") ;
+		  							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
 		  							isError= true ;
 		  						} else if (v.length>1 && !isNaN(v[2])) {
-		 							errorutil.ShowFieldError($('param'+par.idEnter),"2Должна быть 1 точка или запятая") ;
+		 							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
 		 							isError= true ;
 								}
 		  					} else {
@@ -82,7 +82,17 @@
 				
 				
 			}
-			var str = JSON.stringify(fldJson)
+			if (+fldJson.isdoctoredit==0) {
+				if (+$('paramWF').value==0) {
+					isError=true ;
+					errorutil.ShowFieldError($('paramWFName'),"Обязательное поле") ;
+				} else {
+					fldJson.workFunction=$('paramWF').value
+				}
+				
+			}
+			var str = JSON.stringify(fldJson);
+			//alert(str) ;
 			if (!isError) PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, {
 				callback: function (aResult) {
 					window.document.location.reload();
@@ -131,7 +141,7 @@
      }
      
      function go${name}Service(aSmoId,aPrescriptId,aServiceId,aFunctionSave) {
-			PrescriptionService.getTemplateByService(aSmoId,aServiceId,"enter${name}Result", {
+			PrescriptionService.getTemplateByService(aSmoId,aPrescriptId,aServiceId,"enter${name}Result","save${name}Result", {
 					callback: function(aResult) {
 						//alert(aResult) ;
 						var n = +aResult.substring(0,1) ; 
@@ -161,6 +171,16 @@
 				        fldJson = JSON.parse(aResult) ;
 				        var cnt = +fldJson.params.length ;
 				        var txt = "<form><table id='tblParamProtocol'>" ;
+				        if (+fldJson.isdoctoredit==0) {
+				        	
+				        	var p = "WF" ;var pid=fldJson.workFunction;var pn =fldJson.workFunctionName ;
+				        	var param = {"id":p,"idEnter":p+"Name","valueVoc":pn,"value":pid
+				        			,"vocname":"workFunction","vocid":""
+				        			,"shortname":"Специалист","name":"Специалист","type":"2" ,"unitname":""
+				        	};
+				        	txt += ${name}getFieldTxtByParam(param) ;
+				        	
+				        }
 				        for (var ind=0;ind<cnt;ind++) {
 				        	var param = fldJson.params[ind] ;
 				        	txt += ${name}getFieldTxtByParam(param) ;
@@ -172,7 +192,24 @@
 				       	+ "<input type=\"button\" value=\"Отмена\" onclick=\"cancelBioIntakeInfo()\">";
 		             	theBioIntakeInfoDialog.show() ;
 		             	//alert(aResult) ;
-		             if (fldJson.errors.length==0) { 
+		             	
+		             if (fldJson.errors.length==0) {
+		            	 if (+fldJson.isdoctoredit==0) {
+		            		 var p = "WF" ;var pid=fldJson.workFunction;var pn =fldJson.workFunctionName ; 
+				        		eval("param"+p+"Autocomlete = new msh_autocomplete.Autocomplete() ;");
+				        		eval("param"+p+"Autocomlete.setUrl('simpleVocAutocomplete/workFunction') ;");
+				        		eval("param"+p+"Autocomlete.setIdFieldId('param"+p+"') ;");
+				        		eval("param"+p+"Autocomlete.setNameFieldId('param"+p+"Name') ;");
+				        		eval("param"+p+"Autocomlete.setDivId('param"+p+"Div') ;");
+				        		eval("param"+p+"Autocomlete.setVocKey('workFunction') ;");
+				        		eval("param"+p+"Autocomlete.setVocTitle('"+pn+"') ;");
+				        		eval("param"+p+"Autocomlete.build() ;");
+				        		//eval("param"+p+"Autocomlete.setParentId('"+pid+"') ;");
+				        		$("param"+p+"Name").select() ;
+				        		$("param"+p+"Name").focus() ;
+				        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
+				        		
+		            	 }
 				        for (var ind=0;ind<fldJson.params.length;ind++) {
 				        	var param1 = fldJson.params[ind] ;
 				        	
@@ -181,8 +218,7 @@
 				        		eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
 				        	} else {
 				        		eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
-				        		$("param"+fldJson.params[0].idEnter).select() ;
-				        		$("param"+fldJson.params[0].idEnter).focus() ;
+				        		
 				        	}
 				        	if (+param1.type==2) {
 				        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
@@ -203,6 +239,18 @@
 		 				$('BioIntakeRootPane').innerHTML =txt 
 				       	+ "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
 				     }
+		             
+		             if (+fldJson.isdoctoredit>0) {
+
+	            		 $("param"+fldJson.params[0].idEnter).select() ;
+			        	 $("param"+fldJson.params[0].idEnter).focus() ;
+	            	 } else {
+	            		 $("param"+p+"Name").select() ;
+			        		$("param"+p+"Name").focus() ;
+			        		$('param'+p+'Name').className="autocomplete horizontalFill required" ;
+			        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
+			        		
+	            	 }
 				}
 			}) ;
 		}
