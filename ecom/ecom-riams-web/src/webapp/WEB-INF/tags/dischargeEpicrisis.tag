@@ -79,7 +79,6 @@
 		        </msh:row>
 		        <tr onclick='show${name}DiariesDiv()'>
 		            <msh:checkBox property="${name}Diaries" label="Дневники" fieldColSpan="2" />
-		           <%--  <td><input type='button' onclick="show${name}DiariesDiv"></td> --%>
 		        <msh:row><td colspan="5">
 		        <div id='${name}diariesDiv' style='display:none'>
 		        </div></td>
@@ -106,10 +105,11 @@
     	 HospitalMedCaseService.getDiariesByHospital($('id').value, {
     		 callback: function (aResult) {
     			 var p = '';
+    			 if (aResult!=null&&aResult!='') {
     			 var r=aResult.split('@');
     			 
     			 if (r.length>0) {
-    				 p+='<table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
+    				 p+='<!DOCTYPE html><table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
     				 
     				 for (var i=0;i<r.length;i++){
     				 var text = r[i].split('#');
@@ -122,12 +122,16 @@
     				 p+='</tbody></table>'
     			 }
     			 
-    			 $('${name}diariesDiv').style='display:block';
-    			 $('${name}diariesDiv').innerHTML=p;	 
+    			 
+    		 } else {
+    			 p='Данных не найдено.';
+    		 }
+    		 $('${name}diariesDiv').style.display='block';
+			 $('${name}diariesDiv').innerHTML=p;
     		 }
     	 });
      } else {
-		 $('${name}diariesDiv').style='display:none';
+		 $('${name}diariesDiv').style.display='none';
      }
      }
      // Показать
