@@ -29,7 +29,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/MedPolicy")
 public class MedPolicyForm extends IdEntityForm {
 
-    /** Серия */
+    /** Новый тип полиса) */
+	@Comment("Новый тип полиса)")
+	public Long getChangePolicyType() {return theChangePolicyType;}
+	public void setChangePolicyType(Long aChangePolicyType) {theChangePolicyType = aChangePolicyType;}
+	/** Новый тип полиса) */
+	private Long theChangePolicyType;
+
+	/** Серия */
     @Comment("Серия")
     @Persist @DoUpperCase
     public String getSeries() { return theSeries ; }

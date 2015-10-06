@@ -41,6 +41,13 @@
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" guid="fb7219ed-1b0d-4de6-98b2-844686275c71" />
       </msh:panel>
+      <msh:section>
+            <div id='changeType' style='display:none'>
+      <msh:separator label="Изменить тип полиса" colSpan="10"></msh:separator>
+      <msh:autoComplete label="Новый тип" vocName="vocMedPolicy" property="changePolicyType" fieldColSpan="10" size="50" />
+      <input type='button' value="Изменить тип"  onclick="changePolicyTypef()">
+      </div>
+            </msh:section>
         <msh:ifFormTypeIsView formName="mis_medPolicyDmcForeignForm">
         	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/View">
         		<ecom:webQuery name="list_sls" nativeSql="select m.id ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY')||'г.' ,d.name as depname ,ss.code as sscode , m.dateStart as mdateStart,m.dateFinish as mdateFinish from medCase_medPolicy as mp left join MedCase as m on m.id=mp.medcase_id left join medcase as h on h.id=m.parent_id  left join statisticstub as ss on ss.id=m.statisticstub_id  left join bedfund as bf on bf.id=m.bedfund_id  left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id  left join vocbedtype as vbt on vbt.id=bf.bedtype_id  left join mislpu as d on d.id=m.department_id  left join patient as p on p.id=m.patient_id  where mp.policies_id='${param.id}' and m.DTYPE='HospitalMedCase'  order by m.dateStart"/>
@@ -66,6 +73,9 @@
       <hr />
       <msh:ifFormTypeAreViewOrEdit formName="mis_medPolicyDmcForeignForm" guid="e768d0a9-7ac0-47b9-adfe-595effd37a2b">
         <msh:sideLink roles="/Policy/Mis/MedPolicy/DmcForeign/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_medPolicyDmcForeign" name="Удалить" confirm="Удалить полис?" guid="a4553ac9-c47f-4c90-97b2-29fa2926f00b" />
+      <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForeignForm">
+	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/DmcForeign/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+      </msh:ifFormTypeIsNotView>
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
   </tiles:put>
@@ -74,6 +84,7 @@
   </tiles:put>
     <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForeignForm">
+        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>	
     	<script type="text/javascript">
     		
     	companyAutocomplete.addOnChangeCallback(function() {
@@ -88,6 +99,20 @@
 		      	 	$('insuranceCompanyName').value=text;
 	      	 	//}
 	      	 }
+	      	 
+	      	function changePolicyTypef() {
+	    		 if ($('changePolicyType').value!=null&&$('changePolicyType').value!=''){
+	    		PatientService.changeMedPolicyType($('id').value, $('changePolicyType').value,{
+	    			callback: function(){
+	    				alert ('Тип полиса изменен!');
+	    				document.location='entityView-mis_patient.do?id='+$('patient').value;
+	    			}});
+	    		} else {
+	    			alert ('Укажите тип полиса');
+	    		} 
+	    		
+	    		
+	    	}
     	</script>
     </msh:ifFormTypeIsNotView>
   

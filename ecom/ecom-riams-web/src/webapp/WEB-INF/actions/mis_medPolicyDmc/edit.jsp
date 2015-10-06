@@ -31,7 +31,13 @@
 
                 <msh:submitCancelButtonsRow colSpan="2"/>
             </msh:panel>
-            
+            <msh:section>
+            <div id='changeType' style='display:none'>
+      <msh:separator label="Изменить тип полиса" colSpan="10"></msh:separator>
+      <msh:autoComplete label="Новый тип" vocName="vocMedPolicy" property="changePolicyType" fieldColSpan="10" size="50" />
+      <input type='button' value="Изменить тип"  onclick="changePolicyTypef()">
+      </div>
+            </msh:section>
             
 
         </msh:form>
@@ -66,6 +72,9 @@
             <msh:ifFormTypeAreViewOrEdit formName="mis_medPolicyDmcForm">
                 <msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Delete" key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_medPolicyDmc" name="Удалить"
                               confirm="Удалить полис?"/>
+                <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForm">
+	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+      </msh:ifFormTypeIsNotView>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>
@@ -73,6 +82,26 @@
     <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_medPolicyDmcForm"/>
     </tiles:put>
+  <tiles:put type="string" name="javascript">
 
+	    <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForm">    
+	        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>	
+	    	<script type="text/javascript">
+	    	
+	        function changePolicyTypef() {
+	    		 if ($('changePolicyType').value!=null&&$('changePolicyType').value!=''){
+	    		PatientService.changeMedPolicyType($('id').value, $('changePolicyType').value,{
+	    			callback: function(){
+	    				alert ('Тип полиса изменен!');
+	    				document.location='entityView-mis_patient.do?id='+$('patient').value;
+	    			}});
+	    		} else {
+	    			alert ('Укажите тип полиса');
+	    		} 
+	    	}
+	    	</script>
+	    </msh:ifFormTypeIsNotView>
+
+    </tiles:put>
 
 </tiles:insert>

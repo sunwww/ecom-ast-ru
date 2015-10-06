@@ -10,6 +10,7 @@
     <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     	<msh:separator label="Проверка пациента по базе фонда" colSpan="4"/>
     	<msh:link action="javascript:checkPatientByPolicy()">Проверка по полису</msh:link>
+    	
     </msh:ifInRole>	
 
         <msh:form action="entityParentSaveGoParentView-mis_medPolicyOmc.do" defaultField="typeName">
@@ -53,8 +54,17 @@
                 	<msh:textField viewOnlyField="true" property="confirmationDate" label="Дата"/>
                 	<msh:autoComplete property="confirmationType" label="Тип" vocName="vocPolicyConfirmationType" horizontalFill="true"/>
                 </msh:row>
+                 
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
+            
+	<msh:section>
+    	<div id='changeType' style='display:none'>
+     		<msh:separator label="Изменить тип полиса" colSpan="10"></msh:separator>
+      		<msh:autoComplete label="Новый тип" vocName="vocMedPolicy" property="changePolicyType" fieldColSpan="10" size="50" />
+      		<input type='button' value="Изменить тип"  onclick="changePolicyTypef()">
+      	</div>
+	</msh:section>
             
             
 
@@ -94,6 +104,9 @@
 	    			action="/stac_receivedWithoutPolicy_list" name="По госпитализациям без прикрепленных полисов"
 	    			styleId="stac_receivedWithoutPolicy"
 	    		/>
+	    		<msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForm">
+	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+      </msh:ifFormTypeIsNotView>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>
@@ -102,10 +115,26 @@
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_medPolicyOmcForm"/>
     </tiles:put>
     <tiles:put type="string" name="javascript">
-	    <msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForm">
-	    	<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+
+	    <msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForm">    
+	        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>	
 	    	<script type="text/javascript">
-	    		function isRequeredRZ() {
+	    	
+	        function changePolicyTypef() {
+	    		 if ($('changePolicyType').value!=null&&$('changePolicyType').value!=''){
+	    		PatientService.changeMedPolicyType($('id').value, $('changePolicyType').value,{
+	    			callback: function(){
+	    				alert ('Тип полиса изменен!');
+	    				document.location='entityView-mis_patient.do?id='+$('patient').value;
+	    			}});
+	    		} else {
+	    			alert ('Укажите тип полиса');
+	    		} 
+	    		
+	    		
+	    	}
+	    	
+	    	function isRequeredRZ() {
 	    			PatientService.getCodeByMedPolicyOmc($('type').value, {
 	                    callback: function(aResult) {
 	                 	  if (+aResult==3) {
@@ -116,11 +145,13 @@
 	                    }
 	 	        	});
 	    		}
+	    	
+	    	
+	    	
 	    		isRequeredRZ() ;
 	    		typeAutocomplete.addOnChangeCallback(function() {isRequeredRZ() ;}) ;
 	    	</script>
 	    </msh:ifFormTypeIsNotView>
-    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
     	function checkPatientByPolicy(a) {

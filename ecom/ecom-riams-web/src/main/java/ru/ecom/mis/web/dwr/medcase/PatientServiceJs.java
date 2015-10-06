@@ -20,6 +20,11 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
+	
+	public void changeMedPolicyType(Long aPolicyId, Long aNewPolicyTypeId, HttpServletRequest aRequest) throws NamingException {
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
+		service.changeMedPolicyType(aPolicyId, aNewPolicyTypeId);
+	}
 	public boolean updateDataByFondAutomatic(String aPatientFondId, String aCheckId
 			, boolean isUpdatePatient, boolean isUpdateDocument, boolean isUpdatePolicy, boolean isUpdateAttachment
 			, HttpServletRequest aRequest) throws NamingException {
