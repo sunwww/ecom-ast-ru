@@ -1350,9 +1350,10 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 }
 function printStatCardInfo(aCtx, aParams) {
 	var slsId=aParams.get("id") ;
+	var check=aParams.get("check") ;
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
-	checkAllDiagnosis (aCtx, slsId) ;
+	if (+check>0) checkAllDiagnosis (aCtx, slsId) ;
 	
 	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList()) ;
 	recordPatient(medCase,aCtx) ;
