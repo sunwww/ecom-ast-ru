@@ -109,6 +109,10 @@
             <forward name="success" path="/entityParentList-{1}.do" redirect="true"/>
         </action>
 
+        <action path="/entityParentSaveGoEdit-*" type='ru.ecom.web.actions.entity.SaveAction'
+            scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
+            <forward name="success" path="/entityParentEdit-{1}.do" redirect="true"/>
+        </action>
         <action path="/entityParentSaveGoView-*" type='ru.ecom.web.actions.entity.SaveAction'
             scope='request' validate="true" name="{1}Form" input="/WEB-INF/actions/{1}/edit.jsp">
             <forward name="success" path="/entityParentView-{1}.do" redirect="true"/>
