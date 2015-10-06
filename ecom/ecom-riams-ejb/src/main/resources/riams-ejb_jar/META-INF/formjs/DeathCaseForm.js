@@ -7,6 +7,9 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var patient = aEntity.getPatient();
+	patient.setDeathDate(aEntity.getDeathDate());
+	aCtx.manager.persist(patient) ;
 }
 /**
  * Перед сохранением
@@ -17,8 +20,6 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var patient = aEntity.getPatient();
-	if (patient.getDeathDate()!= null) {
-	} else {
-		patient.setDeathDate(aEntity.getDeathDate());
-	}
+	patient.setDeathDate(aEntity.getDeathDate());
+	aCtx.manager.persist(patient) ;
 }
