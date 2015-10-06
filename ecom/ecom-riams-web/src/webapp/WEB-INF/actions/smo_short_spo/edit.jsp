@@ -351,7 +351,29 @@ order by vis.dateStart
       		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDates()' value='Удалить' />";
       		createOtherDates();
       	}
+      	function setDiagnosisText(aFieldMkb,aFieldText) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				$(aFieldText).value=val.substring(ind+1) ;
+  			}
+  		}
       	
+      	idc10Autocomplete.addOnChangeCallback(function() {
+    		setDiagnosisText('idc10','concludingDiagnos') ;
+    		if (($('idc10Name').value!='') &&($('idc10Name').value.substring(0,1)=='Z')) {
+	      	 	TicketService.findProvReason($('visitReason').value,{
+	      	 		callback: function(aResult) {
+	      	 			var ind = aResult.indexOf('#') ;
+	      	 			if (ind!=-1) {
+	      	 				$('visitReason').value=aResult.substring(0,ind) ;
+	      	 				$('visitReasonName').value=aResult.substring(ind+1) ;
+	      	 			}
+	      	 		}
+	      	 	}) ;
+	      	 }
+	    });
     </script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>
