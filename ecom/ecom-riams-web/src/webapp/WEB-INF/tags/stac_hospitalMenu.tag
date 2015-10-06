@@ -125,7 +125,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066All" 
     	name="Печать стат.карты выбывшего из стационара" params="id"  
-    	action='/print-066_all.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
+    	action='/print-066_all.do?m=printStatCardInfo&s=HospitalPrintService&check=1' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard033" 
     	name="Печать истории болезни и стат.карты выбывшего из стационара" params="id"  
