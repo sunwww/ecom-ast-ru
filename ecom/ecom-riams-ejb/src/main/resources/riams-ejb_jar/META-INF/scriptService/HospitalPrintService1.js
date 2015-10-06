@@ -1,4 +1,18 @@
 var map = new java.util.HashMap() ;
+function checkAllDiagnosis (aCtx, aSlsId) {
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
+		var sql = "select sls.id,slo.id from medcase sls "
+		 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
+		 +" left join mislpu ml on ml.id=slo.department_id"
+		 +" left join diagnosis d on slo.id = d.medcase_id"
+		 +" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id"
+		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
+		 +" group by sls.id,slo.id	"
+		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and d.idc10_id is not null then 1 else null end)=0  "
+		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+		if (list.size()>0) {throw "Не полностью заполнены данные по диагнозам в отделениях!!!" ;}	
+	}
+}
 function printStatCards(aCtx, aParams) {
 	
 	var ids1 = aParams.get("id") ;
@@ -27,7 +41,7 @@ function printStatCards(aCtx, aParams) {
 		var id = id1.substring(indlast+1) ;
 		//throw indlast+"--"+id1 +"----"+id;
 		
-		
+		checkAllDiagnosis (aCtx, id) ;
 		var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 				, new java.lang.Long(id)) ;
 		//medCase.setPrintDate(curDate) ;
