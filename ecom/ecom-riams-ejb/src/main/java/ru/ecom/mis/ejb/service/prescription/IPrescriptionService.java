@@ -8,7 +8,7 @@ import org.json.JSONException;
  * @author STkacheva
  */
 public interface IPrescriptionService {
-	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams,String aUsername) throws JSONException  ;
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername) throws JSONException  ;
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) ;
 	
 	/**

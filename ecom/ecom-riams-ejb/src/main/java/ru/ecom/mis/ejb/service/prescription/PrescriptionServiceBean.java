@@ -28,6 +28,7 @@ import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.expomc.ejb.services.registry.ExcelTemplateAllValueVoc;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
@@ -53,9 +54,12 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams,String aUsername) throws JSONException {
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername) throws JSONException {
 		Protocol d =null;
 		//if (aProtocolId!=null )) {
+		JSONObject obj = new JSONObject(aParams) ;
+		String wf = String.valueOf(obj.get("workFunction"));
+		System.out.print("workfunction================"+wf);
 		StringBuilder sql = new StringBuilder() ;
 		Visit m = theManager.find(Visit.class, aSmoId) ;
 		if (m!=null) {
@@ -77,7 +81,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
 		}
 		} else {
-			Long smo = checkLabAnalyzed(aPrescriptId,aUsername) ;
+			Long smo = checkLabAnalyzed(aPrescriptId,Long.valueOf(wf),aUsername) ;
 			m = theManager.find(Visit.class, smo) ;
 		}
 		if (d == null) {
@@ -86,7 +90,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			theManager.persist(d) ;
 		}
 		//}
-		JSONObject obj = new JSONObject(aParams) ;
+		
 		JSONArray params = obj.getJSONArray("params");
 		StringBuilder sb = new StringBuilder() ;
 		for (int i = 0; i < params.length(); i++) {
@@ -135,11 +139,17 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		d.setRecord(sb.toString()) ;
 		theManager.persist(d) ;
-		m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
+		if (wf!=null && !wf.equals("0")) {
+			WorkFunction wfo = theManager.find(WorkFunction.class, Long.valueOf(wf)) ;
+			m.setWorkFunctionExecute(wfo) ;
+		} else {
+			m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
+			theManager.persist(m) ;
+		}
 		theManager.persist(m) ;
 		return "" ;
 	}
-	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
+	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
 		sql.append(" when slo.dtype='Visit' then sls.id else slo.id end as pmo") ;
@@ -149,43 +159,54 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		sql.append(" from prescription p ") ;
 		sql.append(" left join PrescriptionList pl on pl.id=p.prescriptionlist_id left join medcase slo on slo.id=pl.medcase_id left join medcase sls on sls.id=slo.parent_id left join patient pat on pat.id=slo.patient_id where p.id=").append(aPrescriptId) ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (aWorkFunctionId == null) {
+			List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
+			if ( wf.isEmpty()) {
+				return null ;
+			}
+			aWorkFunctionId = ConvertSql.parseLong(wf.get(0)) ;
+		}
+		if (list.isEmpty()) return null ;
+		Object[] objs = list.get(0) ;
+		Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
+		Patient pat = theManager.find(Patient.class, ConvertSql.parseLong(objs[0])) ;
+		MedCase mc = theManager.find(MedCase.class,ConvertSql.parseLong(objs[1])) ;
+		WorkFunction ps = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[2])) ;
+		WorkFunction pc = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[3])) ;
+		WorkFunction wfCur = theManager.find(WorkFunction.class, aWorkFunctionId) ;
+		MedService ms = theManager.find(MedService.class, ConvertSql.parseLong(objs[4])) ;
+		long date = new java.util.Date().getTime() ;
+		Visit vis = new Visit() ;
+		vis.setParent(mc) ;
+		vis.setOrderWorkFunction(ps) ;
+		vis.setWorkFunctionPlan(pc) ;
+		vis.setPatient(pat) ;
+		vis.setCreateDate(new java.sql.Date(date)) ;
+		vis.setCreateTime(new java.sql.Time(date)) ;
+		vis.setUsername(aUsername) ;
+		ServiceMedCase smc = new ServiceMedCase() ;
+		smc.setPatient(pat) ;
+		smc.setMedService(ms) ;
+		smc.setParent(vis) ;
+		smc.setOrderWorkFunction(ps) ;
+		smc.setWorkFunctionPlan(pc) ;
+		smc.setWorkFunctionExecute(wfCur) ;
+		smc.setCreateDate(new java.sql.Date(date)) ;
+		smc.setCreateTime(new java.sql.Time(date)) ;
+		smc.setUsername(aUsername) ;
+		pres.setMedCase(vis) ;
+		theManager.persist(vis) ;
+		theManager.persist(smc) ;
+		theManager.persist(pres) ;
+		//theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
+		return  vis.getId();
+	}
+	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
 		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
-		if (list.isEmpty() || wf.isEmpty()) {
+		if ( wf.isEmpty()) {
 			return null ;
 		} else {
-			Object[] objs = list.get(0) ;
-			Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
-			Patient pat = theManager.find(Patient.class, ConvertSql.parseLong(objs[0])) ;
-			MedCase mc = theManager.find(MedCase.class,ConvertSql.parseLong(objs[1])) ;
-			WorkFunction ps = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[2])) ;
-			WorkFunction pc = theManager.find(WorkFunction.class, ConvertSql.parseLong(objs[3])) ;
-			WorkFunction wfCur = theManager.find(WorkFunction.class, ConvertSql.parseLong(wf.get(0))) ;
-			MedService ms = theManager.find(MedService.class, ConvertSql.parseLong(objs[4])) ;
-			long date = new java.util.Date().getTime() ;
-			Visit vis = new Visit() ;
-			vis.setParent(mc) ;
-			vis.setOrderWorkFunction(ps) ;
-			vis.setWorkFunctionPlan(pc) ;
-			vis.setPatient(pat) ;
-			vis.setCreateDate(new java.sql.Date(date)) ;
-			vis.setCreateTime(new java.sql.Time(date)) ;
-			vis.setUsername(aUsername) ;
-			ServiceMedCase smc = new ServiceMedCase() ;
-			smc.setPatient(pat) ;
-			smc.setMedService(ms) ;
-			smc.setParent(vis) ;
-			smc.setOrderWorkFunction(ps) ;
-			smc.setWorkFunctionPlan(pc) ;
-			smc.setWorkFunctionExecute(wfCur) ;
-			smc.setCreateDate(new java.sql.Date(date)) ;
-			smc.setCreateTime(new java.sql.Time(date)) ;
-			smc.setUsername(aUsername) ;
-			pres.setMedCase(vis) ;
-			theManager.persist(vis) ;
-			theManager.persist(smc) ;
-			theManager.persist(pres) ;
-			//theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
-			return  vis.getId();
+			return checkLabAnalyzed(aPrescriptId,ConvertSql.parseLong(wf.get(0)), aUsername) ;
 		}
 		
 		
