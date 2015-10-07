@@ -92,7 +92,7 @@ function onPreSave(aForm, aVisit, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
-	aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
+	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	
 	checks(aCtx,aForm) ;
 	var visit = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aForm.id))  ;
