@@ -457,7 +457,7 @@ public class PrescriptionServiceJs {
 		
 		return ret ;
 	}
-	public String getTemplateByService(Long aSmoId,Long aPrescriptId, Long aService, String aFunctionGo, HttpServletRequest aRequest) throws NamingException {
+	public String getTemplateByService(Long aSmoId,Long aPrescriptId, Long aService, String aFunctionGo,String aFunctionSave, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder ret = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
@@ -516,6 +516,7 @@ public class PrescriptionServiceJs {
 					.append("','").append(wqr.get2())
 					.append("','").append(aProtocolId!=null?aProtocolId:"")
 					.append("','").append(wqr.get3())
+					.append("','").append(aFunctionSave)
 					.append("')\" colspan=\"4\">");
 		    		ret.append("	<input name=\"typeTemplate\" id=\"typeTemplate\" value=\"").append(wqr.get1()).append("#").append(wqr.get3()).append("#").append(aSmoId).append("#").append(wqr.get5()).append("\" type=\"radio\" />  "+wqr.get4()); 
 		    		ret.append("</td>") ;
