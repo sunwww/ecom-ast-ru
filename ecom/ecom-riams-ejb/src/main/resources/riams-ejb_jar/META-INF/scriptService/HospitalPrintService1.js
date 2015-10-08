@@ -1,6 +1,6 @@
 var map = new java.util.HashMap() ;
 function checkAllDiagnosis (aCtx, aSlsId) {
-	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DontPrintWithoutDiagnosisInSlo")){
 		var sql = "select sls.id,slo.id from medcase sls "
 		 +" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'"
 		 +" left join mislpu ml on ml.id=slo.department_id"
