@@ -272,8 +272,8 @@
       <ecom:webQuery maxResult="50"  name="protocols"  nativeSql="
       select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record 
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
-      ,case when aslo.dtype='Visit' then 'background:#F6D8CE;' 
-      when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;'
+      ,case when aslo.dtype='Visit' then 'background:#F6D8CE;color:black;' 
+      when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;color:black;'
       else '' end
       from MedCase slo
       left join MedCase aslo on aslo.parent_id=slo.parent_id
