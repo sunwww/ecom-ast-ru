@@ -66,7 +66,11 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-	
+
+	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId) {
+		theManager.createNativeQuery("update medpolicy set dtype=(select vmp.code from vocmedpolicy vmp" +
+				" where vmp.id="+aNewPolicyTypeId+") where id="+aPolicyId).executeUpdate();
+	}
 	
 	public boolean needUpdatePatient (Long aPatientId, Long aPatientFondId){
 		boolean isDifference=false;
