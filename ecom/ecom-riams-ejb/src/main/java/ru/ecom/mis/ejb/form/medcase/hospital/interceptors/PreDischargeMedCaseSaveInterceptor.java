@@ -142,6 +142,7 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 					aDiag.setPrimary(primary) ;
 					aDiag.setIllnesPrimary(illnes) ;
 				}
+				aManager.persist(aDiag) ;
 				result = true ;
 			}
 			
