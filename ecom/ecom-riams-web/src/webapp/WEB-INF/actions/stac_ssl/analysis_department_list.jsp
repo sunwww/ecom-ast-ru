@@ -141,9 +141,8 @@
     	if (view!=null && (view.equals("11"))) {
     	%>
     
-    <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}">
-    <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list" nativeSql="
+    <msh:section>
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list" nameFldSql="journal_list_sql" nativeSql="
     
 select 
 hmc.id as soDepid,dep.name as depname
@@ -159,6 +158,8 @@ hmc.id as soDepid,dep.name as depname
 		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		end as countDays
 	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
+		,count(distinct soDep.id) as cntOper
+		,list(to_char(soDep.operationDate,'dd.mm.yyyy')||' - '||voDep.code||'. '||voDep.name) as operlist
     , (select list(mkb.code||' '||mkb.name) from diagnosis diag
     	left join VocIdc10 mkb on mkb.id=idc10_id 
     	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -166,8 +167,6 @@ hmc.id as soDepid,dep.name as depname
     	where diag.medCase_id=hmc.id  
     	and vpd.code='1' and vdrt.code='4'
 		) as diag
-		,count(distinct soDep.id) as cntOper
-		,list(to_char(soDep.operationDate,'dd.mm.yyyy')||' - '||voDep.code||'. '||voDep.name) as operlist
 		
 from MedCase hmc
     left join statisticstub ss on hmc.statisticstub_id=ss.id
@@ -208,6 +207,20 @@ where hmc.DTYPE='HospitalMedCase'
 	,hmc.dateStart,hmc.dateFinish
  order by dep.name ,pat.lastname   
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    
+        <form action="print-stac_analysis_department_11.do" method="post" target="_blank">
+    ${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_list_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
         <msh:table name="journal_list"
         viewUrl="entityShortView-stac_ssl.do"
          action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
@@ -221,9 +234,9 @@ where hmc.DTYPE='HospitalMedCase'
             <msh:tableColumn columnName="Кол-во койко дней" property="8"/>
             <msh:tableColumn columnName="Дата поступления" property="9"/>
             <msh:tableColumn columnName="Дата выписки" property="10"/>
-            <msh:tableColumn columnName="Кол-во операций" property="12"/>
-            <msh:tableColumn columnName="Операции (дата, наименование)" property="13"/>
-            <msh:tableColumn columnName="Диагноз" property="11"/>
+            <msh:tableColumn columnName="Кол-во операций" property="11"/>
+            <msh:tableColumn columnName="Операции (дата, наименование)" property="12"/>
+            <msh:tableColumn columnName="Диагноз" property="13"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
