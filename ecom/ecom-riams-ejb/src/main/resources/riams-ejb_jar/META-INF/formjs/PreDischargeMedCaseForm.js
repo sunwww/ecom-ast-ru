@@ -7,6 +7,9 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
+function getObject(aCtx,aId,aClazz) {
+	return (aId==null||aId=='0'||aId=='')?null:aCtx.manager.find(aClazz, aId) ;
+}
 function onSave(aForm,aEntity, aCtx) {
 	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisis(aForm.id,aForm.getDischargeEpicrisis(),aCtx.manager) ;
 	if (+aForm.reasonDischarge>0 && aEntity.statisticStub!=null) {
