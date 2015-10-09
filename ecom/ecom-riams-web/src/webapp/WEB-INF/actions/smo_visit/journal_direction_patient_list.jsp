@@ -176,8 +176,8 @@ select t.id as tid
     (mp.actualDateTo is null or mp.actualDateTo>=wcd.calendarDate)
     )>1 then 'Да' else '' end as more1Policy
 ,cast(
-to_timestamp(to_char(t.dateStart,'dd.mm.yyyy')||to_char(t.timeexecute,'HH:MI'),'dd.MM.yyyyHH:MI') -
-to_timestamp(to_char(wcd.calendarDate,'dd.mm.yyyy')||to_char(wct.timefrom,'HH:MI'),'dd.MM.yyyyHH:MI')
+to_timestamp(to_char(t.dateStart,'dd.mm.yyyy')||to_char(t.timeexecute,'HH:MI'),'dd.MM.yyyyHH24:MI') -
+to_timestamp(to_char(wcd.calendarDate,'dd.mm.yyyy')||to_char(wct.timefrom,'HH:MI'),'dd.MM.yyyyHH24:MI') 
  as varchar) as time_wait
 ,to_char(wct.timefrom,'HH:MI') as time_naprav
 ,to_char(t.timeexecute,'HH:MI') as time_priem
