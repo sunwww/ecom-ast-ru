@@ -31,16 +31,7 @@
     </global-forwards>
 
     <action-mappings>
-    
-    	<action path='/journal_time_visit' type='ru.ecom.mis.web.action.medcase.journal.TimeVisitPatient'               
-        		name='poly_journalBySpecForm'
-                validate='true'
-                scope='session'
-                input='/WEB-INF/actions/smo_visit/time_visit_report.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/time_visit_report.jsp"/>
-        </action>
-    
+        
         <action path='/extDisp_journal_card' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='extDisp_journalForm'
                 validate='true'
