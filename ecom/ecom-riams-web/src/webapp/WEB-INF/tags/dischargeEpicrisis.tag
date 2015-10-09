@@ -109,7 +109,7 @@
     			 var r=aResult.split('@');
     			 
     			 if (r.length>0) {
-    				 p+='<!DOCTYPE html><table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
+    				 p+='<table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
     				 
     				 for (var i=0;i<r.length;i++){
     				 var text = r[i].split('#');
@@ -164,7 +164,7 @@
 		get${name}LabsInfo() ;
      }
      function get${name}LabsInfo() {
-		if ($('${name}Labs')&& ($('${name}Labs').checked)||$('${name}Fisio')&& ($('${name}Fisio').checked)
+		 if ($('${name}Labs')&& ($('${name}Labs').checked)||$('${name}Fisio')&& ($('${name}Fisio').checked)
 			||$('${name}Func')&& ($('${name}Func').checked) ||$('${name}Cons')&& ($('${name}Cons').checked)||$('${name}Luch')&& ($('${name}Luch').checked)) {
 			HospitalMedCaseService.getLabInvestigations($('${patient}').value,$('${dateStart}').value
 				,$('${dateFinish}').value, $('${name}Labs').checked,
@@ -177,9 +177,9 @@
 						get${name}OperationsInfo() ;
 					}
 			} ) ;
-		} else {
+		} else { 
 			get${name}OperationsInfo() ;
-     	}
+     	 } 
      }
      function get${name}OperationsInfo() {
      	if ($('${name}Operations').checked) {
@@ -197,7 +197,7 @@
      }
 
      function get${name}ExpMedserviceInfo() {
-      	if ($('${name}ExtLabs').checked) {
+      	if ($('${name}ExtLabs')&& $('${name}ExtLabs').checked) {
       		var frm = document.forms["${name}EpicrisisParameterForm"]
       		var reg = getCheckedRadio(frm,"${name}ExtLabsReg") ;
       		var str = getCheckedRadio(frm,"${name}ExtLabsStr") ;
