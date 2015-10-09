@@ -217,6 +217,8 @@ order by ${dateSql}
    	,count (wchb.id) as cnt1
    	,wf.id as wfId
    	from WorkCalendarHospitalBed wchb
+   	left join Patient p on p.id=wchb.patient_id
+left join MedCase mc on mc.id=wchb.medcase_id
    	left join workfunction wf on wf.id=wchb.workfunction_id
    	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
    	left join worker w on w.id=wf.worker_id
@@ -233,8 +235,8 @@ order by ${dateSql}
    	    </msh:sectionTitle>
    	    <msh:sectionContent>
    	        <msh:table
-   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.date}&short=Short&typeReestr=1" idField="4" 
-   	          cellFunction="true" noDataMessage="Не найдено">
+   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?typeView=${param.typeView}&beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.typeDate}&short=Short&typeReestr=1" idField="4" 
+   	         cellFunction="true" noDataMessage="Не найдено">
    	            <msh:tableColumn columnName="#" property="sn"/>
    	            <msh:tableColumn columnName="Отделение" property="1"/>
    	            <msh:tableColumn columnName="Специалист" property="2"/>
