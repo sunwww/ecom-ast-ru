@@ -8,7 +8,7 @@
 
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="Poly">Просмотр данных по направленным пациентам</msh:title>
@@ -22,6 +22,8 @@
   <%
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeView","3", request) ;
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeDate","2", request) ;
+    ActionUtil.updateParameter("ReportPlanHospitalByVisit","id","", request) ;
+    ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeReestr","2", request) ;
     boolean isZav = RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request) ;
     String infoSql = "" ;
     if (isZav) {
@@ -36,6 +38,7 @@
     <input type="hidden" name="m" id="m" value="f039"/>
     <input type="hidden" name="s" id="s" value="VisitPrintService"/>
     <input type="hidden" name="id" id="id"/>
+     <%if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {%>
     <msh:panel colsWidth="1%,1%,1%">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -70,6 +73,15 @@
 	        	<input type="radio" name="typeDate" value="3"> госпитализации
 	        </td>
         </msh:row>
+        <msh:row>
+	        <td class="label" title="Отображать(typeReestr)" colspan="1"><label for="typeReestrName" id="typeReestrLabel">Отображать:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeReestr" value="1"> реестр записей
+	        </td>
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeReestr" value="2"> Свод по врачам
+	        </td>
+	    </msh:row>
 
         </table></td></tr>
         <msh:row>
@@ -84,6 +96,7 @@
         </msh:row>
 
     </msh:panel>
+    <%} %>
     </msh:form>
            <script type='text/javascript'>
     
@@ -92,6 +105,7 @@
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
     checkFieldUpdate('typeView','${typeView}',3) ;
+    checkFieldUpdate('typeReestr','${typeReestr}',2) ;
     
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -114,6 +128,7 @@
     		} else {
     			request.setAttribute("dateTo", request.getParameter("finishDate")) ;
     		}
+    		String typeReestr = (String)request.getAttribute("typeReestr");
     	    String date = (String)request.getAttribute("typeDate") ;
     	    String dateSql = "" ;
     	    if (date.equals("1")) {
@@ -125,6 +140,11 @@
     	    }
     	    String view = (String)request.getAttribute("typeView") ;
     	    String viewSql ="" ;
+    	    String id=(String) request.getAttribute("id");
+    	    if (id!=null&&!id.equals("")) {
+    	    	id="and wchb.workfunction_id="+id;
+    	    }
+    	    
         	if (view!=null && (view.equals("1"))) {
         		viewSql = " and mc.id is not null" ;
         	} else if (view!=null && (view.equals("2"))) {
@@ -132,6 +152,9 @@
         	} 
         	request.setAttribute("viewSql", viewSql) ;
         	request.setAttribute("dateSql", dateSql) ;
+        	request.setAttribute("idSql",id);
+        	
+        	if (typeReestr!=null&&typeReestr.equals("1")){
     		%>
     
     <msh:section>
@@ -147,7 +170,7 @@ left join VocIdc10 mkb on mkb.id=wchb.idc10_id
 left join MisLpu ml on ml.id=wchb.department_id
 left join Diagnosis diag on diag.medcase_id=mc.id
 left join VocIdc10 mkbF on mkbF.id=diag.idc10_id
-where ${infoSql}
+where ${infoSql} ${idSql}
 and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
 ${viewSql} 
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
@@ -184,7 +207,44 @@ order by ${dateSql}
     </msh:sectionContent>
 
     </msh:section>
-    <% } else {%>
+    <%}
+   	else if (typeReestr!=null&&typeReestr.equals("2")) {
+   		%>
+   	 <msh:section>
+   	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
+   	select ml.name as mlname
+   	,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as fio
+   	,count (wchb.id) as cnt1
+   	,wf.id as wfId
+   	from WorkCalendarHospitalBed wchb
+   	left join workfunction wf on wf.id=wchb.workfunction_id
+   	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+   	left join worker w on w.id=wf.worker_id
+   	left join Patient wp on wp.id=w.person_id
+   	left join mislpu ml on ml.id=w.lpu_id
+   	where ${infoSql}
+   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	${viewSql} 
+   	group by wf.id,ml.name, wp.lastname, wp.firstname, wp.middlename, vwf.name
+   	order by wp.lastname,wp.firstname,wp.middlename
+   	"/> 
+   	    <msh:sectionTitle>
+   	    
+   	    </msh:sectionTitle>
+   	    <msh:sectionContent>
+   	        <msh:table
+   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.date}&short=Short&typeReestr=1" idField="4" 
+   	          cellFunction="true" noDataMessage="Не найдено">
+   	            <msh:tableColumn columnName="#" property="sn"/>
+   	            <msh:tableColumn columnName="Отделение" property="1"/>
+   	            <msh:tableColumn columnName="Специалист" property="2"/>
+   	            <msh:tableColumn columnName="Количество направленных" property="3"/>
+   	        </msh:table>
+   	    </msh:sectionContent>
+
+   	    </msh:section>
+   	   <%}
+        	} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
   </tiles:put>
