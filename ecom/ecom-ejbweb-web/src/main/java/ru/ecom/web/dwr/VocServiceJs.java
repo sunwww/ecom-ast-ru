@@ -66,7 +66,7 @@ public class VocServiceJs {
 					Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
 					String strValue = value!=null?value.toString():"";
 					if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
-					par.append("\"").append(prop[1]).append("\":\"").append(strValue).append("\"") ;
+					par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
@@ -79,5 +79,10 @@ public class VocServiceJs {
 		sb.append("}") ;
     	return sb.toString() ;
     }
-
+    private String str(String aValue) {
+    	if (aValue.indexOf("\"")!=-1) {
+    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
+    	}
+    	return aValue ;
+    }
 }
