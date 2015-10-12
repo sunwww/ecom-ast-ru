@@ -161,7 +161,7 @@
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
        ,to_char(p.planStartDate,'dd.mm.yyyy') as f14planStartDate
    ,vst.name as vstname
-    ,list('<input type=''checkbox'' name=''labCheckbox'' value='''||p.id||'''>')
+    ,'<input type=''checkbox'' name=''labCheckbox'' value='''||list(''||p.id)||'''>'
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
