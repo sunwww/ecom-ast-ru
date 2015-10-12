@@ -115,9 +115,8 @@
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_medPolicyOmcForm"/>
     </tiles:put>
     <tiles:put type="string" name="javascript">
-
+<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>	
 	    <msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForm">    
-	        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>	
 	    	<script type="text/javascript">
 	    	
 	        function changePolicyTypef() {
