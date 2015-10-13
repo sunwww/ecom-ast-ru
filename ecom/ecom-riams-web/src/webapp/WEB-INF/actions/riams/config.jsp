@@ -158,6 +158,18 @@
 					</ul>
 					</div>
 				</msh:ifInRole>
+				<msh:ifInRole roles="/Policy/Config/Update">
+					<div class='menu'>
+					<h2>Обновление</h2>
+					<ul>
+						<li>
+							<msh:link action="js-riams-update_postgres.do">
+	                            Для postgres
+	                    	</msh:link>
+	                    </li>
+					</ul>
+					</div>
+				</msh:ifInRole>
 				</td>
 			</tr>
 			
