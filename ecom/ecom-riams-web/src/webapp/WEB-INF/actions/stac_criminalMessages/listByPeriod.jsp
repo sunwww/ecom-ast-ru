@@ -1,10 +1,11 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в полицию"></msh:title>
@@ -14,6 +15,11 @@
     	<tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  String typeAge=ActionUtil.updateParameter("Report_criminal","typeAge","3", request) ;
+  String typeDuration=ActionUtil.updateParameter("Report_criminal","typeDuration","4", request) ;
+  if (request.getParameter("short")==null) {
+  %>
     <msh:form action="/journal_militiaMessage.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
@@ -39,6 +45,33 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeEmergency" value="3">  все
+        </td>
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Поиск по длительности госпитализации (typeDuration)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Длительность госп.:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeDuration" value="1">  0-24 часа
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeDuration" value="2" >  0-7 суток
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeDuration" value="3">  0-30
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeDuration" value="4">  все
+        </td>
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Поиск по возрастным категориям (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст. категория:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAge" value="1">  0-17 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAge" value="2" >  трудосп. возраст от 18 лет
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAge" value="3">  все
         </td>
       </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
@@ -88,6 +121,11 @@
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
 	        	<input type="radio" name="typeView1" value="7">  реестр МДГП-ЦП 
 	        </td>            
+	        
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeView1" value="8">  свод по возрастам 
+	        </td>            
+	        
         </msh:row>
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -120,6 +158,8 @@
     checkFieldUpdate('typeDate1','${typeDate1}',1) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeView1','${typeView1}',1) ;
+    checkFieldUpdate('typeAge','${typeAge}',3) ;
+    checkFieldUpdate('typeDuration','${typeDuration}',4) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -148,11 +188,62 @@
     </script>
 
     
-    <%
+    <%}
     String date = (String)request.getParameter("dateBegin") ;
     String date1 = (String)request.getParameter("dateEnd") ;
     
     if (date!=null && !date.equals(""))  {
+    	ActionUtil.getValueBySql("select id,omccode from VocSex where omccode='2'"
+    			,"sex_id","sex_code",request);  		
+    	StringBuilder age = new StringBuilder() ;
+  		age.append("  cast(to_char(m.dateStart,'yyyy') as int)")
+		.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+		.append(" +(case when (cast(to_char(m.dateStart, 'mm') as int)")
+		.append(" -cast(to_char(p.birthday, 'mm') as int)")
+		.append(" +(case when (cast(to_char(m.dateStart,'dd') as int)") 
+		.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+		.append(" <0)")
+			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
+			.append(request.getAttribute("sex_id")).append("' then 54 else 59 end ") ;
+    	request.setAttribute("age_works_pat", age.toString()) ;
+    	age=new StringBuilder() ;
+  		age.append(" cast(to_char(m.dateStart,'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(m.dateStart, 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(m.dateStart,'dd') as int)") 
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 15 and 17 ") ;
+    	request.setAttribute("age_0_17", age.toString()) ;
+    	if (typeAge!=null &&typeAge.equals("1")) {
+    		request.setAttribute("ageSql", " and "+request.getAttribute("age_0_17")) ;
+    	} else if (typeAge!=null &&typeAge.equals("2")) {
+    		request.setAttribute("ageSql", " and "+request.getAttribute("age_works_pat")) ;
+    	}
+    	
+    	if (typeDuration!=null &&typeDuration.equals("1")) {
+    		request.setAttribute("durationSql", " and (m.dateStart=m.dateFinish or (m.dateFinish-m.dateStart=1 and m.dischargetime<m.entrancetime))") ;
+    	} else if (typeDuration!=null &&typeDuration.equals("2")) {
+    		request.setAttribute("durationSql", " and m.dateFinish-m.dateStart<=7") ;
+    	} else if (typeDuration!=null &&typeDuration.equals("3")) {
+    		request.setAttribute("durationSql", " and m.dateFinish-m.dateStart<=31") ;
+    	}
+    	
+    	ActionUtil.getValueBySql("select id,code from VocHospitalizationResult where code='11'"
+    			,"death_id","death_code",request);
+    	String typeDeath = request.getParameter("typeDeath") ;
+    	if (typeDeath!=null &&typeDeath.equals("1")) {
+    		request.setAttribute("deathSql", " and m.result_id="+request.getAttribute("death_id")) ;
+    	}
+    	
+    	String typeHosp = request.getParameter("typeHosp") ;
+    	if (typeHosp!=null &&typeHosp.equals("1")) {
+    		request.setAttribute("hospSql", " and m.deniedHospitalizating_id is null") ;
+    	} else if (typeHosp!=null &&typeHosp.equals("2")) {
+    		request.setAttribute("hospSql", " and m.deniedHospitalizating_id is not null") ;
+    	}
+
     	if (date1==null ||date1.equals("")) {
     		request.setAttribute("dateEnd", date);
     	} else {
@@ -200,12 +291,88 @@
     		request.setAttribute("paramDateInfo","Дата регистрации сообщения") ;
     	}
     	%>
-    	<%if (view!=null && (view.equals("1"))) {%>
+    	<%if (view!=null && (view.equals("1"))) {
+    	String typeGroup = request.getParameter("typeGroup") ;
+    	if (typeGroup!=null && typeGroup.equals("patient")) {
+        	%>
+            
+            <msh:section>
+            <msh:sectionTitle>
+            <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
+            select m.id, list(to_char(pm.phoneDate,'dd.mm.yyyy'))
+            ,list(vpht.name||coalesce(' '||vpmst.name,''))
+            ,list(to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5))) as whenevent
+            ,list(pm.place) as pmplace
+            ,list(coalesce(vpme.name,pm.recieverFio)) as reciever
+            ,list(vpmo.name) as vphoname,list(wp.lastname) as wplastname
+            ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
+            ,list(coalesce(vpmorg.name,pm.phone,pm.recieverOrganization)) as organization
+            ,list(pm.diagnosis) as pmdiagnosis
+            ,coalesce(vdh.name,'СК №'||ss.code) as sscode
+            from PhoneMessage pm 
+            left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
+            left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
+            left join VocPhoneMessageOrganization vpmorg on vpmorg.id=pm.organization_id
+            left join VocPhoneMessageEmploye vpme on vpme.id=pm.recieverEmploye_id
+            left join VocPhoneMessageOutcome vpmo on vpmo.id=pm.outcome_id
+            left join WorkFunction wf on wf.id=pm.workFunction_id
+            left join Worker w on w.id=wf.worker_id
+            left join Patient wp on wp.id=w.person_id
+            left join medcase m on m.id=pm.medCase_id
+            left join StatisticStub ss on ss.id=m.statisticstub_id
+            left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
+            left join Patient p on p.id=m.patient_id
+        	left join MisLpu as ml on ml.id=m.department_id 
+        	left join SecUser su on su.login=m.username
+        	left join WorkFunction wf1 on wf1.secUser_id=su.id
+        	left join Worker w1 on w1.id=wf1.worker_id
+        	left join MisLpu ml1 on ml1.id=w1.lpu_id     
+            where pm.dtype='CriminalPhoneMessage'
+            and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
+        and ( m.noActuality is null or m.noActuality='0')
+        ${period}
+        ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
+            group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
+            order by p.lastname
+            " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+            
+            
+            <form action="print-stac_criminalMessage_1_pat.do" method="post" target="_blank">
+    Реестр с ${param.dateBegin} по ${param.dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+            <msh:table name="journal_militia"
+            viewUrl="entityShortView-stac_ssl.do" 
+             action="entityParentView-stac_ssl.do" idField="1" >
+              <msh:tableColumn columnName="#" property="sn" />
+              <msh:tableColumn columnName="Дата" property="2" />
+              <msh:tableColumn property="12" columnName="Госпит."/>
+              <msh:tableColumn property="9" columnName="Пациент"/>
+              <msh:tableColumn columnName="Тип" property="3" />
+              <msh:tableColumn columnName="Когда" property="4" />
+              <msh:tableColumn columnName="Место" property="5" />
+              <msh:tableColumn columnName="Фамилия принявшего" property="6" />
+              <msh:tableColumn columnName="Фамилия передавшего" property="8" />
+              <msh:tableColumn columnName="Диагноз" property="11" />
+              <msh:tableColumn columnName="Исход" property="7" />
+            </msh:table>
+            </msh:sectionContent>
+            </msh:section>
+            <% 
+    		
+    	} else {
+    	%>
     
     <msh:section>
-    <msh:sectionTitle>Реестр с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_militia" nativeSql="
+    <msh:sectionTitle>
+    <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
     select pm.id, pm.phoneDate
     ,vpht.name||coalesce(' '||vpmst.name,'')
     ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
@@ -235,12 +402,25 @@
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <form action="print-stac_criminalMessage_1.do" method="post" target="_blank">
+    Реестр с ${param.dateBegin} по ${param.dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
     <msh:table name="journal_militia"
     viewUrl="entityShortView-stac_criminalMessages.do" 
      action="entityParentView-stac_criminalMessages.do" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата" property="2" />
       <msh:tableColumn property="9" columnName="Пациент"/>
       <msh:tableColumn columnName="Тип" property="3" />
@@ -253,7 +433,9 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% }  
+    <% 
+    	}
+    	}  
     if (view!=null && (view.equals("2"))) {%>
     
     <msh:section>
@@ -333,7 +515,7 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -384,10 +566,12 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <msh:sectionTitle>Свод по дням с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:'||to_char(${paramDate},'dd.mm.yyyy')||':${param.phoneMessageType}:${param.phoneMessageSubType}' as id,to_char(${paramDate},'dd.mm.yyyy') as dateSearch, count(pm.id) as cntMessages
+    select '&dateBegin='||to_char(${paramDate},'dd.mm.yyyy')||'&dateEnd='||to_char(${paramDate},'dd.mm.yyyy') as id
+    ,to_char(${paramDate},'dd.mm.yyyy') as dateSearch
+    , count(pm.id) as cntMessages
     , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as cntHosp
     , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as cntDenied
-    ,count(distinct m.id) as cntHosp
+    ,count(distinct m.id) as cntObr
     from PhoneMessage pm 
     left join medcase m on m.id=pm.medCase_id
     left join MisLpu as ml on ml.id=m.department_id 
@@ -395,18 +579,18 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     group by ${paramDate}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-    viewUrl="js-stac_criminalMessages-listByDate.do?short=Short" 
-     action="js-stac_criminalMessages-listByDate.do" idField="1">
+    cellFunction="true"
+     action="journal_militiaMessage.do?typeView1=1&typeDate1=${typeDate1}&department=${param.department}&pigeonHole=${param.pigeonHole}&phoneMessageType=${param.phoneMessageType}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" idField="1">
       <msh:tableColumn columnName="${paramDateInfo}" property="2"/>
       <msh:tableColumn columnName="Кол-во сообщений" property="3"/>
-      <msh:tableColumn columnName="Кол-во госпит." property="4" />
-      <msh:tableColumn columnName="Кол-во отказов от госпит." property="5" />
-      <msh:tableColumn columnName="Кол-во обращений" property="6" />
+      <msh:tableColumn columnName="Кол-во госпит." property="4" addParam="&typeGroup=patient&typeHosp=1" />
+      <msh:tableColumn columnName="Кол-во отказов от госпит." property="5" addParam="&typeGroup=patient&typeHosp=2"/>
+      <msh:tableColumn columnName="Кол-во обращений" property="6" addParam="&typeGroup=patient"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -418,7 +602,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <msh:sectionTitle>Свод по госпитализациям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
+    select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     ,count(distinct m.id) as cntHosp
     from PhoneMessage pm 
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
@@ -429,17 +613,16 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_militia" 
-    viewUrl="js-stac_criminalMessages-listByHospital.do?short=Short"
-    action="js-stac_criminalMessages-listByHospital.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_militia" cellFunction="true"
+    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=1&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Тип" property="3" />
-      <msh:tableColumn columnName="Кол-во сообщений" property="4" />
-      <msh:tableColumn columnName="Кол-во госпитализаций" property="5" />
+      <msh:tableColumn columnName="Кол-во сообщений" property="4" addParam=""/>
+      <msh:tableColumn columnName="Кол-во госпитализаций" property="5" addParam="&typeGroup=patient"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -450,7 +633,7 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <msh:sectionTitle>Свод по отказам с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id
+    select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id
     ,ml.name as mlname,vpmt.name as vpmtname
     ,count(pm.id) as cntPm
     ,count(distinct m.id) as cntHosp
@@ -463,17 +646,17 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-    viewUrl="js-stac_criminalMessages-listByDenied.do?short=Short" 
-    action="js-stac_criminalMessages-listByDenied.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    cellFunction="true"
+    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=2&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Тип" property="3" />
+      <msh:tableColumn columnName="Тип" property="3"/>
       <msh:tableColumn columnName="Кол-во сообщений" property="4" />
-      <msh:tableColumn columnName="Кол-во отказов" property="5" />
+      <msh:tableColumn columnName="Кол-во отказов" property="5" addParam="typeGroup=patient"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -484,10 +667,10 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     <msh:sectionTitle>Свод по обращениям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_militia" nativeSql="
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${paramDate}:${param.dateBegin}:${dateEnd}:'||coalesce(m.department_id,0)||':'||coalesce(vpmt.id,0)||':${param.phoneMessageSubType}' as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
+    select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as cntHosp
     , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as cntDenied
-    ,count(distinct m.id) as cntHosp
+    ,count(distinct m.id) as cntObr
     from PhoneMessage pm 
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
     left join medcase m on m.id=pm.medCase_id
@@ -496,20 +679,20 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_militia"
-        viewUrl="js-stac_criminalMessages-listByObr.do?short=Short" 
-    action="js-stac_criminalMessages-listByObr.do" 
+        cellFunction="true"
+    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeView1=1&typeDate1=${typeDate1}&department=${param.department}&pigeonHole=${param.pigeonHole}&phoneMessageType=${param.phoneMessageType}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" 
 	idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Тип" property="3" />
-      <msh:tableColumn columnName="Кол-во сообщений" property="4" />
-      <msh:tableColumn columnName="Кол-во госпит." property="5" />
-      <msh:tableColumn columnName="Кол-во отказов от госпит." property="6" />
-      <msh:tableColumn columnName="Кол-во обращений" property="7" />
+      <msh:tableColumn columnName="Отделение" property="2" addParam=""/>
+      <msh:tableColumn columnName="Тип" property="3" addParam=""/>
+      <msh:tableColumn columnName="Кол-во сообщений" property="4" addParam=""/>
+      <msh:tableColumn columnName="Кол-во госпит." property="5" addParam="&typeGroup=patient&typeHosp=1"/>
+      <msh:tableColumn columnName="Кол-во отказов от госпит." property="6" addParam="&typeGroup=patient&typeHosp=2"/>
+      <msh:tableColumn columnName="Кол-во обращений" property="7" addParam="&typeGroup=patient"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -564,7 +747,7 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and m.deniedHospitalizating_id is null and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -595,7 +778,102 @@ ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-     <%} %>
+     <%} 
+    if (view!=null && (view.equals("8"))) {
+    StringBuilder sls24h = new StringBuilder() ;
+    sls24h.append(" and (m.datestart=m.datefinish or (m.datefinish-m.datestart=1 and m.dischargetime<m.entrancetime))") ;
+    request.setAttribute("sls24h", sls24h.toString()) ;
+    %>
+    <msh:section>
+    <msh:sectionTitle>
+    <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
+    select '&typeEmergency=${typeEmergency}&paramDate=${typeDate1}'
+    	||'&pigeonHole=${param.pigeonHole}'||'&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}'
+    	||'&department=${param.department}'||'&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}'
+    	||'&phoneMessageType='||coalesce(vpmt.id,0)||'&phoneMessageSubType=${param.phoneMessageSubType}' as id
+    ,vpmt.name as f2vpmtname
+    , count(distinct case when m.result_id='${death_id}' then m.id else null end) as f3cntDeathHosp
+    , count(distinct case when m.result_id='${death_id}' and ${age_0_17} then m.id else null end) as f4cntDeathHosp
+    , count(distinct case when m.result_id='${death_id}' and ${age_works_pat} then m.id else null end) as f5cntDeathHosp
+    , count(distinct case when m.result_id='${death_id}' ${sls24h} then m.id else null end) as f6cntDeath24h
+    , count(distinct case when m.result_id='${death_id}' ${sls24h} and ${age_0_17} then m.id else null end) as f7cntDeath24h
+    , count(distinct case when m.result_id='${death_id}' ${sls24h} and ${age_works_pat} then m.id else null end) as f8cntDeath24h
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=7 then m.id else null end) as f9cntDeath7d
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=7 and ${age_0_17}  then m.id else null end) as f10cntDeath7d
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=7 and ${age_works_pat} then m.id else null end) as f11cntDeath7d
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=30 then m.id else null end) as f12cntDeath30d
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=30 and ${age_0_17} then m.id else null end) as f13cntDeath30d
+    , count(distinct case when m.result_id='${death_id}' and m.dateFinish-m.dateStart<=30 and ${age_works_pat} then m.id else null end) as f14cntDeath30d
+    ,count(distinct m.id) as f15cntHosp
+    ,count(distinct case when ${age_0_17} then m.id else null end) as f16cntHosp
+    ,count(distinct case when ${age_works_pat}  then m.id else null end) as f17cntHosp
+    , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as f18cntHosp
+    , count(distinct case when m.deniedHospitalizating_id is null and ${age_0_17} then m.id else null end) as f19cntHosp
+    , count(distinct case when m.deniedHospitalizating_id is null and ${age_works_pat} then m.id else null end) as f20cntHosp
+    from PhoneMessage pm 
+    left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
+    left join medcase m on m.id=pm.medCase_id
+    left join mislpu ml on ml.id=m.department_id
+    left join Patient p on p.id=m.patient_id
+    where pm.dtype='CriminalPhoneMessage'
+    and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
+and ( m.noActuality is null or m.noActuality='0')
+${period}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+    group by vpmt.id,vpmt.name
+    order by vpmt.name
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+                <form action="print-stac_criminalMessage_8.do" method="post" target="_blank">
+    Свод по возрастам с ${param.dateBegin} по ${param.dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <msh:table name="journal_militia"
+      
+    action="journal_militiaMessage.do?short=Short&typeView1=1&typeGroup=patient" cellFunction="true" 
+	idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	<msh:tableNotEmpty>
+		<tr>
+                <th colspan="1" />
+                <th colspan="3" class="rightBold">Умершие в стационаре</th>
+                <th colspan="3" class="rightBold">Умершие в стационаре в первые 24 часа</th>
+                <th colspan="3" class="rightBold">Умершие в течение 0-7 суток </th>
+                <th colspan="3" class="rightBold">Умершие в течение 0-30 суток </th>
+                <th colspan="3" class="rightBold">Общее кол-во пострадавших</th>
+                <th colspan="3" class="rightBold">Кол-во госпитализированных</th>
+        </tr>
+	</msh:tableNotEmpty>
+      <msh:tableColumn columnName="Тип" property="2" />
+      <msh:tableColumn columnName="общ. кол-во" property="3"  addParam="&typeDeath=1&typeAge=${typeAge}&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="0-17" property="4"  addParam="&typeDeath=1&typeAge=2&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="труд. нас." property="5"  addParam="&typeDeath=1&typeAge=2&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="общ. кол-во" property="6" addParam="&typeDeath=1&typeDuration=1&typeAge=${typeAge}"/>
+      <msh:tableColumn columnName="0-17" property="7"  addParam="&typeDeath=1&typeDuration=1&typeAge=1"/>
+      <msh:tableColumn columnName="труд. нас." property="8"  addParam="&typeDeath=1&typeDuration=1&typeAge=2"/>
+      <msh:tableColumn columnName="общ. кол-во" property="9"  addParam="&typeDeath=1&typeDuration=2"/>
+      <msh:tableColumn columnName="0-17" property="10"  addParam="&typeDeath=1&typeDuration=2&typeAge=1"/>
+      <msh:tableColumn columnName="труд. нас." property="11"  addParam="&typeDeath=1&typeDuration=2&typeAge=2"/>
+      <msh:tableColumn columnName="общ. кол-во" property="12"  addParam="&typeDeath=1&typeDuration=3&typeAge=${typeAge}"/>
+      <msh:tableColumn columnName="0-17" property="13"  addParam="&typeDeath=1&typeDuration=3"/>
+      <msh:tableColumn columnName="труд. нас." property="14"  addParam="&typeDeath=1&typeDuration=3"/>
+      <msh:tableColumn columnName="общ. кол-во" property="15" addParam="&typeAge=${typeAge}&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="0-17" property="16"  addParam="&typeAge=1&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="труд. нас." property="17"  addParam="&typeAge=2&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="общ. кол-во" property="18" addParam="&typeHosp=1&typeAge=${typeAge}&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="0-17" property="19"  addParam="&typeAge=1&typeHosp=1&typeDuration=${typeDuration}"/>
+      <msh:tableColumn columnName="труд. нас." property="20"  addParam="&typeAge=2&typeHosp=1&typeDuration=${typeDuration}"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%} 
+     %>
     <% 
     } else {%>
     	<i>Нет данных </i>
