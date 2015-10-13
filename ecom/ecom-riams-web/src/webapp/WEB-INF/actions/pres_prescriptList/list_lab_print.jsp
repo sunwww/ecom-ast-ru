@@ -61,7 +61,7 @@
                 </msh:panel>
                 <input type="hidden" name="sql_info" id="sql_info" value="
     select 
-    p.id as pid
+    d.id as pid
     ,  d.record as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material
@@ -111,16 +111,26 @@
 	    <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
 	    <input type='hidden' name="groupField" id="groupField" value="14">
 	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
+	    <input type='hidden' name="updateId" id="updateId" value="1">
+	    <input type='hidden' name="updateSql" id="updateSql" value="update diary set printdate=current_date,printtime=current_time where id=':id'">
+	    
 	    <input type="submit" value="Печать текстовый" onclick="print();this.form.action='print-pres_lab_print_txt.do'"> 
-	    <input type="submit" value="Печать файл" onclick="print();this.form.action='print-pres_lab_print_odt.do';alert(123);"> 
+	    <input type="submit" value="Печать файл" onclick="print();this.form.action='print-pres_lab_print_odt.do';"> 
                            
     </form>
             <script type="text/javascript">
             checkFieldUpdate('typePrint','${typePrint}',1) ;
             function checkfrm() {
-            	document.forms[0].submit() ;
+            	document.forms[1].submit() ;
             }
-            function print(aPrefix) {
+            function printId(aId,aDate,aFilePrefix) {
+            	var addParam = " and p.id="+aId;
+            	$('sqlText').value = $('sql_info').value.replace('{param.beginDate}',aDate)
+            	$('sqlText').value=$('sqlText').value.replace('{sqlAdd}',addParam) ;
+            	document.forms[1].action='print-pres_lab_print_'+aFilePrefix+'.do'
+            	document.forms[1].submit() ;
+            }
+            function print() {
             	if ($('beginDate').value=="") {
                 	$('beginDate').value=getCurrentDate() ;
                 }
@@ -199,7 +209,7 @@
             	<ecom:webQuery name="listPres" nativeSql="
             	
    select 
-    p.id as pid
+    p.id||''',''${param.beginDate}' as pid
     ,  d.record as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material
@@ -242,6 +252,8 @@
     
 "/>
    <msh:table name="listPres" action="javascript:void(0)" idField="1">
+   <msh:tableButton property="1" addParam="'txt'" buttonFunction="printId" buttonName="Печать в txt" buttonShortName="txt"/>
+   <msh:tableButton property="1" addParam="'odt'" buttonFunction="printId" buttonName="Печать в odt" buttonShortName="odt"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Дата напр." property="11"/>
