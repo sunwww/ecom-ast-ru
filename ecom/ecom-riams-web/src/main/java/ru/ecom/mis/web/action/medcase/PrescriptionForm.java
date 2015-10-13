@@ -66,4 +66,12 @@ public class PrescriptionForm extends BaseValidatorForm {
 
 	/** Номер */
 	private String theNumber;
+	
+	/** Пациент */
+	@Comment("Пациент")
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
+
+	/** Пациент */
+	private Long thePatient;
 }

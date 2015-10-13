@@ -672,7 +672,7 @@ public class PrescriptionServiceJs {
 						String strValue = value!=null?value.toString():"";
 						
 						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
-						par.append("\"").append(prop[1]).append("\":\"").append(strValue).append("\"") ;
+						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
 						
 					}
 					
@@ -696,7 +696,12 @@ public class PrescriptionServiceJs {
 			return sb.toString();
 		
 	}
-	
+	private String str(String aValue) {
+    	if (aValue.indexOf("\"")!=-1) {
+    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
+    	}
+    	return aValue ;
+    }
 	private String savePrescriptNew(Long aTemplateList, Long aMedCase, IPrescriptionService service) {
 		String ret ="";
 		try {

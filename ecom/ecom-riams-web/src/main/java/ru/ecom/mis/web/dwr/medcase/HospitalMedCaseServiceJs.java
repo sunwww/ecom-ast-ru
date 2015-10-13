@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
+import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.web.dwr.TicketServiceJs;
 import ru.ecom.web.login.LoginInfo;
@@ -27,7 +29,40 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
-	
+	public String getDiaryDefects(Long aDiaryId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		StringBuilder res = new StringBuilder();
+		req.append("select vdd.id, vdd.name from VocDefectDiary vdd ");
+		req.append("order by vdd.id ");
+		List<Object[]> list = service.executeNativeSqlGetObj(req.toString()) ;
+		for (int i=0;i<list.size();i++) {
+			Object[] obj = list.get(i);
+			res.append(obj[0]).append(":").append(obj[1]).append("#");
+		}
+		
+		return res.length()>0?res.substring(0,res.length()-1):"";
+	}
+	public String setDiaryDefect(Long aDiaryId, Long aDefectId, String aComment, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		
+		sql.append("insert into DiaryMessage (diary_id,defect_id,comment,createusername,createdate,createtime) ")
+			.append("values ('").append(aDiaryId).append("','")
+			.append(aDefectId).append("','").append(aComment)
+			.append("','").append(login).append("',current_date,current_time)") ;
+		service.executeUpdateNativeSql(sql.toString()) ;
+		sql = new StringBuilder() ;
+		
+		sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
+			.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
+			.append("values ('").append("На исправление дневник").append("','")
+			.append("На исправление дневник").append("','").append(aComment)
+			.append("','").append(login).append("',current_date,current_time,'")
+			.append("entityParentView-smo_visitProtocol.do?id="+aDiaryId).append("')") ;
+		return "1" ;
+	}
 	public String getDiariesByHospital(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder res = new StringBuilder();
