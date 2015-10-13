@@ -84,6 +84,12 @@ function current_info(aCtx) {
 function printGroupColumnNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");
+	var printSql = aParams.get("printSql");
+	var printId = +aParams.get("printId") ;
+	var isupdate=false ;
+	if (printSql!=null &&printSql!='') {
+		isupdate=true ;
+	}
 	var cntBegin = 1;
 	var sqlColumn = aParams.get("sqlColumn");
 	var groupField = aParams.get("groupField");
@@ -124,6 +130,10 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
 		
 		par.set1(""+cntBegin) ;
 		++cntBegin ;
+		if (isupdate) {
+			var print_id = printSql.replace(":id",obj[printId-1]) ; 
+			aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
+		}
 		for (var j=2;j<=obj.length;j++) {
 			var val = obj[j-1] ;
 			eval("par.set"+(j)+"(val==null?'':val);") ;
