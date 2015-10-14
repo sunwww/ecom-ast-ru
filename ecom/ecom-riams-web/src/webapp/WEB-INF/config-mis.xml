@@ -528,6 +528,12 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
 		</action>
+		<action path='/contract_find_by_naturalPerson'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
+		</action>
 		<!-- Услуги -->	
 		<action path='/contract_policlinic_render'
 			type='ru.ecom.web.actions.base.ForwardAction' 
