@@ -7,10 +7,19 @@
 function onCreate(aForm, aEntity, aContext) {
 	var date = new java.util.Date() ;
 	var dispatchDate = new java.sql.Date(date.getTime()) ;
+	
 	var dispatchTime = new java.sql.Time(date.getTime()) ;
+	var cal = java.util.Calendar.getInstance() ;
+	var dateMax = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(dispatchDate,dispatchTime);
+	cal.setTime(dateMax) ;
+	cal.add(java.util.Calendar.MINUTE,15) ;
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 	aEntity.setDispatchDate(dispatchDate) ;
 	aEntity.setDispatchTime(dispatchTime) ;
+	if (aForm.isEmergency!=null && aForm.isEmergency.equals(java.lang.Boolean.TRUE)) {
+		aEntity.setValidityDate(new java.sql.Date(cal.getTime().getTime()) ) ;
+		aEntity.setValidityTime(new java.sql.Time(cal.getTime().getTime())) ;
+	}
 	aEntity.setUsername(username) ;
 	if (+aForm.secUser) {
 		var user = aContext.manager.find(Packages.ru.ecom.jaas.ejb.domain.SecUser,aForm.secUser) ;
@@ -18,6 +27,7 @@ function onCreate(aForm, aEntity, aContext) {
 	} else if (+aForm.secRole) {
 		var listUser = aContext.manager.createNativeQuery("select su.id,su.login from SecUser su left join secuser_secrole susr on susr.secuser_id=su.id where susr.roles_id='"+aForm.secRole+"' and (su.disable='0' or su.disable is null) ").getResultList() ;
 		var validityDate = aEntity.validityDate ;
+		var validityTime = aEntity.validityTime ;
 		for (var i=0;i<listUser.size();i++) {
 			var user=listUser.get(i) ;
 			if (i==0) {
@@ -32,6 +42,8 @@ function onCreate(aForm, aEntity, aContext) {
 				mes.setDispatchTime(dispatchTime) ;
 				mes.setUsername(username) ;
 				mes.setValidityDate(validityDate) ;
+				mes.setValidityTime(validityTime) ;
+				mes.setIsEmergency(aForm.getIsEmergency()) ;
 				aContext.manager.persist(mes) ;
 			}
 		}
@@ -39,6 +51,7 @@ function onCreate(aForm, aEntity, aContext) {
 		
 		var listUser = aContext.manager.createNativeQuery("select su.id,su.login from SecUser su where su.disable='0' or su.disable is null ").getResultList() ;
 		var validityDate = aEntity.validityDate ;
+		var validityTime = aEntity.validityTime ;
 		for (var i=0;i<listUser.size();i++) {
 			var user=listUser.get(i) ;
 			if (i==0) {
@@ -52,6 +65,8 @@ function onCreate(aForm, aEntity, aContext) {
 				mes.setDispatchTime(dispatchTime) ;
 				mes.setUsername(username) ;
 				mes.setValidityDate(validityDate) ;
+				mes.setValidityTime(validityTime) ;
+				mes.setIsEmergency(aForm.getIsEmergency()) ;
 				aContext.manager.persist(mes) ;
 			}
 		}
