@@ -309,6 +309,7 @@
             ,list(coalesce(vpmorg.name,pm.phone,pm.recieverOrganization)) as organization
             ,list(pm.diagnosis) as pmdiagnosis
             ,coalesce(vdh.name,'СК №'||ss.code) as sscode
+            ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5))
             from PhoneMessage pm 
             left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
             left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -333,6 +334,7 @@
         ${period}
         ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
             group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
+            ,m.dateFinish,m.dischargeTime
             order by p.lastname
             " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             
@@ -362,6 +364,7 @@
               <msh:tableColumn columnName="Фамилия передавшего" property="8" />
               <msh:tableColumn columnName="Диагноз" property="11" />
               <msh:tableColumn columnName="Исход" property="7" />
+              <msh:tableColumn columnName="Дата выписки" property="13" />
             </msh:table>
             </msh:sectionContent>
             </msh:section>
@@ -382,6 +385,7 @@
     ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
     ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
     ,pm.diagnosis as pmdiagnosis
+    ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as datedischarge
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -430,6 +434,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
       <msh:tableColumn columnName="Фамилия передавшего" property="8" />
       <msh:tableColumn columnName="Диагноз" property="11" />
       <msh:tableColumn columnName="Исход" property="7" />
+      <msh:tableColumn property="12" columnName="Дата выписки"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
