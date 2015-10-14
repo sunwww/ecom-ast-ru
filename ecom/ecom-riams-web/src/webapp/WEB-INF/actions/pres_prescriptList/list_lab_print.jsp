@@ -70,8 +70,8 @@
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f7medServicies
    ,wp.lastname||' '||wp.firstname||' '||wp.middlename as f8fioworker
    ,iwp.lastname||' '||iwp.firstname||' '||iwp.middlename as f9intakefioworker
-   ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f10dtintake
-   ,to_char(p.planStartDate,'dd.mm.yyyy') as f11planStartDate
+   ,to_char(mc.datestart,'dd.mm.yyyy')||' '||cast(mc.timeexecute as varchar(5)) as f10dtintake
+   ,to_char(p.createdate,'dd.mm.yyyy')||' '||cast(p.createtime as varchar(5)) as f11planStartDate
    ,mc.id as f12mcid
    ,ml.name as m13lname
    ,ml.name||' '||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f14birthday
@@ -91,7 +91,7 @@
     left join Worker w on w.id=wf.worker_id
     left join Patient wp on wp.id=w.person_id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-    left join WorkFunction iwf on iwf.id=p.intakeSpecial_id
+    left join WorkFunction iwf on iwf.id=mc.workfunctionexecute_id
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
@@ -218,8 +218,8 @@
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f7medServicies
    ,wp.lastname||' '||wp.firstname||' '||wp.middlename as f8fioworker
    ,iwp.lastname||' '||iwp.firstname||' '||iwp.middlename as f9intakefioworker
-   ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f10dtintake
-   ,to_char(p.planStartDate,'dd.mm.yyyy') as f11planStartDate
+   ,to_char(mc.datestart,'dd.mm.yyyy')||' '||cast(mc.timeexecute as varchar(5)) as f10dtintake
+   ,to_char(p.createdate,'dd.mm.yyyy')||' '||cast(p.createtime as varchar(5)) as f11planStartDate
    ,mc.id as f12mcid
    ,ml.name as m13lname
    
@@ -239,7 +239,7 @@
     left join Worker w on w.id=wf.worker_id
     left join Patient wp on wp.id=w.person_id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-    left join WorkFunction iwf on iwf.id=p.intakeSpecial_id
+    left join WorkFunction iwf on iwf.id=mc.workfunctionexecute_id
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
