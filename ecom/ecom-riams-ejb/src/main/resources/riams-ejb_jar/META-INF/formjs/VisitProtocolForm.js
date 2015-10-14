@@ -103,7 +103,10 @@ function check(aForm,aCtx) {
 				param1.put("permission" ,"editAfterCertainHour") ;
 				param1.put("id", +aForm.id) ;
 				var isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-				if (+isCheck!=1) throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
+				if (+isCheck!=1) {
+					var ldm = aCtx.manager.createNativeManager("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id="+aForm.id+" and (dm.validitydate<current_date or dm.validitydate=current_date and dm.validitytime<current_time)").getResultList() ;
+					if (ldm.size()==0) throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
+				}
 			}
 		}
 		
