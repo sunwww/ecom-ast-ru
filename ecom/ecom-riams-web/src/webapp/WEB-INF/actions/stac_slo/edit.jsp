@@ -274,7 +274,9 @@
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
       ,case when aslo.dtype='Visit' then 'background:#F6D8CE;color:black;' 
       when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;color:black;'
-      else '' end
+      else '' end as f4style
+      ,case when (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
+      , (select list(vdd.name) from DiaryMessage dm left join VocDefectDiary vdd on vdd.id=dm.defect_id where dm.diary_id=d.id and dm.createDate>current_date-2) as message
       from MedCase slo
       left join MedCase aslo on aslo.parent_id=slo.parent_id
       left join Diary as d on aslo.id=d.medCase_id
@@ -302,7 +304,9 @@
             	</msh:tableNotEmpty>
             	<div id='divprotocolslo${param.id}'>
           <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
-
+					<msh:tableButton property="5" buttonFunction="checkErrorProtocol" 
+					buttonName="На редакцию врачу" buttonShortName="На редак." 
+						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments"/>
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
@@ -446,6 +450,17 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <msh:ifFormTypeIsView formName="stac_sloForm">
+  	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
+  	<tags:smo_diary_defect name="SMODef" title="Выбор проблемы в протоколе" parentID="${param.id}" />
+  		<script type="text/javascript">
+  			function checkErrorProtocol(aId) {
+  				showSMODefDiaryDefect() ;
+  				
+  			}
+  		</script>
+  	</msh:ifInRole>
+  </msh:ifFormTypeIsView>
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
         function viewOtherVisitsByPatient(d) {
       	  //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
