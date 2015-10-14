@@ -299,8 +299,8 @@
             <msh:section>
             <msh:sectionTitle>
             <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
-            select m.id, list(to_char(pm.phoneDate,'dd.mm.yyyy'))
-            ,list(vpht.name||coalesce(' '||vpmst.name,''))
+            select m.id, list(to_char(pm.phoneDate,'dd.mm.yyyy')) as pmphone
+            ,list(vpht.name||coalesce(' '||vpmst.name,'')) as vphtnamevpmstname
             ,list(to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5))) as whenevent
             ,list(pm.place) as pmplace
             ,list(coalesce(vpme.name,pm.recieverFio)) as reciever
@@ -308,8 +308,8 @@
             ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') as fiopat
             ,list(coalesce(vpmorg.name,pm.phone,pm.recieverOrganization)) as organization
             ,list(pm.diagnosis) as pmdiagnosis
-            ,coalesce(vdh.name,'СК №'||ss.code) as sscode
-            ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5))
+            ,coalesce(vdh.name,'СК №'||ss.code||' от '||to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5))) as sscode
+            ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as discharge
             from PhoneMessage pm 
             left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
             left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -334,7 +334,7 @@
         ${period}
         ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
             group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
-            ,m.dateFinish,m.dischargeTime
+            ,m.dateFinish,m.dischargeTime,m.dateStart,m.entranceTime
             order by p.lastname
             " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             
@@ -377,7 +377,7 @@
     <msh:sectionTitle>
     <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
     select pm.id, pm.phoneDate
-    ,vpht.name||coalesce(' '||vpmst.name,'')
+    ,vpht.name||coalesce(' '||vpmst.name,'') as vphtnamevpmstname
     ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
     ,pm.place as pmplace
     ,coalesce(vpme.name,pm.recieverFio) as reciever
