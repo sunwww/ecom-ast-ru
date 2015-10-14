@@ -7,7 +7,13 @@ function onView(aForm, aVisit, aCtx) {
  * Перед удалением
  */
 function onPreDelete(aEntityId, aContext) {
-	//throw "Запрет на удаление!!!"; 
+	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aEntityId)) ;
+	if(visit.getNoActuality()!=null && visit.getNoActuality()==true) {
+		//throw "fdsfsd";
+		aContext.manager.createNativeQuery("delete from Diagnosis where medcase_id="+aEntityId).executeUpdate() ;
+		aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
+		aContext.manager.createNativeQuery("delete from diary where medcase_id="+aEntityId).executeUpdate() ;
+	}
 }
 
 function onCreate(aForm, aVisit, aCtx) {

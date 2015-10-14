@@ -49,7 +49,9 @@ function onPreDelete(aId, aCtx) {
 		//throw isDeleteClose ;
 		if (+isDeleteClose==1) {}else{throw "У вас стоит запрет на удаление данных в закрытом периоде";}
 	}
-	aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
+	aCtx.manager.createNativeQuery("delete from Diagnosis where medcase_id="+aId).executeUpdate() ;
+	aCtx.manager.createNativeQuery("delete from Medcase where parent_id="+aId).executeUpdate() ;
+	//aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
 	aCtx.manager.createNativeQuery("delete from ambulancecard where medcase_id='"+aId+"'").executeUpdate() ;
 	
 }
