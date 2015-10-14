@@ -155,7 +155,7 @@ public class LoginSaveAction extends LoginExitAction {
 		sqlA.append(" where recipient='").append(aUsername).append("'") ;
 		sqlA.append(" and readDate is null");
 		sqlA.append(" and username!='system_message'");
-		sqlA.append(" and (validitydate is null or validitydate>=current_date)");
+		sqlA.append(" and (validitydate is null or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
 	
 		Collection<WebQueryResult> list1 =service.executeNativeSql(sqlA.toString()) ;
 		//StringBuilder res = new StringBuilder() ;
