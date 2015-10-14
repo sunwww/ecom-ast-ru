@@ -35,4 +35,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
       <msh:sideLink key="CTRL+7" params="" action="/pres_prescription_find" name="⇧ Назначений" 
       	styleId="pres_find"
       	guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
+      <msh:sideLink params="" action="/pres_lab_print" name="Печать" 
+      	styleId="pres_print"
+      	guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
     </msh:sideMenu>
