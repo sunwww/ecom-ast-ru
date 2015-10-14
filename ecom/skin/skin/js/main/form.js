@@ -57,7 +57,7 @@ function goToPage(aPage,aId,aTableCell) {
 	    		func = func + "," ;
 	    	} 
 	    	event(func+"'"+aId+"','"+aTableCell+"')") ;
-	    	alert(func+"'"+aId+"'"+")");
+	    	//alert(func+"'"+aId+"'"+")");
     	}
     } else {
     	var delim = aPage.indexOf('?')==-1 ? '?' : '&' ;
