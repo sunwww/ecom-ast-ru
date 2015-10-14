@@ -156,7 +156,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		try {
 			if (aAttributeName==null) aAttributeName=aParameter ;
 			String param = (String)aRequest.getParameter(aParameter) ;
-			System.out.println(aParameter+"param="+param) ;
+			System.out.println(aParameter+"="+param) ;
 	    	if (param!=null && !param.equals("") && !param.equals("0")) {
 	    		service = Injection.find(aRequest).getService(IWebQueryService.class);
 	    		aSql = aSql.replaceAll(":id", param) ;
@@ -166,16 +166,18 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 					String title = aTitle!=null && !aTitle.equals("")?aTitle+": ":"" ;
 					aRequest.setAttribute(aAttributeName+"Info", title+obj.get2()) ;
 				} else {
-					
+					aRequest.setAttribute(aAttributeName+"Info", "") ;
 				}
 	    		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
 	    		sql=" and "+aFldId+"='"+param+"'";
 	    		aRequest.setAttribute(aAttributeName+"Sql", sql) ;
-	    		aRequest.setAttribute(aAttributeName,param) ;
+	    		aRequest.setAttribute(aAttributeName,param!=null?param:"") ;
+	    		
 		    	
 	    	} else {
 	    		aRequest.setAttribute(aAttributeName,"0") ;
 	    		aRequest.setAttribute(aAttributeName+"SqlId", "''") ;
+	    		aRequest.setAttribute(aAttributeName+"Info", "") ;
 	    	}
     	
 		} catch (NamingException e) {
