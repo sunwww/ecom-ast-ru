@@ -67,7 +67,7 @@ function printStatCards(aCtx, aParams) {
 		//wqr.set7(medCase.outcome) ;//"sls.outcome",
 		//wqr.set8(medCase.result) ;//"sls.result",
 		
-		wqr.set9(medCase.daysCount) ;//"sls.daysCount", 
+		wqr.set9(Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1)) ;//"sls.daysCount", 
 		
 		//7. Доставлен по экстренным показания
 		wqr.set10(medCase.emergency!=null && medCase.emergency==true?"экстренные":"планово") ;

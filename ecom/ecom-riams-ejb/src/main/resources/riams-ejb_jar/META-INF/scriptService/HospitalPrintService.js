@@ -1378,7 +1378,7 @@ function printStatCardInfo(aCtx, aParams) {
 	//else {
 	//map.put("diag.establishDate",medCase.diagnosClinical.establishDate);
 	//}
-	map.put("sls.daysCount", medCase.daysCount) ;
+	map.put("sls.daysCount", Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1)) ;
 	//recordVocProba("sls.hosp",medCase.hospitalization,1,2);
 	//7. Доставлен по экстренным показания
 	toBeOrNotToBe("sls.dostavlen",medCase.emergency) ;
