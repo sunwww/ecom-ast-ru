@@ -452,10 +452,10 @@
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="stac_sloForm">
   	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-  	<tags:smo_diary_defect name="SMODef" title="Выбор проблемы в протоколе" parentID="${param.id}" />
+  	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника" parentID="${param.id}" />
   		<script type="text/javascript">
   			function checkErrorProtocol(aId) {
-  				showSMODefDiaryDefect() ;
+  				showSMODefDiaryDefect(aId) ;
   				
   			}
   		</script>
