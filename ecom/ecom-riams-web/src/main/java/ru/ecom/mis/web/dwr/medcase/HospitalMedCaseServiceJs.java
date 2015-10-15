@@ -36,9 +36,9 @@ public class HospitalMedCaseServiceJs {
 		if (list.size()>0) {
 			Object[] obj=list.get(0) ;
 			StringBuilder sql = new StringBuilder() ;
-			sql.append("update diary set record='").append(obj[1]).append("',editdate=current_date,edittime=current_time where dm.diary_id="+aDiary) ;
+			sql.append("update diary set record='").append(obj[1]).append("',editdate=current_date,edittime=current_time where id="+aDiary) ;
 			service.executeUpdateNativeSql(sql.toString()) ;
-			service.executeUpdateNativeSql("update diarymessage set IsDoctorCheck='1' where dm.diary_id="+aDiary) ;
+			service.executeUpdateNativeSql("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aDiary) ;
 		}
 		return "" ;
 	}
