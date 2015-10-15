@@ -49,7 +49,7 @@ public class VocServiceJs {
 		sqlA.append("select id,messagetitle,messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
 		sqlA.append(" where recipient='").append(username).append("'") ;
 		sqlA.append(" and readDate is null");
-		sqlA.append(" and isEmergency='1' and (validitydate<current_date or validitydate=current_date and validitytime<=current_time) ");
+		sqlA.append(" and isEmergency='1' and (validitydate>current_date or validitydate=current_date and validitytime>=current_time) ");
     	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
     	StringBuilder sb = new StringBuilder() ;
     	sb.append("{");
