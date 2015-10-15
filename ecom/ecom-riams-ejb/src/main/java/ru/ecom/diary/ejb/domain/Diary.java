@@ -79,5 +79,18 @@ public class Diary extends BaseEntity {
 
 	/** Тяжесть состояния */
 	private VocPhoneMessageState theState;
+	
+	/** Время редактирования */
+	@Comment("Время редактирования")
+	public Time getEditTime() {
+		return theEditTime;
+	}
+
+	public void setEditTime(Time aEditTime) {
+		theEditTime = aEditTime;
+	}
+
+	/** Время редактирования */
+	private Time theEditTime;
  
  }
