@@ -214,7 +214,7 @@
 			.append(" +(case when (cast(to_char(m.dateStart,'dd') as int)") 
 			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
 			.append(" <0)")
-			.append(" then -1 else 0 end) between 15 and 17 ") ;
+			.append(" then -1 else 0 end) between 0 and 17 ") ;
     	request.setAttribute("age_0_17", age.toString()) ;
     	if (typeAge!=null &&typeAge.equals("1")) {
     		request.setAttribute("ageSql", " and "+request.getAttribute("age_0_17")) ;
