@@ -275,9 +275,10 @@
       ,case when aslo.dtype='Visit' then 'background:#F6D8CE;color:black;' 
       when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;color:black;'
       else '' end as f4style
-      ,case when (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
+      ,case when sls.datefinish is null and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
       , (select list(vdd.name) from DiaryMessage dm left join VocDefectDiary vdd on vdd.id=dm.defect_id where dm.diary_id=d.id and dm.createDate>current_date-2) as message
       from MedCase slo
+      left join medcase sls on sls.id = slo.parent_id
       left join MedCase aslo on aslo.parent_id=slo.parent_id
       left join Diary as d on aslo.id=d.medCase_id
       left join WorkFunction wf on wf.id=d.specialist_id
