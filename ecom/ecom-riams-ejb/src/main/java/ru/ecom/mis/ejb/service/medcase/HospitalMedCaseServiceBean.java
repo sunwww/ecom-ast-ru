@@ -1450,6 +1450,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (obj[1]!=null) {
 	    		if (obj[0]!=null) {
 	    			// Отд next1=current (объединять 2 отделения)
+	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
@@ -1473,6 +1474,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	    	theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
 	    		} else {
 	    			//
+	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
