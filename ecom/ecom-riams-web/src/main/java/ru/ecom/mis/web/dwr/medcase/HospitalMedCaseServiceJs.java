@@ -29,6 +29,19 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public String checkEditProtocolControl(Long aDiaryMessage, Long aDiary, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select dm.diary_id,dm.record from diarymessage dm left join diary d on d.id=dm.diary_id where (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time) and d.username='"+login+"' and d.id='"+aDiary+"'") ;
+		if (list.size()>0) {
+			Object[] obj=list.get(0) ;
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("update diary set record='").append(obj[1]).append("',editdate=current_date,edittime=current_time where dm.diary_id="+aDiary) ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+			service.executeUpdateNativeSql("update diarymessage set IsDoctorCheck='1' where dm.diary_id="+aDiary) ;
+		}
+		return "" ;
+	}
 	public String getDiaryDefects(Long aDiaryId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder req = new StringBuilder();
@@ -65,15 +78,22 @@ public class HospitalMedCaseServiceJs {
 			.append("','").append(login).append("',current_date,current_time,to_date('").append(f.format(cal.getTime())).append("','dd.mm.yyyy'),current_time)") ;
 		System.out.println(sql) ;
 		service.executeUpdateNativeSql(sql.toString()) ;
-		String username="" ;
 		sql = new StringBuilder() ;
-		
-		sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
-			.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
-			.append("values ('").append("На исправление дневник").append("','")
-			.append(aComment).append("','").append(login)
-			.append("',current_date,current_time,'").append(username).append("',current_date,'")
-			.append("entityParentView-smo_visitProtocol.do?id="+aDiaryId).append("')") ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select d.id,d.username,to_char(d.dateregistration,'dd.mm.yyyy')||' '||pat.lastname from diary d left join medcase mc on mc.id=d.medcase_id left join patient pat on pat.id=mc.patient_id where d.id='"+aDiaryId+"'") ;
+		if (list.size()>0) {
+			Object[] obj = list.get(0) ;
+			String username=""+obj[1] ;
+			
+			sql = new StringBuilder() ;
+			
+			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
+				.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
+				.append("values ('").append("На исправление дневник").append("','")
+				.append(obj[2]).append("','").append(username)
+				.append("',current_date,current_time,'").append(login).append("',current_date,'")
+				.append("entityParentView-smo_visitProtocol.do?id="+aDiaryId).append("')") ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+		}
 		return "1" ;
 	}
 	public String getDiariesByHospital(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
