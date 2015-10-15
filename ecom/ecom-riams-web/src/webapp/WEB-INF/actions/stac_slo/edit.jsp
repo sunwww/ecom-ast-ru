@@ -109,6 +109,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
         <msh:sideLink styleId="viewShort" action='/javascript:getDefinition("js-smo_draftProtocol-list.do?short=Short", null);' name='Черновики' title="Просмотр черновиков специалиста" key="ALT+4" roles="/Policy/Mis/MedCase/Protocol/View" />
+        <msh:sideLink action='/js-stac_slo-list_edit_protocol.do' name='На редакцию' title="Просмотр дневников для редакции" roles="/Policy/Mis/MedCase/Protocol/View" />
         <msh:sideLink params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
 	    <msh:sideLink 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDepartmentAdmission" 
