@@ -10,6 +10,44 @@
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 	<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
 	<script type="text/javascript">
+	
+	var currentDate = new Date;
+	var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+	var textMonth = currentDate.getMonth()+1;
+	var textMonth = textMonth<10?'0'+textMonth:textMonth;
+	var textYear =currentDate.getFullYear();
+	var textDate = textDay+'.'+textMonth+'.'+textYear;
+	
+	function changeDate(days) {
+		currentDate.setDate(currentDate.getDate()+days);
+		var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+		var newTextMonth = currentDate.getMonth()+1;
+		var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
+		var newTextYear =currentDate.getFullYear();
+		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
+		$('labDate').value=newTextDate;
+		for (var i=1;i<=labNum;i++) {
+			$('labDate'+i).value=newTextDate;
+		}
+	}
+	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
+	function fillFormFromTemplate(aData) {
+		
+		var aRow = aData.split("#");
+		if (aRow.length>0) {
+			for (var i=0;i<aRow.length;i++) {
+				var research = aRow[i].split("@");
+				if (research[0]!=null && research[0]!="" ){
+					var prescType = research[0];
+					if (prescType=="SERVICE") {
+						addRows(research[1],1);
+					}
+				}
+			}
+		}
+		
+	}
+	
 	function prepare1Row(aId,aName) {
   		
   		$('labServicies').value=aId ;
@@ -267,6 +305,79 @@
 				$('prescriptTypeName').style.display="block";
 			}
 	}
+		function addRows(aResult,aFocus) {
+		var resultRow = aResult.split(":");
+		/*
+		0 - ms.type
+		1 - ms.ID 2 - ms. code+name
+		3 - date
+		4 - cabinetcode           5 - cabinetname
+		6 - departmentintakecode  7 - departmentintakename (for lab)
+		8 - timecode              9 - timename (for func)
+		*/
+		var type = resultRow[0];
+		var id = resultRow[1]; 
+		var name = resultRow[2];
+		var date = resultRow[3]!=""?resultRow[3]:textDate;
+		var cabinet = resultRow[4]?resultRow[4]:"";
+		var cabinetName = resultRow[5]?resultRow[5]:"";
+		
+		if (type=='LABSURVEY' || type=='lab') {
+			type='lab'; num = labNum;
+		} else if (type=='DIAGNOSTIC' || type=='func') {
+			type='func'; num = funcNum; 
+		} else if (type=='surg') {
+			num = surgNum;
+		} else if (type='hosp') {
+			num = hospNum;
+		}
+		num+=1;
+	    
+ 		var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке и добавляем тх 
+	    var td1 = document.createElement("TD"); td1.colSpan="2"; td1.align="right";
+	    var td2 = document.createElement("TD"); td2.colSpan="2";
+	    var td3 = document.createElement("TD");
+	    row.appendChild(td1); row.appendChild(td2); row.appendChild(td3);
+	   
+	    // Наполняем ячейки 
+	    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
+	    
+	  	td1.innerHTML = textInput("Дата",type,"Date",num,resultRow[3],date,10) ;
+	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+	   	if (type=="lab") {
+	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
+	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
+	   		labNum = num;
+	   	} else if (type=="func"){
+		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
+	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
+	   		funcNum = num;
+	   		$(type+'Cabinet').value='';
+			$(type+'CabinetName').value='';
+	   	} else if (type=='surg') {
+	   		surgNum=num;
+	   	}
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
+	   	new dateutil.DateField($(type+'Date'+num));
+		
+		$(type+'Servicies').value='';
+		$(type+'ServiciesName').value='';
+		if (aFocus) $(type+'ServiciesName').focus() ;
+}
+	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
+		return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
+	}
+	function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
+		return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
+	}
+	function spanTag(aText,aValue,aDefaultValue) {
+		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
+	}
 	
 	function addRow(type) { 
 		if (type=='lab') {
@@ -392,6 +503,13 @@
             </td>
 			</tr>
 			<tr>
+				<td>
+					<input type='button' value='-1' title="Уменьшить дату на 1 день" onclick='changeDate(-1)'>
+					<input type='button' value='+1' title="Увеличить дату на 1 день"  onclick='changeDate(1)'>
+			
+				</td>
+			</tr>
+			<tr>
 			<msh:autoComplete property="labDepartment" label="Место забора" vocName="departmentIntake" size='20' fieldColSpan="3" horizontalFill="true" />
 			</tr>
            </tbody>
@@ -494,6 +612,13 @@
         <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
+    <msh:ifFormTypeIsCreate formName="pres_servicePrescriptionForm">
+    <tags:templatePrescription record="2" parentId="${param.prescriptionList}" name="add" />
+    <msh:sideMenu title="Шаблоны">
+  			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
+  		</msh:sideMenu>
+  		
+    </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
 
