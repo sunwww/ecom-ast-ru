@@ -167,6 +167,7 @@ function printInfo(aCtx, aParams) {
 	//throw aParams+"" ;
 }
 function printAgreement(aCtx, aParams) {
-	var map = new java.util.HashMap() ;
-	return map ;
+	//var map = new java.util.HashMap() ;
+	//return map ;
+	return printInfo(aCtx, aParams);
 }
