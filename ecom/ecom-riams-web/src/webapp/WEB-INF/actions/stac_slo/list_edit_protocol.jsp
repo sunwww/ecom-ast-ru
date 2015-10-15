@@ -128,26 +128,26 @@ select dm.diary_id as diaryid
 ,slo.dateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
     ,pat.birthday,sc.code
-    ,p.dateRegistration
+    ,d.dateRegistration
 ,vdd.name as vddname
 ,dm.record as dmrecord
 ,d.record as drecord 
 ,to_char(dm.validitydate,'dd.mm.yyyy')||cast(dm.validitytime as varchar(5)) as validity
-, p.id as pid
+, d.id as pid
 ,dm.id as dmid
 
     from DiaryMessage dm
 left join vocdefectdiary vdd on vdd.id=dm.defect_id
 left join diary d on d.id=dm.diary_id 
-    left join  medCase slo on slo.id=p.medcase_id 
+    left join  medCase slo on slo.id=d.medcase_id 
     left join MedCase as sls on sls.id = slo.parent_id 
     left join bedfund as bf on bf.id=slo.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left join Patient pat on slo.patient_id = pat.id 
     
     where  d.specialist_id='${curator}'
-    and (current_date>dm.validitydate or dm.validitydate=current_date 
-    and dm.validitytime<=current_time
+    and (dm.validitydate>current_date or dm.validitydate=current_date 
+    and dm.validitytime>=current_time
     )
    
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
