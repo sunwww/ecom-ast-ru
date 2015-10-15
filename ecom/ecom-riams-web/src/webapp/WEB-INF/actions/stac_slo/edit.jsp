@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -260,7 +262,21 @@
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
+    
+    <%
+    String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+	//request.setAttribute("login", login) ;
+	ActionUtil.getValueBySql("select wf.id,w.lpu_id from SecUser su left join WorkFunction wf on su.id=wf.secUSer_id left join Worker w on wf.worker_id=w.id where su.login='"+login+"'"
+			,"wf_id","lpu_wf",request);
+	
+	Object wf_lpu = request.getAttribute("lpu_wf") ;
+	if (wf_lpu==null || (wf_lpu+"").equals("")) {
+		request.setAttribute("lpu_wf", "0") ;
+	}
+	
+    %>
     <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
+    ${lpu_wf}
       <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
         <msh:section title="Дневники специалистов (последние 50). 
         <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить</a>&nbsp;&nbsp;
@@ -269,13 +285,13 @@
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected'>Печать (список нераспеч.)</a>
         " guid="1f21294-8ea0-4b66-a0f3-62713c1">
           
-      <ecom:webQuery maxResult="50"  name="protocols"  nativeSql="
+      <ecom:webQuery maxResult="50"  name="protocols" nameFldSql="protocols_sql"  nativeSql="
       select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record 
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
       ,case when aslo.dtype='Visit' then 'background:#F6D8CE;color:black;' 
       when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;color:black;'
       else '' end as f4style
-      ,case when sls.datefinish is null and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
+      ,case when sls.datefinish is null and aslo.dtype!='Visit' and w.lpu_id='${lpu_wf}' and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
       , (select list(vdd.name) from DiaryMessage dm left join VocDefectDiary vdd on vdd.id=dm.defect_id where dm.diary_id=d.id and dm.createDate>current_date-2) as message
       from MedCase slo
       left join medcase sls on sls.id = slo.parent_id
