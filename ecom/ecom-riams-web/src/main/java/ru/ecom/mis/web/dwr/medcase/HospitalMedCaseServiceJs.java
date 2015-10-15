@@ -43,23 +43,36 @@ public class HospitalMedCaseServiceJs {
 		
 		return res.length()>0?res.substring(0,res.length()-1):"";
 	}
-	public String setDiaryDefect(Long aDiaryId, Long aDefectId, String aComment, HttpServletRequest aRequest) throws NamingException {
+	public String getDiaryText(Long aDiaryId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select id,record from diary where id="+aDiaryId) ;
+		StringBuilder ret = new StringBuilder() ;
+		if (list.size()>0) {
+			ret.append(list.get(0)[1]) ;
+		}
+		return ret.toString() ;
+	}
+	public String setDiaryDefect(Long aDiaryId, Long aDefectId, String aComment,String aRecord, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		
-		sql.append("insert into DiaryMessage (diary_id,defect_id,comment,createusername,createdate,createtime) ")
+		Calendar cal = Calendar.getInstance() ;
+		cal.add(Calendar.HOUR, 24) ;
+		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
+		sql.append("insert into DiaryMessage (diary_id,defect_id,comment,record,createusername,createdate,createtime,validitydate,validitytime) ")
 			.append("values ('").append(aDiaryId).append("','")
-			.append(aDefectId).append("','").append(aComment)
-			.append("','").append(login).append("',current_date,current_time)") ;
+			.append(aDefectId).append("','").append(aComment).append("','").append(aRecord)
+			.append("','").append(login).append("',current_date,current_time,to_date('").append(f.format(cal.getTime())).append("','dd.mm.yyyy'),current_time)") ;
+		System.out.println(sql) ;
 		service.executeUpdateNativeSql(sql.toString()) ;
+		String username="" ;
 		sql = new StringBuilder() ;
 		
 		sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
 			.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
 			.append("values ('").append("На исправление дневник").append("','")
-			.append("На исправление дневник").append("','").append(aComment)
-			.append("','").append(login).append("',current_date,current_time,'")
+			.append(aComment).append("','").append(login)
+			.append("',current_date,current_time,'").append(username).append("',current_date,'")
 			.append("entityParentView-smo_visitProtocol.do?id="+aDiaryId).append("')") ;
 		return "1" ;
 	}
