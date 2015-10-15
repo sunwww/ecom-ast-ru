@@ -10,6 +10,19 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
+    	function changeDate(days) {
+    		currentDate.setDate(currentDate.getDate()+days);
+    		var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+    		var newTextMonth = currentDate.getMonth()+1;
+    		var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
+    		var newTextYear =currentDate.getFullYear();
+    		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
+    		$('labDate').value=newTextDate;
+    		for (var i=1;i<=labNum;i++) {
+    			$('labDate'+i).value=newTextDate;
+    		}
+    	}
+    	
       	function prepare1Row(aId,aName) {
       		
       		$('labServicies').value=aId ;
@@ -892,6 +905,13 @@
 	            <input type="button" name="subm" onclick="preShowDir() ;show1DirMedService();" value="++" tabindex="4" />
             </td>
             </msh:row>
+            <tr>
+				<td>
+					<input type='button' value='-1' title="Уменьшить дату на 1 день" onclick='changeDate(-1)'>
+					<input type='button' value='+1' title="Увеличить дату на 1 день"  onclick='changeDate(1)'>
+			
+				</td>
+			</tr>
             <msh:row> 
             	<msh:autoComplete  property="labDepartment" vocName="departmentIntake" label="Место забора" size='20' fieldColSpan="3" horizontalFill="true" />
             </msh:row>
