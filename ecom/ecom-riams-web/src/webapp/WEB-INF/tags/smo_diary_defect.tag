@@ -94,6 +94,7 @@
 						 if (aDefects!=null && aDefects!="") {
 							 var defects = aDefects.split("#");
 							 var tbody = document.getElementById('table${name}Defects');
+							 tbody.innerHTML="" ;
 							for (var i=0;i<defects.length;i++) {
 								var row = document.createElement("TR");
 								var param = defects[i].split(":");
