@@ -78,7 +78,7 @@
 		            <msh:checkBox property="${name}Operations" label="Операции" fieldColSpan="2"/>
 		        </msh:row>
 		        <tr onclick='show${name}DiariesDiv()'>
-		            <msh:checkBox property="${name}Diaries" label="Дневники" fieldColSpan="2" />
+		            <msh:checkBox property="${name}Diaries" label="Протоколы и исследования" fieldColSpan="2" />
 		        <msh:row><td colspan="5">
 		        <div id='${name}diariesDiv' style='display:none'>
 		        </div></td>
