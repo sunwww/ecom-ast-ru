@@ -253,7 +253,7 @@
             <msh:tableColumn isCalcAmount="true" columnName="Число летальных исходов" property="4" addParam="&addCell=dead"/>
             <msh:tableColumn columnName="% летальных исходов по отделению" property="6"/>
             <msh:tableColumn columnName="%  от летальных исходов всего" property="7"/>
-        </msh:table>${journal_list_swod_sql}
+        </msh:table>
     </msh:sectionContent>
     </msh:section>
     <%} 
