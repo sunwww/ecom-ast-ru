@@ -90,6 +90,10 @@ function check(aForm,aCtx) {
 				}
 			}
 		}
+		var ldm = aCtx.manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id="+aForm.id+" and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList() ;
+		if (ldm.size()>0) {
+			aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aForm.id+"").executeUpdate() ;
+		}
 		if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
 			var curDate = java.util.Calendar.getInstance();
 			var maxVisit = java.util.Calendar.getInstance();
@@ -104,12 +108,9 @@ function check(aForm,aCtx) {
 				param1.put("id", +aForm.id) ;
 				var isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
 				if (+isCheck!=1) {
-					var ldm = aCtx.manager.createNativeManager("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id="+aForm.id+" and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList() ;
 					if (ldm.size()==0) {
 						throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
-					} else {
-						aCtx.manager.createNativeManager("update diarymessage set IsDoctorCheck='1' where dm.diary_id="+aForm.id+"").executeUpdate() ;
-					}
+					} 
 				}
 			}
 		}
