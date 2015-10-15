@@ -72,12 +72,17 @@
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select ml.id||'&department='||ml.id,ml.name ,count(distinct slo.id) 
-	from MedCase slo 
-	left join Diary p on slo.id=p.medcase_id 
-	left join MisLpu ml on slo.department_id=ml.id 
-	where p.dtype='RoughDraft'
-	and slo.dtype='DepartmentMedCase'
+    select ml.id||'&department='||ml.id,ml.name ,count(distinct p.id) 
+	from diarymessage dm  
+	left join Diary p on p.id=dm.diary_id 
+left join WorkFunction owf on p.specialist_id=owf.id 
+left join Worker ow on owf.worker_id=ow.id 
+	left join MedCase slo on slo.id=p.medcase_id 
+	left join MisLpu ml on ow.lpu_id=ml.id 
+	where slo.dtype='DepartmentMedCase'
+	and (dm.validitydate>current_date or dm.validitydate=current_date 
+    and dm.validitytime>=current_time
+    )
 	group by ml.id,ml.name order by ml.name
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
@@ -97,15 +102,18 @@
     <ecom:webQuery name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&curator='||owf.id as id,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
-,count(distinct slo.id) as cntSlo 
-from MedCase slo 
+,count(distinct p.id) as cntSlo 
+	from diarymessage dm  
+	left join Diary p on p.id=dm.diary_id 
+	left join MedCase slo on slo.id=p.medcase_id 
 left join Patient pat on slo.patient_id=pat.id 
-left join WorkFunction owf on slo.ownerFunction_id=owf.id 
+left join WorkFunction owf on p.Specialist_id=owf.id 
 left join Worker ow on owf.worker_id=ow.id 
 left join Patient owp on ow.person_id=owp.id 
-left join Diary p on slo.id=p.medcase_id 
-where slo.department_id='${department}' and slo.dtype='DepartmentMedCase' 
- and p.dtype='RoughDraft'
+where ow.lpu_id='${department}' and slo.dtype='DepartmentMedCase' 
+	and (dm.validitydate>current_date or dm.validitydate=current_date 
+    and dm.validitytime>=current_time
+    )
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
