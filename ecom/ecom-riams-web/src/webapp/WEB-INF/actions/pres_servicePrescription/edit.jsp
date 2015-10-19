@@ -19,13 +19,18 @@
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	
 	function changeDate(days) {
+		var l = $('labDate')?$('labDate').value:$('planStartDate').value;
+		l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+		currentDate.setTime (Date.parse(l));
 		currentDate.setDate(currentDate.getDate()+days);
 		var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 		var newTextMonth = currentDate.getMonth()+1;
 		var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
 		var newTextYear =currentDate.getFullYear();
 		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
-		$('labDate').value=newTextDate;
+		if ($('labDate')) $('labDate').value=newTextDate;
+		if ($('planStartDate')) $('planStartDate').value=newTextDate;
+		
 		for (var i=1;i<=labNum;i++) {
 			$('labDate'+i).value=newTextDate;
 		}
@@ -95,7 +100,8 @@
 			
 		 $('1ListIds').value=list;
 	 }
-	onload =function isInDepartment () {
+	onload =
+		function isInDepartment () {
 		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value,{
 			callback: function(aResult) {
 				PrescriptionService.isMedcaseIsDepartment(aResult,{
@@ -125,8 +131,8 @@
 		var month = date.getMonth()+1; if (month<10) {month="0"+month;}
 		var day = date.getDate(); if (day<10) {day="0"+day;}
 		var year = date.getFullYear();
-		$('labDate').value=day+"."+month+"."+year;
-		$('funcDate').value=day+"."+month+"."+year;
+		if ($('labDate')) $('labDate').value=day+"."+month+"."+year;
+		if ($('funcDate')) $('funcDate').value=day+"."+month+"."+year;
 			if ($('prescriptType').value=="" || $('prescriptType').value==null){
  				showcheckPrescTypes();
  			}	
@@ -549,9 +555,19 @@
         </msh:row>
   		<msh:autoComplete property="medService" vocName="labMedService"  label="Наименование исследования" horizontalFill="true" size="90" />
   		<msh:textField property="planStartDate" label="Дата " size="10"/>
+  		<msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+				<td>
+					<input type='button' value='-1' title="Уменьшить дату на 1 день" onclick='changeDate(-1)'>
+					<input type='button' value='+1' title="Увеличить дату на 1 день"  onclick='changeDate(1)'>
+			
+				</td>
+			</msh:ifFormTypeIsNotView>
 		<msh:row>
 		<msh:autoComplete property="prescriptCabinet" vocName="funcMedServiceRoom" parentAutocomplete="medService" label="Кабинет" size='20' horizontalFill="true" />
   		</msh:row>
+  		<tr>
+			<msh:autoComplete property="labDepartment" label="Место забора" vocName="departmentIntake" size='20' fieldColSpan="3" horizontalFill="true" />
+			</tr>
 		</msh:ifFormTypeAreViewOrEdit>
         </msh:panel>
 

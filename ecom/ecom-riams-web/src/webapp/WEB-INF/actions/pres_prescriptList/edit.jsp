@@ -11,6 +11,9 @@
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
     	function changeDate(days) {
+    		var l = $('labDate')?$('labDate').value:$('planStartDate').value;
+    		l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+    		currentDate.setTime (Date.parse(l));
     		currentDate.setDate(currentDate.getDate()+days);
     		var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
     		var newTextMonth = currentDate.getMonth()+1;
