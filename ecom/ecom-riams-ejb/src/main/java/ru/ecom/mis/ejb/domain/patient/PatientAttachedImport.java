@@ -263,9 +263,8 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
 	
     /** Пациент */
 	@Comment("Пациент")
-	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
 
 	/** Полис */
 	@Comment("Полис")
@@ -291,7 +290,7 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
 	/** Полис */
 	private MedPolicy theMedPolicy;
 	/** Пациент */
-	private Patient thePatient;
+	private Long thePatient;
 	
 	/** Создан новый пациент */
 	@Comment("Создан новый пациент")
