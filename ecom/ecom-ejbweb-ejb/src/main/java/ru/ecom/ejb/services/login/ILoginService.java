@@ -12,4 +12,5 @@ public interface ILoginService {
 	public void dispatchMessage(Long aIdMessage) ;
     public void checkMessage(Long aIdMessage);
 	public void hideMessage(Long aIdMessage) ;
+	public String[] getConfigUrl() ;
 }
