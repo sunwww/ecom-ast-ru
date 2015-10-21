@@ -17,6 +17,7 @@ public class LoginInfo implements ILoginInfo, Serializable {
     public LoginInfo(String aUsername, String aPassword) {
         theUsername = aUsername ;
         thePassword = getHashPassword(aUsername, aPassword) ;
+        
     }
 
     public String getFullname() {
@@ -65,6 +66,30 @@ public class LoginInfo implements ILoginInfo, Serializable {
     }
 
     public void saveTo(HttpSession aSession) {
-        aSession.setAttribute(KEY, this);
+    	aSession.setAttribute(KEY, this);
     }
+    /** Url main base */
+	public String getUrlMainBase() {
+		return theUrlMainBase;
+	}
+
+	/** Url report base */
+	public String getUrlReportBase() {
+		return theUrlReportBase;
+	}
+	public void setUrlReportBase(String aVal,HttpSession aSession) {
+		theUrlReportBase=aVal ;
+    	aSession.setAttribute("LOGININFO_URL_REPORT_BASE", theUrlReportBase);
+    	System.out.println("report="+theUrlReportBase) ;
+	}
+	public void setUrlMainBase(String aVal,HttpSession aSession) {
+		theUrlMainBase=aVal;
+        aSession.setAttribute("LOGININFO_URL_MAIN_BASE", theUrlMainBase);
+        System.out.println("main="+theUrlMainBase) ;
+	}
+
+	/** Url report base */
+	private String theUrlReportBase;
+	/** Url main base */
+	private String theUrlMainBase;
 }

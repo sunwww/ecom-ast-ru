@@ -64,7 +64,10 @@ public class LoginSaveAction extends LoginExitAction {
 
             ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
             if(service==null) throw new IllegalStateException("Невозможно получить сервис "+ILoginService.class.getSimpleName()) ;
-
+            String[] urls=service.getConfigUrl() ;
+            loginInfo.setUrlMainBase(urls[0],session) ;
+            loginInfo.setUrlReportBase(urls[1],session) ;
+            
             logLoginUserInvironment(aRequest) ;
             
             Set<String> roles = service.getUserRoles() ;
