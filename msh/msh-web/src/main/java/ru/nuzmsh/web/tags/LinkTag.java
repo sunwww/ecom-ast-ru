@@ -49,6 +49,21 @@ public class LinkTag extends AbstractGuidSimpleSupportTag {
 	public void setOnclick(String aOnclick) {
 		theOnclick = aOnclick;
 	}
+	/** Это отчет 
+    * @jsp.attribute   description = "Ссылка на отчетную базу"
+    *                     required = "false"
+    *                  rtexprvalue = "true"
+    */                  
+	public boolean getIsReport() {
+		return theIsReport;
+	}
+
+	public void setIsReport(boolean aIsReport) {
+		theIsReport = aIsReport;
+	}
+
+	/** Это отчет */
+	private boolean theIsReport;
 
 	/** OnClick */
 	private String theOnclick;
@@ -96,6 +111,14 @@ public class LinkTag extends AbstractGuidSimpleSupportTag {
 
             StringBuilder url = new StringBuilder();
             if (!theAction.startsWith("javascript:")) {
+                String addSb ; 
+                if (theIsReport) {
+                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_REPORT_BASE") ;
+                } else {
+                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_MAIN_BASE") ;
+                }
+                if (theAction.indexOf("http")==-1) url.append(addSb!=null&&!addSb.equals("null")?addSb:"") ;
+
 	            url.append(theAction.charAt(0)=='/' ? theAction.substring(1) : theAction) ;
 	            
 	            if(theAction.indexOf(".do")<0) {

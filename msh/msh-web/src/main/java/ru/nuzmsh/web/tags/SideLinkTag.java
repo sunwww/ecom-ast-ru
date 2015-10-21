@@ -84,6 +84,22 @@ public class SideLinkTag extends AbstractGuidSupportTag {
     public void setParams(String aExists) {
         theParams = aExists;
     }
+    
+    /** Это отчет 
+    * @jsp.attribute   description = "Ссылка на отчетную базу"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     * */
+	public boolean getIsReport() {
+		return theIsReport;
+	}
+
+	public void setIsReport(boolean aIsReport) {
+		theIsReport = aIsReport;
+	}
+
+	/** Это отчет */
+	private boolean theIsReport;
 
     /**
      * Действие
@@ -156,6 +172,13 @@ public class SideLinkTag extends AbstractGuidSupportTag {
             boolean isJavascript= false ;
             String actionJavascript = "" ;
             if (action.indexOf("javascript")==-1) {
+                String addSb ; 
+                if (theIsReport) {
+                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_REPORT_BASE") ;
+                } else {
+                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_MAIN_BASE") ;
+                }
+                if (action.indexOf("http")==-1)sb.append(addSb!=null&&!addSb.equals("null")?addSb:"") ;
             	sb.append(action) ;
             	if(action.indexOf(".do")>=0) {
 	                if(action.indexOf('?')>=0) {
