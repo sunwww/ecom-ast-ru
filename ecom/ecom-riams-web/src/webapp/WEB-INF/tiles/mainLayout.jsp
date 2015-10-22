@@ -112,7 +112,7 @@
             <msh:sideLink params=""  styleId="mainMenuLaboratoryJournal" action="/pres_prescription_find.do" name="Лаборатория"
                           roles="/Policy/MainMenu/LaboratoryJournal" title="Лаборатория" />
 
-            <msh:sideLink params="" styleId="mainMenuJournals"
+            <msh:sideLink params="" isReport="true" styleId="mainMenuJournals"
             			name="Отчеты" roles="/Policy/MainMenu/Journals" title="Отчеты" 
             			action="/riams_journals.do"/>
 <%--            <msh:sideLink params="" styleId="mainMenuDiet" 

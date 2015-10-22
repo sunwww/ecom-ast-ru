@@ -348,6 +348,7 @@
   		
   		}) ;
       datePlanAutocomplete.addOnChangeCallback(function(){
+    	  
     	  getPreRecord() ;
     	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
   		}) ;
@@ -438,7 +439,9 @@
 			 
   		}
   	function getPreRecord() {
+  		
   		if ($('tdPreRecord')) {
+  			
   			if (+$('datePlan').value>0) {
   	  			WorkCalendarService.getPreRecord($('datePlan').value,
   	  		  			{
@@ -449,13 +452,17 @@
   	  			  				else {
   	  			  					$('tdPreRecord').innerHTML="";
   	  			  				}
-  	  		  					updateTime()
+  	  		  				
+  	  		  					updateTime() ;
+  	  		  					
   	  			  			}
   	  		  			}
   	  		  			) ;
   	  			} else {
   	  				$('tdPreRecord').innerHTML="";
   	  			}
+  		} else {
+  			updateTime() ;
   		}
 	}
   		</script>
