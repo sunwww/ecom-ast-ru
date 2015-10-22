@@ -56,9 +56,11 @@ function printStatCards(aCtx, aParams) {
 		
 		var depDirect = "" ;
 		var hospType = medCase.hospType ;
+		var daysCount = Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0) ;
 		if (hospType!=null) {
 			if (hospType.code=="DAYTIMEHOSP") {
 				depDirect = "(дневное)" ;
+				daysCount = Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1) ;
 			}
 		}
 		
@@ -67,7 +69,7 @@ function printStatCards(aCtx, aParams) {
 		//wqr.set7(medCase.outcome) ;//"sls.outcome",
 		//wqr.set8(medCase.result) ;//"sls.result",
 		
-		wqr.set9(Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1)) ;//"sls.daysCount", 
+		wqr.set9(daysCount) ;//"sls.daysCount", 
 		
 		//7. Доставлен по экстренным показания
 		wqr.set10(medCase.emergency!=null && medCase.emergency==true?"экстренные":"планово") ;

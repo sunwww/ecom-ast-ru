@@ -1363,12 +1363,15 @@ function printStatCardInfo(aCtx, aParams) {
 	
 	var depDirect = "" ;
 	var hospType = medCase.hospType ;
+	var daysCount = Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0) ;
 	if (hospType!=null) {
 		if (hospType.code=="DAYTIMEHOSP") {
 			depDirect = "(дневное)" ;
+			daysCount = Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1) ;
+			
 		}
 	}
-	
+	map.put("sls.daysCount",daysCount) ;
 	map.put("sls.departmentDirection",medCase.department) ;
 	map.put("sls.typeDirect",depDirect) ;
 	map.put("sls.outcome",medCase.outcome) ;
@@ -1378,7 +1381,7 @@ function printStatCardInfo(aCtx, aParams) {
 	//else {
 	//map.put("diag.establishDate",medCase.diagnosClinical.establishDate);
 	//}
-	map.put("sls.daysCount", Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0,1)) ;
+	
 	//recordVocProba("sls.hosp",medCase.hospitalization,1,2);
 	//7. Доставлен по экстренным показания
 	toBeOrNotToBe("sls.dostavlen",medCase.emergency) ;
