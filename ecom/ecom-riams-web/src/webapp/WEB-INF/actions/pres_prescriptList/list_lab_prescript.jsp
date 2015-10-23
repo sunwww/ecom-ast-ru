@@ -178,6 +178,7 @@
   	//Object lpu = request.getAttribute("lpu_id") ;
   	String beginDate = request.getParameter("beginDate") ;
   	String endDate = request.getParameter("endDate") ;
+  	String department = request.getParameter("department");
   	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}
   	if (beginDate!=null && !beginDate.equals("")) {
   		request.setAttribute("beginDate", beginDate) ;
@@ -215,7 +216,9 @@
   		} else if (typeCancel!=null && typeCancel.equals("2")) {
   			sqlAdd.append(" and p.cancelDate is null ") ;
   		}
-  		
+  		if (department!=null&&!department.equals("")) {
+  			sqlAdd.append("and ml.id = "+department);
+  		}
 		href.append("&typeCancel=").append(typeCancel) ;
 		href.append("&typeIntake=").append(typeIntake) ;
 		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
