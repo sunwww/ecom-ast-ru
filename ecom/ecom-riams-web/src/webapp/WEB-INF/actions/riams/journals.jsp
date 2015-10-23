@@ -12,7 +12,7 @@
 	<tiles:put name='body' type='string'>
 	<msh:ifInRole roles="/Policy/MainMenu/JournalsAMOKB">
 	<script type='text/javascript'>
-	if(location.hostname=='192.168.10.20') {
+	if(location.hostname!='192.168.10.11' && location.hostname!='192.168.7.249') {
 		window.location='http://192.168.10.11:8080/riams/riams_journals.do';
 	}
 	</script>
