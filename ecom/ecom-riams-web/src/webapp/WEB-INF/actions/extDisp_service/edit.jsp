@@ -231,7 +231,7 @@ order by veds.id,veds.name"
 		out.print("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
 		out.print("<input type='hidden' name='visitServiceTypeName"+i+"' id='visitServiceTypeName"+i+"' value='");out.print(wqr.get3()) ;out.print("'/>") ;
 		out.print("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
-		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
+		out.print("<td>") ;out.println(wqr.get4()) ;out.print("<input type='checkbox' hidden='true' id = 'defCheckBox"+i+"'><span style='color: red' id='defect"+i+"'></span></td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
 		out.print("'>") ;out.print("</td>") ;
@@ -280,8 +280,10 @@ order by veds.id,veds.name"
 		%>
 		
 		<tr><td class="buttons"><input type="button" value="Отменить" title="Отменить изменения" onclick="this.disabled=true; window.location.href='entityParentView-extDisp_card.do?id=${param.id}';  return true ;" id="cancelButton">
-		<input type="button" title="Сохранить изменения "	onclick="this.disabled=true; this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
+		<!-- <input type="button" title="Сохранить изменения " id='submButton' onclick="this.disabled=true; this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr> -->
+		<input type="button" title="Сохранить изменения " id='submButton' onclick="checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
 		</table>
+		
 		<%
 		
 		out.println("<script type='text/javascript'>") ;
@@ -332,6 +334,15 @@ order by veds.id,veds.name"
 			}
 			for (int ii=0;ii<fldVisitDate.length;ii++) {
 				out.println(" new dateutil.DateField($('"+fldVisitDate[ii]+i+"')) ;") ;
+				//test
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'click',function(){checkService("+i+")}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'blur',function(){checkService("+i+")}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'keyup',function(){checkService("+i+");}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'change',function(){checkService("+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'click',function(){checkService("+i+")}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'blur',function(){checkService("+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'keyup',function(){checkService("+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'change',function(){checkService("+i+");}) ;");
 			}
 		}
 		
@@ -358,6 +369,60 @@ order by veds.id,veds.name"
 		</form>
 
 	</tiles:put>
+	<tiles:put name='javascript' type='string'>
+		<script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
+		<script type='text/javascript'>
+		function checkServicies(subm) {
+			var isAllow = true;	
+			var cnt = $('cntVisit').value;
+			for (var i=0;i<cnt;i++) {
+				if ($('defCheckBox'+i).checked) {isAllow = false;}
+			}
+			if (isAllow) {
+				if (subm) {
+					document.forms[0].action='js-extDisp_service-save.do';
+					document.forms[0].submit();
+				}
+				
+			} else {
+				if (subm) {
+					alert ('Исправьте ошибки и попробуйте снова');
+				}
+			}
+		}
+		function checkService (i) {
+			var date = $('visitServiceDate'+i).value;
+			var doctor = $('workFunction'+i).value;
+		if (date!=null&&date!='' &&date.length==10 ) {
+			if (doctor==null ||doctor=='') {doctor=0;}
+			ExtDispService.checkDispService(date, $('card').value,0,doctor,{
+				callback: function(aResult) {
+				if (aResult!=null&&aResult!=''){
+					if (aResult.startsWith("1")){
+						$('defect'+i).style.color='green';
+						$('defCheckBox'+i).checked=false;
+					} else if (aResult.startsWith('2')) {
+						$('defect'+i).style.color='red';
+						$('defCheckBox'+i).checked=true;
+					}
+					$('defect'+i).innerHTML=aResult.substring(1);
+					//checkServicies();
+				} else {
+					$('defect'+i).innerHTML='';
+					$('defCheckBox'+i).checked=false;
+					//checkServicies();
+				}
+				}
+			});
+		} else {
+			$('defect'+i).innerHTML='';
+			$('defCheckBox'+i).checked=false;
+			//checkServicies(false);
+		}
+		}
+		
+		</script>
+		</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="extDisp_cardForm" title="Услуги" />
 	</tiles:put>

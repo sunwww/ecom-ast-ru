@@ -149,12 +149,38 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
 		<msh:ifNotInRole roles="/Policy/Mis/ExtDisp/Card/IgnoreAttachmentDisp">
 		<msh:ifFormTypeIsCreate formName="extDisp_cardForm">
 		<script type="text/javascript">
 		var oldaction = document.forms['extDisp_cardForm'].action ;
 		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached('1')";
 		
+		function checkDisp(aDate) {
+			if (aDate!=null && aDate!='' && $('workFunction').value!=null && $('workFunction').value!=0) {
+				ExtDispService.checkDispService(aDate, 0,$('patient').value, $('workFunction').value,{
+					callback: function(aResult) {
+						if (aResult.startsWith("1")) {
+							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
+								document.getElementById('submitButton').disabled=false;
+								document.getElementById('submitButton').value='Создать';
+								return;
+							} else {
+								document.forms['extDisp_cardForm'].action=oldaction ;
+	    						document.forms['extDisp_cardForm'].submit();
+							}
+						} else if (aResult.startsWith("2")) {
+							alert ("Внимание! Дубль!\n "+aResult.substring(1)+" . \nСоздание карты невозможно.");
+							document.getElementById('submitButton').disabled=false;
+							document.getElementById('submitButton').value='Создать';
+						} else {
+							document.forms['extDisp_cardForm'].action=oldaction ;
+    						document.forms['extDisp_cardForm'].submit();
+						}
+					}
+				});
+			}
+		}
 		function checkDispAttached(r) {
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
@@ -169,14 +195,15 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     				}
     				else {
     					if (r=='1') {
-    						document.forms['extDisp_cardForm'].action=oldaction ;
-    						document.forms['extDisp_cardForm'].submit();
+    						checkDisp($('finishDate').value);
+    						
     					}
     					
     				} 
     					
     			}
     		});
+			
     	}
 		</script>
 		</msh:ifFormTypeIsCreate>
@@ -192,7 +219,8 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	updateAge() ;
     	try {
     		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
-    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;}) ;
+    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('finishDate').value);}) ;
+    		eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('finishDate').value);}) ;
     		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
     		} catch(e) {
 
