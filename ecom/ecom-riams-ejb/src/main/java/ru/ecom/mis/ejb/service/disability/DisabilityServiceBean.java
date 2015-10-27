@@ -524,6 +524,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				
 				if (reason1!=null&& (reason1.equals("09")||reason1.equals("12")
 						||reason1.equals("13")||reason1.equals("14")||reason1.equals("15"))) {
+					
+					if (serv1_birthday==null|| serv1_birthday.equals("")) {
+						defect.append(ln).append(":").append(ln_id).append(":Не указано лицо по уходу за которым берется ЛН").append(":")
+						.append(patId).append(":").append(patInfo).append("#");
+						continue;
+					}
 					//Считаем возраст
 					Date bithday1 = new Date(format.parse(serv1_birthday).getTime());
 					Date dateFrom1 = new Date(format.parse(startDate).getTime());
