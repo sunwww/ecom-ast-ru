@@ -40,9 +40,9 @@ public class LoginServiceBean implements ILoginService {
     public String[] getConfigUrl() {
     	String ret = null ;
     	String ret1 = null ;
-    	List<Object> l = theManager.createNativeQuery("select KeyValue from SoftConfig where key='config_url_main'").getResultList() ;
+    	List<Object> l = theManager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_main'").getResultList() ;
     	if (l.size()>0) {ret = ""+l.get(0);}
-    	List<Object> l1 = theManager.createNativeQuery("select KeyValue from SoftConfig where key='config_url_report'").getResultList() ;
+    	List<Object> l1 = theManager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_report'").getResultList() ;
     	if (l1.size()>0) {ret1 = ""+l1.get(0);}
     	String[] rets = new String[2] ;
     	rets[0]=ret ;rets[1]=ret1 ;
