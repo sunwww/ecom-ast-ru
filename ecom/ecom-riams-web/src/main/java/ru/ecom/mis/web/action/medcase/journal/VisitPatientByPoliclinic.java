@@ -47,8 +47,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			if (ids[8]!=null && !ids[8].equals("")) 	form.setWorkPlaceType(Long.valueOf(ids[8])) ;
 			if (ids[9]!=null && !ids[9].equals("")) 	form.setOrderLpu(Long.valueOf(ids[9])) ;
 			if (ids[10]!=null && !ids[10].equals("")) 	form.setOrderWorkFunction(Long.valueOf(ids[10])) ;
-			if (ids[11]!=null && !ids[11].equals("")) 	form.setSocialStatus(Long.valueOf(ids[10])) ;
-			if (ids[12]!=null && !ids[12].equals("")) 	form.setDefect(Long.valueOf(ids[10])) ;
+			if (ids[11]!=null && !ids[11].equals("")) 	form.setSocialStatus(Long.valueOf(ids[11])) ;
+			if (ids[12]!=null && !ids[12].equals("")) 	form.setDefect(Long.valueOf(ids[12])) ;
 			
 		} else {
 			view =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeView","2", aRequest) ;
