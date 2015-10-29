@@ -1826,6 +1826,7 @@ if (date!=null && !date.equals("")) {
 	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	and bfc.financesource=vfs.id ${departmentBFC} 
 	and bfc.department=slo.department_id and bfc.bedsubtype=vbst.id
+	and slo.datefinish between bfc.startDate and bfc.finishDate
 	group by vbst.id, vbst.name,vbt.id, vbt.name ,bfc.plantreatmentduration,vfs.id,vfs.name
 	
 	      " />
