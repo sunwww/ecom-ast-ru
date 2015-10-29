@@ -29,9 +29,6 @@
         <msh:checkBox property="needUpdatePolicy" label="Автоматически обновлять данные мед. полиса"/>
         <msh:checkBox property="needUpdateAttachment" label="Автоматически обновлять данные прикрепления"/>
         </msh:row>
-         <td>
-        <input type='button' onclick='test()' value='2'>
-        </td>
         </msh:ifFormTypeIsCreate>
         <msh:ifFormTypeAreViewOrEdit formName="mis_patientFondCheckDataForm">
         <msh:row>
@@ -85,7 +82,7 @@
 ,case when ((pf.commonnumber is null or pf.commonnumber='') and p.commonnumber!='') then null when ((pf.snils is null or pf.snils='') and p.snils!='') then null when case when (pf.commonnumber is not null) then pf.commonnumber else '' end ||'#'|| case when pf.snils is not null then pf.snils else '' end=case when p.commonnumber is not null then p.commonnumber else '' end||'#'|| case when p.snils is not null then p.snils else '' end then null else pf.id end as f13_changePat
 ,case when pf.lpuattached=(select sc.keyvalue from softconfig sc where key='DEFAULT_LPU_OMCCODE') and ((pf.attacheddate||'#'||pf.attachedtype)!=(att.dateFrom||'#'||vat.code) or att.id is null) then pf.id else null end as f14_changeAttachment
 from patientfond pf 
-left join patient p on p.id=pf.patient_id
+left join patient p on p.id=coalesce(pf.patient_id,pf.patient)
 left join vocidentitycard vic on vic.id=p.passporttype_id
 left join medpolicy mp on mp.patient_id=p.id
 left join vocmedpolicyomc vmpo on vmpo.id=mp.type_id
@@ -191,11 +188,6 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
    
     document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
 	
-    function test () {
-    	alert ($('needUpdatePatient').checked+' = '+
-	    		$('needUpdateDocument').checked+' = ' +$('needUpdatePolicy').checked+' = '+ 
-	    		$('needUpdateAttachment').checked);
-    }
 	 function checkAllPatients() {
 		 var typePat='1';
 		 var p=document.forms[0].typePatient;
