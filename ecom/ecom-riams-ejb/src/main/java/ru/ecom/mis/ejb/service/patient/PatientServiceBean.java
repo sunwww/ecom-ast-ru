@@ -439,7 +439,7 @@ public class PatientServiceBean implements IPatientService {
 					", pf.lastname, pf.firstname, pf.middlename, pf.commonnumber, pf.snils" +
 					" ,pf.documentnumber,pf.documentseries, pf.documenttype, pf.documentdateissued, documentwhomissued" +
 					" ,pf.lpuattached, pf.attachedtype, to_char(pf.attacheddate,'dd.MM.yyyy') as attDate " +
-					" ,pf.policyseries, pf.policynumber, to_char(pf.policydatefrom,'dd.MM.yyyy') as polFrom, to_char(pf.policydateto,'dd.MM.yyyy') as polTo, pf.companycode, to_char(pf.birthday,'dd.MM.yyyy')as birthday, pf.patient_id" +
+					" ,pf.policyseries, pf.policynumber, to_char(pf.policydatefrom,'dd.MM.yyyy') as polFrom, to_char(pf.policydateto,'dd.MM.yyyy') as polTo, pf.companycode, to_char(pf.birthday,'dd.MM.yyyy')as birthday, pf.patient" +
 					" ,to_char(pf.checkDate,'dd.MM.yyyy') as checkDate " +
 					" from patientfond pf where pf.id='"+aPatientFondId+"' ").getResultList();
 			if (!listZ.isEmpty()) {
@@ -451,7 +451,7 @@ public class PatientServiceBean implements IPatientService {
 					,aAttachedLpu=toStr(arr[11]),aAttachedType=toStr(arr[12]),aAttachedDate=toStr(arr[13])
 					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
 					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21]);
-					Long aPatientId =Long.valueOf(arr[20].toString()); 
+					Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null; 
 			if (needUpdatePatient) {
 				System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
@@ -527,6 +527,10 @@ public class PatientServiceBean implements IPatientService {
 	}
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
 			, boolean ignoreType, boolean updateEditDate) {
+		if (aCompany==null || aCompany.equals("") || aLpu==null || aLpu.equals("")) {
+			System.out.println("======= company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
+			return null;
+		}
 		String updateDate = updateEditDate?" editdate=current_date, ":""; 
 		SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
