@@ -144,11 +144,11 @@ public class FondWebService {
 		StringBuilder patSql = new StringBuilder().append("select p.id, p.lastname, p.firstname, p.middlename, p.birthday ");
 		if (typePat.equals("1")) {
 			patSql.append(" from patient p" +
-					" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id");
+					" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		} else if (typePat.equals("2")) {
 			patSql.append("from lpuattachedbydepartment att " +
 					" left join patient p on p.id=att.patient_id" +
-					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null order by p.id limit 20");
+					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		}
 	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
 		boolean needUpdate = false, updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;  
