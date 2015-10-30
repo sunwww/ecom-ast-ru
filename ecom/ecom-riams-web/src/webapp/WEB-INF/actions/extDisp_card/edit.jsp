@@ -32,8 +32,16 @@
 		        		parentId="extDisp_cardForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
 		        </msh:row>				
 		        <msh:row>
+		            <msh:ifInRole roles="/Policy/Mis/ExtDisp/Card/NoCheckLpu">
+		        	<msh:autoComplete parentAutocomplete="lpu" vocName="workFunction" hideLabel="false" property="workFunction" viewOnlyField="false" 
+		          		label="Раб.функция (терапевт)" fieldColSpan="3" horizontalFill="true" size="150" />
+		          	</msh:ifInRole>
+		            <msh:ifNotInRole roles="/Policy/Mis/ExtDisp/Card/NoCheckLpu">
 		        	<msh:autoComplete parentAutocomplete="lpu" vocName="workFunctionByLpu" hideLabel="false" property="workFunction" viewOnlyField="false" 
 		          		label="Раб.функция (терапевт)" fieldColSpan="3" horizontalFill="true" size="150" />
+		          	</msh:ifNotInRole>
+		            
+		          	
 		        </msh:row>
 				<msh:row>
 					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3"/>
