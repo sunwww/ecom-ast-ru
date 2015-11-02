@@ -788,7 +788,7 @@ order by p.lastname,p.firstname,p.middlename " />
     	} else if (view.equals("4")) {
 		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
     	} else if (view.equals("5")) {
-		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.prevmedcase_id is null and sls.deniedHospitalizating_id") ;
+		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.prevmedcase_id is null and sls.deniedHospitalizating_id is null") ;
     	} 
 
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
