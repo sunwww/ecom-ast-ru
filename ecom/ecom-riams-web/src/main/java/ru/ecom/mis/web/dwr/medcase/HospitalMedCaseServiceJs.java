@@ -91,7 +91,7 @@ public class HospitalMedCaseServiceJs {
 				.append("values ('").append("На исправление дневник").append("','")
 				.append(obj[2]).append("','").append(username)
 				.append("',current_date,current_time,'").append(login).append("',current_date,'")
-				.append("entityParentView-smo_visitProtocol.do?id="+aDiaryId).append("')") ;
+				.append("js-stac_slo-list_edit_protocol.do?id="+aDiaryId).append("')") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
 		return "1" ;
