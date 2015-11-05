@@ -130,11 +130,6 @@
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
-<%--            <input type="submit" onclick="print()" value="Печать" />
-            <input type="submit" onclick="printNew()" value="Печать (по отделениям)" />
-            <input type="submit" onclick="printNew1()" value="Печать (сопроводительного листа) 1" />
-            <input type="submit" onclick="printNew2()" value="Печать (сопроводительного листа) 2" />
-             --%>
           </td>
       </msh:row>
       
@@ -330,8 +325,8 @@
     <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
     
     select  
-    '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:'
-    ||to_char(m.${dateI},'dd.mm.yyyy'),
+    '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
+    ||to_char(m.${dateI},'dd.mm.yyyy')||'&dateEnd='||to_char(m.${dateI},'dd.mm.yyyy'),
     m.${dateI} 
 ,count(distinct case when (m.emergency is null or m.emergency='0') and m.deniedHospitalizating_id is null then m.id else null end) as pl
 ,count(distinct case when m.emergency='1' and m.deniedHospitalizating_id is null then m.id else null end) as em
@@ -391,7 +386,7 @@ order by m.${dateI}
                                 </form>
     </msh:sectionTitle>                             
     <msh:sectionContent>
-    <msh:table name="journal_priem" 
+    <msh:table name="journal_priem" cellFunction="true"
     viewUrl="js-stac_sslAllInfo-findByDate.do?short=Short"
     action="js-stac_sslAllInfo-findByDate.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
@@ -404,20 +399,20 @@ order by m.${dateI}
               </tr>
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Дата" property="2"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Плановые" property="3"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Экстренные" property="4"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж" property="6"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из всего гор." property="7"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из всего иног." property="8"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из всего иностр." property="9"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из всего другое" property="10"/>
-      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="11"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="12"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="13"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="14"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="15"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="16"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Плановые" property="3" addParam="&typeHosp=1&typeEmergency=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Экстренные" property="4" addParam="&typeHosp=1&typeEmergency=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5" addParam="&typeEmergency=${typeEmergency}&typeHosp=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж" property="6" addParam="&typeEmergency=${typeEmergency}&typeHosp=1&typePatient=vil"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего гор." property="7" addParam="&typeEmergency=${typeEmergency}&typeHosp=1&typePatient=city"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего иног." property="8" addParam="&typeEmergency=${typeEmergency}&typeHosp=1&typePatient=inog"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего иностр." property="9" addParam="&typeEmergency=${typeEmergency}&typeHosp=1&typePatient=inostr"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего другое" property="10" addParam="&typeEmergency=${typeEmergency}&typeHosp=1&typePatient=other"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="11" addParam="&typeEmergency=${typeEmergency}&typeHosp=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="12" addParam="&typeEmergency=${typeEmergency}&typeHosp=2&typePatient=vil"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="13" addParam="&typeEmergency=${typeEmergency}&typeHosp=2&typePatient=city"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="14" addParam="&typeEmergency=${typeEmergency}&typeHosp=2&typePatient=inog"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="15" addParam="&typeEmergency=${typeEmergency}&typeHosp=2&typePatient=inostr"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="16" addParam="&typeEmergency=${typeEmergency}&typeHosp=2&typePatient=other"/>
       <msh:tableColumn isCalcAmount="true" columnName="Обращений" property="17"/>
     </msh:table>
     </msh:sectionContent>
@@ -428,7 +423,7 @@ order by m.${dateI}
     <msh:sectionTitle>
     <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
+    select '&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
 ,dep.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -473,9 +468,9 @@ order by dep.name
                                 </form>
     </msh:sectionTitle>
     <msh:sectionContent >
-    <msh:table name="journal_priem_otd" 
-    viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short"
-    action="js-stac_sslAllInfo-findHospByPeriod.do"
+    <msh:table name="journal_priem_otd" cellFunction="true" 
+    viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&short=Short"
+    action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1"
      idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
@@ -487,19 +482,19 @@ order by dep.name
 
               </tr>
             </msh:tableNotEmpty>    
-      <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn isCalcAmount="true" columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
-      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="10"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="11"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="12"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="13"/>
-      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="14"/>
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3" addParam="&typeEmergency=2" />
+      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="4" addParam="&typeEmergency=2&typeFrm=kcp" />
+      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="5" addParam="&typeEmergency=2&typeFrm=sam" />
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="6" addParam="&typeEmergency=1" />
+      <msh:tableColumn isCalcAmount="true" columnName="КСП" property="7" addParam="&typeEmergency=1&typeFrm=kcp" />
+      <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="8" addParam="&typeEmergency=1&typeFrm=sam" />
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" identificator="false" property="9" addParam="&typeEmergency=${param.typeEmergency}"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="10"  addParam="&typeEmergency=${param.typeEmergency}&typePatient=vil"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="11" addParam="&typeEmergency=${param.typeEmergency}&typePatient=city"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="12" addParam="&typeEmergency=${param.typeEmergency}&typePatient=inog"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="13" addParam="&typeEmergency=${param.typeEmergency}&typePatient=inostr"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="14" addParam="&typeEmergency=${param.typeEmergency}&typePatient=other"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -508,7 +503,7 @@ order by dep.name
     <msh:section>
     <ecom:webQuery name="journal_priem_denied" nameFldSql="journal_priem_denied_sql" nativeSql="
     
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
+    select '&pigeonHole=${param.pigeonHole}&department=${department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&deniedHospitalizating='
     ||m.deniedHospitalizating_id 
 ,vdh.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -564,9 +559,9 @@ order by vdh.name
                                 </form>
 </msh:sectionTitle>
     <msh:sectionContent >
-    <msh:table name="journal_priem_denied" 
-    viewUrl="js-stac_sslAllInfo-findDeniedByPeriod.do?short=Short"
-    action="js-stac_sslAllInfo-findDeniedByPeriod.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_priem_denied" cellFunction="true"  
+    viewUrl="js-stac_sslAllInfo-findDeniedByPeriod.do?short=Short&typeHosp=2"
+    action="js-stac_sslAllInfo-findDeniedByPeriod.do?typeHosp=2" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
@@ -576,19 +571,19 @@ order by vdh.name
                 <th colspan=6>Общее кол-во</th>
               </tr>
             </msh:tableNotEmpty>    
-      <msh:tableColumn columnName="Причина отказа" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="КСП" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="самообращение" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Всего" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
-      <msh:tableColumn columnName="из них с.ж" property="10"/>
-      <msh:tableColumn columnName="из них гор." property="11"/>
-      <msh:tableColumn columnName="из них иног." property="12"/>
-      <msh:tableColumn columnName="из них иностр." property="13"/>
-      <msh:tableColumn columnName="из них другое" property="14"/>
+      <msh:tableColumn columnName="Причина отказа" property="2" />
+      <msh:tableColumn columnName="Всего" property="3" addParam="&typeEmergency=2"/>
+      <msh:tableColumn columnName="КСП" property="4"  addParam="&typeEmergency=2&typeFrm=kcp" />
+      <msh:tableColumn columnName="самообращение" property="5"  addParam="&typeEmergency=2&typeFrm=sam" />
+      <msh:tableColumn columnName="Всего" property="6"  addParam="&typeEmergency=1" />
+      <msh:tableColumn columnName="КСП" property="7"  addParam="&typeEmergency=1&typeFrm=kcp" />
+      <msh:tableColumn columnName="самообращение" property="8"  addParam="&typeEmergency=1&typeFrm=sam" />
+      <msh:tableColumn columnName="Всего" identificator="false" property="9" addParam="&typeEmergency=${typeEmergency}" />
+      <msh:tableColumn columnName="из них с.ж" property="10" addParam="&typeEmergency=${typeEmergency}&typePatient=vil"/>
+      <msh:tableColumn columnName="из них гор." property="11" addParam="&typeEmergency=${typeEmergency}&typePatient=city"/>
+      <msh:tableColumn columnName="из них иног." property="12" addParam="&typeEmergency=${typeEmergency}&typePatient=inog"/>
+      <msh:tableColumn columnName="из них иностр." property="13" addParam="&typeEmergency=${typeEmergency}&typePatient=inostr"/>
+      <msh:tableColumn columnName="из них другое" property="14" addParam="&typeEmergency=${typeEmergency}&typePatient=other"/>
     </msh:table>
     </msh:sectionContent>
     
@@ -600,7 +595,7 @@ order by vdh.name
     <msh:sectionTitle>
     <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
-    select '${typeEmergency}:${param.pigeonHole}:${department}:${typeDate}:${dateI}:${param.dateBegin}:${dateEnd}:'
+    select '&typeEmergency=${typeEmergency}&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
 ,dep.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -638,9 +633,9 @@ order by dep.name
                                 </form>
     </msh:sectionTitle>
     <msh:sectionContent >
-    <msh:table name="journal_priem_otd" 
-    viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short"
-    action="js-stac_sslAllInfo-findHospByPeriod.do"
+    <msh:table name="journal_priem_otd"  cellFunction="true"
+    viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short&typeHosp=1"
+    action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1"
      idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
@@ -651,14 +646,14 @@ order by dep.name
 
               </tr>
             </msh:tableNotEmpty>    
-      <msh:tableColumn columnName="Отделение" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Всего" property="3" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="КСП" property="4" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="самообращение" property="5" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Всего" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Доставленных в первые 6 часов" property="7" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Доставленных в первые 7-24 часов" property="8" guid="8410185d-711a-4851-bca4-913a77381989" />
-      <msh:tableColumn columnName="Доставленных позднее 24 часов" identificator="false" property="9" guid="7f973955-a5cb-4497-bd0b-f4d05848f049" />
+      <msh:tableColumn columnName="Отделение" property="2"  addParam="&typeEmergency=1" />
+      <msh:tableColumn columnName="Всего" property="3" addParam="&typeEmergency=2" />
+      <msh:tableColumn columnName="КСП" property="4" addParam="&typeEmergency=2&typeFrm=kcp" />
+      <msh:tableColumn columnName="самообращение" property="5" addParam="&typeEmergency=2&typeFrm=sam" />
+      <msh:tableColumn columnName="Всего" property="6" addParam="&typeEmergency=1" />
+      <msh:tableColumn columnName="Доставленных в первые 6 часов" property="7" addParam="&typeEmergency=1&typeDost=1"/>
+      <msh:tableColumn columnName="Доставленных в первые 7-24 часов" property="8" addParam="&typeEmergency=1&typeDost=2" />
+      <msh:tableColumn columnName="Доставленных позднее 24 часов" identificator="false" property="9" addParam="&typeEmergency=1&typeDost=3" />
 
     </msh:table>
     </msh:sectionContent>
