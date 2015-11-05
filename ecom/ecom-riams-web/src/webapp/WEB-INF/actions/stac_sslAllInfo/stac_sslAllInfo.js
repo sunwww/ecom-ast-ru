@@ -6,48 +6,93 @@ function report007(aForm,aCtx) {
  * Выбор даты поступления
  */
 function findByDate(aForm, aCtx) {
-	var id = aCtx.request.getParameter("id").split(":") ;
-	if (+id[3]==3) {
+	var dateI = aCtx.request.getParameter("dateI") ;
+	var dateBegin = aCtx.request.getParameter("dateBegin") ;
+	var dateEnd = aCtx.request.getParameter("dateEnd") ;
+	var typeDate = aCtx.request.getParameter("typeDate") ;
+	if (+typeDate==3) {
 		aCtx.request.setAttribute("paramPeriod"," and m.dateFinish is null") ;
 	} else {
-		aCtx.request.setAttribute("paramPeriod"," and m."+id[4]+"=to_date('"+id[5]+"','dd.mm.yyyy')")
+		aCtx.request.setAttribute("paramPeriod"," and m."+dateI+"=to_date('"+dateBegin+"','dd.mm.yyyy')")
 	}
 	
-	return listRecord(aCtx,id) ;
+	return listRecord(aCtx) ;
 }
 function findHospByPeriod(aForm, aCtx) {
-	var id = aCtx.request.getParameter("id").split(":") ;
-	if (+id[3]==3) {
+	var dateI = aCtx.request.getParameter("dateI") ;
+	var dateBegin = aCtx.request.getParameter("dateBegin") ;
+	var dateEnd = aCtx.request.getParameter("dateEnd") ;
+	var typeDate = aCtx.request.getParameter("typeDate") ;
+	if (+typeDate==3) {
 		aCtx.request.setAttribute("paramPeriod"," and m.dateFinish is null") ;
 	} else {
-		aCtx.request.setAttribute("paramPeriod"," and m."+id[4]+" between to_date('"+id[5]+"','dd.mm.yyyy') and to_date('"+id[6]+"','dd.mm.yyyy')")
+		aCtx.request.setAttribute("paramPeriod"," and m."+dateI+" between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')")
 	}
-	var dep = +id[7] ;
-	if (dep>0) aCtx.request.setAttribute("addParam", " and m.department_id='"+dep+"' and m.deniedHospitalizating_id is null") ;
-	return listRecord(aCtx,id) ;
+	//var dep = +aCtx.request.getParameter("department") ;
+	//if (dep>0) aCtx.request.setAttribute("addParam", " and m.department_id='"+dep+"' and m.deniedHospitalizating_id is null") ;
+	return listRecord(aCtx) ;
 }
 function findDeniedByPeriod(aForm, aCtx) {
 	
-	var id = aCtx.request.getParameter("id").split(":") ;
-	if (+id[3]==3) {
+	var dateI = aCtx.request.getParameter("dateI") ;
+	var dateBegin = aCtx.request.getParameter("dateBegin") ;
+	var dateEnd = aCtx.request.getParameter("dateEnd") ;
+	
+	var typeDate = aCtx.request.getParameter("typeDate") ;
+	if (+typeDate==3) {
 		aCtx.request.setAttribute("paramPeriod"," and m.dateStart=current_date") ;
 	} else {
-		aCtx.request.setAttribute("paramPeriod"," and m."+id[4]+" between to_date('"+id[5]+"','dd.mm.yyyy') and to_date('"+id[6]+"','dd.mm.yyyy')")
+		aCtx.request.setAttribute("paramPeriod"," and m."+dateI+" between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')")
 	}
-	var dep = +id[7] ;
+	var dep = aCtx.request.getParameter("deniedHospitalizating") ;
 	if (dep>0) aCtx.request.setAttribute("addParam", " and m.deniedHospitalizating_id='"+dep+"'") ;
 	
-	return listRecord(aCtx,id) ;
+	return listRecord(aCtx) ;
 }
-function listRecord(aCtx,aId) {
-	var dep = +aId[2] ;
-	var pHole = +aId[1] ;
-	var emer = +aId[0] ;
-	if (emer==1) {
+function listRecord(aCtx) {
+	var dep = aCtx.request.getParameter("department") ;
+	var pHole = aCtx.request.getParameter("pigeonHole") ;
+	var typeEmergency = aCtx.request.getParameter("typeEmergency") ;
+	var typeHosp = +aCtx.request.getParameter("typeHosp") ;
+	var typeDost = +aCtx.request.getParameter("typeDost") ;
+	var typePatient = aCtx.request.getParameter("typePatient") ;
+	var typeFrm = aCtx.request.getParameter("typeFrm") ;
+	if (+typeEmergency==1) {
 		aCtx.request.setAttribute("emergency"," and m.emergency='1'") ;
-	} else if (emer==2) {
+	} else if (+typeEmergency==2) {
 		aCtx.request.setAttribute("emergency"," and (m.emergency is null or m.emergency='0')") ;
 	}
+	if (+typeDost==1) {
+		aCtx.request.setAttribute("dostSql"," and vpat.code='1'") ;
+	} else if (+typeDost==2) {
+		aCtx.request.setAttribute("dostSql"," and vpat.code='2'") ;
+	} else if (+typeDost==3) {
+		aCtx.request.setAttribute("dostSql"," and vpat.code='3'") ;
+	}
+	if (+typeHosp==1) {
+		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is null") ;
+	} else if (+typeHosp==2) {
+		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is not null") ;
+	}
+	if (typeFrm=="kcp") {
+		aCtx.request.setAttribute("frmSql"," and of1.voc_code='К'") ;
+	} else if (typeFrm=="sam") {
+		aCtx.request.setAttribute("frmSql"," and of1.voc_code='О'") ;
+	}
+	
+	if (typePatient=="vil") {
+		aCtx.request.setAttribute("patientSql"," and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1' ") ;
+	} else if (typePatient=="city") {
+		aCtx.request.setAttribute("patientSql"," and (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1' ") ;
+	} else if (typePatient=="inog") {
+		aCtx.request.setAttribute("patientSql"," and (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30' ") ;
+	} else if (typePatient=="inostr") {
+		aCtx.request.setAttribute("patientSql"," and oo.voc_code!='643' ") ;
+	} else if (typePatient=="other") {
+		aCtx.request.setAttribute("patientSql"," and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3) ") ;
+	}
+	
+	//throw typeFrm+"---"+aCtx.request.getAttribute("frmSql") ;
 	if (dep>0) {
 		aCtx.request.setAttribute("department", " and ml.id='"+dep+"'") ;
 	}	
