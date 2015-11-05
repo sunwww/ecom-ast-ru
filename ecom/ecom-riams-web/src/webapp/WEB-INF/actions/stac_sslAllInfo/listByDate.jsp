@@ -136,19 +136,23 @@
      ,vr.name as vrname
      ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diagnosis
     from MedCase m 
+left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
     left join MisLpu dep on m.department_id = dep.id
     left join Patient p on m.patient_id = p.id  
     left join StatisticStub stat on m.statisticstub_id=stat.id 
     left join MisLpu lpu on m.department_id = lpu.id 
     left join Address2 a on p.address_addressid=a.addressid 
-    left join Omc_Oksm oo on oo.id=p.nationality_id 
+    left join Omc_Oksm oo on oo.id=p.nationality_id
+    left join Omc_Frm of1 on of1.id=m.orderType_id
+     
     left join VocRayon vr on vr.id=p.rayon_id
 	left join Diagnosis diag on diag.medcase_id=m.id
 	left join VocIdc10 mkb on mkb.id=diag.idc10_id
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+	left join MisLpu as ml on ml.id=m.department_id
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     where m.DTYPE='HospitalMedCase' ${paramPeriod} ${addParam} ${emergency} ${department} ${pigeonHole}
-     ${age_sql}
+     ${age_sql} ${patientSql} ${hospSql} ${frmSql} ${dostSql}
      group by m.id,m.dateStart,m.dateFinish,m.username,stat.code
     ,p.lastname ,p.firstname,p.middlename
     ,p.birthday,dep.name , m.emergency ,m.noActuality  ,oo.voc_code,oo.id,a.kladr
