@@ -137,7 +137,7 @@ select dm.diary_id as f1diaryid
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as f3fio
     ,pat.birthday as f4birthday,sc.code as f5sscode
     ,d.dateRegistration as f6datereg
-,vdd.name as f7vddname
+,vdd.name||' '||coalesce(dm.comment,'') as f7vddname
 ,case when dm.record!=d.record then dm.record else '' end as f8dmrecord
 ,d.record as f9drecord 
 ,to_char(dm.validitydate,'dd.mm.yyyy')||cast(dm.validitytime as varchar(5)) as f10validity
@@ -182,7 +182,7 @@ left join diary d on d.id=dm.diary_id
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   <script type="text/javascript">
   function checkEditProtocolControl(aDm,aD) {
-	  alert(aDm+"---"+aD) ;
+	  //alert(aDm+"---"+aD) ;
 	  HospitalMedCaseService.checkEditProtocolControl(aDm,aD
 				,{
 		 
