@@ -161,16 +161,16 @@ public class AddressPointServiceBean implements IAddressPointService {
     			{"pai.lastname","FAM","pai.lastname","1","Фамилия"},				{"pai.firstname","IM","pai.firstname","1","Имя"}
     	    	,		{"case when pai.middlename='' or pai.middlename='Х' or pai.middlename is null then '' else pai.middlename end","OT" ,"pai.middlename",null,"Отчество"} 
     	    	,		{"to_char(pai.birthday,'yyyy-mm-dd')","DR" ,"pai.birthday","1","Дата рождение"} ,		{"pai.snils","SNILS" ,"pai.snils",null,"СНИЛС"}
-    	    	,		{"pai.docType","DOCTYPE" ,"pai.docType","1","Тип документа"} ,		{"pai.docSeries","DOCSER" ,"pai.docSeries",null,"Серия документа"}
-    	    	,		{"pai.docNumber","DOCNUM" ,"pai.docNumber","1","Номер паспорта"} ,		{"to_char(pai.docdateissued,'yyyy-mm-dd')","DOCDT" ,"pai.docdateissued","1","Дата выдачи документа"}
-    	    	,		{"coalesce(pai.phone,'')","TEL" ,"pai.phone",null,"Телефон"} ,		{"pai.commonNumber","RZ" ,"pai.commonNumber",null,"ЕПН"}
+    	    	,		{"pai.docType","DOCTYPE" ,"pai.docType",null,"Тип документа"} ,		{"pai.docSeries","DOCSER" ,"pai.docSeries",null,"Серия документа"}
+    	    	,		{"pai.docNumber","DOCNUM" ,"pai.docNumber",null,"Номер паспорта"} ,		{"to_char(pai.docdateissued,'yyyy-mm-dd')","DOCDT" ,"pai.docdateissued",null,"Дата выдачи документа"}
+    	    	,		{"coalesce(pai.phone,'')","TEL" ,"pai.phone",null,"Телефон"} ,		{"pai.commonNumber","RZ" ,"pai.commonNumber","1","ЕПН"}
     	    	,		{"pai.lpuauto","SP_PRIK" ,"pai.lpuauto","1","Тип прикрепления"} 
     	    	,		{"cast('1' as varchar(1))","T_PRIK" ,"pai.lpuauto","1","прикреплениt/открепление"}
     	    	,		{"to_char(pai.lpuDateFrom,'yyyy-MM-dd')","DATE_1" ,"pai.lpuDateFrom","1","Дата прикрепления"} 
     	    	,		{"cast('0' as varchar(1))","N_ADR" ,"pai.lpudatefrom",null,""}
     	    	,		{"pai.department","KODPODR" ,"pai.department","1","Код подразделения"}
     	    	,		{"coalesce(pai.areaNumber,'')", "LPUUCH", "pai.areaNumber", null},{"pai.doctorsnils","SSD" ,"pai.doctorsnils","1","СНИЛС врача"}
-    	    	, {"cast('1' as varchar(1))","MEDRAB","",null,"Врач/медработник"}
+    	    	, {"cast('1' as varchar(1))","MEDRAB","","1","Врач/медработник"}
     	    	
     	    	
     	    } ;
