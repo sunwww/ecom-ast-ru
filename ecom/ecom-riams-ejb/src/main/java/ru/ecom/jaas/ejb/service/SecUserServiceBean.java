@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -40,6 +42,39 @@ import ru.ecom.jaas.ejb.form.SecRoleForm;
 @Remote(ISecUserService.class )
 public class SecUserServiceBean implements ISecUserService {
 
+	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) {
+		String regexp = null;
+		String hashPassword = null;
+		if (aOldPassword.equals(aNewPassword)){
+			return "0Новый пароль ничем не отличается от старого";
+		}
+		String oldHash = getHashPassword(aUsername, aOldPassword);
+		List<Object> lo  = theManager.createNativeQuery("select id from secuser where login = '"+aUsername+"' and password = '"+oldHash+"'").getResultList();
+		if (lo.isEmpty()) {
+			return "0Старый пароль указан неверно";
+		}
+		String isGood = ""+lo.get(0).toString();
+		if (isGood==null||isGood.equals("")) {
+			return "0Старый пароль указан неверно";			
+		}
+		List<Object[]> l = theManager.createNativeQuery("select KeyValue, description from SoftConfig where key='PASSWORDREGEXP'").getResultList() ;
+		if (!l.isEmpty()) {
+			regexp = l.get(0)[0].toString();
+		}
+		if (regexp!=null) {
+			Pattern p = Pattern.compile(regexp);
+			Matcher m = p.matcher(aNewPassword);
+			if (!m.matches()) {
+				return "0Пароль не удоволетворяет требованиям безопасности!\n"+l.get(0)[1].toString();
+			}
+		}
+		hashPassword = getHashPassword(aUsername, aNewPassword);
+		if (hashPassword==null) {
+			return "0Хеш не получился";
+		}
+		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date where login = '"+aUsername+"'").executeUpdate();
+		return "1Пароль успешно обновлен";
+	}
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
