@@ -28,7 +28,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class SecUser extends BaseEntity {
 
 
-    /** Наименование пользователя */
+	/** Дата последнего изменение пароля */
+	@Comment("Дата последнего изменение пароля")
+	public Date getPasswordChangedDate() {return thePasswordChangedDate;}
+	public void setPasswordChangedDate(Date aPasswordChangedDate) {thePasswordChangedDate = aPasswordChangedDate;}
+	/** Дата последнего изменение пароля */
+	private Date thePasswordChangedDate;
+
+	/** Наименование пользователя */
     public String getLogin() { return theLogin ; }
     public void setLogin(String aLogin) { theLogin = aLogin ; }
 

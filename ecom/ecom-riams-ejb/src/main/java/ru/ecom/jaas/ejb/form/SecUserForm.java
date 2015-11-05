@@ -25,7 +25,16 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Пользователь")
 @EntityFormSecurityPrefix("/Policy/Jaas/SecUser")
 public class SecUserForm  extends IdEntityForm {
-    /** Идентификатор */
+
+	/** Дата изменение пароля */
+	@Comment("Дата изменение пароля")
+	@Persist
+	public String getPasswordChangedDate() {return thePasswordChangedDate;}
+	public void setPasswordChangedDate(String aPasswordChangedDate) {thePasswordChangedDate = aPasswordChangedDate;}
+	/** Дата изменение пароля */
+	private String thePasswordChangedDate;
+	
+	/** Идентификатор */
     @Id
     public long getId() { return theId ; }
     public void setId(long aId) { theId = aId ; }
