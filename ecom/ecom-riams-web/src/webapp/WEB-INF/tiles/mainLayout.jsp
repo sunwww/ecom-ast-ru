@@ -86,6 +86,8 @@
             <li class="separator">|</li>
             <li><ecom:loginName /></li>
             <li class="separator">|</li>
+            <li><a href='js-secuser-changePassword.do'>Сменить пароль</a></li>
+            <li class="separator">|</li>
             <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под другим именем</a></li>
             <li class="separator">|</li>
             <li><msh:link action="/ecom_loginExit.do">Завершить работу</msh:link></li>
