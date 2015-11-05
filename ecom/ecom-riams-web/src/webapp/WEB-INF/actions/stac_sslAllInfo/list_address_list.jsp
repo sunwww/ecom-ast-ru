@@ -1,3 +1,6 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -76,6 +79,15 @@
         	<input type="radio" name="typeDate" value="2">  выписки
         </td>
       </msh:row>      
+      <msh:row>
+        <td class="label" title="Искать по кол-ву дней госпитализации (typeCntDays)" colspan="1"><label for="typeCntDaysName" id="typeCntDaysLabel">Искать по кол-ву дн. госп.:</label></td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeCntDays" value="1"> 90 дней  
+        </td>
+        <td class='tdradio' onclick="this.childNodes[1].checked='checked';" colspan="3">
+        	<input type="radio" name="typeCntDays" value="2">  без ограничения
+        </td>
+      </msh:row>      
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         
         <msh:textField property="dateBegin" label="Период с" />
@@ -103,11 +115,33 @@
     
     <%
     String date = (String)request.getParameter("dateBegin") ;
-    String dateEnd = (String)request.getAttribute("dateEnd") ;
+    String dateEnd = (String)request.getParameter("dateEnd") ;
+    String typeDate = (String)request.getAttribute("typeDate") ;
     String typeView = (String) request.getAttribute("typeView") ;
-    if (dateEnd==null || dateEnd.equals("")) dateEnd=(String)request.getAttribute("dateBegin") ;
+    String typeCntDays =ActionUtil.updateParameter("AddressSheetHospital","typeCntDays","2", request) ;
+    
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
-    request.setAttribute("dateEnd", dateEnd) ;
+    if (typeCntDays!=null&&typeCntDays.equals("1")) {
+    	if (typeDate!=null &&typeDate.equals("1")) {
+    		java.util.Date d1 = DateFormat.parseDate(date) ;
+    		java.util.Date d2 = DateFormat.parseDate(dateEnd) ;
+    		Calendar c1 = Calendar.getInstance() ;
+    		Calendar c2 = Calendar.getInstance() ;
+    		c1.setTime(d1) ; c2.setTime(d2) ;
+    		c1.add(Calendar.DATE, -90) ;
+    		c2.add(Calendar.DATE, -90) ;
+    		SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd");
+    		SimpleDateFormat FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy");
+    		date = FORMAT_1.format(c1.getTime()) ;
+    		dateEnd = FORMAT_1.format(c2.getTime()) ;
+    		request.setAttribute("dateBegin", date) ;
+    		request.setAttribute("dateEnd", dateEnd) ;
+    		request.setAttribute("dateAddInfo", " ("+FORMAT_2.format(c1.getTime()) +"-"+FORMAT_2.format(c2.getTime()) +")") ;
+    	}
+    	request.setAttribute("addDaysSql", " and (coalesce(m.datefinish,current_date)-m.datestart)>=90") ;
+    }
+    request.setAttribute("dateEnd", (String)request.getAttribute("dateEnd")!=null?(String)request.getAttribute("dateEnd"):(String)request.getAttribute("dateBegin")) ;
     if (date!=null && !date.equals("")) {
     	if (typeView!=null && (typeView.equals("1")||typeView.equals("4"))) {
     		if (typeView.equals("4")) {
@@ -116,7 +150,7 @@
     	%>
     
     <msh:section>
-    <msh:sectionTitle>Результаты поиска обращений для формирования адресных листков за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${printStatus} </msh:sectionTitle>
+    <msh:sectionTitle>Результаты поиска обращений для формирования адресных листков за период с ${param.dateBegin} по ${param.dateEnd}${dateAddInfo}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
@@ -127,8 +161,14 @@
     ,dep.name
     ,case when cast(m.emergency as int)=1 then 'Да' else 'Нет' end as emergency
     ,m.noActuality
-    , case when m.kinsman_id is null then 'Нет' else 'Есть' End as kinsman  
+    , case when m.kinsman_id is null then 'Нет' else 'Есть' End as kinsman
+    , case 
+		when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
+		else (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)
+		end as cntDays  
     from MedCase m 
+    left join VocHospType vht on vht.id=m.hospType_id
     left outer join MisLpu dep on m.department_id = dep.id
 	left outer join Patient pat on m.patient_id = pat.id  
 	left outer join StatisticStub stat on m.statisticstub_id=stat.id 
@@ -137,7 +177,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is null or ok.voc_code='643')
-	${pigeonHole} ${status} ${department} ${serviceStreamSql} ${addAdrSql}
+	${pigeonHole} ${status} ${department} ${serviceStreamSql} ${addAdrSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -165,6 +205,8 @@
       <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+            <msh:tableColumn columnName="К/дней" property="12" />
+      
     </msh:table>
 
     </msh:sectionContent>
@@ -185,6 +227,11 @@
     ,m.noActuality
     , case when m.kinsman_id is null then 'Нет' else 'Есть' End as kinsman
     , ok.name as okname  
+    , case 
+		when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
+		else (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)
+		end as cntDays  
     from MedCase m 
     left outer join MisLpu dep on m.department_id = dep.id
 	left outer join Patient pat on m.patient_id = pat.id  
@@ -192,10 +239,11 @@
 	left outer join MisLpu lpu on m.department_id = lpu.id 
 	left join Omc_Oksm ok on pat.nationality_id=ok.id
 	left join Address2 adr on adr.addressid=pat.address_addressid
+	left join VocHospType vht on vht.id=m.hospType_id
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is not null and ok.voc_code != '643' or adr.kladr is not null and adr.kladr not like  '30%')
-	${pigeonHole} ${status} ${serviceStreamSql}
+	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -219,6 +267,7 @@
       <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="К/дней" property="13" />
     </msh:table>
 
     </msh:sectionContent>
@@ -240,7 +289,13 @@
     , case when m.kinsman_id is null then 'Нет' else 'Есть' End as kinsman
     , ok.name as okname  
     , vss.name as vssname    
+    , case 
+		when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
+		when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
+		else (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)
+		end as cntDays  
     from MedCase m 
+    left join VocHospType vht on vht.id=m.hospType_id
     left outer join MisLpu dep on m.department_id = dep.id
 	left outer join Patient pat on m.patient_id = pat.id  
 	left outer join StatisticStub stat on m.statisticstub_id=stat.id 
@@ -251,7 +306,7 @@
 	where m.DTYPE='HospitalMedCase' 
 	and m.${dateSearch} between '${dateBegin}' and '${dateEnd}'
 	${hospType} and m.deniedHospitalizating_id is null and ok.voc_code is not null and ok.voc_code != '643'
-	${pigeonHole} ${status} ${serviceStreamSql}
+	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
     <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -275,6 +330,7 @@
       <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Поток обслуживания" property="13" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="К/дней" property="14" />
       <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
     </msh:table>
 
@@ -292,6 +348,7 @@
 	 checkFieldUpdate('typeStatus','${typeStatus}',1) ;
      checkFieldUpdate('typeView','${typeView}',1) ;
      checkFieldUpdate('typeDate','${typeDate}',1) ;
+     checkFieldUpdate('typeCntDays','${typeCntDays}',1) ;
      
    
     function checkFieldUpdate(aField,aValue,aDefault) {
