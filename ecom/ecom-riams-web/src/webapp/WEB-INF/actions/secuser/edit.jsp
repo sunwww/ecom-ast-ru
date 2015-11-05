@@ -58,6 +58,10 @@
         	<msh:label property="createDate" label="Дата создания"/>
         	<msh:label property="createTime" label="время"/>
         </msh:row>
+         <msh:row>
+        	<msh:label property="passwordChangedDate" label="Дата изменения пароля"/>
+        	
+        </msh:row>
         <msh:row>
         	<msh:label property="createUsername" label="пользователь"/>
         </msh:row>

@@ -7,3 +7,7 @@ function replaceWF(aForm,aCtx) {
 	aCtx.session.setAttribute("smo_visit.currentCalendarDay", null) ;
 	return listWF(aForm,aCtx) ;
 }
+
+function changePassword(aForm, aCtx){
+	return aCtx.createForward("/WEB-INF/actions/secuser/changePassword.jsp");
+}
