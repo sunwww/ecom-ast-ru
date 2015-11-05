@@ -324,7 +324,7 @@
           <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
 					<msh:tableButton property="5" buttonFunction="checkErrorProtocol" 
 					buttonName="На редакцию врачу" buttonShortName="На редак." 
-						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments"/>
+						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/Control"/>
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
@@ -469,7 +469,7 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="stac_sloForm">
-  	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
+  	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/Control">
   	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника" parentID="${param.id}" />
   		<script type="text/javascript">
   			function checkErrorProtocol(aId) {
