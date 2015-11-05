@@ -57,7 +57,7 @@ left join mislpu ml on ml.id=slo.department_id
 left join workfunctionservice wfs on wfs.lpu_id=slo.department_id
     and bf.bedtype_id=wfs.bedtype_id and bf.bedsubtype_id=wfs.bedsubtype_id
     and wfs.roomType_id=wp.roomType_id
-left join medservice ms on ms.id=wfs.medservice_id
+left join medservice ms on ms.id=wfs.medservice_id and ms.servicetype_id=11
 	left join pricemedservice pms on pms.medservice_id=wfs.medservice_id
 		left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
 
