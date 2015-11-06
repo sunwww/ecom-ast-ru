@@ -23,7 +23,6 @@ import ru.nuzmsh.util.format.DateFormat;
 public class RolePoliciesServiceJs  {
 	public static Long getPasswordAge (HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		ISecUserService sec = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
 		Long passwordLifetime = null;
 		Long diff = null;
 		Long passwordAge = null;
