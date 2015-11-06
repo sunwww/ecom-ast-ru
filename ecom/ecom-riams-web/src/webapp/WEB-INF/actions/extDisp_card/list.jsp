@@ -28,6 +28,7 @@
 		left join VocExtDispHealthGroup vedhg on vedhg.id=edc.healthGroup_id
 		left join VocIdc10 vi on vi.id=edc.idcMain_id
 		where edc.patient_id=${param.id}
+		order by edc.startDate desc
 		"/>
 		<msh:table name="list" action="entityView-extDisp_card.do" idField="1" >
 			<msh:tableColumn columnName="#" property="sn" />
