@@ -277,6 +277,10 @@ public class ExtDispServiceBean implements IExtDispService {
 				String lpuName = rs.getString("lpuName");
 				String lpuAddress = rs.getString("lpuAddress");
 				
+				if (commonNumber==null || commonNumber.equals("")) {
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Не заполнено поле RZ").append("#");
+					continue;
+				}
 				if (lpuName==null || lpuName.equals("")) {
 					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Наименование ЛПУ не указано").append("#");
 					continue;
