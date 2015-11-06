@@ -76,7 +76,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");
 	//	 System.out.println("=======isRightSnils, snilsAFTER="+currentSnils);
 		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
-		System.out.println(snilsCN);
+	//	System.out.println(snilsCN);
 		if (currentSnils.length()!=11) {
 		//	System.out.println("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
 			return false;
@@ -393,8 +393,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				String startDate = rs.getString("startDate");
 				String snils = rs.getString("snils");
 				String parentCode = rs.getString("osnWorkplaceNumber").trim();
+				String employer = rs.getString("employer")!=null?rs.getString("employer").trim():null;
 				Matcher m = lnPattern.matcher(ln);
 				System.out.println("======Текущий ЛН = "+ln);
+				
 				if (!m.matches()) {
 //Check ELN-004
 					defect.append(ln).append(":").append(ln_id).append(":ELN-004 Некорректный номер ЛН - ").append(ln).append(":")
@@ -439,11 +441,16 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				if (placementService!=null &&placementService.equals("1")) {
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("3"));
 				} else {
+					if (employer==null||employer.equals("")) {
+						defect.append(ln).append(":").append(ln_id).append(":ELN-028 Поле \"Работодатель\" обязательно к заполнению, если застрахованный не стоит на учете в государственных учреждениях службы занятости")
+						.append(":").append(patId).append(":").append(patInfo).append("#");
+						continue;
+					}
 				if ((workcombotypeid!=null &&!workcombotypeid.equals(""))||parentCode!=null&&!parentCode.equals("")) {
-					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
+					rowLpuLn.addContent(new Element("EMPLOYER").addContent(employer));
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("2"));
 				}  else {
-					rowLpuLn.addContent(new Element("EMPLOYER").addContent(rs.getString("employer")));
+					rowLpuLn.addContent(new Element("EMPLOYER").addContent(employer));
 					rowLpuLn.addContent(new Element("EMPL_FLAG").addContent("1"));
 				}					
 				} 
