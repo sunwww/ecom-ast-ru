@@ -12,7 +12,13 @@ import ru.nuzmsh.util.format.DateFormat;
  */
 public class AgeUtil {
 
-    public static int calcAgeYear(Date aBirthDate, Date aFromDate) {
+    public static long calculateDays (Date aStartDate, Date aFinishDate) {
+    	if (aStartDate ==null) throw new IllegalArgumentException("Не указана дата начала");
+    	if (aFinishDate ==null) {aFinishDate = new java.util.Date();}
+    	Long days = (aFinishDate.getTime()-aStartDate.getTime())/3600000/24;
+    	return days;
+    }
+	public static int calcAgeYear(Date aBirthDate, Date aFromDate) {
         if (aBirthDate == null) throw new IllegalArgumentException("Не установлена дата рождения");
         if (aFromDate == null) throw new IllegalArgumentException("Не установлена дата, с которой вычисляется возраст");
         if(aBirthDate.getTime()>aFromDate.getTime()) {
