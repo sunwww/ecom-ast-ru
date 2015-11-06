@@ -146,6 +146,7 @@
                 type="ru.ecom.web.login.LoginSaveAction"
                 input='/WEB-INF/actions/ecom_login/login.jsp'>
             <forward name="success" path="/start.do" redirect="true"/>
+            <forward name="new_password" path="/js-secuser-changePassword.do?short=Short" redirect="true"/>
             <forward name="manyParams" path="/ecom_redirectMany.do" redirect="true"/>
             
         </action>
