@@ -52,11 +52,8 @@ public class RolePoliciesServiceJs  {
 	public String changePassword (String aNewPassword, String aOldPassword, HttpServletRequest aRequest) throws NamingException, InstanceNotFoundException, MalformedObjectNameException, ReflectionException, MBeanException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		String res = service.changePassword(aNewPassword, aOldPassword, username);
-		if (res.startsWith("1")) {
-			ServiceExportJbossAction.export(aRequest);
-		}
-		return res;
+		return service.changePassword(aNewPassword, aOldPassword, username);
+		
 	}
     public void savePolicies(long aRoleId, String[] aAdds, String[] aRemoves, HttpServletRequest aRequest) throws Exception {
 	long[] adds = RolePoliciesSaveAction.getLongs(aAdds) ;
