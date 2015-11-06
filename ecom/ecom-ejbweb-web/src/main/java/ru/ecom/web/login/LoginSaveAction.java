@@ -35,6 +35,7 @@ import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.messages.UserMessage;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.StringSafeEncode;
@@ -46,7 +47,32 @@ public class LoginSaveAction extends LoginExitAction {
 
     private final static Log LOG = LogFactory.getLog(LoginSaveAction.class) ;
     private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-
+    public static Long getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Long passwordLifetime = null;
+		Long diff = null;
+		Long passwordAge = null;
+		Date passwordStartDate = null;
+		try {
+			passwordLifetime = Long.valueOf(service.executeNativeSql("select KeyValue from SoftConfig where key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
+		} catch (Exception e){}
+		try {
+			passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when passwordChangedDate is not null then to_char(passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(editdate,createdate),'dd.MM.yyyy') end as date from secuser where login='"+username+"'").iterator().next().get1().toString());
+		} catch (Exception e){}
+		if (passwordStartDate !=null) {
+			passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
+		}
+		if (passwordLifetime!=null) {
+			System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
+			diff = passwordLifetime - passwordAge;
+			if (diff<=0) {
+				diff = Long.valueOf(0);
+			} 
+		}
+		
+		
+		return diff;
+	}
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         super.myExecute(aMapping, aForm, aRequest, aResponse) ;
@@ -73,8 +99,18 @@ public class LoginSaveAction extends LoginExitAction {
             Set<String> roles = service.getUserRoles() ;
             
             if(roles==null) throw new NullPointerException("Нет ролей у пользователя roles==null") ;
+            
+            Long d = getPasswordAge(form.getUsername(),aRequest);
             loginInfo.setUserRoles(service.getUserRoles());
-
+            if (d!=null&& d==0){
+            	System.out.println("===ЛогинСейвАктив, Д=0");
+            	return aMapping.findForward("new_password") ;
+            }  else if (d!=null&&d<8L) {
+            	UserMessage.addMessage(aRequest,d,"Срок действия вашего пароля истекает через "+d+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
+            	
+            }
+            System.out.println("===ЛогинСейвАктив, Д!=0");
+           
         } catch (Exception e) {
             LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
             e.printStackTrace() ;
