@@ -274,8 +274,16 @@ public class ExtDispServiceBean implements IExtDispService {
 				String vrach_l=rs.getString("vrach_l");
 				String vrach_m=rs.getString("vrach_m");
 				String pid = rs.getString("pid");
-				if (commonNumber==null || commonNumber.equals("")) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента не заполено поле RZ").append("#");
+				String lpuName = rs.getString("lpuName");
+				String lpuAddress = rs.getString("lpuAddress");
+				
+				if (lpuName==null || lpuName.equals("")) {
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Наименование ЛПУ не указано").append("#");
+					continue;
+				}
+				
+				if (lpuAddress==null || lpuAddress.equals("")) {
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У ЛПУ не заполнено поле - адрес. ЛПУ - "+lpuName).append("#");
 					continue;
 				}
 				if (passID == null || (!passID.equals("3") && !passID.equals("14"))) {
@@ -331,7 +339,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				
 				
 				//Ищем все исследования
-				{
+				
 				String SQLissled = "SELECT distinct edc.servicedate as date "
 						+ ", vedc.orphcode as iss_id "
 						+ "FROM extdispservice edc "
@@ -348,14 +356,13 @@ public class ExtDispServiceBean implements IExtDispService {
 							.addContent(new Element("result").addContent(card_issl_result))
 						);
 					}
-				} //Заканчивается поиск услуг
 				
 				if (!card_basic.getChildren().isEmpty()) {
 					card_issled.addContent(card_basic);
 				}
 				
 					
-				{  //Запускаем поиск осмотров специалистами
+				  //Запускаем поиск осмотров специалистами
 					
 				String SQLosmotri = "SELECT distinct edc.servicedate as date "
 					+ ", vedc.orphcode as iss_id "
@@ -365,14 +372,16 @@ public class ExtDispServiceBean implements IExtDispService {
 					+ "and edc.servicedate is not null and vedc.orphcode is not null ";
        			
 				ResultSet rs_osmotri = statement.executeQuery(SQLosmotri);
-					while (rs_osmotri.next())
-					{
+					while (rs_osmotri.next()) {
 					card_osmotri.addContent(new Element("record")
 						.addContent(new Element("id").addContent(rs_osmotri.getString("iss_id")))
 							.addContent(new Element("date").addContent(rs_osmotri.getString("date")))
 						);
 					}
-				} //Заканчивается поиск осмотров специалистами
+					if (card_osmotri.getChildren().isEmpty()) {
+						badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет ни одного осмотра врачом!").append("#");
+						continue;
+					}
 				
 				Element currPat = new Element ("child")
 				.addContent(new Element("idInternal").addContent(rs.getString("pid")))
@@ -391,8 +400,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				//.addContent(new Element("polisSer").addContent(""))
 				.addContent(new Element("polisNum").addContent(commonNumber))
 				.addContent(new Element("idInsuranceCompany").addContent(InsuranceCompany))
-				.addContent(new Element("medSanName").addContent(rs.getString("lpuName")))
-				.addContent(new Element("medSanAddress").addContent(rs.getString("lpuAddress")))
+				.addContent(new Element("medSanName").addContent(lpuName))
+				.addContent(new Element("medSanAddress").addContent(lpuAddress))
 				.addContent(new Element("address"));
 				String fullAddress = rs.getString("fullAddress");
 				if (fullAddress!=null&&!fullAddress.equals("0")&&!fullAddress.equals("")) {
@@ -557,6 +566,7 @@ public class ExtDispServiceBean implements IExtDispService {
 											.addContent(new Element("first").addContent(vrach_f))
 											.addContent(new Element("middle").addContent(vrach_m))
 									);
+									
 									card.addContent(card_osmotri);
 									cards.addContent(card);
 									currPat.addContent(cards);
@@ -583,10 +593,10 @@ public class ExtDispServiceBean implements IExtDispService {
 			if (!rootElement.getChildren().isEmpty()) {
 				createFile(rootElement);	
 			}
-			System.out.println("ExtDispExport: Всего записей = " + numAll);
-			System.out.println("ExtDispExport: Всего записей без ошибок= " + numRight);
+			//System.out.println("ExtDispExport: Всего записей = " + numAll);
+			//System.out.println("ExtDispExport: Всего записей без ошибок= " + numRight);
 //			System.out.println();
-			System.out.println("ExtDispExport: ErrorText= "+badCards.toString());
+		//	System.out.println("ExtDispExport: ErrorText= "+badCards.toString());
 	//		return theArchiveFileName;
 			}
 			
