@@ -153,60 +153,62 @@
     	String cellF = (String) request.getParameter("addCell");
     	if (cellF!=null) {
     		if (cellF.equals("dead")) {
-    			request.setAttribute("cellAdd", sex+"and vhr.omccode='11'");
+    			request.setAttribute("cellAdd", ") "+sex);
+    		} else if (cellF.equals("notDead")) {
+    			request.setAttribute("cellAdd", " or vhr.omccode!='11') "+sex) ;
     		} else if (cellF.equals("planDead")) {
-    			request.setAttribute("cellAdd", sex+" and (hmc.emergency is null or hmc.emergency='0') and vhr.omccode='11'") ;
+    			request.setAttribute("cellAdd", ") and (hmc.emergency is null or hmc.emergency='0') "+sex) ;
     		} else if (cellF.equals("emmergDead")) {
-    			request.setAttribute("cellAdd", sex+" and hmc.emergency='1' and vhr.omccode='11'") ;
+    			request.setAttribute("cellAdd", ") and hmc.emergency='1' "+sex) ;
     		} else if (cellF.equals("dead6")) {
-    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and (hmc.datestart=hmc.datefinish and"+ 
+    			request.setAttribute("cellAdd",") and (hmc.datestart=hmc.datefinish and"+ 
     					" (hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)<=cast('06:00:00' as time))  "+
     					" or (hmc.datefinish-hmc.datestart=1 and hmc.entrancetime>hmc.dischargetime and ((cast('24:00:00' as time) -"+ 
     					" hmc.entrancetime))+hmc.dischargetime<=cast('06:00:00' as time) and ((cast('24:00:00' as time)"+ 
-    					" - hmc.entrancetime)<=cast('06:00:00' as time))))");
+    					" - hmc.entrancetime)<=cast('06:00:00' as time))))"+sex);
     		} else if (cellF.equals("dead624")){
-    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and ((hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)>cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.dischargetime<=hmc.entrancetime and (((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime>cast('06:00:00' as time))or hmc.dischargetime=hmc.entrancetime))");
-    			
+    			request.setAttribute("cellAdd",")  and ((hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)>cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.dischargetime<=hmc.entrancetime and (((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime>cast('06:00:00' as time))or hmc.dischargetime=hmc.entrancetime))"+sex);
     		} else if (cellF.equals("deadUp5")){
-    			request.setAttribute("cellAdd",sex+" and vhr.omccode='11' and ((hmc.datefinish-hmc.datestart=1 and hmc.dischargetime>hmc.entrancetime) or (hmc.datefinish-hmc.datestart between 2 and 4) or (hmc.datefinish-hmc.datestart =5 and hmc.dischargetime<=hmc.entrancetime))");
+    			request.setAttribute("cellAdd",") and ((hmc.datefinish-hmc.datestart=1 and hmc.dischargetime>hmc.entrancetime) or (hmc.datefinish-hmc.datestart between 2 and 4) or (hmc.datefinish-hmc.datestart =5 and hmc.dischargetime<=hmc.entrancetime))"+sex);
     		} else if (cellF.equals("dead5More")) {
-    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and (hmc.datefinish-hmc.datestart>5 or (hmc.datefinish-hmc.datestart=5 and hmc.dischargetime>hmc.entrancetime))");
+    			request.setAttribute("cellAdd", ") and (hmc.datefinish-hmc.datestart>5 or (hmc.datefinish-hmc.datestart=5 and hmc.dischargetime>hmc.entrancetime))"+sex);
     		} else if (cellF.equals("age1")) {
-    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    			request.setAttribute ("cellAdd",") and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
     					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
     					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
-    					" then -1 else 0 end)<0) then -1 else 0 end)<18)");
+    					" then -1 else 0 end)<0) then -1 else 0 end)<18)"+sex);
     		}else if (cellF.equals("age2")) {
-    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    			request.setAttribute ("cellAdd",") and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
     					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
     					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
-    					" then -1 else 0 end)<0) then -1 else 0 end) between 18 and 45)");
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 18 and 45)"+sex);
     		}else if (cellF.equals("age3")) {
-    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    			request.setAttribute ("cellAdd",") and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
     					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
     					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
-    					" then -1 else 0 end)<0) then -1 else 0 end) between 46 and 60)");
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 46 and 60)"+sex);
     		}else if (cellF.equals("age4")) {
-    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    			request.setAttribute ("cellAdd",") and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
     					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
     					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
-    					" then -1 else 0 end)<0) then -1 else 0 end) between 61 and 75)");
+    					" then -1 else 0 end)<0) then -1 else 0 end) between 61 and 75)"+sex);
     		}else if (cellF.equals("age5")) {
-    			request.setAttribute ("cellAdd",sex+" and vhr.omccode='11' and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
+    			request.setAttribute ("cellAdd",") and (cast(to_char("+dateT+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) "+
     					" +(case when (cast(to_char("+dateT+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)"+
     					" +(case when (cast(to_char("+dateT+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0)"+
-    					" then -1 else 0 end)<0) then -1 else 0 end)>75)");
+    					" then -1 else 0 end)<0) then -1 else 0 end)>75)"+sex);
     				
     		} else if (cellF.equals("allAge")) {
-    			request.setAttribute("cellAdd", sex+ " and vhr.omccode='11'");
+    			request.setAttribute("cellAdd", ")"+sex);
     		} else if (cellF.equals("foreign")) {
-    			request.setAttribute("cellAdd", sex+" and vhr.omcode='11' and (ok.voc_code!='643' or adr.kladr not like '30%')");
+    			request.setAttribute("cellAdd", ") and (ok.voc_code!='643' or adr.kladr not like '30%')"+sex);
     		} else if (cellF.equals("inostr")) {
-    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and ok.voc_code!='643'");
+    			request.setAttribute("cellAdd", ") and ok.voc_code!='643'"+sex);
     		} else if (cellF.equals("inogor")) {
-    			request.setAttribute("cellAdd", sex+" and vhr.omccode='11' and adr.kladr not like '30%' and ok.voc_code='643' ");
-    		}
-    		
+    			request.setAttribute("cellAdd", ") and adr.kladr not like '30%' and ok.voc_code='643' "+sex);
+    		} 
+    	} else {
+    		request.setAttribute("cellAdd",")"+sex);
     	}
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("depIsNoOmc", " and (dmc.department_id='"+dep+"' or d.isNoOmc='1' and pdmc.department_id='"+dep+"')");
@@ -228,7 +230,8 @@
 	,count(case when vhr.omccode='11' then 1 else null end) as f3_deadPat
 	,count (pat.id) as f4_allPat
 	,round(cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/count (pat.id) ,2) as f5_percentOtdel
-	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select count (smo2.patient_id) from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
+	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select case when count (smo2.patient_id)>0 then count (smo2.patient_id) else 1 end from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
+	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select case when count (smo2.patient_id)>0 then count (smo2.patient_id) else 1 end from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
 	
 	from medcase hmc 
 	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
@@ -248,8 +251,8 @@
         <msh:table name="journal_list_swod" cellFunction="true"
          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Число пролеченных" property="5"/>
+            <msh:tableColumn columnName="Отделение" property="3" />
+            <msh:tableColumn isCalcAmount="true" columnName="Число пролеченных" property="5" addParam="&addCell=notDead"/>
             <msh:tableColumn isCalcAmount="true" columnName="Число летальных исходов" property="4" addParam="&addCell=dead"/>
             <msh:tableColumn columnName="% летальных исходов по отделению" property="6"/>
             <msh:tableColumn columnName="%  от летальных исходов всего" property="7"/>
@@ -263,7 +266,8 @@
     <msh:sectionContent>
         ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_surOperation_sql"  name="journal_surOperation" nativeSql="
     select
-    hmc.id as slsid,hmc.id as slsid2
+    hmc.id as slsid
+    ,list (vdrt.name||' - '||mkb.code)
     ,ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
     ,cast(to_char(${dateT},'yyyy') as int)
@@ -276,7 +280,7 @@
     ,to_char(hmc.dateStart,'dd.mm.yyyy') as slsdateStart
     ,to_char(hmc.dateFinish,'dd.mm.yyyy') as slsdateFinish
     ,case when hmc.emergency='1' then 'Да' else null end as emer
-    ,mkb.code
+    
     from medcase hmc 
      left join StatisticStub ss on ss.id=hmc.statisticStub_id
 	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
@@ -292,10 +296,12 @@
 	left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id
 	left join vocidc10 mkb on mkb.id=diag.idc10_id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-	and hmc.datefinish is not null and vdrt.code='3' and vpd.code='1' 
+	and hmc.datefinish is not null and vdrt.code in ('5','3') and vpd.code='1' 
+    and (vhr.omccode='11'
+    ${cellAdd}
     	${depIsNoOmc}
-    ${cellAdd} ${addNewborn}
-    
+     ${addNewborn}
+    group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:table name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do"
@@ -308,7 +314,7 @@
           <msh:tableColumn columnName="Дата поступления" property="6"/>
           <msh:tableColumn columnName="Дата выписки" property="7"/>
           <msh:tableColumn columnName="Экстренно?" property="8"/>
-          <msh:tableColumn columnName="Диагноз выписной" property="9"/>
+          <msh:tableColumn columnName="Диагноз" property="2"/>
 		  </msh:table>
         </msh:sectionContent>
         </msh:section>  
