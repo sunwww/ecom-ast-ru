@@ -42,7 +42,17 @@ import ru.ecom.jaas.ejb.form.SecRoleForm;
 @Remote(ISecUserService.class )
 public class SecUserServiceBean implements ISecUserService {
 
-	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) {
+	private void exportPropertiesOtherServer(String aFilename) {
+		try {
+		String sb = "/home/scripts/upd_props.sh "+aFilename;
+		System.out.println("==== exportPropertiesOtherServer sb="+sb);
+		Runtime.getRuntime().exec(sb);
+		} catch (Exception e) {
+		//	e.printStackTrace();
+		}
+	}
+	
+	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) throws IOException {
 		String regexp = null;
 		String hashPassword = null;
 		if (aOldPassword.equals(aNewPassword)){
@@ -73,6 +83,7 @@ public class SecUserServiceBean implements ISecUserService {
 			return "0Хеш не получился";
 		}
 		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date where login = '"+aUsername+"'").executeUpdate();
+		exportUsersProperties();
 		return "1Пароль успешно обновлен";
 	}
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
@@ -115,6 +126,7 @@ public class SecUserServiceBean implements ISecUserService {
         } finally {
         	if(out!=null) out.close() ;
         }
+        exportPropertiesOtherServer(aFilename);
     }
 
     public void exportRolesProperties() throws IOException {
@@ -174,6 +186,7 @@ public class SecUserServiceBean implements ISecUserService {
         }
         
     	//return aRoles ;
+        exportPropertiesOtherServer(aFilename);
     }
 
     private String createPoliciesString(SecUser aUser, SecRole aRole, Map<SecPolicy,String> aPoliciesHash) {

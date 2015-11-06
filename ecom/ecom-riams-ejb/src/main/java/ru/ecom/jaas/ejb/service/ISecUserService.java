@@ -16,7 +16,7 @@ import ru.ecom.jaas.ejb.form.SecRoleForm;
 public interface ISecUserService {
 
 
-	public String changePassword (String aNewPassword, String aOldPassword, String aUsername);
+	public String changePassword (String aNewPassword, String aOldPassword, String aUsername)throws IOException;
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException;
     public void exportUsersProperties(String aFilename) throws IOException ;
     public void exportUsersProperties() throws IOException ;
