@@ -688,8 +688,8 @@ public class FondWebService {
             in.close() ;
             
             result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
-            //System.out.println("result adress:") ;
-            //System.out.println(result) ;
+            System.out.println("result adress:") ;
+            System.out.println(result) ;
         	
         	result = updateXml(result) ;
         	//System.out.println(result) ;
@@ -727,7 +727,7 @@ public class FondWebService {
         		String streetT = el.getChildText("street_t");
         		String provance = el.getChildText("province") ;
         		String index = el.getChildText("ssity") ;
-        		
+        		String okato = el.getChildText("region");
         		sb.append("<td>").append("<input  onclick=\"patientcheck('address')\" type='radio' ")
             	//.append(isStart?" checked='true' ":"") 
             	.append("name='fondAdr' id='fondAdr' value='")
@@ -735,6 +735,7 @@ public class FondWebService {
         			.append(hb).append("#").append(fn).append("#").append(r).append("#")
         			.append(sity).append("#").append(street).append("#").append(streetT).append("#")
         			.append(provance).append("#")
+        			.append(okato).append("#")
         			.append("'/>").append("</td>") ;
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getAddressInfo().equals(kl)?"":" bgcolor='yellow'"):"").append(">").append(kl).append("</td>");
         		sb.append("<td").append(ac).append(">").append(index).append("</td>");
