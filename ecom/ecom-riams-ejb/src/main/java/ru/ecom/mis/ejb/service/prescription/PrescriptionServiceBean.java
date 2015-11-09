@@ -307,16 +307,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		boolean isEmergency =false ;
 		
 		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
-		String sqlquery = "select mcs.datestart || '-' || mcs.entrancetime as datetime, " +
-				"case when mcs.emergency='1' then '1' else null end " +
+		String sqlquery = "select case when mc.dtype='HospitalMedCase' then mc.datestart || '-' || mc.entrancetime " +
+				" else mcs.datestart || '-' || mcs.entrancetime end as datetime, " +
+				" case when mc.dtype='HospitalMedCase' then case when mc.emergency='1' then '1' else null end else " +
+				" case when mc.emergency='1' then '1' else null end end " +
 				" from medCase mc " +
-				"left join medcase mcs on mcs.id = mc.parent_id ";
+				" left join medcase mcs on mcs.id = mc.parent_id ";
 				
 		if (idType.equals("prescriptionList")) {
-			sqlquery+="left join prescriptionList pl on pl.medcase_id = mc.id " +
-					"where pl.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
+			sqlquery+=" left join prescriptionList pl on pl.medcase_id = mc.id " +
+					" where pl.id ='"+aId+"' and (mcs.dtype='HospitalMedCase' or mc.dtype='HospitalMedCase') ";
 		} else if (idType.equals("medCase")) {
-			sqlquery+="where mc.id ='"+aId+"' and mcs.dtype='HospitalMedCase' ";
+			sqlquery+=" where mc.id ='"+aId+"' and (mcs.dtype='HospitalMedCase' or mc.dtype='HospitalMedCase')";
 		} else {
 			return false; 
 		}
