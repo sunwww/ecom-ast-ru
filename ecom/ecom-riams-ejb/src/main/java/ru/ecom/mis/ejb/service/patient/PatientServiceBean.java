@@ -225,6 +225,25 @@ public class PatientServiceBean implements IPatientService {
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet) {
 		return getAddressByKladr(aKladr, aRegion, aRayon, aCity, aStreet,null);
 	}
+	
+	private String getAddressByOkato (String aOkato, String aStreet) {
+		if (aOkato==null||aOkato.equals("")) return null;
+		if (aOkato.length()<11) {
+			aOkato +="0000000000";
+			aOkato = aOkato.substring(0,11);
+		}
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
+	" where k.okatd='"+aOkato+"' and upper(a.name) = '"+aStreet+"'");
+		System.out.println("==== find by okato, sql = "+sql.toString());
+		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+		if (listO.size()>0) {
+			System.out.println("==== found by okato, res = "+listO.get(0));
+			return listO.get(0).toString();
+		}
+		return null;
+	}
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet, String aOkato) {
 		StringBuilder sql = new StringBuilder() ;
 		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
@@ -254,15 +273,9 @@ public class PatientServiceBean implements IPatientService {
 		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
 		System.out.println("==== All is good, OKATO = "+aOkato);
 		if (aOkato!=null&&!aOkato.equals("")) {
-			sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
-		" where k.okatd='"+aOkato+"' and upper(a.name) = '"+aStreet+"'");
-			System.out.println("==== find by okato, sql = "+sql.toString());
-			List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (listO.size()>0) {
-				System.out.println("==== found by okato, res = "+listO.get(0));
-				return listO.get(0).toString();
-			}
-			sql.setLength(0);
+			String s = getAddressByOkato(aOkato, aStreet);
+			if (s!=null&&!s.equals("")) return s;
+			
 		}
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
