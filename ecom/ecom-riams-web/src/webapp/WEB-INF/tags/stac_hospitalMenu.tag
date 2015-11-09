@@ -67,9 +67,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	title='Регистрация инфекционных заболеваний'
     	styleId="stac_infectiousMessage"
     	/> 
-	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" 
-		action='/entityParentList-pres_prescriptList' title='Показать листы назначений'
-		styleId="pres_prescriptList"
+	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" 
+		action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}','.do')" title='Показать листы назначений'
+		styleId="viewShort"
 		
 		/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
