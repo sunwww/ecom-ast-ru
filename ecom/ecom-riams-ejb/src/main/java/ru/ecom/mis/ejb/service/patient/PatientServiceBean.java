@@ -222,9 +222,12 @@ public class PatientServiceBean implements IPatientService {
 		 theManager.persist(np);
 		 //return np.getId();
 	}
-	
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet) {
+		return getAddressByKladr(aKladr, aRegion, aRayon, aCity, aStreet,null);
+	}
+	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet, String aOkato) {
 		StringBuilder sql = new StringBuilder() ;
+		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
 		aStreet=aStreet.toUpperCase().replaceAll(" ", "").replaceAll("-", "").replaceAll("№", "N") ;
 		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
 		if (aCity.endsWith(" С")
@@ -239,6 +242,7 @@ public class PatientServiceBean implements IPatientService {
 				||aCity.endsWith(" ПОС")
 				||aCity.endsWith("ПОС.")
 				) aCity = aCity.substring(0,aCity.length()-4) ;
+		else if (aCity.endsWith(" РП")) aCity = aCity.substring(0,aCity.length()-2);
 		else if (aCity.startsWith("С.")||aCity.startsWith("С ")) aCity = aCity.substring(2) ;
 		else if (aCity.startsWith("Г.")||aCity.startsWith("Г ")) aCity = aCity.substring(2) ;
 		else if (aCity.startsWith("П.")||aCity.startsWith("П ")) aCity = aCity.substring(2) ;
@@ -248,7 +252,18 @@ public class PatientServiceBean implements IPatientService {
 		else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
 		
 		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
-		
+		System.out.println("==== All is good, OKATO = "+aOkato);
+		if (aOkato!=null&&!aOkato.equals("")) {
+			sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
+		" where k.okatd='"+aOkato+"' and upper(a.name) = '"+aStreet+"'");
+			System.out.println("==== find by okato, sql = "+sql.toString());
+			List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (listO.size()>0) {
+				System.out.println("==== found by okato, res = "+listO.get(0));
+				return listO.get(0).toString();
+			}
+			sql.setLength(0);
+		}
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
@@ -716,7 +731,8 @@ public class PatientServiceBean implements IPatientService {
 			String street = adr[6].toUpperCase() ;
 			String rayon = adr[4].toUpperCase() ;
 			String region = adr[8].toUpperCase() ;
-			String addressid=getAddressByKladr(kladr,region,rayon, sity, street) ;
+			String okato = adr[9].toUpperCase();
+			String addressid=getAddressByKladr(kladr,region,rayon, sity, street,okato) ;
 			
 			sql = new StringBuilder() ;
 			sql.append("update Patient set ") ;
