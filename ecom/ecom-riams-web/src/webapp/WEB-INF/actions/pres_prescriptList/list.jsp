@@ -4,7 +4,9 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
+
+
 
   <tiles:put name="title" type="string">
     <msh:title mainMenu="Patient" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Сводный лист назначений" />
@@ -21,8 +23,8 @@
   </tiles:put>
   <tiles:put name="body" type="string">
 
-    <msh:section>
-    <msh:sectionTitle>Список листов назначений</msh:sectionTitle>
+    <msh:section title="Список листов назначений" createUrl="entityParentPrepareCreate-pres_prescriptList.do?id=${param.id}">
+    
     <msh:sectionContent>
 	    <msh:table name="list" action="entityParentView-pres_prescriptList.do" idField="id" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
 	      <msh:tableColumn columnName="Назначил" property="workFunctionInfo" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
