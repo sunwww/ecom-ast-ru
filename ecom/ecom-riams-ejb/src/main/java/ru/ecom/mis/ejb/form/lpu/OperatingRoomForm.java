@@ -14,15 +14,10 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Операционная")
 @EntityForm
 @EntityFormPersistance(clazz = OperatingRoom.class)
-@WebTrail(comment = "Операционная", nameProperties = "name", view = "entityView-mis_operatingRoom.do")
+@WebTrail(comment = "Операционная", nameProperties = "groupName", view = "entityView-mis_operatingRoom.do")
 @Parent(property = "lpu", parentForm = FloorBuildingForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu/OperatingRoom")
 public class OperatingRoomForm  extends GroupWorkFunctionForm {
-	/** Название */
-	@Comment("Название")
-	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
@@ -31,6 +26,5 @@ public class OperatingRoomForm  extends GroupWorkFunctionForm {
 	public void setLpu(Long aLpu) {theLpu = aLpu;}
 
 	/** Лечебное учреждение */
-	private Long theLpu;/** Название */
-	private String theName;
+	private Long theLpu;
 }
