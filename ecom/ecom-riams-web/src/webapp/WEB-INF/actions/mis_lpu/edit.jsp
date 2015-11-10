@@ -126,20 +126,20 @@
 			        </msh:table>
 			      </msh:section>
     		</td>
-    		<msh:ifInRole roles="/Policy/Mis/MisLpu/OperatingRoom/View">
+<msh:ifInRole roles="/Policy/Mis/WorkPlace/OperatingRoom/View">
     		<td width="15%" valign="top" style="padding-right: 1em">
     			<msh:section>
     				<msh:sectionTitle>Список операционных. <a href='entityParentPrepareCreate-mis_operatingRoom.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
     				<msh:sectionContent>
-    					<ecom:parentEntityListAll attribute="operatingRooms" formName="mis_operatingRoomForm"/>
-    					<msh:table name="operatingRooms" hideTitle="true" action="entityParentView-mis_operatingRoom.do" idField="id">
-    						<msh:tableColumn property="name"/>
+    					<ecom:webQuery name="operatingRooms" nativeSql="select wp.id,wp.groupname from WorkFunction wp where wp.lpu_id='${param.id}' and wp.dtype='OperatingRoom'"/>
+    					<msh:table  name="operatingRooms" hideTitle="true" action="entityParentView-mis_operatingRoom.do" idField="1">
+    						<msh:tableColumn property="2"/>
     					</msh:table>
     				</msh:sectionContent>
     			</msh:section>
     		</td>
-    			</msh:ifInRole>
-    			<msh:ifInRole roles="/Policy/Mis/BedFund/View">
+  			</msh:ifInRole>
+  			    			<msh:ifInRole roles="/Policy/Mis/BedFund/View">
     		<td width="70%" valign="top">
 			      <msh:section guid="c061fcb6-70a4-4739-b110-0a6edad9e250">
 			      <msh:sectionTitle>Коечный фонд 
