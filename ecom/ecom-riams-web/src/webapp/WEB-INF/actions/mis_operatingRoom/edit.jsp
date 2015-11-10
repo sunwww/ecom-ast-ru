@@ -1,41 +1,85 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
-<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
-<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom"%>
-<%@ include file="/WEB-INF/tiles/header.jsp" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form guid="123" action="entityParentSaveGoView-mis_operatingRoom.do" defaultField="name">
-      <msh:hidden property="id" guid="67476bdd-7eb2-4eac-8512-9476a6e2d5ad" />
-      <msh:hidden property="saveType" guid="0a37e6e5-4875-4dae-a226-50fba9990881" />
-      <msh:hidden property="parent" guid="e38246ea-4a88-40fb-8f4d-3986e8856332" />
-      <msh:panel guid="04fd7a8f-37bc-4492-996b-5778911d56cc">
-        <msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d">
-        	<msh:textField property="name" label="Наименование" size="100"/>
+    <!-- 
+    	  - Проба
+    	  -->
+    <msh:form guid="formHello" action="/entitySaveGoView-mis_operationRoom.do" defaultField="code">
+      <msh:hidden guid="hiddenId" property="id" />
+      <msh:hidden guid="hiddenSaveType" property="saveType" />
+      <msh:hidden property="lpu" guid="384a5a43-d9f9-464e-a36b-bcf6e2e8c6d4" />
+      <msh:panel guid="panel">
+        <msh:row>
+          <msh:textField property="code" fieldColSpan="3" label="Код" size="50" />
+        </msh:row>
+        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
+          <msh:textField property="groupName" guid="3a3e4d1b-8802-467d-b205-715fb379b018" fieldColSpan="3" label="Название группы" size="50" />
+        </msh:row>
+        <msh:row guid="7fe9abb8-b4e0-49ce-a31b-0d9c09b621da">
+          <msh:autoComplete viewAction="entityView-voc_workFunction.do" vocName="vocWorkFunction" property="workFunction" label="Функция" guid="8754e635-11ce-4c73-b398-4479988fd60d" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:row guid="7fe9abb8-b4e0-49ce-a31b-0d9c09b621da">
+          <msh:checkBox property="hasServiceStuff" label="Имеет вспомогательный персонал" guid="8754e635-11ce-4c73-b398-4479988fd60d" />
+        </msh:row>
+        <msh:row> 
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row>
-	        <msh:autoComplete property="lpu" fieldColSpan="3" vocName="lpu" horizontalFill="true"/>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="3" guid="9279e49d-2ee0-426b-9024-b06947a1f0a8" />
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="emergency" label="Экстр. пункт"/>
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isNoDirectSelf" label="Запрет на создание направление к самому себе" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
-  </tiles:put>
-  <tiles:put name="side" type="string">
-    <msh:sideMenu title="Операционная" guid="8709feb9-c102-4a0f-8bb5-3404cf624927">
-      <msh:ifFormTypeIsView formName="mis_operatingRoomForm" guid="e4a7c0d3-c936-4947-a202-2c14949a8567">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_operatingRoom" name="Изменить" guid="175cf029-eaae-47a2-8ad7-0486fcbea707" roles="/Policy/Mis/MisLpu/OperatingRoom/Edit" />
-        <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-mis_opertingRoom" name="Удалить" confirm="Удалить сотрудника?" guid="bed2b91a-84fc-4a8b-9cb1-0a83d94fd2de" roles="/Policy/Mis/MisLpu/OperatingRoom/Delete" />
-      </msh:ifFormTypeIsView>
-    </msh:sideMenu>
-    <msh:ifFormTypeIsView formName="mis_operatingRoomForm" guid="b0b5c1a9-5459-43b9-9030-ba0177a24cbd">
-      <msh:sideMenu title="Добавить" guid="652cf5dc-1acf-4fb5-b064-7eb3912e6531">
-              <msh:sideLink params="id" action="/entityParentPrepareCreate-cal_workCalendarPatternByOperRoom" name="Шаблон операций" title="Шаблон операций" guid="6b2a67-8d42-4281-baaf-a288f426" roles="/Policy/Mis/Worker/WorkBook/Create" />
-      </msh:sideMenu>
+    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="mis_operationRoomForm">
+      <msh:section guid="sectionChilds" title="Календарь">
+        <ecom:parentEntityListAll guid="parentEntityListChilds" formName="cal_workCalendarForm" attribute="childs" />
+        <msh:table guid="tableChilds" viewUrl="entityShortView-cal_workCalendar.do" name="childs" action="entityParentView-cal_workCalendar.do" idField="id">
+          <msh:tableColumn columnName="ИД" property="id" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
+        </msh:table>
+      </msh:section>
+      <msh:section title="Список сотрудников" guid="3ca48b94-1757-42fa-b790-63b5e0ba4966">
+        <ecom:parentEntityListAll attribute="functions" formName="work_personalWorkFunctionByGroupForm" guid="3f936e9b-bc75-4344-92ff-2b81e9aab54b" />
+        <msh:table name="functions" viewUrl="entityShortView-work_personalWorkFunction.do" action="entityParentView-work_personalWorkFunction.do" idField="id" guid="5de5a4f7-4a9a-4bca-907b-7506e87dc49b">
+          <msh:tableColumn property="workerInfo" columnName="Сотрудник" guid="c7e6d86d-c0b9-4cc4-869e-71968f1b6481" />
+        </msh:table>
+      </msh:section>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_operatingRoomForm" guid="049dd53d-f3b2-495a-bfec-be41a32d7a27" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_operationRoomForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+  </tiles:put>
+  <tiles:put name="side" type="string">
+    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="mis_operationRoomForm">
+      <msh:sideMenu guid="sideMenu-123" title="Рабочая функция">
+        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_operationRoom" name="Изменить" roles="/Policy/Mis/MisLpu/OperatingRoom/Create" />
+        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_operationRoom" name="Удалить" roles="/Policy/Mis/MisLpu/OperatingRoom/Delete" />
+      </msh:sideMenu>
+      <msh:sideMenu title="Добавить" guid="53f4a828-71f4-4c29-a2e8-fd61ff083187">
+        <msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_workCalendar" name="Календарь" title="Добавить календарь" guid="2f18fed4-7259-479a-97df-ff073fc4569d" />
+      </msh:sideMenu>
+    </msh:ifFormTypeIsView>
   </tiles:put>
 </tiles:insert>
+
