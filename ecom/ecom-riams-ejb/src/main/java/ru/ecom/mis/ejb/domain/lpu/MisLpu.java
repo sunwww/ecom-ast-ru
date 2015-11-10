@@ -82,19 +82,7 @@ public class MisLpu extends BaseEntity {
 		theDiets = aDiets;
 	}
 	
-	/** Операционные */
-	@Comment("Операционные")
-	@OneToMany(mappedBy="lpu")
-	public List<OperatingRoom> getOperatingRooms() {
-		return theOperatingRooms;
-	}
-
-	public void setOperatingRooms(List<OperatingRoom> aOperatingRooms) {
-		theOperatingRooms = aOperatingRooms;
-	}
-
-	/** Операционные */
-	private List<OperatingRoom> theOperatingRooms;
+	
 
 	/** Диеты */
 	private List<Diet> theDiets;
