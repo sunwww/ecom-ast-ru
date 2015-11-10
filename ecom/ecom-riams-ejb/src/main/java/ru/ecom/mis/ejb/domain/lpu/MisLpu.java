@@ -71,21 +71,7 @@ public class MisLpu extends BaseEntity {
 	/** Уровень рабочего места */
 	private VocWorkPlaceLevel theWorkPlaceLevel;
 	
-	/** Диеты */
-	@Comment("Диеты")
-	@OneToMany(mappedBy="lpu")
-	public List<Diet> getDiets() {
-		return theDiets;
-	}
 
-	public void setDiets(List<Diet> aDiets) {
-		theDiets = aDiets;
-	}
-	
-	
-
-	/** Диеты */
-	private List<Diet> theDiets;
 	
 	/** Вид собственности */
 	@Comment("Вид собственности")
