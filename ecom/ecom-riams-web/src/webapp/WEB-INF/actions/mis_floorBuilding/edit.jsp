@@ -89,19 +89,7 @@
 		    	</msh:section>
 		    </td>
 			</msh:ifInRole>
-    		<msh:ifInRole roles="/Policy/Mis/WorkPlace/OperatingRoom/View">
-    		<td width="15%" valign="top" style="padding-right: 1em">
-    			<msh:section>
-    				<msh:sectionTitle>Список операционных. <a href='entityParentPrepareCreate-mis_operatingRoom.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
-    				<msh:sectionContent>
-    					<ecom:webQuery name="operatingRooms" nativeSql="select wp.id,wp.name from WorkPlace wp where wp.parent_id='${param.id}' and wp.dtype='OperatingRoom'"/>
-    					<msh:table  name="operatingRooms" hideTitle="true" action="entityParentView-mis_operatingRoom.do" idField="1">
-    						<msh:tableColumn property="2"/>
-    					</msh:table>
-    				</msh:sectionContent>
-    			</msh:section>
-    		</td>
-  			</msh:ifInRole>
+    		
     	</tr>
     </table>
 
