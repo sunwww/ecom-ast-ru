@@ -705,7 +705,7 @@ public class FondWebService {
             sb.append("<th></th>") ;
             sb.append("<th>").append("КЛАДР").append("</th>") ;
             sb.append("<th>").append("Индекс").append("</th>") ;
-            sb.append("<th>").append("Регион").append("</th>") ;
+            sb.append("<th>").append("Регион/ОКАТО").append("</th>") ;
             sb.append("<th>").append("Район").append("</th>") ;
             sb.append("<th>").append("Город").append("</th>") ;
             sb.append("<th>").append("Улица").append("</th>") ;
@@ -739,7 +739,7 @@ public class FondWebService {
         			.append("'/>").append("</td>") ;
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getAddressInfo().equals(kl)?"":" bgcolor='yellow'"):"").append(">").append(kl).append("</td>");
         		sb.append("<td").append(ac).append(">").append(index).append("</td>");
-        		sb.append("<td").append(ac).append(">").append(provance).append("</td>");
+        		sb.append("<td").append(ac).append(">").append(provance).append((okato!=null&&!okato.equals(""))?"/"+okato:"").append("</td>");
         		sb.append("<td").append(ac).append(">").append(r).append("</td>");
         		sb.append("<td").append(ac).append(">").append(sity).append("</td>");
         		sb.append("<td").append(ac).append(">").append(streetT).append(" ")
