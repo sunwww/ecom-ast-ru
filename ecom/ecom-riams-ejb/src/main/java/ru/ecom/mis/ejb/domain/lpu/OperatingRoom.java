@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -16,7 +17,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 //			@AIndex(unique= false, properties = {"lpu"})
 		}
 	)
-public class OperatingRoom extends WorkPlace {
+public class OperatingRoom extends WorkFunction {
 
 
 }
