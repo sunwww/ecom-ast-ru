@@ -247,6 +247,7 @@ public class PatientServiceBean implements IPatientService {
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet, String aOkato) {
 		StringBuilder sql = new StringBuilder() ;
 		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
+		if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
 		aStreet=aStreet.toUpperCase().replaceAll(" ", "").replaceAll("-", "").replaceAll("№", "N") ;
 		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
 		if (aCity.endsWith(" С")
