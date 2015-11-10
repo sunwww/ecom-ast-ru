@@ -156,15 +156,16 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 		                Long medPolicyId = theSyncService.findMedPolicyId(aPolicySeries, aPolicyNumber) ;
 		                medPolicy = medPolicyId!=null ? theManager.find(MedPolicyOmc.class, medPolicyId) : null ;
 	            	}
-	                Patient patient = patImp.getPatient();
+	                Long patientId1 = patImp.getPatient();
 	                if(medPolicy==null) {
-	                	if (patient==null) {
+	                	if (patientId1==null) {
 		                    Long patientId = theSyncService.findPatientId(patImp.getLastname()
 		                            , patImp.getFirstname(), patImp.getMiddlename(), patImp.getBirthday()) ;
-		                    patient = patientId!=null ? theManager.find(Patient.class, patientId) : null ;
+		                    Patient patient = patientId!=null ? theManager.find(Patient.class, patientId) : null ;
+		                    if (patient!=null)patientId1 = patient.getId() ;
 	                	}
 	                } else {
-	                    patient = (Patient) medPolicy.getPatient() ;
+	                    patientId1 = medPolicy.getPatient().getId() ;
 	                }
 	            	Address adr = patImp.getAddressRegistration() ;
 	            	VocRayon vr = findOrCreateRayon(patImp.getRayonName(),patImp.getRegion()) ;
@@ -178,8 +179,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	                    monitor.advice(100);
 	                    monitor.setText(i+". "+patImp.getLastname());
 	                }
-	                System.out.println("=== before syncPatient, patImp ="+(patImp!=null?patImp.getLastname():"patIMP=null")+", pat="+(patient!=null?patient.getLastname():" null"));
-	                syncPatient(patImp, patient, medPolicy,current_date, forceUpdateAttachment, fi) ;
+	                //System.out.println("=== before syncPatient, patImp ="+(patImp!=null?patImp.getLastname():"patIMP=null")+", pat="+(patientId1!=null?patientId1:" null"));
+	                syncPatient(patImp, patientId1, medPolicy,current_date, forceUpdateAttachment, fi) ;
 	            }
             }
             monitor.finish(aTimeId + "");
@@ -191,73 +192,75 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         }
     }
 
-    private void syncPatient(PatientAttachedImport aEntity, Patient aPatient, MedPolicyOmc aMedPolicy,Date aCurrentDate, boolean updateAttachment, FondImport fi) {
+    private void syncPatient(PatientAttachedImport aEntity, Long aPatientId, MedPolicyOmc aMedPolicy,Date aCurrentDate, boolean updateAttachment, FondImport fi) {
     	VocIdentityCard passportType=findOrCreateIdentity(aEntity.getDocType()) ;
     	OmcOksm nat = findOrCreateNationality(aEntity.getCountry()) ;
     	boolean isNew = false ;
     	String firRecord = ""; 
-    	if(aPatient==null) {
+    	Patient patient ;
+    	if (aPatientId==null) {
     		firRecord="Создан новый пациент - "+aEntity.getLastname()+" "+aEntity.getFirstname()+" "+aEntity.getMiddlename()
     				+" д.р. "+DateFormat.formatToDate(aEntity.getBirthday())+". ";
     		isNew=true;
-    		aPatient = new Patient();
-    		aPatient.setCreateUsername("fond_base") ;
-    		aPatient.setCreateDate(aCurrentDate) ;
+    		patient = new Patient();
+    		patient.setCreateUsername("fond_base") ;
+    		patient.setCreateDate(aCurrentDate) ;
     		aEntity.setIsCreateNewPatient(true) ;
-        	aPatient.setLastname(aEntity.getLastname());
-        	aPatient.setFirstname(aEntity.getFirstname());
-        	aPatient.setMiddlename(aEntity.getMiddlename());
-        	aPatient.setBirthday(aEntity.getBirthday());
-        	aPatient.setPassportSeries(aEntity.getDocSeries()) ;
-        	aPatient.setPassportNumber(aEntity.getDocNumber()) ;
-        	aPatient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
-        	aPatient.setPassportType(passportType) ;
-        	aPatient.setPassportWhomIssued(aEntity.getDocWhom()!=null?aEntity.getDocWhom():"") ;
-        	aPatient.setBirthPlace(aEntity.getBirthPlace()!=null?aEntity.getBirthPlace():"") ;
+        	patient.setLastname(aEntity.getLastname());
+        	patient.setFirstname(aEntity.getFirstname());
+        	patient.setMiddlename(aEntity.getMiddlename());
+        	patient.setBirthday(aEntity.getBirthday());
+        	patient.setPassportSeries(aEntity.getDocSeries()) ;
+        	patient.setPassportNumber(aEntity.getDocNumber()) ;
+        	patient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
+        	patient.setPassportType(passportType) ;
+        	patient.setPassportWhomIssued(aEntity.getDocWhom()!=null?aEntity.getDocWhom():"") ;
+        	patient.setBirthPlace(aEntity.getBirthPlace()!=null?aEntity.getBirthPlace():"") ;
         	//Гражданство
-        	aPatient.setNationality(nat) ;
+        	patient.setNationality(nat) ;
     	} else {
-    		firRecord="Пациент "+aPatient.getPatientInfo()+ " найден в базе. ";
+    		patient = theManager.find(Patient.class,aPatientId) ;
+    		firRecord="Пациент "+patient.getPatientInfo()+ " найден в базе. ";
     		aEntity.setIsUpdatePatient(true) ;
-    		if ((aPatient.getBirthPlace()==null||aPatient.getBirthPlace().equals(""))&&aEntity.getBirthPlace()!=null) {
-    			aPatient.setBirthPlace(aEntity.getBirthPlace()) ;
+    		if ((patient.getBirthPlace()==null||patient.getBirthPlace().equals(""))&&aEntity.getBirthPlace()!=null) {
+    			patient.setBirthPlace(aEntity.getBirthPlace()) ;
     		}
-    		if ((aPatient.getPassportSeries()==null||aPatient.getPassportSeries().equals(""))&&aEntity.getDocSeries()!=null) {
-    			aPatient.setPassportSeries(aEntity.getDocSeries()) ;
-            	aPatient.setPassportNumber(aEntity.getDocNumber()) ;
-            	aPatient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
-            	aPatient.setPassportType(passportType) ;
+    		if ((patient.getPassportSeries()==null||patient.getPassportSeries().equals(""))&&aEntity.getDocSeries()!=null) {
+    			patient.setPassportSeries(aEntity.getDocSeries()) ;
+            	patient.setPassportNumber(aEntity.getDocNumber()) ;
+            	patient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
+            	patient.setPassportType(passportType) ;
     		}
         	//Гражданство
-    		if (aPatient.getNationality()==null) {
-    			aPatient.setNationality(nat) ;
+    		if (patient.getNationality()==null) {
+    			patient.setNationality(nat) ;
     		}
     	}
     	
-    	if (aPatient.getRayon()==null) {
-    		aPatient.setRayon(aEntity.getRayon()) ;
+    	if (patient.getRayon()==null) {
+    		patient.setRayon(aEntity.getRayon()) ;
     	}
-		aPatient.setEditUsername("fond_base") ;
-		aPatient.setEditDate(aCurrentDate) ;
-    	aPatient.setSnils(aEntity.getSnils());
-    	aPatient.setCommonNumber(aEntity.getCommonNumber());
+		patient.setEditUsername("fond_base") ;
+		patient.setEditDate(aCurrentDate) ;
+    	patient.setSnils(aEntity.getSnils());
+    	patient.setCommonNumber(aEntity.getCommonNumber());
     	//aPatient.setBirthPlace(aEntity.getBirthPlace()) ;
     	if (aEntity.getAddressRegistration()!=null) {
-    		aPatient.setAddress(aEntity.getAddressRegistration());
+    		patient.setAddress(aEntity.getAddressRegistration());
     	} else {
-    		aPatient.setNotice((aPatient.getNotice()!=null?aPatient.getNotice():"")+" "+aEntity.getCity()+" "+aEntity.getStreet()) ;
+    		patient.setNotice((patient.getNotice()!=null?patient.getNotice():"")+" "+aEntity.getCity()+" "+aEntity.getStreet()) ;
     	}
-    	aPatient.setHouseNumber(aEntity.getHouse());
-    	aPatient.setFlatNumber(aEntity.getApartment());
-    	aPatient.setHouseBuilding(aEntity.getHousing());
-    	theManager.persist(aPatient);
+    	patient.setHouseNumber(aEntity.getHouse());
+    	patient.setFlatNumber(aEntity.getApartment());
+    	patient.setHouseBuilding(aEntity.getHousing());
+    	theManager.persist(patient);
     	//Район
-    	if (aEntity.getSex()!=null&&!aEntity.getSex().equals("")) aPatient.setSex(findEntity(VocSex.class,"omcCode",aEntity.getSex()));
+    	if (aEntity.getSex()!=null&&!aEntity.getSex().equals("")) patient.setSex(findEntity(VocSex.class,"omcCode",aEntity.getSex()));
     	
     	if (aEntity.getInsuranceCompany()!=null) {
 	    	if(aMedPolicy==null) {
 	    		aMedPolicy = new MedPolicyOmc() ;
-	    		aMedPolicy.setPatient(aPatient);
+	    		aMedPolicy.setPatient(patient);
 	    	}
 	    	aMedPolicy.setType(findEntity(VocMedPolicyOmc.class, "code", aEntity.getPolicyType())) ;
 	        aMedPolicy.setCommonNumber(aEntity.getCommonNumber());
@@ -279,33 +282,33 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	    	
 	    	theManager.persist(aMedPolicy);
     	}
-    	aEntity.setPatient(aPatient) ;
+    	aEntity.setPatient(patient.getId()) ;
     	aEntity.setMedPolicy(aMedPolicy) ;
     	
     	theManager.merge(aEntity);
     	
     	//theManager.persist(aEntity);
-    	String patientSync = new StringBuilder().append("Ф").append(aPatient.getId()).toString() ;
+    	String patientSync = new StringBuilder().append("Ф").append(patient.getId()).toString() ;
     	if (isNew) {
     		Medcard medcard = new Medcard() ;
     		medcard.setNumber(patientSync) ;
     		MisLpu lpu = findEntity(MisLpu.class,"codef",aEntity.getLpu()) ;
     		medcard.setLpu(lpu) ;
-    		medcard.setPerson(aPatient) ;
+    		medcard.setPerson(patient) ;
     		theManager.persist(medcard);
     	}
     	//Обновляем прикрепления
     		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("")) {
-    		firRecord+=	thePatientService.updateOrCreateAttachment(aPatient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
+    		firRecord+=	thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
         				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), updateAttachment, true);
     			
         	}
     	
     	
     	
-		if (aPatient.getPatientSync()==null || aPatient.getPatientSync().equals("")) {
-			aPatient.setPatientSync(patientSync) ;
-	    	theManager.persist(aPatient);
+		if (patient.getPatientSync()==null || patient.getPatientSync().equals("")) {
+			patient.setPatientSync(patientSync) ;
+	    	theManager.persist(patient);
 		}
 		FondImportReestr fir = new FondImportReestr();
 		fir.setImportType(fi);
