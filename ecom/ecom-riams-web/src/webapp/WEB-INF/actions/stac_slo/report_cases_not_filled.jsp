@@ -14,20 +14,20 @@
 
   <tiles:put name="title" type="string">
           <%
-        	String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
-        	request.setAttribute("cntDays", cntDays) ;
+            String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
+            request.setAttribute("cntDays", cntDays) ;
         %>
     <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-  	<tags:stac_journal currentAction="stac_journalByCurator"/>
+      <tags:stac_journal currentAction="stac_journalByCurator"/>
   </tiles:put>
-  <tiles:put name="body" type="string">    
+  <tiles:put name="body" type="string">   
         <%
-        	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
-        	request.setAttribute("login", login) ;
-        	String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
-        	request.setAttribute("cntDays", cntDays) ;
+            String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+            request.setAttribute("login", login) ;
+            String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
+            request.setAttribute("cntDays", cntDays) ;
         %>
         <ecom:webQuery name="infoByLogin"
         maxResult="1" nativeSql="
@@ -39,54 +39,57 @@
         "
         />
         <%
-        	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
-	    	List list= (List)request.getAttribute("infoByLogin");
-	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
-        	String department = request.getParameter("department") ;
-        	String curator = request.getParameter("curator") ;
-        	String workFunc = wqr!=null?""+wqr.get1():"0" ;
-        	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+            boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
+            List list= (List)request.getAttribute("infoByLogin");
+            WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+            String department = request.getParameter("department") ;
+            String curator = request.getParameter("curator") ;
+            String workFunc = wqr!=null?""+wqr.get1():"0" ;
+            boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
 
  
-        	int type=0 ;
-        	if (curator!=null && !curator.equals("0")) {
-        		type=3 ;
-        		if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
-        			curator=workFunc ;
-        		}
-        	} else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
-        		type=2 ;
-       		} else if (isViewAllDepartment) {
-       			type=1 ;
-       		} else if (wqr!=null) {
-       			if (isBossDepartment) {
-       				type=2 ;
-       				department=""+wqr.get2() ;
-       			} else {
-       				type=3 ;
-       				curator=workFunc ;
-       			}
-       		}
-       		request.setAttribute("department", department) ;
-       		request.setAttribute("curator", curator) ;        	
-       	%>
-        	
+            int type=0 ;
+            if (curator!=null && !curator.equals("0")) {
+                type=3 ;
+                if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
+                    curator=workFunc ;
+                }
+            } else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
+                type=2 ;
+               } else if (isViewAllDepartment) {
+                   type=1 ;
+               } else if (wqr!=null) {
+                   if (isBossDepartment) {
+                       type=2 ;
+                       department=""+wqr.get2() ;
+                   } else {
+                       type=3 ;
+                       curator=workFunc ;
+                   }
+               }
+               request.setAttribute("department", department) ;
+               request.setAttribute("curator", curator) ;           
+           %>
+           
     <%if (type==1) { %>
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select ml.id||'&department='||ml.id,ml.name ,count(distinct slo.id) 
-	from MedCase slo left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' 
-	left join MisLpu ml on slo.department_id=ml.id 
-	where slo.dateFinish is null  
-	and slo.dtype='DepartmentMedCase' 
-	and slo.transferDate is null 
-	and slo.dateStart < current_date-${cntDays} 
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2)
-	group by ml.id,ml.name order by ml.name
+    select ml.id||'&department='||ml.id,ml.name ,count(distinct slo.id)
+    from MedCase slo left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol'
+    left join MisLpu ml on slo.department_id=ml.id
+    where slo.dateFinish is null 
+    and slo.dtype='DepartmentMedCase'
+    and slo.transferDate is null
+and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and p.specialist_id=slo.ownerfunction_id
+
+)-slo.datestart<${cntDays}
+
+    group by ml.id,ml.name order by ml.name
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short"
     action="stac_report_cases_not_filled.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -94,28 +97,33 @@ and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p
       <msh:tableColumn columnName="Кол-во" property="3" />
     </msh:table>
     </msh:sectionContent>
-    </msh:section> 
+    </msh:section>
     <% } %>
-    <%   if (type==2 )  {	%>
+    <%   if (type==2 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
-    select 
+    select
 owf.id||'&department=${department}&curator='||owf.id as id,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
-,count(distinct slo.id) as cntSlo 
-from MedCase slo 
-left join Patient pat on slo.patient_id=pat.id 
-left join WorkFunction owf on slo.ownerFunction_id=owf.id 
-left join Worker ow on owf.worker_id=ow.id 
-left join Patient owp on ow.person_id=owp.id 
-where slo.department_id='${department}' and slo.dtype='DepartmentMedCase' 
-and slo.dateFinish is null and slo.transferDate is null 
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-${cntDays})
-group by owf.id,owp.lastname,owp.middlename,owp.firstname 
+,count(distinct slo.id) as cntSlo
+from MedCase slo
+left join Patient pat on slo.patient_id=pat.id
+left join WorkFunction owf on slo.ownerFunction_id=owf.id
+left join Worker ow on owf.worker_id=ow.id
+left join Patient owp on ow.person_id=owp.id
+where slo.department_id='${department}' and slo.dtype='DepartmentMedCase'
+and slo.dateFinish is null and slo.transferDate is null
+
+and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and p.specialist_id=slo.ownerfunction_id
+
+)-slo.datestart<${cntDays}
+
+group by owf.id,owp.lastname,owp.middlename,owp.firstname
 order by owp.lastname,owp.middlename,owp.firstname
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short"
     action="stac_report_cases_not_filled.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -125,44 +133,50 @@ order by owp.lastname,owp.middlename,owp.firstname
     </msh:sectionContent>
     </msh:section>
          <%}%>
-         <%if (type==3 )  {	%>
+         <%if (type==3 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nativeSql="
 select slo.id,slo.dateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
-    ,pat.birthday,sc.code,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) as oper  
-    ,	  case 
-			when (CURRENT_DATE-sls.dateStart)=0 then 1 
-			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1) 
-			else (CURRENT_DATE-sls.dateStart)
-		  end as cnt1
-    ,	  case 
-			when (CURRENT_DATE-slo.dateStart)=0 then 1 
-			when bf.addCaseDuration='1' then ((CURRENT_DATE-slo.dateStart)+1) 
-			else (CURRENT_DATE-slo.dateStart)
-		  end as cnt2
-,to_char(max(p.dateRegistration),'dd.mm.yyyy')||' '||(select coalesce(cast(max(p.timeRegistration) as varchar(5)),'') from diary d1 where slo.id=d1.medCase_id and d1.dateRegistration=max(p.dateRegistration) and d1.dtype='Protocol' group by d1.dateRegistration) as pdateregistration
-    from medCase slo 
-    left join MedCase as sls on sls.id = slo.parent_id 
-    left join bedfund as bf on bf.id=slo.bedfund_id 
-    left join StatisticStub as sc on sc.medCase_id=sls.id 
-    left join Patient pat on slo.patient_id = pat.id 
-    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' 
-    left join Diagnosis diag on diag.medcase_id=slo.id 
+    ,pat.birthday,sc.code,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) as oper 
+    ,      case
+            when (CURRENT_DATE-sls.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1)
+            else (CURRENT_DATE-sls.dateStart)
+          end as cnt1
+    ,      case
+            when (CURRENT_DATE-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((CURRENT_DATE-slo.dateStart)+1)
+            else (CURRENT_DATE-slo.dateStart)
+          end as cnt2
+,to_char(max(p.dateRegistration),'dd.mm.yyyy')
+
+as pdateregistration
+    from medCase slo
+    left join MedCase as sls on sls.id = slo.parent_id
+    left join bedfund as bf on bf.id=slo.bedfund_id
+    left join StatisticStub as sc on sc.medCase_id=sls.id
+    left join Patient pat on slo.patient_id = pat.id
+    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' and p.specialist_id=slo.ownerfunction_id
+
+    left join Diagnosis diag on diag.medcase_id=slo.id
     left join SurgicalOperation so on so.medCase_id in (slo.id,sls.id)
     left join medservice ms on ms.id=so.medService_id
-    where slo.DTYPE='DepartmentMedCase' and slo.ownerFunction_id='${curator}' 
+    where slo.DTYPE='DepartmentMedCase' and slo.ownerFunction_id='${curator}'
     and slo.transferDate is null and slo.dateFinish is null
+and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and p.specialist_id=slo.ownerfunction_id
+
+)-slo.datestart<${cntDays}
     group by  slo.id,slo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
-    having (current_date-${cntDays})>max(p.dateRegistration) 
 
     order by pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist"
     viewUrl="entityShortView-stac_slo.do"
     action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -181,4 +195,5 @@ select slo.id,slo.dateStart
 
   </tiles:put>
 </tiles:insert>
+
 
