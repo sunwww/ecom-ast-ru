@@ -485,5 +485,13 @@ public class PrescriptionForm extends IdEntityForm{
 
 	/** Отделение для забора крови */
 	private Long theLabDepartment;
+	
+	/** Хирургическая операция */
+	@Comment("Хирургическая операция")
+	@Persist
+	public Long getSurgicalOperation() {return theSurgicalOperation;}
+	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
+	/** Хирургическая операция */
+	private Long theSurgicalOperation;
 }
 

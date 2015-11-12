@@ -18,6 +18,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Групповая рабочая функция", nameProperties= "name", view="entityParentView-work_groupWorkFunction.do",list= "entityParentList-work_groupWorkFunction.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
+
 public class GroupWorkFunctionForm extends WorkFunctionForm {
 	
 	/** Есть обслуживающий персонал */

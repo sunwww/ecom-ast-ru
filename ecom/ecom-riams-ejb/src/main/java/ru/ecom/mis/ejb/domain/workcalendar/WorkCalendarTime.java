@@ -251,4 +251,12 @@ public class WorkCalendarTime extends BaseEntity{
 	private Long theService;
 	/** Номер телефона */
 	private String thePhone;
+	
+	/** Назначение */
+	@Comment("Назначение")
+	public Long getPrescription() {return thePrescription;}
+	public void setPrescription(Long aPrescription) {thePrescription = aPrescription;}
+	/** Назначение */
+	private Long thePrescription;
+	
 }

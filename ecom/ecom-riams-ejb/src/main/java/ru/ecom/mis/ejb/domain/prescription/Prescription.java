@@ -38,7 +38,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Назначение")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "intakeDate" }) })
+@AIndexes(value = { @AIndex(properties = { "intakeDate" }),@AIndex(properties = { "calendartime" }) })
 public abstract class Prescription extends BaseEntity{
 
 	/** Лист назначений */
@@ -409,5 +409,14 @@ public abstract class Prescription extends BaseEntity{
 
 	/** СМО */
 	private MedCase theMedCase;
+
+	
+	/** Хирургическая операция */
+	@Comment("Хирургическая операция")
+	public Long getSurgicalOperation() {return theSurgicalOperation;}
+	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
+	/** Хирургическая операция */
+	private Long theSurgicalOperation;
+	
 
 }

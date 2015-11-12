@@ -3,9 +3,11 @@ package ru.ecom.mis.ejb.form.worker;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.lpu.OperatingRoom;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
+import ru.ecom.mis.ejb.form.lpu.OperatingRoomForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -27,7 +29,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Рабочая функция", nameProperties= "info", view="entitySubclassView-work_workFunction.do")
 @Parent(property="lpuRegister", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
-@Subclasses({PersonalWorkFunctionForm.class, GroupWorkFunctionForm.class})
+@Subclasses({PersonalWorkFunctionForm.class, GroupWorkFunctionForm.class, OperatingRoomForm.class})
 public class WorkFunctionForm extends IdEntityForm{
 	/** Наименование */
 	@Comment("Наименование")

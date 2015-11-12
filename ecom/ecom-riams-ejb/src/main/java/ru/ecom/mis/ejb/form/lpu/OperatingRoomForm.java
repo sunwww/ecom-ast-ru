@@ -10,12 +10,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @Comment("Операционная")
 @EntityForm
 @EntityFormPersistance(clazz = OperatingRoom.class)
 @WebTrail(comment = "Операционная", nameProperties = "groupName", view = "entityView-mis_operatingRoom.do")
-@Parent(property = "lpu", parentForm = FloorBuildingForm.class)
+@Parent(property = "lpu", parentForm = MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu/OperatingRoom")
 public class OperatingRoomForm  extends GroupWorkFunctionForm {
 
@@ -27,4 +28,12 @@ public class OperatingRoomForm  extends GroupWorkFunctionForm {
 
 	/** Лечебное учреждение */
 	private Long theLpu;
+	
+	/** Функция */
+	@Comment("Функция")
+	@Persist 
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Функция */
+	private Long theWorkFunction;
 }
