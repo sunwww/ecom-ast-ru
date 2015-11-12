@@ -126,7 +126,7 @@
 			        </msh:table>
 			      </msh:section>
     		</td>
-<msh:ifInRole roles="/Policy/Mis/WorkPlace/OperatingRoom/View">
+<msh:ifInRole roles="/Policy/Mis/MisLpu/OperatingRoom/View">
     		<td width="15%" valign="top" style="padding-right: 1em">
     			<msh:section>
     				<msh:sectionTitle>Список операционных. <a href='entityParentPrepareCreate-mis_operatingRoom.do?id=${param.id}'>Добавить</a></msh:sectionTitle>

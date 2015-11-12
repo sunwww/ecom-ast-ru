@@ -847,7 +847,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" and wcd.calendarDate>=CURRENT_DATE");
 		sql.append(" and wct.medCase_id is null");
 		if (remoteUser) {
-			sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
+			sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or (wf.dtype='GroupWorkFunction' or wf.dtype='OperatingRoom') and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 		}
 		sql.append(" group by case when wf.dtype='PersonalWorkFunction' then m2.id else m1.id end,case when wf.dtype='PersonalWorkFunction' then m2.name else m1.name end");
@@ -878,7 +878,7 @@ public class WorkCalendarServiceJs {
 				sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
 				sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 			}
-			if (!remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' )") ;
+			if (!remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' or (wf.dtype='GroupWorkFunction' or wf.dtype='OperatingRoom') and m1.id='").append(wqrLpu.get1()).append("' )") ;
 			sql.append(" group by wc.id,wp.lastname,wp.firstname,wp.middlename,wf.groupName,wf.comment");
 			sql.append(" order by wf.groupName,wp.lastname,wp.firstname,wp.middlename") ;
 			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
@@ -1097,7 +1097,7 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Boolean isRemoteUser = remoteUser(service, aRequest) ;
 		sql.append(" select wct.id,cast(wct.timeFrom as varchar(5)) as wcttimeFrom")
-			.append(" ,case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
+			.append(" ,case when wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
@@ -1135,6 +1135,11 @@ public class WorkCalendarServiceJs {
 			sql.append(" left join Worker w on w.id=wf.worker_id") ;
 			sql.append(" left join WorkFunction swf on swf.secUser_id=su.id") ;
 			sql.append(" left join Worker sw on sw.id=swf.worker_id") ;
+			sql.append(" left join Prescription p on p.id=wct.prescription") ;
+			sql.append(" left join PrescriptionList pl on pl.id=p.prescriptionlist_id") ;
+			sql.append(" left join Medcase dep on dep.id=pl.medcase_id") ;
+			sql.append(" left join Patient pat2 on pat2.id=dep.patient_id") ;
+			
 		}
 		sql.append(" left join patient pat on pat.id=vis.patient_id");
 		sql.append(" left join patient prepat on prepat.id=wct.prepatient_id");
