@@ -253,7 +253,7 @@ public class PrescriptionServiceJs {
 						.append(wqr.get3()).append(":")
 						.append(date).append(":");
 						
-						if (cabID!=null && cabID !=""){
+						if (cabID!=null &&!cabID.equals("")){
 							sqlCab = new StringBuilder() ;
 							sqlCab.append("Select wf.id,wf.groupname from workfunction wf where wf.id='").append(cabID).append("' ");
 							Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString(),1) ;
@@ -262,7 +262,7 @@ public class PrescriptionServiceJs {
 								res.append(wqr2.get2()).append(":");
 							}
 						} else res.append("::");
-						if (departmentID!=null && departmentID !=""){
+						if (departmentID!=null && !departmentID.equals("")){
 							sqlCab = new StringBuilder() ;
 							sqlCab.append("Select ml.id,ml.name from mislpu ml where ml.id='").append(departmentID).append("' ");
 							Collection<WebQueryResult> listCab = service.executeNativeSql(sqlCab.toString(),1) ;
