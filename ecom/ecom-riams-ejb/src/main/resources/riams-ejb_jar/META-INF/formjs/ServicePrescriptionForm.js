@@ -1,3 +1,8 @@
+
+function onPreDelete(aId, aCtx) {
+		aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
+}
+
 /**
  * Перед сохранением
  */
@@ -23,7 +28,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setPrescriptSpecial(wf) ;
 	var check1S = 0 ;
 	var pat = aEntity.prescriptionList.medCase.patient ;
-//	throw ""+aForm.labList;	
+	//throw ""+aForm.labList;	
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
 		var labMap = new java.util.HashMap() ;
@@ -69,7 +74,13 @@ function onCreate(aForm, aEntity, aCtx) {
 						var department = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(department);	
 					}
+														
 					aCtx.manager.persist(adMedService) ;
+					if (medService.serviceType.code.equial("OPERATION")&&par4!=null){
+						
+						var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par4) ;
+						wct.setPrescription(adMedservice.getId());
+					}
 				}
 			}
 		}

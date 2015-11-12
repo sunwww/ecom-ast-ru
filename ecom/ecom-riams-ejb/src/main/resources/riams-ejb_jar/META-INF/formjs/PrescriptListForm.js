@@ -1,3 +1,16 @@
+/**
+ * Перед удалением
+ */
+
+function onPreDelete(aId, aCtx) {
+	var pres = aCtx.manager.createNativeQuery("select p.id from prescription p where prescriptionlist_id = "+aId).getResultList();
+	if (pres.size()>0) {
+		for (var i=0;i<pres.size();i++){
+			aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+pres.get(i)).executeUpdate();
+		}
+	}
+}
+
 
 /**
  * Перед сохранением
@@ -105,6 +118,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				var par2 = (param[1])?Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(param[1]):null ;
 				var par3 = (param[2]&&(+param[2]>0))?java.lang.Long.valueOf(param[2]):null ;
 				var par4 = (param[3]&&(+param[3]>0))?java.lang.Long.valueOf(param[3]):null ;
+				var par5 = (param[4]&&(+param[4]>0))?java.lang.Long.valueOf(param[4]):null ; //WorkCalendarTime
 				//var par5 = (param[4])?java.lang.Long.valueOf(param[4]):null ;
 				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				
@@ -117,6 +131,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					}
 					var adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					adMedService.setPrescriptionList(aEntity) ;
+					
 					adMedService.setPrescriptSpecial(aEntity.getWorkFunction()) ;
 					adMedService.setMedService(medService) ;
 					adMedService.setMaterialId(matId!=null?""+matId:"") ;
@@ -135,10 +150,12 @@ function onCreate(aForm, aEntity, aCtx) {
 						var dep = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(dep);
 					}
-					/*if (par5!=null && !par5.equals(java.lang.Long(0))) {
+					aCtx.manager.persist(adMedService) ;
+				//	throw "WAZZZAP!!!!1"+par5;
+					if (par5!=null && !par5.equals(java.lang.Long(0))) {
 						if (!isTemp&&pat!=null&&medService.serviceType!=null 
 								&& medService.serviceType.code.equals("DIAGNOSTIC")&&par2!=null) {
-							var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
+/*							var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
 							var v = new Packages.ru.ecom.mis.ejb.domain.medcase.Visit() ;
 							v.serviceStream(hospStream) ;
 							v.setWorkFunctionPlan(medServiceCabinet) ;
@@ -149,10 +166,17 @@ function onCreate(aForm, aEntity, aCtx) {
 								v.setTimePlan(wct) ;
 								v.setDatePlan(wct.workCalendarDay) ;
 							}
-							v.setOrderWorkFunction() ;
-						}*/
+							v.setOrderWorkFunction() ;*/
+						} else if (medService.serviceType.code.equals("OPERATION")) {
+							//throw ""+aEntity.getWorkFunction() ;
+							var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
+							adMedService.setCalendarTime(wct);
+							wct.setPrescription(adMedService.getId());
+							
+						}
+						}
 					}
-					aCtx.manager.persist(adMedService) ;
+				//	aCtx.manager.refresh(adMedService) ;
 					matId=null ;
 				}
 			}
