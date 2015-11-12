@@ -250,7 +250,7 @@
 			} else if (type=='surg') {
 				typeNum=surgNum;
 				reqFld=[0,1];
-				fld = [['Service',1],['Date',1],['',1],['',1],['',1]] ;
+				fld = [['Service',1],['Date',1],['Cabinet',1],['',1],['CalTime',1]] ;
 			} else if (type=='hosp') {
 				typeNum=hospNum;
 				reqFld=[0,1];
@@ -415,7 +415,7 @@
 			//alert("labList = "+$('labList').value); 
 			//alert("funcList = "+$('funcList').value); 
 			//alert("drugList = "+$('drugList').value); 
-		//	alert($('labList').value);
+			alert($('labList').value);
 			document.forms['pres_prescriptListForm'].action=oldaction ;
 			document.forms['pres_prescriptListForm'].submit();
 		}
@@ -814,7 +814,7 @@
           <msh:textArea rows="2" property="comments" label="Комментарии" fieldColSpan="3" horizontalFill="true" guid="f5338dbf-03ae-4c9c-a2ee-e6a3cc240dff" />
         </msh:row>
         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
+          <msh:autoComplete property="workFunction" label="Назначил" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" horizontalFill="true"  />
         </msh:row>
         </msh:panel>
          <msh:ifFormTypeIsCreate formName="pres_prescriptListForm">
@@ -965,16 +965,16 @@
         <table id="surgTable">
         <tbody id="addsurgElements">
     		<tr>
-    			<msh:textField property="surgDate" label="Дата " size="10"/>
     			<msh:autoComplete property="surgServicies" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" />
     			<td>        	
-	            <input type="button" name="subm" onclick="prepareLabRow('surg');" value="Добавить" tabindex="4" />
+	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Добавить" tabindex="4" />
 	            </td>
 			 </tr>
 			 <tr>
-			<%-- <msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" fieldColSpan="3" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
-			<msh:autoComplete property="funcCalTime" label="Время" vocName="workCalendarTimeByDate"/>
-			 --%>
+				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="3" vocName="operationRoom" size='20' horizontalFill="true" />
+				 <msh:textField property="surgDate"  label="Дата" size="10"/>
+				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10"/>
+    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay"/>
 			 </tr>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			</msh:ifFormTypeIsNotView>
