@@ -1,5 +1,16 @@
 <vocconfig>
 
+<voc id="operationRoom" type="NativeVocService">
+	<NativeVocService
+		from="Workfunction wf"
+		nameId="wf.id"
+		order="wf.groupname"
+		names="wf.groupname"
+		queryAppend="wf.dtype='OperatingRoom'"
+		queried="cast(wf.id as varchar(2)) like :querId or upper(wf.groupname) like upper(:query) "
+	/>
+</voc>
+
 <voc id="vocMedPolicy" type="NativeVocService">
 	<NativeVocService
 		from="VocMedPolicy vmp"
@@ -405,7 +416,7 @@
                 queryAppend=" (wcp.workFunction_id is null or wcp.workFunction_id = wc.workFunction_id)"
                 join="
                 left join worker w on w.lpu_id=wcp.lpu_id
-                left join workfunction wf1 on wf1.lpu_id=wcp.lpu_id and wf1.DTYPE='GroupWorkFunction'
+                left join workfunction wf1 on wf1.lpu_id=wcp.lpu_id and (wf1.DTYPE='GroupWorkFunction' or wf1.DTYPE='OperatingRoom')
                 left join workcalendar wc1 on wc1.workfunction_id=wf1.id
                 left join workfunction wf on wf.worker_id=w.id and wf.dtype='PersonalWorkFunction'
                 left join workcalendar wc on wc.workfunction_id=wf.id
@@ -1340,7 +1351,7 @@
     			parent = " wct.workCalendarDay_id = :parent "
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null"
+    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null"
     			order =''
     			nameId='wct.id'
     			join=' left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id'
@@ -1352,7 +1363,7 @@
     			parent = " wc.workFunction_id = :par1 and wcd.calendarDate = to_date(:par2,'dd.mm.yyyy')"
     			names  = " to_char(wcd.calendarDate,'dd.mm.yyyy')||' '||cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
     			order =''
     			nameId='wct.id'
     			join=' left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id'
