@@ -250,6 +250,7 @@
         <form-bean name="pres_drugPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionForm" />
         <form-bean name="pres_dietPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DietPrescriptionForm" />
         <form-bean name="pres_servicePrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
+        <form-bean name="pres_operationPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
         <form-bean name="pres_prescriptionFulfilmentForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionFulfilmentForm" />
         <form-bean name="pres_prescriptionForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionForm" />
         <form-bean name="pres_abstractPrescriptionListForm" type="ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm" />
