@@ -137,10 +137,12 @@ select dm.diary_id as f1diaryid
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as f3fio
     ,pat.birthday as f4birthday,sc.code as f5sscode
     ,d.dateRegistration as f6datereg
-,vdd.name||' '||coalesce(dm.comment,'') as f7vddname
+,
+case when dm.isVk='1' then 'Врач. ком. ' else '' end||
+vdd.name||' '||coalesce(dm.comment,'') as f7vddname
 ,case when dm.record!=d.record then dm.record else '' end as f8dmrecord
 ,d.record as f9drecord 
-,to_char(dm.validitydate,'dd.mm.yyyy')||cast(dm.validitytime as varchar(5)) as f10validity
+,to_char(dm.validitydate,'dd.mm.yyyy')||' '||cast(dm.validitytime as varchar(5)) as f10validity
 , d.id as f11pid
 ,case when (dm.isDoctorCheck='0' or dm.isDoctorCheck is null) and dm.record!=d.record and dm.record!='' then dm.id||''','''||d.id else null end as f12dmid
 ,case when dm.isDoctorCheck='1' then 'background:#F6D8CE;color:black;' else null end as f13style
@@ -171,8 +173,8 @@ left join diary d on d.id=dm.diary_id
       <msh:tableColumn columnName="Дата" property="6"/>
       <msh:tableColumn columnName="Причина" property="7" />
       <msh:tableButton property="12" buttonFunction="checkEditProtocolControl" hideIfEmpty="true" buttonShortName="Исправить" buttonName="Подтвердить изменения сделанные заведующим"/>
-      <msh:tableColumn columnName="Текст после редакции заведующего" property="9" cssClass="preCell"/>
-      <msh:tableColumn columnName="Текст протокола" property="8" cssClass="preCell"/>
+      <msh:tableColumn columnName="Текст после редакции заведующего" property="8" cssClass="preCell"/>
+      <msh:tableColumn columnName="Текст протокола" property="9" cssClass="preCell"/>
       <msh:tableColumn property="10" columnName="Срок на редактирование"/>
 
     </msh:table>
