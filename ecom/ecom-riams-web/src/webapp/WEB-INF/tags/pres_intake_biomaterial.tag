@@ -51,7 +51,9 @@
 				} */
 				
 				if (+par.type==2) {
-					if (+val<1) val='0' ;
+					if (+val<1) {val='0' ;} else {
+						par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
+					}
 				}
 				if (par.type=='4') {
 					val = val.replace(",",".") ;
