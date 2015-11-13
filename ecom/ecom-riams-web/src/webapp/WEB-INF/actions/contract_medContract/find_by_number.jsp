@@ -112,7 +112,6 @@
 				<msh:table name="childContract" action="entityParentView-contract_medContract.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn" />
 					<msh:tableColumn columnName="№ договора" property="4" />
-					<msh:tableColumn columnName="ЛПУ" property="3" />
 					<msh:tableColumn columnName="Заказчик" property="2" />
 					<msh:tableColumn columnName="Дата начала" property="5" />
 					<msh:tableColumn columnName="Дата окончания" property="6" />
