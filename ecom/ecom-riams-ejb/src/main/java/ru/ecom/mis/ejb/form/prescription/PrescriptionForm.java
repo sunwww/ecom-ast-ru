@@ -374,7 +374,7 @@ public class PrescriptionForm extends IdEntityForm{
 //	private boolean theInHospitalMedCase;
 	/** Тип назначения */
 	@Comment("Тип назначения")
-	@Persist @Required
+	@Persist 
 	public Long getPrescriptType() {return thePrescriptType;}
 	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
 	/** Тип назначения */

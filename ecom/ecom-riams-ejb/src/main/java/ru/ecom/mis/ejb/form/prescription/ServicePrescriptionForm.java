@@ -75,5 +75,40 @@ public class ServicePrescriptionForm extends PrescriptionForm{
 	}
    public void setDescriptionInfo (String aDescriptionInfo) {theDescriptionInfo = aDescriptionInfo ; }
    private String theDescriptionInfo ;
+   
+   /** Операци */
+	@Comment("Операци")
+	public String getSurgServicies() {return theSurgServicies;}
+	public void setSurgServicies(String aSurgServicies) {theSurgServicies = aSurgServicies;	}
+	/** Операци */
+	private String theSurgServicies;
 	
+/*	*//** Дата операции *//*
+	@Comment("Дата операции")
+	@DateString @DoDateString
+	public String getSurgDate() {return theSurgDate;}
+	public void setSurgDate(String aSurgDate) {theSurgDate = aSurgDate;}
+	*//** Дата операции *//*
+	private String theSurgDate;*/
+	
+	/** Время для направления на операцию */
+	@Comment("Время для направления на операцию")
+	public Long getSurgCalTime() {return theSurgCalTime;}
+	public void setSurgCalTime(Long aSurgCalTime) {	theSurgCalTime = aSurgCalTime;}
+	/** Время для направления на операцию */
+	private Long theSurgCalTime;
+	
+	/** Дата для направления на операцию */
+	@Comment("Дата для направления на операцию")
+	public Long getSurgCalDate() {return theSurgCalDate;}
+	public void setSurgCalDate(Long aSurgCalDate) {theSurgCalDate = aSurgCalDate;}
+	/** Дата для направления на операцию */
+	private Long theSurgCalDate;
+	
+	/** Операционная */
+	@Comment("Операционная")
+	public Long getSurgCabinet() {return theSurgCabinet;}
+	public void setSurgCabinet(Long aSurgCabinet) {theSurgCabinet = aSurgCabinet;}
+	/** Операционная */
+	private Long theSurgCabinet;
 }
