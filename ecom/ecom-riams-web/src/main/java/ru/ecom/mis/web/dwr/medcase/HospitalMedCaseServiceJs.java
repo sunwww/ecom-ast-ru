@@ -65,15 +65,16 @@ public class HospitalMedCaseServiceJs {
 		}
 		return ret.toString() ;
 	}
-	public String setDiaryDefect(Long aDiaryId, Long aDefectId, String aComment,String aRecord, HttpServletRequest aRequest) throws NamingException {
+	public String setDiaryDefect(Long aDiaryId, Long aDefectId, String aComment,String aRecord,String aVk, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		Calendar cal = Calendar.getInstance() ;
 		cal.add(Calendar.HOUR, 24) ;
+		boolean vk = (aVk!=null && aVk.equals("1"))?true:false ;
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy") ;
-		sql.append("insert into DiaryMessage (diary_id,defect_id,comment,record,createusername,createdate,createtime,validitydate,validitytime) ")
-			.append("values ('").append(aDiaryId).append("','")
+		sql.append("insert into DiaryMessage (isVk,diary_id,defect_id,comment,record,createusername,createdate,createtime,validitydate,validitytime) ")
+			.append("values ('").append(vk?"1":"0").append("','").append(aDiaryId).append("','")
 			.append(aDefectId).append("','").append(aComment).append("','").append(aRecord)
 			.append("','").append(login).append("',current_date,current_time,to_date('").append(f.format(cal.getTime())).append("','dd.mm.yyyy'),current_time)") ;
 		System.out.println(sql) ;
