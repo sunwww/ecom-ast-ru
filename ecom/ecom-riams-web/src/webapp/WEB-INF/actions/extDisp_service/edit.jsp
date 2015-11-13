@@ -32,22 +32,24 @@ and veds.id is not null
 and (veds.isVisit='0' or veds.isVisit is null)
 group by veds.id,veds.code,veds.name,veds.isVisit
 order by veds.id,veds.name"/>
-	<ecom:webQuery name="getServiceVisit" nativeSql="
-	select 
- max(eds.id) as serviceid
-, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
-,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
-, to_char(max( eds.serviceDate ),'dd.mm.yyyy') as servicedate
-,list(eds.recommendation) as edsRecommendation
-, case when count(case when eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end
-,veds.workfunctioncode 
-,case when max(eds.workfunction_id) is not null then max(cast(eds.workfunction_id as varchar)) else 
-	case when (max(eds.id)is null and count(wf1.id)='1') then max(cast(wf1.id as varchar)) else '' end end as edsWF
+	<ecom:webQuery name="getServiceVisit" nameFldSql="getServiceVisitSql" nativeSql="
+		select   max( case when eds.serviceType_id=edps.serviceType_id then eds.id else null end) as serviceid 
+ 	, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname  
+ 	,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype 
+, to_char(max(case when eds.serviceType_id=edps.serviceType_id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate 
+,list(case when eds.serviceType_id=edps.serviceType_id then eds.recommendation else null end) as edsRecommendation 
 
-,case when max(eds.workfunction_id)is not null then max(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name) else 
-	case when (max(eds.id)is null and count(wf1.id)='1') then max(vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename || ' '||ml1.name) else '' end end as wfname
-,max(case when (eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10
-,max(case when (eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name
+, case when count(case when eds.serviceType_id=edps.serviceType_id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end 
+
+,veds.workfunctioncode  
+
+,case when max(case when eds.serviceType_id=edps.serviceType_id then eds.workfunction_id end) is not null then max(cast(eds.workfunction_id as varchar)) else  	case when (max(case when eds.serviceType_id=edps.serviceType_id then eds.id end)is null and count(wf1.id)='1') then max(cast(wf1.id as varchar)) else '' end end as edsWF  
+
+,case when max(case when eds.serviceType_id=edps.serviceType_id then eds.workfunction_id end)is not null then max(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name) else  	case when (max(case when eds.serviceType_id=edps.serviceType_id then eds.id end)is null and count(wf1.id)='1') then max(vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename || ' '||ml1.name) else '' end end as wfname 
+
+,max(case when (eds.serviceType_id=edps.serviceType_id and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10 
+ 	
+,max(case when (eds.serviceType_id=edps.serviceType_id and eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name 
 from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -66,7 +68,7 @@ left join Worker w1 on w1.id=wf1.worker_id
 left join mislpu ml1 on ml1.id=w1.lpu_id
 left join Patient wp1 on wp1.id=w1.person_id
 where edc.id='${param.id}' 
-and case when eds.serviceType_id=edps.serviceType_id then '1' when eds.id is null then '1' else '0' end = '1'
+
 and (edps.sex_id=pat.sex_id or edps.sex_id is null)
 and edc.ageGroup_id=edps.ageGroup_id
 and (veds.isVisit='1')
@@ -278,7 +280,7 @@ order by veds.id,veds.name"
 	<% 	
 		}
 		%>
-		
+		<pre>${getServiceVisitSql}</pre>
 		<tr><td class="buttons"><input type="button" value="Отменить" title="Отменить изменения" onclick="this.disabled=true; window.location.href='entityParentView-extDisp_card.do?id=${param.id}';  return true ;" id="cancelButton">
 		<!-- <input type="button" title="Сохранить изменения " id='submButton' onclick="this.disabled=true; this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr> -->
 		<input type="button" title="Сохранить изменения " id='submButton' onclick="checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
