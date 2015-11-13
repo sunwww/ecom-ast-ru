@@ -11,6 +11,7 @@ import ru.ecom.mis.ejb.domain.contract.ContractMedServiceGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 	/**
 	 * Интервал медицинских услуг (A01.01.001-A01.01.005, A01.001.
@@ -26,7 +27,7 @@ public class MedServiceInterval extends BaseEntity{
 	 * Маска кодов мед. услуг
 	 */
 	@Comment("Маска кодов мед. услуг")
-	
+	@Persist @Required
 	public String getMedServiceMask() {
 		return theMedServiceMask;
 	}

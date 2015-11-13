@@ -101,4 +101,12 @@ public class DiaryMessage extends BaseEntity {
 	public void setValidityDate(Date aValidityDate) {theValidityDate = aValidityDate;}
 	/** Срок действия */
 	private Date theValidityDate;
+	
+	/** Врачебная комиссия */
+	@Comment("Врачебная комиссия")
+	public Boolean getIsVk() {return theIsVk;}
+	public void setIsVk(Boolean aIsVk) {theIsVk = aIsVk;}
+
+	/** Врачебная комиссия */
+	private Boolean theIsVk;
 }

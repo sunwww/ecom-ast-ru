@@ -6,7 +6,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
   * 
   */
- @Comment("")
+ @Comment("Справочник обработки правил")
 @Entity
 @Table(schema="SQLUser")
 public class VocContractRulesProcessing extends VocBaseEntity{

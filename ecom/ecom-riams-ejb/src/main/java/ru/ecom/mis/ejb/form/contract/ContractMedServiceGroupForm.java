@@ -7,6 +7,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ContractMedServiceGroup.class)
 @Comment("Группу медицинских услуг по договору")
@@ -18,7 +19,7 @@ public class ContractMedServiceGroupForm extends IdEntityForm{
 	 * Название
 	 */
 	@Comment("Название")
-	@Persist
+	@Persist @Required
 	public String getName() {
 		return theName;
 	}
