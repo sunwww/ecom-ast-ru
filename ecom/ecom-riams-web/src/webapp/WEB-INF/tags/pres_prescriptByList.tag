@@ -111,11 +111,14 @@
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select 
     	p.id as pid,pl.id as plid,ms.name as drname
-    	
- ,p.planStartDate,p.planEndDate,vpt.name as vptname
+,to_char(p.planStartDate,'dd.MM.yyyy')
+,cast (wct.timefrom as varchar(5))
+,wf.groupname
  
  from Prescription p 
- left join PrescriptionList pl on pl.id=p.prescriptionList_id 
+ left join PrescriptionList pl on pl.id=p.prescriptionList_id
+ left join workfunction wf on wf.id=p.prescriptcabinet_id
+ left join workcalendartime wct on wct.id=p.calendartime_id
  left join mislpu ml on ml.id=p.department_id
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id 
@@ -127,9 +130,11 @@
     	<msh:sectionContent>
     		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Операция"/>
-    			<msh:tableColumn property="6" columnName="Тип назначения"/>
+    			<msh:tableColumn property="6" columnName="Операционная"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
-    			<msh:tableColumn property="5" columnName="Дата окончания"/>
+    			<msh:tableColumn property="5" columnName="Время назначения"/>
+    			
+    			
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
