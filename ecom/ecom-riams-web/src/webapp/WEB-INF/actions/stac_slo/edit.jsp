@@ -1,3 +1,4 @@
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -269,12 +270,14 @@
 	//request.setAttribute("login", login) ;
 	ActionUtil.getValueBySql("select wf.id,w.lpu_id from SecUser su left join WorkFunction wf on su.id=wf.secUSer_id left join Worker w on wf.worker_id=w.id where su.login='"+login+"'"
 			,"wf_id","lpu_wf",request);
-	
+	boolean isRoleVk = RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ControlVk", request) ;
 	Object wf_lpu = request.getAttribute("lpu_wf") ;
 	if (wf_lpu==null || (wf_lpu+"").equals("")) {
 		request.setAttribute("lpu_wf", "0") ;
 	}
-	
+	if (isRoleVk) {
+		request.setAttribute("edit_vk_all", "vk") ;
+	}
     %>
     <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
     ${lpu_wf}
@@ -292,7 +295,8 @@
       ,case when aslo.dtype='Visit' then 'background:#F6D8CE;color:black;' 
       when aslo.dtype='DepartmentMedCase' and slo.department_id!=aslo.department_id then 'background:#E0F8EC;color:black;'
       else '' end as f4style
-      ,case when sls.datefinish is null and aslo.dtype!='Visit' and w.lpu_id='${lpu_wf}' and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
+      ,case when sls.datefinish is null and aslo.dtype!='Visit' and w.lpu_id='${lpu_wf}'  and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
+      ,case when sls.datefinish is null and aslo.dtype!='Visit' and 'vk'='${edit_vk_all}' and (select count(*) from DiaryMessage dm where dm.diary_id=d.id and dm.createDate>current_date-2)=0 then d.id else null end as cntmessage
       , (select list(vdd.name) from DiaryMessage dm left join VocDefectDiary vdd on vdd.id=dm.defect_id where dm.diary_id=d.id and dm.createDate>current_date-2) as message
       from MedCase slo
       left join medcase sls on sls.id = slo.parent_id
@@ -325,6 +329,9 @@
 					<msh:tableButton property="5" buttonFunction="checkErrorProtocol" 
 					buttonName="На редакцию врачу" buttonShortName="На редак." 
 						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/Control"/>
+					<msh:tableButton property="6" buttonFunction="checkErrorProtocolVk" 
+					buttonName="На редакцию врачу VK" buttonShortName="На редак." 
+						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/ControlVK"/>
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
@@ -473,7 +480,16 @@
   	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника" parentID="${param.id}" />
   		<script type="text/javascript">
   			function checkErrorProtocol(aId) {
-  				showSMODefDiaryDefect(aId) ;
+  				showSMODefDiaryDefect(aId,'0') ;
+  				
+  			}
+  		</script>
+  	</msh:ifInRole>
+  	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ControlVk">
+  	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника (ВК)" parentID="${param.id}" />
+  		<script type="text/javascript">
+  			function checkErrorProtocol(aId) {
+  				showSMODefDiaryDefect(aId,'1') ;
   				
   			}
   		</script>
