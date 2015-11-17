@@ -25,7 +25,7 @@
 	<%
 	String typeContractPerson =ActionUtil.updateParameter("ReportContractFind","typeContractPerson","1", request) ;
 	%>
-	<msh:form action="contract_find_by_number.do" defaultField="dateFrom">
+	<msh:form action="contract_find_by_number.do" defaultField="contractNumber" >
 			<msh:panel>
 				<msh:row>
 					<msh:textField property="contractNumber" label="№ контракта или контрагент" fieldColSpan="3" horizontalFill="true"/>
@@ -109,7 +109,7 @@
 			 ${fiocp}) 
 			${cpdtypeSql}
 			"/>
-				<msh:table name="childContract" action="entityParentView-contract_medContract.do" idField="1">
+				<msh:table name="childContract" action="entityParentView-contract_medContract.do" idField="1" disableKeySupport="true">
 					<msh:tableColumn columnName="#" property="sn" />
 					<msh:tableColumn columnName="№ договора" property="4" />
 					<msh:tableColumn columnName="Заказчик" property="2" />
