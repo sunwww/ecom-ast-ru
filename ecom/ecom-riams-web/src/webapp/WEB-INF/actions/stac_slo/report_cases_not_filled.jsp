@@ -82,10 +82,10 @@
     where slo.dateFinish is null 
     and slo.dtype='DepartmentMedCase'
     and slo.transferDate is null
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and (current_date-(select coalesce(max(p.dateRegistration),slo.datestart) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
 and p.specialist_id=slo.ownerfunction_id
 
-)-slo.datestart<${cntDays}
+))>${cntDays}
 
     group by ml.id,ml.name order by ml.name
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -114,11 +114,11 @@ left join Worker ow on owf.worker_id=ow.id
 left join Patient owp on ow.person_id=owp.id
 where slo.department_id='${department}' and slo.dtype='DepartmentMedCase'
 and slo.dateFinish is null and slo.transferDate is null
-
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and
+(current_date-(select coalesce(max(p.dateRegistration),slo.datestart) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
 and p.specialist_id=slo.ownerfunction_id
 
-)-slo.datestart<${cntDays}
+))>${cntDays}
 
 group by owf.id,owp.lastname,owp.middlename,owp.firstname
 order by owp.lastname,owp.middlename,owp.firstname
@@ -166,10 +166,10 @@ as pdateregistration
     left join medservice ms on ms.id=so.medService_id
     where slo.DTYPE='DepartmentMedCase' and slo.ownerFunction_id='${curator}'
     and slo.transferDate is null and slo.dateFinish is null
-and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
+and (current_date-(select coalesce(max(p.dateRegistration),slo.datestart) from diary p where p.medcase_id=slo.id and p.dtype='Protocol'
 and p.specialist_id=slo.ownerfunction_id
 
-)-slo.datestart<${cntDays}
+))>${cntDays}
     group by  slo.id,slo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart

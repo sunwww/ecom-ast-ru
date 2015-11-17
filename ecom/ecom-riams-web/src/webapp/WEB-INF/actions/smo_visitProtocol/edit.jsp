@@ -152,7 +152,15 @@
     		document.forms[1].submit() ;
     	}
     }
+    
     </script>
+    <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+    <script type="text/javascript">
+    $('record').focus() ;
+    
+    
+    </script>
+    </msh:ifFormTypeAreViewOrEdit>
     </msh:ifFormTypeIsNotView>
     <script type="text/javascript">
     function printProtocol() {
