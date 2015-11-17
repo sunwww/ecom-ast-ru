@@ -342,7 +342,7 @@
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
     </form>
-	<msh:ifInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
+	
     <msh:table name="datelist" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -355,7 +355,7 @@
       <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Госпитализация" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Адрес" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Адрес" role="/Policy/Mis/Journal/ViewInfoPatient" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Кол-во к.дней" isCalcAmount="true" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Диагноз клин СЛО" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
@@ -366,27 +366,7 @@
       <msh:tableColumn columnName="Отделение выписки" property="15" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Исход" property="17" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
     </msh:table>
-    </msh:ifInRole>
-    <msh:ifNotInRole roles="/Policy/Mis/Journal/ViewInfoPatient">
-    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
-      <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата рождения" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Возраст" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Пол" property="18" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Госпитализация" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во к.дней" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз клин СЛО" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз выпис. СЛС" property="13" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз выпис. СЛС сопут." property="19" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение пост." property="14" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение выписки" property="15" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-    </msh:table>
-    </msh:ifNotInRole>    		
+    	
     		
     		<%
 
