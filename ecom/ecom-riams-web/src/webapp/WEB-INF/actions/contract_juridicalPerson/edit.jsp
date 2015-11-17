@@ -81,7 +81,7 @@ where mc.customer_id='${param.id}'
 group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
 order by mc.dateFrom desc
       	" maxResult="10"/>
-      	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
+      	<msh:table name="medContracts" viewUrl="entityView-contract_juridicalContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
       		<msh:tableColumn property="2" columnName="№ договора"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>
