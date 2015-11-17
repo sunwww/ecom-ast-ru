@@ -252,7 +252,19 @@
   				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
   			}
   		}
-      
+      function isAutopsyCheck() {
+    	  if ($('postmortemBureauNumber').value!="" ||
+    	  $('postmortemBureauDate').value!="" ||
+    	  $('dateForensic').value!="") {
+    		  $('isAutopsy').checked="checked" ;
+    	  }
+      }
+      eventutil.addEventListener($('postmortemBureauNumber'), "change", function() {isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('postmortemBureauNumber'),'blur',function(){isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('postmortemBureauDate'), "change", function() {isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('postmortemBureauDate'),'blur',function(){isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('dateForensic'), "change", function() {isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('dateForensic'),'blur',function(){isAutopsyCheck() ;}) ;
     </script>
     </msh:ifFormTypeIsNotView>
   
