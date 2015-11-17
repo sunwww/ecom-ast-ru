@@ -83,7 +83,7 @@
 			fio.append("(cp.name like '%").append(contractNumber).append("%' or reg.name like '%").append(contractNumber).append("%')") ;
 		}
 			//request.setAttribute("cpdtypeSql", " and ") ;
-			fio.append("cp.name like '%").append(contractNumber).append("%'") ;
+			
 		
 		request.setAttribute("fiocp", fio.toString()) ;
 	%>
@@ -93,6 +93,7 @@
 			when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name else 'Страховая компания'||reg.name END as persname
 			from  ContractPerson cp
 			left join REG_IC reg on reg.id=cp.regCompany_id
+			left join Patient p on p.id=cp.patient_id
 			where  ${cpdtypeSql} and ${fiocp} 
 			
 			"/>
