@@ -23,14 +23,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 <msh:sideMenu></msh:sideMenu>
 <msh:sideMenu title="Списки">
-	<msh:sideLink styleId="naturalPerson" 
-		roles="/Policy/Mis/Contract/ContractPerson/NaturalPerson/View" 
-		action="/entityList-contract_naturalPerson" 
-		name="Физических лиц" title="Список физических лиц"/>
-	<msh:sideLink styleId="juridicalPerson" 
-		roles="/Policy/Mis/Contract/ContractPerson/JuridicalPerson/View" 
-		action="/entityList-contract_juridicalPerson" name="Юридических лиц" 
-		title="Список юридических лиц"/>
+	<msh:sideLink styleId="conPerson" 
+		roles="/Policy/Mis/Contract/ContractPerson/View" 
+		action="/contract_find_person" name="Контрактные лица (юридические, физические)" 
+		title="Список контрактных лиц (юридических, физических)"/>
 	<msh:sideLink styleId="price" 
 		action="/entityList-contract_priceList" name="прейскурантов" title="Список прейскурантов"
 		roles="/Policy/Mis/Contract/PriceList/View"/>
@@ -38,7 +34,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		action="/contract_find_by_number.do" name="мед.договоров" title="Поиск договора"
 			roles="/Policy/Mis/Contract/MedContract/View"/>
 	<msh:sideLink styleId="medServiceGroup" 
-		action="/entityList-contract_contractMedServiceGroup" 
+		action="/entityList-contract_medServiceGroup" 
 		name="групп медицинских услуг" roles="/Policy/Mis/Contract/GroupRules/ContractMedServiceGroup/View"
 		title="Список групп медицинских услуг по договорам"/>
 	<msh:sideLink styleId="guaranteeGroup" 
@@ -46,7 +42,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="групп гарантийных документов" roles="/Policy/Mis/Contract/GroupRules/ContractGuaranteeGroup/View"
 		title="Список групп гарантийных документов по договорам"/>
 	<msh:sideLink styleId="nosologyGroup" 
-		action="/entityList-contract_contractNosologyGroup" 
+		action="/entityList-contract_nosologyGroup" 
 		name="нозологических групп" roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/View"
 		title="Список нозологических групп по договорам"
 		/>
