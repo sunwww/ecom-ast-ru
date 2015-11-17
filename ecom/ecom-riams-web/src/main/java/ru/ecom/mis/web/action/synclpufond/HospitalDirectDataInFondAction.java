@@ -23,6 +23,7 @@ import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class HospitalDirectDataInFondAction extends BaseAction {
@@ -122,6 +123,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
         }}
     	} else if (typeMode!=null && typeMode.equals("2")) {
     		if (typeImport.equals("1")||typeImport.equals("3")) update(aRequest) ;
+    		new InfoMessage(aRequest, aRequest.getParameter("infoImport")) ;
     		String errorFile = aRequest.getParameter("errorFile") ;
     		if (errorFile!=null && !errorFile.equals("") && !errorFile.equals("null")) {
     			form.setFilenameError("<a href='../rtf/"+errorFile+"'>"+errorFile+"</a>") ;
