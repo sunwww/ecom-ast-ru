@@ -77,15 +77,16 @@
 		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
 		<form-bean name="contract_contractGuaranteeLetterForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeLetterForm" />
 		<form-bean name="contract_contractMedPolicyForm" type="ru.ecom.mis.ejb.form.contract.ContractMedPolicyForm" />
-		<form-bean name="contract_contractMedServiceGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractMedServiceGroupForm" />
-		<form-bean name="contract_contractNosologyGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractNosologyGroupForm" />
 		<form-bean name="contract_contractPaymentOrderForm" type="ru.ecom.mis.ejb.form.contract.ContractPaymentOrderForm" />
 		<form-bean name="contract_contractPersonForm" type="ru.ecom.mis.ejb.form.contract.ContractPersonForm" />
-		<form-bean name="contract_contractRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractRuleForm" />
+		<form-bean name="contract_medServiceGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractMedServiceGroupForm" />
+		<form-bean name="contract_nosologyGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractNosologyGroupForm" />
+		<form-bean name="contract_ruleForm" type="ru.ecom.mis.ejb.form.contract.ContractRuleForm" />
 		<form-bean name="contract_guaranteeIntervalForm" type="ru.ecom.mis.ejb.form.contract.GuaranteeIntervalForm" />
 		<form-bean name="contract_juridicalPersonForm" type="ru.ecom.mis.ejb.form.contract.JuridicalPersonForm" />
 		<form-bean name="contract_medContract_personForm" type="ru.ecom.mis.ejb.form.contract.MedContractByPersonForm" />
 		<form-bean name="contract_medContractForm" type="ru.ecom.mis.ejb.form.contract.MedContractForm" />
+		<form-bean name="contract_juridicalContractForm" type="ru.ecom.mis.ejb.form.contract.MedContractForm" />
 		<form-bean name="contract_medServiceIntervalForm" type="ru.ecom.mis.ejb.form.contract.MedServiceIntervalForm" />
 		<form-bean name="contract_naturalPersonForm" type="ru.ecom.mis.ejb.form.contract.NaturalPersonForm" />
 		<form-bean name="contract_nosologyIntervalForm" type="ru.ecom.mis.ejb.form.contract.NosologyIntervalForm" />
@@ -529,11 +530,11 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
 		</action>
-		<action path='/contract_find_by_naturalPerson'
+		<action path='/contract_find_person'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm" validate='false' scope="session">
 			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
+				path="/WEB-INF/actions/contract_juridicalPerson/find_person.jsp" />
 		</action>
 		<!-- Услуги -->	
 		<action path='/contract_policlinic_render'
