@@ -234,6 +234,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_diagnosis/list_by_slo.jsp" />
         </action>
+        <action path='/stac_diagnosis_by_sls_list' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                input='/WEB-INF/actions/stac_diagnosis/list_by_sls.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_diagnosis/list_by_sls.jsp" />
+        </action>
         <action path='/stac_diagnosis_hospital' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
