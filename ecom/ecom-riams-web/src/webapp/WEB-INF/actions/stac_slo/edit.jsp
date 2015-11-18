@@ -48,7 +48,7 @@
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" name="Дневник специалиста" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" title="Дневник специалиста" guid="11cc057f-b309-4193-9d22-199373cfd28d" />
         </msh:ifNotInRole>
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/Create" name="Диагноз" params="id" action="/entityParentPrepareCreate-stac_diagnosis" title="Диагноз" guid="c3e59a04-8858-4523-9370-74b16ec784e6" />
-        <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" params="id" action="/entityParentPrepareCreate-pres_prescriptList" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
+        <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" name="Услугу" params="id" action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23-45a26d-5hfd" />
 
@@ -280,6 +280,7 @@
 	}
     %>
     <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
+    <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
     ${lpu_wf}
       <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
         <msh:section title="Дневники специалистов (последние 50). 
@@ -436,8 +437,7 @@
       
       <msh:ifInRole roles="/Policy/Mis/Prescription/Prescript/View">
       	<msh:section title="Лист назначний " createUrl="entityParentPrepareCreate-pres_prescriptList.do?id=${param.id}"
-      	createRoles="/Policy/Mis/Prescription/Prescript/Create"
-      	>
+      	createRoles="/Policy/Mis/Prescription/Prescript/Create" 	>
 	      	<%-- <msh:sectionTitle >Листы назначений. Добавить ЛН</msh:sectionTitle> --%>
 	      	<msh:sectionContent>
 	          <ecom:webQuery name="presLists" nativeSql="select pl.id as ilid
@@ -519,6 +519,7 @@
       	}
       	</script>
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 	<msh:ifFormTypeIsView formName="stac_sloForm">
 		<script type="text/javascript">
 		function unionSloWithNextSlo() {
