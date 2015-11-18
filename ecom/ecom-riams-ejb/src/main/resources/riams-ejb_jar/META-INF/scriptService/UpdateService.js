@@ -2,6 +2,7 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"CustomMessage") ;
 	default_id(aCtx,"DiaryMessage") ;
 	default_id(aCtx,"VocDefectDiary") ;
+	default_id(aCtx,"prescriptionlist") ;
 	default_id(aCtx,"HospitalDataFond") ;
 	return "1" ;
 }
