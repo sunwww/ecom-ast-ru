@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import org.apache.ecs.xhtml.comment;
 import org.jdom.IllegalDataException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,25 +85,57 @@ public class PrescriptionServiceJs {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
 		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;
 	}
-	public String removePrescriptionFromList (String aPrescriptList, String aMedService,HttpServletRequest aRequest) throws NamingException {
+	public String removePrescriptionFromList (String aPrescriptList, String aMedService, HttpServletRequest aRequest) throws NamingException {
+		return removePrescriptionFromListWCT(aPrescriptList,aMedService,null,aRequest);
+	}
+	public String removePrescriptionFromListWCT (String aPrescriptList, String aMedService,String aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder str = new StringBuilder();
-		str.append("delete from prescription where medservice_id='").append(aMedService).append("' and prescriptionlist_id='")
-			.append(aPrescriptList).append("'");
+		str.append("delete from prescription where medservice_id=").append(aMedService).append(" and prescriptionlist_id=")
+			.append(aPrescriptList);
+		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {
+			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;
+			service.executeUpdateNativeSql("update workcalendartime set prescription=null where id="+aWorkCalendarTime);
+		}
 		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
 	}
-	public String addPrescriptionToList (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType,HttpServletRequest aRequest) throws NamingException {
+	public String addPrescriptionToList (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
+		return addPrescriptionToListWCT (aPrescriptList, aMedService, aDepartment, aCabinet, dType,null,null,"", aRequest);
+	}
+	public String addPrescriptionToListWCT (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, String aDateStart, String aWorkCalendarTime, String aComments, HttpServletRequest aRequest) throws NamingException {
+		java.util.Date date = new java.util.Date() ;
+		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		String wf = null;
+		try {
+			wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+login+"'").iterator().next().get1().toString();
+		} catch (Exception e) {e.printStackTrace(); throw new IllegalDataException(e.toString());}
 		StringBuilder str = new StringBuilder();
 		StringBuilder values = new StringBuilder();
 		StringBuilder valuesData = new StringBuilder();
+		if (wf==null) {throw new IllegalDataException("Нет рабочей функции!!!");}
 		values.append("prescriptionlist_id");valuesData.append("'").append(aPrescriptList).append("'");
 		values.append(",dtype");valuesData.append(",'").append(dType).append("'");
 		values.append(",medservice_id");valuesData.append(",'").append(aMedService).append("'");
 		if (aDepartment!=null&&!aDepartment.equals("")) {values.append(",department_id");valuesData.append(",'").append(aDepartment).append("'");}
 		if (aCabinet!=null&&!aCabinet.equals("")) {values.append(",prescriptcabinet_id");valuesData.append(",'").append(aCabinet).append("'");}
-		str.append("insert into prescription (").append(values).append(") values (").append(valuesData).append(")");			
-		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
+		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {values.append(",calendartime_id");valuesData.append(",'").append(aWorkCalendarTime).append("'");}
+		if (aDateStart!=null&&!aDateStart.equals("")) {values.append(",planstartdate");valuesData.append(" ,to_date('").append(aDateStart).append("','dd.MM.yyyy')"); }
+		values.append(",comments");valuesData.append(" ,'").append(aComments).append("'");
+		values.append(",createusername");valuesData.append(" ,'").append(login).append("'");
+		values.append(",createdate");valuesData.append(" ,to_date('").append(formatD.format(date)).append("','dd.MM.yyyy')");
+		values.append(",createtime");valuesData.append(" ,cast ('").append(formatT.format(date)).append("' as time)");
+		values.append(",prescriptspecial_id");valuesData.append(" ,").append(wf);
+		str.append("insert into prescription (").append(values).append(") values (").append(valuesData).append(")");	
+		//System.out.println("===== PresJS, str ="+str.toString());
+		service.executeUpdateNativeSql(str.toString());
+		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")){
+			String presId = service.executeNativeSql("select id from prescription where calendartime_id="+aWorkCalendarTime).iterator().next().get1().toString();
+			 service.executeUpdateNativeSql("update workcalendartime set prescription="+presId+" where id = "+aWorkCalendarTime);
+		}
+		return "Выполнено: ";
 	}
 	
 	public String cancelService(String aPrescript,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
@@ -116,24 +149,44 @@ public class PrescriptionServiceJs {
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
+	
 	/**Возвращает ID листа назначений, если он существует в заданном Medcase 
+	 * 
+	 * UPD 11.2015 - Если ЛН не существует, то создает его
 	 * 	
 	 * @param aMedcase - ИД СЛО
 	 * @param aRequest
-	 * @return - ИД листа назначений (самый ранний)
+	 * @return - ИД листа назначений
 	 * @throws NamingException
 	 */
+	
 	public String isPrescriptListExists(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
 		Collection <WebQueryResult> wrt = service.executeNativeSql(req, 1);
-		
+		String plId = null;
 		if (wrt.size()>0) {
 			WebQueryResult obj = wrt.iterator().next();
 			//System.out.println("---------------------in isPrescriptListExists, id="+obj.get1().toString());
-			return obj.get1().toString();
+			plId = obj.get1().toString();
+		} else {
+			java.util.Date date = new java.util.Date() ;
+			SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
+			SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
+			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+			String wf = null;
+			try {
+				wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+username+"'").iterator().next().get1().toString();
+			} catch (Exception e) {e.printStackTrace(); throw new IllegalDataException(e.toString());}
+			if (wf==null) {throw new IllegalDataException("Нет рабочей функции!!!");}
+			String sqlCreate = "insert into prescriptionlist (dtype,medcase_id, createusername, createdate, createtime, workfunction_id) values ('PrescriptList',"
+					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy'),"
+					+", cast('"+formatT.format(date)+"' as time), "+wf+")";
+			System.out.println(" ========= "+sqlCreate);
+			service.executeUpdateNativeSql(sqlCreate);
+			return isPrescriptListExists(aMedcase, aRequest);
 		}
-		return "";
+		return plId;
 	}
 	/**
 	 * Поиск СЛО по ИД листа назначения
