@@ -10,6 +10,15 @@
 
 <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
         <script type="text/javascript">
+        
+        function addPrescription(aLabID, aLabDepartment, aLabCabinet, aWCT) {
+			var aID = $('id').value;
+			PrescriptionService.addPrescriptionToListWCT(aID, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription", aWCT);
+		}
+		function deletePrescription(aMedService, aWCT) {
+			PrescriptionService.removePrescriptionFromListWCT($('id').value,aMedService,aWCT);
+		}
+		
     	function changeDate(days) {
     		var l = $('labDate')?$('labDate').value:$('planStartDate').value;
     		l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
@@ -69,7 +78,7 @@
 	    	else if (aTableId=='tblDrug') {aFld='drugForm1.planStartDate';}
 	    	else if (aTableId=='tblDiet') {aFld='dietForm.planStartDate';}
 	    	else if (aTableId=='tblMode') {aFld='modeForm.planStartDate';}
-	    	else if (aTableId=='tblSurgOperation') {aFld='surgDate';}
+	    	else if (aTableId=='tblSurgOperation') {aFld='';}
 	    	
 	    	if (aFld!=''&&$(aFld).value==''){$(aFld).value=textDate;}
     		//alert(aTableId+"--"+aCheckFld) ;
@@ -249,8 +258,8 @@
 				fld = [['Service',1],['Date',1],['Cabinet',1],['',1],['CalTime',1]] ;
 			} else if (type=='surg') {
 				typeNum=surgNum;
-				reqFld=[0,1];
-				fld = [['Service',1],['Date',1],['Cabinet',1],['',1],['CalTime',1]] ;
+				reqFld=[0,1,2];
+				fld = [['Service',1],['CalDateName',1],['Cabinet',1],['',1],['CalTime',1]] ;
 			} else if (type=='hosp') {
 				typeNum=hospNum;
 				reqFld=[0,1];
@@ -281,6 +290,7 @@
 				//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
 				for (var i=0;i<aFldList.length;i++) {
 					var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
+					val = val.replace(":","-");
 					if (i!=0) {
 						l += ":" ;lAll+=":";
 					} 
@@ -431,12 +441,12 @@
 			var fldList,reqList =[];
 			if (type=='surg') {
 				var error = [
-						      [type+'Date','', 'Укажите дату операции!','isEmptyUnit']
+						      [type+'CalTime','', 'Укажите дату и время операции!','isEmptyUnit']
 							  , [type+'Servicies','Name', 'Выбирите операцию!','isEmptyUnit']
 							];
 				num = surgNum;
-				fldList = [['Servicies',1],['ServiciesName',1],['Date',1],['',1]
-				,['',1],['',1],['',1],['',1],['',1]
+				fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
+				,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
 			] ;
 			
 			}
@@ -480,6 +490,12 @@
 			var checkNum = 1;
 			while (checkNum<=num) {
 				if (document.getElementById(type+'Service'+checkNum)) {
+					if ($(type+'CalTime')) {
+						if ($(type+'CalTime').value == $(type+'CalTime'+checkNum).value) {
+							alert ("На это время уже назначена запись!");
+							return;
+						}
+					}
 					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
 						if (confirm("В этом листе назначений уже назначено это исследование, ВЫ УВЕРЕНЫ, что хотите назначить его еще раз?")) {
 							break; 
@@ -487,6 +503,7 @@
 							return;
 						}
 					}
+					
 				}
 				checkNum+=1;
 			}
@@ -497,14 +514,15 @@
 		
 		//AddRow для лабораторных и функциональных исследований 
 		function addRow(aResult,aFocus) {
+			alert (""+aResult);
 			var resultRow = aResult.split(":");
 			/*
 			0 - ms.type
 			1 - ms.ID 2 - ms. code+name
 			3 - date
-			4 - cabinetcode           5 - cabinetname
-			6 - departmentintakecode  7 - departmentintakename (for lab)
-			8 - timecode              9 - timename (for func)
+			4 - cabinetID           5 - cabinetname
+			6 - departmentintakeID  7 - departmentintakename (for lab)
+			8 - timeID              9 - timename (for func)
 			*/
 			var type = resultRow[0];
 			var id = resultRow[1]; 
@@ -512,13 +530,14 @@
 			var date = resultRow[3]!=""?resultRow[3]:textDate;
 			var cabinet = resultRow[4]?resultRow[4]:"";
 			var cabinetName = resultRow[5]?resultRow[5]:"";
-			
+			var calTime = resultRow[8];			
 			if (type=='LABSURVEY' || type=='lab') {
 				type='lab'; num = labNum;
 			} else if (type=='DIAGNOSTIC' || type=='func') {
 				type='func'; num = funcNum; 
 			} else if (type=='surg') {
 				num = surgNum;
+				addPrescription( id, '', cabinet, calTime); 
 			} else if (type='hosp') {
 				num = hospNum;
 			}
@@ -540,6 +559,7 @@
 		    
 		  	td1.innerHTML = textInput("Дата",type,"Date",num,resultRow[3],textDate,10) ;
 		    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+		
 		   	if (type=="lab") {
 		   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
 		   		labNum = num;
@@ -551,6 +571,11 @@
 				$(type+'CabinetName').value='';
 		   	} else if (type=='surg') {
 		   		surgNum=num;
+		   		td1.innerHTML = spanTag("Дата",resultRow[3]+" "+resultRow[9],"") ;
+		   		td1.colSpan="1";
+		   		td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Операционная",resultRow[5],"");
+		   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"");
+		   		//td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
 		   	}
 		   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='Удалить' />";
 		   	new dateutil.DateField($(type+'Date'+num));
@@ -799,6 +824,7 @@
       <msh:hidden property="drugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="allDrugList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:hidden property="labCabinet" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="surgDate" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
@@ -972,10 +998,9 @@
 			 </tr>
 			 <tr>
 				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="3" vocName="operationRoom" size='20' horizontalFill="true" />
-				 <msh:textField property="surgDate"  label="Дата" size="10"/>
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10"/>
     			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay"/>
-			 </tr>
+    		</tr>
 			<msh:ifFormTypeIsNotView formName="pres_prescriptListForm">
 			</msh:ifFormTypeIsNotView>
            </tbody>
