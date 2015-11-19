@@ -143,7 +143,9 @@
     
 
     <tiles:put name='javascript' type='string'>
+    
     <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
     <script type="text/javascript">
     setTimeout(checktime,600000) ;
     function checktime() {
@@ -154,12 +156,15 @@
     }
     
     </script>
+    </msh:ifNotInRole>
     <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+    <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     <script type="text/javascript">
     $('record').focus() ;
-    
+    $('record').selectionStart=$('record').value.length ;
     
     </script>
+    </msh:ifFormTypeIsNotView>
     </msh:ifFormTypeAreViewOrEdit>
     </msh:ifFormTypeIsNotView>
     <script type="text/javascript">
