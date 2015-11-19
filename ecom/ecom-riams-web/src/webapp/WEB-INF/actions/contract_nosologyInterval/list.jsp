@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_contractNosologyGroupForm" title="Список интервалов нозологий"/>
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_nosologyGroupForm" title="Список интервалов нозологий"/>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
