@@ -161,30 +161,34 @@
 				</msh:table>
 			</msh:section>
 			
-			<msh:section title="Гарантийные документы (последние 20)" listUrl="js-contract_contractGuarantee-listAll.do?id=${param.id}" 
-				createUrl="entityParentPrepareCreate-contract_contractGuaranteeLetter.do?id=${param.id}"
+			<msh:section title="Гарантийные документы (последние 20)" listUrl="js-contract_guarantee-listAll.do?id=${param.id}" 
+				createUrl="entityParentPrepareCreate-contract_guaranteeLetter.do?id=${param.id}"
 				createRoles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create">
-				<ecom:webQuery name="contractGuaranteeList" nativeSql="
+				<ecom:webQuery maxResult="20" name="contractGuaranteeList" nativeSql="
 				select cg.id as cgid
 				,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name else 'Страховая компания'||reg.name  END as cpid
 				,cg.limitMoney as cglimitMoney
-				
+				,cg.numberdoc||' от '||to_char(cg.issueDate,'dd.mm.yyyy') as issueinfo
+				,cg.actiondate
 				 from ContractGuarantee cg
 				 left join ContractPerson cp on cp.id=cg.contractPerson_id
 				left join Patient p on p.id=cp.patient_id
 				left join reg_ic reg on reg.id=cp.regcompany_id
 				 where cg.contract_id='${param.id}'
+				 order by cg.issueDate desc
 				"/>
-				<msh:table name="contractGuaranteeList" action="entitySubclassView-contract_contractGuarantee.do" idField="1">
+				<msh:table name="contractGuaranteeList" action="entitySubclassView-contract_guarantee.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Договорная персона" property="2" />
+					<msh:tableColumn columnName="Номер" property="4" />
+					<msh:tableColumn columnName="Дата действия" property="4" />
 					<msh:tableColumn columnName="Лимит" property="3" />
+					<msh:tableColumn columnName="Договорная персона" property="2" />
 				</msh:table>
 			</msh:section>
 			<msh:section title="Договорные правила" createRoles="/Policy/Mis/Contract/MedContract/ContractRule/Create"
 			createUrl="entityParentPrepareCreate-contract_rule.do?id=${param.id}">
 			<ecom:webQuery name="rules" nativeSql="select cr.id,cr.name as crname
-			,coalesce(vcrp.name,cr.dateFrom||'-'||coalesce(to_char(cr.dateFrom,'dd.mm.yyyy')||'-'||coalesce(to_char(cr.dateTo,'dd.mm.yyyy'),'неограничено'))) as p3eriod
+			,coalesce(vcrp.name,cr.dateFrom||'-'||coalesce(to_char(cr.dateTo,'dd.mm.yyyy'),'неограничено')) as p3eriod
 			,cr.medserviceAmount,cr.courseAmount,cr.medserviceCourseAmount
 			,cng.name as c7ngname, cmsg.name as c8msgname,cgg.name as c9ggname
 			,vcp.name as v10cpname
@@ -266,13 +270,13 @@
 			
 			<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-contract_rule" name="Договорные правила" title="Добавить договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/Create"/>
 
-			<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-contract_contractGuaranteeLetter" name="Гарантийное письмо" title="Гарантийное письмо" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create"/>
+			<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-contract_guaranteeLetter" name="Гарантийное письмо" title="Гарантийное письмо" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create"/>
 			<msh:sideLink key="ALT+7" params="id" action="/entityParentPrepareCreate-contract_contractPaymentOrder" name="Платежное поручение" title="Добавить платежное поручение по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/Create"/>
 			<msh:sideLink key="ALT+8" params="id" action="/entityParentPrepareCreate-contract_contractMedPolicy" name="Медицинский полис" title="Добавить медицинский полис по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/Create"/>
 		</msh:sideMenu>
 		
 		<msh:sideMenu title="Показать по договору">
-			<msh:sideLink params="id" action="/entityParentList-contract_contractGuaranteeLetter" name="Гарантийные письма" title="Просмотреть гарантийные письма по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View"/>
+			<msh:sideLink params="id" action="/entityParentList-contract_guaranteeLetter" name="Гарантийные письма" title="Просмотреть гарантийные письма по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_contractPaymentOrder" name="Платежные поручения" title="Просмотреть платежные поручения по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_contractMedPolicy" name="Медицинские полиса" title="Просмотреть медицинские полиса по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_rule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
