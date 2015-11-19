@@ -189,7 +189,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	/>
     	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
     	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
-
+		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
 </msh:sideMenu>
 <msh:sideMenu title="Перейти">
 	    <msh:sideLink 
