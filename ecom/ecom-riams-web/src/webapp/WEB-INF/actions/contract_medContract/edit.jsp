@@ -182,7 +182,7 @@
 				</msh:table>
 			</msh:section>
 			<msh:section title="Договорные правила" createRoles="/Policy/Mis/Contract/MedContract/ContractRule/Create"
-			createUrl="entityParentPrepareCreate-contract_contractRule.do?id=${param.id}">
+			createUrl="entityParentPrepareCreate-contract_rule.do?id=${param.id}">
 			<ecom:webQuery name="rules" nativeSql="select cr.id,cr.dateFrom,cr.dateTo
 			,cr.medserviceAmount,cr.courseAmount,cr.medserviceCourseAmount
 			,cng.name as cngname, cmsg.name as cmsgname,cgg.name as cggname
@@ -202,7 +202,7 @@
 			left join Patient p on p.id=cp.patient_id
 			left join reg_ic reg on reg.id=cp.regcompany_id
 			where cr.contract_id=${param.id}"/>
-				<msh:table name="rules" action="entityParentView-contract_contractRule.do" idField="1">
+				<msh:table name="rules" action="entityParentView-contract_rule.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Название" property="13"/>
 					<msh:tableColumn columnName="Период действия" property="11"/>
@@ -265,7 +265,7 @@
 			<msh:sideLink params="id" action="/entityParentPrepareCreate-contract_medContract" name="Поддоговор" title="Поддоговор" roles="/Policy/Mis/Contract/MedContract/Create"/>
 			
 			
-			<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-contract_contractRule" name="Договорные правила" title="Добавить договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/Create"/>
+			<msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-contract_rule" name="Договорные правила" title="Добавить договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/Create"/>
 
 			<msh:sideLink key="ALT+6" params="id" action="/entityParentPrepareCreate-contract_contractGuaranteeLetter" name="Гарантийное письмо" title="Гарантийное письмо" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create"/>
 			<msh:sideLink key="ALT+7" params="id" action="/entityParentPrepareCreate-contract_contractPaymentOrder" name="Платежное поручение" title="Добавить платежное поручение по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/Create"/>
@@ -276,7 +276,7 @@
 			<msh:sideLink params="id" action="/entityParentList-contract_contractGuaranteeLetter" name="Гарантийные письма" title="Просмотреть гарантийные письма по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_contractPaymentOrder" name="Платежные поручения" title="Просмотреть платежные поручения по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractPaymentOrder/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_contractMedPolicy" name="Медицинские полиса" title="Просмотреть медицинские полиса по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/View"/>
-			<msh:sideLink params="id" action="/entityParentList-contract_contractRule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
+			<msh:sideLink params="id" action="/entityParentList-contract_rule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="medContract"/>		
 	</tiles:put>
