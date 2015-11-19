@@ -23,6 +23,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <msh:sideMenu title="Журналы">
 	<msh:sideLink name="Список отчетов" 
 	action="/javascript:getDefinition('riams_journals.do?short=Short',null)" styleId="viewShort" />
+	<msh:sideLink name="Назначения на операцию" action="/direct_operation_list" />
 
 	    <msh:sideMenu title="СЛС">
 	    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
