@@ -14,12 +14,6 @@
 			<msh:hidden property="fromMedServiceCode"/>
 			<msh:panel>
 				<msh:row>
-					<msh:textField property="name" label="Название" size="150"/>
-				</msh:row>
-				<msh:row>
-					<msh:textField property="medServiceMask" label="Маска кодов мед. услуг" size="150"/>
-				</msh:row>
-				<msh:row>
 					<msh:autoComplete size="150" property="fromCode" label="Начиная с кода" vocName="medService" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
