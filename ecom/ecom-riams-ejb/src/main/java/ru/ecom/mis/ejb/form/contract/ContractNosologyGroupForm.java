@@ -13,7 +13,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ContractNosologyGroup.class)
 @Comment("Нозологическая группа по договору")
-@WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityList-contract_contractNosologyGroup.do", view="entityView-contract_contractNosologyGroup.do")
+@WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityList-contract_nosologyGroup.do", view="entityView-contract_nosologyGroup.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractNosologyGroup")
 public class ContractNosologyGroupForm extends IdEntityForm{
 	/**

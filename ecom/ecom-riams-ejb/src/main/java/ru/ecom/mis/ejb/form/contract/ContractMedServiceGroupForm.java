@@ -11,7 +11,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = ContractMedServiceGroup.class)
 @Comment("Группу медицинских услуг по договору")
-@WebTrail(comment = "Группу медицинских услуг по договору", nameProperties= "id", list="entityParentList-contract_contractMedServiceGroup.do", view="entityParentView-contract_contractMedServiceGroup.do")
+@WebTrail(comment = "Группу медицинских услуг по договору", nameProperties= "id", list="entityParentList-contract_medServiceGroup.do", view="entityParentView-contract_medServiceGroup.do")
 //@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractMedServiceGroup")
 public class ContractMedServiceGroupForm extends IdEntityForm{
@@ -30,4 +30,17 @@ public class ContractMedServiceGroupForm extends IdEntityForm{
 	 * Название
 	 */
 	private String theName;
+	
+	/** Диапозон */
+	@Comment("Диапозон")
+	public String getRangeMkb() {
+		return theRangeMkb;
+	}
+
+	public void setRangeMkb(String aRangeMkb) {
+		theRangeMkb = aRangeMkb;
+	}
+
+	/** Диапозон */
+	private String theRangeMkb;
 }

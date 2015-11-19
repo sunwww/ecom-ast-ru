@@ -15,7 +15,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz = ContractRule.class)
 @Comment("Договорное правило")
-@WebTrail(comment = "Договорное правило", nameProperties= {"id","dateFrom","dateTo"}, list="entityParentList-contract_contractRule.do", view="entityParentView-contract_contractRule.do")
+@WebTrail(comment = "Договорное правило", nameProperties= {"id","dateFrom","dateTo"}, list="entityParentList-contract_rule.do", view="entityParentView-contract_rule.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractRule")
 public class ContractRuleForm extends IdEntityForm{

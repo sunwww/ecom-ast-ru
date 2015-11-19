@@ -98,7 +98,7 @@ public class NosologyIntervalForm extends IdEntityForm{
 	 * Название
 	 */
 	@Comment("Название")
-	@Persist @DoUpperCase @Required
+	@Persist @DoUpperCase
 	public String getName() {
 		return theName;
 	}
