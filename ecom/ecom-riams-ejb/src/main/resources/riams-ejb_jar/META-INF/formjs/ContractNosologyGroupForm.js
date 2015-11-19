@@ -35,21 +35,9 @@ function save_interval(aForm,aEntity,aCtx) {
 	    			fFrom=fs[0].trim();fTo=fs[1].trim();
 	    		} else {
 	    			fFrom=filt1 ;
-	    			if (fFrom.length()<2) {
-	    				fTo = fFrom+"99.999" ;
-	    			} else if (fFrom.length()<3) {
-	    				fTo = fFrom+"9.999" ;
-	    			} else if (fFrom.length()<4) {
-	    				fTo = fFrom+".999" ;
-	    			} else if (fFrom.length()<5) {
-	    				fTo = fFrom+"999" ;
-	    			} else if (fFrom.length()<6) {
-	    				fTo = fFrom+"99" ;
-	    			} else if (fFrom.length()<7) {
-	    				fTo = fFrom+"9" ;
-	    			} else {
-	    				fTo = fFrom ;
-	    			}
+	    			var st = "Z99.999" ;
+	    			fTo = fFrom+st.substring(fFrom.length())+"-"+fFrom.length()+"-"+st.length+"-"+(st.length+fFrom.length()) ;
+	    			
 	    		}
 	    		var nosInterval = new Packages.ru.ecom.mis.ejb.domain.contract.NosologyInterval() ;
 	    		nosInterval.setNosologyGroup(aEntity) ;

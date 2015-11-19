@@ -22,7 +22,6 @@ function onSave(aForm, aEntity, aCtx) {
 
 function save_interval(aForm,aEntity,aCtx) {
 	var list = aCtx.manager.createNativeQuery("delete from MedServiceInterval cni where cni.MedServiceGroup_id="+aEntity.id+" ").executeUpdate() ;
-	throw "" +aForm;
 	var rangeMkb = aForm.rangeMkb ;
 	rangeMkb = rangeMkb.toUpperCase() ;
 	var fs1=rangeMkb.split(",") ;
@@ -36,40 +35,8 @@ function save_interval(aForm,aEntity,aCtx) {
 	    		} else {
 	    			fFrom=filt1 ;
 	    			var st = "Z99.999.999.999" ;
-	    			fTo = fFrom+st.substring(st,fFrom.length(),st.length()-fFrom.legth()) ;
-	    			throw fTo ;
-	    			/*
-	    			if (fFrom.length()<2) {
-	    				fTo = fFrom+"99.999.999.999" ;
-	    			} else if (fFrom.length()<3) {
-	    				fTo = fFrom+"9.999.999.999" ;
-	    			} else if (fFrom.length()<4) {
-	    				fTo = fFrom+".999.999.999" ;
-	    			} else if (fFrom.length()<5) {
-	    				fTo = fFrom+"999.999.999" ;
-	    			} else if (fFrom.length()<6) {
-	    				fTo = fFrom+"99.999.999" ;
-	    			} else if (fFrom.length()<7) {
-	    				fTo = fFrom+"9.999.999" ;
-	    			} else if (fFrom.length()<8) {
-	    				fTo = fFrom+".999.999" ;
-	    			} else if (fFrom.length()<9) {
-	    				fTo = fFrom+"999.999" ;
-	    			} else if (fFrom.length()<10) {
-	    				fTo = fFrom+"99.999" ;
-	    			} else if (fFrom.length()<11) {
-	    				fTo = fFrom+"9.999" ;
-	    			} else if (fFrom.length()<12) {
-	    				fTo = fFrom+".999" ;
-	    			} else if (fFrom.length()<13) {
-	    				fTo = fFrom+"999" ;
-	    			} else if (fFrom.length()<14) {
-	    				fTo = fFrom+"99" ;
-	    			} else if (fFrom.length()<15) {
-	    				fTo = fFrom+"9" ;
-	    			} else {
-	    				fTo = fFrom ;
-	    			}*/
+	    			fTo = fFrom+st.substring(fFrom.length())+"-"+fFrom.length()+"-"+st.length+"-"+(st.length+fFrom.length()) ;
+	    			
 	    		}
 	    		var nosInterval = new Packages.ru.ecom.mis.ejb.domain.contract.MedServiceInterval() ;
 	    		nosInterval.setMedServiceGroup(aEntity) ;
