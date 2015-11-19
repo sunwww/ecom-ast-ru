@@ -27,6 +27,11 @@
     </tr>
     <tr>
     	<td>
+    		<input type='button' onclick="javascript:goTo('func')" value='Добавить диагностическое исследование'> 
+    	</td>
+    </tr>
+    <tr>
+    	<td>
     		<input type='button' onclick="javascript:goTo('operation')" value='Добавить назначение на операцию'> 
     	</td>
     </tr>
@@ -62,6 +67,7 @@ var plId ;
     	if (aValue=='service') window.location='entityParentPrepareCreate-pres_servicePrescription.do?id='+plId;
     	else if (aValue=='operation') window.location='entityParentPrepareCreate-pres_operationPrescription.do?id='+plId;
     	else if (aValue=='diet') window.location='entityParentPrepareCreate-pres_dietPrescription.do?id='+plId;
+    	else if (aValue=='func') window.location='entityParentPrepareCreate-pres_diagnosticPrescription.do?id='+plId;
     	else if (aValue=='view') window.location='entityParentView-pres_prescriptList.do?id='+plId;
     	//else if (aValue=='service') window.location='entityParentPrepareCreate-pres_servicePrescription.do?id='+plId;
      }

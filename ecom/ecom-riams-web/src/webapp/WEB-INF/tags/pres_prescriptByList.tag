@@ -74,7 +74,7 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на диагностические исследования</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    		<msh:table name="pres" action="entityView-pres_diagnosticPrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
@@ -128,7 +128,7 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на операции</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    		<msh:table name="pres" action="entityView-pres_operationPrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Операция"/>
     			<msh:tableColumn property="6" columnName="Операционная"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
