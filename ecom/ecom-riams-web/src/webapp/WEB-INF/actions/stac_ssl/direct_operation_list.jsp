@@ -11,7 +11,7 @@
 	</tiles:put>
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">АНАЛИЗ РАБОТЫ УЧРЕЖДЕНИЯ
+        <msh:title mainMenu="StacJournal">Просмотр назначений на операции
         </msh:title>
     </tiles:put>
 
@@ -56,8 +56,8 @@
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	String dep = (String) request.getParameter("department") ; 
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("dep", " and dmc.department_id='"+dep+"'");
-    		request.setAttribute("depOper", " and so.department_id='"+dep+"'");
+    		request.setAttribute("dep", " and wN.lpu_id='"+dep+"'");
+    		request.setAttribute("depOper", " and wN.lpu_id='"+dep+"'");
     	} else{
     		request.setAttribute("dep", "") ;
     	}
@@ -66,30 +66,39 @@
     <msh:section title="Журнал направлений на хир. операции. Период с ${param.dateBegin} по ${dateEnd}.">
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_suroper" nameFldSql="journal_list_suroper_sql" nativeSql=" 
-select wct.id as timeid
+select mc.id as medcaseid
 ,pat.patientinfo
 ,wf.id
 ,vms.code||' '||vms.name as oper_name
 ,wf.groupname
 ,to_char(wcd.calendardate,'dd.MM.yyyy') as oper_date
 ,cast(wct.timefrom as varchar(5)) as oper_time
-from workcalendartime wct
+,mlN.name||' (' ||wp.lastname||')' as naprInfo
+,ss.code
+from prescription p 
+left join workcalendartime wct on wct.prescription=p.id
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
-left join prescription p on p.id=wct.prescription
 left join prescriptionlist pl on pl.id=p.prescriptionlist_id
 left join medcase mc on mc.id=pl.medcase_id
+left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
 left join medservice ms on ms.id=p.medservice_id
 left join vocmedservice vms on vms.id=ms.vocmedservice_id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
+left join workfunction wfN on wfN.id=p.prescriptspecial_id
+left join worker wN on wN.id=wfN.worker_id
+left join patient wp on wp.id=wN.person_id
+left join mislpu mlN on mlN.id=wN.lpu_id
+left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
 where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') 
-and wct.prescription is not null 
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+${dep}
+order by wcd.calendardate, wct.timefrom
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />${journal_list_suroper_sql}
         <msh:table name="journal_list_suroper"
-      
-         action="/javascript:void()" idField="1" noDataMessage="Не найдено">
-          
+         action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Пациент" property="2"/>
+            <msh:tableColumn columnName="ИБ" property="9"/>
+            <msh:tableColumn columnName="Направитель" property="8"/>
             <msh:tableColumn columnName="Операция" property="4"/>
             <msh:tableColumn columnName="Операционная" property="5"/>
             <msh:tableColumn columnName="Дата назначения" property="6"/>
@@ -105,8 +114,7 @@ and wct.prescription is not null
     	<% }   %>
     <script type='text/javascript'>
     
-     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-     checkFieldUpdate('typeView','${typeView}',8) ;
+   /*   checkFieldUpdate('typeEmergency','${typeEmergency}',3) ; */
      
    
     function checkFieldUpdate(aField,aValue,aDefault) {
