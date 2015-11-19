@@ -30,11 +30,12 @@ function save_interval(aForm,aEntity,aCtx) {
 			var filt1 = fs1[i].trim() ;
 			var fs=filt1.split("-") ;
 			if (filt1.length()>0) {
+				var st = "Z99.999.999.999" ;
     			if (fs.length>1) {
 	    			fFrom=fs[0].trim();fTo=fs[1].trim();
+	    			fTo = fTo+st.substring(fTo.length()) ;
 	    		} else {
 	    			fFrom=filt1 ;
-	    			var st = "Z99.999.999.999" ;
 	    			fTo = fFrom+st.substring(fFrom.length()) ;
 	    			
 	    		}
