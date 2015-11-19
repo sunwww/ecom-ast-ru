@@ -64,7 +64,7 @@
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_juridicalPersonForm">
 		
-		      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
+		      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_juridicalContract.do?id=${param.id}" 
       	 title="Список последних 10 договоров заказчика">
       	<ecom:webQuery name="medContracts" nativeSql="
       	select mc.id as mcid ,mc.contractNumber as mccontractNumber
@@ -81,7 +81,8 @@ where mc.customer_id='${param.id}'
 group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
 order by mc.dateFrom desc
       	" maxResult="10"/>
-      	<msh:table name="medContracts" viewUrl="entityView-contract_juridicalContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
+      	<msh:table name="medContracts" viewUrl="entityView-contract_juridicalContract.do?short=Short" 
+      	action="entityView-contract_juridicalContract.do" idField="1">
       		<msh:tableColumn property="2" columnName="№ договора"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>
