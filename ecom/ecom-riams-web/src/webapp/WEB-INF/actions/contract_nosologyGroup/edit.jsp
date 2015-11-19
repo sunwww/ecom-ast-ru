@@ -13,7 +13,7 @@
 				<msh:row>
 					<msh:textField property="name" label="Название" size="150"/>
 				</msh:row>
-				<msh:ifFormTypeIsNotView formName="contract_medServiceGroupForm">
+				<msh:ifFormTypeIsNotView formName="contract_nosologyGroupForm">
 					<msh:row>
 						<msh:textArea property="rangeMkb" label="Маска"/>
 					</msh:row>
