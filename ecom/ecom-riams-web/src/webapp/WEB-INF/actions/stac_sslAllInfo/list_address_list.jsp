@@ -121,6 +121,8 @@
     String typeCntDays =ActionUtil.updateParameter("AddressSheetHospital","typeCntDays","2", request) ;
     
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+    String dateEndR = (String)request.getAttribute("dateEnd") ;
+    if (dateEndR==null || dateEndR.equals("")) request.setAttribute("dateEnd", request.getAttribute("dateBegin")) ;
     ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request) ;
     if (typeCntDays!=null&&typeCntDays.equals("1")) {
     	if (typeDate!=null &&typeDate.equals("1")) {
