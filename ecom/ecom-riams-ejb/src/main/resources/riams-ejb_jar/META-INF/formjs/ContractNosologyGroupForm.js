@@ -36,7 +36,7 @@ function save_interval(aForm,aEntity,aCtx) {
 	    		} else {
 	    			fFrom=filt1 ;
 	    			var st = "Z99.999" ;
-	    			fTo = fFrom+st.substring(fFrom.length())+"-"+fFrom.length()+"-"+st.length+"-"+(st.length+fFrom.length()) ;
+	    			fTo = fFrom+st.substring(fFrom.length()) ;
 	    			
 	    		}
 	    		var nosInterval = new Packages.ru.ecom.mis.ejb.domain.contract.NosologyInterval() ;
