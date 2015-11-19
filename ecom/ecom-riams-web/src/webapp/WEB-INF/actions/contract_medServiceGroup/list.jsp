@@ -12,11 +12,20 @@
 		<msh:sideMenu title="Добавить">
 			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/GroupRules/ContractMedServiceGroup/Create" params="" action="/entityPrepareCreate-contract_medServiceGroup" title="Добавить медицинскую группу по договору" name="Медицинскую группу по договору" />
 		</msh:sideMenu>
-		<tags:contractMenu currentAction="nosologyGroup"/>
+		<tags:contractMenu currentAction="medServiceGroup"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-		<msh:table name="list" action="entityView-contract_contractNosologyGroup.do" idField="id">
-			<msh:tableColumn columnName="Название" property="name" />
+	<ecom:webQuery name="list" nativeSql="
+		select cng.id,cng.name
+		,list(cni.fromMedServiceCode||'-'||cni.toMedServiceCode)
+		from ContractMedServiceGroup cng
+		left join MedServiceInterval cni on cng.id=cni.medServiceGroup_id
+		group by cng.id,cng.name
+		order by cng.name
+		"/>
+		<msh:table name="list" action="entityView-contract_medServiceGroup.do" idField="1">
+			<msh:tableColumn columnName="Название" property="2" />
+			<msh:tableColumn columnName="Маска" property="3" />
 		</msh:table>
 	</tiles:put>
 </tiles:insert>
