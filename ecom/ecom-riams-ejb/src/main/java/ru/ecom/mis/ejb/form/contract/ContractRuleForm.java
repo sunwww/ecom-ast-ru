@@ -10,7 +10,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = ContractRule.class)
@@ -143,7 +145,7 @@ public class ContractRuleForm extends IdEntityForm{
 	 * Разрешение
 	 */
 	@Comment("Разрешение")
-	@Persist
+	@Persist @Required
 	public Long getPermission() {
 		return thePermission;
 	}
@@ -204,7 +206,7 @@ public class ContractRuleForm extends IdEntityForm{
 	
 	/** Название правила */
 	@Comment("Название правила")
-	@Persist
+	@Persist @Required @DoUpperCase
 	public String getName() {return theName;}
 	public void setName(String aName) {theName = aName;}
 
