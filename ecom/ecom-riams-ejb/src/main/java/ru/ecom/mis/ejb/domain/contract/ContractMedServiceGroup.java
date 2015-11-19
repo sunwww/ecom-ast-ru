@@ -17,6 +17,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 	@AIndexes({
 		@AIndex(unique= false, properties = {"name"})
+
 	})
 public class ContractMedServiceGroup extends BaseEntity{
 	/**
