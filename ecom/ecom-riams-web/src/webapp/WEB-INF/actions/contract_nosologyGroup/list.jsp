@@ -10,7 +10,7 @@
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/Create" params="" action="/entityPrepareCreate-contract_contractNosologyGroup" title="Нозологическая группа по договору" name="Нозологическая группа по договору" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/Create" params="" action="/entityPrepareCreate-contract_nosologyGroup" title="Нозологическая группа по договору" name="Нозологическая группа по договору" />
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="nosologyGroup"/>
 	</tiles:put>

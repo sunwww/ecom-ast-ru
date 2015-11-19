@@ -18,10 +18,10 @@
 					<msh:textField property="name" label="Название правила" fieldColSpan="3" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete viewAction="entityView-contract_contractNosologyGroup.do" property="nosologyGroup" label="Нозологическая группа" vocName="contractNosologyGroup" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete viewAction="entityView-contract_nosologyGroup.do" property="nosologyGroup" label="Нозологическая группа" vocName="contractNosologyGroup" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete viewAction="entityView-contract_contractMedServiceGroup.do" property="medServiceGroup" label="Группа медицинских услуг" vocName="contractMedServiceGroup" horizontalFill="true"  fieldColSpan="3"/>
+					<msh:autoComplete viewAction="entityView-contract_medServiceGroup.do" property="medServiceGroup" label="Группа медицинских услуг" vocName="contractMedServiceGroup" horizontalFill="true"  fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete viewAction="entityView-contract_contractGuaranteeGroup.do" property="guaranteeGroup" label="Группа гарантийных документов" vocName="contractGuaranteeGroup" horizontalFill="true" fieldColSpan="3"/>

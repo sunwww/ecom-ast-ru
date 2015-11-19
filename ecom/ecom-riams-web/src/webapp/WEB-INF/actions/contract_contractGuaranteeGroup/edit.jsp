@@ -30,7 +30,7 @@
 			</msh:section>
 			<msh:section title="Договорные правила, в которых используется данное ограничение">
 				<ecom:webQuery nativeSql="select cr.id,mc.contractNumber as mcname,cr.dateFrom as crdatefrom,cr.dateTo as crdateto from ContractRule cr left join MedContract mc on mc.id=cr.contract_id where cr.guaranteeGroup_id=${param.id}" name="contractRule"/>
-				<msh:table name="contractRule" action="entityParentView-contract_contractRule.do" idField="1">
+				<msh:table name="contractRule" action="entityParentView-contract_rule.do" idField="1">
 					<msh:tableColumn property="sn" columnName="#"/>
 					<msh:tableColumn property="2" columnName="Номер договора"/>
 					<msh:tableColumn property="3" columnName="Дата начала действия правила"/>
