@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.contract;
 import java.math.BigDecimal;
+import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -59,4 +60,28 @@ public abstract class ContractGuarantee extends BaseEntity{
 
 	/** Лимит денег */
 	private BigDecimal theLimitMoney;
+	
+	/** Номер */
+	@Comment("Номер")
+	public String getNumberDoc() {return theNumberDoc;}
+	public void setNumberDoc(String aNumberDoc) {theNumberDoc = aNumberDoc;}
+
+	/** Номер */
+	private String theNumberDoc;
+	
+	/** Дата выдачи */
+	@Comment("Дата выдачи")
+	public Date getIssueDate() {return theIssueDate;}
+	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
+
+	
+	/** Дата действия */
+	@Comment("Дата действия")
+	public Date getActionDate() {return theActionDate;}
+	public void setActionDate(Date aActionDate) {theActionDate = aActionDate;}
+
+	/** Дата действия */
+	private Date theActionDate;
+	/** Дата выдачи */
+	private Date theIssueDate;
 }
