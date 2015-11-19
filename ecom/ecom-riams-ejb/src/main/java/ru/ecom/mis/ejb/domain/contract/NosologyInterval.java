@@ -19,7 +19,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"name"})
+		@AIndex(unique= false, properties = {"nosologyGroup"})
+
 	})
 public class NosologyInterval extends BaseEntity{
 	/**
