@@ -25,8 +25,8 @@
 			<msh:section title="Интервалы медицинских услуг" createUrl="entityParentPrepareCreate-contract_medServiceInterval.do?id=${param.id}">
 			<ecom:parentEntityListAll formName="contract_medServiceIntervalForm" attribute="medServiceGroup" />
 				<msh:table name="medServiceGroup" deleteUrl="entityParentDeleteGoParentView-contract_medServiceInterval.do" action="entityParentView-contract_medServiceInterval.do" idField="id">
-					<msh:tableColumn columnName="с" property="fromCode"/>
-					<msh:tableColumn columnName="по" property="toCode"/>
+					<msh:tableColumn columnName="с" property="fromMedServiceCode"/>
+					<msh:tableColumn columnName="по" property="toMedServiceCode"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Договорные правила, в которых используется данное ограничение">
