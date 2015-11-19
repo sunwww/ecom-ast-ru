@@ -14,9 +14,6 @@
 			<msh:hidden property="toIdc10Code"/>
 			<msh:panel>
 				<msh:row>
-					<msh:textField size="150" property="name" label="Наименование"/>
-				</msh:row>
-				<msh:row>
 					<msh:autoComplete size="150" property="fromCode" label="Начиная с кода" vocName="vocIdc10" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
