@@ -14,10 +14,10 @@
 			<msh:hidden property="fromMedServiceCode"/>
 			<msh:panel>
 				<msh:row>
-					<msh:autoComplete size="150" property="fromCode" label="Начиная с кода" vocName="medService" horizontalFill="true" />
+					<msh:textField size="150" property="fromMedServiceCode" label="Начиная с кода" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete size="150" property="toCode" label="Заканчивая кодом" vocName="medService" horizontalFill="true" />
+					<msh:textField size="150" property="toMedServiceCode" label="Заканчивая кодом" horizontalFill="true" />
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
