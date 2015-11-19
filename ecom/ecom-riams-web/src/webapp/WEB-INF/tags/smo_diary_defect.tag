@@ -40,9 +40,11 @@
 <script type="text/javascript"><!--
      var theIs${name}DiaryId=0 ;
      var theIs${name}DiaryDefectDialogInitialized = false ;
+     var theIs${name}DiaryDefectVk  ;
      var the${name}DiaryDefectDialog = new msh.widget.Dialog($('${name}DiaryDefectDialog')) ;
      // Показать 
-     function show${name}DiaryDefect(aId) {
+     function show${name}DiaryDefect(aId,aVk) {
+    	 theIs${name}DiaryDefectVk = aVk ;
     	 //alert(aId) ;
     	 if (theIs${name}DiaryId!=aId){
     		 theIs${name}DiaryId=aId;
@@ -53,7 +55,7 @@
     	 //theIs${name}DiaryDefectId=aId ;
          if (!theIs${name}DiaryDefectDialogInitialized) {
          	init${name}DiaryDefectDialog() ;
-         	the${name}DiaryDefectDialog.show() ;
+         	
          	
           } else {
         	    the${name}DiaryDefectDialog.show() ;
@@ -76,6 +78,7 @@
 		} else {
 		HospitalMedCaseService.setDiaryDefect(theIs${name}DiaryId,defID
 				,$('${name}Comment').value,$('${name}Record').value
+				,theIs${name}DiaryDefectVk
 				,{
 			callback: function(aResult) {
 				window.document.location.reload();
@@ -113,6 +116,7 @@
 							 
 								callback: function(aResult1) {
 									$('${name}Record').value=aResult1;
+									the${name}DiaryDefectDialog.show() ;
 								}
 							});
 					 }
